@@ -24,14 +24,26 @@
   --ring: hsl(222.2, 84%, 4.9%);
   --radius: 0.5rem;
   
-  /* Custom Mok Sports colors */
-  --fantasy-green: hsl(142, 71%, 45%);
-  --trust-blue: hsl(224, 76%, 48%);
-  --accent-gold: hsl(45, 93%, 47%);
+  /* Custom Mok Sports colors - Vibrant Fantasy Theme */
+  --fantasy-green: hsl(142, 76%, 40%);
+  --fantasy-green-light: hsl(142, 76%, 85%);
+  --trust-blue: hsl(217, 91%, 60%);
+  --trust-blue-light: hsl(217, 91%, 85%);
+  --accent-gold: hsl(43, 96%, 56%);
+  --accent-gold-light: hsl(43, 96%, 85%);
+  --fantasy-purple: hsl(262, 83%, 58%);
+  --fantasy-purple-light: hsl(262, 83%, 85%);
+  --fantasy-orange: hsl(25, 95%, 53%);
+  --fantasy-orange-light: hsl(25, 95%, 85%);
   --error-red: hsl(0, 84%, 60%);
-  --dark-gray: hsl(220, 13%, 18%);
-  --light-gray: hsl(210, 20%, 98%);
-  --muted-gray: hsl(220, 9%, 46%);
+  --success-green: hsl(142, 76%, 40%);
+  --warning-yellow: hsl(43, 96%, 56%);
+  --dark-bg: hsl(220, 15%, 12%);
+  --card-bg: hsl(0, 0%, 100%);
+  --surface-bg: hsl(210, 20%, 98%);
+  --text-primary: hsl(220, 13%, 18%);
+  --text-secondary: hsl(220, 9%, 46%);
+  --border-light: hsl(214, 32%, 91%);
 }
 
 .dark {
@@ -79,16 +91,12 @@
   background-color: var(--accent-gold);
 }
 
-.bg-error-red {
-  background-color: var(--error-red);
+.bg-fantasy-purple {
+  background-color: var(--fantasy-purple);
 }
 
-.bg-dark-gray {
-  background-color: var(--dark-gray);
-}
-
-.bg-light-gray {
-  background-color: var(--light-gray);
+.bg-fantasy-orange {
+  background-color: var(--fantasy-orange);
 }
 
 .text-fantasy-green {
@@ -103,16 +111,46 @@
   color: var(--accent-gold);
 }
 
-.text-error-red {
-  color: var(--error-red);
+.text-fantasy-purple {
+  color: var(--fantasy-purple);
 }
 
-.text-dark-gray {
-  color: var(--dark-gray);
+.text-fantasy-orange {
+  color: var(--fantasy-orange);
 }
 
-.text-muted-gray {
-  color: var(--muted-gray);
+.border-fantasy-green {
+  border-color: var(--fantasy-green);
+}
+
+/* Fantasy card styles */
+.fantasy-card {
+  @apply bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden;
+}
+
+.fantasy-card-hover {
+  @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
+}
+
+.fantasy-gradient-green {
+  background: linear-gradient(135deg, var(--fantasy-green), var(--trust-blue));
+}
+
+.fantasy-gradient-gold {
+  background: linear-gradient(135deg, var(--accent-gold), var(--fantasy-orange));
+}
+
+.fantasy-gradient-purple {
+  background: linear-gradient(135deg, var(--fantasy-purple), var(--trust-blue));
+}
+
+/* Mobile-first responsive utilities */
+.mobile-container {
+  @apply px-4 pb-20 md:pb-4;
+}
+
+.desktop-sidebar-spacing {
+  @apply md:ml-64;
 }
 
 .border-fantasy-green {

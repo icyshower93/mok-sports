@@ -6,6 +6,9 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider, useAuth } from "@/hooks/use-auth";
 import LoginPage from "@/pages/login";
 import DashboardPage from "@/pages/dashboard";
+import LeaguesPage from "@/pages/leagues";
+import DraftPage from "@/pages/draft";
+import ProfilePage from "@/pages/profile";
 import NotFound from "@/pages/not-found";
 
 function AppContent() {
@@ -24,8 +27,20 @@ function AppContent() {
 
   return (
     <Switch>
+      <Route path="/login">
+        <LoginPage />
+      </Route>
       <Route path="/">
         {isAuthenticated ? <DashboardPage /> : <LoginPage />}
+      </Route>
+      <Route path="/leagues">
+        {isAuthenticated ? <LeaguesPage /> : <LoginPage />}
+      </Route>
+      <Route path="/draft">
+        {isAuthenticated ? <DraftPage /> : <LoginPage />}
+      </Route>
+      <Route path="/profile">
+        {isAuthenticated ? <ProfilePage /> : <LoginPage />}
       </Route>
       <Route component={NotFound} />
     </Switch>
