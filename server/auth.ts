@@ -21,24 +21,36 @@ if (!GOOGLE_CLIENT_ID || !GOOGLE_CLIENT_SECRET) {
 
 // Get the base URL for redirects
 const getBaseUrl = () => {
+  // Use the deployment domain if we're in production (when REPLIT_DOMAINS contains a .replit.dev domain)
   const replitDomains = process.env.REPLIT_DOMAINS;
+  
+  // Check if we're in a deployed Replit environment
+  if (replitDomains && replitDomains.includes('.replit.dev')) {
+    // This is the production deployment domain pattern for this project
+    return 'https://mok-sports-draft-mokfantasysport.replit.app';
+  }
+  
+  // Development environment with REPLIT_DOMAINS
   if (replitDomains) {
     const domains = replitDomains.split(',');
     return `https://${domains[0]}`;
   }
-  return process.env.NODE_ENV === 'production' 
-    ? 'https://your-app-domain.com' 
-    : 'http://localhost:5000';
+  
+  // Final fallback for local development
+  return 'http://localhost:5000';
 };
 
 // Only configure Google OAuth strategy if credentials are available
 if (isOAuthConfigured && GOOGLE_CLIENT_ID && GOOGLE_CLIENT_SECRET) {
+  const callbackURL = `${getBaseUrl()}/api/auth/google/callback`;
+  console.log(`🔗 OAuth callback URL: ${callbackURL}`);
+  
   passport.use(
     new GoogleStrategy(
       {
         clientID: GOOGLE_CLIENT_ID,
         clientSecret: GOOGLE_CLIENT_SECRET,
-        callbackURL: `${getBaseUrl()}/api/auth/google/callback`,
+        callbackURL: callbackURL,
       },
       async (accessToken, refreshToken, profile, done) => {
         try {
