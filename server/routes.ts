@@ -2,6 +2,10 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import passport from "passport";
 import { generateJWT, authenticateJWT, isOAuthConfigured } from "./auth";
+import { storage } from "./storage";
+import { generateJoinCode } from "./utils";
+import { insertLeagueSchema } from "@shared/schema";
+import { z } from "zod";
 import "./auth"; // Initialize passport strategies
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -89,9 +93,131 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.json({ message: "Logged out successfully" });
   });
 
-  // Protected route example
-  app.get("/api/user/profile", authenticateJWT, (req, res) => {
-    res.json(req.user);
+  // League routes
+  app.post("/api/leagues", async (req, res) => {
+    try {
+      const token = req.cookies?.auth_token;
+      if (!token) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+
+      const { verifyJWT } = require("./auth");
+      const user = verifyJWT(token);
+      if (!user) {
+        return res.status(401).json({ message: "Invalid token" });
+      }
+
+      // Validate request body
+      const createLeagueSchema = insertLeagueSchema.extend({
+        name: z.string().min(1, "League name is required").max(50, "League name too long"),
+        maxTeams: z.number().min(2, "Must have at least 2 teams").max(20, "Maximum 20 teams allowed"),
+      });
+
+      const validatedData = createLeagueSchema.parse(req.body);
+      
+      // Generate unique join code
+      let joinCode: string;
+      let isUnique = false;
+      let attempts = 0;
+      
+      do {
+        joinCode = generateJoinCode();
+        const existing = await storage.getLeagueByJoinCode(joinCode);
+        isUnique = !existing;
+        attempts++;
+      } while (!isUnique && attempts < 10);
+
+      if (!isUnique) {
+        return res.status(500).json({ message: "Failed to generate unique join code" });
+      }
+
+      const league = await storage.createLeague({
+        ...validatedData,
+        creatorId: user.id,
+        joinCode: joinCode!,
+      });
+
+      res.status(201).json(league);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ 
+          message: "Validation error", 
+          errors: error.errors 
+        });
+      }
+      console.error("Create league error:", error);
+      res.status(500).json({ message: "Failed to create league" });
+    }
+  });
+
+  app.get("/api/leagues/user", async (req, res) => {
+    try {
+      const token = req.cookies?.auth_token;
+      if (!token) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+
+      const { verifyJWT } = require("./auth");
+      const user = verifyJWT(token);
+      if (!user) {
+        return res.status(401).json({ message: "Invalid token" });
+      }
+
+      const leagues = await storage.getUserLeagues(user.id);
+      res.json(leagues);
+    } catch (error) {
+      console.error("Get user leagues error:", error);
+      res.status(500).json({ message: "Failed to fetch leagues" });
+    }
+  });
+
+  app.post("/api/leagues/join", async (req, res) => {
+    try {
+      const token = req.cookies?.auth_token;
+      if (!token) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+
+      const { verifyJWT } = require("./auth");
+      const user = verifyJWT(token);
+      if (!user) {
+        return res.status(401).json({ message: "Invalid token" });
+      }
+
+      const { joinCode } = req.body;
+      if (!joinCode) {
+        return res.status(400).json({ message: "Join code is required" });
+      }
+
+      // Find league by join code
+      const league = await storage.getLeagueByJoinCode(joinCode.toUpperCase());
+      if (!league) {
+        return res.status(404).json({ message: "That code doesn't exist" });
+      }
+
+      // Check if user is already in league
+      const isAlreadyMember = await storage.isUserInLeague(user.id, league.id);
+      if (isAlreadyMember) {
+        return res.status(400).json({ message: "You're already in this league" });
+      }
+
+      // Check if league is full
+      const memberCount = await storage.getLeagueMemberCount(league.id);
+      if (memberCount >= league.maxTeams) {
+        return res.status(400).json({ message: "League is full" });
+      }
+
+      // Add user to league
+      await storage.joinLeague({
+        leagueId: league.id,
+        userId: user.id,
+      });
+
+      res.json({ message: "Successfully joined league", league });
+    } catch (error) {
+      console.error("Join league error:", error);
+      res.status(500).json({ message: "Failed to join league" });
+    }
   });
 
   const httpServer = createServer(app);
