@@ -159,24 +159,137 @@ export default function DashboardPage() {
   return (
     <MainLayout>
       <div className="py-6 space-y-8">
-        {/* Hero Section with Quick Actions */}
-        <div className="fantasy-card fantasy-gradient-green p-6 text-white">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between">
-            <div className="mb-4 md:mb-0">
-              <h1 className="text-2xl md:text-3xl font-bold mb-2">
-                Welcome back, {firstName}! 🏆
+        {/* Main Action Section */}
+        {leagues.length === 0 ? (
+          <div className="fantasy-card fantasy-gradient-green p-8 text-white text-center">
+            <div className="max-w-2xl mx-auto">
+              <h1 className="text-3xl md:text-4xl font-bold mb-4">
+                Welcome to Mok Sports, {firstName}! 🏆
               </h1>
-              <p className="text-white/90 text-lg">Ready to dominate your leagues?</p>
+              <p className="text-white/90 text-xl mb-8">
+                Get started by creating your first league or joining an existing one
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Button className="bg-white text-fantasy-green hover:bg-white/90 font-semibold shadow-lg px-8 py-4 text-lg">
+                      <Plus className="w-6 h-6 mr-3" />
+                      Create Your League
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-md">
+                    <DialogHeader>
+                      <DialogTitle>Create New League</DialogTitle>
+                    </DialogHeader>
+                    <div className="space-y-4">
+                      <div>
+                        <Label htmlFor="league-name">League Name</Label>
+                        <Input
+                          id="league-name"
+                          value={leagueName}
+                          onChange={(e) => setLeagueName(e.target.value)}
+                          placeholder="Enter league name"
+                          maxLength={50}
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="max-teams">Number of Teams</Label>
+                        <select
+                          id="max-teams"
+                          value={maxTeams}
+                          onChange={(e) => setMaxTeams(e.target.value)}
+                          className="w-full px-3 py-2 border border-border rounded-md bg-background text-foreground"
+                        >
+                          <option value={8}>8 Teams</option>
+                          <option value={10}>10 Teams</option>
+                          <option value={12}>12 Teams</option>
+                          <option value={14}>14 Teams</option>
+                          <option value={16}>16 Teams</option>
+                        </select>
+                      </div>
+                      <div className="flex space-x-3 pt-4">
+                        <Button
+                          variant="outline"
+                          onClick={() => setCreateDialogOpen(false)}
+                          className="flex-1"
+                        >
+                          Cancel
+                        </Button>
+                        <Button
+                          onClick={handleCreateLeague}
+                          disabled={createLeagueMutation.isPending}
+                          className="flex-1 bg-fantasy-green hover:bg-fantasy-green/90"
+                        >
+                          {createLeagueMutation.isPending ? "Creating..." : "Create"}
+                        </Button>
+                      </div>
+                    </div>
+                  </DialogContent>
+                </Dialog>
+                
+                <Dialog open={joinDialogOpen} onOpenChange={setJoinDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Button className="bg-white/10 border-2 border-white text-white hover:bg-white hover:text-fantasy-green font-semibold px-8 py-4 text-lg">
+                      <UserPlus className="w-6 h-6 mr-3" />
+                      Join a League
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-md">
+                    <DialogHeader>
+                      <DialogTitle>Join League</DialogTitle>
+                    </DialogHeader>
+                    <div className="space-y-4">
+                      <div>
+                        <Label htmlFor="join-code">League Code</Label>
+                        <Input
+                          id="join-code"
+                          value={joinCode}
+                          onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
+                          placeholder="Enter 6-character code"
+                          maxLength={6}
+                          className="uppercase"
+                        />
+                      </div>
+                      <div className="flex space-x-3 pt-4">
+                        <Button
+                          variant="outline"
+                          onClick={() => setJoinDialogOpen(false)}
+                          className="flex-1"
+                        >
+                          Cancel
+                        </Button>
+                        <Button
+                          onClick={handleJoinLeague}
+                          disabled={joinLeagueMutation.isPending}
+                          className="flex-1 bg-fantasy-green hover:bg-fantasy-green/90"
+                        >
+                          {joinLeagueMutation.isPending ? "Joining..." : "Join"}
+                        </Button>
+                      </div>
+                    </div>
+                  </DialogContent>
+                </Dialog>
+              </div>
             </div>
-            <div className="flex flex-col sm:flex-row gap-3">
-              <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
-              <DialogTrigger asChild>
-                <Button className="bg-white text-fantasy-green hover:bg-white/90 font-semibold shadow-lg">
-                  <Plus className="w-5 h-5 mr-2" />
-                  Create League
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-md">
+          </div>
+        ) : (
+          <div className="fantasy-card fantasy-gradient-green p-6 text-white">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+              <div className="mb-4 md:mb-0">
+                <h1 className="text-2xl md:text-3xl font-bold mb-2">
+                  Welcome back, {firstName}! 🏆
+                </h1>
+                <p className="text-white/90 text-lg">Ready to dominate your leagues?</p>
+              </div>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Button className="bg-white text-fantasy-green hover:bg-white/90 font-semibold shadow-lg">
+                      <Plus className="w-5 h-5 mr-2" />
+                      Create League
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-md">
                 <DialogHeader>
                   <DialogTitle>Create New League</DialogTitle>
                 </DialogHeader>
@@ -268,11 +381,13 @@ export default function DashboardPage() {
                 </div>
               </DialogContent>
             </Dialog>
+              </div>
             </div>
           </div>
-        </div>
+        )}
 
-        {/* Quick Stats Dashboard */}
+        {/* Quick Stats Dashboard - only show if user has leagues */}
+        {leagues.length > 0 && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           <div className="fantasy-card fantasy-card-hover p-4 text-center">
             <div className="w-12 h-12 bg-fantasy-green/10 rounded-xl flex items-center justify-center mx-auto mb-3">
@@ -303,6 +418,7 @@ export default function DashboardPage() {
             <p className="text-sm text-muted-foreground">Win Rate</p>
           </div>
         </div>
+        )}
 
         {/* Your Leagues Section */}
         <div>
