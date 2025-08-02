@@ -6,7 +6,7 @@ import { AlertCircle, Trophy, Loader2 } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
 export default function LoginPage() {
-  const { login, isLoading } = useAuth();
+  const { login, isLoading, oauthConfigured, oauthLoading } = useAuth();
   const [error, setError] = useState<string | null>(null);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
 
@@ -17,11 +17,19 @@ export default function LoginPage() {
     
     if (errorParam === "auth_failed") {
       setError("Authentication failed. Please try again.");
+    } else if (errorParam === "oauth_not_configured") {
+      setError("Google sign-in is temporarily unavailable. Please contact support.");
     }
   }, []);
 
   const handleGoogleLogin = () => {
     setError(null);
+    
+    if (!oauthConfigured) {
+      setError("Google sign-in is temporarily unavailable. Please contact support.");
+      return;
+    }
+    
     setIsLoggingIn(true);
     login();
   };
@@ -52,8 +60,8 @@ export default function LoginPage() {
             {/* Google Auth Button */}
             <Button
               onClick={handleGoogleLogin}
-              disabled={isLoading || isLoggingIn}
-              className="w-full bg-white border-2 border-gray-200 text-dark-gray hover:border-fantasy-green hover:shadow-lg transition-all duration-200 h-12"
+              disabled={isLoading || isLoggingIn || oauthLoading || !oauthConfigured}
+              className="w-full bg-white border-2 border-gray-200 text-dark-gray hover:border-fantasy-green hover:shadow-lg transition-all duration-200 h-12 disabled:opacity-50"
               variant="outline"
             >
               {isLoggingIn ? (
@@ -78,7 +86,13 @@ export default function LoginPage() {
                   />
                 </svg>
               )}
-              {isLoggingIn ? "Signing you in..." : "Continue with Google"}
+              {oauthLoading 
+                ? "Loading..." 
+                : !oauthConfigured 
+                  ? "Sign-in Unavailable" 
+                  : isLoggingIn 
+                    ? "Signing you in..." 
+                    : "Continue with Google"}
             </Button>
 
             {/* Error Message */}

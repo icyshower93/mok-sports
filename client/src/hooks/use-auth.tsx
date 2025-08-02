@@ -9,12 +9,19 @@ interface User {
   avatar?: string;
 }
 
+interface OAuthConfig {
+  oauthConfigured: boolean;
+  provider: string;
+}
+
 interface AuthContextType {
   user: User | null;
   isLoading: boolean;
   login: () => void;
   logout: () => Promise<void>;
   isAuthenticated: boolean;
+  oauthConfigured: boolean;
+  oauthLoading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -30,6 +37,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     meta: {
       onError: () => setIsAuthenticated(false)
     }
+  });
+
+  const { data: oauthConfig, isLoading: oauthLoading } = useQuery<OAuthConfig>({
+    queryKey: ["/api/auth/config"],
+    retry: false,
+    enabled: true,
   });
 
   const logoutMutation = useMutation({
@@ -66,6 +79,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [queryClient]);
 
   const login = () => {
+    if (!oauthConfig?.oauthConfigured) {
+      console.error("OAuth is not configured");
+      return;
+    }
     window.location.href = "/api/auth/google";
   };
 
@@ -81,6 +98,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         login,
         logout,
         isAuthenticated,
+        oauthConfigured: oauthConfig?.oauthConfigured || false,
+        oauthLoading,
       }}
     >
       {children}

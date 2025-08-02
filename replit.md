@@ -46,6 +46,8 @@ The server is built with **Express.js** using TypeScript and follows a modular a
 
 **User Flow**: New users are automatically registered upon first Google login, while existing users are authenticated and redirected appropriately. Error handling covers authentication failures and provides user feedback.
 
+**Configuration Management**: OAuth configuration is checked dynamically, allowing the application to gracefully handle missing credentials without crashing. The frontend checks OAuth availability before attempting authentication, providing appropriate error messages to users when sign-in is unavailable.
+
 # External Dependencies
 
 ## Authentication Services
