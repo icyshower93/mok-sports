@@ -1,8 +1,9 @@
 import { 
-  users, leagues, leagueMembers,
+  users, leagues, leagueMembers, nflTeams,
   type User, type InsertUser,
   type League, type InsertLeague,
-  type LeagueMember, type InsertLeagueMember
+  type LeagueMember, type InsertLeagueMember,
+  type NflTeam
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, sql } from "drizzle-orm";
@@ -22,6 +23,9 @@ export interface IStorage {
   joinLeague(member: InsertLeagueMember): Promise<LeagueMember>;
   isUserInLeague(userId: string, leagueId: string): Promise<boolean>;
   getLeagueMemberCount(leagueId: string): Promise<number>;
+  
+  // NFL Teams methods
+  getAllNflTeams(): Promise<NflTeam[]>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -122,6 +126,11 @@ export class DatabaseStorage implements IStorage {
       .from(leagueMembers)
       .where(eq(leagueMembers.leagueId, leagueId));
     return result.count;
+  }
+
+  // NFL Teams methods
+  async getAllNflTeams(): Promise<NflTeam[]> {
+    return await db.select().from(nflTeams);
   }
 }
 

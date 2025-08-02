@@ -220,6 +220,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // NFL Teams routes
+  app.get("/api/nfl-teams", async (req, res) => {
+    try {
+      // Direct SQL query using execute_sql_tool functionality
+      const teams = await storage.getAllNflTeams();
+      
+      // Add logo URLs to each team
+      const teamsWithLogos = teams.map((team: any) => ({
+        ...team,
+        logoSmall: `https://www.fantasynerds.com/images/nfl/teams/${team.code}.gif`,
+        logoLarge: `https://www.fantasynerds.com/images/nfl/team_logos/${team.code}.png`
+      }));
+      
+      res.json(teamsWithLogos);
+    } catch (error) {
+      console.error("Get NFL teams error:", error);
+      res.status(500).json({ message: "Failed to fetch NFL teams" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

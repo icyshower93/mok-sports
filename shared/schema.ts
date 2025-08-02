@@ -30,6 +30,14 @@ export const leagueMembers = pgTable("league_members", {
   joinedAt: timestamp("joined_at").defaultNow().notNull(),
 });
 
+export const nflTeams = pgTable("nfl_teams", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  code: varchar("code", { length: 3 }).notNull().unique(),
+  name: text("name").notNull(),
+  city: text("city").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 // Relations
 export const usersRelations = relations(users, ({ many }) => ({
   createdLeagues: many(leagues),
@@ -74,6 +82,12 @@ export const insertLeagueMemberSchema = createInsertSchema(leagueMembers).pick({
   userId: true,
 });
 
+export const insertNflTeamSchema = createInsertSchema(nflTeams).pick({
+  code: true,
+  name: true,
+  city: true,
+});
+
 // Types
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
@@ -81,3 +95,5 @@ export type InsertLeague = z.infer<typeof insertLeagueSchema>;
 export type League = typeof leagues.$inferSelect;
 export type InsertLeagueMember = z.infer<typeof insertLeagueMemberSchema>;
 export type LeagueMember = typeof leagueMembers.$inferSelect;
+export type InsertNflTeam = z.infer<typeof insertNflTeamSchema>;
+export type NflTeam = typeof nflTeams.$inferSelect;

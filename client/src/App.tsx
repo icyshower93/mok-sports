@@ -10,6 +10,7 @@ import DashboardPage from "@/pages/dashboard";
 import LeaguesPage from "@/pages/leagues";
 import DraftPage from "@/pages/draft";
 import ProfilePage from "@/pages/profile";
+import TeamsPage from "@/pages/teams";
 import NotFound from "@/pages/not-found";
 
 function AppContent() {
@@ -42,6 +43,9 @@ function AppContent() {
       </Route>
       <Route path="/profile">
         {isAuthenticated ? <ProfilePage /> : <LoginPage />}
+      </Route>
+      <Route path="/teams">
+        {isAuthenticated ? <TeamsPage /> : <LoginPage />}
       </Route>
       <Route component={NotFound} />
     </Switch>
