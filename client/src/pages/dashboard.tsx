@@ -27,7 +27,7 @@ export default function DashboardPage() {
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [joinDialogOpen, setJoinDialogOpen] = useState(false);
   const [leagueName, setLeagueName] = useState("");
-  const [maxTeams, setMaxTeams] = useState("8");
+  const [maxTeams, setMaxTeams] = useState("6");
   const [joinCode, setJoinCode] = useState("");
 
   if (!user) {
@@ -39,16 +39,27 @@ export default function DashboardPage() {
   // Create league mutation
   const createLeagueMutation = useMutation({
     mutationFn: async (data: { name: string; maxTeams: number }) => {
-      return apiRequest(`/api/leagues`, {
-        method: "POST",
+      const response = await fetch('/api/leagues', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
         body: JSON.stringify(data),
       });
+      
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Failed to create league');
+      }
+      
+      return response.json();
     },
     onSuccess: (newLeague) => {
       queryClient.invalidateQueries({ queryKey: ["/api/leagues"] });
       setCreateDialogOpen(false);
       setLeagueName("");
-      setMaxTeams("8");
+      setMaxTeams("6");
       toast({
         title: "League Created!",
         description: `Your league "${newLeague.name}" has been created successfully.`,
@@ -66,10 +77,21 @@ export default function DashboardPage() {
   // Join league mutation
   const joinLeagueMutation = useMutation({
     mutationFn: async (code: string) => {
-      return apiRequest(`/api/leagues/join`, {
-        method: "POST",
+      const response = await fetch('/api/leagues/join', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
         body: JSON.stringify({ joinCode: code }),
       });
+      
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Failed to join league');
+      }
+      
+      return response.json();
     },
     onSuccess: (league) => {
       queryClient.invalidateQueries({ queryKey: ["/api/leagues"] });
@@ -152,21 +174,6 @@ export default function DashboardPage() {
                       placeholder="Enter league name"
                       maxLength={50}
                     />
-                  </div>
-                  <div>
-                    <Label htmlFor="max-teams">Number of Teams</Label>
-                    <select
-                      id="max-teams"
-                      value={maxTeams}
-                      onChange={(e) => setMaxTeams(e.target.value)}
-                      className="w-full px-3 py-2 border border-border rounded-md bg-background text-foreground"
-                    >
-                      <option value="8">8 Teams</option>
-                      <option value="10">10 Teams</option>
-                      <option value="12">12 Teams</option>
-                      <option value="14">14 Teams</option>
-                      <option value="16">16 Teams</option>
-                    </select>
                   </div>
                   <div className="flex space-x-3 pt-4">
                     <Button
