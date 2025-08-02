@@ -8,8 +8,8 @@ export default function LeaguesPage() {
       <div className="py-6 space-y-8">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">My Leagues</h1>
-            <p className="text-gray-600 mt-1">Manage all your fantasy leagues in one place</p>
+            <h1 className="text-3xl font-bold text-foreground">My Leagues</h1>
+            <p className="text-muted-foreground mt-1">Manage all your fantasy leagues in one place</p>
           </div>
         </div>
 
@@ -19,8 +19,8 @@ export default function LeaguesPage() {
             <div className="w-20 h-20 bg-fantasy-green/10 rounded-full flex items-center justify-center mx-auto mb-6">
               <Trophy className="w-10 h-10 text-fantasy-green" />
             </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-3">Detailed League Management</h2>
-            <p className="text-gray-600 max-w-md mx-auto">
+            <h2 className="text-2xl font-bold text-foreground mb-3">Detailed League Management</h2>
+            <p className="text-muted-foreground max-w-md mx-auto">
               Advanced league management features are coming soon. For now, you can view and manage your leagues from the dashboard.
             </p>
           </CardContent>

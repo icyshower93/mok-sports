@@ -278,36 +278,36 @@ export default function DashboardPage() {
             <div className="w-12 h-12 bg-fantasy-green/10 rounded-xl flex items-center justify-center mx-auto mb-3">
               <Trophy className="w-6 h-6 text-fantasy-green" />
             </div>
-            <p className="text-2xl font-bold text-gray-900">{leagues.length}</p>
-            <p className="text-sm text-gray-600">Active Leagues</p>
+            <p className="text-2xl font-bold text-foreground">{leagues.length}</p>
+            <p className="text-sm text-muted-foreground">Active Leagues</p>
           </div>
           <div className="fantasy-card fantasy-card-hover p-4 text-center">
             <div className="w-12 h-12 bg-trust-blue/10 rounded-xl flex items-center justify-center mx-auto mb-3">
               <Crown className="w-6 h-6 text-trust-blue" />
             </div>
-            <p className="text-2xl font-bold text-gray-900">{leagues.filter(l => l.isCreator).length}</p>
-            <p className="text-sm text-gray-600">As Commissioner</p>
+            <p className="text-2xl font-bold text-foreground">{leagues.filter(l => l.isCreator).length}</p>
+            <p className="text-sm text-muted-foreground">As Commissioner</p>
           </div>
           <div className="fantasy-card fantasy-card-hover p-4 text-center">
             <div className="w-12 h-12 bg-accent-gold/10 rounded-xl flex items-center justify-center mx-auto mb-3">
               <Star className="w-6 h-6 text-accent-gold" />
             </div>
-            <p className="text-2xl font-bold text-gray-900">-</p>
-            <p className="text-sm text-gray-600">Top Finish</p>
+            <p className="text-2xl font-bold text-foreground">-</p>
+            <p className="text-sm text-muted-foreground">Top Finish</p>
           </div>
           <div className="fantasy-card fantasy-card-hover p-4 text-center">
             <div className="w-12 h-12 bg-fantasy-purple/10 rounded-xl flex items-center justify-center mx-auto mb-3">
               <TrendingUp className="w-6 h-6 text-fantasy-purple" />
             </div>
-            <p className="text-2xl font-bold text-gray-900">-</p>
-            <p className="text-sm text-gray-600">Win Rate</p>
+            <p className="text-2xl font-bold text-foreground">-</p>
+            <p className="text-sm text-muted-foreground">Win Rate</p>
           </div>
         </div>
 
         {/* Your Leagues Section */}
         <div>
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-gray-900">Your Leagues</h2>
+            <h2 className="text-2xl font-bold text-foreground">Your Leagues</h2>
             <div className="flex space-x-3">
               <Button 
                 onClick={() => setCreateDialogOpen(true)}
@@ -331,16 +331,16 @@ export default function DashboardPage() {
             <div className="fantasy-card">
               <div className="flex items-center justify-center py-16">
                 <div className="animate-spin rounded-full h-8 w-8 border-2 border-fantasy-green border-t-transparent"></div>
-                <span className="ml-3 text-gray-600">Loading your leagues...</span>
+                <span className="ml-3 text-muted-foreground">Loading your leagues...</span>
               </div>
             </div>
           ) : leagues.length === 0 ? (
             <div className="fantasy-card p-12 text-center">
-              <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Users className="w-10 h-10 text-gray-400" />
+              <div className="w-20 h-20 bg-muted rounded-full flex items-center justify-center mx-auto mb-6">
+                <Users className="w-10 h-10 text-muted-foreground" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">Ready to compete?</h3>
-              <p className="text-gray-600 mb-8 max-w-md mx-auto">
+              <h3 className="text-xl font-semibold text-foreground mb-3">Ready to compete?</h3>
+              <p className="text-muted-foreground mb-8 max-w-md mx-auto">
                 Join your friends in fantasy leagues or create your own to become the commissioner.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -385,7 +385,7 @@ export default function DashboardPage() {
                           </div>
                           <div>
                             <div className="flex items-center space-x-3 mb-1">
-                              <h3 className="text-xl font-bold text-gray-900">{league.name}</h3>
+                              <h3 className="text-xl font-bold text-foreground">{league.name}</h3>
                               {league.isCreator && (
                                 <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-accent-gold/10 text-accent-gold">
                                   <Crown className="w-3 h-3 mr-1" />
@@ -393,7 +393,7 @@ export default function DashboardPage() {
                                 </span>
                               )}
                             </div>
-                            <p className="text-gray-600">
+                            <p className="text-muted-foreground">
                               {league.memberCount}/{league.maxTeams} teams • 
                               {league.memberCount === league.maxTeams ? (
                                 <span className="text-fantasy-green font-medium ml-1">Full</span>
@@ -408,23 +408,23 @@ export default function DashboardPage() {
                         
                         <div className="flex items-center space-x-4">
                           <div className="text-center">
-                            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">
+                            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1">
                               League Code
                             </p>
                             <div className="flex items-center space-x-2">
-                              <code className="px-3 py-2 bg-gray-100 rounded-lg text-sm font-mono font-bold text-gray-900 border-2 border-dashed border-gray-300">
+                              <code className="px-3 py-2 bg-muted rounded-lg text-sm font-mono font-bold text-foreground border-2 border-dashed border-border">
                                 {league.joinCode}
                               </code>
                               <Button
                                 variant="ghost"
                                 size="sm"
                                 onClick={() => copyJoinCode(league.joinCode)}
-                                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                                className="p-2 hover:bg-muted rounded-lg transition-colors"
                               >
                                 {copiedCode === league.joinCode ? (
                                   <Check className="w-4 h-4 text-fantasy-green" />
                                 ) : (
-                                  <Copy className="w-4 h-4 text-gray-500" />
+                                  <Copy className="w-4 h-4 text-muted-foreground" />
                                 )}
                               </Button>
                             </div>

@@ -19,8 +19,8 @@ export default function ProfilePage() {
       <div className="py-6 space-y-8">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Profile</h1>
-            <p className="text-gray-600 mt-1">Manage your account and fantasy preferences</p>
+            <h1 className="text-3xl font-bold text-foreground">Profile</h1>
+            <p className="text-muted-foreground mt-1">Manage your account and fantasy preferences</p>
           </div>
         </div>
 
@@ -39,9 +39,9 @@ export default function ProfilePage() {
                 <AvatarFallback className="text-2xl">{user.name.charAt(0)}</AvatarFallback>
               </Avatar>
               <div>
-                <h2 className="text-2xl font-bold text-gray-900 mb-1">{user.name}</h2>
-                <p className="text-gray-600 mb-2">{user.email}</p>
-                <p className="text-sm text-gray-500">
+                <h2 className="text-2xl font-bold text-foreground mb-1">{user.name}</h2>
+                <p className="text-muted-foreground mb-2">{user.email}</p>
+                <p className="text-sm text-muted-foreground">
                   Mok Sports member
                 </p>
               </div>
@@ -66,8 +66,8 @@ export default function ProfilePage() {
             <div className="w-20 h-20 bg-accent-gold/10 rounded-full flex items-center justify-center mx-auto mb-6">
               <Trophy className="w-10 h-10 text-accent-gold" />
             </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-3">Fantasy Stats & Achievements</h2>
-            <p className="text-gray-600 max-w-md mx-auto">
+            <h2 className="text-2xl font-bold text-foreground mb-3">Fantasy Stats & Achievements</h2>
+            <p className="text-muted-foreground max-w-md mx-auto">
               Your fantasy sports history and achievements will be displayed here once you start playing in leagues.
             </p>
           </CardContent>
