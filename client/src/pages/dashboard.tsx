@@ -120,22 +120,22 @@ export default function DashboardPage() {
 
   return (
     <MainLayout>
-      <div className="min-h-[80vh] flex items-center justify-center px-4">
-        <div className="fantasy-card fantasy-gradient-green p-12 text-white text-center max-w-2xl mx-auto">
-          <h1 className="text-4xl md:text-5xl font-bold mb-6">
+      <div className="min-h-[70vh] flex items-center justify-center">
+        <div className="fantasy-card fantasy-gradient-green p-8 md:p-12 text-white text-center max-w-2xl mx-auto">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 md:mb-6">
             Welcome to Mok Sports! 🏆
           </h1>
-          <p className="text-white/90 text-xl mb-12">
+          <p className="text-white/90 text-lg md:text-xl mb-8 md:mb-12">
             Get started by creating your first league or joining an existing one
           </p>
           
-          <div className="flex flex-col sm:flex-row gap-6 justify-center">
+          <div className="flex flex-col gap-4 sm:gap-6 justify-center">
             {/* Create League Dialog */}
             <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
               <DialogTrigger asChild>
-                <Button className="bg-white text-fantasy-green hover:bg-white/90 font-bold shadow-xl px-12 py-6 text-xl rounded-2xl">
-                  <Plus className="w-8 h-8 mr-4" />
-                  Create Your League
+                <Button className="bg-white text-fantasy-green hover:bg-white/90 font-bold shadow-xl px-6 py-4 sm:px-12 sm:py-6 text-lg sm:text-xl rounded-2xl w-full sm:w-auto min-h-[60px]">
+                  <Plus className="w-6 h-6 sm:w-8 sm:h-8 mr-3 sm:mr-4 flex-shrink-0" />
+                  <span className="whitespace-nowrap">Create Your League</span>
                 </Button>
               </DialogTrigger>
               <DialogContent className="sm:max-w-md">
@@ -191,9 +191,9 @@ export default function DashboardPage() {
             {/* Join League Dialog */}
             <Dialog open={joinDialogOpen} onOpenChange={setJoinDialogOpen}>
               <DialogTrigger asChild>
-                <Button className="bg-white/10 border-3 border-white text-white hover:bg-white hover:text-fantasy-green font-bold shadow-xl px-12 py-6 text-xl rounded-2xl">
-                  <UserPlus className="w-8 h-8 mr-4" />
-                  Join a League
+                <Button className="bg-white/10 border-2 border-white text-white hover:bg-white hover:text-fantasy-green font-bold shadow-xl px-6 py-4 sm:px-12 sm:py-6 text-lg sm:text-xl rounded-2xl w-full sm:w-auto min-h-[60px]">
+                  <UserPlus className="w-6 h-6 sm:w-8 sm:h-8 mr-3 sm:mr-4 flex-shrink-0" />
+                  <span className="whitespace-nowrap">Join a League</span>
                 </Button>
               </DialogTrigger>
               <DialogContent className="sm:max-w-md">
