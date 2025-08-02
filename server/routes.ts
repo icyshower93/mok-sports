@@ -65,6 +65,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get current user
   app.get("/api/auth/me", (req, res) => {
     const token = req.cookies?.auth_token;
+    console.log("🍪 Auth check - Cookie present:", !!token);
+    
     if (!token) {
       return res.status(401).json({ message: "Not authenticated" });
     }
@@ -73,9 +75,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     const user = verifyJWT(token);
     
     if (!user) {
+      console.log("❌ Auth check - Invalid token");
       return res.status(401).json({ message: "Invalid token" });
     }
 
+    console.log("✅ Auth check - User authenticated:", user.email);
     res.json(user);
   });
 
