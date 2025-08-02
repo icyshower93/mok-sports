@@ -51,17 +51,17 @@ export default function LoginPage() {
         <Card className="shadow-xl">
           <CardContent className="p-8">
             <div className="text-center mb-6">
-              <h2 className="text-2xl font-semibold text-dark-gray mb-2">
+              <h2 className="text-2xl font-semibold text-foreground mb-2">
                 Welcome to Mok Sports
               </h2>
-              <p className="text-muted-gray">Sign in to start your fantasy journey</p>
+              <p className="text-muted-foreground">Sign in to start your fantasy journey</p>
             </div>
 
             {/* Google Auth Button */}
             <Button
               onClick={handleGoogleLogin}
               disabled={isLoading || isLoggingIn || oauthLoading || !oauthConfigured}
-              className="w-full bg-white border-2 border-gray-200 text-dark-gray hover:border-fantasy-green hover:shadow-lg transition-all duration-200 h-12 disabled:opacity-50"
+              className="w-full bg-card border-2 border-border text-foreground hover:border-fantasy-green hover:shadow-lg transition-all duration-200 h-12 disabled:opacity-50"
               variant="outline"
             >
               {isLoggingIn ? (
@@ -104,7 +104,7 @@ export default function LoginPage() {
             )}
 
             <div className="mt-6 text-center">
-              <p className="text-xs text-muted-gray">
+              <p className="text-xs text-muted-foreground">
                 By continuing, you agree to our{" "}
                 <a href="#" className="text-fantasy-green hover:underline">
                   Terms
