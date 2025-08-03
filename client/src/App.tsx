@@ -9,7 +9,7 @@ import { usePWADetection } from "@/hooks/use-pwa-detection";
 import { PWAInstallPrompt } from "@/components/pwa-install-prompt";
 
 import { ErrorBoundary } from "@/components/error-boundary";
-import { NotificationBanner } from "@/components/notification-banner";
+import { DesktopNotice } from "@/components/desktop-notice";
 import LoginPage from "@/pages/login";
 import DashboardPage from "@/pages/dashboard";
 import LeaguesPage from "@/pages/leagues";
@@ -23,8 +23,10 @@ function AppContent() {
   const { isAuthenticated, isLoading, user } = useAuth();
   const { isPWA } = usePWADetection();
 
-  // Show install prompt if not in PWA mode
-  if (!isPWA) {
+  // Show install prompt only on mobile devices when not in PWA mode
+  // Allow desktop usage for testing/development
+  const isDesktop = window.innerWidth >= 768; // Tailwind 'md' breakpoint
+  if (!isPWA && !isDesktop) {
     return <PWAInstallPrompt />;
   }
 
@@ -71,6 +73,7 @@ function AppContent() {
         <Route path="/profile" component={ProfilePage} />
         <Route component={NotFound} />
       </Switch>
+      {!isPWA && window.innerWidth >= 768 && <DesktopNotice />}
     </>
   );
 }
