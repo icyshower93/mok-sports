@@ -9,12 +9,14 @@ interface NotificationPromptProps {
   className?: string;
   onPermissionGranted?: () => void;
   onDismiss?: () => void;
+  forceShow?: boolean; // Allow showing even when permission is denied
 }
 
 export function NotificationPrompt({ 
   className, 
   onPermissionGranted,
-  onDismiss 
+  onDismiss,
+  forceShow = false
 }: NotificationPromptProps) {
   const [permission, setPermission] = useState<NotificationPermission>('default');
   const [isVisible, setIsVisible] = useState(false);
@@ -24,10 +26,10 @@ export function NotificationPrompt({
   useEffect(() => {
     if ('Notification' in window) {
       setPermission(Notification.permission);
-      // Show prompt when user is logged in and permission is default
-      setIsVisible(Boolean(user && Notification.permission === 'default'));
+      // Show prompt when user is logged in and permission is default or denied (if forceShow)
+      setIsVisible(Boolean(user && (Notification.permission === 'default' || (forceShow && Notification.permission === 'denied'))));
     }
-  }, [user]);
+  }, [user, forceShow]);
 
   const requestPermission = async () => {
     if (!('Notification' in window)) {
@@ -73,10 +75,15 @@ export function NotificationPrompt({
       <CardHeader className="pb-3">
         <div className="flex items-center gap-2">
           <Bell className="h-5 w-5 text-fantasy-green" />
-          <CardTitle className="text-base">Stay Updated</CardTitle>
+          <CardTitle className="text-base">
+            {permission === 'denied' ? 'Enable Notifications' : 'Stay Updated'}
+          </CardTitle>
         </div>
         <CardDescription>
-          Get notified about draft starts, trades, and league updates
+          {permission === 'denied' 
+            ? 'You previously blocked notifications. Click to enable updates about draft starts, trades, and league activity.'
+            : 'Get notified about draft starts, trades, and league updates'
+          }
         </CardDescription>
       </CardHeader>
       <CardContent className="pt-0">

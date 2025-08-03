@@ -263,11 +263,12 @@ export default function DashboardPage() {
             </Dialog>
           </div>
 
-          {permission === 'default' && !showNotificationPrompt && (
+          {(permission === 'default' || permission === 'denied') && !showNotificationPrompt && (
             <div className="mt-8">
               <NotificationPrompt
                 onPermissionGranted={() => showWelcomeNotification()}
                 onDismiss={() => {}}
+                forceShow={permission === 'denied'}
               />
             </div>
           )}
