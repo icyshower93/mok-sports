@@ -38,16 +38,9 @@ export function usePushNotifications(): UsePushNotificationsReturn {
   );
   const needsPWAInstall = isIOS && !isIOSPWA;
 
-  // Initialize permission state from browser immediately
-  useEffect(() => {
-    if (typeof window !== 'undefined' && 'Notification' in window) {
-      const currentPermission = Notification.permission;
-      console.log('[PWA Debug] Initial permission state:', currentPermission);
-      setPermission(currentPermission);
-    }
-  }, []);
+  // Don't initialize permission state immediately - let it be handled by the main useEffect
 
-  // Debug logging for iOS detection and permission status
+  // Debug logging for iOS detection
   useEffect(() => {
     if (isIOS) {
       console.log('[PWA Debug] iOS detected:', {
@@ -58,19 +51,10 @@ export function usePushNotifications(): UsePushNotificationsReturn {
         needsPWAInstall,
         notificationPermission: Notification.permission,
         pushManagerSupported: 'PushManager' in window,
-        serviceWorkerSupported: 'serviceWorker' in navigator,
-        hasUser: !!user
+        serviceWorkerSupported: 'serviceWorker' in navigator
       });
-      
-      // Check for permission denial issue
-      if (Notification.permission === 'denied') {
-        console.log('[PWA Debug] Notification permission is DENIED. User needs to:');
-        console.log('1. Go to iOS Settings > Safari > Advanced > Website Data');
-        console.log('2. Search for your domain and remove data');
-        console.log('3. Or try adding fresh from home screen');
-      }
     }
-  }, [isIOS, isIOSPWA, needsPWAInstall, user]);
+  }, [isIOS, isIOSPWA, needsPWAInstall]);
 
   // Check if push notifications are supported
   const isSupported = typeof window !== 'undefined' && 
@@ -140,11 +124,9 @@ export function usePushNotifications(): UsePushNotificationsReturn {
       setPermission(result);
 
       if (result === 'denied') {
-        setError('Notification permission was denied. To reset: Go to iOS Settings > Safari > Advanced > Website Data, find this site and remove it, then add the app to home screen again.');
+        setError('Notification permission was denied. Please enable notifications in your device settings.');
       } else if (result === 'granted') {
         console.log('[PWA Debug] Permission granted successfully');
-        // Auto-subscribe after permission is granted
-        await subscribe();
       }
     } catch (err) {
       console.error('Error requesting permission:', err);
@@ -280,30 +262,15 @@ export function usePushNotifications(): UsePushNotificationsReturn {
 
   // Auto-request permission for iOS PWA users on app load
   useEffect(() => {
-    console.log('[PWA Debug] Auto-permission check:', {
-      isIOS, 
-      isIOSPWA, 
-      isSupported, 
-      hasUser: !!user, 
-      permission,
-      shouldTrigger: isIOS && isIOSPWA && isSupported && user && permission === 'default'
-    });
-    
     if (isIOS && isIOSPWA && isSupported && user && permission === 'default') {
-      console.log('[PWA Debug] iOS PWA detected with user logged in, auto-requesting permission in 2 seconds');
-      // Shorter delay and more aggressive permission request
+      console.log('[PWA Debug] iOS PWA detected with user logged in, auto-requesting permission in 3 seconds');
+      // Longer delay to ensure app is fully loaded and user sees the interface
       const timer = setTimeout(() => {
         console.log('[PWA Debug] Triggering auto permission request now');
         requestPermission();
-      }, 2000);
+      }, 3000);
       
       return () => clearTimeout(timer);
-    }
-    
-    // Also check if permission was previously denied and we need to inform user
-    if (isIOS && isIOSPWA && isSupported && user && permission === 'denied') {
-      console.log('[PWA Debug] Permission was denied - user needs to reset in Settings');
-      setError('Notification permission denied. To reset: iOS Settings > Safari > Advanced > Website Data > Remove this site data, then reinstall app.');
     }
   }, [isIOS, isIOSPWA, isSupported, user, permission, requestPermission]);
 
