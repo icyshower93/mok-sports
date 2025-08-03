@@ -9,8 +9,9 @@ import { Label } from "@/components/ui/label";
 import { Plus, UserPlus, RefreshCw, Bell } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useLocation } from "wouter";
+import { PushNotificationCard } from "@/components/push-notifications";
+import { IOSPWABanner } from "@/components/ios-pwa-banner";
 import { usePushNotifications } from "@/hooks/use-push-notifications";
-
 
 interface League {
   id: string;
@@ -23,12 +24,20 @@ interface League {
 
 export default function DashboardPage() {
   // All hooks must be declared at the very top, before any conditionals
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [, setLocation] = useLocation();
-  const { requestPermission, permission, isSupported } = usePushNotifications();
-
+  const { 
+    isIOS, 
+    isIOSPWA, 
+    needsPWAInstall, 
+    sendTestNotification, 
+    forcePermissionCheck,
+    permission,
+    isSupported,
+    requestPermission 
+  } = usePushNotifications();
   
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [joinDialogOpen, setJoinDialogOpen] = useState(false);
@@ -115,7 +124,17 @@ export default function DashboardPage() {
     },
   });
 
-  // Auto-redirect disabled - users should manually choose league action
+  // Auto-redirect effect - disabled to allow testing notifications on dashboard
+  // useEffect(() => {
+  //   const leagues = userLeaguesQuery.data;
+  //   const params = new URLSearchParams(window.location.search);
+  //   const skipAutoRedirect = params.get('stay') === 'true';
+  //   
+  //   if (!userLeaguesQuery.isLoading && !userLeaguesQuery.error && leagues && leagues.length > 0 && !skipAutoRedirect) {
+  //     const activeLeague = leagues[0];
+  //     setLocation(`/league/waiting?id=${activeLeague.id}`);
+  //   }
+  // }, [userLeaguesQuery.data, userLeaguesQuery.isLoading, userLeaguesQuery.error, setLocation]);
 
   // Handle form submissions
   const handleCreateLeague = () => {
@@ -142,7 +161,21 @@ export default function DashboardPage() {
     joinLeagueMutation.mutate(joinCode.trim());
   };
 
-
+  const handleTestNotification = async () => {
+    try {
+      await sendTestNotification();
+      toast({
+        title: "Test Notification Sent!",
+        description: "Check your device for the notification.",
+      });
+    } catch (error) {
+      toast({
+        title: "Notification Failed",
+        description: error instanceof Error ? error.message : "Failed to send test notification",
+        variant: "destructive",
+      });
+    }
+  };
 
   // Early returns after all hooks
   if (!user) {
@@ -169,7 +202,11 @@ export default function DashboardPage() {
 
   return (
     <>
-
+      <IOSPWABanner 
+        isIOS={isIOS} 
+        isIOSPWA={isIOSPWA} 
+        needsPWAInstall={needsPWAInstall} 
+      />
       <MainLayout>
         <div className="max-w-4xl mx-auto space-y-8">
         {/* Welcome Section */}
@@ -177,34 +214,111 @@ export default function DashboardPage() {
           <h1 className="text-4xl font-bold text-foreground">
             Welcome back, {firstName}!
           </h1>
-          <p className="text-xl text-muted-foreground">
-            Ready to draft your dream team?
-          </p>
-        </div>
-
-        {/* Debug notification section - temporary */}
-        <div className="text-center mb-4">
-          <Button 
-            onClick={requestPermission} 
-            variant="outline" 
-            size="sm" 
-            className="text-xs"
-          >
-            <Bell className="w-3 h-3 mr-1" />
-            Test Notification Permission ({permission}) - {isSupported ? 'Supported' : 'Not supported'}
-          </Button>
+          
+          {/* Debug & Test Buttons */}
+          <div className="flex flex-col items-center gap-2">
+            <div className="flex gap-2">
+              <Button
+                onClick={handleTestNotification}
+                variant="outline"
+                size="sm"
+                className="text-sm"
+              >
+                <Bell className="w-4 h-4 mr-2" />
+                Send Test Notification
+              </Button>
+              <Button
+                onClick={() => {
+                  const currentPerm = forcePermissionCheck();
+                  toast({
+                    title: "Permission Check",
+                    description: `Current permission: ${currentPerm}`,
+                  });
+                }}
+                variant="outline"
+                size="sm"
+                className="text-sm"
+              >
+                Check Permission
+              </Button>
+            </div>
+            <Button
+              onClick={async () => {
+                try {
+                  await requestPermission();
+                  toast({
+                    title: "Permission Request Sent",
+                    description: "Check if prompt appeared",
+                  });
+                } catch (error) {
+                  toast({
+                    title: "Permission Failed",
+                    description: error instanceof Error ? error.message : "Failed",
+                    variant: "destructive",
+                  });
+                }
+              }}
+              variant="outline"
+              size="sm"
+              className="text-sm"
+            >
+              Manual Permission Request
+            </Button>
+            <Button
+              onClick={() => logout()}
+              variant="outline"
+              size="sm"
+              className="text-sm"
+            >
+              Logout (Test Welcome Notification)
+            </Button>
+            <div className="text-xs text-muted-foreground text-center">
+              Debug: {permission} | iOS: {isIOS ? 'Y' : 'N'} | PWA: {isIOSPWA ? 'Y' : 'N'} | Supported: {isSupported ? 'Y' : 'N'}
+              <br />User: {user ? 'Logged In' : 'Not Logged In'}
+            </div>
+          </div>
+          {userLeagues.length > 0 ? (
+            <div className="space-y-2">
+              <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+                You have {userLeagues.length} active league{userLeagues.length > 1 ? 's' : ''}. Join one or create a new league.
+              </p>
+              <div className="flex flex-wrap justify-center gap-2">
+                {userLeagues.map((league) => (
+                  <Button
+                    key={league.id}
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setLocation(`/league/waiting?id=${league.id}`)}
+                    className="text-xs"
+                  >
+                    {league.name} ({league.memberCount}/{league.maxTeams})
+                  </Button>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              Ready to draft your dream team? Create a new league or join an existing one to get started.
+            </p>
+          )}
         </div>
 
         {/* Action Cards */}
-        <div className="grid md:grid-cols-2 gap-6 max-w-2xl mx-auto">
+        <div className="grid md:grid-cols-2 gap-6">
           {/* Create League Card */}
           <div className="bg-card border border-border rounded-lg p-6 space-y-4">
-            <div className="text-center space-y-3">
-              <div className="w-16 h-16 bg-fantasy-green/10 rounded-full flex items-center justify-center mx-auto">
-                <Plus className="w-8 h-8 text-fantasy-green" />
+            <div className="flex items-center space-x-3">
+              <div className="w-12 h-12 bg-fantasy-green/10 rounded-lg flex items-center justify-center">
+                <Plus className="w-6 h-6 text-fantasy-green" />
               </div>
-              <h3 className="text-xl font-semibold text-foreground">Create League</h3>
+              <div>
+                <h3 className="text-lg font-semibold text-foreground">Create League</h3>
+                <p className="text-sm text-muted-foreground">Start a new 6-team league</p>
+              </div>
             </div>
+            <p className="text-muted-foreground">
+              Create your own league and invite friends to join. You'll be the commissioner with full control over league settings.
+            </p>
             
             <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
               <DialogTrigger asChild>
@@ -253,12 +367,18 @@ export default function DashboardPage() {
 
           {/* Join League Card */}
           <div className="bg-card border border-border rounded-lg p-6 space-y-4">
-            <div className="text-center space-y-3">
-              <div className="w-16 h-16 bg-trust-blue/10 rounded-full flex items-center justify-center mx-auto">
-                <UserPlus className="w-8 h-8 text-trust-blue" />
+            <div className="flex items-center space-x-3">
+              <div className="w-12 h-12 bg-trust-blue/10 rounded-lg flex items-center justify-center">
+                <UserPlus className="w-6 h-6 text-trust-blue" />
               </div>
-              <h3 className="text-xl font-semibold text-foreground">Join League</h3>
+              <div>
+                <h3 className="text-lg font-semibold text-foreground">Join League</h3>
+                <p className="text-sm text-muted-foreground">Enter a friend's league</p>
+              </div>
             </div>
+            <p className="text-muted-foreground">
+              Have a join code from a friend? Enter it below to join their league and start drafting together.
+            </p>
             
             <Dialog open={joinDialogOpen} onOpenChange={setJoinDialogOpen}>
               <DialogTrigger asChild>
@@ -301,7 +421,10 @@ export default function DashboardPage() {
           </div>
         </div>
 
-
+        {/* Push Notification Settings */}
+        <div className="max-w-2xl mx-auto" id="push-notifications-section">
+          <PushNotificationCard />
+        </div>
       </div>
     </MainLayout>
     </>
