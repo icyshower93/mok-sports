@@ -56,25 +56,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   });
 
   useEffect(() => {
+    console.log('[Auth Hook] State change:', { user: !!user, isLoading, isAuthenticated });
     if (user) {
+      console.log('[Auth Hook] Setting authenticated to true');
       setIsAuthenticated(true);
     } else if (!isLoading) {
+      console.log('[Auth Hook] Setting authenticated to false');
       setIsAuthenticated(false);
     }
   }, [user, isLoading]);
 
-  // Check URL params for auth success/error and auto-send welcome notification
+  // Check URL params for auth success/error
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const authStatus = urlParams.get("auth");
     const error = urlParams.get("error");
 
+    console.log('[Auth Debug] URL params check:', { authStatus, error, currentURL: window.location.href });
+
     if (authStatus === "success") {
+      console.log('[Auth Debug] Auth success detected, invalidating queries');
       setIsAuthenticated(true);
       queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
       // Clean up URL
       window.history.replaceState({}, document.title, "/");
     } else if (error) {
+      console.log('[Auth Debug] Auth error detected:', error);
       setIsAuthenticated(false);
       // Clean up URL
       window.history.replaceState({}, document.title, "/");
@@ -83,6 +90,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = () => {
     if (!oauthConfig?.oauthConfigured) {
+      console.error("OAuth is not configured");
       return;
     }
     window.location.href = "/api/auth/google";
