@@ -93,9 +93,18 @@ export function usePushNotifications(): UsePushNotificationsReturn {
     const hasRequestedPermission = localStorage.getItem('notification-permission-requested');
     const isPWA = window.matchMedia && window.matchMedia('(display-mode: standalone)').matches;
     
+    console.log('Notification auto-request check:', {
+      hasRequestedPermission,
+      isPWA,
+      permission,
+      isSupported,
+      displayMode: window.matchMedia ? window.matchMedia('(display-mode: standalone)').matches : 'no matchMedia'
+    });
+    
     // Only request permission in PWA mode (not regular browsers)
     // This matches the behavior of the manual button that was working
     if (isPWA && !hasRequestedPermission && permission === 'default' && isSupported) {
+      console.log('Conditions met for auto-request, starting timer...');
       // Small delay to ensure PWA is fully loaded
       const timer = setTimeout(async () => {
         try {
@@ -108,6 +117,8 @@ export function usePushNotifications(): UsePushNotificationsReturn {
       }, 1500);
       
       return () => clearTimeout(timer);
+    } else {
+      console.log('Auto-request conditions not met');
     }
   }, [permission, isSupported, requestPermission]);
 

@@ -6,9 +6,10 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Plus, UserPlus, RefreshCw } from "lucide-react";
+import { Plus, UserPlus, RefreshCw, Bell } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useLocation } from "wouter";
+import { usePushNotifications } from "@/hooks/use-push-notifications";
 
 
 interface League {
@@ -26,6 +27,7 @@ export default function DashboardPage() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [, setLocation] = useLocation();
+  const { requestPermission, permission, isSupported } = usePushNotifications();
 
   
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
@@ -178,6 +180,19 @@ export default function DashboardPage() {
           <p className="text-xl text-muted-foreground">
             Ready to draft your dream team?
           </p>
+        </div>
+
+        {/* Debug notification section - temporary */}
+        <div className="text-center mb-4">
+          <Button 
+            onClick={requestPermission} 
+            variant="outline" 
+            size="sm" 
+            className="text-xs"
+          >
+            <Bell className="w-3 h-3 mr-1" />
+            Test Notification Permission ({permission}) - {isSupported ? 'Supported' : 'Not supported'}
+          </Button>
         </div>
 
         {/* Action Cards */}
