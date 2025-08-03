@@ -88,15 +88,25 @@ export function usePushNotifications(): UsePushNotificationsReturn {
     }
   }, [isSupported, needsPWAInstall]);
 
-  // Auto-request notification permission when PWA is first opened
+  // Auto-request notification permission when app is first opened
   useEffect(() => {
     const hasRequestedPermission = localStorage.getItem('notification-permission-requested');
-    const isPWA = window.matchMedia && window.matchMedia('(display-mode: standalone)').matches;
     
-    if (isPWA && !hasRequestedPermission && permission === 'default' && isSupported) {
-      // Small delay to ensure PWA is fully loaded
+    // Request permission on first app load if:
+    // 1. We haven't asked before
+    // 2. Permission is still default (not granted/denied)
+    // 3. Notifications are supported
+    // 4. Not on iOS Safari (which requires PWA mode)
+    const shouldRequest = !hasRequestedPermission && 
+                         permission === 'default' && 
+                         isSupported &&
+                         !needsPWAInstall;
+    
+    if (shouldRequest) {
+      // Small delay to ensure app is fully loaded
       const timer = setTimeout(async () => {
         try {
+          console.log('Auto-requesting notification permission...');
           await requestPermission();
           localStorage.setItem('notification-permission-requested', 'true');
         } catch (error) {
@@ -106,7 +116,7 @@ export function usePushNotifications(): UsePushNotificationsReturn {
       
       return () => clearTimeout(timer);
     }
-  }, [permission, isSupported, requestPermission]);
+  }, [permission, isSupported, requestPermission, needsPWAInstall]);
 
   // Check initial permission status
   useEffect(() => {
