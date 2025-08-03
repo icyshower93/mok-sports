@@ -35,8 +35,19 @@ This setup allows testing the complete league workflow including:
 - Removed unreliable client-side notification dependency
 - Added robust error handling to prevent join failures due to notification issues
 
+## Recent Fix: iOS PWA Push Subscription Auto-Refresh (August 2025)
+**Issue**: Push subscriptions became stale after iOS PWA deletion/reinstall, preventing notifications from being delivered despite proper server-side triggering.
+
+**Solution**: Implemented comprehensive automatic push subscription refresh system:
+- `useAutoPushRefresh` hook automatically unsubscribes and resubscribes on every app open
+- Triggers on service worker activation and app visibility changes  
+- Handles iOS Safari PWA-specific subscription behavior
+- Sends fresh subscription data to `/api/subscribe` automatically
+- Added detailed debug logging to track refresh behavior
+- Enhanced service worker to broadcast activation events
+
 **Current League Status**: Test League 1 (EEW2YU) - FULL (6/6 members)
-- Sky Evans (Creator)
+- Sky Evans (Creator) - Push subscription auto-refresh system active
 - Mok Sports + 4 test users + Jordan Smith
 
 # System Architecture
