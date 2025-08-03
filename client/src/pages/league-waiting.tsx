@@ -44,23 +44,32 @@ export function LeagueWaiting() {
   const [previousMemberCount, setPreviousMemberCount] = useState<number>(0);
   const [notificationSent, setNotificationSent] = useState<boolean>(false);
 
-  // Get league ID from URL params
+  // Get league ID from URL params and handle invalid/missing IDs
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const id = params.get('id');
-    if (id) {
+    
+    if (id && id !== 'undefined' && id !== 'null') {
       setLeagueId(id);
     } else {
-      // If no league ID, redirect to dashboard
-      setLocation('/');
+      // If no valid league ID, redirect to dashboard
+      console.warn('Invalid or missing league ID, redirecting to dashboard');
+      setLocation('/?stay=true');
     }
   }, [setLocation]);
 
   // Fetch league details
-  const { data: league, isLoading, refetch } = useQuery<League>({
+  const { data: league, isLoading, refetch, error } = useQuery<League>({
     queryKey: [`/api/leagues/${leagueId}`],
     enabled: !!leagueId && !!user,
     refetchInterval: 5000, // Refresh every 5 seconds to check for new members
+    retry: (failureCount, error) => {
+      // Don't retry if user is not authorized (removed from league)
+      if (error instanceof Error && error.message.includes('403')) {
+        return false;
+      }
+      return failureCount < 2;
+    },
   });
 
   // Remove member mutation (creator only)
@@ -176,8 +185,24 @@ export function LeagueWaiting() {
   }, [league]);
 
   // Early return after ALL hooks have been called
-  if (!user || !leagueId) {
+  if (!user) {
     return null;
+  }
+
+  // Handle missing or invalid league ID
+  if (!leagueId) {
+    return (
+      <MainLayout>
+        <div className="min-h-[70vh] flex items-center justify-center">
+          <div className="text-center space-y-4">
+            <p className="text-muted-foreground">No league selected</p>
+            <Button onClick={() => setLocation('/')}>
+              Return to Dashboard
+            </Button>
+          </div>
+        </div>
+      </MainLayout>
+    );
   }
 
   const copyJoinCode = () => {
@@ -221,19 +246,47 @@ export function LeagueWaiting() {
     );
   }
 
-  if (!league) {
+  if (!league && !isLoading) {
+    // Check if this is an authorization error (user was removed)
+    const isAuthError = error && (error as any).message?.includes('403');
+    
     return (
       <MainLayout>
         <div className="min-h-[70vh] flex items-center justify-center">
-          <div className="text-center">
-            <p className="text-muted-foreground mb-4">League not found</p>
-            <Button onClick={() => setLocation('/')}>
-              Back to Dashboard
-            </Button>
+          <div className="text-center space-y-4">
+            <p className="text-muted-foreground">
+              {isAuthError 
+                ? "You don't have access to this league anymore" 
+                : "League not found"}
+            </p>
+            <p className="text-sm text-muted-foreground">
+              {isAuthError 
+                ? "You may have been removed from this league. Check the dashboard for your current leagues."
+                : "This league may no longer exist or the link is invalid."}
+            </p>
+            <div className="flex gap-2 justify-center">
+              <Button onClick={() => {
+                // Clear any cached league data and redirect
+                queryClient.invalidateQueries({ queryKey: ['/api/leagues/user'] });
+                setLocation('/?stay=true');
+              }}>
+                Return to Dashboard
+              </Button>
+              {!isAuthError && (
+                <Button variant="outline" onClick={() => window.location.reload()}>
+                  Retry
+                </Button>
+              )}
+            </div>
           </div>
         </div>
       </MainLayout>
     );
+  }
+
+  // Type guard - ensure league exists before proceeding
+  if (!league) {
+    return null;
   }
 
   const isLeagueFull = league.memberCount >= league.maxTeams;
@@ -254,9 +307,9 @@ export function LeagueWaiting() {
         description: "You have successfully left the league",
       });
       
-      // Invalidate user leagues query to force dashboard refresh
+      // Clear all league-related cache and redirect
       queryClient.invalidateQueries({ queryKey: ['/api/leagues/user'] });
-      // Redirect to dashboard with stay parameter to prevent auto-redirect
+      queryClient.removeQueries({ queryKey: [`/api/leagues/${leagueId}`] });
       setLocation('/?stay=true');
     } catch (error) {
       toast({

@@ -37,10 +37,10 @@ export default function DashboardPage() {
     const urlParams = new URLSearchParams(window.location.search);
     const shouldStay = urlParams.get('stay') === 'true';
     
-    if (!shouldStay && userLeagues && userLeagues.length > 0) {
+    if (!shouldStay && userLeagues && Array.isArray(userLeagues) && userLeagues.length > 0) {
       // Find the most recent active league
-      const activeLeague = userLeagues.find((league: any) => league.isActive);
-      if (activeLeague) {
+      const activeLeague = userLeagues.find((league: any) => league.isActive && league.id);
+      if (activeLeague && activeLeague.id) {
         setLocation(`/league/waiting?id=${activeLeague.id}`);
         return;
       }
@@ -118,9 +118,10 @@ export default function DashboardPage() {
       setJoinCode("");
       toast({
         title: "Joined League!",
-        description: `You've successfully joined "${result.name}".`,
+        description: `You've successfully joined "${result.league.name}".`,
       });
-      setLocation(`/league/waiting?id=${result.id}`);
+      // Navigate to the league waiting room with the correct league ID
+      setLocation(`/league/waiting?id=${result.league.id}`);
     },
     onError: (error: any) => {
       toast({

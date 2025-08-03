@@ -223,7 +223,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         userId: user.id,
       });
 
-      res.json({ message: "Successfully joined league", league });
+      // Return the league with updated member count
+      const updatedLeague = await storage.getLeague(league.id);
+      res.json({ message: "Successfully joined league", league: updatedLeague });
     } catch (error) {
       res.status(500).json({ message: "Failed to join league" });
     }
