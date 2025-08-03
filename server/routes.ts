@@ -528,6 +528,40 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Debug endpoint to check push subscription status
+  app.get("/api/test/push-status/:email", async (req, res) => {
+    try {
+      const { email } = req.params;
+      
+      const user = await storage.getUserByEmail(email);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      const subscriptions = await storage.getUserPushSubscriptions(user.id);
+      
+      res.json({
+        user: {
+          id: user.id,
+          name: user.name,
+          email: user.email
+        },
+        subscriptions: subscriptions.map(sub => ({
+          id: sub.id,
+          isActive: sub.isActive,
+          createdAt: sub.createdAt,
+          endpoint: sub.endpoint.substring(0, 50) + '...' // Truncate for privacy
+        })),
+        totalSubscriptions: subscriptions.length,
+        activeSubscriptions: subscriptions.filter(sub => sub.isActive).length
+      });
+
+    } catch (error) {
+      console.error('Error checking push status:', error);
+      res.status(500).json({ message: "Failed to check push status" });
+    }
+  });
+
   // Push notification routes
   app.get("/api/push/vapid-key", async (req, res) => {
     const token = req.cookies?.auth_token;
