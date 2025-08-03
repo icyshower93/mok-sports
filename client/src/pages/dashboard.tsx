@@ -207,7 +207,6 @@ export default function DashboardPage() {
                       placeholder="Enter league name"
                       className="mt-1"
                       autoFocus={false}
-                      inputMode="none"
                       autoComplete="off"
                     />
                   </div>
@@ -249,7 +248,6 @@ export default function DashboardPage() {
                       maxLength={6}
                       className="mt-1 text-center text-lg font-mono tracking-wider"
                       autoFocus={false}
-                      inputMode="none"
                       autoComplete="off"
                     />
                   </div>
