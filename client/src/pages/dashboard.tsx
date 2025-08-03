@@ -206,6 +206,7 @@ export default function DashboardPage() {
                       onChange={(e) => setLeagueName(e.target.value)}
                       placeholder="Enter league name"
                       className="mt-1"
+                      autoFocus={false}
                     />
                   </div>
                   <Button
@@ -245,6 +246,7 @@ export default function DashboardPage() {
                       placeholder="Enter 6-letter code"
                       maxLength={6}
                       className="mt-1 text-center text-lg font-mono tracking-wider"
+                      autoFocus={false}
                     />
                   </div>
                   <Button

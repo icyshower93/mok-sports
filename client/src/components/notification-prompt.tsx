@@ -25,7 +25,7 @@ export function NotificationPrompt({
     if ('Notification' in window) {
       setPermission(Notification.permission);
       // Show prompt when user is logged in and permission is default
-      setIsVisible(user && Notification.permission === 'default');
+      setIsVisible(Boolean(user && Notification.permission === 'default'));
     }
   }, [user]);
 
