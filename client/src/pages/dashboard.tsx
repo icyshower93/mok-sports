@@ -155,14 +155,17 @@ export default function DashboardPage() {
   return (
     <MainLayout>
       <div className="min-h-screen flex flex-col items-center justify-center px-4 py-8">
-        <div className="w-full max-w-md space-y-8">
+        <div className="w-full max-w-lg space-y-8">
           {/* Welcome Header */}
-          <div className="text-center space-y-2">
-            <h1 className="text-3xl font-bold text-fantasy-green">
-              Welcome, {firstName}!
-            </h1>
-            <p className="text-muted-foreground">
-              Ready to draft entire teams? Let's get started.
+          <div className="text-center space-y-4">
+            <div className="relative">
+              <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-fantasy-green to-accent text-transparent bg-clip-text">
+                Welcome, {firstName}!
+              </h1>
+              <div className="absolute -inset-1 bg-gradient-to-r from-fantasy-green/20 to-accent/20 blur-xl opacity-30 animate-pulse"></div>
+            </div>
+            <p className="text-lg text-muted-foreground max-w-md mx-auto">
+              Ready to draft entire teams? Create your league and dominate the competition.
             </p>
           </div>
           
@@ -172,7 +175,6 @@ export default function DashboardPage() {
               <NotificationPrompt
                 onPermissionGranted={() => {
                   setShowNotificationPrompt(false);
-                  // Send welcome notification
                   showWelcomeNotification();
                 }}
                 onDismiss={() => setShowNotificationPrompt(false)}
@@ -181,31 +183,31 @@ export default function DashboardPage() {
           )}
 
           {/* Main Action Buttons */}
-          <div className="space-y-4">
+          <div className="space-y-6">
             {/* Create League Button */}
             <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
               <DialogTrigger asChild>
                 <Button 
-                  className="w-full h-14 text-lg font-semibold"
+                  className="w-full h-16 text-lg font-bold bg-gradient-to-r from-fantasy-green to-fantasy-green/80 hover:from-fantasy-green/90 hover:to-fantasy-green/70 text-white shadow-xl hover:shadow-2xl transition-all duration-300 ease-out hover:scale-105 border-0"
                   size="lg"
                 >
-                  <Plus className="w-6 h-6 mr-3" />
+                  <Plus className="w-7 h-7 mr-3" />
                   Create League
                 </Button>
               </DialogTrigger>
-              <DialogContent>
+              <DialogContent className="sm:max-w-md">
                 <DialogHeader>
-                  <DialogTitle>Create New League</DialogTitle>
+                  <DialogTitle className="text-xl font-bold">Create New League</DialogTitle>
                 </DialogHeader>
-                <div className="space-y-4">
+                <div className="space-y-6">
                   <div>
-                    <Label htmlFor="league-name">League Name</Label>
+                    <Label htmlFor="league-name" className="text-sm font-medium">League Name</Label>
                     <Input
                       id="league-name"
                       value={leagueName}
                       onChange={(e) => setLeagueName(e.target.value)}
                       placeholder="Enter league name"
-                      className="mt-1"
+                      className="mt-2 h-12 text-lg border-2 focus:border-fantasy-green transition-colors"
                       autoFocus={false}
                       inputMode="none"
                       autoComplete="off"
@@ -214,7 +216,7 @@ export default function DashboardPage() {
                   <Button
                     onClick={handleCreateLeague}
                     disabled={createLeagueMutation.isPending}
-                    className="w-full"
+                    className="w-full h-12 font-semibold bg-fantasy-green hover:bg-fantasy-green/90"
                   >
                     {createLeagueMutation.isPending ? "Creating..." : "Create League"}
                   </Button>
@@ -227,27 +229,27 @@ export default function DashboardPage() {
               <DialogTrigger asChild>
                 <Button 
                   variant="outline" 
-                  className="w-full h-14 text-lg font-semibold border-2"
+                  className="w-full h-16 text-lg font-bold border-2 border-accent/30 hover:border-accent/60 text-foreground bg-card/50 hover:bg-card/80 shadow-lg hover:shadow-xl transition-all duration-300 ease-out hover:scale-105"
                   size="lg"
                 >
-                  <UserPlus className="w-6 h-6 mr-3" />
+                  <UserPlus className="w-7 h-7 mr-3" />
                   Join League
                 </Button>
               </DialogTrigger>
-              <DialogContent>
+              <DialogContent className="sm:max-w-md">
                 <DialogHeader>
-                  <DialogTitle>Join Existing League</DialogTitle>
+                  <DialogTitle className="text-xl font-bold">Join Existing League</DialogTitle>
                 </DialogHeader>
-                <div className="space-y-4">
+                <div className="space-y-6">
                   <div>
-                    <Label htmlFor="join-code">League Code</Label>
+                    <Label htmlFor="join-code" className="text-sm font-medium">League Code</Label>
                     <Input
                       id="join-code"
                       value={joinCode}
                       onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
                       placeholder="Enter 6-letter code"
                       maxLength={6}
-                      className="mt-1 text-center text-lg font-mono tracking-wider"
+                      className="mt-2 h-12 text-center text-xl font-mono tracking-wider border-2 focus:border-accent transition-colors"
                       autoFocus={false}
                       inputMode="none"
                       autoComplete="off"
@@ -256,7 +258,7 @@ export default function DashboardPage() {
                   <Button
                     onClick={handleJoinLeague}
                     disabled={joinLeagueMutation.isPending}
-                    className="w-full"
+                    className="w-full h-12 font-semibold bg-accent hover:bg-accent/90"
                   >
                     {joinLeagueMutation.isPending ? "Joining..." : "Join League"}
                   </Button>

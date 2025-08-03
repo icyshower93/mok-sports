@@ -9,7 +9,6 @@ import { usePWADetection } from "@/hooks/use-pwa-detection";
 import { PWAInstallPrompt } from "@/components/pwa-install-prompt";
 
 import { ErrorBoundary } from "@/components/error-boundary";
-import { NotificationBanner } from "@/components/notification-banner";
 import LoginPage from "@/pages/login";
 import DashboardPage from "@/pages/dashboard";
 import LeaguesPage from "@/pages/leagues";
@@ -30,25 +29,18 @@ function AppContent() {
 
   if (isLoading && !user) {
     return (
-      <div style={{
-        minHeight: '100vh',
-        backgroundColor: '#0f172a',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        color: 'white'
-      }}>
-        <div style={{ textAlign: 'center' }}>
-          <div style={{
-            width: '32px',
-            height: '32px',
-            border: '2px solid #10b981',
-            borderTop: '2px solid transparent',
-            borderRadius: '50%',
-            animation: 'spin 1s linear infinite',
-            margin: '0 auto 16px auto'
-          }}></div>
-          <p>Loading...</p>
+      <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 flex items-center justify-center">
+        <div className="text-center space-y-6">
+          <div className="relative">
+            <div className="w-16 h-16 border-4 border-fantasy-green/30 border-t-fantasy-green rounded-full animate-spin mx-auto"></div>
+            <div className="absolute inset-0 w-16 h-16 border-4 border-transparent border-l-accent/30 rounded-full animate-spin mx-auto" style={{ animationDirection: 'reverse', animationDuration: '1.5s' }}></div>
+          </div>
+          <div className="space-y-2">
+            <h2 className="text-2xl font-bold bg-gradient-to-r from-fantasy-green to-accent text-transparent bg-clip-text">
+              Mok Sports
+            </h2>
+            <p className="text-muted-foreground">Initializing your fantasy experience...</p>
+          </div>
         </div>
       </div>
     );
