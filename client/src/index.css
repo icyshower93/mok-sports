@@ -6,12 +6,16 @@
 html {
   overscroll-behavior: contain;
   overscroll-behavior-x: none;
+  touch-action: pan-y;
+  overflow-x: hidden;
 }
 
 body {
   overscroll-behavior-x: none;
   touch-action: pan-y;
   -webkit-overflow-scrolling: touch;
+  overflow-x: hidden;
+  position: relative;
 }
 
 /* Prevent accidental text selection on mobile while preserving input functionality */
