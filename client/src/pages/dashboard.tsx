@@ -28,7 +28,16 @@ export default function DashboardPage() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [, setLocation] = useLocation();
-  const { isIOS, isIOSPWA, needsPWAInstall, sendTestNotification } = usePushNotifications();
+  const { 
+    isIOS, 
+    isIOSPWA, 
+    needsPWAInstall, 
+    sendTestNotification, 
+    forcePermissionCheck,
+    permission,
+    isSupported,
+    requestPermission 
+  } = usePushNotifications();
   
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [joinDialogOpen, setJoinDialogOpen] = useState(false);
@@ -206,17 +215,58 @@ export default function DashboardPage() {
             Welcome back, {firstName}!
           </h1>
           
-          {/* Test Notification Button */}
-          <div className="flex justify-center">
+          {/* Debug & Test Buttons */}
+          <div className="flex flex-col items-center gap-2">
+            <div className="flex gap-2">
+              <Button
+                onClick={handleTestNotification}
+                variant="outline"
+                size="sm"
+                className="text-sm"
+              >
+                <Bell className="w-4 h-4 mr-2" />
+                Send Test Notification
+              </Button>
+              <Button
+                onClick={() => {
+                  const currentPerm = forcePermissionCheck();
+                  toast({
+                    title: "Permission Check",
+                    description: `Current permission: ${currentPerm}`,
+                  });
+                }}
+                variant="outline"
+                size="sm"
+                className="text-sm"
+              >
+                Check Permission
+              </Button>
+            </div>
             <Button
-              onClick={handleTestNotification}
+              onClick={async () => {
+                try {
+                  await requestPermission();
+                  toast({
+                    title: "Permission Request Sent",
+                    description: "Check if prompt appeared",
+                  });
+                } catch (error) {
+                  toast({
+                    title: "Permission Failed",
+                    description: error instanceof Error ? error.message : "Failed",
+                    variant: "destructive",
+                  });
+                }
+              }}
               variant="outline"
               size="sm"
               className="text-sm"
             >
-              <Bell className="w-4 h-4 mr-2" />
-              Send Test Notification
+              Manual Permission Request
             </Button>
+            <div className="text-xs text-muted-foreground text-center">
+              Debug: {permission} | iOS: {isIOS ? 'Y' : 'N'} | PWA: {isIOSPWA ? 'Y' : 'N'} | Supported: {isSupported ? 'Y' : 'N'}
+            </div>
           </div>
           {userLeagues.length > 0 ? (
             <div className="space-y-2">

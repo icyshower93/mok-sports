@@ -15,6 +15,7 @@ interface UsePushNotificationsReturn {
   subscribe: () => Promise<void>;
   unsubscribe: () => Promise<void>;
   sendTestNotification: () => Promise<void>;
+  forcePermissionCheck: () => NotificationPermission | 'unavailable';
 }
 
 const VAPID_KEY_ENDPOINT = '/api/push/vapid-key';
@@ -38,7 +39,21 @@ export function usePushNotifications(): UsePushNotificationsReturn {
   );
   const needsPWAInstall = isIOS && !isIOSPWA;
 
-  // Don't initialize permission state immediately - let it be handled by the main useEffect
+  // Initialize permission state and add comprehensive debugging
+  useEffect(() => {
+    if (typeof window !== 'undefined' && 'Notification' in window) {
+      const currentPermission = Notification.permission;
+      console.log('[PWA Debug] CRITICAL - Permission state check:', {
+        currentPermission,
+        previousPermission: permission,
+        isIOS,
+        isIOSPWA,
+        hasUser: !!user,
+        timestamp: new Date().toISOString()
+      });
+      setPermission(currentPermission);
+    }
+  }, [user]); // Re-check when user changes
 
   // Debug logging for iOS detection
   useEffect(() => {
@@ -56,12 +71,30 @@ export function usePushNotifications(): UsePushNotificationsReturn {
     }
   }, [isIOS, isIOSPWA, needsPWAInstall]);
 
-  // Check if push notifications are supported
-  const isSupported = typeof window !== 'undefined' && 
-    'serviceWorker' in navigator && 
-    'PushManager' in window && 
-    'Notification' in window &&
-    (!isIOS || isIOSPWA); // iOS requires PWA mode
+  // Check if push notifications are supported with detailed logging
+  const isSupported = useMemo(() => {
+    if (typeof window === 'undefined') return false;
+    
+    const hasServiceWorker = 'serviceWorker' in navigator;
+    const hasPushManager = 'PushManager' in window;
+    const hasNotification = 'Notification' in window;
+    const iosRequirement = !isIOS || isIOSPWA;
+    
+    const supported = hasServiceWorker && hasPushManager && hasNotification && iosRequirement;
+    
+    console.log('[PWA Debug] Support check:', {
+      hasServiceWorker,
+      hasPushManager,
+      hasNotification,
+      iosRequirement,
+      isIOS,
+      isIOSPWA,
+      supported,
+      currentPermission: typeof window !== 'undefined' && 'Notification' in window ? Notification.permission : 'unavailable'
+    });
+    
+    return supported;
+  }, [isIOS, isIOSPWA]);
 
   // Check initial permission status
   useEffect(() => {
@@ -301,6 +334,17 @@ export function usePushNotifications(): UsePushNotificationsReturn {
     }
   }, [isSubscribed]);
 
+  // Manual force permission check function for debugging
+  const forcePermissionCheck = useCallback(() => {
+    if (typeof window !== 'undefined' && 'Notification' in window) {
+      const currentPermission = Notification.permission;
+      console.log('[PWA Debug] FORCE CHECK - Current browser permission:', currentPermission);
+      setPermission(currentPermission);
+      return currentPermission;
+    }
+    return 'unavailable';
+  }, []);
+
   return {
     isSupported,
     permission,
@@ -315,5 +359,6 @@ export function usePushNotifications(): UsePushNotificationsReturn {
     subscribe,
     unsubscribe,
     sendTestNotification,
+    forcePermissionCheck,
   };
 }
