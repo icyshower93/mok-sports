@@ -3,10 +3,9 @@ import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
-// import { ThemeProvider } from "@/hooks/use-theme";
+import { ThemeProvider } from "@/hooks/use-theme";
 import { AuthProvider, useAuth } from "@/hooks/use-auth";
-import { usePushNotifications } from "@/hooks/use-push-notifications";
-import { DesktopQR } from "@/components/desktop-qr";
+import { NotificationManager } from "@/components/notification-manager";
 import LoginPage from "@/pages/login";
 import DashboardPage from "@/pages/dashboard";
 import LeaguesPage from "@/pages/leagues";
@@ -18,11 +17,8 @@ import NotFound from "@/pages/not-found";
 
 function AppContent() {
   const { isAuthenticated, isLoading, user } = useAuth();
-  
-  // Initialize push notifications to handle auto-permission requests
-  usePushNotifications();
 
-  // Enhanced device detection
+  // Enhanced iOS detection that runs immediately - but ONLY for actual iOS devices
   const isIOSSafari = typeof window !== 'undefined' && 
     /iPad|iPhone|iPod/.test(navigator.userAgent) && 
     window.matchMedia && 
@@ -32,29 +28,10 @@ function AppContent() {
     navigator.userAgent.indexOf('CriOS') === -1 && // Not Chrome on iOS
     navigator.userAgent.indexOf('FxiOS') === -1; // Not Firefox on iOS
 
-  const isDesktop = typeof window !== 'undefined' && 
-    !(/iPad|iPhone|iPod|Android/.test(navigator.userAgent));
 
-  console.log('[Debug] App state:', { 
-    isAuthenticated, 
-    isLoading, 
-    hasUser: !!user, 
-    isIOSSafari,
-    isDesktop,
-    userAgent: navigator.userAgent,
-    displayMode: window.matchMedia ? window.matchMedia('(display-mode: standalone)').matches : 'N/A',
-    shouldShowInstallPrompt: isIOSSafari && /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.matchMedia('(display-mode: standalone)').matches
-  });
 
-  // Show QR code for desktop users
-  if (isDesktop) {
-    console.log('[Desktop Debug] Desktop detected - showing QR code');
-    return <DesktopQR />;
-  }
-
-  // Show install prompt for iOS Safari browsers (not desktop or other browsers)
+  // Only show install prompt for iOS Safari browsers (not desktop or other browsers)
   if (isIOSSafari && /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.matchMedia('(display-mode: standalone)').matches) {
-    console.log('[iOS Debug] iOS Safari detected - showing install prompt');
     return (
       <div style={{
         minHeight: '100vh',
@@ -128,7 +105,9 @@ function AppContent() {
   console.log('[Debug] Rendering main app - bypassed install prompt');
 
   return (
-    <Switch>
+    <>
+      <NotificationManager />
+      <Switch>
         <Route path="/login">
           <LoginPage />
         </Route>
@@ -152,18 +131,21 @@ function AppContent() {
         </Route>
         <Route component={NotFound} />
       </Switch>
+    </>
   );
 }
 
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <AuthProvider>
-          <Toaster />
-          <AppContent />
-        </AuthProvider>
-      </TooltipProvider>
+      <ThemeProvider defaultTheme="dark" storageKey="mok-sports-theme">
+        <TooltipProvider>
+          <AuthProvider>
+            <Toaster />
+            <AppContent />
+          </AuthProvider>
+        </TooltipProvider>
+      </ThemeProvider>
     </QueryClientProvider>
   );
 }
