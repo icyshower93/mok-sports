@@ -33,6 +33,18 @@ export function useAutoPushRefresh(options: AutoPushRefreshOptions = {}) {
     }
   }, [debug]);
 
+  // Always log key lifecycle events for debugging
+  useEffect(() => {
+    console.log(`[AutoPushRefresh] Hook initialized:`, {
+      enabled,
+      refreshOnOpen,
+      refreshOnServiceWorkerActivation,
+      debug,
+      userAuthenticated: !!user,
+      userEmail: user?.email
+    });
+  }, [enabled, refreshOnOpen, refreshOnServiceWorkerActivation, debug, user]);
+
   // Helper function to convert VAPID key
   const urlBase64ToUint8Array = useCallback((base64String: string) => {
     const padding = '='.repeat((4 - base64String.length % 4) % 4);
@@ -52,12 +64,12 @@ export function useAutoPushRefresh(options: AutoPushRefreshOptions = {}) {
   // Main subscription refresh function
   const refreshPushSubscription = useCallback(async (force: boolean = false): Promise<void> => {
     if (!enabled || !user) {
-      log('Skipping refresh - not enabled or user not logged in');
+      log('Skipping refresh - not enabled or user not logged in', { enabled, user: !!user });
       return;
     }
 
     if (!force && refreshAttempted.current) {
-      log('Skipping refresh - already attempted this session');
+      log('Skipping refresh - already attempted this session (use force=true to override)');
       return;
     }
 
@@ -134,7 +146,7 @@ export function useAutoPushRefresh(options: AutoPushRefreshOptions = {}) {
           }
         };
 
-        log('Sending subscription to server');
+        log('Sending subscription to server:', subscriptionData);
         const response = await fetch('/api/subscribe', {
           method: 'POST',
           headers: {
@@ -144,12 +156,21 @@ export function useAutoPushRefresh(options: AutoPushRefreshOptions = {}) {
           body: JSON.stringify(subscriptionData)
         });
 
+        const responseText = await response.text();
+        log('Server response status:', response.status);
+        log('Server response text:', responseText);
+
         if (!response.ok) {
-          throw new Error(`Server responded with status: ${response.status}`);
+          throw new Error(`Server responded with status: ${response.status} - ${responseText}`);
         }
 
-        const result = await response.json();
-        log('Server response:', result);
+        let result;
+        try {
+          result = JSON.parse(responseText);
+        } catch (e) {
+          result = { message: responseText };
+        }
+        log('Parsed server response:', result);
 
         // Mark refresh as completed
         refreshAttempted.current = true;
@@ -167,9 +188,10 @@ export function useAutoPushRefresh(options: AutoPushRefreshOptions = {}) {
 
   // Trigger refresh on user authentication (app open/reopen)
   useEffect(() => {
-    if (refreshOnOpen && user && !refreshAttempted.current) {
-      log('User authenticated, triggering subscription refresh');
-      refreshPushSubscription();
+    if (refreshOnOpen && user) {
+      // Always attempt refresh when user is authenticated, ignore previous attempts for debugging
+      log('User authenticated, triggering subscription refresh (force mode for debugging)');
+      refreshPushSubscription(true); // Force refresh to debug the issue
     }
   }, [user, refreshOnOpen, refreshPushSubscription, log]);
 

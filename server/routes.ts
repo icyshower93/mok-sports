@@ -528,6 +528,44 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Simple subscription endpoint for auto-refresh (uses cookie authentication)
+  app.post("/api/subscribe", async (req, res) => {
+    try {
+      const token = req.cookies?.auth_token;
+      if (!token) {
+        return res.status(401).json({ message: "Not authenticated - no auth_token cookie" });
+      }
+
+      const jwt = await import("jsonwebtoken");
+      const user = jwt.verify(token, process.env.JWT_SECRET || "mok-sports-jwt-secret-fallback-key-12345") as any;
+      if (!user || !user.id) {
+        return res.status(401).json({ message: "Invalid token format" });
+      }
+
+      const subscription = req.body;
+      console.log(`[AutoRefresh] Creating subscription for user ${user.email}:`, {
+        endpoint: subscription.endpoint?.substring(0, 50) + '...',
+        hasKeys: !!subscription.keys
+      });
+      
+      await storage.createPushSubscription(user.id, subscription);
+      
+      console.log(`[AutoRefresh] Successfully created subscription for user ${user.email}`);
+      res.json({ 
+        message: "Subscription created successfully",
+        userId: user.id,
+        userEmail: user.email
+      });
+      
+    } catch (error) {
+      console.error('[AutoRefresh] Failed to create subscription:', error);
+      res.status(500).json({ 
+        message: "Failed to create subscription",
+        details: error instanceof Error ? error.message : "Unknown error"
+      });
+    }
+  });
+
   // Debug endpoint to check push subscription status
   app.get("/api/test/push-status/:email", async (req, res) => {
     try {
