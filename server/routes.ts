@@ -223,42 +223,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
         userId: user.id,
       });
 
-      // Check if league just became full and send notifications
+      // Check if league just became full and send notifications using reusable pattern
       const newMemberCount = await storage.getLeagueMemberCount(league.id);
+      console.log(`League ${league.name} member count after join: ${newMemberCount}/${league.maxTeams}`);
+      
       if (newMemberCount === league.maxTeams) {
-        // League is now full - send notifications to all members
+        console.log(`League ${league.name} is now full! Sending notifications...`);
+        
+        // Use the reusable notification pattern
+        const { sendLeagueNotification, NotificationTemplates } = require("./utils/notification-patterns");
+        
         try {
-          const leagueMembers = await storage.getLeagueMembers(league.id);
-          const allSubscriptions = [];
+          const notification = NotificationTemplates.leagueFull(league.name, league.id);
+          const result = await sendLeagueNotification(league.id, notification);
           
-          // Collect all push subscriptions from league members
-          for (const member of leagueMembers) {
-            const memberSubscriptions = await storage.getUserPushSubscriptions(member.userId);
-            allSubscriptions.push(...memberSubscriptions);
-          }
-          
-          if (allSubscriptions.length > 0) {
-            const notificationData = {
-              title: `${league.name} is Full!`,
-              body: "Your league is ready! The creator can now schedule the draft.",
-              icon: "/icon-192x192.png",
-              badge: "/icon-72x72.png",
-              data: {
-                url: `/league/waiting?id=${league.id}`,
-                type: "league-full",
-                leagueId: league.id,
-                leagueName: league.name,
-                timestamp: Date.now()
-              }
-            };
-            
-            await storage.sendPushNotification(allSubscriptions, notificationData);
-            console.log(`Sent league full notifications to ${allSubscriptions.length} devices for league ${league.name}`);
+          if (result.success) {
+            console.log(`Successfully sent league full notifications to ${result.sentCount} devices`);
+          } else {
+            console.error('Failed to send league full notifications:', result.errors);
           }
         } catch (notificationError) {
           console.error('Failed to send league full notifications:', notificationError);
           // Don't fail the join request if notifications fail
         }
+      } else {
+        console.log(`League ${league.name} not full yet (${newMemberCount}/${league.maxTeams}) - no notifications sent`);
       }
 
       // Return the league with updated member count
@@ -451,6 +440,52 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Register push notification routes
   registerPushNotificationRoutes(app);
+  
+  // Test notification endpoint for debugging
+  app.post("/api/test/league-full-notification", async (req, res) => {
+    const token = req.cookies?.auth_token;
+    if (!token) {
+      return res.status(401).json({ message: "Not authenticated" });
+    }
+
+    const { verifyJWT } = require("./auth");
+    const user = verifyJWT(token);
+    if (!user) {
+      return res.status(401).json({ message: "Invalid token" });
+    }
+
+    try {
+      const { leagueId } = req.body;
+      if (!leagueId) {
+        return res.status(400).json({ message: "League ID is required" });
+      }
+
+      console.log(`Testing league full notification for league ${leagueId} by user ${user.id}`);
+
+      // Use the reusable notification pattern
+      const { sendLeagueNotification, NotificationTemplates } = require("./utils/notification-patterns");
+      const notification = NotificationTemplates.leagueFull("Test League 1", leagueId);
+      const result = await sendLeagueNotification(leagueId, notification);
+
+      res.json({
+        message: "League full notification test completed",
+        success: result.success,
+        sentCount: result.sentCount,
+        errors: result.errors,
+        details: {
+          notification: notification,
+          timestamp: new Date().toISOString()
+        }
+      });
+
+    } catch (error) {
+      console.error('Test league full notification error:', error);
+      res.status(500).json({ 
+        message: "Failed to test league full notification",
+        details: error instanceof Error ? error.message : "Unknown error"
+      });
+    }
+  });
 
   // Push notification routes
   app.get("/api/push/vapid-key", async (req, res) => {
