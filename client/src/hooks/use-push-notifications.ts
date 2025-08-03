@@ -170,15 +170,21 @@ export function usePushNotifications(): UsePushNotificationsReturn {
   }, [isSupported, isIOS, isIOSPWA, needsPWAInstall]);
 
   const getVapidKey = useCallback(async (): Promise<string> => {
+    console.log('[PWA Debug] Fetching VAPID key from:', VAPID_KEY_ENDPOINT);
     const response = await fetch(VAPID_KEY_ENDPOINT, {
       credentials: 'include',
     });
 
+    console.log('[PWA Debug] VAPID response status:', response.status);
+    
     if (!response.ok) {
-      throw new Error('Failed to get VAPID key');
+      const errorText = await response.text();
+      console.error('[PWA Debug] VAPID key fetch failed:', errorText);
+      throw new Error(`Failed to get VAPID key: ${response.status} - ${errorText}`);
     }
 
     const data = await response.json();
+    console.log('[PWA Debug] VAPID key received:', data.publicKey?.substring(0, 20) + '...');
     return data.publicKey;
   }, []);
 

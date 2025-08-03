@@ -194,32 +194,35 @@ export class DatabaseStorage implements IStorage {
 
   // Push notification methods
   getVapidKeys(): { publicKey: string; privateKey: string } {
-    // Use environment variables or generate valid VAPID keys
-    let publicKey = process.env.VAPID_PUBLIC_KEY;
-    let privateKey = process.env.VAPID_PRIVATE_KEY;
-    
-    // If no environment keys, generate new ones
-    if (!publicKey || !privateKey) {
-      const webpush = require('web-push');
-      const vapidKeys = webpush.generateVAPIDKeys();
-      publicKey = vapidKeys.publicKey;
-      privateKey = vapidKeys.privateKey;
+    try {
+      // Use environment variables or generate valid VAPID keys
+      let publicKey: string = process.env.VAPID_PUBLIC_KEY || '';
+      let privateKey: string = process.env.VAPID_PRIVATE_KEY || '';
       
-      console.log('🔑 Generated new VAPID keys:');
-      console.log('Public Key:', publicKey);
-      console.log('Private Key:', privateKey);
-      console.log('Add these to your environment variables for persistence!');
+      // If no environment keys, generate new ones
+      if (!publicKey || !privateKey) {
+        const vapidKeys = webpush.generateVAPIDKeys();
+        publicKey = vapidKeys.publicKey;
+        privateKey = vapidKeys.privateKey;
+        
+        console.log('🔑 Generated new VAPID keys:');
+        console.log('Public Key:', publicKey);
+        console.log('Private Key:', privateKey);
+        console.log('Add these to your environment variables for persistence!');
+      }
+      
+      // Set up web-push with VAPID details
+      webpush.setVapidDetails(
+        'mailto:admin@moksports.com',
+        publicKey,
+        privateKey
+      );
+      
+      return { publicKey, privateKey };
+    } catch (error) {
+      console.error('Error generating VAPID keys:', error);
+      throw new Error('Failed to generate VAPID keys');
     }
-    
-    // Set up web-push with VAPID details
-    const webpush = require('web-push');
-    webpush.setVapidDetails(
-      'mailto:admin@moksports.com',
-      publicKey,
-      privateKey
-    );
-    
-    return { publicKey, privateKey };
   }
 
   async createPushSubscription(insertSubscription: InsertPushSubscription): Promise<PushSubscription> {

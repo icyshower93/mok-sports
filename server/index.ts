@@ -39,6 +39,16 @@ app.use((req, res, next) => {
 });
 
 (async () => {
+  // Initialize VAPID keys on startup
+  const { storage } = await import("./storage");
+  console.log('🔑 Initializing VAPID keys...');
+  try {
+    const vapidKeys = storage.getVapidKeys();
+    console.log('✅ VAPID keys initialized successfully');
+  } catch (error) {
+    console.error('❌ Failed to initialize VAPID keys:', error);
+  }
+
   const server = await registerRoutes(app);
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {

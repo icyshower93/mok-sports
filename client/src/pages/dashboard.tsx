@@ -266,6 +266,7 @@ export default function DashboardPage() {
             </Button>
             <div className="text-xs text-muted-foreground text-center">
               Debug: {permission} | iOS: {isIOS ? 'Y' : 'N'} | PWA: {isIOSPWA ? 'Y' : 'N'} | Supported: {isSupported ? 'Y' : 'N'}
+              <br />User: {user ? 'Logged In' : 'Not Logged In'}
             </div>
           </div>
           {userLeagues.length > 0 ? (
