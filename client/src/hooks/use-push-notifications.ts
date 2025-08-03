@@ -30,13 +30,22 @@ export function usePushNotifications(): UsePushNotificationsReturn {
   const [error, setError] = useState<string | null>(null);
   const [needsReauthorization, setNeedsReauthorization] = useState(false);
 
-  // Enhanced iOS detection
+  // Enhanced iOS detection with better logging
   const isIOS = typeof window !== 'undefined' && /iPad|iPhone|iPod/.test(navigator.userAgent);
   const isIOSPWA = isIOS && (
     (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) ||
     ('standalone' in window.navigator && (window.navigator as any).standalone === true)
   );
   const needsPWAInstall = isIOS && !isIOSPWA;
+
+  // Initialize permission state from browser immediately
+  useEffect(() => {
+    if (typeof window !== 'undefined' && 'Notification' in window) {
+      const currentPermission = Notification.permission;
+      console.log('[PWA Debug] Initial permission state:', currentPermission);
+      setPermission(currentPermission);
+    }
+  }, []);
 
   // Debug logging for iOS detection and permission status
   useEffect(() => {
@@ -271,15 +280,30 @@ export function usePushNotifications(): UsePushNotificationsReturn {
 
   // Auto-request permission for iOS PWA users on app load
   useEffect(() => {
+    console.log('[PWA Debug] Auto-permission check:', {
+      isIOS, 
+      isIOSPWA, 
+      isSupported, 
+      hasUser: !!user, 
+      permission,
+      shouldTrigger: isIOS && isIOSPWA && isSupported && user && permission === 'default'
+    });
+    
     if (isIOS && isIOSPWA && isSupported && user && permission === 'default') {
-      console.log('[PWA Debug] iOS PWA detected with user logged in, auto-requesting permission in 3 seconds');
-      // Longer delay to ensure app is fully loaded and user sees the interface
+      console.log('[PWA Debug] iOS PWA detected with user logged in, auto-requesting permission in 2 seconds');
+      // Shorter delay and more aggressive permission request
       const timer = setTimeout(() => {
         console.log('[PWA Debug] Triggering auto permission request now');
         requestPermission();
-      }, 3000);
+      }, 2000);
       
       return () => clearTimeout(timer);
+    }
+    
+    // Also check if permission was previously denied and we need to inform user
+    if (isIOS && isIOSPWA && isSupported && user && permission === 'denied') {
+      console.log('[PWA Debug] Permission was denied - user needs to reset in Settings');
+      setError('Notification permission denied. To reset: iOS Settings > Safari > Advanced > Website Data > Remove this site data, then reinstall app.');
     }
   }, [isIOS, isIOSPWA, isSupported, user, permission, requestPermission]);
 

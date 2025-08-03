@@ -17,52 +17,35 @@ import NotFound from "@/pages/not-found";
 function AppContent() {
   const { isAuthenticated, isLoading, user } = useAuth();
 
-  console.log('[iOS Debug] App state:', { isAuthenticated, isLoading, hasUser: !!user });
-
-  if (isLoading && !user) {
-    console.log('[iOS Debug] Showing loading screen');
-    return (
-      <div style={{
-        minHeight: '100vh',
-        backgroundColor: '#0f172a',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        color: 'white'
-      }}>
-        <div style={{ textAlign: 'center' }}>
-          <div style={{
-            width: '32px',
-            height: '32px',
-            border: '2px solid #10b981',
-            borderTop: '2px solid transparent',
-            borderRadius: '50%',
-            animation: 'spin 1s linear infinite',
-            margin: '0 auto 16px'
-          }}></div>
-          <p>Loading...</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Check if this is iOS Safari browser (not PWA) 
+  // Enhanced iOS detection that runs immediately
   const isIOSSafari = typeof window !== 'undefined' && 
     /iPad|iPhone|iPod/.test(navigator.userAgent) && 
+    window.matchMedia && 
     !window.matchMedia('(display-mode: standalone)').matches &&
     !('standalone' in window.navigator && (window.navigator as any).standalone === true);
-  
-  // For iOS Safari, always show install prompt regardless of auth state
+
+  console.log('[iOS Debug] App state:', { 
+    isAuthenticated, 
+    isLoading, 
+    hasUser: !!user, 
+    isIOSSafari,
+    userAgent: navigator.userAgent,
+    displayMode: window.matchMedia ? window.matchMedia('(display-mode: standalone)').matches : 'N/A'
+  });
+
+  // CRITICAL: Check iOS Safari FIRST, before any loading or auth checks
   if (isIOSSafari) {
-    console.log('[iOS Debug] iOS Safari detected, showing PWA install prompt');
+    console.log('[iOS Debug] iOS Safari detected - showing install prompt immediately');
     return (
       <div style={{
         minHeight: '100vh',
+        minHeight: '-webkit-fill-available',
         background: 'linear-gradient(135deg, #10b981, #3b82f6)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: '20px'
+        padding: '20px',
+        fontFamily: 'system-ui, -apple-system, sans-serif'
       }}>
         <div style={{
           backgroundColor: 'white',
@@ -92,6 +75,33 @@ function AppContent() {
           
           <div style={{ fontSize: '40px', marginBottom: '16px' }}>📱⬇️</div>
           <p style={{ color: '#6b7280', fontSize: '12px' }}>Once installed, open from your home screen to get started!</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (isLoading && !user) {
+    console.log('[iOS Debug] Showing loading screen');
+    return (
+      <div style={{
+        minHeight: '100vh',
+        backgroundColor: '#0f172a',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        color: 'white'
+      }}>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{
+            width: '32px',
+            height: '32px',
+            border: '2px solid #10b981',
+            borderTop: '2px solid transparent',
+            borderRadius: '50%',
+            animation: 'spin 1s linear infinite',
+            margin: '0 auto 16px'
+          }}></div>
+          <p>Loading...</p>
         </div>
       </div>
     );
