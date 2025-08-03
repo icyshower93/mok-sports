@@ -3,7 +3,7 @@ import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { ThemeProvider } from "@/hooks/use-theme";
+// import { ThemeProvider } from "@/hooks/use-theme";
 import { AuthProvider, useAuth } from "@/hooks/use-auth";
 import { usePushNotifications } from "@/hooks/use-push-notifications";
 import { DesktopQR } from "@/components/desktop-qr";
@@ -158,14 +158,12 @@ function AppContent() {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider defaultTheme="dark" storageKey="mok-sports-theme">
-        <TooltipProvider>
-          <AuthProvider>
-            <Toaster />
-            <AppContent />
-          </AuthProvider>
-        </TooltipProvider>
-      </ThemeProvider>
+      <TooltipProvider>
+        <AuthProvider>
+          <Toaster />
+          <AppContent />
+        </AuthProvider>
+      </TooltipProvider>
     </QueryClientProvider>
   );
 }

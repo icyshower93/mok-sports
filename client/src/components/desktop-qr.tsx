@@ -3,12 +3,12 @@ import QRCode from 'qrcode';
 
 export function DesktopQR() {
   const [qrCodeDataUrl, setQrCodeDataUrl] = useState<string>('');
-  const currentUrl = window.location.href;
+  const appUrl = 'https://mok-sports-draft-mokfantasysport.replit.app';
 
   useEffect(() => {
     const generateQR = async () => {
       try {
-        const dataUrl = await QRCode.toDataURL(currentUrl, {
+        const dataUrl = await QRCode.toDataURL(appUrl, {
           width: 200,
           margin: 2,
           color: {
@@ -23,7 +23,7 @@ export function DesktopQR() {
     };
 
     generateQR();
-  }, [currentUrl]);
+  }, [appUrl]);
 
   return (
     <div style={{
@@ -68,6 +68,17 @@ export function DesktopQR() {
               />
             </div>
           )}
+          
+          <div style={{ marginBottom: '16px', color: '#6b7280', fontSize: '12px' }}>
+            <code style={{ 
+              backgroundColor: '#e5e7eb', 
+              padding: '4px 8px', 
+              borderRadius: '4px',
+              color: '#374151'
+            }}>
+              {appUrl}
+            </code>
+          </div>
           
           <div style={{ textAlign: 'left', color: '#6b7280', fontSize: '14px' }}>
             <p>1. <strong>Scan this QR code</strong> with your phone camera</p>
