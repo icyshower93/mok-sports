@@ -83,19 +83,7 @@ export function usePushNotifications(): UsePushNotificationsReturn {
     }
   }, [isSupported, user]);
 
-  // Auto-request permission for iOS PWA users on app load
-  useEffect(() => {
-    if (isIOS && isIOSPWA && isSupported && user && permission === 'default') {
-      console.log('[PWA Debug] iOS PWA detected with user logged in, auto-requesting permission in 2 seconds');
-      // Small delay to ensure app is fully loaded and user sees the interface
-      const timer = setTimeout(() => {
-        console.log('[PWA Debug] Triggering auto permission request');
-        requestPermission();
-      }, 2000);
-      
-      return () => clearTimeout(timer);
-    }
-  }, [isIOS, isIOSPWA, isSupported, user, permission]);
+  // Define requestPermission function first
 
   const requestPermission = useCallback(async () => {
     console.log('[PWA Debug] Requesting permission:', {
@@ -142,7 +130,7 @@ export function usePushNotifications(): UsePushNotificationsReturn {
     } finally {
       setIsLoading(false);
     }
-  }, [isSupported, isIOS, isIOSPWA, needsPWAInstall, requestPermission]);
+  }, [isSupported, isIOS, isIOSPWA, needsPWAInstall]);
 
   const getVapidKey = useCallback(async (): Promise<string> => {
     const response = await fetch(VAPID_KEY_ENDPOINT, {
@@ -267,6 +255,20 @@ export function usePushNotifications(): UsePushNotificationsReturn {
       setIsLoading(false);
     }
   }, [isSubscribed, user]);
+
+  // Auto-request permission for iOS PWA users on app load
+  useEffect(() => {
+    if (isIOS && isIOSPWA && isSupported && user && permission === 'default') {
+      console.log('[PWA Debug] iOS PWA detected with user logged in, auto-requesting permission in 2 seconds');
+      // Small delay to ensure app is fully loaded and user sees the interface
+      const timer = setTimeout(() => {
+        console.log('[PWA Debug] Triggering auto permission request');
+        requestPermission();
+      }, 2000);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [isIOS, isIOSPWA, isSupported, user, permission, requestPermission]);
 
   return {
     isSupported,

@@ -55,10 +55,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   });
 
   useEffect(() => {
+    console.log('[Auth Debug] User state changed:', { user, isAuthenticated });
     if (user) {
       setIsAuthenticated(true);
+    } else {
+      setIsAuthenticated(false);
     }
-  }, [user]);
+  }, [user, isAuthenticated]);
 
   // Check URL params for auth success/error
   useEffect(() => {
@@ -66,12 +69,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const authStatus = urlParams.get("auth");
     const error = urlParams.get("error");
 
+    console.log('[Auth Debug] URL params check:', { authStatus, error, currentURL: window.location.href });
+
     if (authStatus === "success") {
+      console.log('[Auth Debug] Auth success detected, invalidating queries');
       setIsAuthenticated(true);
       queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
       // Clean up URL
       window.history.replaceState({}, document.title, "/");
     } else if (error) {
+      console.log('[Auth Debug] Auth error detected:', error);
       setIsAuthenticated(false);
       // Clean up URL
       window.history.replaceState({}, document.title, "/");

@@ -15,7 +15,9 @@ import { LeagueWaiting } from "@/pages/league-waiting";
 import NotFound from "@/pages/not-found";
 
 function AppContent() {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading, user } = useAuth();
+
+  console.log('[App Debug] Current state:', { isAuthenticated, isLoading, hasUser: !!user });
 
   if (isLoading) {
     return (
