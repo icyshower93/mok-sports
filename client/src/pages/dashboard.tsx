@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/use-auth";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { MainLayout } from "@/components/layout/main-layout";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -24,6 +24,28 @@ export default function DashboardPage() {
   const [leagueName, setLeagueName] = useState("");
   const [joinCode, setJoinCode] = useState("");
   const [showNotificationPrompt, setShowNotificationPrompt] = useState(false);
+
+  // Check if user is already in a league
+  const { data: userLeagues } = useQuery({
+    queryKey: ['/api/leagues/user'],
+    enabled: !!user,
+  });
+
+  // Redirect to league waiting room if user is already in a league
+  useEffect(() => {
+    // Check if user explicitly wants to stay on dashboard (e.g., after leaving a league)
+    const urlParams = new URLSearchParams(window.location.search);
+    const shouldStay = urlParams.get('stay') === 'true';
+    
+    if (!shouldStay && userLeagues && userLeagues.length > 0) {
+      // Find the most recent active league
+      const activeLeague = userLeagues.find((league: any) => league.isActive);
+      if (activeLeague) {
+        setLocation(`/league/waiting?id=${activeLeague.id}`);
+        return;
+      }
+    }
+  }, [userLeagues, setLocation]);
 
   // Show notification prompt for newly logged in users
   useEffect(() => {
