@@ -6,12 +6,10 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Plus, UserPlus, RefreshCw, Bell } from "lucide-react";
+import { Plus, UserPlus, RefreshCw } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useLocation } from "wouter";
-import { PushNotificationCard } from "@/components/push-notifications";
-import { IOSPWABanner } from "@/components/ios-pwa-banner";
-import { usePushNotifications } from "@/hooks/use-push-notifications";
+
 
 interface League {
   id: string;
@@ -24,20 +22,11 @@ interface League {
 
 export default function DashboardPage() {
   // All hooks must be declared at the very top, before any conditionals
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [, setLocation] = useLocation();
-  const { 
-    isIOS, 
-    isIOSPWA, 
-    needsPWAInstall, 
-    sendTestNotification, 
-    forcePermissionCheck,
-    permission,
-    isSupported,
-    requestPermission 
-  } = usePushNotifications();
+
   
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [joinDialogOpen, setJoinDialogOpen] = useState(false);
@@ -161,21 +150,7 @@ export default function DashboardPage() {
     joinLeagueMutation.mutate(joinCode.trim());
   };
 
-  const handleTestNotification = async () => {
-    try {
-      await sendTestNotification();
-      toast({
-        title: "Test Notification Sent!",
-        description: "Check your device for the notification.",
-      });
-    } catch (error) {
-      toast({
-        title: "Notification Failed",
-        description: error instanceof Error ? error.message : "Failed to send test notification",
-        variant: "destructive",
-      });
-    }
-  };
+
 
   // Early returns after all hooks
   if (!user) {
@@ -202,11 +177,7 @@ export default function DashboardPage() {
 
   return (
     <>
-      <IOSPWABanner 
-        isIOS={isIOS} 
-        isIOSPWA={isIOSPWA} 
-        needsPWAInstall={needsPWAInstall} 
-      />
+
       <MainLayout>
         <div className="max-w-4xl mx-auto space-y-8">
         {/* Welcome Section */}
@@ -215,68 +186,7 @@ export default function DashboardPage() {
             Welcome back, {firstName}!
           </h1>
           
-          {/* Debug & Test Buttons */}
-          <div className="flex flex-col items-center gap-2">
-            <div className="flex gap-2">
-              <Button
-                onClick={handleTestNotification}
-                variant="outline"
-                size="sm"
-                className="text-sm"
-              >
-                <Bell className="w-4 h-4 mr-2" />
-                Send Test Notification
-              </Button>
-              <Button
-                onClick={() => {
-                  const currentPerm = forcePermissionCheck();
-                  toast({
-                    title: "Permission Check",
-                    description: `Current permission: ${currentPerm}`,
-                  });
-                }}
-                variant="outline"
-                size="sm"
-                className="text-sm"
-              >
-                Check Permission
-              </Button>
-            </div>
-            <Button
-              onClick={async () => {
-                try {
-                  await requestPermission();
-                  toast({
-                    title: "Permission Request Sent",
-                    description: "Check if prompt appeared",
-                  });
-                } catch (error) {
-                  toast({
-                    title: "Permission Failed",
-                    description: error instanceof Error ? error.message : "Failed",
-                    variant: "destructive",
-                  });
-                }
-              }}
-              variant="outline"
-              size="sm"
-              className="text-sm"
-            >
-              Manual Permission Request
-            </Button>
-            <Button
-              onClick={() => logout()}
-              variant="outline"
-              size="sm"
-              className="text-sm"
-            >
-              Logout (Test Welcome Notification)
-            </Button>
-            <div className="text-xs text-muted-foreground text-center">
-              Debug: {permission} | iOS: {isIOS ? 'Y' : 'N'} | PWA: {isIOSPWA ? 'Y' : 'N'} | Supported: {isSupported ? 'Y' : 'N'}
-              <br />User: {user ? 'Logged In' : 'Not Logged In'}
-            </div>
-          </div>
+
           {userLeagues.length > 0 ? (
             <div className="space-y-2">
               <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
@@ -421,10 +331,7 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* Push Notification Settings */}
-        <div className="max-w-2xl mx-auto" id="push-notifications-section">
-          <PushNotificationCard />
-        </div>
+
       </div>
     </MainLayout>
     </>

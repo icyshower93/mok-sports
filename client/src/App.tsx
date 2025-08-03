@@ -27,20 +27,10 @@ function AppContent() {
     navigator.userAgent.indexOf('CriOS') === -1 && // Not Chrome on iOS
     navigator.userAgent.indexOf('FxiOS') === -1; // Not Firefox on iOS
 
-  console.log('[Debug] App state:', { 
-    isAuthenticated, 
-    isLoading, 
-    hasUser: !!user, 
-    isIOSSafari,
-    isDesktop: !(/iPad|iPhone|iPod|Android/.test(navigator.userAgent)),
-    userAgent: navigator.userAgent,
-    displayMode: window.matchMedia ? window.matchMedia('(display-mode: standalone)').matches : 'N/A',
-    shouldShowInstallPrompt: isIOSSafari && /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.matchMedia('(display-mode: standalone)').matches
-  });
 
-  // CRITICAL: Only show install prompt for iOS Safari browsers (not desktop or other browsers)
+
+  // Only show install prompt for iOS Safari browsers (not desktop or other browsers)
   if (isIOSSafari && /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.matchMedia('(display-mode: standalone)').matches) {
-    console.log('[iOS Debug] iOS Safari detected - showing install prompt');
     return (
       <div style={{
         minHeight: '100vh',

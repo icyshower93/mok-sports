@@ -41,7 +41,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
           try {
             const subscriptions = await storage.getUserPushSubscriptions(user.id);
             if (subscriptions.length > 0) {
-              console.log(`Sending welcome notification to user ${user.name}`);
               await storage.sendPushNotification(subscriptions, {
                 title: "Welcome back!",
                 body: `Hi ${user.name}, welcome to Mok Sports! 🏈`,
@@ -55,7 +54,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
               });
             }
           } catch (notificationError) {
-            console.error("Failed to send welcome notification:", notificationError);
             // Don't fail auth if notification fails
           }
 
@@ -91,7 +89,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get current user
   app.get("/api/auth/me", (req, res) => {
     const token = req.cookies?.auth_token;
-    console.log("🍪 Auth check - Cookie present:", !!token);
     
     if (!token) {
       return res.status(401).json({ message: "Not authenticated" });
@@ -101,11 +98,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     const user = verifyJWT(token);
     
     if (!user) {
-      console.log("❌ Auth check - Invalid token");
       return res.status(401).json({ message: "Invalid token" });
     }
 
-    console.log("✅ Auth check - User authenticated:", user.email);
     res.json(user);
   });
 
