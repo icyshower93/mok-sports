@@ -11,6 +11,7 @@ import LeaguesPage from "@/pages/leagues";
 import DraftPage from "@/pages/draft";
 import ProfilePage from "@/pages/profile";
 import TeamsPage from "@/pages/teams";
+import { LeagueWaiting } from "@/pages/league-waiting";
 import NotFound from "@/pages/not-found";
 
 function AppContent() {
@@ -46,6 +47,9 @@ function AppContent() {
       </Route>
       <Route path="/teams">
         {isAuthenticated ? <TeamsPage /> : <LoginPage />}
+      </Route>
+      <Route path="/league/waiting">
+        {isAuthenticated ? <LeagueWaiting /> : <LoginPage />}
       </Route>
       <Route component={NotFound} />
     </Switch>

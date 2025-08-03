@@ -220,6 +220,40 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get specific league
+  app.get("/api/leagues/:id", async (req, res) => {
+    try {
+      const token = req.cookies?.auth_token;
+      if (!token) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+
+      const { verifyJWT } = require("./auth");
+      const user = verifyJWT(token);
+      if (!user) {
+        return res.status(401).json({ message: "Invalid token" });
+      }
+
+      const { id } = req.params;
+      const league = await storage.getLeague(id);
+      
+      if (!league) {
+        return res.status(404).json({ message: "League not found" });
+      }
+
+      // Check if user is member of this league
+      const isMember = await storage.isUserInLeague(user.id, id);
+      if (!isMember) {
+        return res.status(403).json({ message: "Not authorized to view this league" });
+      }
+
+      res.json(league);
+    } catch (error) {
+      console.error("Get league error:", error);
+      res.status(500).json({ message: "Failed to fetch league" });
+    }
+  });
+
   // NFL Teams routes
   app.get("/api/nfl-teams", async (req, res) => {
     try {

@@ -64,6 +64,8 @@ export default function DashboardPage() {
         title: "League Created!",
         description: `Your league "${newLeague.name}" has been created successfully.`,
       });
+      // Redirect to league waiting area
+      window.location.href = `/league/waiting?id=${newLeague.id}`;
     },
     onError: (error: any) => {
       toast({
