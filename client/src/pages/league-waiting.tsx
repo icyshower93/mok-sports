@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { MainLayout } from "@/components/layout/main-layout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Copy, Users, Clock, Share2, RefreshCw, LogOut, Crown } from "lucide-react";
+import { Copy, Users, Clock, Share2, RefreshCw, LogOut, Crown, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
 import { useLocation } from "wouter";
@@ -145,6 +145,37 @@ export function LeagueWaiting() {
     }
   };
 
+  // Remove member mutation (creator only)
+  const removeMemberMutation = useMutation({
+    mutationFn: async (userId: string) => {
+      const response = await fetch(`/api/leagues/${leagueId}/remove-member`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ userId }),
+      });
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Failed to remove member');
+      }
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "Member Removed",
+        description: "Member has been removed from the league",
+      });
+      refetch(); // Refresh league data
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to remove member",
+        variant: "destructive",
+      });
+    },
+  });
+
   return (
     <MainLayout>
       <div className="min-h-[70vh] flex items-center justify-center px-4">
@@ -209,6 +240,9 @@ export function LeagueWaiting() {
                 <div className="space-y-2">
                   {league.members?.map((member) => {
                     const isCreator = member.id === league.creatorId;
+                    const isCurrentUser = member.id === user?.id;
+                    const canRemoveMember = user?.id === league.creatorId && !isCurrentUser;
+                    
                     return (
                       <div key={member.id} className="flex items-center gap-3 p-2 rounded-lg bg-muted/50">
                         <Avatar className="w-8 h-8">
@@ -226,6 +260,17 @@ export function LeagueWaiting() {
                             {isCreator ? 'Created' : 'Joined'} {new Date(member.joinedAt).toLocaleDateString()}
                           </p>
                         </div>
+                        {canRemoveMember && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => removeMemberMutation.mutate(member.id)}
+                            disabled={removeMemberMutation.isPending}
+                            className="h-8 w-8 p-0 text-muted-foreground hover:text-destructive"
+                          >
+                            <X className="w-4 h-4" />
+                          </Button>
+                        )}
                       </div>
                     );
                   }) || []}

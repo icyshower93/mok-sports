@@ -291,6 +291,56 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Remove member from league (creator only)
+  app.post("/api/leagues/:id/remove-member", async (req, res) => {
+    try {
+      const token = req.cookies?.auth_token;
+      if (!token) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+
+      const { verifyJWT } = require("./auth");
+      const user = verifyJWT(token);
+      if (!user) {
+        return res.status(401).json({ message: "Invalid token" });
+      }
+
+      const { id } = req.params;
+      const { userId } = req.body;
+
+      if (!userId) {
+        return res.status(400).json({ message: "User ID is required" });
+      }
+
+      // Get league to check if user is the creator
+      const league = await storage.getLeague(id);
+      if (!league) {
+        return res.status(404).json({ message: "League not found" });
+      }
+
+      // Only league creator can remove members
+      if (league.creatorId !== user.id) {
+        return res.status(403).json({ message: "Only league creator can remove members" });
+      }
+
+      // Check if target user is in the league
+      const isMember = await storage.isUserInLeague(userId, id);
+      if (!isMember) {
+        return res.status(400).json({ message: "User is not a member of this league" });
+      }
+
+      // Creator cannot remove themselves this way (they should use leave endpoint)
+      if (userId === user.id) {
+        return res.status(400).json({ message: "Use leave endpoint to remove yourself from league" });
+      }
+
+      await storage.leaveLeague(userId, id);
+      res.json({ message: "Member removed successfully" });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to remove member" });
+    }
+  });
+
   // NFL Teams routes
   app.get("/api/nfl-teams", async (req, res) => {
     try {
