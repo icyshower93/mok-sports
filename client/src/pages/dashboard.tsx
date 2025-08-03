@@ -171,6 +171,7 @@ export default function DashboardPage() {
             <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
               <DialogTrigger asChild>
                 <Button 
+                  className="w-full h-14 text-lg font-semibold"
                   size="lg"
                 >
                   <Plus className="w-6 h-6 mr-3" />
@@ -197,6 +198,7 @@ export default function DashboardPage() {
                     disabled={createLeagueMutation.isPending}
                     className="w-full"
                   >
+                    {createLeagueMutation.isPending ? "Creating..." : "Create League"}
                   </Button>
                 </div>
               </DialogContent>
@@ -235,6 +237,7 @@ export default function DashboardPage() {
                     disabled={joinLeagueMutation.isPending}
                     className="w-full"
                   >
+                    {joinLeagueMutation.isPending ? "Joining..." : "Join League"}
                   </Button>
                 </div>
               </DialogContent>

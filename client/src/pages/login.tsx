@@ -62,6 +62,7 @@ export default function LoginPage() {
               onClick={handleGoogleLogin}
               disabled={isLoading || isLoggingIn || oauthLoading || !oauthConfigured}
               variant="outline"
+              className="w-full h-12 text-base font-semibold"
             >
               {isLoggingIn ? (
                 <Loader2 className="w-4 h-4 animate-spin mr-2" />
