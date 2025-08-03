@@ -17,7 +17,6 @@ import DraftPage from "@/pages/draft";
 import ProfilePage from "@/pages/profile";
 import TeamsPage from "@/pages/teams";
 import { LeagueWaiting } from "@/pages/league-waiting";
-import NotificationDebug from "@/pages/notification-debug";
 import NotFound from "@/pages/not-found";
 
 function AppContent() {
@@ -72,7 +71,6 @@ function AppContent() {
         <Route path="/draft" component={DraftPage} />
         <Route path="/teams" component={TeamsPage} />
         <Route path="/profile" component={ProfilePage} />
-        <Route path="/debug/notifications" component={NotificationDebug} />
         <Route component={NotFound} />
       </Switch>
       {!isPWA && window.innerWidth >= 768 && <DesktopNotice />}

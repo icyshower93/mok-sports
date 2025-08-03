@@ -11,7 +11,6 @@ import { useToast } from "@/hooks/use-toast";
 import { useLocation } from "wouter";
 import { usePushNotifications } from "@/hooks/use-push-notifications";
 import { NotificationPrompt } from "@/components/notification-prompt";
-import { NotificationSetup } from "@/components/notifications/notification-setup";
 
 export default function DashboardPage() {
   const { user, logout } = useAuth();
@@ -214,21 +213,6 @@ export default function DashboardPage() {
               />
             </div>
           )}
-
-          {/* Notification Setup */}
-          <NotificationSetup />
-          
-          {/* Debug Link for troubleshooting */}
-          <div className="text-center">
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              onClick={() => setLocation('/debug/notifications')}
-              className="text-muted-foreground"
-            >
-              Notification Troubleshooting
-            </Button>
-          </div>
 
           {/* Main Action Buttons */}
           <div className="space-y-4">
