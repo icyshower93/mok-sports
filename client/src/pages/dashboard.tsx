@@ -7,7 +7,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Plus, UserPlus, RefreshCw } from "lucide-react";
-import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { useLocation } from "wouter";
 
@@ -21,6 +20,7 @@ interface League {
 }
 
 export default function DashboardPage() {
+  // All hooks must be declared at the very top, before any conditionals
   const { user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -29,71 +29,20 @@ export default function DashboardPage() {
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [joinDialogOpen, setJoinDialogOpen] = useState(false);
   const [leagueName, setLeagueName] = useState("");
-  const [maxTeams, setMaxTeams] = useState("6");
   const [joinCode, setJoinCode] = useState("");
 
-  // Check if user is already in a league - only if user exists
-  const { data: userLeagues, isLoading: leaguesLoading, error: leaguesError } = useQuery<League[]>({
+  // Query for user leagues
+  const userLeaguesQuery = useQuery<League[]>({
     queryKey: ['/api/leagues/user'],
     enabled: !!user,
   });
-
-  // Redirect to waiting room if user is already in a league
-  useEffect(() => {
-    if (!leaguesLoading && !leaguesError && userLeagues && Array.isArray(userLeagues) && userLeagues.length > 0) {
-      const activeLeague = userLeagues[0];
-      console.log('Redirecting to league waiting room:', activeLeague.id);
-      setLocation(`/league/waiting?id=${activeLeague.id}`);
-    }
-  }, [userLeagues, leaguesLoading, leaguesError, setLocation]);
-
-  // Early returns for loading states
-  if (!user) {
-    return null;
-  }
-
-  if (leaguesLoading) {
-    return (
-      <MainLayout>
-        <div className="min-h-[70vh] flex items-center justify-center">
-          <div className="text-center">
-            <RefreshCw className="w-8 h-8 animate-spin mx-auto mb-4 text-fantasy-green" />
-            <p className="text-muted-foreground">Checking your leagues...</p>
-          </div>
-        </div>
-      </MainLayout>
-    );
-  }
-
-  // If user has leagues and we're not loading, they'll be redirected by the useEffect
-  if (!leaguesError && userLeagues && Array.isArray(userLeagues) && userLeagues.length > 0) {
-    return (
-      <MainLayout>
-        <div className="min-h-[70vh] flex items-center justify-center">
-          <div className="text-center">
-            <RefreshCw className="w-8 h-8 animate-spin mx-auto mb-4 text-fantasy-green" />
-            <p className="text-muted-foreground">Redirecting to your league...</p>
-          </div>
-        </div>
-      </MainLayout>
-    );
-  }
-
-  // Log error but continue to show dashboard
-  if (leaguesError) {
-    console.error('Failed to load user leagues:', leaguesError);
-  }
-
-  const firstName = user.name.split(" ")[0];
 
   // Create league mutation
   const createLeagueMutation = useMutation({
     mutationFn: async (data: { name: string; maxTeams: number }) => {
       const response = await fetch('/api/leagues', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
         body: JSON.stringify(data),
       });
@@ -110,12 +59,10 @@ export default function DashboardPage() {
       queryClient.invalidateQueries({ queryKey: ["/api/leagues/user"] });
       setCreateDialogOpen(false);
       setLeagueName("");
-      setMaxTeams("6");
       toast({
         title: "League Created!",
         description: `Your league "${newLeague.name}" has been created successfully.`,
       });
-      // Redirect to league waiting area
       setLocation(`/league/waiting?id=${newLeague.id}`);
     },
     onError: (error: any) => {
@@ -132,9 +79,7 @@ export default function DashboardPage() {
     mutationFn: async (code: string) => {
       const response = await fetch('/api/leagues/join', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
         body: JSON.stringify({ joinCode: code }),
       });
@@ -152,13 +97,10 @@ export default function DashboardPage() {
       setJoinDialogOpen(false);
       setJoinCode("");
       toast({
-        title: "Joined League!",  
-        description: `Successfully joined "${result.league?.name}".`,
+        title: "Joined League!",
+        description: `You've successfully joined "${result.league.name}".`,
       });
-      // Redirect to league waiting area
-      if (result.league) {
-        setLocation(`/league/waiting?id=${result.league.id}`);
-      }
+      setLocation(`/league/waiting?id=${result.league.id}`);
     },
     onError: (error: any) => {
       toast({
@@ -169,6 +111,16 @@ export default function DashboardPage() {
     },
   });
 
+  // Auto-redirect effect
+  useEffect(() => {
+    const leagues = userLeaguesQuery.data;
+    if (!userLeaguesQuery.isLoading && !userLeaguesQuery.error && leagues && leagues.length > 0) {
+      const activeLeague = leagues[0];
+      setLocation(`/league/waiting?id=${activeLeague.id}`);
+    }
+  }, [userLeaguesQuery.data, userLeaguesQuery.isLoading, userLeaguesQuery.error, setLocation]);
+
+  // Handle form submissions
   const handleCreateLeague = () => {
     if (!leagueName.trim()) {
       toast({
@@ -178,47 +130,92 @@ export default function DashboardPage() {
       });
       return;
     }
-
-    createLeagueMutation.mutate({ 
-      name: leagueName.trim(), 
-      maxTeams: parseInt(maxTeams) 
-    });
+    createLeagueMutation.mutate({ name: leagueName.trim(), maxTeams: 6 });
   };
 
   const handleJoinLeague = () => {
     if (!joinCode.trim()) {
       toast({
-        title: "Error", 
-        description: "Please enter a league code",
+        title: "Error",
+        description: "Please enter a join code",
         variant: "destructive",
       });
       return;
     }
-
     joinLeagueMutation.mutate(joinCode.trim());
   };
 
+  // Early returns after all hooks
+  if (!user) {
+    return null;
+  }
+
+  if (userLeaguesQuery.isLoading) {
+    return (
+      <MainLayout>
+        <div className="min-h-[70vh] flex items-center justify-center">
+          <div className="text-center">
+            <RefreshCw className="w-8 h-8 animate-spin mx-auto mb-4 text-fantasy-green" />
+            <p className="text-muted-foreground">Checking your leagues...</p>
+          </div>
+        </div>
+      </MainLayout>
+    );
+  }
+
+  // If user has leagues, show redirecting state
+  if (userLeaguesQuery.data && userLeaguesQuery.data.length > 0) {
+    return (
+      <MainLayout>
+        <div className="min-h-[70vh] flex items-center justify-center">
+          <div className="text-center">
+            <RefreshCw className="w-8 h-8 animate-spin mx-auto mb-4 text-fantasy-green" />
+            <p className="text-muted-foreground">Redirecting to your league...</p>
+          </div>
+        </div>
+      </MainLayout>
+    );
+  }
+
+  const firstName = user.name.split(" ")[0];
+
   return (
     <MainLayout>
-      <div className="min-h-[70vh] flex items-center justify-center">
-        <div className="fantasy-card fantasy-gradient-green p-8 md:p-12 text-white text-center max-w-2xl mx-auto">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 md:mb-6">
-            Welcome to Mok Sports! 🏆
+      <div className="max-w-4xl mx-auto space-y-8">
+        {/* Welcome Section */}
+        <div className="text-center space-y-4">
+          <h1 className="text-4xl font-bold text-foreground">
+            Welcome back, {firstName}!
           </h1>
-          <p className="text-white/90 text-lg md:text-xl mb-8 md:mb-12">
-            Get started by creating your first league or joining an existing one
+          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+            Ready to draft your dream team? Create a new league or join an existing one to get started.
           </p>
-          
-          <div className="flex flex-col gap-4 sm:gap-6 justify-center">
-            {/* Create League Dialog */}
+        </div>
+
+        {/* Action Cards */}
+        <div className="grid md:grid-cols-2 gap-6">
+          {/* Create League Card */}
+          <div className="bg-card border border-border rounded-lg p-6 space-y-4">
+            <div className="flex items-center space-x-3">
+              <div className="w-12 h-12 bg-fantasy-green/10 rounded-lg flex items-center justify-center">
+                <Plus className="w-6 h-6 text-fantasy-green" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-foreground">Create League</h3>
+                <p className="text-sm text-muted-foreground">Start a new 6-team league</p>
+              </div>
+            </div>
+            <p className="text-muted-foreground">
+              Create your own league and invite friends to join. You'll be the commissioner with full control over league settings.
+            </p>
+            
             <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
               <DialogTrigger asChild>
-                <Button className="bg-white text-fantasy-green hover:bg-white/90 font-bold shadow-xl px-6 py-4 sm:px-12 sm:py-6 text-lg sm:text-xl rounded-2xl w-full sm:w-auto min-h-[60px]">
-                  <Plus className="w-6 h-6 sm:w-8 sm:h-8 mr-3 sm:mr-4 flex-shrink-0" />
-                  <span className="whitespace-nowrap">Create Your League</span>
+                <Button className="w-full bg-fantasy-green hover:bg-fantasy-green/90 text-white">
+                  Create New League
                 </Button>
               </DialogTrigger>
-              <DialogContent className="sm:max-w-md">
+              <DialogContent>
                 <DialogHeader>
                   <DialogTitle>Create New League</DialogTitle>
                 </DialogHeader>
@@ -229,76 +226,84 @@ export default function DashboardPage() {
                       id="league-name"
                       value={leagueName}
                       onChange={(e) => setLeagueName(e.target.value)}
-                      placeholder="Enter league name"
-                      maxLength={50}
-                      autoFocus={false}
-                      tabIndex={-1}
-                      onFocus={(e) => e.target.setAttribute('tabindex', '0')}
+                      placeholder="Enter league name..."
+                      autoFocus
                     />
                   </div>
-                  <div className="flex space-x-3 pt-4">
-                    <Button
-                      variant="outline"
-                      onClick={() => setCreateDialogOpen(false)}
-                      className="flex-1"
-                    >
-                      Cancel
-                    </Button>
-                    <Button
-                      onClick={handleCreateLeague}
-                      disabled={createLeagueMutation.isPending}
-                      className="flex-1 bg-fantasy-green hover:bg-fantasy-green/90"
-                    >
-                      {createLeagueMutation.isPending ? "Creating..." : "Create"}
-                    </Button>
+                  <div className="bg-muted/50 p-3 rounded-lg">
+                    <p className="text-sm text-muted-foreground">
+                      <strong>League Settings:</strong> 6 teams maximum (preset)
+                    </p>
                   </div>
+                  <Button
+                    onClick={handleCreateLeague}
+                    disabled={createLeagueMutation.isPending}
+                    className="w-full bg-fantasy-green hover:bg-fantasy-green/90 text-white"
+                  >
+                    {createLeagueMutation.isPending ? (
+                      <>
+                        <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+                        Creating...
+                      </>
+                    ) : (
+                      "Create League"
+                    )}
+                  </Button>
                 </div>
               </DialogContent>
             </Dialog>
+          </div>
+
+          {/* Join League Card */}
+          <div className="bg-card border border-border rounded-lg p-6 space-y-4">
+            <div className="flex items-center space-x-3">
+              <div className="w-12 h-12 bg-trust-blue/10 rounded-lg flex items-center justify-center">
+                <UserPlus className="w-6 h-6 text-trust-blue" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-foreground">Join League</h3>
+                <p className="text-sm text-muted-foreground">Enter a friend's league</p>
+              </div>
+            </div>
+            <p className="text-muted-foreground">
+              Have a join code from a friend? Enter it below to join their league and start drafting together.
+            </p>
             
-            {/* Join League Dialog */}
             <Dialog open={joinDialogOpen} onOpenChange={setJoinDialogOpen}>
               <DialogTrigger asChild>
-                <Button className="bg-white/10 border-2 border-white text-white hover:bg-white hover:text-fantasy-green font-bold shadow-xl px-6 py-4 sm:px-12 sm:py-6 text-lg sm:text-xl rounded-2xl w-full sm:w-auto min-h-[60px]">
-                  <UserPlus className="w-6 h-6 sm:w-8 sm:h-8 mr-3 sm:mr-4 flex-shrink-0" />
-                  <span className="whitespace-nowrap">Join a League</span>
+                <Button variant="outline" className="w-full border-trust-blue text-trust-blue hover:bg-trust-blue/10">
+                  Join Existing League
                 </Button>
               </DialogTrigger>
-              <DialogContent className="sm:max-w-md">
+              <DialogContent>
                 <DialogHeader>
                   <DialogTitle>Join League</DialogTitle>
                 </DialogHeader>
                 <div className="space-y-4">
                   <div>
-                    <Label htmlFor="join-code">League Code</Label>
+                    <Label htmlFor="join-code">League Join Code</Label>
                     <Input
                       id="join-code"
                       value={joinCode}
-                      onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
-                      placeholder="Enter 6-character code"
-                      maxLength={6}
-                      className="uppercase"
-                      autoFocus={false}
-                      tabIndex={-1}
-                      onFocus={(e) => e.target.setAttribute('tabindex', '0')}
+                      onChange={(e) => setJoinCode(e.target.value)}
+                      placeholder="Enter join code..."
+                      autoFocus
                     />
                   </div>
-                  <div className="flex space-x-3 pt-4">
-                    <Button
-                      variant="outline"
-                      onClick={() => setJoinDialogOpen(false)}
-                      className="flex-1"
-                    >
-                      Cancel
-                    </Button>
-                    <Button
-                      onClick={handleJoinLeague}
-                      disabled={joinLeagueMutation.isPending}
-                      className="flex-1 bg-fantasy-green hover:bg-fantasy-green/90"
-                    >
-                      {joinLeagueMutation.isPending ? "Joining..." : "Join"}
-                    </Button>
-                  </div>
+                  <Button
+                    onClick={handleJoinLeague}
+                    disabled={joinLeagueMutation.isPending}
+                    className="w-full bg-trust-blue hover:bg-trust-blue/90 text-white"
+                  >
+                    {joinLeagueMutation.isPending ? (
+                      <>
+                        <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+                        Joining...
+                      </>
+                    ) : (
+                      "Join League"
+                    )}
+                  </Button>
                 </div>
               </DialogContent>
             </Dialog>
