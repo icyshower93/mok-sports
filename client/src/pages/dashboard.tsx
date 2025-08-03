@@ -130,7 +130,20 @@ export default function DashboardPage() {
       });
       return;
     }
-    joinLeagueMutation.mutate(joinCode.trim());
+    joinLeagueMutation.mutate();
+  };
+
+  const showWelcomeNotification = () => {
+    if ('Notification' in window && Notification.permission === 'granted') {
+      new Notification("Welcome to Mok Sports! 🏈", {
+        body: `Hey ${firstName}! You're all set to receive draft alerts, league updates, and game notifications.`,
+        icon: '/icon-192x192.png',
+        badge: '/icon-72x72.png',
+        tag: 'welcome',
+        requireInteraction: false,
+        silent: false
+      });
+    }
   };
 
   if (!user) {
@@ -157,9 +170,11 @@ export default function DashboardPage() {
           {showNotificationPrompt && (
             <div className="mb-6">
               <NotificationPrompt
-                isProminent={true}
-                context="post-login"
-                onPermissionGranted={() => setShowNotificationPrompt(false)}
+                onPermissionGranted={() => {
+                  setShowNotificationPrompt(false);
+                  // Send welcome notification
+                  showWelcomeNotification();
+                }}
                 onDismiss={() => setShowNotificationPrompt(false)}
               />
             </div>
@@ -247,9 +262,7 @@ export default function DashboardPage() {
           {permission === 'default' && !showNotificationPrompt && (
             <div className="mt-8">
               <NotificationPrompt
-                isProminent={false}
-                context="dashboard"
-                onPermissionGranted={() => {}}
+                onPermissionGranted={() => showWelcomeNotification()}
                 onDismiss={() => {}}
               />
             </div>
