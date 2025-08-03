@@ -56,22 +56,6 @@
   </head>
   <body>
     <div id="root"></div>
-    <script>
-      // Basic iOS Safari debugging
-      console.log('[iOS Debug] Starting app load...');
-      console.log('[iOS Debug] User agent:', navigator.userAgent);
-      console.log('[iOS Debug] Screen dimensions:', window.screen.width, 'x', window.screen.height);
-      console.log('[iOS Debug] Viewport dimensions:', window.innerWidth, 'x', window.innerHeight);
-      
-      // Add emergency fallback if main app fails to load
-      setTimeout(function() {
-        const root = document.getElementById('root');
-        if (!root || root.children.length === 0) {
-          console.error('[iOS Debug] App failed to load, showing emergency fallback');
-          root.innerHTML = '<div style="min-height:100vh;background:#10b981;display:flex;align-items:center;justify-content:center;color:white;font-family:sans-serif;text-align:center;padding:20px"><div><h1>Mok Sports</h1><p>Loading issue detected on iOS Safari</p><button onclick="window.location.reload()" style="background:white;color:#10b981;border:none;padding:10px 20px;border-radius:5px;margin-top:10px">Reload App</button></div></div>';
-        }
-      }, 5000);
-    </script>
     <script type="module" src="/src/main.tsx"></script>
     <!-- This is a replit script which adds a banner on the top of the page when opened in development mode outside the replit environment -->
     <script type="text/javascript" src="https://replit.com/public/js/replit-dev-banner.js"></script>

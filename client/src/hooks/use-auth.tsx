@@ -55,12 +55,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   });
 
   useEffect(() => {
-    console.log('[Auth Debug] User state changed:', { user, isAuthenticated, isLoading });
     if (user) {
-      console.log('[Auth Debug] Setting authenticated to true');
       setIsAuthenticated(true);
     } else if (!isLoading) {
-      console.log('[Auth Debug] Setting authenticated to false');
       setIsAuthenticated(false);
     }
   }, [user, isLoading]);
