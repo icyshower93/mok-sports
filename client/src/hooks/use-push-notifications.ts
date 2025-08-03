@@ -10,6 +10,7 @@ interface UsePushNotificationsReturn {
   isIOS: boolean;
   isIOSPWA: boolean;
   needsPWAInstall: boolean;
+  needsReauthorization: boolean;
   requestPermission: () => Promise<void>;
   subscribe: () => Promise<void>;
   unsubscribe: () => Promise<void>;
@@ -37,7 +38,7 @@ export function usePushNotifications(): UsePushNotificationsReturn {
   );
   const needsPWAInstall = isIOS && !isIOSPWA;
 
-  // Debug logging for iOS detection
+  // Debug logging for iOS detection and permission status
   useEffect(() => {
     if (isIOS) {
       console.log('[PWA Debug] iOS detected:', {
@@ -48,10 +49,19 @@ export function usePushNotifications(): UsePushNotificationsReturn {
         needsPWAInstall,
         notificationPermission: Notification.permission,
         pushManagerSupported: 'PushManager' in window,
-        serviceWorkerSupported: 'serviceWorker' in navigator
+        serviceWorkerSupported: 'serviceWorker' in navigator,
+        hasUser: !!user
       });
+      
+      // Check for permission denial issue
+      if (Notification.permission === 'denied') {
+        console.log('[PWA Debug] Notification permission is DENIED. User needs to:');
+        console.log('1. Go to iOS Settings > Safari > Advanced > Website Data');
+        console.log('2. Search for your domain and remove data');
+        console.log('3. Or try adding fresh from home screen');
+      }
     }
-  }, [isIOS, isIOSPWA, needsPWAInstall]);
+  }, [isIOS, isIOSPWA, needsPWAInstall, user]);
 
   // Check if push notifications are supported
   const isSupported = typeof window !== 'undefined' && 
@@ -121,9 +131,11 @@ export function usePushNotifications(): UsePushNotificationsReturn {
       setPermission(result);
 
       if (result === 'denied') {
-        setError('Notification permission was denied. Please enable notifications in your device settings.');
+        setError('Notification permission was denied. To reset: Go to iOS Settings > Safari > Advanced > Website Data, find this site and remove it, then add the app to home screen again.');
       } else if (result === 'granted') {
         console.log('[PWA Debug] Permission granted successfully');
+        // Auto-subscribe after permission is granted
+        await subscribe();
       }
     } catch (err) {
       console.error('Error requesting permission:', err);

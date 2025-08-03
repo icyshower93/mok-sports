@@ -46,10 +46,14 @@ function AppContent() {
     );
   }
 
-  // Check if this is iOS Safari browser (not PWA)
-  const isIOSSafari = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.matchMedia('(display-mode: standalone)').matches;
+  // Check if this is iOS Safari browser (not PWA) 
+  const isIOSSafari = typeof window !== 'undefined' && 
+    /iPad|iPhone|iPod/.test(navigator.userAgent) && 
+    !window.matchMedia('(display-mode: standalone)').matches &&
+    !('standalone' in window.navigator && (window.navigator as any).standalone === true);
   
-  if (isIOSSafari && !isAuthenticated && !user && !isLoading) {
+  // For iOS Safari, always show install prompt regardless of auth state
+  if (isIOSSafari) {
     console.log('[iOS Debug] iOS Safari detected, showing PWA install prompt');
     return (
       <div style={{
