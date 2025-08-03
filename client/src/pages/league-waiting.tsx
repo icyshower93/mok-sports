@@ -48,7 +48,7 @@ export function LeagueWaiting() {
 
   // Fetch league details
   const { data: league, isLoading, refetch } = useQuery<League>({
-    queryKey: ['/api/leagues', leagueId],
+    queryKey: [`/api/leagues/${leagueId}`],
     enabled: !!leagueId,
     refetchInterval: 5000, // Refresh every 5 seconds to check for new members
   });
