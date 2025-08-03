@@ -213,6 +213,7 @@ self.addEventListener('push', (event) => {
     try {
       const pushData = event.data.json();
       notificationData = { ...notificationData, ...pushData };
+      console.log('[SW] Parsed notification data:', notificationData);
     } catch (error) {
       console.error('[SW] Error parsing push data:', error);
       notificationData.body = event.data.text() || notificationData.body;

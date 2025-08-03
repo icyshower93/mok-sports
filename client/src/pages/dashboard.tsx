@@ -24,7 +24,7 @@ interface League {
 
 export default function DashboardPage() {
   // All hooks must be declared at the very top, before any conditionals
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [, setLocation] = useLocation();
@@ -263,6 +263,14 @@ export default function DashboardPage() {
               className="text-sm"
             >
               Manual Permission Request
+            </Button>
+            <Button
+              onClick={() => logout()}
+              variant="outline"
+              size="sm"
+              className="text-sm"
+            >
+              Logout (Test Welcome Notification)
             </Button>
             <div className="text-xs text-muted-foreground text-center">
               Debug: {permission} | iOS: {isIOS ? 'Y' : 'N'} | PWA: {isIOSPWA ? 'Y' : 'N'} | Supported: {isSupported ? 'Y' : 'N'}

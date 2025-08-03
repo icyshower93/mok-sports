@@ -20,7 +20,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     app.get("/api/auth/google/callback",
       passport.authenticate("google", { session: false }),
-      (req, res) => {
+      async (req, res) => {
         try {
           const user = req.user as any;
           if (!user) {
@@ -36,6 +36,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
             sameSite: "lax",
             maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
           });
+
+          // Send welcome notification if user has active push subscriptions
+          try {
+            const subscriptions = await storage.getUserPushSubscriptions(user.id);
+            if (subscriptions.length > 0) {
+              console.log(`Sending welcome notification to user ${user.name}`);
+              await storage.sendPushNotification(subscriptions, {
+                title: "Welcome back!",
+                body: `Hi ${user.name}, welcome to Mok Sports! 🏈`,
+                icon: "/icon-192x192.png",
+                badge: "/icon-72x72.png",
+                data: {
+                  url: "/",
+                  type: "welcome",
+                  timestamp: Date.now()
+                }
+              });
+            }
+          } catch (notificationError) {
+            console.error("Failed to send welcome notification:", notificationError);
+            // Don't fail auth if notification fails
+          }
 
           res.redirect("/?auth=success");
         } catch (error) {
