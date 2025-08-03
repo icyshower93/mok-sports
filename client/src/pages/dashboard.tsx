@@ -113,17 +113,7 @@ export default function DashboardPage() {
     },
   });
 
-  // Auto-redirect effect - disabled to allow testing notifications on dashboard
-  // useEffect(() => {
-  //   const leagues = userLeaguesQuery.data;
-  //   const params = new URLSearchParams(window.location.search);
-  //   const skipAutoRedirect = params.get('stay') === 'true';
-  //   
-  //   if (!userLeaguesQuery.isLoading && !userLeaguesQuery.error && leagues && leagues.length > 0 && !skipAutoRedirect) {
-  //     const activeLeague = leagues[0];
-  //     setLocation(`/league/waiting?id=${activeLeague.id}`);
-  //   }
-  // }, [userLeaguesQuery.data, userLeaguesQuery.isLoading, userLeaguesQuery.error, setLocation]);
+  // Auto-redirect disabled - users should manually choose league action
 
   // Handle form submissions
   const handleCreateLeague = () => {
@@ -185,50 +175,21 @@ export default function DashboardPage() {
           <h1 className="text-4xl font-bold text-foreground">
             Welcome back, {firstName}!
           </h1>
-          
-
-          {userLeagues.length > 0 ? (
-            <div className="space-y-2">
-              <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-                You have {userLeagues.length} active league{userLeagues.length > 1 ? 's' : ''}. Join one or create a new league.
-              </p>
-              <div className="flex flex-wrap justify-center gap-2">
-                {userLeagues.map((league) => (
-                  <Button
-                    key={league.id}
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setLocation(`/league/waiting?id=${league.id}`)}
-                    className="text-xs"
-                  >
-                    {league.name} ({league.memberCount}/{league.maxTeams})
-                  </Button>
-                ))}
-              </div>
-            </div>
-          ) : (
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Ready to draft your dream team? Create a new league or join an existing one to get started.
-            </p>
-          )}
+          <p className="text-xl text-muted-foreground">
+            Ready to draft your dream team?
+          </p>
         </div>
 
         {/* Action Cards */}
-        <div className="grid md:grid-cols-2 gap-6">
+        <div className="grid md:grid-cols-2 gap-6 max-w-2xl mx-auto">
           {/* Create League Card */}
           <div className="bg-card border border-border rounded-lg p-6 space-y-4">
-            <div className="flex items-center space-x-3">
-              <div className="w-12 h-12 bg-fantasy-green/10 rounded-lg flex items-center justify-center">
-                <Plus className="w-6 h-6 text-fantasy-green" />
+            <div className="text-center space-y-3">
+              <div className="w-16 h-16 bg-fantasy-green/10 rounded-full flex items-center justify-center mx-auto">
+                <Plus className="w-8 h-8 text-fantasy-green" />
               </div>
-              <div>
-                <h3 className="text-lg font-semibold text-foreground">Create League</h3>
-                <p className="text-sm text-muted-foreground">Start a new 6-team league</p>
-              </div>
+              <h3 className="text-xl font-semibold text-foreground">Create League</h3>
             </div>
-            <p className="text-muted-foreground">
-              Create your own league and invite friends to join. You'll be the commissioner with full control over league settings.
-            </p>
             
             <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
               <DialogTrigger asChild>
@@ -277,18 +238,12 @@ export default function DashboardPage() {
 
           {/* Join League Card */}
           <div className="bg-card border border-border rounded-lg p-6 space-y-4">
-            <div className="flex items-center space-x-3">
-              <div className="w-12 h-12 bg-trust-blue/10 rounded-lg flex items-center justify-center">
-                <UserPlus className="w-6 h-6 text-trust-blue" />
+            <div className="text-center space-y-3">
+              <div className="w-16 h-16 bg-trust-blue/10 rounded-full flex items-center justify-center mx-auto">
+                <UserPlus className="w-8 h-8 text-trust-blue" />
               </div>
-              <div>
-                <h3 className="text-lg font-semibold text-foreground">Join League</h3>
-                <p className="text-sm text-muted-foreground">Enter a friend's league</p>
-              </div>
+              <h3 className="text-xl font-semibold text-foreground">Join League</h3>
             </div>
-            <p className="text-muted-foreground">
-              Have a join code from a friend? Enter it below to join their league and start drafting together.
-            </p>
             
             <Dialog open={joinDialogOpen} onOpenChange={setJoinDialogOpen}>
               <DialogTrigger asChild>
