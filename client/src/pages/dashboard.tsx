@@ -193,7 +193,7 @@ export default function DashboardPage() {
                   Create League
                 </Button>
               </DialogTrigger>
-              <DialogContent>
+              <DialogContent onOpenAutoFocus={(e) => e.preventDefault()}>
                 <DialogHeader>
                   <DialogTitle>Create New League</DialogTitle>
                 </DialogHeader>
@@ -233,7 +233,7 @@ export default function DashboardPage() {
                   Join League
                 </Button>
               </DialogTrigger>
-              <DialogContent>
+              <DialogContent onOpenAutoFocus={(e) => e.preventDefault()}>
                 <DialogHeader>
                   <DialogTitle>Join Existing League</DialogTitle>
                 </DialogHeader>
