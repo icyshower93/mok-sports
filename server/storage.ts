@@ -150,9 +150,10 @@ export class DatabaseStorage implements IStorage {
   }
 
   async leaveLeague(userId: string, leagueId: string): Promise<void> {
-    await db
+    const result = await db
       .delete(leagueMembers)
       .where(and(eq(leagueMembers.userId, userId), eq(leagueMembers.leagueId, leagueId)));
+    console.log(`Leave league result for user ${userId} from league ${leagueId}:`, result);
   }
 
   async isUserInLeague(userId: string, leagueId: string): Promise<boolean> {

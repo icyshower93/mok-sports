@@ -12,7 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useLocation } from "wouter";
 
 interface League {
-  id: number;
+  id: string;
   name: string;
   joinCode: string;
   maxTeams: number;
@@ -33,16 +33,19 @@ export default function DashboardPage() {
   const [joinCode, setJoinCode] = useState("");
 
   // Check if user is already in a league
-  const { data: userLeagues, isLoading: leaguesLoading } = useQuery({
+  const { data: userLeagues, isLoading: leaguesLoading } = useQuery<League[]>({
     queryKey: ['/api/leagues/user'],
     enabled: !!user,
   });
 
   // Redirect to waiting room if user is already in a league
   useEffect(() => {
-    if (userLeagues && userLeagues.length > 0) {
+    if (userLeagues && Array.isArray(userLeagues) && userLeagues.length > 0) {
       const activeLeague = userLeagues[0]; // User should only be in one league at a time
+      console.log('Redirecting to league waiting room:', activeLeague.id);
       setLocation(`/league/waiting?id=${activeLeague.id}`);
+    } else if (userLeagues && Array.isArray(userLeagues) && userLeagues.length === 0) {
+      console.log('User has no leagues, staying on dashboard');
     }
   }, [userLeagues, setLocation]);
 
@@ -65,7 +68,7 @@ export default function DashboardPage() {
   }
 
   // If user is in a league, this component shouldn't render (redirected by useEffect)
-  if (userLeagues && userLeagues.length > 0) {
+  if (userLeagues && Array.isArray(userLeagues) && userLeagues.length > 0) {
     return null;
   }
 
