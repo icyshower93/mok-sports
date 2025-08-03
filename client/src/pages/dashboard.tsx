@@ -217,6 +217,18 @@ export default function DashboardPage() {
 
           {/* Notification Setup */}
           <NotificationSetup />
+          
+          {/* Debug Link for troubleshooting */}
+          <div className="text-center">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={() => setLocation('/debug/notifications')}
+              className="text-muted-foreground"
+            >
+              Notification Troubleshooting
+            </Button>
+          </div>
 
           {/* Main Action Buttons */}
           <div className="space-y-4">
