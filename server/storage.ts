@@ -194,11 +194,25 @@ export class DatabaseStorage implements IStorage {
 
   // Push notification methods
   getVapidKeys(): { publicKey: string; privateKey: string } {
-    // Generate VAPID keys if not set in environment
-    const publicKey = process.env.VAPID_PUBLIC_KEY || 'BEqy6z3xFdqr6UhtpYNRRhV9Tr3dTb5qr6P-9UwG4uRy3V4iQJcj_PfgHgXxVV2r8tAW5RQgE8O1UgQy1U3k7Ow';
-    const privateKey = process.env.VAPID_PRIVATE_KEY || 'CQxfQDR_XXQX7WCw7BPiUqfzNtNxCNcl6VQI3a_x3Ek';
+    // Use environment variables or generate valid VAPID keys
+    let publicKey = process.env.VAPID_PUBLIC_KEY;
+    let privateKey = process.env.VAPID_PRIVATE_KEY;
+    
+    // If no environment keys, generate new ones
+    if (!publicKey || !privateKey) {
+      const webpush = require('web-push');
+      const vapidKeys = webpush.generateVAPIDKeys();
+      publicKey = vapidKeys.publicKey;
+      privateKey = vapidKeys.privateKey;
+      
+      console.log('🔑 Generated new VAPID keys:');
+      console.log('Public Key:', publicKey);
+      console.log('Private Key:', privateKey);
+      console.log('Add these to your environment variables for persistence!');
+    }
     
     // Set up web-push with VAPID details
+    const webpush = require('web-push');
     webpush.setVapidDetails(
       'mailto:admin@moksports.com',
       publicKey,
