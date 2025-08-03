@@ -1,44 +1,23 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/use-auth";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { MainLayout } from "@/components/layout/main-layout";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Plus, UserPlus, RefreshCw, Bell } from "lucide-react";
+import { Plus, UserPlus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useLocation } from "wouter";
-import { PushNotificationCard } from "@/components/push-notifications";
-import { IOSPWABanner } from "@/components/ios-pwa-banner";
 import { usePushNotifications } from "@/hooks/use-push-notifications";
 import { NotificationPrompt } from "@/components/notification-prompt";
 
-interface League {
-  id: string;
-  name: string;
-  joinCode: string;
-  maxTeams: number;
-  memberCount: number;
-  isCreator: boolean;
-}
-
 export default function DashboardPage() {
-  // All hooks must be declared at the very top, before any conditionals
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [, setLocation] = useLocation();
-  const { 
-    isIOS, 
-    isIOSPWA, 
-    needsPWAInstall, 
-    sendTestNotification, 
-    forcePermissionCheck,
-    permission,
-    isSupported,
-    requestPermission 
-  } = usePushNotifications();
+  const { permission } = usePushNotifications();
   
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [joinDialogOpen, setJoinDialogOpen] = useState(false);
@@ -46,16 +25,15 @@ export default function DashboardPage() {
   const [joinCode, setJoinCode] = useState("");
   const [showNotificationPrompt, setShowNotificationPrompt] = useState(false);
 
-  // Show prominent notification prompt for newly logged in users
+  // Show notification prompt for newly logged in users
   useEffect(() => {
     if (user && permission === 'default') {
-      // Check if user just logged in (within last 5 minutes) and hasn't seen prompt
       const loginTime = sessionStorage.getItem('login-time');
       const promptShown = sessionStorage.getItem('notification-prompt-shown');
       
       if (loginTime && !promptShown) {
         const timeSinceLogin = Date.now() - parseInt(loginTime);
-        if (timeSinceLogin < 5 * 60 * 1000) { // 5 minutes
+        if (timeSinceLogin < 5 * 60 * 1000) {
           setShowNotificationPrompt(true);
           sessionStorage.setItem('notification-prompt-shown', 'true');
         }
@@ -63,39 +41,30 @@ export default function DashboardPage() {
     }
   }, [user, permission]);
 
-  // Query for user leagues
-  const userLeaguesQuery = useQuery<League[]>({
-    queryKey: ['/api/leagues/user'],
-    enabled: !!user,
-  });
-
   // Create league mutation
   const createLeagueMutation = useMutation({
     mutationFn: async (data: { name: string; maxTeams: number }) => {
-      const response = await fetch('/api/leagues', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
+      const response = await fetch("/api/leagues", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
-      
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.message || 'Failed to create league');
+        throw new Error(error.message || "Failed to create league");
       }
-      
       return response.json();
     },
-    onSuccess: (newLeague) => {
+    onSuccess: (result: any) => {
       queryClient.invalidateQueries({ queryKey: ["/api/leagues"] });
       queryClient.invalidateQueries({ queryKey: ["/api/leagues/user"] });
       setCreateDialogOpen(false);
       setLeagueName("");
       toast({
         title: "League Created!",
-        description: `Your league "${newLeague.name}" has been created successfully.`,
+        description: `"${result.league.name}" has been created successfully.`,
       });
-      setLocation(`/league/waiting?id=${newLeague.id}`);
+      setLocation(`/league/waiting?id=${result.league.id}`);
     },
     onError: (error: any) => {
       toast({
@@ -108,22 +77,19 @@ export default function DashboardPage() {
 
   // Join league mutation
   const joinLeagueMutation = useMutation({
-    mutationFn: async (code: string) => {
-      const response = await fetch('/api/leagues/join', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ joinCode: code }),
+    mutationFn: async () => {
+      const response = await fetch("/api/leagues/join", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ joinCode }),
       });
-      
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.message || 'Failed to join league');
+        throw new Error(error.message || "Failed to join league");
       }
-      
       return response.json();
     },
-    onSuccess: (result) => {
+    onSuccess: (result: any) => {
       queryClient.invalidateQueries({ queryKey: ["/api/leagues"] });
       queryClient.invalidateQueries({ queryKey: ["/api/leagues/user"] });
       setJoinDialogOpen(false);
@@ -143,19 +109,6 @@ export default function DashboardPage() {
     },
   });
 
-  // Auto-redirect effect - disabled to allow testing notifications on dashboard
-  // useEffect(() => {
-  //   const leagues = userLeaguesQuery.data;
-  //   const params = new URLSearchParams(window.location.search);
-  //   const skipAutoRedirect = params.get('stay') === 'true';
-  //   
-  //   if (!userLeaguesQuery.isLoading && !userLeaguesQuery.error && leagues && leagues.length > 0 && !skipAutoRedirect) {
-  //     const activeLeague = leagues[0];
-  //     setLocation(`/league/waiting?id=${activeLeague.id}`);
-  //   }
-  // }, [userLeaguesQuery.data, userLeaguesQuery.isLoading, userLeaguesQuery.error, setLocation]);
-
-  // Handle form submissions
   const handleCreateLeague = () => {
     if (!leagueName.trim()) {
       toast({
@@ -180,61 +133,27 @@ export default function DashboardPage() {
     joinLeagueMutation.mutate(joinCode.trim());
   };
 
-  const handleTestNotification = async () => {
-    try {
-      await sendTestNotification();
-      toast({
-        title: "Test Notification Sent!",
-        description: "Check your device for the notification.",
-      });
-    } catch (error) {
-      toast({
-        title: "Notification Failed",
-        description: error instanceof Error ? error.message : "Failed to send test notification",
-        variant: "destructive",
-      });
-    }
-  };
-
-  // Early returns after all hooks
   if (!user) {
     return null;
   }
 
-  if (userLeaguesQuery.isLoading) {
-    return (
-      <MainLayout>
-        <div className="min-h-[70vh] flex items-center justify-center">
-          <div className="text-center">
-            <RefreshCw className="w-8 h-8 animate-spin mx-auto mb-4 text-fantasy-green" />
-            <p className="text-muted-foreground">Checking your leagues...</p>
-          </div>
-        </div>
-      </MainLayout>
-    );
-  }
-
-
-
-  const firstName = user.name.split(" ")[0];
-  const userLeagues = userLeaguesQuery.data || [];
+  const firstName = user.name?.split(" ")[0] || "Player";
 
   return (
-    <>
-      <IOSPWABanner 
-        isIOS={isIOS} 
-        isIOSPWA={isIOSPWA} 
-        needsPWAInstall={needsPWAInstall} 
-      />
-      <MainLayout>
-        <div className="max-w-4xl mx-auto space-y-8">
-        {/* Welcome Section */}
-        <div className="text-center space-y-4">
-          <h1 className="text-4xl font-bold text-foreground">
-            Welcome back, {firstName}!
-          </h1>
+    <MainLayout>
+      <div className="min-h-screen flex flex-col items-center justify-center px-4 py-8">
+        <div className="w-full max-w-md space-y-8">
+          {/* Welcome Header */}
+          <div className="text-center space-y-2">
+            <h1 className="text-3xl font-bold text-fantasy-green">
+              Welcome, {firstName}!
+            </h1>
+            <p className="text-muted-foreground">
+              Ready to draft entire teams? Let's get started.
+            </p>
+          </div>
           
-          {/* Prominent notification prompt for post-login users */}
+          {/* Notification Prompt */}
           {showNotificationPrompt && (
             <div className="mb-6">
               <NotificationPrompt
@@ -245,116 +164,17 @@ export default function DashboardPage() {
               />
             </div>
           )}
-          
-          {/* Debug & Test Buttons */}
-          <div className="flex flex-col items-center gap-2">
-            <div className="flex gap-2">
-              <Button
-                onClick={handleTestNotification}
-                variant="outline"
-                size="sm"
-                className="text-sm"
-              >
-                <Bell className="w-4 h-4 mr-2" />
-                Send Test Notification
-              </Button>
-              <Button
-                onClick={() => {
-                  const currentPerm = forcePermissionCheck();
-                  toast({
-                    title: "Permission Check",
-                    description: `Current permission: ${currentPerm}`,
-                  });
-                }}
-                variant="outline"
-                size="sm"
-                className="text-sm"
-              >
-                Check Permission
-              </Button>
-            </div>
-            <Button
-              onClick={async () => {
-                try {
-                  await requestPermission();
-                  toast({
-                    title: "Permission Request Sent",
-                    description: "Check if prompt appeared",
-                  });
-                } catch (error) {
-                  toast({
-                    title: "Permission Failed",
-                    description: error instanceof Error ? error.message : "Failed",
-                    variant: "destructive",
-                  });
-                }
-              }}
-              variant="outline"
-              size="sm"
-              className="text-sm"
-            >
-              Manual Permission Request
-            </Button>
-            <Button
-              onClick={() => logout()}
-              variant="outline"
-              size="sm"
-              className="text-sm"
-            >
-              Logout (Test Welcome Notification)
-            </Button>
-            <div className="text-xs text-muted-foreground text-center">
-              Debug: {permission} | iOS: {isIOS ? 'Y' : 'N'} | PWA: {isIOSPWA ? 'Y' : 'N'} | Supported: {isSupported ? 'Y' : 'N'}
-              <br />User: {user ? 'Logged In' : 'Not Logged In'}
-            </div>
-          </div>
-          {userLeagues.length > 0 ? (
-            <div className="space-y-2">
-              <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-                You have {userLeagues.length} active league{userLeagues.length > 1 ? 's' : ''}. Join one or create a new league.
-              </p>
-              <div className="flex flex-wrap justify-center gap-2">
-                {userLeagues.map((league) => (
-                  <Button
-                    key={league.id}
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setLocation(`/league/waiting?id=${league.id}`)}
-                    className="text-xs"
-                  >
-                    {league.name} ({league.memberCount}/{league.maxTeams})
-                  </Button>
-                ))}
-              </div>
-            </div>
-          ) : (
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Ready to draft your dream team? Create a new league or join an existing one to get started.
-            </p>
-          )}
-        </div>
 
-        {/* Action Cards */}
-        <div className="grid md:grid-cols-2 gap-6">
-          {/* Create League Card */}
-          <div className="bg-card border border-border rounded-lg p-6 space-y-4">
-            <div className="flex items-center space-x-3">
-              <div className="w-12 h-12 bg-fantasy-green/10 rounded-lg flex items-center justify-center">
-                <Plus className="w-6 h-6 text-fantasy-green" />
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold text-foreground">Create League</h3>
-                <p className="text-sm text-muted-foreground">Start a new 6-team league</p>
-              </div>
-            </div>
-            <p className="text-muted-foreground">
-              Create your own league and invite friends to join. You'll be the commissioner with full control over league settings.
-            </p>
-            
+          {/* Main Action Buttons */}
+          <div className="space-y-4">
+            {/* Create League Button */}
             <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
               <DialogTrigger asChild>
-                <Button className="w-full bg-fantasy-green hover:bg-fantasy-green/90 text-white">
-                  Create New League
+                <Button 
+                  size="lg"
+                >
+                  <Plus className="w-6 h-6 mr-3" />
+                  Create League
                 </Button>
               </DialogTrigger>
               <DialogContent>
@@ -368,96 +188,71 @@ export default function DashboardPage() {
                       id="league-name"
                       value={leagueName}
                       onChange={(e) => setLeagueName(e.target.value)}
-                      placeholder="Enter league name..."
-                      autoFocus
+                      placeholder="Enter league name"
+                      className="mt-1"
                     />
-                  </div>
-                  <div className="bg-muted/50 p-3 rounded-lg">
-                    <p className="text-sm text-muted-foreground">
-                      <strong>League Settings:</strong> 6 teams maximum (preset)
-                    </p>
                   </div>
                   <Button
                     onClick={handleCreateLeague}
                     disabled={createLeagueMutation.isPending}
-                    className="w-full bg-fantasy-green hover:bg-fantasy-green/90 text-white"
+                    className="w-full"
                   >
-                    {createLeagueMutation.isPending ? (
-                      <>
-                        <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
-                        Creating...
-                      </>
-                    ) : (
-                      "Create League"
-                    )}
                   </Button>
                 </div>
               </DialogContent>
             </Dialog>
-          </div>
 
-          {/* Join League Card */}
-          <div className="bg-card border border-border rounded-lg p-6 space-y-4">
-            <div className="flex items-center space-x-3">
-              <div className="w-12 h-12 bg-trust-blue/10 rounded-lg flex items-center justify-center">
-                <UserPlus className="w-6 h-6 text-trust-blue" />
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold text-foreground">Join League</h3>
-                <p className="text-sm text-muted-foreground">Enter a friend's league</p>
-              </div>
-            </div>
-            <p className="text-muted-foreground">
-              Have a join code from a friend? Enter it below to join their league and start drafting together.
-            </p>
-            
+            {/* Join League Button */}
             <Dialog open={joinDialogOpen} onOpenChange={setJoinDialogOpen}>
               <DialogTrigger asChild>
-                <Button variant="outline" className="w-full border-trust-blue text-trust-blue hover:bg-trust-blue/10">
-                  Join Existing League
+                <Button 
+                  variant="outline" 
+                  className="w-full h-14 text-lg font-semibold border-2"
+                  size="lg"
+                >
+                  <UserPlus className="w-6 h-6 mr-3" />
+                  Join League
                 </Button>
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
-                  <DialogTitle>Join League</DialogTitle>
+                  <DialogTitle>Join Existing League</DialogTitle>
                 </DialogHeader>
                 <div className="space-y-4">
                   <div>
-                    <Label htmlFor="join-code">League Join Code</Label>
+                    <Label htmlFor="join-code">League Code</Label>
                     <Input
                       id="join-code"
                       value={joinCode}
-                      onChange={(e) => setJoinCode(e.target.value)}
-                      placeholder="Enter join code..."
-                      autoFocus
+                      onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
+                      placeholder="Enter 6-letter code"
+                      maxLength={6}
+                      className="mt-1 text-center text-lg font-mono tracking-wider"
                     />
                   </div>
                   <Button
                     onClick={handleJoinLeague}
                     disabled={joinLeagueMutation.isPending}
-                    className="w-full bg-trust-blue hover:bg-trust-blue/90 text-white"
+                    className="w-full"
                   >
-                    {joinLeagueMutation.isPending ? (
-                      <>
-                        <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
-                        Joining...
-                      </>
-                    ) : (
-                      "Join League"
-                    )}
                   </Button>
                 </div>
               </DialogContent>
             </Dialog>
           </div>
-        </div>
 
-        {/* Push Notification Settings */}
-        <div className="max-w-2xl mx-auto" id="push-notifications-section">
-          <PushNotificationCard />
+          {permission === 'default' && !showNotificationPrompt && (
+            <div className="mt-8">
+              <NotificationPrompt
+                isProminent={false}
+                context="dashboard"
+                onPermissionGranted={() => {}}
+                onDismiss={() => {}}
+              />
+            </div>
+          )}
         </div>
       </div>
     </MainLayout>
-    </>
   );
 }

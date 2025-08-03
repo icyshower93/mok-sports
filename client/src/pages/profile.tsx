@@ -51,7 +51,6 @@ export default function ProfilePage() {
               <Button
                 onClick={handleLogout}
                 variant="outline"
-                className="text-red-600 border-red-200 hover:bg-red-50 hover:border-red-300"
               >
                 <LogOut className="w-4 h-4 mr-2" />
                 Sign Out

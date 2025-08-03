@@ -25,7 +25,6 @@ const corsOptions = {
       return callback(null, true);
     }
     
-    console.log(`⚠️ CORS blocked origin: ${origin}`);
     callback(new Error('Not allowed by CORS'), false);
   },
   credentials: true, // Allow cookies to be sent
@@ -72,12 +71,9 @@ app.use((req, res, next) => {
 (async () => {
   // Initialize VAPID keys on startup
   const { storage } = await import("./storage");
-  console.log('🔑 Initializing VAPID keys...');
   try {
     const vapidKeys = storage.getVapidKeys();
-    console.log('✅ VAPID keys initialized successfully');
   } catch (error) {
-    console.error('❌ Failed to initialize VAPID keys:', error);
   }
 
   const server = await registerRoutes(app);

@@ -26,7 +26,7 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export function AuthProvider({ children }: { children: ReactNode }) {
+export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const queryClient = useQueryClient();
 
@@ -57,12 +57,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const hasUser = !!user;
-    console.log('[Auth] Authentication state update:', { hasUser, userEmail: (user as any)?.email, isLoading });
     setIsAuthenticated(hasUser && !isLoading);
     
-    // Handle authentication errors
     if (error && !isLoading) {
-      console.error('[Auth] Authentication error:', error);
       setIsAuthenticated(false);
     }
   }, [user, error, isLoading]);
@@ -73,27 +70,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const authStatus = urlParams.get("auth");
     const error = urlParams.get("error");
 
-    console.log('[Auth Debug] URL params check:', { authStatus, error, currentURL: window.location.href });
-
     if (authStatus === "success") {
-      console.log('[Auth Debug] Auth success detected, invalidating queries');
       setIsAuthenticated(true);
-      // Mark login time for notification prompt
       sessionStorage.setItem('login-time', Date.now().toString());
       queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
-      // Clean up URL
       window.history.replaceState({}, document.title, "/");
     } else if (error) {
-      console.log('[Auth Debug] Auth error detected:', error);
       setIsAuthenticated(false);
-      // Clean up URL
       window.history.replaceState({}, document.title, "/");
     }
   }, [queryClient]);
 
   const login = () => {
     if (!oauthConfig?.oauthConfigured) {
-      console.error("OAuth is not configured");
       return;
     }
     window.location.href = "/api/auth/google";

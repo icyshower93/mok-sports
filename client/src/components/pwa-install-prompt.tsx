@@ -21,9 +21,7 @@ export function PWAInstallPrompt() {
       try {
         await installPrompt.prompt();
         const { outcome } = await installPrompt.userChoice;
-        console.log('[PWA] Install prompt result:', outcome);
       } catch (error) {
-        console.error('[PWA] Install prompt failed:', error);
       }
     }
   };
@@ -77,8 +75,9 @@ export function PWAInstallPrompt() {
               </div>
             </div>
           ) : (
-            // Android/Chrome installation
-            <div className="space-y-3">
+            <>
+              {/* Android/Chrome installation */}
+              <div className="space-y-3">
               {installPrompt ? (
                 <Button 
                   onClick={handleInstallClick}
@@ -95,7 +94,8 @@ export function PWAInstallPrompt() {
                   </p>
                 </div>
               )}
-            </div>
+              </div>
+            </>
           )}
 
           <div className="text-center">

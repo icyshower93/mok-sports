@@ -12,11 +12,8 @@ const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
 let isOAuthConfigured = false;
 
 if (!GOOGLE_CLIENT_ID || !GOOGLE_CLIENT_SECRET) {
-  console.warn("⚠️  Google OAuth not configured: GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET environment variables are missing");
-  console.warn("⚠️  OAuth authentication will be disabled. Users will not be able to sign in with Google.");
 } else {
   isOAuthConfigured = true;
-  console.log("✅ Google OAuth configured successfully");
 }
 
 // Get the base URL for redirects
@@ -43,7 +40,6 @@ const getBaseUrl = () => {
 // Only configure Google OAuth strategy if credentials are available
 if (isOAuthConfigured && GOOGLE_CLIENT_ID && GOOGLE_CLIENT_SECRET) {
   const callbackURL = `${getBaseUrl()}/api/auth/google/callback`;
-  console.log(`🔗 OAuth callback URL: ${callbackURL}`);
   
   passport.use(
     new GoogleStrategy(
@@ -131,16 +127,7 @@ export function verifyJWT(token: string) {
 export function authenticateJWT(req: Request, res: Response, next: NextFunction) {
   const token = req.cookies?.auth_token;
   
-  console.log(`🍪 Auth check - Cookie present: ${!!token}`);
-  console.log(`🍪 All cookies:`, Object.keys(req.cookies || {}));
-  console.log(`🍪 Headers:`, {
-    cookie: req.headers.cookie?.substring(0, 100) + '...',
-    origin: req.headers.origin,
-    userAgent: req.headers['user-agent']?.substring(0, 50) + '...'
-  });
-  
   if (!token) {
-    console.log(`🚫 No auth token found in cookies`);
     return res.status(401).json({ 
       message: "Not authenticated",
       reason: "no_token",
@@ -153,11 +140,9 @@ export function authenticateJWT(req: Request, res: Response, next: NextFunction)
 
   try {
     const decoded = jwt.verify(token, JWT_SECRET) as any;
-    console.log(`✅ JWT verified for user: ${decoded.email}`);
     req.user = decoded;
     next();
   } catch (error) {
-    console.error("🚫 JWT verification failed:", error);
     res.clearCookie("auth_token", {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",

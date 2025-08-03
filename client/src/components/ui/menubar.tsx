@@ -8,31 +8,26 @@ import { cn } from "@/lib/utils"
 
 function MenubarMenu({
   ...props
-}: React.ComponentProps<typeof MenubarPrimitive.Menu>) {
   return <MenubarPrimitive.Menu {...props} />
 }
 
 function MenubarGroup({
   ...props
-}: React.ComponentProps<typeof MenubarPrimitive.Group>) {
   return <MenubarPrimitive.Group {...props} />
 }
 
 function MenubarPortal({
   ...props
-}: React.ComponentProps<typeof MenubarPrimitive.Portal>) {
   return <MenubarPrimitive.Portal {...props} />
 }
 
 function MenubarRadioGroup({
   ...props
-}: React.ComponentProps<typeof MenubarPrimitive.RadioGroup>) {
   return <MenubarPrimitive.RadioGroup {...props} />
 }
 
 function MenubarSub({
   ...props
-}: React.ComponentProps<typeof MenubarPrimitive.Sub>) {
   return <MenubarPrimitive.Sub data-slot="menubar-sub" {...props} />
 }
 
@@ -69,7 +64,6 @@ MenubarTrigger.displayName = MenubarPrimitive.Trigger.displayName
 const MenubarSubTrigger = React.forwardRef<
   React.ElementRef<typeof MenubarPrimitive.SubTrigger>,
   React.ComponentPropsWithoutRef<typeof MenubarPrimitive.SubTrigger> & {
-    inset?: boolean
   }
 >(({ className, inset, children, ...props }, ref) => (
   <MenubarPrimitive.SubTrigger
@@ -130,7 +124,6 @@ MenubarContent.displayName = MenubarPrimitive.Content.displayName
 const MenubarItem = React.forwardRef<
   React.ElementRef<typeof MenubarPrimitive.Item>,
   React.ComponentPropsWithoutRef<typeof MenubarPrimitive.Item> & {
-    inset?: boolean
   }
 >(({ className, inset, ...props }, ref) => (
   <MenubarPrimitive.Item
@@ -193,7 +186,6 @@ MenubarRadioItem.displayName = MenubarPrimitive.RadioItem.displayName
 const MenubarLabel = React.forwardRef<
   React.ElementRef<typeof MenubarPrimitive.Label>,
   React.ComponentPropsWithoutRef<typeof MenubarPrimitive.Label> & {
-    inset?: boolean
   }
 >(({ className, inset, ...props }, ref) => (
   <MenubarPrimitive.Label
@@ -223,7 +215,6 @@ MenubarSeparator.displayName = MenubarPrimitive.Separator.displayName
 const MenubarShortcut = ({
   className,
   ...props
-}: React.HTMLAttributes<HTMLSpanElement>) => {
   return (
     <span
       className={cn(

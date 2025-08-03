@@ -20,12 +20,12 @@ interface League {
   memberCount: number;
   isActive: boolean;
   createdAt: string;
-  members?: Array<{
+  members: {
     id: string;
     name: string;
     avatar: string | null;
     joinedAt: string;
-  }>;
+  }[];
 }
 
 export function LeagueWaiting() {
@@ -247,7 +247,7 @@ export function LeagueWaiting() {
                     <p className="text-sm text-muted-foreground mb-4">
                       All {league.maxTeams} teams have joined. The draft will begin soon.
                     </p>
-                    <Button className="bg-fantasy-green hover:bg-fantasy-green/90">
+                    <Button className="mt-3 w-full" onClick={() => setLocation('/draft')}>
                       Start Draft
                     </Button>
                   </div>
@@ -270,7 +270,6 @@ export function LeagueWaiting() {
                 <Button
                   variant="ghost"
                   onClick={leaveLeague}
-                  className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950"
                 >
                   <LogOut className="w-4 h-4 mr-2" />
                   Leave League

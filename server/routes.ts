@@ -41,18 +41,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
             path: '/'
           };
           
-          console.log(`🍪 Setting auth cookie with options:`, cookieOptions);
-          console.log(`🍪 Token preview:`, token.substring(0, 20) + '...');
           
           res.cookie("auth_token", token, cookieOptions);
 
           // Note: Welcome notifications are now handled by the client-side post-login flow
           // This ensures proper timing and user interaction context for notifications
 
-          console.log(`🔄 Redirecting after successful auth for user: ${user.email}`);
           res.redirect("/?auth=success");
         } catch (error) {
-          console.error("Auth callback error:", error);
           res.redirect("/?error=auth_failed");
         }
       }
@@ -82,7 +78,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get current user
   app.get("/api/auth/me", (req, res) => {
     const token = req.cookies?.auth_token;
-    console.log("🍪 Auth check - Cookie present:", !!token);
     
     if (!token) {
       return res.status(401).json({ message: "Not authenticated" });
@@ -92,11 +87,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     const user = verifyJWT(token);
     
     if (!user) {
-      console.log("❌ Auth check - Invalid token");
       return res.status(401).json({ message: "Invalid token" });
     }
 
-    console.log("✅ Auth check - User authenticated:", user.email);
     res.json(user);
   });
 
@@ -164,7 +157,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
           errors: error.errors 
         });
       }
-      console.error("Create league error:", error);
       res.status(500).json({ message: "Failed to create league" });
     }
   });
@@ -185,7 +177,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const leagues = await storage.getUserLeagues(user.id);
       res.json(leagues);
     } catch (error) {
-      console.error("Get user leagues error:", error);
       res.status(500).json({ message: "Failed to fetch leagues" });
     }
   });
@@ -234,7 +225,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       res.json({ message: "Successfully joined league", league });
     } catch (error) {
-      console.error("Join league error:", error);
       res.status(500).json({ message: "Failed to join league" });
     }
   });
@@ -268,7 +258,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       res.json(league);
     } catch (error) {
-      console.error("Get league error:", error);
       res.status(500).json({ message: "Failed to fetch league" });
     }
   });
@@ -298,7 +287,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       await storage.leaveLeague(user.id, id);
       res.json({ message: "Successfully left league" });
     } catch (error) {
-      console.error("Leave league error:", error);
       res.status(500).json({ message: "Failed to leave league" });
     }
   });
@@ -318,7 +306,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       res.json(teamsWithLogos);
     } catch (error) {
-      console.error("Get NFL teams error:", error);
       res.status(500).json({ message: "Failed to fetch NFL teams" });
     }
   });
@@ -342,7 +329,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const vapidKeys = storage.getVapidKeys();
       res.json({ publicKey: vapidKeys.publicKey });
     } catch (error) {
-      console.error("Error getting VAPID key:", error);
       res.status(500).json({ message: "Failed to get VAPID key" });
     }
   });
@@ -369,7 +355,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       res.json({ success: true, subscription: pushSubscription });
     } catch (error) {
-      console.error("Error saving push subscription:", error);
       res.status(500).json({ message: "Failed to save push subscription" });
     }
   });
@@ -389,7 +374,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       await storage.deactivatePushSubscriptions(user.id);
       res.json({ success: true });
     } catch (error) {
-      console.error("Error unsubscribing from push notifications:", error);
       res.status(500).json({ message: "Failed to unsubscribe" });
     }
   });
@@ -427,7 +411,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const results = await storage.sendPushNotification(subscriptions, notification);
       res.json({ success: true, sent: results.length });
     } catch (error) {
-      console.error("Error sending test notification:", error);
       res.status(500).json({ message: "Failed to send test notification" });
     }
   });

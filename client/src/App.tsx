@@ -7,7 +7,7 @@ import { ThemeProvider } from "@/hooks/use-theme";
 import { AuthProvider, useAuth } from "@/hooks/use-auth";
 import { usePWADetection } from "@/hooks/use-pwa-detection";
 import { PWAInstallPrompt } from "@/components/pwa-install-prompt";
-import { DebugPanel } from "@/components/debug-panel";
+
 import { ErrorBoundary } from "@/components/error-boundary";
 import { NotificationBanner } from "@/components/notification-banner";
 import LoginPage from "@/pages/login";
@@ -23,21 +23,12 @@ function AppContent() {
   const { isAuthenticated, isLoading, user } = useAuth();
   const { isPWA } = usePWADetection();
 
-  console.log('[Debug] App state:', { 
-    isAuthenticated, 
-    isLoading, 
-    hasUser: !!user,
-    isPWA
-  });
-
   // Show install prompt if not in PWA mode
   if (!isPWA) {
-    console.log('[PWA] Showing install prompt');
     return <PWAInstallPrompt />;
   }
 
   if (isLoading && !user) {
-    console.log('[Debug] Showing loading screen');
     return (
       <div style={{
         minHeight: '100vh',
@@ -55,7 +46,7 @@ function AppContent() {
             borderTop: '2px solid transparent',
             borderRadius: '50%',
             animation: 'spin 1s linear infinite',
-            margin: '0 auto 16px'
+            margin: '0 auto 16px auto'
           }}></div>
           <p>Loading...</p>
         </div>
@@ -63,42 +54,23 @@ function AppContent() {
     );
   }
 
-  console.log('[Debug] Rendering main app - bypassed install prompt');
+  if (!isAuthenticated) {
+    return <LoginPage />;
+  }
+
 
   return (
     <>
-      {/* Show notification banner after login in PWA mode */}
-      {(isAuthenticated || user) && isPWA && <NotificationBanner />}
-      
       <Switch>
-        <Route path="/login">
-          <LoginPage />
-        </Route>
-        <Route path="/">
-          {(isAuthenticated || user) ? <DashboardPage /> : <LoginPage />}
-        </Route>
-        <Route path="/leagues">
-          {(isAuthenticated || user) ? <LeaguesPage /> : <LoginPage />}
-        </Route>
-        <Route path="/draft">
-          {(isAuthenticated || user) ? <DraftPage /> : <LoginPage />}
-        </Route>
-        <Route path="/profile">
-          {(isAuthenticated || user) ? <ProfilePage /> : <LoginPage />}
-        </Route>
-        <Route path="/teams">
-          {(isAuthenticated || user) ? <TeamsPage /> : <LoginPage />}
-        </Route>
-        <Route path="/league/waiting">
-          {(isAuthenticated || user) ? <LeagueWaiting /> : <LoginPage />}
-        </Route>
+        <Route path="/login" component={LoginPage} />
+        <Route path="/" component={DashboardPage} />
+        <Route path="/leagues" component={LeaguesPage} />
+        <Route path="/league/waiting" component={LeagueWaiting} />
+        <Route path="/draft" component={DraftPage} />
+        <Route path="/teams" component={TeamsPage} />
+        <Route path="/profile" component={ProfilePage} />
         <Route component={NotFound} />
       </Switch>
-      
-      {/* Debug panel - only show in development or when query param is present */}
-      {(import.meta.env.DEV || new URLSearchParams(window.location.search).has('debug')) && (
-        <DebugPanel />
-      )}
     </>
   );
 }

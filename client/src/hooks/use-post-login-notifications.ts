@@ -23,7 +23,6 @@ export function usePostLoginNotifications() {
     showEnableBanner: false,
     isProcessing: false,
     error: null,
-    lastWelcomeNotificationSent: null
   });
 
   // Check if notifications are supported in current environment
@@ -42,18 +41,15 @@ export function usePostLoginNotifications() {
         setState(prev => ({
           ...prev,
           lastWelcomeNotificationSent: parsedState.lastWelcomeNotificationSent,
-          isFirstTimeSetup: !parsedState.lastWelcomeNotificationSent
         }));
       } else {
         setState(prev => ({ ...prev, isFirstTimeSetup: true }));
       }
     } catch (error) {
-      console.error('[Notifications] Error loading saved state:', error);
     }
   }, [user?.id]);
 
   // Save state to localStorage
-  const saveState = useCallback((updates: Partial<PostLoginNotificationState>) => {
     if (!user?.id) return;
     
     try {
@@ -64,12 +60,10 @@ export function usePostLoginNotifications() {
         ...existing,
         ...updates,
         userId: user.id,
-        lastUpdated: Date.now()
       };
       
       localStorage.setItem(`notification_state_${user.id}`, JSON.stringify(newState));
     } catch (error) {
-      console.error('[Notifications] Error saving state:', error);
     }
   }, [user?.id]);
 
@@ -79,7 +73,6 @@ export function usePostLoginNotifications() {
       setState(prev => ({ 
         ...prev, 
         permissionStatus: 'denied',
-        showEnableBanner: false 
       }));
       return;
     }
@@ -94,36 +87,28 @@ export function usePostLoginNotifications() {
         subscriptionActive = !!subscription;
       }
     } catch (error) {
-      console.error('[Notifications] Error checking subscription:', error);
     }
 
     setState(prev => ({
       ...prev,
       permissionStatus: permission,
       subscriptionActive,
-      showEnableBanner: permission === 'default' || (permission === 'granted' && !subscriptionActive)
     }));
 
-    console.log('[Notifications] Status check:', { permission, subscriptionActive });
   }, [isNotificationSupported, isPWA]);
 
   // Request permission and setup subscription (POST-LOGIN ONLY)
-  const requestPermissionPostLogin = useCallback(async (): Promise<boolean> => {
     if (!isAuthenticated || !user || !isNotificationSupported || !isPWA) {
-      console.log('[Notifications] Skipping permission request - not authenticated or not supported');
       return false;
     }
 
     setState(prev => ({ ...prev, isProcessing: true, error: null }));
 
     try {
-      console.log('[Notifications] Requesting permission post-login for user:', user.email);
       
-      // CRITICAL: This must be called from user interaction context
       // On iOS Safari, this MUST be triggered by user gesture
       const permission = await Notification.requestPermission();
       
-      console.log('[Notifications] Permission result:', permission);
       
       if (permission === 'granted') {
         // Create push subscription
@@ -144,7 +129,6 @@ export function usePostLoginNotifications() {
             subscriptionActive: true,
             showEnableBanner: false,
             isFirstTimeSetup: false,
-            isProcessing: false
           }));
           
           return true;
@@ -155,24 +139,20 @@ export function usePostLoginNotifications() {
         ...prev,
         permissionStatus: permission,
         showEnableBanner: permission !== 'granted',
-        isProcessing: false
       }));
       
       return permission === 'granted';
       
     } catch (error) {
-      console.error('[Notifications] Error requesting permission:', error);
       setState(prev => ({
         ...prev,
         error: error instanceof Error ? error.message : 'Permission request failed',
-        isProcessing: false
       }));
       return false;
     }
   }, [isAuthenticated, user, isNotificationSupported, isPWA, state.isFirstTimeSetup, saveState]);
 
   // Create push subscription
-  const createPushSubscription = useCallback(async (): Promise<PushSubscription | null> => {
     try {
       const registration = await navigator.serviceWorker.getRegistration();
       if (!registration) {
@@ -185,7 +165,6 @@ export function usePostLoginNotifications() {
 
       const subscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,
-        applicationServerKey: publicKey
       });
 
       // Send subscription to server
@@ -193,20 +172,16 @@ export function usePostLoginNotifications() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify(subscription)
       });
 
-      console.log('[Notifications] Push subscription created successfully');
       return subscription;
       
     } catch (error) {
-      console.error('[Notifications] Error creating push subscription:', error);
       return null;
     }
   }, []);
 
   // Send welcome notification
-  const sendWelcomeNotification = useCallback(async (type: 'first-time' | 'returning') => {
     try {
       const message = type === 'first-time' 
         ? 'Welcome to Mok Sports! You\'ll receive updates about your leagues and drafts.'
@@ -219,9 +194,7 @@ export function usePostLoginNotifications() {
         body: JSON.stringify({ message, type })
       });
       
-      console.log('[Notifications] Welcome notification sent:', type);
     } catch (error) {
-      console.error('[Notifications] Error sending welcome notification:', error);
     }
   }, []);
 
@@ -229,13 +202,11 @@ export function usePostLoginNotifications() {
   const handlePostLoginFlow = useCallback(async () => {
     if (!isAuthenticated || !user || !isPWA) return;
     
-    console.log('[Notifications] Starting post-login flow for user:', user.email);
     
     await checkCurrentStatus();
     
     // If already has permission and subscription, send returning user notification
     if (state.permissionStatus === 'granted' && state.subscriptionActive) {
-      console.log('[Notifications] User already has notifications enabled, sending welcome back notification');
       await sendWelcomeNotification('returning');
     }
     

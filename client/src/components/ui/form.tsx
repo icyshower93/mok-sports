@@ -21,7 +21,6 @@ type FormFieldContextValue<
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
 > = {
-  name: TName
 }
 
 const FormFieldContext = React.createContext<FormFieldContextValue>(
@@ -35,7 +34,6 @@ const FormField = <
   ...props
 }: ControllerProps<TFieldValues, TName>) => {
   return (
-    <FormFieldContext.Provider value={{ name: props.name }}>
       <Controller {...props} />
     </FormFieldContext.Provider>
   )
@@ -65,7 +63,6 @@ const useFormField = () => {
 }
 
 type FormItemContextValue = {
-  id: string
 }
 
 const FormItemContext = React.createContext<FormItemContextValue>(
@@ -116,7 +113,6 @@ const FormControl = React.forwardRef<
       aria-describedby={
         !error
           ? `${formDescriptionId}`
-          : `${formDescriptionId} ${formMessageId}`
       }
       aria-invalid={!!error}
       {...props}
@@ -147,7 +143,6 @@ const FormMessage = React.forwardRef<
   React.HTMLAttributes<HTMLParagraphElement>
 >(({ className, children, ...props }, ref) => {
   const { error, formMessageId } = useFormField()
-  const body = error ? String(error?.message ?? "") : children
 
   if (!body) {
     return null

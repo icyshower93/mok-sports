@@ -61,7 +61,6 @@ export default function LoginPage() {
             <Button
               onClick={handleGoogleLogin}
               disabled={isLoading || isLoggingIn || oauthLoading || !oauthConfigured}
-              className="w-full bg-card border-2 border-border text-foreground hover:border-fantasy-green hover:shadow-lg transition-all duration-200 h-12 disabled:opacity-50"
               variant="outline"
             >
               {isLoggingIn ? (
@@ -88,9 +87,9 @@ export default function LoginPage() {
               )}
               {oauthLoading 
                 ? "Loading..." 
-                : !oauthConfigured 
+                : !oauthConfigured
                   ? "Sign-in Unavailable" 
-                  : isLoggingIn 
+                  : isLoggingIn
                     ? "Signing you in..." 
                     : "Continue with Google"}
             </Button>
@@ -105,14 +104,7 @@ export default function LoginPage() {
 
             <div className="mt-6 text-center">
               <p className="text-xs text-muted-foreground">
-                By continuing, you agree to our{" "}
-                <a href="#" className="text-fantasy-green hover:underline">
-                  Terms
-                </a>{" "}
-                and{" "}
-                <a href="#" className="text-fantasy-green hover:underline">
-                  Privacy Policy
-                </a>
+                By continuing, you agree to our Terms and Privacy Policy
               </p>
             </div>
           </CardContent>

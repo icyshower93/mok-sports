@@ -1,14 +1,14 @@
 import { useState, useEffect } from 'react';
 
-export interface PWAStatus {
+interface PWAStatus {
   isPWA: boolean;
   isIOSDevice: boolean;
   canInstall: boolean;
+  displayMode: 'browser' | 'standalone' | 'minimal-ui' | 'fullscreen';
   installPrompt?: BeforeInstallPromptEvent;
-  displayMode: string;
 }
 
-export function usePWADetection(): PWAStatus {
+export function usePWADetection() {
   const [pwaStatus, setPWAStatus] = useState<PWAStatus>({
     isPWA: false,
     isIOSDevice: false,
@@ -38,14 +38,6 @@ export function usePWADetection(): PWAStatus {
         isIOSDevice,
         canInstall,
         displayMode
-      });
-
-      console.log('[PWA Detection]', {
-        isPWA: isStandalone,
-        isIOSDevice,
-        canInstall,
-        displayMode,
-        userAgent: navigator.userAgent
       });
     };
 

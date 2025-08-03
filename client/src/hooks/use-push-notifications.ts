@@ -1,370 +1,154 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
-import { useAuth } from './use-auth';
+import { useState, useEffect, useCallback } from 'react';
+import { useAuth } from '@/hooks/use-auth';
 
-interface UsePushNotificationsReturn {
+interface PushNotificationState {
   isSupported: boolean;
   permission: NotificationPermission;
-  isSubscribed: boolean;
-  isLoading: boolean;
+  subscription: PushSubscription | null;
+  isSubscribing: boolean;
   error: string | null;
-  isIOS: boolean;
-  isIOSPWA: boolean;
-  needsPWAInstall: boolean;
-  needsReauthorization: boolean;
-  requestPermission: () => Promise<void>;
-  subscribe: () => Promise<void>;
-  unsubscribe: () => Promise<void>;
-  sendTestNotification: () => Promise<void>;
-  forcePermissionCheck: () => NotificationPermission | 'unavailable';
 }
 
-const VAPID_KEY_ENDPOINT = '/api/push/vapid-key';
-const SUBSCRIBE_ENDPOINT = '/api/push/subscribe';
-const UNSUBSCRIBE_ENDPOINT = '/api/push/unsubscribe';
-const TEST_NOTIFICATION_ENDPOINT = '/api/push/test';
-
-export function usePushNotifications(): UsePushNotificationsReturn {
+export function usePushNotifications() {
   const { user } = useAuth();
-  const [permission, setPermission] = useState<NotificationPermission>('default');
-  const [isSubscribed, setIsSubscribed] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [needsReauthorization, setNeedsReauthorization] = useState(false);
+  const [state, setState] = useState<PushNotificationState>({
+    isSupported: false,
+    permission: 'default',
+    subscription: null,
+    isSubscribing: false,
+    error: null
+  });
 
-  // Enhanced iOS detection with better logging
-  const isIOS = typeof window !== 'undefined' && /iPad|iPhone|iPod/.test(navigator.userAgent);
-  const isIOSPWA = isIOS && (
-    (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) ||
-    ('standalone' in window.navigator && (window.navigator as any).standalone === true)
-  );
-  const needsPWAInstall = isIOS && !isIOSPWA;
-
-  // Initialize permission state and add comprehensive debugging
   useEffect(() => {
-    if (typeof window !== 'undefined' && 'Notification' in window) {
-      const currentPermission = Notification.permission;
-      console.log('[PWA Debug] CRITICAL - Permission state check:', {
-        currentPermission,
-        previousPermission: permission,
-        isIOS,
-        isIOSPWA,
-        hasUser: !!user,
-        timestamp: new Date().toISOString()
-      });
-      setPermission(currentPermission);
-    }
-  }, [user]); // Re-check when user changes
-
-  // Debug logging for iOS detection
-  useEffect(() => {
-    if (isIOS) {
-      console.log('[PWA Debug] iOS detected:', {
-        userAgent: navigator.userAgent,
-        displayMode: window.matchMedia ? window.matchMedia('(display-mode: standalone)').matches : 'N/A',
-        standalone: 'standalone' in window.navigator ? window.navigator.standalone : 'N/A',
-        isIOSPWA,
-        needsPWAInstall,
-        notificationPermission: Notification.permission,
-        pushManagerSupported: 'PushManager' in window,
-        serviceWorkerSupported: 'serviceWorker' in navigator
-      });
-    }
-  }, [isIOS, isIOSPWA, needsPWAInstall]);
-
-  // Check if push notifications are supported with detailed logging
-  const isSupported = useMemo(() => {
-    if (typeof window === 'undefined') return false;
-    
-    const hasServiceWorker = 'serviceWorker' in navigator;
-    const hasPushManager = 'PushManager' in window;
-    const hasNotification = 'Notification' in window;
-    const iosRequirement = !isIOS || isIOSPWA;
-    
-    const supported = hasServiceWorker && hasPushManager && hasNotification && iosRequirement;
-    
-    console.log('[PWA Debug] Support check:', {
-      hasServiceWorker,
-      hasPushManager,
-      hasNotification,
-      iosRequirement,
-      isIOS,
-      isIOSPWA,
-      supported,
-      currentPermission: typeof window !== 'undefined' && 'Notification' in window ? Notification.permission : 'unavailable'
-    });
-    
-    return supported;
-  }, [isIOS, isIOSPWA]);
-
-  // Check initial permission status
-  useEffect(() => {
-    if (isSupported) {
-      setPermission(Notification.permission);
-      checkSubscriptionStatus();
-    }
-  }, [isSupported, user]);
-
-  const checkSubscriptionStatus = useCallback(async () => {
-    if (!isSupported || !user) {
-      setIsSubscribed(false);
-      return;
-    }
-
-    try {
-      const registration = await navigator.serviceWorker.ready;
-      const subscription = await registration.pushManager.getSubscription();
-      setIsSubscribed(!!subscription);
-    } catch (err) {
-      console.error('Error checking subscription status:', err);
-      setIsSubscribed(false);
-    }
-  }, [isSupported, user]);
-
-  // Define requestPermission function first
-
-  const requestPermission = useCallback(async () => {
-    console.log('[PWA Debug] Requesting permission:', {
-      isIOS,
-      isIOSPWA,
-      needsPWAInstall,
-      isSupported,
-      currentPermission: Notification.permission
-    });
-
-    if (needsPWAInstall) {
-      setError('To enable notifications on iOS, please add this app to your home screen first, then open it from there.');
-      return;
-    }
-    
-    if (!isSupported) {
-      const reasons = [];
-      if (!('serviceWorker' in navigator)) reasons.push('Service Worker not supported');
-      if (!('PushManager' in window)) reasons.push('Push Manager not supported');
-      if (!('Notification' in window)) reasons.push('Notification API not supported');
-      if (isIOS && !isIOSPWA) reasons.push('iOS requires PWA mode');
+    const checkSupport = async () => {
+      const isSupported = 'serviceWorker' in navigator && 'PushManager' in window;
+      const permission: NotificationPermission = 'Notification' in window ? Notification.permission : 'denied';
       
-      setError(`Push notifications are not supported: ${reasons.join(', ')}`);
-      return;
-    }
+      setState(prev => ({
+        ...prev,
+        isSupported,
+        permission
+      }));
 
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      console.log('[PWA Debug] Calling Notification.requestPermission()');
-      const result = await Notification.requestPermission();
-      console.log('[PWA Debug] Permission result:', result);
-      setPermission(result);
-
-      if (result === 'denied') {
-        setError('Notification permission was denied. Please enable notifications in your device settings.');
-      } else if (result === 'granted') {
-        console.log('[PWA Debug] Permission granted successfully');
-      }
-    } catch (err) {
-      console.error('Error requesting permission:', err);
-      setError(`Failed to request notification permission: ${err instanceof Error ? err.message : 'Unknown error'}`);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [isSupported, isIOS, isIOSPWA, needsPWAInstall]);
-
-  const getVapidKey = useCallback(async (): Promise<string> => {
-    console.log('[PWA Debug] Fetching VAPID key from:', VAPID_KEY_ENDPOINT);
-    const response = await fetch(VAPID_KEY_ENDPOINT, {
-      credentials: 'include',
-    });
-
-    console.log('[PWA Debug] VAPID response status:', response.status);
-    
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('[PWA Debug] VAPID key fetch failed:', errorText);
-      throw new Error(`Failed to get VAPID key: ${response.status} - ${errorText}`);
-    }
-
-    const data = await response.json();
-    console.log('[PWA Debug] VAPID key received:', data.publicKey?.substring(0, 20) + '...');
-    return data.publicKey;
-  }, []);
-
-  const subscribe = useCallback(async () => {
-    if (!isSupported || permission !== 'granted' || !user) {
-      setError('Cannot subscribe: missing requirements');
-      return;
-    }
-
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      // Ensure service worker is registered and ready
-      const registration = await navigator.serviceWorker.ready;
-
-      // Get VAPID public key from server
-      const vapidKey = await getVapidKey();
-
-      // Subscribe to push notifications
-      const subscription = await registration.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: vapidKey,
-      });
-
-      // Send subscription to server
-      const response = await fetch(SUBSCRIBE_ENDPOINT, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify({
-          subscription: subscription.toJSON(),
-          userAgent: navigator.userAgent,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to save subscription to server');
-      }
-
-      setIsSubscribed(true);
-    } catch (err) {
-      console.error('Error subscribing to push notifications:', err);
-      setError(err instanceof Error ? err.message : 'Failed to subscribe to push notifications');
-    } finally {
-      setIsLoading(false);
-    }
-  }, [isSupported, permission, user, getVapidKey]);
-
-  const unsubscribe = useCallback(async () => {
-    if (!isSupported || !user) {
-      return;
-    }
-
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      // Unsubscribe from browser
-      const registration = await navigator.serviceWorker.ready;
-      const subscription = await registration.pushManager.getSubscription();
-      
-      if (subscription) {
-        await subscription.unsubscribe();
-      }
-
-      // Notify server
-      const response = await fetch(UNSUBSCRIBE_ENDPOINT, {
-        method: 'POST',
-        credentials: 'include',
-      });
-
-      if (!response.ok) {
-        console.warn('Failed to notify server of unsubscription');
-      }
-
-      setIsSubscribed(false);
-    } catch (err) {
-      console.error('Error unsubscribing from push notifications:', err);
-      setError('Failed to unsubscribe from push notifications');
-    } finally {
-      setIsLoading(false);
-    }
-  }, [isSupported, user]);
-
-  const sendTestNotification = useCallback(async () => {
-    if (!isSubscribed || !user) {
-      setError('Must be subscribed to send test notification');
-      return;
-    }
-
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      const response = await fetch(TEST_NOTIFICATION_ENDPOINT, {
-        method: 'POST',
-        credentials: 'include',
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to send test notification');
-      }
-    } catch (err) {
-      console.error('Error sending test notification:', err);
-      setError(err instanceof Error ? err.message : 'Failed to send test notification');
-    } finally {
-      setIsLoading(false);
-    }
-  }, [isSubscribed, user]);
-
-  // Auto-request permission for iOS PWA users on app load
-  useEffect(() => {
-    if (isIOS && isIOSPWA && isSupported && user && permission === 'default') {
-      console.log('[PWA Debug] iOS PWA detected with user logged in, auto-requesting permission in 3 seconds');
-      // Longer delay to ensure app is fully loaded and user sees the interface
-      const timer = setTimeout(() => {
-        console.log('[PWA Debug] Triggering auto permission request now');
-        requestPermission();
-      }, 3000);
-      
-      return () => clearTimeout(timer);
-    }
-  }, [isIOS, isIOSPWA, isSupported, user, permission, requestPermission]);
-
-  // Check if notifications need re-enabling (PWA reinstall scenario)
-  useEffect(() => {
-    if (isIOSPWA && 'serviceWorker' in navigator && 'PushManager' in window) {
-      // Check if we previously had permission but lost subscription
-      const checkReinstallStatus = async () => {
-        const permission = Notification.permission;
-        if (permission === 'granted') {
+      if (isSupported && 'serviceWorker' in navigator) {
+        try {
           const registration = await navigator.serviceWorker.ready;
           const subscription = await registration.pushManager.getSubscription();
-          if (!subscription && localStorage.getItem('was-subscribed') === 'true') {
-            // PWA was reinstalled, need to re-subscribe
-            console.log('PWA reinstall detected, subscription needs renewal');
-            setNeedsReauthorization(true);
-          }
+          setState(prev => ({
+            ...prev,
+            subscription
+          }));
+        } catch (error) {
+          console.error('Error getting push subscription:', error);
         }
-      };
-      checkReinstallStatus();
-    }
-  }, [isIOSPWA]);
+      }
+    };
 
-  // Track subscription status in localStorage
-  useEffect(() => {
-    if (isSubscribed) {
-      localStorage.setItem('was-subscribed', 'true');
-    }
-  }, [isSubscribed]);
-
-  // Manual force permission check function for debugging
-  const forcePermissionCheck = useCallback(() => {
-    if (typeof window !== 'undefined' && 'Notification' in window) {
-      const currentPermission = Notification.permission;
-      console.log('[PWA Debug] FORCE CHECK - Current browser permission:', currentPermission);
-      setPermission(currentPermission);
-      return currentPermission;
-    }
-    return 'unavailable';
+    checkSupport();
   }, []);
 
+  const requestPermission = useCallback(async (): Promise<boolean> => {
+    if (!('Notification' in window)) {
+      setState(prev => ({ ...prev, error: 'Notifications not supported' }));
+      return false;
+    }
+
+    setState(prev => ({ ...prev, isSubscribing: true, error: null }));
+
+    try {
+      const permission = await Notification.requestPermission();
+      setState(prev => ({ ...prev, permission }));
+      
+      if (permission === 'granted') {
+        return true;
+      } else {
+        setState(prev => ({ ...prev, error: 'Notification permission denied' }));
+        return false;
+      }
+    } catch (error) {
+      setState(prev => ({ 
+        ...prev, 
+        error: error instanceof Error ? error.message : 'Failed to request permission' 
+      }));
+      return false;
+    } finally {
+      setState(prev => ({ ...prev, isSubscribing: false }));
+    }
+  }, []);
+
+  const subscribe = useCallback(async (): Promise<PushSubscription | null> => {
+    if (!state.isSupported || !user) {
+      return null;
+    }
+
+    setState(prev => ({ ...prev, isSubscribing: true, error: null }));
+
+    try {
+      const registration = await navigator.serviceWorker.ready;
+      
+      const subscription = await registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(
+          'BEl62iUYgUivxIkv69yViEuiBIa40HI0sVgHbc6vqvRAVy21k7ByHSgFJeTK-J4R-kJ__mNlUJjKZfFfk6tXa-w'
+        )
+      });
+
+      setState(prev => ({ ...prev, subscription }));
+      return subscription;
+    } catch (error) {
+      setState(prev => ({ 
+        ...prev, 
+        error: error instanceof Error ? error.message : 'Failed to subscribe' 
+      }));
+      return null;
+    } finally {
+      setState(prev => ({ ...prev, isSubscribing: false }));
+    }
+  }, [state.isSupported, user]);
+
+  const unsubscribe = useCallback(async (): Promise<boolean> => {
+    if (!state.subscription) {
+      return false;
+    }
+
+    setState(prev => ({ ...prev, isSubscribing: true, error: null }));
+
+    try {
+      const success = await state.subscription.unsubscribe();
+      if (success) {
+        setState(prev => ({ ...prev, subscription: null }));
+      }
+      return success;
+    } catch (error) {
+      setState(prev => ({ 
+        ...prev, 
+        error: error instanceof Error ? error.message : 'Failed to unsubscribe' 
+      }));
+      return false;
+    } finally {
+      setState(prev => ({ ...prev, isSubscribing: false }));
+    }
+  }, [state.subscription]);
+
   return {
-    isSupported,
-    permission,
-    isSubscribed,
-    isLoading,
-    error,
-    isIOS,
-    isIOSPWA,
-    needsPWAInstall,
-    needsReauthorization,
+    ...state,
     requestPermission,
     subscribe,
-    unsubscribe,
-    sendTestNotification,
-    forcePermissionCheck,
+    unsubscribe
   };
+}
+
+function urlBase64ToUint8Array(base64String: string) {
+  const padding = '='.repeat((4 - base64String.length % 4) % 4);
+  const base64 = (base64String + padding)
+    .replace(/-/g, '+')
+    .replace(/_/g, '/');
+
+  const rawData = window.atob(base64);
+  const outputArray = new Uint8Array(rawData.length);
+
+  for (let i = 0; i < rawData.length; ++i) {
+    outputArray[i] = rawData.charCodeAt(i);
+  }
+  return outputArray;
 }

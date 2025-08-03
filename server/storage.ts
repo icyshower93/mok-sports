@@ -148,10 +148,8 @@ export class DatabaseStorage implements IStorage {
         .where(eq(leagueMembers.userId, userId))
         .groupBy(leagues.id);
 
-      console.log(`Found ${userLeagues.length} leagues for user ${userId}`);
       return userLeagues;
     } catch (error) {
-      console.error('Error in getUserLeagues:', error);
       // Return empty array if there's an error instead of throwing
       return [];
     }
@@ -169,7 +167,6 @@ export class DatabaseStorage implements IStorage {
     const result = await db
       .delete(leagueMembers)
       .where(and(eq(leagueMembers.userId, userId), eq(leagueMembers.leagueId, leagueId)));
-    console.log(`Leave league result for user ${userId} from league ${leagueId}:`, result);
   }
 
   async isUserInLeague(userId: string, leagueId: string): Promise<boolean> {
@@ -206,10 +203,6 @@ export class DatabaseStorage implements IStorage {
         publicKey = vapidKeys.publicKey;
         privateKey = vapidKeys.privateKey;
         
-        console.log('🔑 Generated new VAPID keys:');
-        console.log('Public Key:', publicKey);
-        console.log('Private Key:', privateKey);
-        console.log('Add these to your environment variables for persistence!');
       }
       
       // Set up web-push with VAPID details
@@ -221,7 +214,6 @@ export class DatabaseStorage implements IStorage {
       
       return { publicKey, privateKey };
     } catch (error) {
-      console.error('Error generating VAPID keys:', error);
       throw new Error('Failed to generate VAPID keys');
     }
   }
@@ -297,7 +289,6 @@ export class DatabaseStorage implements IStorage {
         
         results.push({ success: true, subscriptionId: subscription.id });
       } catch (error: any) {
-        console.error(`Failed to send notification to subscription ${subscription.id}:`, error);
         
         // If subscription is invalid, deactivate it
         if (error.statusCode === 410 || error.statusCode === 404) {

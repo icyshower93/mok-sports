@@ -1,16 +1,19 @@
 import { useState, useEffect } from 'react';
-import { Clock, Bell } from 'lucide-react';
-import { NotificationPrompt, useNotificationReminder } from './notification-prompt';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Bell, X, Clock, Users } from 'lucide-react';
+import { cn } from '@/lib/utils';
 import { useAuth } from '@/hooks/use-auth';
+import { useNotificationReminder } from '@/hooks/use-notification-reminder';
 
 interface DraftNotificationReminderProps {
-  draftStartTime?: string | Date;
-  leagueName: string;
-  showAlways?: boolean; // For testing
+  className?: string;
+  leagueName?: string;
+  showAlways?: boolean;
 }
 
 export function DraftNotificationReminder({ 
-  draftStartTime, 
+  className, 
   leagueName,
   showAlways = false 
 }: DraftNotificationReminderProps) {
@@ -21,86 +24,73 @@ export function DraftNotificationReminder({
   useEffect(() => {
     if (showAlways) {
       setShouldShow(true);
-      return;
+    } else if (user) {
+      checkIfReminderNeeded();
+      setShouldShow(shouldShowReminder);
     }
+  }, [user, shouldShowReminder, showAlways, checkIfReminderNeeded]);
 
-    // Check if we should show the reminder based on various conditions
-    const permission = Notification.permission;
-    
-    // Don't show if notifications already enabled
-    if (permission === 'granted') {
-      setShouldShow(false);
-      return;
+  const handleEnableNotifications = async () => {
+    if ('Notification' in window) {
+      const permission = await Notification.requestPermission();
+      if (permission === 'granted') {
+        dismissReminder();
+        setShouldShow(false);
+      }
     }
+  };
 
-    // Check if draft is starting soon (within next 2 hours)
-    let isDraftSoon = false;
-    if (draftStartTime) {
-      const startTime = new Date(draftStartTime).getTime();
-      const now = Date.now();
-      const hoursUntilDraft = (startTime - now) / (1000 * 60 * 60);
-      isDraftSoon = hoursUntilDraft > 0 && hoursUntilDraft <= 2;
-    }
+  const handleDismiss = () => {
+    dismissReminder();
+    setShouldShow(false);
+  };
 
-    // Show if draft is soon and user hasn't enabled notifications
-    const shouldShowReminder = isDraftSoon && checkIfReminderNeeded('pre-draft');
-    setShouldShow(shouldShowReminder);
-
-    console.log('[DraftReminder] Decision:', { 
-      permission, 
-      isDraftSoon, 
-      shouldShowReminder, 
-      draftStartTime 
-    });
-  }, [draftStartTime, checkIfReminderNeeded, showAlways]);
-
-  if (!shouldShow) {
+  if (!shouldShow || Notification.permission === 'granted') {
     return null;
   }
 
-  const formatTimeUntilDraft = () => {
-    if (!draftStartTime) return "soon";
-    
-    const startTime = new Date(draftStartTime).getTime();
-    const now = Date.now();
-    const minutesUntil = Math.floor((startTime - now) / (1000 * 60));
-    
-    if (minutesUntil < 60) {
-      return `in ${minutesUntil} minutes`;
-    }
-    
-    const hoursUntil = Math.floor(minutesUntil / 60);
-    return `in ${hoursUntil} hour${hoursUntil > 1 ? 's' : ''}`;
-  };
-
   return (
-    <NotificationPrompt
-      isProminent={true}
-      title="Draft Starting Soon!"
-      description={`The ${leagueName} draft begins ${formatTimeUntilDraft()}. Enable notifications so you never miss your pick or important draft updates.`}
-      context="pre-draft"
-      onPermissionGranted={() => {
-        setShouldShow(false);
-        dismissReminder('pre-draft');
-      }}
-      onDismiss={() => {
-        setShouldShow(false);
-        dismissReminder('pre-draft');
-      }}
-    />
-  );
-}
-
-// Example usage in league waiting room
-export function ExampleDraftReminder() {
-  // This would typically get real draft data from your API
-  const mockDraftTime = new Date(Date.now() + 90 * 60 * 1000); // 90 minutes from now
-  
-  return (
-    <DraftNotificationReminder
-      draftStartTime={mockDraftTime}
-      leagueName="Fantasy Championship League"
-      showAlways={true} // For demo purposes
-    />
+    <Card className={cn("border-orange-200 bg-orange-50 dark:border-orange-800 dark:bg-orange-950/30", className)}>
+      <Button
+        variant="ghost"
+        size="icon"
+        className="absolute right-2 top-2 h-6 w-6"
+        onClick={handleDismiss}
+      >
+        <X className="h-4 w-4" />
+      </Button>
+      <CardHeader className="pb-3">
+        <div className="flex items-center gap-2">
+          <div className="p-1 rounded-full bg-orange-100 dark:bg-orange-900">
+            <Clock className="h-4 w-4 text-orange-600 dark:text-orange-400" />
+          </div>
+          <CardTitle className="text-base text-orange-800 dark:text-orange-200">
+            Draft Starting Soon
+          </CardTitle>
+        </div>
+        <CardDescription className="text-orange-700 dark:text-orange-300">
+          {leagueName ? `${leagueName} draft` : 'Your draft'} will begin shortly. Enable notifications so you don't miss it!
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="pt-0">
+        <div className="flex gap-2">
+          <Button 
+            onClick={handleEnableNotifications}
+            size="sm"
+            className="flex-1"
+          >
+            <Bell className="w-4 h-4 mr-2" />
+            Enable Notifications
+          </Button>
+          <Button 
+            variant="outline"
+            size="sm"
+            onClick={handleDismiss}
+          >
+            Later
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
   );
 }

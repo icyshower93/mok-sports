@@ -13,7 +13,6 @@ export function registerPushNotificationRoutes(app: Express) {
         return res.status(401).json({ error: "Not authenticated" });
       }
 
-      console.log(`[Push] Sending welcome notification to user ${user.email} (${type})`);
       
       // Get user's push subscriptions
       const subscriptions = await storage.getUserPushSubscriptions(user.id);
@@ -41,7 +40,6 @@ export function registerPushNotificationRoutes(app: Express) {
       // Send notification
       await storage.sendPushNotification(subscriptions, notificationData);
       
-      console.log(`[Push] Welcome notification sent successfully to ${subscriptions.length} devices`);
       
       res.json({
         message: "Welcome notification sent",
@@ -50,7 +48,6 @@ export function registerPushNotificationRoutes(app: Express) {
       });
       
     } catch (error) {
-      console.error("[Push] Error sending welcome notification:", error);
       res.status(500).json({ 
         error: "Failed to send welcome notification",
         details: error instanceof Error ? error.message : "Unknown error"
@@ -79,7 +76,6 @@ export function registerPushNotificationRoutes(app: Express) {
         return res.status(401).json({ error: "Not authenticated" });
       }
       
-      console.log(`[Push] Creating subscription for user ${user.email}`);
       
       await storage.createPushSubscription(user.id, subscription);
       
@@ -89,7 +85,6 @@ export function registerPushNotificationRoutes(app: Express) {
       });
       
     } catch (error) {
-      console.error("[Push] Error creating subscription:", error);
       res.status(500).json({ 
         error: "Failed to create subscription",
         details: error instanceof Error ? error.message : "Unknown error"
@@ -107,7 +102,6 @@ export function registerPushNotificationRoutes(app: Express) {
         return res.status(401).json({ error: "Not authenticated" });
       }
       
-      console.log(`[Push] Removing subscription for user ${user.email}`);
       
       await storage.removePushSubscription(user.id, endpoint);
       
@@ -117,7 +111,6 @@ export function registerPushNotificationRoutes(app: Express) {
       });
       
     } catch (error) {
-      console.error("[Push] Error removing subscription:", error);
       res.status(500).json({ 
         error: "Failed to remove subscription",
         details: error instanceof Error ? error.message : "Unknown error"
@@ -148,7 +141,6 @@ export function registerPushNotificationRoutes(app: Express) {
       });
       
     } catch (error) {
-      console.error("[Push] Error getting subscription status:", error);
       res.status(500).json({ 
         error: "Failed to get subscription status",
         details: error instanceof Error ? error.message : "Unknown error"
@@ -166,7 +158,6 @@ export function registerPushNotificationRoutes(app: Express) {
         return res.status(401).json({ error: "Not authenticated" });
       }
       
-      console.log(`[Push] Sending test notification to user ${user.email}`);
       
       const subscriptions = await storage.getUserPushSubscriptions(user.id);
       
@@ -198,7 +189,6 @@ export function registerPushNotificationRoutes(app: Express) {
       });
       
     } catch (error) {
-      console.error("[Push] Error sending test notification:", error);
       res.status(500).json({ 
         error: "Failed to send test notification",
         details: error instanceof Error ? error.message : "Unknown error"

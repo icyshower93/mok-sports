@@ -9,13 +9,11 @@ export interface ServiceWorkerStatus {
   registration?: ServiceWorkerRegistration;
 }
 
-export function useServiceWorker(enableInPWAOnly: boolean = true) {
   const [status, setStatus] = useState<ServiceWorkerStatus>({
     isRegistered: false,
     isActive: false,
     isWaiting: false,
     version: '',
-    updateAvailable: false
   });
 
   const [isPageLoaded, setIsPageLoaded] = useState(false);
@@ -31,7 +29,6 @@ export function useServiceWorker(enableInPWAOnly: boolean = true) {
     }
   }, []);
 
-  const updateServiceWorkerStatus = useCallback((registration?: ServiceWorkerRegistration) => {
     if (!registration) {
       setStatus(prev => ({ ...prev, isRegistered: false, isActive: false }));
       return;
@@ -52,18 +49,15 @@ export function useServiceWorker(enableInPWAOnly: boolean = true) {
 
   const registerServiceWorker = useCallback(async () => {
     if (!('serviceWorker' in navigator)) {
-      console.log('[SW] Service workers not supported');
       return null;
     }
 
     try {
       // Add cache-busting timestamp
       const swUrl = `/sw.js?v=${Date.now()}`;
-      console.log('[SW] Registering service worker:', swUrl);
 
       const registration = await navigator.serviceWorker.register(swUrl, {
         scope: '/',
-        updateViaCache: 'none' // Always check for updates
       });
 
       // Handle updates
@@ -72,7 +66,6 @@ export function useServiceWorker(enableInPWAOnly: boolean = true) {
         if (newWorker) {
           newWorker.addEventListener('statechange', () => {
             if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-              console.log('[SW] New version available');
               updateServiceWorkerStatus(registration);
             }
           });
@@ -87,11 +80,9 @@ export function useServiceWorker(enableInPWAOnly: boolean = true) {
       }
 
       updateServiceWorkerStatus(registration);
-      console.log('[SW] Service worker registered successfully');
       return registration;
 
     } catch (error) {
-      console.error('[SW] Service worker registration failed:', error);
       return null;
     }
   }, [updateServiceWorkerStatus]);
@@ -110,10 +101,8 @@ export function useServiceWorker(enableInPWAOnly: boolean = true) {
       window.matchMedia('(display-mode: standalone)').matches : true;
 
     if (shouldRegister) {
-      console.log('[SW] Conditions met, registering service worker');
       registerServiceWorker();
     } else {
-      console.log('[SW] Skipping service worker registration (not in PWA mode)');
     }
   }, [isPageLoaded, enableInPWAOnly, registerServiceWorker]);
 

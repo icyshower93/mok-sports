@@ -11,7 +11,6 @@ interface NavItem {
   href: string;
 }
 
-const navItems: NavItem[] = [
   { icon: Home, label: "Dashboard", href: "/" },
   { icon: Users, label: "My Leagues", href: "/leagues" },
   { icon: Zap, label: "Draft Center", href: "/draft" },
@@ -29,7 +28,6 @@ export function Sidebar() {
   };
 
   return (
-    <aside className="hidden md:flex md:flex-col md:fixed md:inset-y-0 md:w-64 md:bg-card md:border-r md:border-border md:z-40">
       {/* Logo */}
       <div className="flex items-center px-6 py-4 border-b border-border">
         <div className="flex items-center justify-center w-8 h-8 bg-gradient-to-br from-fantasy-green to-trust-blue rounded-lg mr-3">
@@ -52,7 +50,6 @@ export function Sidebar() {
                 "flex items-center px-4 py-3 rounded-xl transition-all duration-200 group",
                 isActive 
                   ? "bg-gradient-to-r from-fantasy-green to-fantasy-green/80 text-white shadow-lg" 
-                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
               )}>
                 <Icon className={cn(
                   "w-5 h-5 mr-3 transition-colors",
@@ -80,7 +77,6 @@ export function Sidebar() {
         <Button
           variant="ghost"
           onClick={handleLogout}
-          className="w-full justify-start text-muted-foreground hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950"
         >
           <LogOut className="w-4 h-4 mr-3" />
           Sign Out

@@ -9,7 +9,6 @@ interface IOSPWABannerProps {
   needsPWAInstall: boolean;
 }
 
-export function IOSPWABanner({ isIOS, isIOSPWA, needsPWAInstall }: IOSPWABannerProps) {
   const [dismissed, setDismissed] = useState(false);
 
   // Reset dismissed state when conditions change
@@ -38,12 +37,10 @@ export function IOSPWABanner({ isIOS, isIOSPWA, needsPWAInstall }: IOSPWABannerP
   }
 
   return (
-    <div className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <Alert className="rounded-none border-x-0 border-t-0">
         <Bell className="w-4 h-4" />
         <AlertDescription className="flex items-center justify-between gap-4">
           <div className="flex-1">
-            <strong>Get Push Notifications:</strong> Add this app to your home screen for the best experience and to receive league notifications.
           </div>
           <div className="flex items-center gap-2">
             <Button 
