@@ -17,11 +17,13 @@ export function MainLayout({ children, className }: MainLayoutProps) {
 
   return (
     <div className={cn(
-      "min-h-screen bg-background transition-opacity duration-500",
+      "min-h-screen bg-gradient-to-b from-background to-muted/30 transition-opacity duration-500",
       isVisible ? "opacity-100" : "opacity-0",
       className
     )}>
-      {children}
+      <div className="container mx-auto px-4 py-6">
+        {children}
+      </div>
     </div>
   );
 }

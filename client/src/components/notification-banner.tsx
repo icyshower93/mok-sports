@@ -1,109 +1,111 @@
-import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Bell, X, CheckCircle2 } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { useAuth } from '@/hooks/use-auth';
+import { Card, CardContent } from '@/components/ui/card';
+import { Bell, X, AlertCircle, CheckCircle } from 'lucide-react';
+import { usePostLoginNotifications } from '@/hooks/use-post-login-notifications';
+import { useState } from 'react';
 
 interface NotificationBannerProps {
-  className?: string;
-  onPermissionGranted?: () => void;
   onDismiss?: () => void;
 }
 
-export function NotificationBanner({ 
-  className, 
-  onPermissionGranted,
-  onDismiss 
-}: NotificationBannerProps) {
-  const [permission, setPermission] = useState<NotificationPermission>('default');
-  const [isVisible, setIsVisible] = useState(false);
-  const [isRequestingPermission, setIsRequestingPermission] = useState(false);
-  const { user } = useAuth();
+  const { 
+    showEnableBanner, 
+    permissionStatus, 
+    subscriptionActive, 
+    isProcessing, 
+    error, 
+    isSupported,
+    enableNotifications 
+  } = usePostLoginNotifications();
+  
+  const [dismissed, setDismissed] = useState(false);
 
-  useEffect(() => {
-    if ('Notification' in window) {
-      setPermission(Notification.permission);
-      setIsVisible(Boolean(user && Notification.permission === 'default'));
-    }
-  }, [user]);
+  if (!isSupported || !showEnableBanner || dismissed) {
+    return null;
+  }
 
-  const requestPermission = async () => {
-    if (!('Notification' in window)) {
-      return;
-    }
-
-    setIsRequestingPermission(true);
-    
-    try {
-      const result = await Notification.requestPermission();
-      setPermission(result);
-      
-      if (result === 'granted') {
-        onPermissionGranted?.();
-        setIsVisible(false);
-      }
-    } catch (error) {
-      console.error('Error requesting notification permission:', error);
-    } finally {
-      setIsRequestingPermission(false);
+  const handleEnableClick = async () => {
+    // iOS Safari requires this to be triggered by user gesture
+    const success = await enableNotifications();
+    if (success) {
+      setDismissed(true);
+      onDismiss?.();
     }
   };
 
   const handleDismiss = () => {
-    setIsVisible(false);
+    setDismissed(true);
     onDismiss?.();
   };
 
-  if (!isVisible || permission === 'granted') {
-    return null;
-  }
+  const getStatusIcon = () => {
+    if (permissionStatus === 'granted' && subscriptionActive) {
+      return <CheckCircle className="w-5 h-5 text-green-500" />;
+    }
+    if (permissionStatus === 'denied') {
+      return <AlertCircle className="w-5 h-5 text-red-500" />;
+    }
+    return <Bell className="w-5 h-5 text-blue-500" />;
+  };
+
+  const getMessage = () => {
+    if (permissionStatus === 'denied') {
+      return {
+        title: 'Notifications Blocked',
+        description: 'Enable notifications in your browser settings to get league updates.',
+      };
+    }
+    
+    if (permissionStatus === 'granted' && !subscriptionActive) {
+      return {
+        title: 'Complete Notification Setup',
+        description: 'Finish setting up notifications to receive league updates.',
+        showButton: true,
+      };
+    }
+    
+    return {
+      title: 'Enable Notifications',
+      description: 'Get notified about draft times, league updates, and important announcements.',
+      showButton: true,
+    };
+  };
+
+  const { title, description, showButton, buttonText } = getMessage();
 
   return (
-    <div className={cn(
-      "fantasy-card p-6 bg-gradient-to-r from-fantasy-primary to-fantasy-purple text-white animate-slide-up",
-      className
-    )}>
-      <Button
-        variant="ghost"
-        size="icon"
-        className="absolute right-3 top-3 h-8 w-8 text-white hover:bg-white/20"
-        onClick={handleDismiss}
-      >
-        <X className="h-4 w-4" />
-      </Button>
-      
-      <div className="flex items-start space-x-4">
-        <div className="flex-shrink-0">
-          <div className="flex items-center justify-center w-12 h-12 bg-white/20 rounded-2xl">
-            <Bell className="w-6 h-6 text-white" />
+      <CardContent className="flex items-center justify-between p-4">
+        <div className="flex items-center space-x-3 flex-1">
+          {getStatusIcon()}
+          <div className="flex-1">
+              {title}
+            </h4>
+              {description}
+            </p>
+            {error && (
+              </p>
+            )}
           </div>
         </div>
         
-        <div className="flex-1 min-w-0">
-          <h3 className="text-lg font-semibold text-white mb-1">
-            Stay in the Game! 🏈
-          </h3>
-          <p className="text-white/90 text-sm mb-4">
-            Get instant alerts for draft starts, trades, and league updates so you never miss the action.
-          </p>
-          
-          <Button 
-            onClick={requestPermission} 
-            disabled={isRequestingPermission}
-            className="bg-white text-fantasy-primary hover:bg-white/90 font-medium px-6 py-2 rounded-xl transition-all duration-300"
+        <div className="flex items-center space-x-2">
+          {showButton && (
+            <Button
+              onClick={handleEnableClick}
+              disabled={isProcessing}
+              size="sm"
+            >
+            </Button>
+          )}
+          <Button
+            onClick={handleDismiss}
+            variant="ghost"
             size="sm"
           >
-            {isRequestingPermission ? (
-              'Enabling...'
-            ) : (
-              <>
-                <CheckCircle2 className="w-4 h-4 mr-2" />
-                Enable Notifications
-              </>
-            )}
+            <X className="w-4 h-4" />
           </Button>
         </div>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 }

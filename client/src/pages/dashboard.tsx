@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Plus, UserPlus, Bell, X, CheckCircle2, Loader2 } from "lucide-react";
+import { Plus, UserPlus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useLocation } from "wouter";
 import { usePushNotifications } from "@/hooks/use-push-notifications";
@@ -154,114 +154,67 @@ export default function DashboardPage() {
 
   return (
     <MainLayout>
-      <div className="min-h-screen mobile-container">
-        <div className="flex flex-col h-full">
-          {/* Header Section */}
-          <div className="text-center pt-12 pb-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-primary rounded-2xl shadow-lg mb-6 animate-bounce-in">
-              <Trophy className="w-8 h-8 text-white" />
-            </div>
-            <h1 className="text-display text-foreground mb-3 animate-fade-in">
-              Hey {firstName}! 👋
+      <div className="min-h-screen flex flex-col items-center justify-center px-4 py-8">
+        <div className="w-full max-w-md space-y-8">
+          {/* Welcome Header */}
+          <div className="text-center space-y-2">
+            <h1 className="text-3xl font-bold text-fantasy-green">
+              Welcome, {firstName}!
             </h1>
-            <p className="text-body text-lg animate-fade-in animate-stagger-1">
-              Ready to draft entire teams and dominate your league?
+            <p className="text-muted-foreground">
+              Ready to draft entire teams? Let's get started.
             </p>
           </div>
           
-          {/* Notification Banner */}
+          {/* Notification Prompt */}
           {showNotificationPrompt && (
-            <div className="mb-8 animate-slide-up">
-              <div className="fantasy-card p-6 bg-primary text-primary-foreground relative">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="absolute right-3 top-3 h-8 w-8 text-white hover:bg-white/20"
-                  onClick={() => setShowNotificationPrompt(false)}
-                >
-                  <X className="h-4 w-4" />
-                </Button>
-                
-                <div className="flex items-start space-x-4">
-                  <div className="flex-shrink-0">
-                    <div className="flex items-center justify-center w-12 h-12 bg-white/20 rounded-2xl">
-                      <Bell className="w-6 h-6 text-white" />
-                    </div>
-                  </div>
-                  
-                  <div className="flex-1 min-w-0">
-                    <h3 className="text-lg font-semibold text-white mb-1">
-                      Stay in the Game! 🏈
-                    </h3>
-                    <p className="text-white/90 text-sm mb-4">
-                      Get instant alerts for draft starts, trades, and league updates so you never miss the action.
-                    </p>
-                    
-                    <Button 
-                      onClick={() => {
-                        setShowNotificationPrompt(false);
-                        showWelcomeNotification();
-                      }} 
-                      className="bg-white text-primary hover:bg-white/90 font-medium px-6 py-2 rounded-xl transition-all duration-300"
-                      size="sm"
-                    >
-                      <CheckCircle2 className="w-4 h-4 mr-2" />
-                      Enable Notifications
-                    </Button>
-                  </div>
-                </div>
-              </div>
+            <div className="mb-6">
+              <NotificationPrompt
+                onPermissionGranted={() => {
+                  setShowNotificationPrompt(false);
+                  // Send welcome notification
+                  showWelcomeNotification();
+                }}
+                onDismiss={() => setShowNotificationPrompt(false)}
+              />
             </div>
           )}
 
-          {/* Main Action Section */}
-          <div className="flex-1 flex flex-col justify-center space-y-6 pb-12">
+          {/* Main Action Buttons */}
+          <div className="space-y-4">
             {/* Create League Button */}
             <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
               <DialogTrigger asChild>
-                <div className="fantasy-card-interactive p-8 text-center animate-fade-in animate-stagger-2">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-green-500 rounded-2xl mb-4">
-                    <Plus className="w-8 h-8 text-white" />
-                  </div>
-                  <h3 className="text-title text-foreground mb-2">Create League</h3>
-                  <p className="text-body mb-6">Start your own fantasy league and invite friends</p>
-                  <div className="btn-fantasy-primary inline-flex items-center justify-center w-full">
-                    <span className="text-lg font-semibold">Create New League</span>
-                  </div>
-                </div>
+                <Button 
+                  className="w-full h-14 text-lg font-semibold"
+                  size="lg"
+                >
+                  <Plus className="w-6 h-6 mr-3" />
+                  Create League
+                </Button>
               </DialogTrigger>
-              <DialogContent className="fantasy-card border-0 shadow-2xl">
-                <DialogHeader className="text-center pb-6">
-                  <DialogTitle className="text-headline text-foreground">Create New League</DialogTitle>
-                  <p className="text-body mt-2">Give your league an awesome name!</p>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Create New League</DialogTitle>
                 </DialogHeader>
-                <div className="space-y-6">
+                <div className="space-y-4">
                   <div>
-                    <Label htmlFor="league-name" className="text-foreground font-semibold mb-2 block">
-                      League Name
-                    </Label>
+                    <Label htmlFor="league-name">League Name</Label>
                     <Input
                       id="league-name"
                       value={leagueName}
                       onChange={(e) => setLeagueName(e.target.value)}
-                      placeholder="e.g., Championship Warriors"
-                      className="input-fantasy"
+                      placeholder="Enter league name"
+                      className="mt-1"
                       autoFocus={false}
                     />
                   </div>
                   <Button
                     onClick={handleCreateLeague}
                     disabled={createLeagueMutation.isPending}
-                    className="btn-fantasy-primary w-full"
+                    className="w-full"
                   >
-                    {createLeagueMutation.isPending ? (
-                      <>
-                        <Loader2 className="w-5 h-5 animate-spin mr-2" />
-                        Creating League...
-                      </>
-                    ) : (
-                      "Create League"
-                    )}
+                    {createLeagueMutation.isPending ? "Creating..." : "Create League"}
                   </Button>
                 </div>
               </DialogContent>
@@ -270,59 +223,46 @@ export default function DashboardPage() {
             {/* Join League Button */}
             <Dialog open={joinDialogOpen} onOpenChange={setJoinDialogOpen}>
               <DialogTrigger asChild>
-                <div className="fantasy-card-interactive p-8 text-center animate-fade-in animate-stagger-3">
-                  <div className="inline-flex items-center justify-center w-16 h-16 bg-primary rounded-2xl mb-4">
-                    <UserPlus className="w-8 h-8 text-white" />
-                  </div>
-                  <h3 className="text-title text-foreground mb-2">Join League</h3>
-                  <p className="text-body mb-6">Enter a league code to join your friends</p>
-                  <div className="btn-fantasy-secondary inline-flex items-center justify-center w-full">
-                    <span className="text-lg font-semibold">Join Existing League</span>
-                  </div>
-                </div>
+                <Button 
+                  variant="outline" 
+                  className="w-full h-14 text-lg font-semibold border-2"
+                  size="lg"
+                >
+                  <UserPlus className="w-6 h-6 mr-3" />
+                  Join League
+                </Button>
               </DialogTrigger>
-              <DialogContent className="fantasy-card border-0 shadow-2xl">
-                <DialogHeader className="text-center pb-6">
-                  <DialogTitle className="text-headline text-foreground">Join League</DialogTitle>
-                  <p className="text-body mt-2">Enter the 6-letter code from your friend</p>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Join Existing League</DialogTitle>
                 </DialogHeader>
-                <div className="space-y-6">
+                <div className="space-y-4">
                   <div>
-                    <Label htmlFor="join-code" className="text-foreground font-semibold mb-2 block">
-                      League Code
-                    </Label>
+                    <Label htmlFor="join-code">League Code</Label>
                     <Input
                       id="join-code"
                       value={joinCode}
                       onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
-                      placeholder="ABC123"
+                      placeholder="Enter 6-letter code"
                       maxLength={6}
-                      className="input-fantasy text-center text-2xl font-mono tracking-widest"
+                      className="mt-1 text-center text-lg font-mono tracking-wider"
                       autoFocus={false}
                     />
                   </div>
                   <Button
                     onClick={handleJoinLeague}
                     disabled={joinLeagueMutation.isPending}
-                    className="btn-fantasy-primary w-full"
+                    className="w-full"
                   >
-                    {joinLeagueMutation.isPending ? (
-                      <>
-                        <Loader2 className="w-5 h-5 animate-spin mr-2" />
-                        Joining League...
-                      </>
-                    ) : (
-                      "Join League"
-                    )}
+                    {joinLeagueMutation.isPending ? "Joining..." : "Join League"}
                   </Button>
                 </div>
               </DialogContent>
             </Dialog>
           </div>
 
-          {/* Subtle Notification Reminder */}
           {permission === 'default' && !showNotificationPrompt && (
-            <div className="pb-8">
+            <div className="mt-8">
               <NotificationPrompt
                 onPermissionGranted={() => showWelcomeNotification()}
                 onDismiss={() => {}}

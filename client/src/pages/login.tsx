@@ -35,47 +35,39 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary via-purple-600 to-primary flex items-center justify-center p-6">
-      <div className="w-full max-w-md animate-fade-in">
-        {/* Brand Section */}
-        <div className="text-center mb-12">
-          <div className="relative inline-flex items-center justify-center w-24 h-24 bg-white rounded-3xl shadow-2xl mb-6 animate-bounce-in">
-            <Trophy className="w-10 h-10 text-primary" />
-            <div className="absolute -top-1 -right-1 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
-              <div className="w-2 h-2 bg-white rounded-full"></div>
-            </div>
+    <div className="min-h-screen bg-gradient-to-br from-fantasy-green to-trust-blue flex items-center justify-center p-4">
+      <div className="w-full max-w-md">
+        {/* Brand Logo */}
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center justify-center w-20 h-20 bg-white rounded-2xl shadow-lg mb-4">
+            <Trophy className="w-8 h-8 text-fantasy-green" />
           </div>
-          <h1 className="text-display text-white mb-3 animate-fade-in animate-stagger-1">
-            Mok Sports
-          </h1>
-          <p className="text-xl text-white/90 font-medium mb-2 animate-fade-in animate-stagger-2">
-            Fantasy Sports Reimagined
-          </p>
-          <p className="text-white/70 animate-fade-in animate-stagger-3">
-            Draft entire teams, not just players
-          </p>
+          <h1 className="text-4xl font-bold text-white mb-2">Mok Sports</h1>
+          <p className="text-white/80 text-lg">Fantasy Sports Reimagined</p>
+          <p className="text-white/60 text-sm mt-2">Draft teams, not players</p>
         </div>
 
         {/* Auth Card */}
-        <div className="fantasy-card p-8 backdrop-blur-sm bg-white/95 animate-slide-up">
-          <div className="text-center mb-8">
-            <h2 className="text-headline text-foreground mb-3">
-              Welcome Back
-            </h2>
-            <p className="text-body">Sign in to continue your fantasy journey</p>
-          </div>
+        <Card className="shadow-xl">
+          <CardContent className="p-8">
+            <div className="text-center mb-6">
+              <h2 className="text-2xl font-semibold text-foreground mb-2">
+                Welcome to Mok Sports
+              </h2>
+              <p className="text-muted-foreground">Sign in to start your fantasy journey</p>
+            </div>
 
-          {/* Google Auth Button */}
-          <button
-            onClick={handleGoogleLogin}
-            disabled={isLoading || isLoggingIn || oauthLoading || !oauthConfigured}
-            className="w-full bg-white border-2 border-gray-200 hover:border-primary text-gray-700 hover:text-primary font-semibold py-5 px-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
-          >
-            <div className="flex items-center justify-center">
+            {/* Google Auth Button */}
+            <Button
+              onClick={handleGoogleLogin}
+              disabled={isLoading || isLoggingIn || oauthLoading || !oauthConfigured}
+              variant="outline"
+              className="w-full h-12 text-base font-semibold"
+            >
               {isLoggingIn ? (
-                <Loader2 className="w-5 h-5 animate-spin mr-3" />
+                <Loader2 className="w-4 h-4 animate-spin mr-2" />
               ) : (
-                <svg className="w-6 h-6 mr-4" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 mr-3" viewBox="0 0 24 24">
                   <path
                     fill="#4285F4"
                     d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -94,43 +86,30 @@ export default function LoginPage() {
                   />
                 </svg>
               )}
-              <span className="text-lg">
-                {oauthLoading 
-                  ? "Loading..." 
-                  : !oauthConfigured
-                    ? "Sign-in Unavailable" 
-                    : isLoggingIn
-                      ? "Signing you in..." 
-                      : "Continue with Google"}
-              </span>
+              {oauthLoading 
+                ? "Loading..." 
+                : !oauthConfigured
+                  ? "Sign-in Unavailable" 
+                  : isLoggingIn
+                    ? "Signing you in..." 
+                    : "Continue with Google"}
+            </Button>
+
+            {/* Error Message */}
+            {error && (
+              <Alert variant="destructive" className="mt-4">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
+
+            <div className="mt-6 text-center">
+              <p className="text-xs text-muted-foreground">
+                By continuing, you agree to our Terms and Privacy Policy
+              </p>
             </div>
-          </button>
-
-          {/* Error Message */}
-          {error && (
-            <div className="mt-6 p-4 bg-red-50 border border-red-200 rounded-2xl animate-fade-in">
-              <div className="flex items-center">
-                <AlertCircle className="h-5 w-5 text-red-600 mr-3" />
-                <p className="text-red-600 font-medium">{error}</p>
-              </div>
-            </div>
-          )}
-
-          <div className="mt-8 text-center">
-            <p className="text-sm text-muted-foreground">
-              By continuing, you agree to our{" "}
-              <span className="text-primary font-medium">Terms</span> and{" "}
-              <span className="text-primary font-medium">Privacy Policy</span>
-            </p>
-          </div>
-        </div>
-
-        {/* Footer */}
-        <div className="text-center mt-8">
-          <p className="text-white/60 text-sm">
-            Join thousands of fantasy sports enthusiasts
-          </p>
-        </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

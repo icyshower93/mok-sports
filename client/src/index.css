@@ -63,7 +63,7 @@ input, textarea, [contenteditable="true"], p, span, h1, h2, h3, h4, h5, h6 {
 }
 
 :root {
-  --background: hsl(240, 10%, 96%);
+  --background: hsl(0, 0%, 100%);
   --foreground: hsl(222, 84%, 4.9%);
   --muted: hsl(210, 40%, 98%);
   --muted-foreground: hsl(215.4, 16.3%, 46.9%);
@@ -73,80 +73,66 @@ input, textarea, [contenteditable="true"], p, span, h1, h2, h3, h4, h5, h6 {
   --card-foreground: hsl(222, 84%, 4.9%);
   --border: hsl(214.3, 31.8%, 91.4%);
   --input: hsl(214.3, 31.8%, 91.4%);
-  --primary: hsl(217, 91%, 60%);
-  --primary-foreground: hsl(0, 0%, 100%);
-  --secondary: hsl(240, 5%, 96%);
+  --primary: hsl(142, 76%, 36%);
+  --primary-foreground: hsl(355.7, 100%, 97.3%);
+  --secondary: hsl(210, 40%, 98%);
   --secondary-foreground: hsl(222.2, 84%, 4.9%);
   --accent: hsl(210, 40%, 98%);
   --accent-foreground: hsl(222.2, 84%, 4.9%);
   --destructive: hsl(0, 84.2%, 60.2%);
   --destructive-foreground: hsl(210, 40%, 98%);
-  --ring: hsl(217, 91%, 60%);
-  --radius: 1rem;
+  --ring: hsl(222.2, 84%, 4.9%);
+  --radius: 0.5rem;
   
-  /* Modern Fantasy Sports Colors - Inspired by Sleeper/ESPN */
-  --fantasy-primary: hsl(217, 91%, 60%);
-  --fantasy-primary-light: hsl(217, 91%, 95%);
-  --fantasy-success: hsl(142, 71%, 45%);
-  --fantasy-success-light: hsl(142, 71%, 95%);
-  --fantasy-warning: hsl(35, 91%, 62%);
-  --fantasy-warning-light: hsl(35, 91%, 95%);
-  --fantasy-danger: hsl(0, 84%, 60%);
-  --fantasy-danger-light: hsl(0, 84%, 95%);
+  /* Custom Mok Sports colors - Vibrant Fantasy Theme */
+  --fantasy-green: hsl(142, 76%, 40%);
+  --fantasy-green-light: hsl(142, 76%, 85%);
+  --trust-blue: hsl(217, 91%, 60%);
+  --trust-blue-light: hsl(217, 91%, 85%);
+  --accent-gold: hsl(43, 96%, 56%);
+  --accent-gold-light: hsl(43, 96%, 85%);
   --fantasy-purple: hsl(262, 83%, 58%);
-  --fantasy-purple-light: hsl(262, 83%, 95%);
+  --fantasy-purple-light: hsl(262, 83%, 85%);
   --fantasy-orange: hsl(25, 95%, 53%);
-  --fantasy-orange-light: hsl(25, 95%, 95%);
-  
-  /* Surface Colors */
-  --surface-primary: hsl(0, 0%, 100%);
-  --surface-secondary: hsl(240, 5%, 96%);
-  --surface-tertiary: hsl(240, 6%, 90%);
-  
-  /* Text Colors */
-  --text-primary: hsl(222, 84%, 4.9%);
-  --text-secondary: hsl(215.4, 16.3%, 46.9%);
-  --text-tertiary: hsl(215.4, 16.3%, 65%);
-  
-  /* Border Colors */
-  --border-primary: hsl(214.3, 31.8%, 91.4%);
-  --border-secondary: hsl(214.3, 31.8%, 85%);
+  --fantasy-orange-light: hsl(25, 95%, 85%);
+  --error-red: hsl(0, 84%, 60%);
+  --success-green: hsl(142, 76%, 40%);
+  --warning-yellow: hsl(43, 96%, 56%);
+  --dark-bg: hsl(220, 15%, 12%);
+  --card-bg: hsl(0, 0%, 100%);
+  --surface-bg: hsl(210, 20%, 98%);
+  --text-primary: hsl(220, 13%, 18%);
+  --text-secondary: hsl(220, 9%, 46%);
+  --border-light: hsl(214, 32%, 91%);
 }
 
 .dark {
-  --background: hsl(222, 13%, 11%);
+  --background: hsl(220, 15%, 8%);
   --foreground: hsl(210, 40%, 98%);
-  --muted: hsl(217.2, 13%, 17%);
+  --muted: hsl(220, 15%, 15%);
   --muted-foreground: hsl(215, 20.2%, 65.1%);
-  --popover: hsl(222, 13%, 13%);
+  --popover: hsl(220, 15%, 12%);
   --popover-foreground: hsl(210, 40%, 98%);
-  --card: hsl(222, 13%, 13%);
+  --card: hsl(220, 15%, 12%);
   --card-foreground: hsl(210, 40%, 98%);
-  --border: hsl(217.2, 13%, 20%);
-  --input: hsl(217.2, 13%, 19%);
-  --primary: hsl(217, 91%, 60%);
-  --primary-foreground: hsl(0, 0%, 100%);
-  --secondary: hsl(217.2, 13%, 17%);
+  --border: hsl(220, 15%, 20%);
+  --input: hsl(220, 15%, 18%);
+  --primary: hsl(142, 71%, 45%);
+  --primary-foreground: hsl(220, 15%, 8%);
+  --secondary: hsl(220, 15%, 18%);
   --secondary-foreground: hsl(210, 40%, 98%);
-  --accent: hsl(217.2, 13%, 17%);
-  --accent-foreground: hsl(210, 40%, 98%);
+  --accent: hsl(217, 91%, 60%);
+  --accent-foreground: hsl(220, 15%, 8%);
   --destructive: hsl(0, 62.8%, 50%);
   --destructive-foreground: hsl(210, 40%, 98%);
-  --ring: hsl(217, 91%, 60%);
+  --ring: hsl(142, 71%, 45%);
   
-  /* Dark theme surface colors */
-  --surface-primary: hsl(222, 13%, 13%);
-  --surface-secondary: hsl(217.2, 13%, 17%);
-  --surface-tertiary: hsl(217.2, 13%, 20%);
-  
-  /* Dark theme text colors */
+  /* Dark theme specific colors */
+  --card-bg: hsl(220, 15%, 12%);
+  --surface-bg: hsl(220, 15%, 8%);
   --text-primary: hsl(210, 40%, 98%);
   --text-secondary: hsl(215, 20.2%, 65.1%);
-  --text-tertiary: hsl(215, 20.2%, 50%);
-  
-  /* Dark theme border colors */
-  --border-primary: hsl(217.2, 13%, 20%);
-  --border-secondary: hsl(217.2, 13%, 25%);
+  --border-light: hsl(220, 15%, 20%);
 }
 
 @layer base {
@@ -159,21 +145,17 @@ input, textarea, [contenteditable="true"], p, span, h1, h2, h3, h4, h5, h6 {
   }
 }
 
-/* Modern Fantasy Sports Utility Classes */
-.bg-fantasy-primary {
-  background-color: var(--fantasy-primary);
+/* Custom utility classes */
+.bg-fantasy-green {
+  background-color: var(--fantasy-green);
 }
 
-.bg-fantasy-success {
-  background-color: var(--fantasy-success);
+.bg-trust-blue {
+  background-color: var(--trust-blue);
 }
 
-.bg-fantasy-warning {
-  background-color: var(--fantasy-warning);
-}
-
-.bg-fantasy-danger {
-  background-color: var(--fantasy-danger);
+.bg-accent-gold {
+  background-color: var(--accent-gold);
 }
 
 .bg-fantasy-purple {
@@ -184,20 +166,16 @@ input, textarea, [contenteditable="true"], p, span, h1, h2, h3, h4, h5, h6 {
   background-color: var(--fantasy-orange);
 }
 
-.text-fantasy-primary {
-  color: var(--fantasy-primary);
+.text-fantasy-green {
+  color: var(--fantasy-green);
 }
 
-.text-fantasy-success {
-  color: var(--fantasy-success);
+.text-trust-blue {
+  color: var(--trust-blue);
 }
 
-.text-fantasy-warning {
-  color: var(--fantasy-warning);
-}
-
-.text-fantasy-danger {
-  color: var(--fantasy-danger);
+.text-accent-gold {
+  color: var(--accent-gold);
 }
 
 .text-fantasy-purple {
@@ -208,124 +186,65 @@ input, textarea, [contenteditable="true"], p, span, h1, h2, h3, h4, h5, h6 {
   color: var(--fantasy-orange);
 }
 
-/* Modern Card Styles */
+.border-fantasy-green {
+  border-color: var(--fantasy-green);
+}
+
+/* Fantasy card styles */
 .fantasy-card {
-  @apply bg-card text-card-foreground rounded-3xl shadow-lg border border-border overflow-hidden transition-all duration-300;
+  @apply bg-card text-card-foreground rounded-2xl shadow-sm border border-border overflow-hidden;
 }
 
-.fantasy-card-interactive {
-  @apply fantasy-card hover:shadow-xl hover:-translate-y-1 active:translate-y-0 active:shadow-lg cursor-pointer;
+.fantasy-card-hover {
+  @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
 }
 
-.fantasy-card-gradient {
-  background: linear-gradient(135deg, var(--fantasy-primary) 0%, var(--fantasy-purple) 100%);
+/* Dark theme specific card styles */
+.dark .fantasy-card {
+  @apply shadow-black/20;
 }
 
-.fantasy-card-success {
-  background: linear-gradient(135deg, var(--fantasy-success) 0%, var(--fantasy-primary) 100%);
+.dark .fantasy-card-hover:hover {
+  @apply shadow-black/40;
 }
 
-/* Modern Button Styles */
-.btn-fantasy-primary {
-  @apply bg-primary hover:opacity-90 text-white font-semibold py-4 px-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0;
+.fantasy-gradient-green {
+  background: linear-gradient(135deg, var(--fantasy-green), var(--trust-blue));
 }
 
-.btn-fantasy-secondary {
-  @apply bg-card border-2 border-primary text-primary hover:bg-primary hover:text-white font-semibold py-4 px-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0;
+.fantasy-gradient-gold {
+  background: linear-gradient(135deg, var(--accent-gold), var(--fantasy-orange));
 }
 
-/* Modern Input Styles */
-.input-fantasy {
-  @apply bg-card border-2 border-border focus:border-primary rounded-2xl px-6 py-4 text-lg transition-all duration-300 focus:shadow-lg;
-}
-
-/* Typography */
-.text-display {
-  @apply text-4xl md:text-5xl font-bold tracking-tight;
-}
-
-.text-headline {
-  @apply text-2xl md:text-3xl font-bold;
-}
-
-.text-title {
-  @apply text-xl font-semibold;
-}
-
-.text-body {
-  @apply text-base text-muted-foreground;
-}
-
-/* Animations */
-@keyframes bounce-in {
-  0% {
-    transform: scale(0.3);
-    opacity: 0;
-  }
-  50% {
-    transform: scale(1.05);
-  }
-  70% {
-    transform: scale(0.9);
-  }
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-
-@keyframes slide-up {
-  from {
-    transform: translateY(100%);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-@keyframes fade-in {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.animate-bounce-in {
-  animation: bounce-in 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-}
-
-.animate-slide-up {
-  animation: slide-up 0.5s ease-out;
-}
-
-.animate-fade-in {
-  animation: fade-in 0.3s ease-out;
-}
-
-/* Stagger animations for lists */
-.animate-stagger-1 {
-  animation-delay: 0.1s;
-}
-
-.animate-stagger-2 {
-  animation-delay: 0.2s;
-}
-
-.animate-stagger-3 {
-  animation-delay: 0.3s;
+.fantasy-gradient-purple {
+  background: linear-gradient(135deg, var(--fantasy-purple), var(--trust-blue));
 }
 
 /* Mobile-first responsive utilities */
 .mobile-container {
-  @apply px-6 pb-20 md:pb-6;
+  @apply px-4 pb-20 md:pb-4;
 }
 
-.safe-area-inset {
-  padding-bottom: env(safe-area-inset-bottom);
+.desktop-sidebar-spacing {
+  @apply md:ml-64;
+}
+
+.border-fantasy-green {
+  border-color: var(--fantasy-green);
+}
+
+.hover\:bg-fantasy-green:hover {
+  background-color: var(--fantasy-green);
+}
+
+.hover\:bg-trust-blue:hover {
+  background-color: var(--trust-blue);
+}
+
+.hover\:border-fantasy-green:hover {
+  border-color: var(--fantasy-green);
+}
+
+.focus\:ring-fantasy-green:focus {
+  --tw-ring-color: var(--fantasy-green);
 }
