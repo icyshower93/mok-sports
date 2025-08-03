@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Plus, UserPlus, RefreshCw } from "lucide-react";
+import { Plus, UserPlus, RefreshCw, Bell } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useLocation } from "wouter";
 import { PushNotificationCard } from "@/components/push-notifications";
@@ -28,7 +28,7 @@ export default function DashboardPage() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [, setLocation] = useLocation();
-  const { isIOS, isIOSPWA, needsPWAInstall } = usePushNotifications();
+  const { isIOS, isIOSPWA, needsPWAInstall, sendTestNotification } = usePushNotifications();
   
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [joinDialogOpen, setJoinDialogOpen] = useState(false);
@@ -152,6 +152,22 @@ export default function DashboardPage() {
     joinLeagueMutation.mutate(joinCode.trim());
   };
 
+  const handleTestNotification = async () => {
+    try {
+      await sendTestNotification();
+      toast({
+        title: "Test Notification Sent!",
+        description: "Check your device for the notification.",
+      });
+    } catch (error) {
+      toast({
+        title: "Notification Failed",
+        description: error instanceof Error ? error.message : "Failed to send test notification",
+        variant: "destructive",
+      });
+    }
+  };
+
   // Early returns after all hooks
   if (!user) {
     return null;
@@ -189,6 +205,19 @@ export default function DashboardPage() {
           <h1 className="text-4xl font-bold text-foreground">
             Welcome back, {firstName}!
           </h1>
+          
+          {/* Test Notification Button */}
+          <div className="flex justify-center">
+            <Button
+              onClick={handleTestNotification}
+              variant="outline"
+              size="sm"
+              className="text-sm"
+            >
+              <Bell className="w-4 h-4 mr-2" />
+              Send Test Notification
+            </Button>
+          </div>
           {userLeagues.length > 0 ? (
             <div className="space-y-2">
               <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
