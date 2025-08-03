@@ -9,6 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
 import { useLocation } from "wouter";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { queryClient } from "@/lib/queryClient";
 
 interface League {
   id: string;
@@ -129,6 +130,8 @@ export function LeagueWaiting() {
         description: "You have successfully left the league",
       });
       
+      // Invalidate user leagues query to force dashboard refresh
+      queryClient.invalidateQueries({ queryKey: ['/api/leagues/user'] });
       setLocation('/');
     } catch (error) {
       toast({

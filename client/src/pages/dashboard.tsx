@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { MainLayout } from "@/components/layout/main-layout";
@@ -6,9 +6,10 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Plus, UserPlus } from "lucide-react";
+import { Plus, UserPlus, RefreshCw } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { useLocation } from "wouter";
 
 interface League {
   id: number;
@@ -23,6 +24,7 @@ export default function DashboardPage() {
   const { user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [, setLocation] = useLocation();
   
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [joinDialogOpen, setJoinDialogOpen] = useState(false);
@@ -30,7 +32,40 @@ export default function DashboardPage() {
   const [maxTeams, setMaxTeams] = useState("6");
   const [joinCode, setJoinCode] = useState("");
 
+  // Check if user is already in a league
+  const { data: userLeagues, isLoading: leaguesLoading } = useQuery({
+    queryKey: ['/api/leagues/user'],
+    enabled: !!user,
+  });
+
+  // Redirect to waiting room if user is already in a league
+  useEffect(() => {
+    if (userLeagues && userLeagues.length > 0) {
+      const activeLeague = userLeagues[0]; // User should only be in one league at a time
+      setLocation(`/league/waiting?id=${activeLeague.id}`);
+    }
+  }, [userLeagues, setLocation]);
+
   if (!user) {
+    return null;
+  }
+
+  // Show loading while checking leagues
+  if (leaguesLoading) {
+    return (
+      <MainLayout>
+        <div className="min-h-[70vh] flex items-center justify-center">
+          <div className="text-center">
+            <RefreshCw className="w-8 h-8 animate-spin mx-auto mb-4 text-fantasy-green" />
+            <p className="text-muted-foreground">Checking your leagues...</p>
+          </div>
+        </div>
+      </MainLayout>
+    );
+  }
+
+  // If user is in a league, this component shouldn't render (redirected by useEffect)
+  if (userLeagues && userLeagues.length > 0) {
     return null;
   }
 
@@ -57,6 +92,7 @@ export default function DashboardPage() {
     },
     onSuccess: (newLeague) => {
       queryClient.invalidateQueries({ queryKey: ["/api/leagues"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/leagues/user"] });
       setCreateDialogOpen(false);
       setLeagueName("");
       setMaxTeams("6");
@@ -65,7 +101,7 @@ export default function DashboardPage() {
         description: `Your league "${newLeague.name}" has been created successfully.`,
       });
       // Redirect to league waiting area
-      window.location.href = `/league/waiting?id=${newLeague.id}`;
+      setLocation(`/league/waiting?id=${newLeague.id}`);
     },
     onError: (error: any) => {
       toast({
@@ -95,14 +131,19 @@ export default function DashboardPage() {
       
       return response.json();
     },
-    onSuccess: (league) => {
+    onSuccess: (result) => {
       queryClient.invalidateQueries({ queryKey: ["/api/leagues"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/leagues/user"] });
       setJoinDialogOpen(false);
       setJoinCode("");
       toast({
         title: "Joined League!",  
-        description: `Successfully joined "${league.name}".`,
+        description: `Successfully joined "${result.league?.name}".`,
       });
+      // Redirect to league waiting area
+      if (result.league) {
+        setLocation(`/league/waiting?id=${result.league.id}`);
+      }
     },
     onError: (error: any) => {
       toast({
