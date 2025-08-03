@@ -259,12 +259,12 @@ export function usePushNotifications(): UsePushNotificationsReturn {
   // Auto-request permission for iOS PWA users on app load
   useEffect(() => {
     if (isIOS && isIOSPWA && isSupported && user && permission === 'default') {
-      console.log('[PWA Debug] iOS PWA detected with user logged in, auto-requesting permission in 2 seconds');
-      // Small delay to ensure app is fully loaded and user sees the interface
+      console.log('[PWA Debug] iOS PWA detected with user logged in, auto-requesting permission in 3 seconds');
+      // Longer delay to ensure app is fully loaded and user sees the interface
       const timer = setTimeout(() => {
-        console.log('[PWA Debug] Triggering auto permission request');
+        console.log('[PWA Debug] Triggering auto permission request now');
         requestPermission();
-      }, 2000);
+      }, 3000);
       
       return () => clearTimeout(timer);
     }

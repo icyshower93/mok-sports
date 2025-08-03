@@ -1,13 +1,15 @@
 import { useAuth } from '@/hooks/use-auth';
+import { usePushNotifications } from '@/hooks/use-push-notifications';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Info, CheckCircle, XCircle, RefreshCw } from 'lucide-react';
+import { Info, CheckCircle, XCircle, RefreshCw, Bell } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 export function AuthDebugPanel() {
   const { user, isAuthenticated, isLoading, oauthConfigured } = useAuth();
+  const { isIOS, isIOSPWA, needsPWAInstall, permission, isSupported, requestPermission } = usePushNotifications();
   const [urlParams, setUrlParams] = useState<{ [key: string]: string | null }>({});
   const [currentURL, setCurrentURL] = useState('');
 
@@ -85,6 +87,30 @@ export function AuthDebugPanel() {
             </div>
           </div>
 
+          <div className="border-t pt-2">
+            <div className="text-xs font-medium mb-2">iOS Notifications:</div>
+            <div className="grid grid-cols-1 gap-1 text-xs">
+              <div className="flex items-center justify-between">
+                <span>iOS Device:</span>
+                {getStatusBadge(isIOS, "Yes", "No")}
+              </div>
+              <div className="flex items-center justify-between">
+                <span>PWA Mode:</span>
+                {getStatusBadge(isIOSPWA, "Active", "Browser")}
+              </div>
+              <div className="flex items-center justify-between">
+                <span>Permission:</span>
+                <Badge variant={permission === 'granted' ? "default" : permission === 'denied' ? "destructive" : "secondary"} className="text-xs">
+                  {permission}
+                </Badge>
+              </div>
+              <div className="flex items-center justify-between">
+                <span>Supported:</span>
+                {getStatusBadge(isSupported, "Yes", "No")}
+              </div>
+            </div>
+          </div>
+
           {user && (
             <Alert>
               <CheckCircle className="w-4 h-4" />
@@ -112,15 +138,29 @@ export function AuthDebugPanel() {
             </div>
           </div>
 
-          <Button 
-            onClick={refreshAuth} 
-            size="sm" 
-            className="w-full"
-            variant="outline"
-          >
-            <RefreshCw className="w-4 h-4 mr-2" />
-            Refresh Auth
-          </Button>
+          <div className="space-y-2">
+            <Button 
+              onClick={refreshAuth} 
+              size="sm" 
+              className="w-full"
+              variant="outline"
+            >
+              <RefreshCw className="w-4 h-4 mr-2" />
+              Refresh Auth
+            </Button>
+
+            {isIOS && (
+              <Button 
+                onClick={requestPermission} 
+                size="sm" 
+                className="w-full"
+                variant="outline"
+              >
+                <Bell className="w-4 h-4 mr-2" />
+                Request iOS Notifications
+              </Button>
+            )}
+          </div>
 
           {!isAuthenticated && !isLoading && (
             <Alert>
