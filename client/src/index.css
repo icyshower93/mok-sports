@@ -19,12 +19,15 @@ html, body {
   min-height: -webkit-fill-available;
 }
 
-/* Prevent swipe navigation and pull-to-refresh on mobile */
+/* Enhanced swipe navigation prevention for iOS */
 html {
   overscroll-behavior: contain;
   overscroll-behavior-x: none;
   touch-action: pan-y;
   overflow-x: hidden;
+  position: fixed;
+  width: 100%;
+  height: 100%;
 }
 
 body {
@@ -33,6 +36,13 @@ body {
   -webkit-overflow-scrolling: touch;
   overflow-x: hidden;
   position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+/* Disable edge swipe on iOS more aggressively */
+* {
+  overscroll-behavior-x: none;
 }
 
 /* Prevent accidental text selection on mobile while preserving input functionality */
