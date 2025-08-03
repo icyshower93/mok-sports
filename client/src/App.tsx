@@ -8,6 +8,7 @@ import { AuthProvider, useAuth } from "@/hooks/use-auth";
 import { usePWADetection } from "@/hooks/use-pwa-detection";
 import { PWAInstallPrompt } from "@/components/pwa-install-prompt";
 import { DebugPanel } from "@/components/debug-panel";
+import { ErrorBoundary } from "@/components/error-boundary";
 import LoginPage from "@/pages/login";
 import DashboardPage from "@/pages/dashboard";
 import LeaguesPage from "@/pages/leagues";
@@ -100,16 +101,18 @@ function AppContent() {
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider defaultTheme="dark" storageKey="mok-sports-theme">
-        <TooltipProvider>
-          <AuthProvider>
-            <Toaster />
-            <AppContent />
-          </AuthProvider>
-        </TooltipProvider>
-      </ThemeProvider>
-    </QueryClientProvider>
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider defaultTheme="dark" storageKey="mok-sports-theme">
+          <TooltipProvider>
+            <AuthProvider>
+              <Toaster />
+              <AppContent />
+            </AuthProvider>
+          </TooltipProvider>
+        </ThemeProvider>
+      </QueryClientProvider>
+    </ErrorBoundary>
   );
 }
 

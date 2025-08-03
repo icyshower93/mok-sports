@@ -61,18 +61,35 @@ self.addEventListener('activate', (event) => {
   
   event.waitUntil(
     Promise.all([
-      // Clean up old caches
+      // Clean up ALL old caches to prevent MIME type issues
       caches.keys().then((cacheNames) => {
+        console.log('[SW] Found caches:', cacheNames);
         const deletePromises = cacheNames
-          .filter(cacheName => cacheName.startsWith('mok-sports-') && cacheName !== CACHE_NAME)
+          .filter(cacheName => cacheName.startsWith('mok-sports-') && !cacheName.includes(CACHE_VERSION))
           .map(cacheName => {
             console.log('[SW] Deleting old cache:', cacheName);
             return caches.delete(cacheName);
           });
-        return Promise.all(deletePromises);
+        
+        // Also clear any caches that might contain stale JS/CSS
+        const additionalCleanup = cacheNames
+          .filter(cacheName => cacheName.includes('workbox') || cacheName.includes('runtime'))
+          .map(cacheName => {
+            console.log('[SW] Deleting potentially problematic cache:', cacheName);
+            return caches.delete(cacheName);
+          });
+          
+        return Promise.all([...deletePromises, ...additionalCleanup]);
       }),
-      // Take control of all clients immediately
-      self.clients.claim()
+      // Take control of all clients immediately and reload them
+      self.clients.claim().then(() => {
+        return self.clients.matchAll();
+      }).then((clients) => {
+        // Notify all clients to reload to get fresh resources
+        clients.forEach(client => {
+          client.postMessage({ type: 'CACHE_UPDATED', version: CACHE_VERSION });
+        });
+      })
     ]).then(() => {
       console.log('[SW] Activation complete, controlling all clients');
     }).catch(err => {
@@ -81,7 +98,7 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// Message handler for skipWaiting requests
+// Message handler for skipWaiting requests and cache management
 self.addEventListener('message', (event) => {
   console.log('[SW] Message received:', event.data);
   
@@ -93,15 +110,45 @@ self.addEventListener('message', (event) => {
   if (event.data && event.data.type === 'GET_VERSION') {
     event.ports[0].postMessage({ version: CACHE_VERSION });
   }
+  
+  if (event.data && event.data.type === 'CLEAR_CACHES') {
+    console.log('[SW] Cache clear requested');
+    event.waitUntil(
+      caches.keys().then((cacheNames) => {
+        return Promise.all(
+          cacheNames.map(cacheName => {
+            console.log('[SW] Clearing cache:', cacheName);
+            return caches.delete(cacheName);
+          })
+        );
+      }).then(() => {
+        console.log('[SW] All caches cleared');
+        // Notify client that caches are cleared
+        self.clients.matchAll().then(clients => {
+          clients.forEach(client => {
+            client.postMessage({ type: 'CACHES_CLEARED' });
+          });
+        });
+      })
+    );
+  }
 });
 
-// Fetch event - network-first with fallback strategies
+// Fetch event - improved caching strategy to prevent MIME type errors
 self.addEventListener('fetch', (event) => {
   const request = event.request;
   const url = new URL(request.url);
 
-  // Skip non-GET requests and chrome-extension URLs
-  if (request.method !== 'GET' || url.protocol === 'chrome-extension:') {
+  // Skip non-GET requests, chrome-extension URLs, and different origins
+  if (request.method !== 'GET' || 
+      url.protocol === 'chrome-extension:' || 
+      url.origin !== self.location.origin) {
+    return;
+  }
+
+  // Critical: Always use network-first for JS/CSS modules to prevent MIME errors
+  if (url.pathname.match(/\.(js|mjs|jsx|ts|tsx|css)$/)) {
+    event.respondWith(networkFirstWithFallback(request));
     return;
   }
 
@@ -110,16 +157,48 @@ self.addEventListener('fetch', (event) => {
     // API requests - network first with cache fallback
     event.respondWith(networkFirstStrategy(request, API_CACHE));
   } else if (STATIC_FILES.includes(url.pathname) || url.pathname === '/') {
-    // Static files and app shell - cache first
-    event.respondWith(cacheFirstStrategy(request, STATIC_CACHE));
-  } else if (url.pathname.match(/\.(js|css|png|jpg|jpeg|svg|woff2?)$/)) {
-    // Assets - stale while revalidate
-    event.respondWith(staleWhileRevalidateStrategy(request, DYNAMIC_CACHE));
+    // Static files and app shell - network first to ensure fresh content
+    event.respondWith(networkFirstStrategy(request, STATIC_CACHE));
+  } else if (url.pathname.match(/\.(png|jpg|jpeg|svg|ico|woff2?|ttf|eot)$/)) {
+    // Non-critical assets - cache first
+    event.respondWith(cacheFirstStrategy(request, DYNAMIC_CACHE));
   } else {
     // Everything else - network first
     event.respondWith(networkFirstStrategy(request, DYNAMIC_CACHE));
   }
 });
+
+// Special strategy for critical JS/CSS files to prevent MIME errors
+async function networkFirstWithFallback(request) {
+  try {
+    console.log('[SW] Fetching critical resource:', request.url);
+    const networkResponse = await fetch(request);
+    
+    // Only cache if we get the correct content type
+    if (networkResponse.ok && networkResponse.headers.get('content-type')?.includes('javascript') || 
+        networkResponse.headers.get('content-type')?.includes('css')) {
+      const cache = await caches.open(DYNAMIC_CACHE);
+      cache.put(request, networkResponse.clone());
+      console.log('[SW] Cached critical resource:', request.url);
+    } else if (!networkResponse.ok) {
+      console.error('[SW] Failed to fetch critical resource:', request.url, networkResponse.status);
+    }
+    
+    return networkResponse;
+  } catch (error) {
+    console.error('[SW] Network error for critical resource:', request.url, error);
+    
+    // Try cache as absolute last resort
+    const cachedResponse = await caches.match(request);
+    if (cachedResponse) {
+      console.log('[SW] Using cached version of critical resource:', request.url);
+      return cachedResponse;
+    }
+    
+    // Don't fallback to offline page for JS/CSS - let it fail properly
+    throw error;
+  }
+}
 
 // Caching strategies
 async function networkFirstStrategy(request, cacheName) {
