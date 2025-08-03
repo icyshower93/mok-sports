@@ -41,6 +41,8 @@ export function LeagueWaiting() {
   const [leagueId, setLeagueId] = useState<string | null>(null);
   const [scheduleDialogOpen, setScheduleDialogOpen] = useState(false);
   const [draftDateTime, setDraftDateTime] = useState("");
+  const [previousMemberCount, setPreviousMemberCount] = useState<number>(0);
+  const [notificationSent, setNotificationSent] = useState<boolean>(false);
 
   // Get league ID from URL params
   useEffect(() => {
@@ -57,104 +59,9 @@ export function LeagueWaiting() {
   // Fetch league details
   const { data: league, isLoading, refetch } = useQuery<League>({
     queryKey: [`/api/leagues/${leagueId}`],
-    enabled: !!leagueId,
+    enabled: !!leagueId && !!user,
     refetchInterval: 5000, // Refresh every 5 seconds to check for new members
   });
-
-  // Track previous member count to detect when league becomes full
-  const [previousMemberCount, setPreviousMemberCount] = useState<number>(0);
-  const [notificationSent, setNotificationSent] = useState<boolean>(false);
-
-  if (!user || !leagueId) {
-    return null;
-  }
-
-  const copyJoinCode = () => {
-    if (league?.joinCode) {
-      navigator.clipboard.writeText(league.joinCode);
-      toast({
-        title: "Copied!",
-        description: "League code copied to clipboard",
-      });
-    }
-  };
-
-  const shareLeague = () => {
-    if (league?.joinCode) {
-      const shareText = `Join my fantasy sports league "${league.name}"! Use code: ${league.joinCode}`;
-      if (navigator.share) {
-        navigator.share({
-          title: 'Join My League',
-          text: shareText,
-        });
-      } else {
-        navigator.clipboard.writeText(shareText);
-        toast({
-          title: "Copied!",
-          description: "Share message copied to clipboard",
-        });
-      }
-    }
-  };
-
-  if (isLoading) {
-    return (
-      <MainLayout>
-        <div className="min-h-[70vh] flex items-center justify-center">
-          <div className="text-center">
-            <RefreshCw className="w-8 h-8 animate-spin mx-auto mb-4 text-fantasy-green" />
-            <p className="text-muted-foreground">Loading league details...</p>
-          </div>
-        </div>
-      </MainLayout>
-    );
-  }
-
-  if (!league) {
-    return (
-      <MainLayout>
-        <div className="min-h-[70vh] flex items-center justify-center">
-          <div className="text-center">
-            <p className="text-muted-foreground mb-4">League not found</p>
-            <Button onClick={() => setLocation('/')}>
-              Back to Dashboard
-            </Button>
-          </div>
-        </div>
-      </MainLayout>
-    );
-  }
-
-  const isLeagueFull = league.memberCount >= league.maxTeams;
-
-  const leaveLeague = async () => {
-    try {
-      const response = await fetch(`/api/leagues/${leagueId}/leave`, {
-        method: 'POST',
-        credentials: 'include',
-      });
-      
-      if (!response.ok) {
-        throw new Error('Failed to leave league');
-      }
-      
-      toast({
-        title: "Left League",
-        description: "You have successfully left the league",
-      });
-      
-      // Invalidate user leagues query to force dashboard refresh
-      queryClient.invalidateQueries({ queryKey: ['/api/leagues/user'] });
-      // Redirect to dashboard with stay parameter to prevent auto-redirect
-      setLocation('/?stay=true');
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to leave league",
-        variant: "destructive",
-      });
-    }
-  };
 
   // Remove member mutation (creator only)
   const removeMemberMutation = useMutation({
@@ -268,6 +175,98 @@ export function LeagueWaiting() {
     }
   }, [league]);
 
+  // Early return after ALL hooks have been called
+  if (!user || !leagueId) {
+    return null;
+  }
+
+  const copyJoinCode = () => {
+    if (league?.joinCode) {
+      navigator.clipboard.writeText(league.joinCode);
+      toast({
+        title: "Copied!",
+        description: "League code copied to clipboard",
+      });
+    }
+  };
+
+  const shareLeague = () => {
+    if (league?.joinCode) {
+      const shareText = `Join my fantasy sports league "${league.name}"! Use code: ${league.joinCode}`;
+      if (navigator.share) {
+        navigator.share({
+          title: 'Join My League',
+          text: shareText,
+        });
+      } else {
+        navigator.clipboard.writeText(shareText);
+        toast({
+          title: "Copied!",
+          description: "Share message copied to clipboard",
+        });
+      }
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <MainLayout>
+        <div className="min-h-[70vh] flex items-center justify-center">
+          <div className="text-center">
+            <RefreshCw className="w-8 h-8 animate-spin mx-auto mb-4 text-fantasy-green" />
+            <p className="text-muted-foreground">Loading league details...</p>
+          </div>
+        </div>
+      </MainLayout>
+    );
+  }
+
+  if (!league) {
+    return (
+      <MainLayout>
+        <div className="min-h-[70vh] flex items-center justify-center">
+          <div className="text-center">
+            <p className="text-muted-foreground mb-4">League not found</p>
+            <Button onClick={() => setLocation('/')}>
+              Back to Dashboard
+            </Button>
+          </div>
+        </div>
+      </MainLayout>
+    );
+  }
+
+  const isLeagueFull = league.memberCount >= league.maxTeams;
+
+  const leaveLeague = async () => {
+    try {
+      const response = await fetch(`/api/leagues/${leagueId}/leave`, {
+        method: 'POST',
+        credentials: 'include',
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to leave league');
+      }
+      
+      toast({
+        title: "Left League",
+        description: "You have successfully left the league",
+      });
+      
+      // Invalidate user leagues query to force dashboard refresh
+      queryClient.invalidateQueries({ queryKey: ['/api/leagues/user'] });
+      // Redirect to dashboard with stay parameter to prevent auto-redirect
+      setLocation('/?stay=true');
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to leave league",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <MainLayout>
       <div className="min-h-[70vh] flex items-center justify-center px-4">
@@ -306,179 +305,137 @@ export function LeagueWaiting() {
                   </div>
                 </div>
                 <div className="flex gap-2">
-                  <Button
-                    variant="outline"
-                    onClick={copyJoinCode}
-                    className="flex-1"
-                  >
+                  <Button onClick={copyJoinCode} variant="outline" className="flex-1">
                     <Copy className="w-4 h-4 mr-2" />
                     Copy Code
                   </Button>
-                  <Button
-                    variant="outline"
-                    onClick={shareLeague}
-                    className="flex-1"
-                  >
+                  <Button onClick={shareLeague} variant="outline" className="flex-1">
                     <Share2 className="w-4 h-4 mr-2" />
                     Share
                   </Button>
                 </div>
               </div>
 
-              {/* Members Section */}
+              {/* Members List */}
               <div>
-                <h3 className="font-semibold mb-3 text-center">League Members</h3>
+                <h3 className="font-semibold mb-3">League Members</h3>
                 <div className="space-y-2">
-                  {league.members?.map((member) => {
-                    const isCreator = member.id === league.creatorId;
-                    const isCurrentUser = member.id === user?.id;
-                    const canRemoveMember = user?.id === league.creatorId && !isCurrentUser;
-                    
-                    return (
-                      <div key={member.id} className="flex items-center gap-3 p-2 rounded-lg bg-muted/50">
+                  {league.members.map((member) => (
+                    <div key={member.id} className="flex items-center justify-between p-3 bg-muted rounded-lg">
+                      <div className="flex items-center gap-3">
                         <Avatar className="w-8 h-8">
-                          <AvatarImage src={member.avatar || undefined} alt={member.name} />
-                          <AvatarFallback className="text-xs">
+                          <AvatarImage src={member.avatar || undefined} />  
+                          <AvatarFallback>
                             {member.name.split(' ').map(n => n[0]).join('').toUpperCase()}
                           </AvatarFallback>
                         </Avatar>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2">
-                            <p className="text-sm font-medium truncate">{member.name}</p>
-                            {isCreator && <Crown className="w-3 h-3 text-fantasy-green" />}
-                          </div>
-                          <p className="text-xs text-muted-foreground">
-                            {isCreator ? 'Created' : 'Joined'} {new Date(member.joinedAt).toLocaleDateString()}
-                          </p>
+                        <div className="flex items-center gap-2">
+                          <span className="font-medium">{member.name}</span>
+                          {member.id === league.creatorId && (
+                            <div className="flex items-center gap-1">
+                              <Crown className="w-4 h-4 text-yellow-500" />
+                              <span className="text-xs text-muted-foreground">Creator</span>
+                            </div>
+                          )}
                         </div>
-                        {canRemoveMember && (
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => removeMemberMutation.mutate(member.id)}
-                            disabled={removeMemberMutation.isPending}
-                            className="h-8 w-8 p-0 text-muted-foreground hover:text-destructive"
-                          >
-                            <X className="w-4 h-4" />
-                          </Button>
-                        )}
                       </div>
-                    );
-                  }) || []}
-                  
-                  {/* Empty slots */}
-                  {Array.from({ length: league.maxTeams - league.memberCount }).map((_, index) => (
-                    <div key={`empty-${index}`} className="flex items-center gap-3 p-2 rounded-lg border-2 border-dashed border-muted">
-                      <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
-                        <Users className="w-4 h-4 text-muted-foreground" />
-                      </div>
-                      <div className="flex-1">
-                        <p className="text-sm text-muted-foreground">Waiting for player...</p>
-                      </div>
+                      {/* Remove member button (only for creator and not themselves) */}
+                      {user?.id === league.creatorId && member.id !== league.creatorId && (
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-6 w-6 text-muted-foreground hover:text-destructive"
+                          onClick={() => removeMemberMutation.mutate(member.id)}
+                          disabled={removeMemberMutation.isPending}
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      )}
                     </div>
                   ))}
                 </div>
               </div>
 
-              {/* Status Section */}
-              <div className="text-center">
-                {isLeagueFull ? (
-                  <div className="bg-fantasy-green/10 border border-fantasy-green rounded-lg p-4">
-                    <h3 className="font-semibold text-fantasy-green mb-2">
-                      League is Full! 🏆
-                    </h3>
-                    
-                    {league.draftScheduledAt ? (
-                      <div className="space-y-3">
-                        <p className="text-sm text-muted-foreground">
-                          Draft scheduled for:
-                        </p>
-                        <div className="bg-muted rounded-lg p-3">
-                          <div className="flex items-center justify-center gap-2 text-fantasy-green font-semibold">
-                            <CalendarClock className="w-4 h-4" />
-                            {new Date(league.draftScheduledAt).toLocaleDateString()} at{" "}
-                            {new Date(league.draftScheduledAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                          </div>
+              {/* Draft Scheduling (only for creator when league is full) */}
+              {user?.id === league.creatorId && isLeagueFull && !league.draftScheduledAt && (
+                <div className="space-y-3">
+                  <h3 className="font-semibold text-center">League is Full!</h3>
+                  <p className="text-sm text-muted-foreground text-center">
+                    All spots are filled. Schedule your draft to get started.
+                  </p>
+                  <Dialog open={scheduleDialogOpen} onOpenChange={setScheduleDialogOpen}>
+                    <DialogTrigger asChild>
+                      <Button className="w-full" variant="default">
+                        <CalendarClock className="w-4 h-4 mr-2" />
+                        Schedule Draft
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Schedule Draft</DialogTitle>
+                      </DialogHeader>
+                      <div className="space-y-4">
+                        <div>
+                          <Label htmlFor="draft-datetime">Draft Date & Time</Label>
+                          <Input
+                            id="draft-datetime"
+                            type="datetime-local"
+                            value={draftDateTime}
+                            onChange={(e) => setDraftDateTime(e.target.value)}
+                            min={new Date().toISOString().slice(0, 16)}
+                          />
                         </div>
-                        <Button className="w-full" onClick={() => setLocation('/draft')}>
-                          Enter Draft Room
-                        </Button>
+                        <div className="flex gap-2">
+                          <Button
+                            onClick={() => {
+                              if (draftDateTime) {
+                                scheduleDraftMutation.mutate(draftDateTime);
+                              }
+                            }}
+                            disabled={!draftDateTime || scheduleDraftMutation.isPending}
+                            className="flex-1"
+                          >
+                            {scheduleDraftMutation.isPending ? "Scheduling..." : "Schedule Draft"}
+                          </Button>
+                          <Button
+                            variant="outline"
+                            onClick={() => setScheduleDialogOpen(false)}
+                            className="flex-1"
+                          >
+                            Cancel
+                          </Button>
+                        </div>
                       </div>
-                    ) : (
-                      <div className="space-y-3">
-                        <p className="text-sm text-muted-foreground mb-4">
-                          All {league.maxTeams} teams have joined. Time to schedule your draft!
-                        </p>
-                        
-                        {user?.id === league.creatorId ? (
-                          <Dialog open={scheduleDialogOpen} onOpenChange={setScheduleDialogOpen}>
-                            <DialogTrigger asChild>
-                              <Button className="w-full">
-                                <Calendar className="w-4 h-4 mr-2" />
-                                Schedule Draft
-                              </Button>
-                            </DialogTrigger>
-                            <DialogContent>
-                              <DialogHeader>
-                                <DialogTitle>Schedule Draft</DialogTitle>
-                              </DialogHeader>
-                              <div className="space-y-4">
-                                <div>
-                                  <Label htmlFor="draft-datetime">Draft Date & Time</Label>
-                                  <Input
-                                    id="draft-datetime"
-                                    type="datetime-local"
-                                    value={draftDateTime}
-                                    onChange={(e) => setDraftDateTime(e.target.value)}
-                                    min={new Date().toISOString().slice(0, 16)}
-                                  />
-                                </div>
-                                <div className="flex gap-2">
-                                  <Button
-                                    variant="outline"
-                                    onClick={() => setScheduleDialogOpen(false)}
-                                    className="flex-1"
-                                  >
-                                    Cancel
-                                  </Button>
-                                  <Button
-                                    onClick={() => scheduleDraftMutation.mutate(draftDateTime)}
-                                    disabled={!draftDateTime || scheduleDraftMutation.isPending}
-                                    className="flex-1"
-                                  >
-                                    {scheduleDraftMutation.isPending ? "Scheduling..." : "Schedule"}
-                                  </Button>
-                                </div>
-                              </div>
-                            </DialogContent>
-                          </Dialog>
-                        ) : (
-                          <p className="text-sm text-muted-foreground">
-                            Waiting for league creator to schedule the draft...
-                          </p>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                ) : (
-                  <div className="bg-muted/50 rounded-lg p-4">
-                    <h3 className="font-semibold mb-2">Waiting for Players</h3>
-                    <p className="text-sm text-muted-foreground mb-3">
-                      Share the league code with friends to fill the remaining{" "}
-                      {league.maxTeams - league.memberCount} spots.
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      This page will automatically refresh when new players join.
-                    </p>
-                  </div>
-                )}
-              </div>
+                    </DialogContent>
+                  </Dialog>
+                </div>
+              )}
 
-              {/* Leave League */}
-              <div className="text-center">
-                <Button
-                  variant="ghost"
+              {/* Show draft time if scheduled */}
+              {league.draftScheduledAt && (
+                <div className="text-center p-4 bg-fantasy-green/10 rounded-lg">
+                  <div className="flex items-center justify-center gap-2 mb-2">
+                    <Calendar className="w-5 h-5 text-fantasy-green" />
+                    <span className="font-semibold text-fantasy-green">Draft Scheduled</span>
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    {new Date(league.draftScheduledAt).toLocaleString()}
+                  </p>
+                </div>
+              )}
+
+              {/* League Status */}
+              <div className="text-center pt-4 border-t">
+                {!isLeagueFull && (
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Waiting for {league.maxTeams - league.memberCount} more {league.maxTeams - league.memberCount === 1 ? 'player' : 'players'}.
+                    Share the league code to invite friends!
+                  </p>
+                )}
+                <Button 
+                  variant="outline" 
                   onClick={leaveLeague}
+                  className="text-destructive hover:text-destructive"
                 >
                   <LogOut className="w-4 h-4 mr-2" />
                   Leave League

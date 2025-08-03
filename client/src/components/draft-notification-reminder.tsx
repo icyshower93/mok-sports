@@ -1,51 +1,35 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Bell, X, Clock, Users } from 'lucide-react';
+import { Bell, X, Clock } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useAuth } from '@/hooks/use-auth';
-import { useNotificationReminder } from '@/hooks/use-notification-reminder';
 
 interface DraftNotificationReminderProps {
   className?: string;
   leagueName?: string;
-  showAlways?: boolean;
 }
 
 export function DraftNotificationReminder({ 
   className, 
-  leagueName,
-  showAlways = false 
+  leagueName
 }: DraftNotificationReminderProps) {
-  const { user } = useAuth();
-  const { shouldShowReminder, checkIfReminderNeeded, dismissReminder } = useNotificationReminder();
-  const [shouldShow, setShouldShow] = useState(false);
-
-  useEffect(() => {
-    if (showAlways) {
-      setShouldShow(true);
-    } else if (user) {
-      checkIfReminderNeeded();
-      setShouldShow(shouldShowReminder);
-    }
-  }, [user, shouldShowReminder, showAlways, checkIfReminderNeeded]);
+  const [dismissed, setDismissed] = useState(false);
 
   const handleEnableNotifications = async () => {
     if ('Notification' in window) {
       const permission = await Notification.requestPermission();
       if (permission === 'granted') {
-        dismissReminder();
-        setShouldShow(false);
+        setDismissed(true);
       }
     }
   };
 
   const handleDismiss = () => {
-    dismissReminder();
-    setShouldShow(false);
+    setDismissed(true);
   };
 
-  if (!shouldShow || Notification.permission === 'granted') {
+  // Don't show if already dismissed or notifications already granted
+  if (dismissed || (typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'granted')) {
     return null;
   }
 
