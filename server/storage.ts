@@ -19,6 +19,7 @@ export interface IStorage {
   // League methods
   createLeague(league: InsertLeague & { joinCode: string }): Promise<League>;
   getLeague(id: string): Promise<(League & { memberCount: number; members: Array<{ id: string; name: string; avatar: string | null; joinedAt: string }> }) | undefined>;
+  getLeagueByName(name: string): Promise<League | undefined>;
   getLeagueByJoinCode(joinCode: string): Promise<League | undefined>;
   getUserLeagues(userId: string): Promise<Array<League & { memberCount: number; isCreator: boolean }>>;
   joinLeague(member: InsertLeagueMember): Promise<LeagueMember>;
@@ -107,6 +108,11 @@ export class DatabaseStorage implements IStorage {
         joinedAt: member.joinedAt.toISOString(),
       }))
     };
+  }
+
+  async getLeagueByName(name: string): Promise<League | undefined> {
+    const [league] = await db.select().from(leagues).where(eq(leagues.name, name));
+    return league || undefined;
   }
 
   async getLeagueByJoinCode(joinCode: string): Promise<League | undefined> {

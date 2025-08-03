@@ -115,6 +115,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const validatedData = createLeagueSchema.parse(req.body);
       
+      // Check if league name already exists
+      const existingLeague = await storage.getLeagueByName(validatedData.name);
+      if (existingLeague) {
+        return res.status(400).json({ message: "A league with this name already exists" });
+      }
+      
       // Generate unique join code
       let joinCode: string;
       let isUnique = false;
