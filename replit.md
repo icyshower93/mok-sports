@@ -6,6 +6,26 @@ Mok Sports is a fantasy sports application that reimagines traditional fantasy l
 
 Preferred communication style: Simple, everyday language.
 
+# Testing Scenario
+
+## Test League Setup (January 2025)
+- **League Name**: Test League 1
+- **Join Code**: EEW2YU
+- **Status**: FULL (6/6 members)
+- **Creator**: Sky Evans (skyevans04@gmail.com)
+- **Members**: 
+  - Mok Sports (mokfantasysports@gmail.com)
+  - Alex Rodriguez (alex.rodriguez.test@example.com) 
+  - Sarah Chen (sarah.chen.test@example.com)
+  - Marcus Johnson (marcus.johnson.test@example.com)
+  - Emily Davis (emily.davis.test@example.com)
+
+This setup allows testing the complete league workflow including:
+- League full notification triggers
+- Draft scheduling functionality for creators
+- Push notification system for PWA users
+- Full league member management and interaction
+
 # System Architecture
 
 ## Frontend Architecture
