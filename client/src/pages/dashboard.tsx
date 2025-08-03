@@ -11,6 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useLocation } from "wouter";
 import { usePushNotifications } from "@/hooks/use-push-notifications";
 import { NotificationPrompt } from "@/components/notification-prompt";
+import { NotificationSetup } from "@/components/notifications/notification-setup";
 
 export default function DashboardPage() {
   const { user, logout } = useAuth();
@@ -213,6 +214,9 @@ export default function DashboardPage() {
               />
             </div>
           )}
+
+          {/* Notification Setup */}
+          <NotificationSetup />
 
           {/* Main Action Buttons */}
           <div className="space-y-4">
