@@ -40,8 +40,8 @@ export default function DashboardPage() {
 
   // Redirect to waiting room if user is already in a league
   useEffect(() => {
-    if (!leaguesLoading && !leaguesError) {
-      if (userLeagues && Array.isArray(userLeagues) && userLeagues.length > 0) {
+    if (!leaguesLoading && !leaguesError && userLeagues) {
+      if (Array.isArray(userLeagues) && userLeagues.length > 0) {
         const activeLeague = userLeagues[0]; // User should only be in one league at a time
         console.log('Redirecting to league waiting room:', activeLeague.id);
         setLocation(`/league/waiting?id=${activeLeague.id}`);
@@ -75,6 +75,19 @@ export default function DashboardPage() {
   }
 
   // Don't hide dashboard if there's an error - just proceed to show create/join options
+  // Only redirect if we have leagues and no error
+  if (!leaguesLoading && !leaguesError && userLeagues && Array.isArray(userLeagues) && userLeagues.length > 0) {
+    return (
+      <MainLayout>
+        <div className="min-h-[70vh] flex items-center justify-center">
+          <div className="text-center">
+            <RefreshCw className="w-8 h-8 animate-spin mx-auto mb-4 text-fantasy-green" />
+            <p className="text-muted-foreground">Redirecting to your league...</p>
+          </div>
+        </div>
+      </MainLayout>
+    );
+  }
 
   const firstName = user.name.split(" ")[0];
 
