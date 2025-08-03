@@ -17,15 +17,38 @@ import NotFound from "@/pages/not-found";
 function AppContent() {
   const { isAuthenticated, isLoading, user } = useAuth();
 
+  console.log('[iOS Debug] App state:', { isAuthenticated, isLoading, hasUser: !!user });
+
   if (isLoading && !user) {
+    console.log('[iOS Debug] Showing loading screen');
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-2 border-fantasy-green border-t-transparent mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Loading...</p>
+      <div style={{
+        minHeight: '100vh',
+        backgroundColor: '#0f172a',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        color: 'white'
+      }}>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{
+            width: '32px',
+            height: '32px',
+            border: '2px solid #10b981',
+            borderTop: '2px solid transparent',
+            borderRadius: '50%',
+            animation: 'spin 1s linear infinite',
+            margin: '0 auto 16px'
+          }}></div>
+          <p>Loading...</p>
         </div>
       </div>
     );
+  }
+
+  // Add a fallback for when authentication state is unclear
+  if (!isAuthenticated && !user && !isLoading) {
+    console.log('[iOS Debug] No auth state, showing login');
   }
 
   return (

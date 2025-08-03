@@ -55,9 +55,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   });
 
   useEffect(() => {
+    console.log('[Auth Hook] State change:', { user: !!user, isLoading, isAuthenticated });
     if (user) {
+      console.log('[Auth Hook] Setting authenticated to true');
       setIsAuthenticated(true);
     } else if (!isLoading) {
+      console.log('[Auth Hook] Setting authenticated to false');
       setIsAuthenticated(false);
     }
   }, [user, isLoading]);
