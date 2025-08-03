@@ -64,20 +64,6 @@ export function LeagueWaiting() {
   // Track previous member count to detect when league becomes full
   const [previousMemberCount, setPreviousMemberCount] = useState<number>(0);
 
-  // Auto-send notifications when league becomes full
-  useEffect(() => {
-    if (league && league.memberCount === league.maxTeams && previousMemberCount < league.maxTeams && user?.id === league.creatorId) {
-      // League just became full and current user is creator
-      sendLeagueFullNotification.mutate({
-        leagueId: league.id,
-        leagueName: league.name
-      });
-    }
-    if (league) {
-      setPreviousMemberCount(league.memberCount);
-    }
-  }, [league?.memberCount, league?.maxTeams, league?.id, league?.name, league?.creatorId, user?.id]);
-
   if (!user || !leagueId) {
     return null;
   }
@@ -256,6 +242,20 @@ export function LeagueWaiting() {
     },
   });
 
+  // Auto-send notifications when league becomes full
+  useEffect(() => {
+    if (league && league.memberCount === league.maxTeams && previousMemberCount < league.maxTeams && user?.id === league.creatorId) {
+      // League just became full and current user is creator
+      sendLeagueFullNotification.mutate({
+        leagueId: league.id,
+        leagueName: league.name
+      });
+    }
+    if (league) {
+      setPreviousMemberCount(league.memberCount);
+    }
+  }, [league?.memberCount, league?.maxTeams, league?.id, league?.name, league?.creatorId, user?.id, previousMemberCount, sendLeagueFullNotification]);
+
   return (
     <MainLayout>
       <div className="min-h-[70vh] flex items-center justify-center px-4">
@@ -279,10 +279,9 @@ export function LeagueWaiting() {
 
             <CardContent className="space-y-6">
               {/* Draft notification reminder for leagues with full capacity */}
-              {league.memberCount === league.maxTeams && (
+              {league.memberCount === league.maxTeams && league.draftScheduledAt && (
                 <DraftNotificationReminder
                   leagueName={league.name}
-                  draftStartTime={new Date(Date.now() + 30 * 60 * 1000)} // 30 minutes from now for demo
                 />
               )}
               

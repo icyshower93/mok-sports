@@ -139,6 +139,8 @@ export class DatabaseStorage implements IStorage {
           maxTeams: leagues.maxTeams,
           creatorId: leagues.creatorId,
           isActive: leagues.isActive,
+          draftScheduledAt: leagues.draftScheduledAt,
+          draftStarted: leagues.draftStarted,
           createdAt: leagues.createdAt,
           memberCount: sql<number>`COUNT(${leagueMembers.userId})::int`,
           isCreator: sql<boolean>`${leagues.creatorId} = ${userId}`,
