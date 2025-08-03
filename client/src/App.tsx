@@ -5,6 +5,9 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/hooks/use-theme";
 import { AuthProvider, useAuth } from "@/hooks/use-auth";
+import { usePWADetection } from "@/hooks/use-pwa-detection";
+import { PWAInstallPrompt } from "@/components/pwa-install-prompt";
+import { DebugPanel } from "@/components/debug-panel";
 import LoginPage from "@/pages/login";
 import DashboardPage from "@/pages/dashboard";
 import LeaguesPage from "@/pages/leagues";
@@ -16,72 +19,19 @@ import NotFound from "@/pages/not-found";
 
 function AppContent() {
   const { isAuthenticated, isLoading, user } = useAuth();
-
-  // Enhanced iOS detection that runs immediately - but ONLY for actual iOS devices
-  const isIOSSafari = typeof window !== 'undefined' && 
-    /iPad|iPhone|iPod/.test(navigator.userAgent) && 
-    window.matchMedia && 
-    !window.matchMedia('(display-mode: standalone)').matches &&
-    !('standalone' in window.navigator && (window.navigator as any).standalone === true) &&
-    navigator.userAgent.indexOf('Safari') > -1 && // Ensure it's actually Safari
-    navigator.userAgent.indexOf('CriOS') === -1 && // Not Chrome on iOS
-    navigator.userAgent.indexOf('FxiOS') === -1; // Not Firefox on iOS
+  const pwaStatus = usePWADetection();
 
   console.log('[Debug] App state:', { 
     isAuthenticated, 
     isLoading, 
-    hasUser: !!user, 
-    isIOSSafari,
-    isDesktop: !(/iPad|iPhone|iPod|Android/.test(navigator.userAgent)),
-    userAgent: navigator.userAgent,
-    displayMode: window.matchMedia ? window.matchMedia('(display-mode: standalone)').matches : 'N/A',
-    shouldShowInstallPrompt: isIOSSafari && /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.matchMedia('(display-mode: standalone)').matches
+    hasUser: !!user,
+    pwaStatus
   });
 
-  // CRITICAL: Only show install prompt for iOS Safari browsers (not desktop or other browsers)
-  if (isIOSSafari && /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.matchMedia('(display-mode: standalone)').matches) {
-    console.log('[iOS Debug] iOS Safari detected - showing install prompt');
-    return (
-      <div style={{
-        minHeight: '100vh',
-        background: 'linear-gradient(135deg, #10b981, #3b82f6)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '20px',
-        fontFamily: 'system-ui, -apple-system, sans-serif'
-      }}>
-        <div style={{
-          backgroundColor: 'white',
-          padding: '40px',
-          borderRadius: '16px',
-          textAlign: 'center',
-          maxWidth: '400px',
-          width: '100%',
-          boxShadow: '0 20px 40px rgba(0,0,0,0.1)'
-        }}>
-          <div style={{ marginBottom: '24px' }}>
-            <h1 style={{ marginBottom: '8px', color: '#1f2937', fontSize: '28px', fontWeight: 'bold' }}>Mok Sports</h1>
-            <p style={{ color: '#6b7280', fontSize: '16px' }}>Fantasy Sports Reimagined</p>
-          </div>
-          
-          <div style={{ marginBottom: '32px', padding: '20px', backgroundColor: '#f8fafc', borderRadius: '12px' }}>
-            <h3 style={{ marginBottom: '12px', color: '#1f2937', fontSize: '18px' }}>Install App for Best Experience</h3>
-            <p style={{ marginBottom: '16px', color: '#6b7280', fontSize: '14px', lineHeight: '1.5' }}>
-              For notifications and the best mobile experience, please add this app to your home screen:
-            </p>
-            <div style={{ textAlign: 'left', color: '#6b7280', fontSize: '14px' }}>
-              <p>1. Tap the <strong>Share</strong> button below</p>
-              <p>2. Select <strong>"Add to Home Screen"</strong></p>
-              <p>3. Tap <strong>"Add"</strong></p>
-            </div>
-          </div>
-          
-          <div style={{ fontSize: '40px', marginBottom: '16px' }}>📱⬇️</div>
-          <p style={{ color: '#6b7280', fontSize: '12px' }}>Once installed, open from your home screen to get started!</p>
-        </div>
-      </div>
-    );
+  // Show install prompt if not in PWA mode and can install
+  if (!pwaStatus.isPWA && pwaStatus.canInstall) {
+    console.log('[PWA] Showing install prompt');
+    return <PWAInstallPrompt />;
   }
 
   if (isLoading && !user) {
@@ -114,7 +64,8 @@ function AppContent() {
   console.log('[Debug] Rendering main app - bypassed install prompt');
 
   return (
-    <Switch>
+    <>
+      <Switch>
         <Route path="/login">
           <LoginPage />
         </Route>
@@ -138,6 +89,12 @@ function AppContent() {
         </Route>
         <Route component={NotFound} />
       </Switch>
+      
+      {/* Debug panel - only show in development or when query param is present */}
+      {(import.meta.env.DEV || new URLSearchParams(window.location.search).has('debug')) && (
+        <DebugPanel />
+      )}
+    </>
   );
 }
 
