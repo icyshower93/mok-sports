@@ -187,6 +187,13 @@ export class DatabaseStorage implements IStorage {
     return !!existing;
   }
 
+  async getLeagueMembers(leagueId: string): Promise<LeagueMember[]> {
+    return await db
+      .select()
+      .from(leagueMembers)
+      .where(eq(leagueMembers.leagueId, leagueId));
+  }
+
   async getLeagueMemberCount(leagueId: string): Promise<number> {
     const [result] = await db
       .select({ count: sql<number>`COUNT(*)::int` })

@@ -159,30 +159,16 @@ export function LeagueWaiting() {
     },
   });
 
-  // Auto-send notifications when league becomes full
+  // Track member count changes for UI updates
   useEffect(() => {
-    if (league) {
-      const leagueJustBecameFull = league.memberCount === league.maxTeams && previousMemberCount < league.maxTeams;
-      const isCreator = user?.id === league.creatorId;
-      
-      if (leagueJustBecameFull && isCreator && !notificationSent) {
-        // League just became full and current user is creator
-        sendLeagueFullNotification.mutate({
-          leagueId: league.id,
-          leagueName: league.name
-        });
-        setNotificationSent(true);
-      }
-      
-      if (league.memberCount !== previousMemberCount) {
-        setPreviousMemberCount(league.memberCount);
-        // Reset notification flag when member count changes (in case someone leaves)
-        if (league.memberCount < league.maxTeams) {
-          setNotificationSent(false);
-        }
+    if (league && league.memberCount !== previousMemberCount) {
+      setPreviousMemberCount(league.memberCount);
+      // Reset notification flag when member count changes (in case someone leaves)
+      if (league.memberCount < league.maxTeams) {
+        setNotificationSent(false);
       }
     }
-  }, [league]);
+  }, [league, previousMemberCount]);
 
   // Early return after ALL hooks have been called
   if (!user) {

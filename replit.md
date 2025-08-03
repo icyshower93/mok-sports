@@ -21,10 +21,23 @@ Preferred communication style: Simple, everyday language.
   - Emily Davis (emily.davis.test@example.com)
 
 This setup allows testing the complete league workflow including:
-- League full notification triggers
+- **Automatic league full notification triggers** (fixed January 2025) - now triggers server-side when any user joins to fill league
 - Draft scheduling functionality for creators
 - Push notification system for PWA users
 - Full league member management and interaction
+
+## Recent Fix: Notification Trigger Logic (January 2025)
+**Issue**: League full notifications only triggered when the creator was viewing the league page at the exact moment it became full.
+
+**Solution**: Moved notification logic to server-side join league API endpoint (`/api/leagues/join`):
+- Automatically detects when a league becomes full after any user joins
+- Sends push notifications to all league members immediately
+- Removed unreliable client-side notification dependency
+- Added robust error handling to prevent join failures due to notification issues
+
+**Current League Status**: Test League 1 (EEW2YU) - FULL (6/6 members)
+- Sky Evans (Creator)
+- Mok Sports + 4 test users + Jordan Smith
 
 # System Architecture
 

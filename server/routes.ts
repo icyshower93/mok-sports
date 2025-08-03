@@ -223,6 +223,44 @@ export async function registerRoutes(app: Express): Promise<Server> {
         userId: user.id,
       });
 
+      // Check if league just became full and send notifications
+      const newMemberCount = await storage.getLeagueMemberCount(league.id);
+      if (newMemberCount === league.maxTeams) {
+        // League is now full - send notifications to all members
+        try {
+          const leagueMembers = await storage.getLeagueMembers(league.id);
+          const allSubscriptions = [];
+          
+          // Collect all push subscriptions from league members
+          for (const member of leagueMembers) {
+            const memberSubscriptions = await storage.getUserPushSubscriptions(member.userId);
+            allSubscriptions.push(...memberSubscriptions);
+          }
+          
+          if (allSubscriptions.length > 0) {
+            const notificationData = {
+              title: `${league.name} is Full!`,
+              body: "Your league is ready! The creator can now schedule the draft.",
+              icon: "/icon-192x192.png",
+              badge: "/icon-72x72.png",
+              data: {
+                url: `/league/waiting?id=${league.id}`,
+                type: "league-full",
+                leagueId: league.id,
+                leagueName: league.name,
+                timestamp: Date.now()
+              }
+            };
+            
+            await storage.sendPushNotification(allSubscriptions, notificationData);
+            console.log(`Sent league full notifications to ${allSubscriptions.length} devices for league ${league.name}`);
+          }
+        } catch (notificationError) {
+          console.error('Failed to send league full notifications:', notificationError);
+          // Don't fail the join request if notifications fail
+        }
+      }
+
       // Return the league with updated member count
       const updatedLeague = await storage.getLeague(league.id);
       res.json({ message: "Successfully joined league", league: updatedLeague });
