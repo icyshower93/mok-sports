@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Plus, UserPlus, RefreshCw } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useLocation } from "wouter";
+import { PushNotificationCard } from "@/components/push-notifications";
 
 interface League {
   id: string;
@@ -308,6 +309,11 @@ export default function DashboardPage() {
               </DialogContent>
             </Dialog>
           </div>
+        </div>
+
+        {/* Push Notification Settings */}
+        <div className="max-w-2xl mx-auto">
+          <PushNotificationCard />
         </div>
       </div>
     </MainLayout>

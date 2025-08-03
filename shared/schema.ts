@@ -38,10 +38,23 @@ export const nflTeams = pgTable("nfl_teams", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+export const pushSubscriptions = pgTable("push_subscriptions", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => users.id),
+  endpoint: text("endpoint").notNull(),
+  p256dhKey: text("p256dh_key").notNull(),
+  authKey: text("auth_key").notNull(),
+  userAgent: text("user_agent"),
+  isActive: boolean("is_active").notNull().default(true),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  lastUsed: timestamp("last_used").defaultNow().notNull(),
+});
+
 // Relations
 export const usersRelations = relations(users, ({ many }) => ({
   createdLeagues: many(leagues),
   leagueMemberships: many(leagueMembers),
+  pushSubscriptions: many(pushSubscriptions),
 }));
 
 export const leaguesRelations = relations(leagues, ({ one, many }) => ({
@@ -59,6 +72,13 @@ export const leagueMembersRelations = relations(leagueMembers, ({ one }) => ({
   }),
   user: one(users, {
     fields: [leagueMembers.userId],
+    references: [users.id],
+  }),
+}));
+
+export const pushSubscriptionsRelations = relations(pushSubscriptions, ({ one }) => ({
+  user: one(users, {
+    fields: [pushSubscriptions.userId],
     references: [users.id],
   }),
 }));
@@ -88,6 +108,14 @@ export const insertNflTeamSchema = createInsertSchema(nflTeams).pick({
   city: true,
 });
 
+export const insertPushSubscriptionSchema = createInsertSchema(pushSubscriptions).pick({
+  userId: true,
+  endpoint: true,
+  p256dhKey: true,
+  authKey: true,
+  userAgent: true,
+});
+
 // Types
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
@@ -97,3 +125,5 @@ export type InsertLeagueMember = z.infer<typeof insertLeagueMemberSchema>;
 export type LeagueMember = typeof leagueMembers.$inferSelect;
 export type InsertNflTeam = z.infer<typeof insertNflTeamSchema>;
 export type NflTeam = typeof nflTeams.$inferSelect;
+export type PushSubscription = typeof pushSubscriptions.$inferSelect;
+export type InsertPushSubscription = z.infer<typeof insertPushSubscriptionSchema>;

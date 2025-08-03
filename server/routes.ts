@@ -310,6 +310,118 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Push notification routes
+  app.get("/api/push/vapid-key", async (req, res) => {
+    const token = req.cookies?.auth_token;
+    if (!token) {
+      return res.status(401).json({ message: "Not authenticated" });
+    }
+
+    const { verifyJWT } = require("./auth");
+    const user = verifyJWT(token);
+    if (!user) {
+      return res.status(401).json({ message: "Invalid token" });
+    }
+    try {
+      const vapidKeys = storage.getVapidKeys();
+      res.json({ publicKey: vapidKeys.publicKey });
+    } catch (error) {
+      console.error("Error getting VAPID key:", error);
+      res.status(500).json({ message: "Failed to get VAPID key" });
+    }
+  });
+
+  app.post("/api/push/subscribe", async (req, res) => {
+    const token = req.cookies?.auth_token;
+    if (!token) {
+      return res.status(401).json({ message: "Not authenticated" });
+    }
+
+    const { verifyJWT } = require("./auth");
+    const user = verifyJWT(token);
+    if (!user) {
+      return res.status(401).json({ message: "Invalid token" });
+    }
+    try {
+      const { subscription, userAgent } = req.body;
+      
+      if (!subscription || !subscription.endpoint || !subscription.keys) {
+        return res.status(400).json({ message: "Invalid subscription data" });
+      }
+
+      const pushSubscription = await storage.createPushSubscription({
+        userId: user.id,
+        endpoint: subscription.endpoint,
+        p256dhKey: subscription.keys.p256dh,
+        authKey: subscription.keys.auth,
+        userAgent: userAgent || null,
+      });
+
+      res.json({ success: true, subscription: pushSubscription });
+    } catch (error) {
+      console.error("Error saving push subscription:", error);
+      res.status(500).json({ message: "Failed to save push subscription" });
+    }
+  });
+
+  app.post("/api/push/unsubscribe", async (req, res) => {
+    const token = req.cookies?.auth_token;
+    if (!token) {
+      return res.status(401).json({ message: "Not authenticated" });
+    }
+
+    const { verifyJWT } = require("./auth");
+    const user = verifyJWT(token);
+    if (!user) {
+      return res.status(401).json({ message: "Invalid token" });
+    }
+    try {
+      await storage.deactivatePushSubscriptions(user.id);
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Error unsubscribing from push notifications:", error);
+      res.status(500).json({ message: "Failed to unsubscribe" });
+    }
+  });
+
+  app.post("/api/push/test", async (req, res) => {
+    const token = req.cookies?.auth_token;
+    if (!token) {
+      return res.status(401).json({ message: "Not authenticated" });
+    }
+
+    const { verifyJWT } = require("./auth");
+    const user = verifyJWT(token);
+    if (!user) {
+      return res.status(401).json({ message: "Invalid token" });
+    }
+    try {
+      const subscriptions = await storage.getUserPushSubscriptions(user.id);
+      
+      if (subscriptions.length === 0) {
+        return res.status(400).json({ message: "No active subscriptions found" });
+      }
+
+      const notification = {
+        title: "Mok Sports Test Notification",
+        body: `Hey ${user.name.split(" ")[0]}, your push notifications are working! 🏈`,
+        icon: "/icon-192x192.png",
+        badge: "/icon-72x72.png",
+        data: {
+          url: "/dashboard",
+          timestamp: Date.now(),
+          type: "test"
+        }
+      };
+
+      const results = await storage.sendPushNotification(subscriptions, notification);
+      res.json({ success: true, sent: results.length });
+    } catch (error) {
+      console.error("Error sending test notification:", error);
+      res.status(500).json({ message: "Failed to send test notification" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

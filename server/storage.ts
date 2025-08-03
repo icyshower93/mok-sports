@@ -1,12 +1,13 @@
 import { 
-  users, leagues, leagueMembers, nflTeams,
+  users, leagues, leagueMembers, nflTeams, pushSubscriptions,
   type User, type InsertUser,
   type League, type InsertLeague,
   type LeagueMember, type InsertLeagueMember,
-  type NflTeam
+  type NflTeam, type PushSubscription, type InsertPushSubscription
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, sql } from "drizzle-orm";
+import webpush from "web-push";
 
 export interface IStorage {
   // User methods
@@ -29,6 +30,13 @@ export interface IStorage {
   
   // NFL Teams methods
   getAllNflTeams(): Promise<NflTeam[]>;
+  
+  // Push notification methods
+  getVapidKeys(): { publicKey: string; privateKey: string };
+  createPushSubscription(subscription: InsertPushSubscription): Promise<PushSubscription>;
+  getUserPushSubscriptions(userId: string): Promise<PushSubscription[]>;
+  deactivatePushSubscriptions(userId: string): Promise<void>;
+  sendPushNotification(subscriptions: PushSubscription[], notification: any): Promise<any[]>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -182,6 +190,97 @@ export class DatabaseStorage implements IStorage {
   // NFL Teams methods
   async getAllNflTeams(): Promise<NflTeam[]> {
     return await db.select().from(nflTeams);
+  }
+
+  // Push notification methods
+  getVapidKeys(): { publicKey: string; privateKey: string } {
+    // Generate VAPID keys if not set in environment
+    const publicKey = process.env.VAPID_PUBLIC_KEY || 'BEqy6z3xFdqr6UhtpYNRRhV9Tr3dTb5qr6P-9UwG4uRy3V4iQJcj_PfgHgXxVV2r8tAW5RQgE8O1UgQy1U3k7Ow';
+    const privateKey = process.env.VAPID_PRIVATE_KEY || 'CQxfQDR_XXQX7WCw7BPiUqfzNtNxCNcl6VQI3a_x3Ek';
+    
+    // Set up web-push with VAPID details
+    webpush.setVapidDetails(
+      'mailto:admin@moksports.com',
+      publicKey,
+      privateKey
+    );
+    
+    return { publicKey, privateKey };
+  }
+
+  async createPushSubscription(insertSubscription: InsertPushSubscription): Promise<PushSubscription> {
+    // First, deactivate any existing subscriptions for this user
+    await db.update(pushSubscriptions)
+      .set({ isActive: false })
+      .where(eq(pushSubscriptions.userId, insertSubscription.userId));
+
+    // Create new subscription
+    const [subscription] = await db
+      .insert(pushSubscriptions)
+      .values(insertSubscription)
+      .returning();
+    
+    return subscription;
+  }
+
+  async getUserPushSubscriptions(userId: string): Promise<PushSubscription[]> {
+    return await db.select()
+      .from(pushSubscriptions)
+      .where(and(
+        eq(pushSubscriptions.userId, userId),
+        eq(pushSubscriptions.isActive, true)
+      ));
+  }
+
+  async deactivatePushSubscriptions(userId: string): Promise<void> {
+    await db.update(pushSubscriptions)
+      .set({ isActive: false })
+      .where(eq(pushSubscriptions.userId, userId));
+  }
+
+  async sendPushNotification(subscriptions: PushSubscription[], notification: any): Promise<any[]> {
+    const results = [];
+    
+    for (const subscription of subscriptions) {
+      try {
+        const pushSubscription = {
+          endpoint: subscription.endpoint,
+          keys: {
+            p256dh: subscription.p256dhKey,
+            auth: subscription.authKey
+          }
+        };
+
+        const result = await webpush.sendNotification(
+          pushSubscription,
+          JSON.stringify(notification)
+        );
+        
+        // Update last used timestamp
+        await db.update(pushSubscriptions)
+          .set({ lastUsed: new Date() })
+          .where(eq(pushSubscriptions.id, subscription.id));
+        
+        results.push({ success: true, subscriptionId: subscription.id });
+      } catch (error: any) {
+        console.error(`Failed to send notification to subscription ${subscription.id}:`, error);
+        
+        // If subscription is invalid, deactivate it
+        if (error.statusCode === 410 || error.statusCode === 404) {
+          await db.update(pushSubscriptions)
+            .set({ isActive: false })
+            .where(eq(pushSubscriptions.id, subscription.id));
+        }
+        
+        results.push({ 
+          success: false, 
+          subscriptionId: subscription.id, 
+          error: error.message 
+        });
+      }
+    }
+    
+    return results;
   }
 }
 
