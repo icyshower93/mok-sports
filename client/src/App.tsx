@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/hooks/use-theme";
 import { AuthProvider, useAuth } from "@/hooks/use-auth";
+import { NotificationManager } from "@/components/notification-manager";
 import LoginPage from "@/pages/login";
 import DashboardPage from "@/pages/dashboard";
 import LeaguesPage from "@/pages/leagues";
@@ -104,7 +105,9 @@ function AppContent() {
   console.log('[Debug] Rendering main app - bypassed install prompt');
 
   return (
-    <Switch>
+    <>
+      <NotificationManager />
+      <Switch>
         <Route path="/login">
           <LoginPage />
         </Route>
@@ -128,6 +131,7 @@ function AppContent() {
         </Route>
         <Route component={NotFound} />
       </Switch>
+    </>
   );
 }
 

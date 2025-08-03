@@ -46,25 +46,6 @@ export function usePushNotifications(): UsePushNotificationsReturn {
     }
   }, [user]);
 
-  // Auto-request notification permission when PWA is first opened
-  useEffect(() => {
-    const hasRequestedPermission = localStorage.getItem('notification-permission-requested');
-    
-    if (isIOSPWA && !hasRequestedPermission && permission === 'default') {
-      // Small delay to ensure PWA is fully loaded
-      const timer = setTimeout(async () => {
-        try {
-          await requestPermission();
-          localStorage.setItem('notification-permission-requested', 'true');
-        } catch (error) {
-          console.error('Auto permission request failed:', error);
-        }
-      }, 1500);
-      
-      return () => clearTimeout(timer);
-    }
-  }, [isIOSPWA, permission]);
-
   // Check if push notifications are supported
   const isSupported = useMemo(() => {
     if (typeof window === 'undefined') return false;
@@ -77,32 +58,7 @@ export function usePushNotifications(): UsePushNotificationsReturn {
     return hasServiceWorker && hasPushManager && hasNotification && iosRequirement;
   }, [isIOS, isIOSPWA]);
 
-  // Check initial permission status
-  useEffect(() => {
-    if (isSupported) {
-      setPermission(Notification.permission);
-      checkSubscriptionStatus();
-    }
-  }, [isSupported, user]);
-
-  const checkSubscriptionStatus = useCallback(async () => {
-    if (!isSupported || !user) {
-      setIsSubscribed(false);
-      return;
-    }
-
-    try {
-      const registration = await navigator.serviceWorker.ready;
-      const subscription = await registration.pushManager.getSubscription();
-      setIsSubscribed(!!subscription);
-    } catch (err) {
-      console.error('Error checking subscription status:', err);
-      setIsSubscribed(false);
-    }
-  }, [isSupported, user]);
-
-  // Define requestPermission function first
-
+  // Define requestPermission function
   const requestPermission = useCallback(async () => {
     if (needsPWAInstall) {
       setError('To enable notifications on iOS, please add this app to your home screen first, then open it from there.');
@@ -130,7 +86,53 @@ export function usePushNotifications(): UsePushNotificationsReturn {
     } finally {
       setIsLoading(false);
     }
-  }, [isSupported, isIOS, isIOSPWA, needsPWAInstall]);
+  }, [isSupported, needsPWAInstall]);
+
+  // Auto-request notification permission when PWA is first opened
+  useEffect(() => {
+    const hasRequestedPermission = localStorage.getItem('notification-permission-requested');
+    const isPWA = window.matchMedia && window.matchMedia('(display-mode: standalone)').matches;
+    
+    if (isPWA && !hasRequestedPermission && permission === 'default' && isSupported) {
+      // Small delay to ensure PWA is fully loaded
+      const timer = setTimeout(async () => {
+        try {
+          await requestPermission();
+          localStorage.setItem('notification-permission-requested', 'true');
+        } catch (error) {
+          console.error('Auto permission request failed:', error);
+        }
+      }, 1500);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [permission, isSupported, requestPermission]);
+
+  // Check initial permission status
+  useEffect(() => {
+    if (isSupported) {
+      setPermission(Notification.permission);
+      checkSubscriptionStatus();
+    }
+  }, [isSupported, user]);
+
+  const checkSubscriptionStatus = useCallback(async () => {
+    if (!isSupported || !user) {
+      setIsSubscribed(false);
+      return;
+    }
+
+    try {
+      const registration = await navigator.serviceWorker.ready;
+      const subscription = await registration.pushManager.getSubscription();
+      setIsSubscribed(!!subscription);
+    } catch (err) {
+      console.error('Error checking subscription status:', err);
+      setIsSubscribed(false);
+    }
+  }, [isSupported, user]);
+
+
 
   const getVapidKey = useCallback(async (): Promise<string> => {
     const response = await fetch(VAPID_KEY_ENDPOINT, {
