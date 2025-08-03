@@ -17,7 +17,7 @@ import NotFound from "@/pages/not-found";
 function AppContent() {
   const { isAuthenticated, isLoading, user } = useAuth();
 
-  // Enhanced iOS detection that runs immediately
+  // Enhanced iOS detection that runs immediately - but ONLY for iOS devices
   const isIOSSafari = typeof window !== 'undefined' && 
     /iPad|iPhone|iPod/.test(navigator.userAgent) && 
     window.matchMedia && 
@@ -33,13 +33,12 @@ function AppContent() {
     displayMode: window.matchMedia ? window.matchMedia('(display-mode: standalone)').matches : 'N/A'
   });
 
-  // CRITICAL: Check iOS Safari FIRST, before any loading or auth checks
-  if (isIOSSafari) {
+  // CRITICAL: Only show install prompt for iOS Safari browsers
+  if (isIOSSafari && /iPad|iPhone|iPod/.test(navigator.userAgent)) {
     console.log('[iOS Debug] iOS Safari detected - showing install prompt immediately');
     return (
       <div style={{
         minHeight: '100vh',
-        minHeight: '-webkit-fill-available',
         background: 'linear-gradient(135deg, #10b981, #3b82f6)',
         display: 'flex',
         alignItems: 'center',
