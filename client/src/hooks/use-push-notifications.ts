@@ -7,6 +7,9 @@ interface UsePushNotificationsReturn {
   isSubscribed: boolean;
   isLoading: boolean;
   error: string | null;
+  isIOS: boolean;
+  isIOSPWA: boolean;
+  needsPWAInstall: boolean;
   requestPermission: () => Promise<void>;
   subscribe: () => Promise<void>;
   unsubscribe: () => Promise<void>;
@@ -25,11 +28,17 @@ export function usePushNotifications(): UsePushNotificationsReturn {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Device detection
+  const isIOS = typeof window !== 'undefined' && /iPad|iPhone|iPod/.test(navigator.userAgent);
+  const isIOSPWA = isIOS && window.matchMedia && window.matchMedia('(display-mode: standalone)').matches;
+  const needsPWAInstall = isIOS && !isIOSPWA;
+
   // Check if push notifications are supported
   const isSupported = typeof window !== 'undefined' && 
     'serviceWorker' in navigator && 
     'PushManager' in window && 
-    'Notification' in window;
+    'Notification' in window &&
+    (!isIOS || isIOSPWA); // iOS requires PWA mode
 
   // Check initial permission status
   useEffect(() => {
@@ -56,6 +65,11 @@ export function usePushNotifications(): UsePushNotificationsReturn {
   }, [isSupported, user]);
 
   const requestPermission = useCallback(async () => {
+    if (needsPWAInstall) {
+      setError('To enable notifications on iOS, please add this app to your home screen first, then open it from there.');
+      return;
+    }
+    
     if (!isSupported) {
       setError('Push notifications are not supported on this device');
       return;
@@ -209,6 +223,9 @@ export function usePushNotifications(): UsePushNotificationsReturn {
     isSubscribed,
     isLoading,
     error,
+    isIOS,
+    isIOSPWA,
+    needsPWAInstall,
     requestPermission,
     subscribe,
     unsubscribe,

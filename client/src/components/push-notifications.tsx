@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
-import { Bell, BellOff, Check, X, AlertCircle, Smartphone } from 'lucide-react';
+import { Bell, BellOff, Check, X, AlertCircle, Smartphone, Plus, Share } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 export function PushNotificationCard() {
@@ -14,6 +14,9 @@ export function PushNotificationCard() {
     isSubscribed,
     isLoading,
     error,
+    isIOS,
+    isIOSPWA,
+    needsPWAInstall,
     requestPermission,
     subscribe,
     unsubscribe,
@@ -63,6 +66,80 @@ export function PushNotificationCard() {
       });
     }
   };
+
+  // Show iOS PWA installation instructions
+  if (needsPWAInstall) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Smartphone className="w-5 h-5" />
+            Enable Push Notifications (iOS)
+          </CardTitle>
+          <CardDescription>
+            Follow these steps to enable notifications on your iPhone
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <Alert>
+            <AlertCircle className="w-4 h-4" />
+            <AlertDescription>
+              Push notifications on iOS require the app to be installed to your home screen first.
+            </AlertDescription>
+          </Alert>
+          
+          <div className="space-y-3">
+            <div className="flex items-start gap-3">
+              <div className="w-6 h-6 bg-primary/10 rounded-full flex items-center justify-center text-sm font-medium">
+                1
+              </div>
+              <div>
+                <p className="font-medium">Tap the Share button</p>
+                <p className="text-sm text-muted-foreground">Look for the <Share className="w-4 h-4 inline mx-1" /> icon in Safari's toolbar</p>
+              </div>
+            </div>
+            
+            <div className="flex items-start gap-3">
+              <div className="w-6 h-6 bg-primary/10 rounded-full flex items-center justify-center text-sm font-medium">
+                2
+              </div>
+              <div>
+                <p className="font-medium">Select "Add to Home Screen"</p>
+                <p className="text-sm text-muted-foreground">Scroll down in the share menu and tap <Plus className="w-4 h-4 inline mx-1" /> "Add to Home Screen"</p>
+              </div>
+            </div>
+            
+            <div className="flex items-start gap-3">
+              <div className="w-6 h-6 bg-primary/10 rounded-full flex items-center justify-center text-sm font-medium">
+                3
+              </div>
+              <div>
+                <p className="font-medium">Open from home screen</p>
+                <p className="text-sm text-muted-foreground">Tap the app icon on your home screen (not Safari)</p>
+              </div>
+            </div>
+            
+            <div className="flex items-start gap-3">
+              <div className="w-6 h-6 bg-primary/10 rounded-full flex items-center justify-center text-sm font-medium">
+                4
+              </div>
+              <div>
+                <p className="font-medium">Enable notifications</p>
+                <p className="text-sm text-muted-foreground">Return to this section and tap "Request Permission"</p>
+              </div>
+            </div>
+          </div>
+          
+          <Alert>
+            <Bell className="w-4 h-4" />
+            <AlertDescription>
+              This only needs to be done once. Once installed, notifications will work normally.
+            </AlertDescription>
+          </Alert>
+        </CardContent>
+      </Card>
+    );
+  }
 
   if (!isSupported) {
     return (

@@ -10,6 +10,8 @@ import { Plus, UserPlus, RefreshCw } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useLocation } from "wouter";
 import { PushNotificationCard } from "@/components/push-notifications";
+import { IOSPWABanner } from "@/components/ios-pwa-banner";
+import { usePushNotifications } from "@/hooks/use-push-notifications";
 
 interface League {
   id: string;
@@ -26,6 +28,7 @@ export default function DashboardPage() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [, setLocation] = useLocation();
+  const { isIOS, isIOSPWA, needsPWAInstall } = usePushNotifications();
   
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [joinDialogOpen, setJoinDialogOpen] = useState(false);
@@ -173,8 +176,14 @@ export default function DashboardPage() {
   const userLeagues = userLeaguesQuery.data || [];
 
   return (
-    <MainLayout>
-      <div className="max-w-4xl mx-auto space-y-8">
+    <>
+      <IOSPWABanner 
+        isIOS={isIOS} 
+        isIOSPWA={isIOSPWA} 
+        needsPWAInstall={needsPWAInstall} 
+      />
+      <MainLayout>
+        <div className="max-w-4xl mx-auto space-y-8">
         {/* Welcome Section */}
         <div className="text-center space-y-4">
           <h1 className="text-4xl font-bold text-foreground">
@@ -325,10 +334,11 @@ export default function DashboardPage() {
         </div>
 
         {/* Push Notification Settings */}
-        <div className="max-w-2xl mx-auto">
+        <div className="max-w-2xl mx-auto" id="push-notifications-section">
           <PushNotificationCard />
         </div>
       </div>
     </MainLayout>
+    </>
   );
 }
