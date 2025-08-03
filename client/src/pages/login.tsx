@@ -35,33 +35,26 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 flex items-center justify-center p-4 relative overflow-hidden">
-      {/* Animated background elements */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--fantasy-success)_0%,_transparent_50%)] opacity-10" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,_var(--fantasy-accent)_0%,_transparent_50%)] opacity-10" />
-      
-      <div className="w-full max-w-md relative z-10">
+    <div className="min-h-screen bg-gradient-to-br from-fantasy-green to-trust-blue flex items-center justify-center p-4">
+      <div className="w-full max-w-md">
         {/* Brand Logo */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-24 h-24 bg-gradient-to-br from-fantasy-green to-accent rounded-3xl shadow-2xl mb-6 relative">
-            <Trophy className="w-10 h-10 text-white" />
-            <div className="absolute -inset-1 bg-gradient-to-br from-fantasy-green to-accent rounded-3xl blur opacity-30 animate-pulse"></div>
+          <div className="inline-flex items-center justify-center w-20 h-20 bg-white rounded-2xl shadow-lg mb-4">
+            <Trophy className="w-8 h-8 text-fantasy-green" />
           </div>
-          <h1 className="text-5xl font-bold bg-gradient-to-r from-fantasy-green to-accent text-transparent bg-clip-text mb-3">
-            Mok Sports
-          </h1>
-          <p className="text-xl text-muted-foreground font-medium">Fantasy Sports Reimagined</p>
-          <p className="text-muted-foreground/70 text-sm mt-2">Draft teams, not players</p>
+          <h1 className="text-4xl font-bold text-white mb-2">Mok Sports</h1>
+          <p className="text-white/80 text-lg">Fantasy Sports Reimagined</p>
+          <p className="text-white/60 text-sm mt-2">Draft teams, not players</p>
         </div>
 
         {/* Auth Card */}
-        <Card className="shadow-2xl border-2 border-border/50 bg-card/95 backdrop-blur-sm">
+        <Card className="shadow-xl">
           <CardContent className="p-8">
-            <div className="text-center mb-8">
-              <h2 className="text-2xl font-bold text-foreground mb-3">
-                Welcome Back
+            <div className="text-center mb-6">
+              <h2 className="text-2xl font-semibold text-foreground mb-2">
+                Welcome to Mok Sports
               </h2>
-              <p className="text-muted-foreground text-lg">Sign in to start dominating</p>
+              <p className="text-muted-foreground">Sign in to start your fantasy journey</p>
             </div>
 
             {/* Google Auth Button */}
@@ -69,7 +62,7 @@ export default function LoginPage() {
               onClick={handleGoogleLogin}
               disabled={isLoading || isLoggingIn || oauthLoading || !oauthConfigured}
               variant="outline"
-              className="w-full h-14 text-lg font-bold border-2 border-border hover:border-fantasy-green hover:bg-fantasy-green/5 transition-all duration-300 ease-out hover:scale-105 shadow-lg hover:shadow-xl"
+              className="w-full h-12 text-base font-semibold"
             >
               {isLoggingIn ? (
                 <Loader2 className="w-4 h-4 animate-spin mr-2" />
