@@ -63,6 +63,7 @@ export function LeagueWaiting() {
 
   // Track previous member count to detect when league becomes full
   const [previousMemberCount, setPreviousMemberCount] = useState<number>(0);
+  const [notificationSent, setNotificationSent] = useState<boolean>(false);
 
   if (!user || !leagueId) {
     return null;
@@ -244,17 +245,28 @@ export function LeagueWaiting() {
 
   // Auto-send notifications when league becomes full
   useEffect(() => {
-    if (league && league.memberCount === league.maxTeams && previousMemberCount < league.maxTeams && user?.id === league.creatorId) {
-      // League just became full and current user is creator
-      sendLeagueFullNotification.mutate({
-        leagueId: league.id,
-        leagueName: league.name
-      });
-    }
     if (league) {
-      setPreviousMemberCount(league.memberCount);
+      const leagueJustBecameFull = league.memberCount === league.maxTeams && previousMemberCount < league.maxTeams;
+      const isCreator = user?.id === league.creatorId;
+      
+      if (leagueJustBecameFull && isCreator && !notificationSent) {
+        // League just became full and current user is creator
+        sendLeagueFullNotification.mutate({
+          leagueId: league.id,
+          leagueName: league.name
+        });
+        setNotificationSent(true);
+      }
+      
+      if (league.memberCount !== previousMemberCount) {
+        setPreviousMemberCount(league.memberCount);
+        // Reset notification flag when member count changes (in case someone leaves)
+        if (league.memberCount < league.maxTeams) {
+          setNotificationSent(false);
+        }
+      }
     }
-  }, [league?.memberCount, league?.maxTeams, league?.id, league?.name, league?.creatorId, user?.id, previousMemberCount, sendLeagueFullNotification]);
+  }, [league]);
 
   return (
     <MainLayout>

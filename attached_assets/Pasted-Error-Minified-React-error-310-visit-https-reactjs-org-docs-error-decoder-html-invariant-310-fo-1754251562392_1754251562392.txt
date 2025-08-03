@@ -1,0 +1,86 @@
+Error: Minified React error #310; visit https://reactjs.org/docs/error-decoder.html?invariant=310 for the full message or use the non-minified dev environment for full errors and additional helpful warnings.
+    at lt (index-BdretTEj.js:38:17576)
+    at Zl (index-BdretTEj.js:38:17829)
+    at Object.useState (index-BdretTEj.js:38:24636)
+    at B.useState (index-BdretTEj.js:9:6364)
+    at Dr (index-BdretTEj.js:48:42155)
+    at wN (index-BdretTEj.js:212:24202)
+    at gc (index-BdretTEj.js:38:16981)
+    at Ja (index-BdretTEj.js:40:3135)
+    at Fm (index-BdretTEj.js:40:44679)
+    at Mm (index-BdretTEj.js:40:39686)
+Za @ index-BdretTEj.js:40
+s.componentDidCatch.n.callback @ index-BdretTEj.js:40
+nf @ index-BdretTEj.js:38
+xf @ index-BdretTEj.js:40
+Om @ index-BdretTEj.js:40
+Ux @ index-BdretTEj.js:40
+Qx @ index-BdretTEj.js:40
+Vn @ index-BdretTEj.js:40
+Cf @ index-BdretTEj.js:40
+zn @ index-BdretTEj.js:38
+(anonymous) @ index-BdretTEj.js:40
+setTimeout
+o @ index-BdretTEj.js:48
+i @ index-BdretTEj.js:48
+batch @ index-BdretTEj.js:48
+$t @ index-BdretTEj.js:48
+setData @ index-BdretTEj.js:48
+onSuccess @ index-BdretTEj.js:48
+f @ index-BdretTEj.js:48
+Promise.then
+S @ index-BdretTEj.js:48
+start @ index-BdretTEj.js:48
+fetch @ index-BdretTEj.js:48
+Fo @ index-BdretTEj.js:48
+setOptions @ index-BdretTEj.js:48
+(anonymous) @ index-BdretTEj.js:48
+fl @ index-BdretTEj.js:40
+_r @ index-BdretTEj.js:40
+(anonymous) @ index-BdretTEj.js:40
+k @ index-BdretTEj.js:25
+D @ index-BdretTEj.js:25Understand this error
+index-BdretTEj.js:168 ErrorBoundary caught an error: Minified React error #310; visit https://reactjs.org/docs/error-decoder.html?invariant=310 for the full message or use the non-minified dev environment for full errors and additional helpful warnings.
+componentDidCatch @ index-BdretTEj.js:168
+s.componentDidCatch.n.callback @ index-BdretTEj.js:40
+nf @ index-BdretTEj.js:38
+xf @ index-BdretTEj.js:40
+Om @ index-BdretTEj.js:40
+Ux @ index-BdretTEj.js:40
+Qx @ index-BdretTEj.js:40
+Vn @ index-BdretTEj.js:40
+Cf @ index-BdretTEj.js:40
+zn @ index-BdretTEj.js:38
+(anonymous) @ index-BdretTEj.js:40
+setTimeout
+o @ index-BdretTEj.js:48
+i @ index-BdretTEj.js:48
+batch @ index-BdretTEj.js:48
+$t @ index-BdretTEj.js:48
+setData @ index-BdretTEj.js:48
+onSuccess @ index-BdretTEj.js:48
+f @ index-BdretTEj.js:48
+Promise.then
+S @ index-BdretTEj.js:48
+start @ index-BdretTEj.js:48
+fetch @ index-BdretTEj.js:48
+Fo @ index-BdretTEj.js:48
+setOptions @ index-BdretTEj.js:48
+(anonymous) @ index-BdretTEj.js:48
+fl @ index-BdretTEj.js:40
+_r @ index-BdretTEj.js:40
+(anonymous) @ index-BdretTEj.js:40
+k @ index-BdretTEj.js:25
+D @ index-BdretTEj.js:25Understand this error
+index-BdretTEj.js:168 Component stack: 
+    at wN (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BdretTEj.js:212:22387)
+    at rn (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BdretTEj.js:48:3201)
+    at _w (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BdretTEj.js:48:4017)
+    at CN (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BdretTEj.js:212:32202)
+    at zE (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BdretTEj.js:168:57304)
+    at u (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BdretTEj.js:48:45215)
+    at Tv (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BdretTEj.js:168:50273)
+    at FE (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BdretTEj.js:168:56776)
+    at e1 (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BdretTEj.js:48:40089)
+    at VE (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BdretTEj.js:168:64177)
+    at EN
