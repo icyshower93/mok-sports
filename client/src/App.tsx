@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/hooks/use-theme";
 import { AuthProvider, useAuth } from "@/hooks/use-auth";
+import { AuthDebugPanel } from "@/components/auth-debug-panel";
 import LoginPage from "@/pages/login";
 import DashboardPage from "@/pages/dashboard";
 import LeaguesPage from "@/pages/leagues";
@@ -31,30 +32,33 @@ function AppContent() {
   }
 
   return (
-    <Switch>
-      <Route path="/login">
-        <LoginPage />
-      </Route>
-      <Route path="/">
-        {isAuthenticated ? <DashboardPage /> : <LoginPage />}
-      </Route>
-      <Route path="/leagues">
-        {isAuthenticated ? <LeaguesPage /> : <LoginPage />}
-      </Route>
-      <Route path="/draft">
-        {isAuthenticated ? <DraftPage /> : <LoginPage />}
-      </Route>
-      <Route path="/profile">
-        {isAuthenticated ? <ProfilePage /> : <LoginPage />}
-      </Route>
-      <Route path="/teams">
-        {isAuthenticated ? <TeamsPage /> : <LoginPage />}
-      </Route>
-      <Route path="/league/waiting">
-        {isAuthenticated ? <LeagueWaiting /> : <LoginPage />}
-      </Route>
-      <Route component={NotFound} />
-    </Switch>
+    <>
+      <Switch>
+        <Route path="/login">
+          <LoginPage />
+        </Route>
+        <Route path="/">
+          {isAuthenticated ? <DashboardPage /> : <LoginPage />}
+        </Route>
+        <Route path="/leagues">
+          {isAuthenticated ? <LeaguesPage /> : <LoginPage />}
+        </Route>
+        <Route path="/draft">
+          {isAuthenticated ? <DraftPage /> : <LoginPage />}
+        </Route>
+        <Route path="/profile">
+          {isAuthenticated ? <ProfilePage /> : <LoginPage />}
+        </Route>
+        <Route path="/teams">
+          {isAuthenticated ? <TeamsPage /> : <LoginPage />}
+        </Route>
+        <Route path="/league/waiting">
+          {isAuthenticated ? <LeagueWaiting /> : <LoginPage />}
+        </Route>
+        <Route component={NotFound} />
+      </Switch>
+      <AuthDebugPanel />
+    </>
   );
 }
 
