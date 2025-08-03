@@ -62,9 +62,9 @@ export default function DashboardPage() {
       setLeagueName("");
       toast({
         title: "League Created!",
-        description: `"${result.league.name}" has been created successfully.`,
+        description: `"${result.name}" has been created successfully.`,
       });
-      setLocation(`/league/waiting?id=${result.league.id}`);
+      setLocation(`/league/waiting?id=${result.id}`);
     },
     onError: (error: any) => {
       toast({
@@ -96,9 +96,9 @@ export default function DashboardPage() {
       setJoinCode("");
       toast({
         title: "Joined League!",
-        description: `You've successfully joined "${result.league.name}".`,
+        description: `You've successfully joined "${result.name}".`,
       });
-      setLocation(`/league/waiting?id=${result.league.id}`);
+      setLocation(`/league/waiting?id=${result.id}`);
     },
     onError: (error: any) => {
       toast({
