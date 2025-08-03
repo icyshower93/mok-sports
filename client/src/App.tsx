@@ -6,6 +6,8 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/hooks/use-theme";
 import { AuthProvider, useAuth } from "@/hooks/use-auth";
 import { usePWADetection } from "@/hooks/use-pwa-detection";
+import { useServiceWorker } from "@/hooks/use-service-worker";
+import { useAutoPushRefresh } from "@/hooks/use-auto-push-refresh";
 import { PWAInstallPrompt } from "@/components/pwa-install-prompt";
 
 import { ErrorBoundary } from "@/components/error-boundary";
@@ -22,6 +24,17 @@ import NotFound from "@/pages/not-found";
 function AppContent() {
   const { isAuthenticated, isLoading, user } = useAuth();
   const { isPWA } = usePWADetection();
+  
+  // Initialize service worker for PWA functionality
+  useServiceWorker(false); // Enable service worker for both PWA and web browsers for testing
+  
+  // Initialize automatic push notification refresh for iOS PWA
+  useAutoPushRefresh({
+    enabled: true,
+    refreshOnOpen: true,
+    refreshOnServiceWorkerActivation: true,
+    debug: true // Enable debug logging to track refresh behavior
+  });
 
   // Show install prompt only on mobile devices when not in PWA mode
   // Allow desktop usage for testing/development

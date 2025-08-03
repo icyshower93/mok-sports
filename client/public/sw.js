@@ -85,9 +85,18 @@ self.addEventListener('activate', (event) => {
       self.clients.claim().then(() => {
         return self.clients.matchAll();
       }).then((clients) => {
-        // Notify all clients to reload to get fresh resources
+        // Notify all clients about service worker activation and cache updates
         clients.forEach(client => {
-          client.postMessage({ type: 'CACHE_UPDATED', version: CACHE_VERSION });
+          client.postMessage({ 
+            type: 'CACHE_UPDATED', 
+            version: CACHE_VERSION,
+            timestamp: Date.now()
+          });
+          client.postMessage({ 
+            type: 'SW_ACTIVATED', 
+            version: CACHE_VERSION,
+            timestamp: Date.now()
+          });
         });
       })
     ]).then(() => {

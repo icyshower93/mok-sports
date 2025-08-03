@@ -9,11 +9,13 @@ export interface ServiceWorkerStatus {
   registration?: ServiceWorkerRegistration;
 }
 
+export function useServiceWorker(enableInPWAOnly: boolean = true) {
   const [status, setStatus] = useState<ServiceWorkerStatus>({
     isRegistered: false,
     isActive: false,
     isWaiting: false,
     version: '',
+    updateAvailable: false
   });
 
   const [isPageLoaded, setIsPageLoaded] = useState(false);
@@ -29,6 +31,7 @@ export interface ServiceWorkerStatus {
     }
   }, []);
 
+  const updateServiceWorkerStatus = useCallback((registration: ServiceWorkerRegistration) => {
     if (!registration) {
       setStatus(prev => ({ ...prev, isRegistered: false, isActive: false }));
       return;
@@ -74,42 +77,56 @@ export interface ServiceWorkerStatus {
 
       // Handle active service worker
       if (registration.active) {
-        registration.active.addEventListener('statechange', () => {
-          updateServiceWorkerStatus(registration);
-        });
+        updateServiceWorkerStatus(registration);
       }
 
-      updateServiceWorkerStatus(registration);
-      return registration;
+      // Handle waiting service worker
+      if (registration.waiting) {
+        updateServiceWorkerStatus(registration);
+      }
 
+      console.log('[SW Hook] Service worker registered successfully');
+      return registration;
     } catch (error) {
+      console.error('[SW Hook] Service worker registration failed:', error);
       return null;
     }
   }, [updateServiceWorkerStatus]);
 
-  const skipWaiting = useCallback(async () => {
-    if (status.registration?.waiting) {
-      status.registration.waiting.postMessage({ type: 'SKIP_WAITING' });
-    }
-  }, [status.registration]);
-
-  // Auto-register service worker when conditions are met
+  // Register service worker when page loads
   useEffect(() => {
     if (!isPageLoaded) return;
 
-    const shouldRegister = enableInPWAOnly ? 
-      window.matchMedia('(display-mode: standalone)').matches : true;
+    // Check if running in PWA mode and respect the enableInPWAOnly flag
+    const isPWA = window.matchMedia('(display-mode: standalone)').matches || 
+                  (window.navigator as any).standalone === true ||
+                  document.referrer.includes('android-app://');
 
-    if (shouldRegister) {
-      registerServiceWorker();
-    } else {
+    if (enableInPWAOnly && !isPWA) {
+      console.log('[SW Hook] Service worker disabled - not in PWA mode');
+      return;
     }
+
+    registerServiceWorker();
   }, [isPageLoaded, enableInPWAOnly, registerServiceWorker]);
 
+  const activateWaitingServiceWorker = useCallback(async () => {
+    if (status.registration?.waiting) {
+      status.registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+      window.location.reload();
+    }
+  }, [status.registration]);
+
+  const clearCaches = useCallback(async () => {
+    if (status.registration) {
+      status.registration.active?.postMessage({ type: 'CLEAR_CACHES' });
+    }
+  }, [status.registration]);
+
   return {
-    status,
+    ...status,
     registerServiceWorker,
-    skipWaiting,
-    isPageLoaded
+    activateWaitingServiceWorker,
+    clearCaches
   };
 }
