@@ -107,8 +107,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(401).json({ message: "Invalid token" });
       }
 
-      // Validate request body
-      const createLeagueSchema = insertLeagueSchema.extend({
+      // Validate request body - only validate what comes from frontend
+      const createLeagueSchema = z.object({
         name: z.string().min(1, "League name is required").max(50, "League name too long"),
         maxTeams: z.number().min(2, "Must have at least 2 teams").max(20, "Maximum 20 teams allowed"),
       });
