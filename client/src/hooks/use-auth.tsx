@@ -32,8 +32,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const { data: user, isLoading } = useQuery({
     queryKey: ["/api/auth/me"],
-    retry: false,
+    retry: 1,
     enabled: true,
+    refetchOnWindowFocus: true,
     meta: {
       onError: () => setIsAuthenticated(false)
     }

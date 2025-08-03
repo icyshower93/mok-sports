@@ -46,10 +46,48 @@ function AppContent() {
     );
   }
 
-  // Add a fallback for when authentication state is unclear
+  // Add emergency fallback for iOS Safari
   if (!isAuthenticated && !user && !isLoading) {
-    console.log('[iOS Debug] No auth state, showing login');
+    console.log('[iOS Debug] No auth state, showing emergency login');
+    return (
+      <div style={{
+        minHeight: '100vh',
+        background: 'linear-gradient(135deg, #10b981, #3b82f6)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '16px'
+      }}>
+        <div style={{
+          backgroundColor: 'white',
+          padding: '32px',
+          borderRadius: '8px',
+          textAlign: 'center',
+          maxWidth: '400px',
+          width: '100%'
+        }}>
+          <h1 style={{ marginBottom: '16px', color: '#1f2937' }}>Mok Sports</h1>
+          <p style={{ marginBottom: '24px', color: '#6b7280' }}>Please log in to continue</p>
+          <button 
+            onClick={() => window.location.href = '/api/auth/google'}
+            style={{
+              backgroundColor: '#3b82f6',
+              color: 'white',
+              padding: '12px 24px',
+              border: 'none',
+              borderRadius: '6px',
+              cursor: 'pointer',
+              width: '100%'
+            }}
+          >
+            Sign in with Google
+          </button>
+        </div>
+      </div>
+    );
   }
+
+  console.log('[iOS Debug] Rendering main app');
 
   return (
     <Switch>

@@ -115,17 +115,17 @@ export default function DashboardPage() {
     },
   });
 
-  // Auto-redirect effect - only redirect on initial load, not after leaving a league
-  useEffect(() => {
-    const leagues = userLeaguesQuery.data;
-    const params = new URLSearchParams(window.location.search);
-    const skipAutoRedirect = params.get('stay') === 'true';
-    
-    if (!userLeaguesQuery.isLoading && !userLeaguesQuery.error && leagues && leagues.length > 0 && !skipAutoRedirect) {
-      const activeLeague = leagues[0];
-      setLocation(`/league/waiting?id=${activeLeague.id}`);
-    }
-  }, [userLeaguesQuery.data, userLeaguesQuery.isLoading, userLeaguesQuery.error, setLocation]);
+  // Auto-redirect effect - disabled to allow testing notifications on dashboard
+  // useEffect(() => {
+  //   const leagues = userLeaguesQuery.data;
+  //   const params = new URLSearchParams(window.location.search);
+  //   const skipAutoRedirect = params.get('stay') === 'true';
+  //   
+  //   if (!userLeaguesQuery.isLoading && !userLeaguesQuery.error && leagues && leagues.length > 0 && !skipAutoRedirect) {
+  //     const activeLeague = leagues[0];
+  //     setLocation(`/league/waiting?id=${activeLeague.id}`);
+  //   }
+  // }, [userLeaguesQuery.data, userLeaguesQuery.isLoading, userLeaguesQuery.error, setLocation]);
 
   // Handle form submissions
   const handleCreateLeague = () => {
