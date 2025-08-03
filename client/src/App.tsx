@@ -17,25 +17,30 @@ import NotFound from "@/pages/not-found";
 function AppContent() {
   const { isAuthenticated, isLoading, user } = useAuth();
 
-  // Enhanced iOS detection that runs immediately - but ONLY for iOS devices
+  // Enhanced iOS detection that runs immediately - but ONLY for actual iOS devices
   const isIOSSafari = typeof window !== 'undefined' && 
     /iPad|iPhone|iPod/.test(navigator.userAgent) && 
     window.matchMedia && 
     !window.matchMedia('(display-mode: standalone)').matches &&
-    !('standalone' in window.navigator && (window.navigator as any).standalone === true);
+    !('standalone' in window.navigator && (window.navigator as any).standalone === true) &&
+    navigator.userAgent.indexOf('Safari') > -1 && // Ensure it's actually Safari
+    navigator.userAgent.indexOf('CriOS') === -1 && // Not Chrome on iOS
+    navigator.userAgent.indexOf('FxiOS') === -1; // Not Firefox on iOS
 
-  console.log('[iOS Debug] App state:', { 
+  console.log('[Debug] App state:', { 
     isAuthenticated, 
     isLoading, 
     hasUser: !!user, 
     isIOSSafari,
+    isDesktop: !(/iPad|iPhone|iPod|Android/.test(navigator.userAgent)),
     userAgent: navigator.userAgent,
-    displayMode: window.matchMedia ? window.matchMedia('(display-mode: standalone)').matches : 'N/A'
+    displayMode: window.matchMedia ? window.matchMedia('(display-mode: standalone)').matches : 'N/A',
+    shouldShowInstallPrompt: isIOSSafari && /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.matchMedia('(display-mode: standalone)').matches
   });
 
-  // CRITICAL: Only show install prompt for iOS Safari browsers
-  if (isIOSSafari && /iPad|iPhone|iPod/.test(navigator.userAgent)) {
-    console.log('[iOS Debug] iOS Safari detected - showing install prompt immediately');
+  // CRITICAL: Only show install prompt for iOS Safari browsers (not desktop or other browsers)
+  if (isIOSSafari && /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.matchMedia('(display-mode: standalone)').matches) {
+    console.log('[iOS Debug] iOS Safari detected - showing install prompt');
     return (
       <div style={{
         minHeight: '100vh',
@@ -80,7 +85,7 @@ function AppContent() {
   }
 
   if (isLoading && !user) {
-    console.log('[iOS Debug] Showing loading screen');
+    console.log('[Debug] Showing loading screen');
     return (
       <div style={{
         minHeight: '100vh',
@@ -106,7 +111,7 @@ function AppContent() {
     );
   }
 
-  console.log('[iOS Debug] Rendering main app');
+  console.log('[Debug] Rendering main app - bypassed install prompt');
 
   return (
     <Switch>
