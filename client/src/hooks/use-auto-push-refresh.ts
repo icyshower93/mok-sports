@@ -41,7 +41,8 @@ export function useAutoPushRefresh(options: AutoPushRefreshOptions = {}) {
       refreshOnServiceWorkerActivation,
       debug,
       userAuthenticated: !!user,
-      userEmail: user?.email
+      userEmail: user?.email,
+      timestamp: new Date().toISOString()
     });
   }, [enabled, refreshOnOpen, refreshOnServiceWorkerActivation, debug, user]);
 
@@ -194,6 +195,18 @@ export function useAutoPushRefresh(options: AutoPushRefreshOptions = {}) {
       refreshPushSubscription(true); // Force refresh to debug the issue
     }
   }, [user, refreshOnOpen, refreshPushSubscription, log]);
+
+  // Additional force refresh for debugging - separate effect to avoid dependency issues
+  useEffect(() => {
+    if (enabled && user && debug) {
+      console.log('[AutoPushRefresh] Additional debugging refresh...');
+      const timer = setTimeout(() => {
+        console.log('[AutoPushRefresh] Executing forced debug refresh');
+        refreshPushSubscription(true);
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [enabled, user, debug, refreshPushSubscription]);
 
   // Listen for service worker activation events
   useEffect(() => {
