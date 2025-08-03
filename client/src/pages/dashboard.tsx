@@ -32,7 +32,7 @@ export default function DashboardPage() {
   const [maxTeams, setMaxTeams] = useState("6");
   const [joinCode, setJoinCode] = useState("");
 
-  // Check if user is already in a league
+  // Check if user is already in a league - only if user exists
   const { data: userLeagues, isLoading: leaguesLoading, error: leaguesError } = useQuery<League[]>({
     queryKey: ['/api/leagues/user'],
     enabled: !!user,
@@ -40,22 +40,18 @@ export default function DashboardPage() {
 
   // Redirect to waiting room if user is already in a league
   useEffect(() => {
-    if (!leaguesLoading && !leaguesError && userLeagues) {
-      if (Array.isArray(userLeagues) && userLeagues.length > 0) {
-        const activeLeague = userLeagues[0]; // User should only be in one league at a time
-        console.log('Redirecting to league waiting room:', activeLeague.id);
-        setLocation(`/league/waiting?id=${activeLeague.id}`);
-      } else {
-        console.log('User has no leagues, staying on dashboard');
-      }
+    if (!leaguesLoading && !leaguesError && userLeagues && Array.isArray(userLeagues) && userLeagues.length > 0) {
+      const activeLeague = userLeagues[0];
+      console.log('Redirecting to league waiting room:', activeLeague.id);
+      setLocation(`/league/waiting?id=${activeLeague.id}`);
     }
   }, [userLeagues, leaguesLoading, leaguesError, setLocation]);
 
+  // Early returns for loading states
   if (!user) {
     return null;
   }
 
-  // Show loading while checking leagues
   if (leaguesLoading) {
     return (
       <MainLayout>
@@ -69,14 +65,8 @@ export default function DashboardPage() {
     );
   }
 
-  // Show error if leagues failed to load, but continue to show dashboard
-  if (leaguesError) {
-    console.error('Failed to load user leagues:', leaguesError);
-  }
-
-  // Don't hide dashboard if there's an error - just proceed to show create/join options
-  // Only redirect if we have leagues and no error
-  if (!leaguesLoading && !leaguesError && userLeagues && Array.isArray(userLeagues) && userLeagues.length > 0) {
+  // If user has leagues and we're not loading, they'll be redirected by the useEffect
+  if (!leaguesError && userLeagues && Array.isArray(userLeagues) && userLeagues.length > 0) {
     return (
       <MainLayout>
         <div className="min-h-[70vh] flex items-center justify-center">
@@ -87,6 +77,11 @@ export default function DashboardPage() {
         </div>
       </MainLayout>
     );
+  }
+
+  // Log error but continue to show dashboard
+  if (leaguesError) {
+    console.error('Failed to load user leagues:', leaguesError);
   }
 
   const firstName = user.name.split(" ")[0];
