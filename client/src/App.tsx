@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/hooks/use-theme";
 import { AuthProvider, useAuth } from "@/hooks/use-auth";
+import { usePushNotifications } from "@/hooks/use-push-notifications";
 import LoginPage from "@/pages/login";
 import DashboardPage from "@/pages/dashboard";
 import LeaguesPage from "@/pages/leagues";
@@ -16,6 +17,9 @@ import NotFound from "@/pages/not-found";
 
 function AppContent() {
   const { isAuthenticated, isLoading, user } = useAuth();
+  
+  // Initialize push notifications to handle auto-permission requests
+  usePushNotifications();
 
   // Enhanced iOS detection that runs immediately - but ONLY for actual iOS devices
   const isIOSSafari = typeof window !== 'undefined' && 
