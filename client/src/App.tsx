@@ -9,6 +9,7 @@ import { usePWADetection } from "@/hooks/use-pwa-detection";
 import { PWAInstallPrompt } from "@/components/pwa-install-prompt";
 import { DebugPanel } from "@/components/debug-panel";
 import { ErrorBoundary } from "@/components/error-boundary";
+import { NotificationBanner } from "@/components/notification-banner";
 import LoginPage from "@/pages/login";
 import DashboardPage from "@/pages/dashboard";
 import LeaguesPage from "@/pages/leagues";
@@ -66,6 +67,9 @@ function AppContent() {
 
   return (
     <>
+      {/* Show notification banner after login in PWA mode */}
+      {(isAuthenticated || user) && isPWA && <NotificationBanner />}
+      
       <Switch>
         <Route path="/login">
           <LoginPage />

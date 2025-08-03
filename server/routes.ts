@@ -6,6 +6,7 @@ import { storage } from "./storage";
 import { generateJoinCode } from "./utils";
 import { insertLeagueSchema } from "@shared/schema";
 import { z } from "zod";
+import { registerPushNotificationRoutes } from "./routes/push-notifications";
 import "./auth"; // Initialize passport strategies
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -37,27 +38,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
             maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
           });
 
-          // Send welcome notification if user has active push subscriptions
-          try {
-            const subscriptions = await storage.getUserPushSubscriptions(user.id);
-            if (subscriptions.length > 0) {
-              console.log(`Sending welcome notification to user ${user.name}`);
-              await storage.sendPushNotification(subscriptions, {
-                title: "Welcome back!",
-                body: `Hi ${user.name}, welcome to Mok Sports! 🏈`,
-                icon: "/icon-192x192.png",
-                badge: "/icon-72x72.png",
-                data: {
-                  url: "/",
-                  type: "welcome",
-                  timestamp: Date.now()
-                }
-              });
-            }
-          } catch (notificationError) {
-            console.error("Failed to send welcome notification:", notificationError);
-            // Don't fail auth if notification fails
-          }
+          // Note: Welcome notifications are now handled by the client-side post-login flow
+          // This ensures proper timing and user interaction context for notifications
 
           res.redirect("/?auth=success");
         } catch (error) {
@@ -332,6 +314,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Register push notification routes
+  registerPushNotificationRoutes(app);
+
   // Push notification routes
   app.get("/api/push/vapid-key", async (req, res) => {
     const token = req.cookies?.auth_token;
@@ -371,13 +356,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Invalid subscription data" });
       }
 
-      const pushSubscription = await storage.createPushSubscription({
-        userId: user.id,
-        endpoint: subscription.endpoint,
-        p256dhKey: subscription.keys.p256dh,
-        authKey: subscription.keys.auth,
-        userAgent: userAgent || null,
-      });
+      const pushSubscription = await storage.createPushSubscription(user.id, subscription);
 
       res.json({ success: true, subscription: pushSubscription });
     } catch (error) {

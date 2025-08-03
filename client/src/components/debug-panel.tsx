@@ -4,13 +4,13 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { usePWADetection } from '@/hooks/use-pwa-detection';
 import { useServiceWorker } from '@/hooks/use-service-worker';
-import { usePushNotifications } from '@/hooks/use-push-notifications';
+import { usePostLoginNotifications } from '@/hooks/use-post-login-notifications';
 
 export function DebugPanel() {
   const [isExpanded, setIsExpanded] = useState(false);
   const pwaStatus = usePWADetection();
   const { status: swStatus, skipWaiting } = useServiceWorker(true);
-  const { permission, isSupported } = usePushNotifications();
+  const notificationState = usePostLoginNotifications();
 
   if (!isExpanded) {
     return (
@@ -85,16 +85,26 @@ export function DebugPanel() {
           <div>
             <h4 className="text-xs font-medium text-gray-600 mb-1">Notifications</h4>
             <div className="flex flex-wrap gap-1">
-              <Badge variant={isSupported ? "default" : "destructive"}>
-                {isSupported ? "Supported" : "Not Supported"}
+              <Badge variant={notificationState.isSupported ? "default" : "destructive"}>
+                {notificationState.isSupported ? "Supported" : "Not Supported"}
               </Badge>
               <Badge 
-                variant={permission === 'granted' ? "default" : 
-                        permission === 'denied' ? "destructive" : "secondary"}
+                variant={notificationState.permissionStatus === 'granted' ? "default" : 
+                        notificationState.permissionStatus === 'denied' ? "destructive" : "secondary"}
               >
-                {permission || 'default'}
+                {notificationState.permissionStatus || 'default'}
               </Badge>
+              {notificationState.subscriptionActive && (
+                <Badge variant="default">
+                  Subscribed
+                </Badge>
+              )}
             </div>
+            {notificationState.error && (
+              <div className="text-xs text-red-600 mt-1">
+                {notificationState.error}
+              </div>
+            )}
           </div>
 
           {/* Actions */}

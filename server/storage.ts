@@ -33,8 +33,9 @@ export interface IStorage {
   
   // Push notification methods
   getVapidKeys(): { publicKey: string; privateKey: string };
-  createPushSubscription(subscription: InsertPushSubscription): Promise<PushSubscription>;
+  createPushSubscription(userId: string, subscription: any): Promise<PushSubscription>;
   getUserPushSubscriptions(userId: string): Promise<PushSubscription[]>;
+  removePushSubscription(userId: string, endpoint: string): Promise<void>;
   deactivatePushSubscriptions(userId: string): Promise<void>;
   sendPushNotification(subscriptions: PushSubscription[], notification: any): Promise<any[]>;
 }
@@ -225,19 +226,27 @@ export class DatabaseStorage implements IStorage {
     }
   }
 
-  async createPushSubscription(insertSubscription: InsertPushSubscription): Promise<PushSubscription> {
+  async createPushSubscription(userId: string, subscription: any): Promise<PushSubscription> {
+    const subscriptionData: InsertPushSubscription = {
+      userId,
+      endpoint: subscription.endpoint,
+      p256dhKey: subscription.keys.p256dh,
+      authKey: subscription.keys.auth,
+      isActive: true
+    };
+
     // First, deactivate any existing subscriptions for this user
     await db.update(pushSubscriptions)
       .set({ isActive: false })
-      .where(eq(pushSubscriptions.userId, insertSubscription.userId));
+      .where(eq(pushSubscriptions.userId, userId));
 
     // Create new subscription
-    const [subscription] = await db
+    const [pushSub] = await db
       .insert(pushSubscriptions)
-      .values(insertSubscription)
+      .values(subscriptionData)
       .returning();
     
-    return subscription;
+    return pushSub;
   }
 
   async getUserPushSubscriptions(userId: string): Promise<PushSubscription[]> {
@@ -246,6 +255,15 @@ export class DatabaseStorage implements IStorage {
       .where(and(
         eq(pushSubscriptions.userId, userId),
         eq(pushSubscriptions.isActive, true)
+      ));
+  }
+
+  async removePushSubscription(userId: string, endpoint: string): Promise<void> {
+    await db.update(pushSubscriptions)
+      .set({ isActive: false })
+      .where(and(
+        eq(pushSubscriptions.userId, userId),
+        eq(pushSubscriptions.endpoint, endpoint)
       ));
   }
 
