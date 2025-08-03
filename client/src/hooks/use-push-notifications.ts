@@ -28,10 +28,29 @@ export function usePushNotifications(): UsePushNotificationsReturn {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Device detection
+  // Enhanced iOS detection
   const isIOS = typeof window !== 'undefined' && /iPad|iPhone|iPod/.test(navigator.userAgent);
-  const isIOSPWA = isIOS && window.matchMedia && window.matchMedia('(display-mode: standalone)').matches;
+  const isIOSPWA = isIOS && (
+    (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) ||
+    ('standalone' in window.navigator && (window.navigator as any).standalone === true)
+  );
   const needsPWAInstall = isIOS && !isIOSPWA;
+
+  // Debug logging for iOS detection
+  useEffect(() => {
+    if (isIOS) {
+      console.log('[PWA Debug] iOS detected:', {
+        userAgent: navigator.userAgent,
+        displayMode: window.matchMedia ? window.matchMedia('(display-mode: standalone)').matches : 'N/A',
+        standalone: 'standalone' in window.navigator ? window.navigator.standalone : 'N/A',
+        isIOSPWA,
+        needsPWAInstall,
+        notificationPermission: Notification.permission,
+        pushManagerSupported: 'PushManager' in window,
+        serviceWorkerSupported: 'serviceWorker' in navigator
+      });
+    }
+  }, [isIOS, isIOSPWA, needsPWAInstall]);
 
   // Check if push notifications are supported
   const isSupported = typeof window !== 'undefined' && 
@@ -65,13 +84,27 @@ export function usePushNotifications(): UsePushNotificationsReturn {
   }, [isSupported, user]);
 
   const requestPermission = useCallback(async () => {
+    console.log('[PWA Debug] Requesting permission:', {
+      isIOS,
+      isIOSPWA,
+      needsPWAInstall,
+      isSupported,
+      currentPermission: Notification.permission
+    });
+
     if (needsPWAInstall) {
       setError('To enable notifications on iOS, please add this app to your home screen first, then open it from there.');
       return;
     }
     
     if (!isSupported) {
-      setError('Push notifications are not supported on this device');
+      const reasons = [];
+      if (!('serviceWorker' in navigator)) reasons.push('Service Worker not supported');
+      if (!('PushManager' in window)) reasons.push('Push Manager not supported');
+      if (!('Notification' in window)) reasons.push('Notification API not supported');
+      if (isIOS && !isIOSPWA) reasons.push('iOS requires PWA mode');
+      
+      setError(`Push notifications are not supported: ${reasons.join(', ')}`);
       return;
     }
 
@@ -79,19 +112,23 @@ export function usePushNotifications(): UsePushNotificationsReturn {
     setError(null);
 
     try {
+      console.log('[PWA Debug] Calling Notification.requestPermission()');
       const result = await Notification.requestPermission();
+      console.log('[PWA Debug] Permission result:', result);
       setPermission(result);
 
       if (result === 'denied') {
-        setError('Notification permission was denied. Please enable notifications in your browser settings.');
+        setError('Notification permission was denied. Please enable notifications in your device settings.');
+      } else if (result === 'granted') {
+        console.log('[PWA Debug] Permission granted successfully');
       }
     } catch (err) {
       console.error('Error requesting permission:', err);
-      setError('Failed to request notification permission');
+      setError(`Failed to request notification permission: ${err instanceof Error ? err.message : 'Unknown error'}`);
     } finally {
       setIsLoading(false);
     }
-  }, [isSupported]);
+  }, [isSupported, isIOS, isIOSPWA, needsPWAInstall]);
 
   const getVapidKey = useCallback(async (): Promise<string> => {
     const response = await fetch(VAPID_KEY_ENDPOINT, {

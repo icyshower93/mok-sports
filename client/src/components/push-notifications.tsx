@@ -6,6 +6,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Bell, BellOff, Check, X, AlertCircle, Smartphone, Plus, Share } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { IOSDebugPanel } from './ios-debug-panel';
 
 export function PushNotificationCard() {
   const {
@@ -295,6 +296,17 @@ export function PushNotificationCard() {
           <p>• Trade proposals and completions</p>
           <p>• You can disable these anytime</p>
         </div>
+
+        {/* iOS Debug Panel */}
+        {isIOS && (
+          <IOSDebugPanel
+            isIOS={isIOS}
+            isIOSPWA={isIOSPWA}
+            needsPWAInstall={needsPWAInstall}
+            isSupported={isSupported}
+            permission={permission}
+          />
+        )}
       </CardContent>
     </Card>
   );
