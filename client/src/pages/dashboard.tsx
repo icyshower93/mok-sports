@@ -112,10 +112,13 @@ export default function DashboardPage() {
     },
   });
 
-  // Auto-redirect effect
+  // Auto-redirect effect - only redirect on initial load, not after leaving a league
   useEffect(() => {
     const leagues = userLeaguesQuery.data;
-    if (!userLeaguesQuery.isLoading && !userLeaguesQuery.error && leagues && leagues.length > 0) {
+    const params = new URLSearchParams(window.location.search);
+    const skipAutoRedirect = params.get('stay') === 'true';
+    
+    if (!userLeaguesQuery.isLoading && !userLeaguesQuery.error && leagues && leagues.length > 0 && !skipAutoRedirect) {
       const activeLeague = leagues[0];
       setLocation(`/league/waiting?id=${activeLeague.id}`);
     }
@@ -164,21 +167,10 @@ export default function DashboardPage() {
     );
   }
 
-  // If user has leagues, show redirecting state
-  if (userLeaguesQuery.data && userLeaguesQuery.data.length > 0) {
-    return (
-      <MainLayout>
-        <div className="min-h-[70vh] flex items-center justify-center">
-          <div className="text-center">
-            <RefreshCw className="w-8 h-8 animate-spin mx-auto mb-4 text-fantasy-green" />
-            <p className="text-muted-foreground">Redirecting to your league...</p>
-          </div>
-        </div>
-      </MainLayout>
-    );
-  }
+
 
   const firstName = user.name.split(" ")[0];
+  const userLeagues = userLeaguesQuery.data || [];
 
   return (
     <MainLayout>
@@ -188,9 +180,30 @@ export default function DashboardPage() {
           <h1 className="text-4xl font-bold text-foreground">
             Welcome back, {firstName}!
           </h1>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Ready to draft your dream team? Create a new league or join an existing one to get started.
-          </p>
+          {userLeagues.length > 0 ? (
+            <div className="space-y-2">
+              <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+                You have {userLeagues.length} active league{userLeagues.length > 1 ? 's' : ''}. Join one or create a new league.
+              </p>
+              <div className="flex flex-wrap justify-center gap-2">
+                {userLeagues.map((league) => (
+                  <Button
+                    key={league.id}
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setLocation(`/league/waiting?id=${league.id}`)}
+                    className="text-xs"
+                  >
+                    {league.name} ({league.memberCount}/{league.maxTeams})
+                  </Button>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              Ready to draft your dream team? Create a new league or join an existing one to get started.
+            </p>
+          )}
         </div>
 
         {/* Action Cards */}

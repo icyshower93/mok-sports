@@ -132,7 +132,8 @@ export function LeagueWaiting() {
       
       // Invalidate user leagues query to force dashboard refresh
       queryClient.invalidateQueries({ queryKey: ['/api/leagues/user'] });
-      setLocation('/');
+      // Redirect to dashboard with stay parameter to prevent auto-redirect
+      setLocation('/?stay=true');
     } catch (error) {
       toast({
         title: "Error",
