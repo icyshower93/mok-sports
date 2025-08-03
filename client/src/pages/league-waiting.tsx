@@ -4,10 +4,11 @@ import { MainLayout } from "@/components/layout/main-layout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Copy, Users, Clock, Share2, RefreshCw } from "lucide-react";
+import { Copy, Users, Clock, Share2, RefreshCw, LogOut } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
 import { useLocation } from "wouter";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface League {
   id: string;
@@ -17,6 +18,12 @@ interface League {
   memberCount: number;
   isActive: boolean;
   createdAt: string;
+  members?: Array<{
+    id: string;
+    name: string;
+    avatar: string | null;
+    joinedAt: string;
+  }>;
 }
 
 export function LeagueWaiting() {
@@ -106,6 +113,32 @@ export function LeagueWaiting() {
 
   const isLeagueFull = league.memberCount >= league.maxTeams;
 
+  const leaveLeague = async () => {
+    try {
+      const response = await fetch(`/api/leagues/${leagueId}/leave`, {
+        method: 'POST',
+        credentials: 'include',
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to leave league');
+      }
+      
+      toast({
+        title: "Left League",
+        description: "You have successfully left the league",
+      });
+      
+      setLocation('/');
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to leave league",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <MainLayout>
       <div className="min-h-[70vh] flex items-center justify-center px-4">
@@ -156,6 +189,41 @@ export function LeagueWaiting() {
                 </div>
               </div>
 
+              {/* Members Section */}
+              <div>
+                <h3 className="font-semibold mb-3 text-center">League Members</h3>
+                <div className="space-y-2">
+                  {league.members?.map((member) => (
+                    <div key={member.id} className="flex items-center gap-3 p-2 rounded-lg bg-muted/50">
+                      <Avatar className="w-8 h-8">
+                        <AvatarImage src={member.avatar || undefined} alt={member.name} />
+                        <AvatarFallback className="text-xs">
+                          {member.name.split(' ').map(n => n[0]).join('').toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium truncate">{member.name}</p>
+                        <p className="text-xs text-muted-foreground">
+                          Joined {new Date(member.joinedAt).toLocaleDateString()}
+                        </p>
+                      </div>
+                    </div>
+                  )) || []}
+                  
+                  {/* Empty slots */}
+                  {Array.from({ length: league.maxTeams - league.memberCount }).map((_, index) => (
+                    <div key={`empty-${index}`} className="flex items-center gap-3 p-2 rounded-lg border-2 border-dashed border-muted">
+                      <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
+                        <Users className="w-4 h-4 text-muted-foreground" />
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-sm text-muted-foreground">Waiting for player...</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
               {/* Status Section */}
               <div className="text-center">
                 {isLeagueFull ? (
@@ -184,14 +252,15 @@ export function LeagueWaiting() {
                 )}
               </div>
 
-              {/* Back to Dashboard */}
+              {/* Leave League */}
               <div className="text-center">
                 <Button
                   variant="ghost"
-                  onClick={() => setLocation('/')}
-                  className="text-muted-foreground"
+                  onClick={leaveLeague}
+                  className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950"
                 >
-                  Back to Dashboard
+                  <LogOut className="w-4 h-4 mr-2" />
+                  Leave League
                 </Button>
               </div>
             </CardContent>

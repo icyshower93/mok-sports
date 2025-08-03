@@ -18,10 +18,11 @@ export interface IStorage {
   
   // League methods
   createLeague(league: InsertLeague & { joinCode: string }): Promise<League>;
-  getLeague(id: string): Promise<(League & { memberCount: number }) | undefined>;
+  getLeague(id: string): Promise<(League & { memberCount: number; members: Array<{ id: string; name: string; avatar: string | null; joinedAt: string }> }) | undefined>;
   getLeagueByJoinCode(joinCode: string): Promise<League | undefined>;
   getUserLeagues(userId: string): Promise<Array<League & { memberCount: number; isCreator: boolean }>>;
   joinLeague(member: InsertLeagueMember): Promise<LeagueMember>;
+  leaveLeague(userId: string, leagueId: string): Promise<void>;
   isUserInLeague(userId: string, leagueId: string): Promise<boolean>;
   getLeagueMemberCount(leagueId: string): Promise<number>;
   
@@ -79,12 +80,33 @@ export class DatabaseStorage implements IStorage {
     return newLeague;
   }
 
-  async getLeague(id: string): Promise<(League & { memberCount: number }) | undefined> {
+  async getLeague(id: string): Promise<(League & { memberCount: number; members: Array<{ id: string; name: string; avatar: string | null; joinedAt: string }> }) | undefined> {
     const [league] = await db.select().from(leagues).where(eq(leagues.id, id));
     if (!league) return undefined;
     
     const memberCount = await this.getLeagueMemberCount(id);
-    return { ...league, memberCount };
+    
+    // Get league members with user details
+    const members = await db
+      .select({
+        id: users.id,
+        name: users.name,
+        avatar: users.avatar,
+        joinedAt: leagueMembers.joinedAt,
+      })
+      .from(leagueMembers)
+      .innerJoin(users, eq(leagueMembers.userId, users.id))
+      .where(eq(leagueMembers.leagueId, id))
+      .orderBy(leagueMembers.joinedAt);
+    
+    return { 
+      ...league, 
+      memberCount,
+      members: members.map(member => ({
+        ...member,
+        joinedAt: member.joinedAt.toISOString(),
+      }))
+    };
   }
 
   async getLeagueByJoinCode(joinCode: string): Promise<League | undefined> {
@@ -119,6 +141,12 @@ export class DatabaseStorage implements IStorage {
       .values(member)
       .returning();
     return newMember;
+  }
+
+  async leaveLeague(userId: string, leagueId: string): Promise<void> {
+    await db
+      .delete(leagueMembers)
+      .where(and(eq(leagueMembers.userId, userId), eq(leagueMembers.leagueId, leagueId)));
   }
 
   async isUserInLeague(userId: string, leagueId: string): Promise<boolean> {
