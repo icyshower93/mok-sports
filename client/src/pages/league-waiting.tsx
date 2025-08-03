@@ -4,7 +4,7 @@ import { MainLayout } from "@/components/layout/main-layout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Copy, Users, Clock, Share2, RefreshCw, LogOut } from "lucide-react";
+import { Copy, Users, Clock, Share2, RefreshCw, LogOut, Crown } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
 import { useLocation } from "wouter";
@@ -20,6 +20,7 @@ interface League {
   memberCount: number;
   isActive: boolean;
   createdAt: string;
+  creatorId: string;
   members: {
     id: string;
     name: string;
@@ -206,22 +207,28 @@ export function LeagueWaiting() {
               <div>
                 <h3 className="font-semibold mb-3 text-center">League Members</h3>
                 <div className="space-y-2">
-                  {league.members?.map((member) => (
-                    <div key={member.id} className="flex items-center gap-3 p-2 rounded-lg bg-muted/50">
-                      <Avatar className="w-8 h-8">
-                        <AvatarImage src={member.avatar || undefined} alt={member.name} />
-                        <AvatarFallback className="text-xs">
-                          {member.name.split(' ').map(n => n[0]).join('').toUpperCase()}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium truncate">{member.name}</p>
-                        <p className="text-xs text-muted-foreground">
-                          Joined {new Date(member.joinedAt).toLocaleDateString()}
-                        </p>
+                  {league.members?.map((member) => {
+                    const isCreator = member.id === league.creatorId;
+                    return (
+                      <div key={member.id} className="flex items-center gap-3 p-2 rounded-lg bg-muted/50">
+                        <Avatar className="w-8 h-8">
+                          <AvatarImage src={member.avatar || undefined} alt={member.name} />
+                          <AvatarFallback className="text-xs">
+                            {member.name.split(' ').map(n => n[0]).join('').toUpperCase()}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2">
+                            <p className="text-sm font-medium truncate">{member.name}</p>
+                            {isCreator && <Crown className="w-3 h-3 text-fantasy-green" />}
+                          </div>
+                          <p className="text-xs text-muted-foreground">
+                            {isCreator ? 'Created' : 'Joined'} {new Date(member.joinedAt).toLocaleDateString()}
+                          </p>
+                        </div>
                       </div>
-                    </div>
-                  )) || []}
+                    );
+                  }) || []}
                   
                   {/* Empty slots */}
                   {Array.from({ length: league.maxTeams - league.memberCount }).map((_, index) => (
