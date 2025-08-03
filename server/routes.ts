@@ -478,6 +478,56 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Test direct notification to specific user (no auth required for testing)
+  app.post("/api/test/user-notification", async (req, res) => {
+    try {
+      const { userId, message, title } = req.body;
+      if (!userId) {
+        return res.status(400).json({ message: "User ID is required" });
+      }
+
+      console.log(`Testing direct user notification for user ${userId}`);
+
+      // Use the reusable notification pattern
+      const { sendUserNotification } = await import("./utils/notification-patterns.js");
+      
+      const notification = {
+        title: title || "Direct Test Notification",
+        body: message || "Testing direct notification to verify your push subscription works.",
+        icon: "/icon-192x192.png",
+        badge: "/icon-72x72.png",
+        data: {
+          url: "/dashboard",
+          type: "direct-test",
+          timestamp: Date.now()
+        }
+      };
+      
+      const result = await sendUserNotification(userId, notification);
+
+      console.log(`Direct user notification test completed - sent to ${result.sentCount} devices`);
+
+      res.json({
+        message: "Direct user notification test completed",
+        success: result.success,
+        sentCount: result.sentCount,
+        errors: result.errors,
+        details: {
+          userId: userId,
+          notification: notification,
+          timestamp: new Date().toISOString()
+        }
+      });
+
+    } catch (error) {
+      console.error('Test direct user notification error:', error);
+      res.status(500).json({ 
+        message: "Failed to test direct user notification",
+        details: error instanceof Error ? error.message : "Unknown error"
+      });
+    }
+  });
+
   // Push notification routes
   app.get("/api/push/vapid-key", async (req, res) => {
     const token = req.cookies?.auth_token;
