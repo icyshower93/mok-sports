@@ -20,6 +20,8 @@ export const leagues = pgTable("leagues", {
   maxTeams: integer("max_teams").notNull().default(6),
   creatorId: varchar("creator_id").notNull().references(() => users.id),
   isActive: boolean("is_active").notNull().default(true),
+  draftScheduledAt: timestamp("draft_scheduled_at"),
+  draftStarted: boolean("draft_started").notNull().default(false),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 

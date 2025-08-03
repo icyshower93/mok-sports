@@ -169,6 +169,14 @@ export class DatabaseStorage implements IStorage {
       .where(and(eq(leagueMembers.userId, userId), eq(leagueMembers.leagueId, leagueId)));
   }
 
+  async scheduleDraft(leagueId: string, draftDateTime: Date): Promise<void> {
+    await db.update(leagues)
+      .set({ 
+        draftScheduledAt: draftDateTime 
+      })
+      .where(eq(leagues.id, leagueId));
+  }
+
   async isUserInLeague(userId: string, leagueId: string): Promise<boolean> {
     const [existing] = await db
       .select()

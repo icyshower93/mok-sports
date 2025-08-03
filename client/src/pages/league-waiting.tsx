@@ -4,13 +4,16 @@ import { MainLayout } from "@/components/layout/main-layout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Copy, Users, Clock, Share2, RefreshCw, LogOut, Crown, X } from "lucide-react";
+import { Copy, Users, Clock, Share2, RefreshCw, LogOut, Crown, X, Calendar, CalendarClock } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
 import { useLocation } from "wouter";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { queryClient } from "@/lib/queryClient";
 import { DraftNotificationReminder } from "@/components/draft-notification-reminder";
+import { Input } from "@/components/ui/input";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
 
 interface League {
   id: string;
@@ -21,6 +24,8 @@ interface League {
   isActive: boolean;
   createdAt: string;
   creatorId: string;
+  draftScheduledAt?: string;
+  draftStarted: boolean;
   members: {
     id: string;
     name: string;
@@ -34,6 +39,8 @@ export function LeagueWaiting() {
   const { toast } = useToast();
   const [, setLocation] = useLocation();
   const [leagueId, setLeagueId] = useState<string | null>(null);
+  const [scheduleDialogOpen, setScheduleDialogOpen] = useState(false);
+  const [draftDateTime, setDraftDateTime] = useState("");
 
   // Get league ID from URL params
   useEffect(() => {
@@ -53,6 +60,23 @@ export function LeagueWaiting() {
     enabled: !!leagueId,
     refetchInterval: 5000, // Refresh every 5 seconds to check for new members
   });
+
+  // Track previous member count to detect when league becomes full
+  const [previousMemberCount, setPreviousMemberCount] = useState<number>(0);
+
+  // Auto-send notifications when league becomes full
+  useEffect(() => {
+    if (league && league.memberCount === league.maxTeams && previousMemberCount < league.maxTeams && user?.id === league.creatorId) {
+      // League just became full and current user is creator
+      sendLeagueFullNotification.mutate({
+        leagueId: league.id,
+        leagueName: league.name
+      });
+    }
+    if (league) {
+      setPreviousMemberCount(league.memberCount);
+    }
+  }, [league?.memberCount, league?.maxTeams, league?.id, league?.name, league?.creatorId, user?.id]);
 
   if (!user || !leagueId) {
     return null;
@@ -176,6 +200,62 @@ export function LeagueWaiting() {
     },
   });
 
+  // Send league full notification mutation
+  const sendLeagueFullNotification = useMutation({
+    mutationFn: async ({ leagueId, leagueName }: { leagueId: string; leagueName: string }) => {
+      const response = await fetch('/api/push/league-full', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ leagueId, leagueName }),
+      });
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to send notifications');
+      }
+      return response.json();
+    },
+    onSuccess: (data) => {
+      console.log('League full notifications sent:', data);
+    },
+    onError: (error: any) => {
+      console.error('Failed to send league full notifications:', error);
+    },
+  });
+
+  // Schedule draft mutation
+  const scheduleDraftMutation = useMutation({
+    mutationFn: async (draftDateTime: string) => {
+      const response = await fetch(`/api/leagues/${leagueId}/schedule-draft`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ draftDateTime }),
+      });
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Failed to schedule draft');
+      }
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "Draft Scheduled!",
+        description: "All league members will be notified about the draft time.",
+      });
+      setScheduleDialogOpen(false);
+      setDraftDateTime("");
+      refetch(); // Refresh league data
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to schedule draft",
+        variant: "destructive",
+      });
+    },
+  });
+
   return (
     <MainLayout>
       <div className="min-h-[70vh] flex items-center justify-center px-4">
@@ -294,14 +374,80 @@ export function LeagueWaiting() {
                 {isLeagueFull ? (
                   <div className="bg-fantasy-green/10 border border-fantasy-green rounded-lg p-4">
                     <h3 className="font-semibold text-fantasy-green mb-2">
-                      League is Full!
+                      League is Full! 🏆
                     </h3>
-                    <p className="text-sm text-muted-foreground mb-4">
-                      All {league.maxTeams} teams have joined. The draft will begin soon.
-                    </p>
-                    <Button className="mt-3 w-full" onClick={() => setLocation('/draft')}>
-                      Start Draft
-                    </Button>
+                    
+                    {league.draftScheduledAt ? (
+                      <div className="space-y-3">
+                        <p className="text-sm text-muted-foreground">
+                          Draft scheduled for:
+                        </p>
+                        <div className="bg-muted rounded-lg p-3">
+                          <div className="flex items-center justify-center gap-2 text-fantasy-green font-semibold">
+                            <CalendarClock className="w-4 h-4" />
+                            {new Date(league.draftScheduledAt).toLocaleDateString()} at{" "}
+                            {new Date(league.draftScheduledAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                          </div>
+                        </div>
+                        <Button className="w-full" onClick={() => setLocation('/draft')}>
+                          Enter Draft Room
+                        </Button>
+                      </div>
+                    ) : (
+                      <div className="space-y-3">
+                        <p className="text-sm text-muted-foreground mb-4">
+                          All {league.maxTeams} teams have joined. Time to schedule your draft!
+                        </p>
+                        
+                        {user?.id === league.creatorId ? (
+                          <Dialog open={scheduleDialogOpen} onOpenChange={setScheduleDialogOpen}>
+                            <DialogTrigger asChild>
+                              <Button className="w-full">
+                                <Calendar className="w-4 h-4 mr-2" />
+                                Schedule Draft
+                              </Button>
+                            </DialogTrigger>
+                            <DialogContent>
+                              <DialogHeader>
+                                <DialogTitle>Schedule Draft</DialogTitle>
+                              </DialogHeader>
+                              <div className="space-y-4">
+                                <div>
+                                  <Label htmlFor="draft-datetime">Draft Date & Time</Label>
+                                  <Input
+                                    id="draft-datetime"
+                                    type="datetime-local"
+                                    value={draftDateTime}
+                                    onChange={(e) => setDraftDateTime(e.target.value)}
+                                    min={new Date().toISOString().slice(0, 16)}
+                                  />
+                                </div>
+                                <div className="flex gap-2">
+                                  <Button
+                                    variant="outline"
+                                    onClick={() => setScheduleDialogOpen(false)}
+                                    className="flex-1"
+                                  >
+                                    Cancel
+                                  </Button>
+                                  <Button
+                                    onClick={() => scheduleDraftMutation.mutate(draftDateTime)}
+                                    disabled={!draftDateTime || scheduleDraftMutation.isPending}
+                                    className="flex-1"
+                                  >
+                                    {scheduleDraftMutation.isPending ? "Scheduling..." : "Schedule"}
+                                  </Button>
+                                </div>
+                              </div>
+                            </DialogContent>
+                          </Dialog>
+                        ) : (
+                          <p className="text-sm text-muted-foreground">
+                            Waiting for league creator to schedule the draft...
+                          </p>
+                        )}
+                      </div>
+                    )}
                   </div>
                 ) : (
                   <div className="bg-muted/50 rounded-lg p-4">

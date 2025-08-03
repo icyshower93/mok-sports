@@ -341,6 +341,55 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Schedule draft (creator only)
+  app.post("/api/leagues/:id/schedule-draft", async (req, res) => {
+    try {
+      const token = req.cookies?.auth_token;
+      if (!token) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+
+      const { verifyJWT } = require("./auth");
+      const user = verifyJWT(token);
+      if (!user) {
+        return res.status(401).json({ message: "Invalid token" });
+      }
+
+      const { id } = req.params;
+      const { draftDateTime } = req.body;
+
+      if (!draftDateTime) {
+        return res.status(400).json({ message: "Draft date and time are required" });
+      }
+
+      // Get league to check creator permissions
+      const league = await storage.getLeague(id);
+      if (!league) {
+        return res.status(404).json({ message: "League not found" });
+      }
+
+      // Only league creator can schedule draft
+      if (league.creatorId !== user.id) {
+        return res.status(403).json({ message: "Only league creator can schedule draft" });
+      }
+
+      // Check if league is full
+      if (league.memberCount < league.maxTeams) {
+        return res.status(400).json({ message: "League must be full before scheduling draft" });
+      }
+
+      // Update league with draft schedule
+      await storage.scheduleDraft(id, new Date(draftDateTime));
+
+      res.json({ 
+        message: "Draft scheduled successfully",
+        draftScheduledAt: draftDateTime
+      });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to schedule draft" });
+    }
+  });
+
   // NFL Teams routes
   app.get("/api/nfl-teams", async (req, res) => {
     try {

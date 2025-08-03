@@ -195,4 +195,67 @@ export function registerPushNotificationRoutes(app: Express) {
       });
     }
   });
+
+  // Send league full notification to all members
+  app.post("/api/push/league-full", authenticateJWT, async (req, res) => {
+    try {
+      const user = req.user as any;
+      const { leagueId, leagueName } = req.body;
+      
+      if (!user) {
+        return res.status(401).json({ error: "Not authenticated" });
+      }
+
+      // Verify user is the league creator
+      const league = await storage.getLeague(leagueId);
+      if (!league || league.creatorId !== user.id) {
+        return res.status(403).json({ error: "Only league creator can send league notifications" });
+      }
+
+      // Get all league members
+      const members = league.members || [];
+      
+      // Get push subscriptions for all members
+      const allSubscriptions = [];
+      for (const member of members) {
+        const subscriptions = await storage.getUserPushSubscriptions(member.id);
+        allSubscriptions.push(...subscriptions);
+      }
+      
+      if (allSubscriptions.length === 0) {
+        return res.status(200).json({ 
+          message: "No active subscriptions among league members",
+          sent: false 
+        });
+      }
+
+      const notificationData = {
+        title: "League Full! 🏆",
+        body: `${leagueName} is ready! All 6 spots are filled. Time to schedule your draft!`,
+        icon: "/icon-192x192.png",
+        badge: "/icon-72x72.png",
+        data: {
+          url: `/league/waiting?id=${leagueId}`,
+          type: "league-full",
+          timestamp: Date.now(),
+          leagueId
+        }
+      };
+
+      await storage.sendPushNotification(allSubscriptions, notificationData);
+      
+      res.json({
+        message: "League full notification sent",
+        sent: true,
+        deviceCount: allSubscriptions.length,
+        memberCount: members.length
+      });
+      
+    } catch (error) {
+      res.status(500).json({ 
+        error: "Failed to send league full notification",
+        details: error instanceof Error ? error.message : "Unknown error"
+      });
+    }
+  });
 }
