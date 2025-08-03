@@ -31,16 +31,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
           const token = generateJWT(user);
           
           // Set JWT as httpOnly cookie and redirect
-          res.cookie("auth_token", token, {
+          // Enhanced cookie settings for PWA compatibility
+          const isProduction = process.env.NODE_ENV === "production";
+          const cookieOptions = {
             httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "lax",
+            secure: isProduction,
+            sameSite: isProduction ? "none" as const : "lax" as const,
             maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-          });
+            path: '/'
+          };
+          
+          console.log(`🍪 Setting auth cookie with options:`, cookieOptions);
+          console.log(`🍪 Token preview:`, token.substring(0, 20) + '...');
+          
+          res.cookie("auth_token", token, cookieOptions);
 
           // Note: Welcome notifications are now handled by the client-side post-login flow
           // This ensures proper timing and user interaction context for notifications
 
+          console.log(`🔄 Redirecting after successful auth for user: ${user.email}`);
           res.redirect("/?auth=success");
         } catch (error) {
           console.error("Auth callback error:", error);

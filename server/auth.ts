@@ -129,20 +129,47 @@ export function verifyJWT(token: string) {
 }
 
 export function authenticateJWT(req: Request, res: Response, next: NextFunction) {
-  const authHeader = req.headers.authorization;
-  const token = authHeader && authHeader.split(' ')[1];
-
+  const token = req.cookies?.auth_token;
+  
+  console.log(`🍪 Auth check - Cookie present: ${!!token}`);
+  console.log(`🍪 All cookies:`, Object.keys(req.cookies || {}));
+  console.log(`🍪 Headers:`, {
+    cookie: req.headers.cookie?.substring(0, 100) + '...',
+    origin: req.headers.origin,
+    userAgent: req.headers['user-agent']?.substring(0, 50) + '...'
+  });
+  
   if (!token) {
-    return res.status(401).json({ message: "Access token required" });
+    console.log(`🚫 No auth token found in cookies`);
+    return res.status(401).json({ 
+      message: "Not authenticated",
+      reason: "no_token",
+      debug: {
+        cookiesReceived: Object.keys(req.cookies || {}),
+        origin: req.headers.origin
+      }
+    });
   }
 
-  const user = verifyJWT(token);
-  if (!user) {
-    return res.status(403).json({ message: "Invalid or expired token" });
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET) as any;
+    console.log(`✅ JWT verified for user: ${decoded.email}`);
+    req.user = decoded;
+    next();
+  } catch (error) {
+    console.error("🚫 JWT verification failed:", error);
+    res.clearCookie("auth_token", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" as const : "lax" as const,
+      domain: process.env.NODE_ENV === "production" ? ".replit.app" : undefined
+    });
+    return res.status(401).json({ 
+      message: "Invalid token",
+      reason: "invalid_token",
+      error: error instanceof Error ? error.message : "Unknown error"
+    });
   }
-
-  req.user = user;
-  next();
 }
 
 // Export OAuth configuration status

@@ -231,8 +231,7 @@ export class DatabaseStorage implements IStorage {
       userId,
       endpoint: subscription.endpoint,
       p256dhKey: subscription.keys.p256dh,
-      authKey: subscription.keys.auth,
-      isActive: true
+      authKey: subscription.keys.auth
     };
 
     // First, deactivate any existing subscriptions for this user

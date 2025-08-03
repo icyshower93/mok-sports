@@ -153,8 +153,12 @@ self.addEventListener('fetch', (event) => {
   }
 
   // Handle different request types
-  if (url.pathname.startsWith('/api/')) {
-    // API requests - network first with cache fallback
+  if (url.pathname.startsWith('/api/auth/')) {
+    // Authentication endpoints - ALWAYS go to network, never cache
+    console.log('[SW] Auth endpoint - bypassing cache:', url.pathname);
+    event.respondWith(fetch(request));
+  } else if (url.pathname.startsWith('/api/')) {
+    // Other API requests - network first with cache fallback
     event.respondWith(networkFirstStrategy(request, API_CACHE));
   } else if (STATIC_FILES.includes(url.pathname) || url.pathname === '/') {
     // Static files and app shell - network first to ensure fresh content

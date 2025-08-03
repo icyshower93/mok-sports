@@ -30,13 +30,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const queryClient = useQueryClient();
 
-  const { data: user, isLoading } = useQuery({
+  const { data: user, isLoading, error } = useQuery({
     queryKey: ["/api/auth/me"],
-    retry: 1,
+    retry: false,
     enabled: true,
-    refetchOnWindowFocus: true,
-    meta: {
-      onError: () => setIsAuthenticated(false)
+    refetchOnWindowFocus: false,
+    refetchOnMount: true,
+    staleTime: 0, // Always check fresh authentication status
+    cacheTime: 0, // Don't cache auth responses
+    onError: (error: any) => {
+      console.error('[Auth] Query failed:', error);
+      setIsAuthenticated(false);
     }
   });
 
@@ -56,15 +60,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   });
 
   useEffect(() => {
-    console.log('[Auth Hook] State change:', { user: !!user, isLoading, isAuthenticated });
-    if (user) {
-      console.log('[Auth Hook] Setting authenticated to true');
-      setIsAuthenticated(true);
-    } else if (!isLoading) {
-      console.log('[Auth Hook] Setting authenticated to false');
+    const hasUser = !!user;
+    console.log('[Auth] Authentication state update:', { hasUser, user: user?.email, isLoading });
+    setIsAuthenticated(hasUser && !isLoading);
+    
+    // Handle authentication errors
+    if (error && !isLoading) {
+      console.error('[Auth] Authentication error:', error);
       setIsAuthenticated(false);
     }
-  }, [user, isLoading]);
+  }, [user, error, isLoading]);
 
   // Check URL params for auth success/error
   useEffect(() => {

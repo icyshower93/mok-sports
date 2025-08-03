@@ -1,9 +1,40 @@
 import express, { type Request, Response, NextFunction } from "express";
 import cookieParser from "cookie-parser";
+import cors from "cors";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 
 const app = express();
+
+// Configure CORS for PWA and cross-origin requests
+const corsOptions = {
+  origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
+    // Allow requests with no origin (mobile apps, Postman, etc.)
+    if (!origin) return callback(null, true);
+    
+    // Allow localhost and development domains
+    if (origin.includes('localhost') || 
+        origin.includes('127.0.0.1') ||
+        origin.includes('.replit.dev') ||
+        origin.includes('.replit.app')) {
+      return callback(null, true);
+    }
+    
+    // Allow the specific deployment domain
+    if (origin === 'https://mok-sports-draft-mokfantasysport.replit.app') {
+      return callback(null, true);
+    }
+    
+    console.log(`⚠️ CORS blocked origin: ${origin}`);
+    callback(new Error('Not allowed by CORS'), false);
+  },
+  credentials: true, // Allow cookies to be sent
+  optionsSuccessStatus: 200,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization', 'Cookie']
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());

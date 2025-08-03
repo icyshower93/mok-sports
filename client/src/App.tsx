@@ -21,17 +21,17 @@ import NotFound from "@/pages/not-found";
 
 function AppContent() {
   const { isAuthenticated, isLoading, user } = useAuth();
-  const pwaStatus = usePWADetection();
+  const { isPWA } = usePWADetection();
 
   console.log('[Debug] App state:', { 
     isAuthenticated, 
     isLoading, 
     hasUser: !!user,
-    pwaStatus
+    isPWA
   });
 
-  // Show install prompt if not in PWA mode and can install
-  if (!pwaStatus.isPWA && pwaStatus.canInstall) {
+  // Show install prompt if not in PWA mode
+  if (!isPWA) {
     console.log('[PWA] Showing install prompt');
     return <PWAInstallPrompt />;
   }
