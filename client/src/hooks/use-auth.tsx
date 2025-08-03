@@ -58,10 +58,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     console.log('[Auth Debug] User state changed:', { user, isAuthenticated });
     if (user) {
       setIsAuthenticated(true);
-    } else {
+    } else if (!isLoading) {
+      // Only set to false if we're not loading (to avoid flicker during initial load)
       setIsAuthenticated(false);
     }
-  }, [user, isAuthenticated]);
+  }, [user, isLoading]);
 
   // Check URL params for auth success/error
   useEffect(() => {

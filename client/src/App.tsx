@@ -20,7 +20,8 @@ function AppContent() {
 
   console.log('[App Debug] Current state:', { isAuthenticated, isLoading, hasUser: !!user });
 
-  if (isLoading) {
+  // Show loading only if we're actually loading and don't have user data yet
+  if (isLoading && !user) {
     return (
       <div className="min-h-screen bg-light-gray flex items-center justify-center">
         <div className="text-center">
@@ -38,22 +39,22 @@ function AppContent() {
           <LoginPage />
         </Route>
         <Route path="/">
-          {isAuthenticated ? <DashboardPage /> : <LoginPage />}
+          {(isAuthenticated || user) ? <DashboardPage /> : <LoginPage />}
         </Route>
         <Route path="/leagues">
-          {isAuthenticated ? <LeaguesPage /> : <LoginPage />}
+          {(isAuthenticated || user) ? <LeaguesPage /> : <LoginPage />}
         </Route>
         <Route path="/draft">
-          {isAuthenticated ? <DraftPage /> : <LoginPage />}
+          {(isAuthenticated || user) ? <DraftPage /> : <LoginPage />}
         </Route>
         <Route path="/profile">
-          {isAuthenticated ? <ProfilePage /> : <LoginPage />}
+          {(isAuthenticated || user) ? <ProfilePage /> : <LoginPage />}
         </Route>
         <Route path="/teams">
-          {isAuthenticated ? <TeamsPage /> : <LoginPage />}
+          {(isAuthenticated || user) ? <TeamsPage /> : <LoginPage />}
         </Route>
         <Route path="/league/waiting">
-          {isAuthenticated ? <LeagueWaiting /> : <LoginPage />}
+          {(isAuthenticated || user) ? <LeagueWaiting /> : <LoginPage />}
         </Route>
         <Route component={NotFound} />
       </Switch>
