@@ -12,6 +12,7 @@ import { useLocation } from "wouter";
 import { PushNotificationCard } from "@/components/push-notifications";
 import { IOSPWABanner } from "@/components/ios-pwa-banner";
 import { usePushNotifications } from "@/hooks/use-push-notifications";
+import { NotificationPrompt } from "@/components/notification-prompt";
 
 interface League {
   id: string;
@@ -43,6 +44,24 @@ export default function DashboardPage() {
   const [joinDialogOpen, setJoinDialogOpen] = useState(false);
   const [leagueName, setLeagueName] = useState("");
   const [joinCode, setJoinCode] = useState("");
+  const [showNotificationPrompt, setShowNotificationPrompt] = useState(false);
+
+  // Show prominent notification prompt for newly logged in users
+  useEffect(() => {
+    if (user && permission === 'default') {
+      // Check if user just logged in (within last 5 minutes) and hasn't seen prompt
+      const loginTime = sessionStorage.getItem('login-time');
+      const promptShown = sessionStorage.getItem('notification-prompt-shown');
+      
+      if (loginTime && !promptShown) {
+        const timeSinceLogin = Date.now() - parseInt(loginTime);
+        if (timeSinceLogin < 5 * 60 * 1000) { // 5 minutes
+          setShowNotificationPrompt(true);
+          sessionStorage.setItem('notification-prompt-shown', 'true');
+        }
+      }
+    }
+  }, [user, permission]);
 
   // Query for user leagues
   const userLeaguesQuery = useQuery<League[]>({
@@ -214,6 +233,18 @@ export default function DashboardPage() {
           <h1 className="text-4xl font-bold text-foreground">
             Welcome back, {firstName}!
           </h1>
+          
+          {/* Prominent notification prompt for post-login users */}
+          {showNotificationPrompt && (
+            <div className="mb-6">
+              <NotificationPrompt
+                isProminent={true}
+                context="post-login"
+                onPermissionGranted={() => setShowNotificationPrompt(false)}
+                onDismiss={() => setShowNotificationPrompt(false)}
+              />
+            </div>
+          )}
           
           {/* Debug & Test Buttons */}
           <div className="flex flex-col items-center gap-2">

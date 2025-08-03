@@ -37,11 +37,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     refetchOnWindowFocus: false,
     refetchOnMount: true,
     staleTime: 0, // Always check fresh authentication status
-    cacheTime: 0, // Don't cache auth responses
-    onError: (error: any) => {
-      console.error('[Auth] Query failed:', error);
-      setIsAuthenticated(false);
-    }
+    gcTime: 0, // Don't cache auth responses (renamed from cacheTime in v5)
   });
 
   const { data: oauthConfig, isLoading: oauthLoading } = useQuery<OAuthConfig>({
@@ -61,7 +57,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const hasUser = !!user;
-    console.log('[Auth] Authentication state update:', { hasUser, user: user?.email, isLoading });
+    console.log('[Auth] Authentication state update:', { hasUser, userEmail: (user as any)?.email, isLoading });
     setIsAuthenticated(hasUser && !isLoading);
     
     // Handle authentication errors
@@ -82,6 +78,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (authStatus === "success") {
       console.log('[Auth Debug] Auth success detected, invalidating queries');
       setIsAuthenticated(true);
+      // Mark login time for notification prompt
+      sessionStorage.setItem('login-time', Date.now().toString());
       queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
       // Clean up URL
       window.history.replaceState({}, document.title, "/");

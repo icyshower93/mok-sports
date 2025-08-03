@@ -10,6 +10,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { useLocation } from "wouter";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { queryClient } from "@/lib/queryClient";
+import { DraftNotificationReminder } from "@/components/draft-notification-reminder";
 
 interface League {
   id: string;
@@ -165,6 +166,14 @@ export function LeagueWaiting() {
             </CardHeader>
 
             <CardContent className="space-y-6">
+              {/* Draft notification reminder for leagues with full capacity */}
+              {league.memberCount === league.maxTeams && (
+                <DraftNotificationReminder
+                  leagueName={league.name}
+                  draftStartTime={new Date(Date.now() + 30 * 60 * 1000)} // 30 minutes from now for demo
+                />
+              )}
+              
               {/* Join Code Section */}
               <div className="text-center">
                 <h3 className="font-semibold mb-2">League Code</h3>
