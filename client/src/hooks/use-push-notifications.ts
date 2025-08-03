@@ -27,6 +27,7 @@ export function usePushNotifications(): UsePushNotificationsReturn {
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [needsReauthorization, setNeedsReauthorization] = useState(false);
 
   // Enhanced iOS detection
   const isIOS = typeof window !== 'undefined' && /iPad|iPhone|iPod/.test(navigator.userAgent);
@@ -270,6 +271,33 @@ export function usePushNotifications(): UsePushNotificationsReturn {
     }
   }, [isIOS, isIOSPWA, isSupported, user, permission, requestPermission]);
 
+  // Check if notifications need re-enabling (PWA reinstall scenario)
+  useEffect(() => {
+    if (isIOSPWA && 'serviceWorker' in navigator && 'PushManager' in window) {
+      // Check if we previously had permission but lost subscription
+      const checkReinstallStatus = async () => {
+        const permission = Notification.permission;
+        if (permission === 'granted') {
+          const registration = await navigator.serviceWorker.ready;
+          const subscription = await registration.pushManager.getSubscription();
+          if (!subscription && localStorage.getItem('was-subscribed') === 'true') {
+            // PWA was reinstalled, need to re-subscribe
+            console.log('PWA reinstall detected, subscription needs renewal');
+            setNeedsReauthorization(true);
+          }
+        }
+      };
+      checkReinstallStatus();
+    }
+  }, [isIOSPWA]);
+
+  // Track subscription status in localStorage
+  useEffect(() => {
+    if (isSubscribed) {
+      localStorage.setItem('was-subscribed', 'true');
+    }
+  }, [isSubscribed]);
+
   return {
     isSupported,
     permission,
@@ -279,6 +307,7 @@ export function usePushNotifications(): UsePushNotificationsReturn {
     isIOS,
     isIOSPWA,
     needsPWAInstall,
+    needsReauthorization,
     requestPermission,
     subscribe,
     unsubscribe,
