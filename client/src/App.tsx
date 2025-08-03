@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/hooks/use-theme";
 import { AuthProvider, useAuth } from "@/hooks/use-auth";
 import { AuthDebugPanel } from "@/components/auth-debug-panel";
+import { ErrorBoundary } from "@/components/error-boundary";
 import LoginPage from "@/pages/login";
 import DashboardPage from "@/pages/dashboard";
 import LeaguesPage from "@/pages/leagues";
@@ -22,14 +23,20 @@ function AppContent() {
 
   // Show loading only if we're actually loading and don't have user data yet
   if (isLoading && !user) {
+    console.log('[App Debug] Showing loading screen');
     return (
-      <div className="min-h-screen bg-light-gray flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-2 border-fantasy-green border-t-transparent mx-auto mb-4"></div>
-          <p className="text-muted-gray">Loading...</p>
+          <p className="text-muted-foreground">Loading...</p>
         </div>
       </div>
     );
+  }
+
+  // If we have neither user nor authentication and not loading, something is wrong
+  if (!user && !isAuthenticated && !isLoading) {
+    console.log('[App Debug] No user, not authenticated, not loading - showing login');
   }
 
   return (
@@ -65,16 +72,18 @@ function AppContent() {
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider defaultTheme="dark" storageKey="mok-sports-theme">
-        <TooltipProvider>
-          <AuthProvider>
-            <Toaster />
-            <AppContent />
-          </AuthProvider>
-        </TooltipProvider>
-      </ThemeProvider>
-    </QueryClientProvider>
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider defaultTheme="dark" storageKey="mok-sports-theme">
+          <TooltipProvider>
+            <AuthProvider>
+              <Toaster />
+              <AppContent />
+            </AuthProvider>
+          </TooltipProvider>
+        </ThemeProvider>
+      </QueryClientProvider>
+    </ErrorBoundary>
   );
 }
 
