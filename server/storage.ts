@@ -121,24 +121,31 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getUserLeagues(userId: string): Promise<Array<League & { memberCount: number; isCreator: boolean }>> {
-    const userLeagues = await db
-      .select({
-        id: leagues.id,
-        name: leagues.name,
-        joinCode: leagues.joinCode,
-        maxTeams: leagues.maxTeams,
-        creatorId: leagues.creatorId,
-        isActive: leagues.isActive,
-        createdAt: leagues.createdAt,
-        memberCount: sql<number>`COUNT(${leagueMembers.userId})::int`,
-        isCreator: sql<boolean>`${leagues.creatorId} = ${userId}`,
-      })
-      .from(leagues)
-      .innerJoin(leagueMembers, eq(leagues.id, leagueMembers.leagueId))
-      .where(eq(leagueMembers.userId, userId))
-      .groupBy(leagues.id);
+    try {
+      const userLeagues = await db
+        .select({
+          id: leagues.id,
+          name: leagues.name,
+          joinCode: leagues.joinCode,
+          maxTeams: leagues.maxTeams,
+          creatorId: leagues.creatorId,
+          isActive: leagues.isActive,
+          createdAt: leagues.createdAt,
+          memberCount: sql<number>`COUNT(${leagueMembers.userId})::int`,
+          isCreator: sql<boolean>`${leagues.creatorId} = ${userId}`,
+        })
+        .from(leagues)
+        .innerJoin(leagueMembers, eq(leagues.id, leagueMembers.leagueId))
+        .where(eq(leagueMembers.userId, userId))
+        .groupBy(leagues.id);
 
-    return userLeagues;
+      console.log(`Found ${userLeagues.length} leagues for user ${userId}`);
+      return userLeagues;
+    } catch (error) {
+      console.error('Error in getUserLeagues:', error);
+      // Return empty array if there's an error instead of throwing
+      return [];
+    }
   }
 
   async joinLeague(member: InsertLeagueMember): Promise<LeagueMember> {
