@@ -173,6 +173,9 @@ export default function DashboardPage() {
                       onChange={(e) => setLeagueName(e.target.value)}
                       placeholder="Enter league name"
                       maxLength={50}
+                      autoFocus={false}
+                      tabIndex={-1}
+                      onFocus={(e) => e.target.setAttribute('tabindex', '0')}
                     />
                   </div>
                   <div className="flex space-x-3 pt-4">
@@ -217,6 +220,9 @@ export default function DashboardPage() {
                       placeholder="Enter 6-character code"
                       maxLength={6}
                       className="uppercase"
+                      autoFocus={false}
+                      tabIndex={-1}
+                      onFocus={(e) => e.target.setAttribute('tabindex', '0')}
                     />
                   </div>
                   <div className="flex space-x-3 pt-4">
