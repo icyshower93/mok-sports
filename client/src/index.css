@@ -2,6 +2,35 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Prevent swipe navigation and pull-to-refresh on mobile */
+html {
+  overscroll-behavior: contain;
+  overscroll-behavior-x: none;
+}
+
+body {
+  overscroll-behavior-x: none;
+  touch-action: pan-y;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Prevent accidental text selection on mobile while preserving input functionality */
+* {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Re-enable text selection where needed */
+input, textarea, [contenteditable="true"], p, span, h1, h2, h3, h4, h5, h6 {
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  user-select: text;
+}
+
 :root {
   --background: hsl(0, 0%, 100%);
   --foreground: hsl(222, 84%, 4.9%);

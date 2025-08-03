@@ -2,8 +2,36 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="msapplication-tap-highlight" content="no" />
     <title>Mok Sports - Fantasy Sports Reimagined</title>
+    <style>
+      /* Disable swipe navigation and pull-to-refresh */
+      html, body {
+        overscroll-behavior-x: none;
+        overscroll-behavior: contain;
+        touch-action: pan-y;
+        -webkit-overflow-scrolling: touch;
+      }
+      
+      /* Disable text selection on touch devices by default */
+      * {
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
+      
+      /* Re-enable text selection for input fields and text content */
+      input, textarea, [contenteditable="true"], p, span, div[role="textbox"] {
+        -webkit-user-select: text;
+        -moz-user-select: text;
+        -ms-user-select: text;
+        user-select: text;
+      }
+    </style>
     <meta name="description" content="Draft teams, not players. Fantasy sports reimagined with Mok Sports - the ultimate team-based fantasy experience." />
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#22C55E">
