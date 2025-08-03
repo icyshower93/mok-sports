@@ -299,19 +299,29 @@ export function usePushNotifications(): UsePushNotificationsReturn {
     }
   }, [isSubscribed, user]);
 
-  // Auto-request permission for iOS PWA users on app load - regardless of authentication status
+  // Auto-request permission for iOS users on app load - regardless of authentication status or PWA mode
   useEffect(() => {
-    if (isIOS && isIOSPWA && isSupported && permission === 'default') {
-      console.log('[PWA Debug] iOS PWA detected, auto-requesting permission in 2 seconds');
+    if (isIOS && permission === 'default' && typeof window !== 'undefined' && 'Notification' in window) {
+      console.log('[PWA Debug] iOS detected, auto-requesting permission in 2 seconds');
       // Short delay to ensure app is loaded and user sees the interface
       const timer = setTimeout(() => {
         console.log('[PWA Debug] Triggering auto permission request now');
-        requestPermission();
+        // Direct call to Notification.requestPermission() to bypass PWA checks
+        Notification.requestPermission().then(result => {
+          console.log('[PWA Debug] Auto permission result:', result);
+          setPermission(result);
+          if (result === 'denied') {
+            setError('Notification permission was denied. Please enable notifications in your device settings.');
+          }
+        }).catch(err => {
+          console.error('Error in auto permission request:', err);
+          setError(`Failed to request notification permission: ${err instanceof Error ? err.message : 'Unknown error'}`);
+        });
       }, 2000);
       
       return () => clearTimeout(timer);
     }
-  }, [isIOS, isIOSPWA, isSupported, permission, requestPermission]);
+  }, [isIOS, permission]);
 
   // Check if notifications need re-enabling (PWA reinstall scenario)
   useEffect(() => {
