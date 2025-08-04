@@ -35,7 +35,7 @@ export function useAutoPushRefresh(options: AutoPushRefreshOptions = {}) {
 
   // Always log key lifecycle events for debugging
   useEffect(() => {
-    console.log(`[AutoPushRefresh] Hook initialized:`, {
+    console.warn(`[CRITICAL DEBUG] AutoPushRefresh Hook initialized:`, {
       enabled,
       refreshOnOpen,
       refreshOnServiceWorkerActivation,
@@ -204,8 +204,16 @@ export function useAutoPushRefresh(options: AutoPushRefreshOptions = {}) {
 
   // Trigger refresh on user authentication (app open/reopen)
   useEffect(() => {
+    console.warn('[CRITICAL DEBUG] User auth effect triggered:', {
+      refreshOnOpen,
+      user: !!user,
+      userEmail: user?.email,
+      timestamp: new Date().toISOString()
+    });
+    
     if (refreshOnOpen && user) {
       // Always attempt refresh when user is authenticated, ignore previous attempts for debugging
+      console.warn('[CRITICAL DEBUG] TRIGGERING refresh subscription for user:', user.email);
       log('User authenticated, triggering subscription refresh (force mode for debugging)');
       refreshPushSubscription(true); // Force refresh to debug the issue
     }
@@ -213,15 +221,15 @@ export function useAutoPushRefresh(options: AutoPushRefreshOptions = {}) {
 
   // Additional force refresh for debugging - separate effect to avoid dependency issues
   useEffect(() => {
-    if (enabled && user && debug) {
-      console.log('[AutoPushRefresh] Additional debugging refresh...');
+    if (enabled && user) {
+      console.warn('[CRITICAL DEBUG] Additional debugging refresh starting for:', user.email);
       const timer = setTimeout(() => {
-        console.log('[AutoPushRefresh] Executing forced debug refresh');
+        console.warn('[CRITICAL DEBUG] Executing forced debug refresh NOW');
         refreshPushSubscription(true);
-      }, 2000);
+      }, 3000);
       return () => clearTimeout(timer);
     }
-  }, [enabled, user, debug, refreshPushSubscription]);
+  }, [enabled, user, refreshPushSubscription]);
 
   // Listen for service worker activation events
   useEffect(() => {
