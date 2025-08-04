@@ -439,6 +439,14 @@ export class SnakeDraftManager {
     round: number, 
     pickNumber: number
   ): Promise<void> {
+    // Clear any existing timer for this draft first
+    const existingKey = Array.from(this.timerIntervals.keys()).find(key => key.startsWith(draftId));
+    if (existingKey) {
+      clearInterval(this.timerIntervals.get(existingKey)!);
+      this.timerIntervals.delete(existingKey);
+      console.log(`🧹 Cleared existing timer: ${existingKey}`);
+    }
+
     // Create timer record
     await this.storage.createDraftTimer({
       draftId,
