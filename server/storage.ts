@@ -213,10 +213,12 @@ export class DatabaseStorage implements IStorage {
   }
 
   async isUserInLeague(userId: string, leagueId: string): Promise<boolean> {
+    console.log(`[Storage] Checking if user ${userId} is in league ${leagueId}`);
     const [existing] = await db
       .select()
       .from(leagueMembers)
       .where(and(eq(leagueMembers.userId, userId), eq(leagueMembers.leagueId, leagueId)));
+    console.log(`[Storage] Membership check result:`, existing ? 'MEMBER' : 'NOT MEMBER');
     return !!existing;
   }
 

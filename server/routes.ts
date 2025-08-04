@@ -353,7 +353,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get specific league
   app.get("/api/leagues/:id", async (req, res) => {
     try {
-      const user = getAuthenticatedUser(req);
+      const user = await getAuthenticatedUser(req);
       if (!user) {
         return res.status(401).json({ message: "Not authenticated" });
       }
@@ -367,6 +367,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Check if user is member of this league
       const isMember = await storage.isUserInLeague(user.id, id);
+      console.log(`[League Access] User ${user.id} checking membership in league ${id}: ${isMember}`);
       if (!isMember) {
         return res.status(403).json({ message: "Not authorized to view this league" });
       }
