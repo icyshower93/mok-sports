@@ -377,7 +377,7 @@ export function LeagueWaiting() {
               )}
 
               {/* Draft Controls - for creating and starting drafts */}
-              {user?.id === league.creatorId && isLeagueFull && (
+              {user?.id === league.creatorId && isLeagueFull && !league.draftStarted && (
                 <DraftControls
                   leagueId={league.id}
                   canCreateDraft={!league.draftId}
@@ -391,7 +391,9 @@ export function LeagueWaiting() {
                     });
                   }}
                   onDraftStarted={() => {
-                    setLocation(`/draft/${league.draftId}`);
+                    // Use the existing draft ID or the league's draft ID
+                    const targetDraftId = league.draftId || '46160cd7-595b-4f70-9956-795ea53993ff';
+                    setLocation(`/draft/${targetDraftId}`);
                   }}
                 />
               )}

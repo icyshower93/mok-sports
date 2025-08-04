@@ -37,7 +37,22 @@ export default function DraftControls({
   // Combined create and start draft mutation
   const createAndStartDraftMutation = useMutation({
     mutationFn: async () => {
-      // First create the draft
+      // If draft already exists, just start it
+      if (draftId) {
+        const startResponse = await fetch(`/api/drafts/${draftId}/start`, {
+          method: 'POST',
+          credentials: 'include'
+        });
+        
+        if (!startResponse.ok) {
+          const error = await startResponse.json();
+          throw new Error(error.message || 'Failed to start existing draft');
+        }
+        
+        return { draftId };
+      }
+      
+      // Otherwise create and start new draft
       const createResponse = await fetch('/api/drafts', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
