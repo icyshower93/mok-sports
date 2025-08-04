@@ -21,7 +21,17 @@ export function NotificationBanner({ onDismiss }: NotificationBannerProps) {
   
   const [dismissed, setDismissed] = useState(false);
 
+  console.warn('[CRITICAL DEBUG] NotificationBanner render:', {
+    isNotificationSupported,
+    showEnableBanner,
+    dismissed,
+    permissionStatus,
+    subscriptionActive,
+    shouldShow: isNotificationSupported && showEnableBanner && !dismissed
+  });
+
   if (!isNotificationSupported || !showEnableBanner || dismissed) {
+    console.warn('[CRITICAL DEBUG] NotificationBanner: Not showing banner');
     return null;
   }
 

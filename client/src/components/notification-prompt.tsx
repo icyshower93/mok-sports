@@ -32,24 +32,76 @@ export function NotificationPrompt({
   }, [user, forceShow]);
 
   const requestPermission = async () => {
+    console.warn('[CRITICAL DEBUG] NotificationPrompt: requestPermission called');
     if (!('Notification' in window)) {
+      console.warn('[CRITICAL DEBUG] NotificationPrompt: Notifications not supported');
       return;
     }
 
     setIsRequestingPermission(true);
+    console.warn('[CRITICAL DEBUG] NotificationPrompt: Requesting permission...');
     
     try {
       const result = await Notification.requestPermission();
+      console.warn('[CRITICAL DEBUG] NotificationPrompt: Permission result:', result);
       setPermission(result);
       
       if (result === 'granted') {
+        console.warn('[CRITICAL DEBUG] NotificationPrompt: Permission granted, calling onPermissionGranted');
         onPermissionGranted?.();
         setIsVisible(false);
+        
+        // CRITICAL: Create the actual push subscription since NotificationPrompt doesn't do it
+        console.warn('[CRITICAL DEBUG] NotificationPrompt: Now creating push subscription...');
+        await createPushSubscriptionForPrompt();
       }
     } catch (error) {
       console.error('Error requesting notification permission:', error);
     } finally {
       setIsRequestingPermission(false);
+    }
+  };
+
+  // Create push subscription for NotificationPrompt (since it wasn't creating them)
+  const createPushSubscriptionForPrompt = async () => {
+    try {
+      console.warn('[CRITICAL DEBUG] Creating push subscription via NotificationPrompt...');
+      const registration = await navigator.serviceWorker.getRegistration();
+      if (!registration) {
+        throw new Error('Service worker not registered');
+      }
+
+      // Get VAPID key from server
+      const vapidResponse = await fetch('/api/push/vapid-key');
+      const { publicKey } = await vapidResponse.json();
+
+      const subscription = await registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: publicKey
+      });
+
+      // Send subscription to server
+      const response = await fetch('/api/push/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          endpoint: subscription.endpoint,
+          keys: {
+            p256dh: btoa(String.fromCharCode.apply(null, Array.from(new Uint8Array(subscription.getKey('p256dh')!)))),
+            auth: btoa(String.fromCharCode.apply(null, Array.from(new Uint8Array(subscription.getKey('auth')!))))
+          }
+        })
+      });
+
+      if (response.ok) {
+        console.warn('[CRITICAL DEBUG] Push subscription created successfully via NotificationPrompt!');
+      } else {
+        console.error('[CRITICAL DEBUG] Failed to save push subscription:', await response.text());
+      }
+      
+    } catch (error) {
+      console.error('[CRITICAL DEBUG] Failed to create push subscription:', error);
     }
   };
 

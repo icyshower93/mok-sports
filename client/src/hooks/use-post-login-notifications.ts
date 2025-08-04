@@ -255,6 +255,17 @@ export function usePostLoginNotifications() {
 
   // Handle post-login notification flow
   useEffect(() => {
+    console.warn('[CRITICAL DEBUG] Post-login notification effect triggered:', {
+      isAuthenticated,
+      hasUser: !!user,
+      userEmail: user?.email,
+      isPWA,
+      permissionStatus: state.permissionStatus,
+      subscriptionActive: state.subscriptionActive,
+      showEnableBanner: state.showEnableBanner,
+      isFirstTimeSetup: state.isFirstTimeSetup
+    });
+    
     if (isAuthenticated && user && isPWA && state.permissionStatus !== 'denied') {
       handlePostLoginFlow();
     }
