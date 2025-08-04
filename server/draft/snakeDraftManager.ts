@@ -251,19 +251,20 @@ export class SnakeDraftManager {
       // Random selection for auto-pick
       const randomTeam = eligibleTeams[Math.floor(Math.random() * eligibleTeams.length)];
       
-      await this.makePick(draftId, {
+      // Use makePick which already handles advancement - remove duplicate advanceDraft call
+      const autoPickResult = await this.makePick(draftId, {
         userId,
         nflTeamId: randomTeam.id,
         isAutoPick: true
       });
 
-      console.log(`🤖 Auto-picked ${randomTeam.name} for user ${userId}`);
+      if (autoPickResult.success) {
+        console.log(`🤖 Auto-picked ${randomTeam.name} for user ${userId}`);
+      } else {
+        console.error(`Failed to auto-pick for user ${userId}:`, autoPickResult.error);
+      }
       
-      // Advance draft to next pick
-      const newState = await this.advanceDraft(draftId);
-      
-      // Broadcast the update
-      this.websocketManager?.broadcastDraftUpdate(draftId, newState);
+      // makePick already handles advancement and broadcasting, so no need to duplicate
       
     } catch (error) {
       console.error(`❌ Error handling timer expiration for user ${userId}:`, error);
