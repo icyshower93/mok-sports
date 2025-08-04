@@ -80,13 +80,17 @@ app.use((req, res, next) => {
 
   const server = await registerRoutes(app);
   
-  // Recover active timers after server restart
+  // Initialize Redis and recover active timers after server restart
   try {
+    const { createRedisClient } = await import("./redis");
+    const redis = createRedisClient();
+    console.log('[Redis] Client initialized');
+    
     const { default: SnakeDraftManager } = await import("./draft/snakeDraftManager");
     const draftManager = new SnakeDraftManager(storage);
     await draftManager.recoverActiveTimers();
   } catch (error) {
-    console.error('Failed to recover timers on startup:', error);
+    console.error('Failed to initialize Redis or recover timers on startup:', error);
   }
 
   // Serve built static assets for PWA compatibility BEFORE Vite middleware

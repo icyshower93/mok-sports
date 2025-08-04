@@ -11,6 +11,7 @@
 
 import { IStorage } from "../storage.js";
 import type { Draft, DraftPick, NflTeam, User } from "@shared/schema";
+import { RedisStateManager, type RedisTimer } from "./redisStateManager.js";
 
 export interface DraftState {
   draft: Draft;
@@ -46,8 +47,7 @@ export class SnakeDraftManager {
   private storage: IStorage;
   private timerIntervals: Map<string, NodeJS.Timeout> = new Map();
   private draftConfig: DraftConfig;
-  private draftStateCache: Map<string, DraftState> = new Map();
-  private lastTimerUpdate: Map<string, number> = new Map();
+  private redisStateManager: RedisStateManager;
   private webSocketManager?: any; // Will be injected
   private robotManager?: any; // Will be injected for robot handling
 
@@ -55,6 +55,7 @@ export class SnakeDraftManager {
     this.storage = storage;
     this.webSocketManager = webSocketManager;
     this.robotManager = robotManager;
+    this.redisStateManager = new RedisStateManager();
     this.draftConfig = {
       totalRounds: 5,
       pickTimeLimit: 60,
@@ -62,8 +63,89 @@ export class SnakeDraftManager {
       maxTeamsPerConference: 3, // No more than 3 teams from same conference per user
       ...config
     };
+  }
+
+  /**
+   * Recover active timers after server restart
+   */
+  async recoverActiveTimers(): Promise<void> {
+    console.log('🔄 Recovering active timers after restart...');
     
-    // Skip timer recovery for now - focus on fixing core timer mechanism
+    try {
+      const activeDrafts = await this.redisStateManager.getActiveDrafts();
+      let recoveredCount = 0;
+      
+      for (const draftId of activeDrafts) {
+        const draft = await this.storage.getDraft(draftId);
+        if (!draft || draft.status !== 'active') {
+          // Clean up stale draft
+          await this.redisStateManager.deleteDraftState(draftId);
+          await this.redisStateManager.deleteTimer(draftId);
+          continue;
+        }
+        
+        const redisTimer = await this.redisStateManager.getTimer(draftId);
+        if (redisTimer) {
+          const timeRemaining = await this.redisStateManager.getTimeRemaining(draftId);
+          
+          if (timeRemaining > 0) {
+            // Restart the timer for remaining time
+            await this.restartPickTimer(draftId, redisTimer.userId, timeRemaining);
+            recoveredCount++;
+            console.log(`✅ Recovered timer for draft ${draftId}, user ${redisTimer.userId} with ${timeRemaining}s remaining`);
+          } else {
+            // Timer expired during downtime, handle auto-pick
+            console.log(`⏰ Timer expired during downtime for draft ${draftId}, user ${redisTimer.userId}`);
+            await this.handleTimerExpired(draftId, redisTimer.userId);
+          }
+        }
+      }
+      
+      console.log(`✅ Recovered ${recoveredCount} active timers`);
+    } catch (error) {
+      console.error('❌ Failed to recover timers:', error);
+    }
+  }
+
+  /**
+   * Restart a timer with specific remaining time
+   */
+  private async restartPickTimer(draftId: string, userId: string, timeRemaining: number): Promise<void> {
+    const timerKey = `${draftId}-${userId}`;
+    
+    // Clear any existing timer
+    const existingInterval = this.timerIntervals.get(timerKey);
+    if (existingInterval) {
+      clearInterval(existingInterval);
+    }
+    
+    console.log(`🔄 Restarting timer for user ${userId} in draft ${draftId} with ${timeRemaining}s remaining`);
+    
+    const interval = setInterval(async () => {
+      const currentTimeRemaining = await this.redisStateManager.getTimeRemaining(draftId);
+      
+      if (currentTimeRemaining <= 0) {
+        console.log(`⏰ Recovered timer expired for user ${userId}`);
+        clearInterval(interval);
+        this.timerIntervals.delete(timerKey);
+        await this.redisStateManager.deleteTimer(draftId);
+        await this.handleTimerExpired(draftId, userId);
+      } else {
+        // Broadcast timer update
+        if (this.webSocketManager) {
+          this.webSocketManager.broadcastTimerUpdate(draftId, currentTimeRemaining);
+        }
+        
+        // Update database timer
+        try {
+          await this.storage.updateDraftTimer(draftId, userId, currentTimeRemaining);
+        } catch (error) {
+          console.error(`Failed to update recovered timer: ${error}`);
+        }
+      }
+    }, 1000);
+    
+    this.timerIntervals.set(timerKey, interval);
   }
 
   // Removed broken timer recovery methods - focusing on core timer fix
@@ -104,8 +186,20 @@ export class SnakeDraftManager {
 
   /**
    * Gets the current draft state for real-time updates
+   * First checks Redis cache, falls back to database if needed
    */
   async getDraftState(draftId: string): Promise<DraftState> {
+    // Try to get from Redis cache first
+    let cachedState = await this.redisStateManager.getDraftState(draftId);
+    
+    if (cachedState) {
+      // Update time remaining from Redis timer
+      const timeRemaining = await this.redisStateManager.getTimeRemaining(draftId);
+      cachedState.timeRemaining = timeRemaining;
+      return cachedState;
+    }
+
+    // Fallback to database and rebuild state
     const draft = await this.storage.getDraft(draftId);
     if (!draft) {
       throw new Error('Draft not found');
@@ -114,17 +208,22 @@ export class SnakeDraftManager {
     const picks = await this.storage.getDraftPicks(draftId);
     const availableTeams = await this.storage.getAvailableNflTeams(draftId);
     const currentUserId = this.getCurrentPickUser(draft);
-    const timer = await this.storage.getActiveDraftTimer(draftId);
+    const timeRemaining = await this.redisStateManager.getTimeRemaining(draftId);
 
-    return {
+    const state: DraftState = {
       draft,
       currentUserId,
-      timeRemaining: timer?.timeRemaining || 0,
+      timeRemaining,
       picks,
       availableTeams,
       isUserTurn: !!currentUserId,
       canMakePick: draft.status === 'active' && !!currentUserId
     };
+
+    // Cache the state in Redis for future requests
+    await this.redisStateManager.setDraftState(draftId, state);
+    
+    return state;
   }
 
   /**
@@ -201,8 +300,8 @@ export class SnakeDraftManager {
         }
       }
 
-      // Update cache
-      this.draftStateCache.set(draftId, nextState);
+      // Update Redis cache
+      await this.redisStateManager.setDraftState(draftId, nextState);
 
       return {
         success: true,
@@ -477,7 +576,7 @@ export class SnakeDraftManager {
     round: number, 
     pickNumber: number
   ): Promise<void> {
-    // Clear any existing timers for this draft first (more comprehensive cleanup)
+    // Clear any existing timers for this draft
     const existingKeys = Array.from(this.timerIntervals.keys()).filter(key => key.startsWith(draftId));
     for (const existingKey of existingKeys) {
       clearInterval(this.timerIntervals.get(existingKey)!);
@@ -485,10 +584,23 @@ export class SnakeDraftManager {
       console.log(`🧹 Cleared existing timer: ${existingKey}`);
     }
 
-    // Deactivate any existing timers in database for this draft
+    // Clear existing Redis timer and database records
+    await this.redisStateManager.deleteTimer(draftId);
     await this.storage.deactivateAllDraftTimers(draftId);
 
-    // Create timer record
+    // Store timer in Redis
+    const redisTimer: RedisTimer = {
+      draftId,
+      userId,
+      startTime: Date.now(),
+      duration: this.draftConfig.pickTimeLimit,
+      round,
+      pick: pickNumber
+    };
+    
+    await this.redisStateManager.setTimer(draftId, redisTimer);
+
+    // Create database timer record for persistence
     await this.storage.createDraftTimer({
       draftId,
       userId,
@@ -496,31 +608,27 @@ export class SnakeDraftManager {
       pickNumber,
       timeRemaining: this.draftConfig.pickTimeLimit
     });
-
-    // Set up countdown interval
+    
+    console.log(`🕐 Starting Redis timer for user ${userId} in draft ${draftId} with ${this.draftConfig.pickTimeLimit} seconds`);
+    
+    // Set up local interval for broadcasting updates
     const timerKey = `${draftId}-${userId}`;
-    let timeLeft = this.draftConfig.pickTimeLimit;
-    
-    console.log(`🕐 Starting timer for user ${userId} in draft ${draftId} with ${timeLeft} seconds`);
-    
-    // Broadcast initial timer state immediately to show full 60 seconds
-    if (this.webSocketManager) {
-      this.webSocketManager.broadcastTimerUpdate(draftId, timeLeft);
-    }
     
     const interval = setInterval(async () => {
-      timeLeft--;
-      console.log(`🕐 Timer tick for user ${userId}: ${timeLeft}s remaining`);
+      // Get current time remaining from Redis
+      const timeRemaining = await this.redisStateManager.getTimeRemaining(draftId);
       
-      if (timeLeft <= 0) {
-        console.log(`⏰ Timer reached 0 for user ${userId}, triggering expiration handler`);
+      console.log(`🕐 Timer tick for user ${userId}: ${timeRemaining}s remaining`);
+      
+      if (timeRemaining <= 0) {
+        console.log(`⏰ Timer expired for user ${userId}, triggering expiration handler`);
         clearInterval(interval);
         this.timerIntervals.delete(timerKey);
         
-        // Force immediate timer expiration handling
-        console.log(`🚨 TIMER EXPIRED: Processing auto-pick for ${userId}`);
+        // Clean up Redis timer
+        await this.redisStateManager.deleteTimer(draftId);
         
-        // Force expiration with immediate execution (no async delay)
+        // Handle expiration
         this.handleTimerExpired(draftId, userId)
           .then(() => {
             console.log(`✅ Timer expiration completed for ${userId}`);
@@ -529,8 +637,14 @@ export class SnakeDraftManager {
             console.error(`❌ Timer expiration handler failed for ${userId}:`, error);
           });
       } else {
+        // Broadcast timer update
+        if (this.webSocketManager) {
+          this.webSocketManager.broadcastTimerUpdate(draftId, timeRemaining);
+        }
+        
+        // Update database timer for persistence
         try {
-          await this.storage.updateDraftTimer(draftId, userId, timeLeft);
+          await this.storage.updateDraftTimer(draftId, userId, timeRemaining);
         } catch (error) {
           console.error(`Failed to update timer: ${error}`);
         }
@@ -549,6 +663,8 @@ export class SnakeDraftManager {
       this.timerIntervals.delete(timerKey);
     }
     
+    // Clean up Redis timer and database timer
+    await this.redisStateManager.deleteTimer(draftId);
     await this.storage.deactivateTimer(draftId, userId);
   }
 

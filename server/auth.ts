@@ -125,74 +125,67 @@ export function verifyJWT(token: string) {
 }
 
 export function authenticateJWT(req: Request, res: Response, next: NextFunction) {
-  // Try Authorization header first (PWA-friendly)
-  const authHeader = req.headers.authorization;
-  let token = null;
-  let tokenSource = 'none';
+  console.log('[Auth] Authenticating request');
   
+  // Try to get token from different sources
+  let token: string | undefined;
+  
+  // 1. Check Authorization header (Bearer token) - preferred for PWA
+  const authHeader = req.headers.authorization;
   if (authHeader && authHeader.startsWith('Bearer ')) {
     token = authHeader.substring(7);
-    tokenSource = 'bearer';
-    console.log("[Auth] Using Bearer token from header");
-  } else {
-    // Fallback to cookie
-    token = req.cookies?.auth_token;
-    if (token) {
-      tokenSource = 'cookie';
-      console.log("[Auth] Using token from cookie");
-    }
+    console.log('[Auth] Token found in Authorization header');
+  }
+  
+  // 2. Fallback to cookie if no Bearer token (for browser requests)
+  if (!token && req.cookies?.auth_token) {
+    token = req.cookies.auth_token;
+    console.log('[Auth] Token found in cookie');
   }
   
   if (!token) {
-    console.log("[Auth] No token found in header or cookies");
-    console.log("[Auth] Available cookies:", Object.keys(req.cookies || {}));
-    console.log("[Auth] Authorization header:", req.headers.authorization);
+    console.log('[Auth] No token found');
+    console.log('[Auth] Available cookies:', Object.keys(req.cookies || {}));
+    console.log('[Auth] Authorization header:', req.headers.authorization);
     
-    // For development: Return Sky Evans if no token (PWA compatibility)
-    if (process.env.NODE_ENV === 'development') {
-      console.log("[Auth] Development mode - returning Sky Evans");
-      req.user = {
+    // Only use development fallback for specific test endpoints
+    if (process.env.NODE_ENV === "development" && req.path.includes('/api/test/')) {
+      console.log('[Auth] Development mode test endpoint - returning Sky Evans');
+      (req as any).user = {
         id: "9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a",
-        name: "Sky Evans", 
-        email: "skyevans04@gmail.com"
+        name: "Sky Evans",
+        email: "sky@example.com"
       };
       return next();
     }
     
     return res.status(401).json({ 
-      message: "Not authenticated",
-      reason: "no_token",
-      debug: {
-        cookiesReceived: Object.keys(req.cookies || {}),
-        authHeader: req.headers.authorization ? 'present' : 'missing',
-        origin: req.headers.origin
-      }
+      message: "Authentication required",
+      error: "missing_token",
+      hint: "Include Authorization: Bearer <token> header or login via /api/auth/google"
     });
   }
 
   try {
     const decoded = jwt.verify(token, JWT_SECRET) as any;
-    req.user = decoded;
-    console.log("[Auth] User authenticated via", tokenSource, ":", decoded.name);
+    (req as any).user = decoded;
+    console.log('[Auth] Token verified successfully for user:', decoded.email);
     next();
   } catch (error) {
-    console.error("[Auth] Token verification failed:", error);
+    console.error('[Auth] Token verification failed:', error);
     
-    // Only clear cookie if token came from cookie
-    if (tokenSource === 'cookie') {
-      res.clearCookie("auth_token", {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: process.env.NODE_ENV === "production" ? "none" as const : "lax" as const,
-        domain: process.env.NODE_ENV === "production" ? ".replit.app" : undefined
+    if (error instanceof jwt.TokenExpiredError) {
+      return res.status(401).json({ 
+        message: "Token expired", 
+        error: "token_expired",
+        hint: "Please login again via /api/auth/google"
       });
     }
     
     return res.status(401).json({ 
-      message: "Invalid token",
-      reason: "invalid_token",
-      tokenSource,
-      error: error instanceof Error ? error.message : "Unknown error"
+      message: "Invalid token", 
+      error: "invalid_token",
+      hint: "Please login again via /api/auth/google"
     });
   }
 }

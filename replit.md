@@ -16,6 +16,13 @@ The client-side application is built with React 18 and TypeScript, using hooks a
 
 The server is built with Express.js using TypeScript, following a modular architecture with ESM modules. `Passport.js` with Google OAuth2 strategy handles user authentication, using JWT tokens stored as HTTP-only cookies for session management. `Drizzle ORM` provides type-safe database operations with `PostgreSQL`, configured with the `Neon serverless PostgreSQL` adapter. API design is RESTful, including comprehensive error handling and request/response logging.
 
+### Production-Ready Scaling Improvements (Latest)
+- **Redis State Management**: Draft state and timers persist using Redis with in-memory fallback for development
+- **Enhanced JWT Authentication**: Improved token validation with Bearer header support for PWA compatibility
+- **Database Connection Pooling**: Optimized PostgreSQL connections with health monitoring and connection limits
+- **Health Check Endpoints**: `/api/health` endpoint for monitoring database, Redis, and overall system health
+- **Static Asset Optimization**: Proper MIME type serving and cache headers for production deployment
+
 ### Real-Time Draft System
 - **WebSocket Integration**: Real-time draft synchronization using WebSocket connections on `/ws/draft` path
 - **Snake Draft Manager**: Comprehensive draft logic with timer management, auto-pick functionality, and conference rule validation

@@ -852,6 +852,46 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Health check endpoints
+  app.get("/api/health", async (req, res) => {
+    try {
+      const { checkDatabaseHealth } = await import("./db");
+      const { getRedisClient } = await import("./redis");
+      
+      const dbHealthy = await checkDatabaseHealth();
+      const redis = getRedisClient();
+      let redisHealthy = false;
+      
+      if (redis) {
+        try {
+          const result = await redis.ping();
+          redisHealthy = result === 'PONG';
+        } catch (error) {
+          console.error('[Health] Redis ping failed:', error);
+        }
+      } else {
+        // In-memory fallback mode is considered healthy
+        redisHealthy = true;
+      }
+      
+      const status = dbHealthy && redisHealthy ? 200 : 503;
+      
+      res.status(status).json({
+        status: status === 200 ? 'healthy' : 'unhealthy',
+        database: dbHealthy ? 'connected' : 'disconnected',
+        redis: redisHealthy ? 'connected' : 'disconnected',
+        timestamp: new Date().toISOString(),
+        uptime: process.uptime()
+      });
+    } catch (error) {
+      res.status(503).json({
+        status: 'error',
+        error: error instanceof Error ? error.message : 'Unknown error',
+        timestamp: new Date().toISOString()
+      });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
