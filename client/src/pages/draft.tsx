@@ -358,7 +358,29 @@ export default function DraftPage() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  {state.currentUserId && (
+                  {state.draft.status === 'completed' ? (
+                    <div className="text-center space-y-3">
+                      <div className="p-3 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
+                        <div className="text-green-700 dark:text-green-300 font-medium mb-2">
+                          🎉 Draft Complete!
+                        </div>
+                        <div className="text-sm text-green-600 dark:text-green-400">
+                          All {state.picks?.length || 0} picks completed across {Math.max(...(state.picks?.map(p => p.round) || [0]))} rounds
+                        </div>
+                      </div>
+                      
+                      <div className="grid grid-cols-2 gap-3 text-sm">
+                        <div className="text-center p-2 bg-secondary/30 rounded">
+                          <div className="font-semibold">{state.picks?.filter(p => !p.isAutoPick).length || 0}</div>
+                          <div className="text-muted-foreground text-xs">Manual Picks</div>
+                        </div>
+                        <div className="text-center p-2 bg-secondary/30 rounded">
+                          <div className="font-semibold">{state.picks?.filter(p => p.isAutoPick).length || 0}</div>
+                          <div className="text-muted-foreground text-xs">Auto Picks</div>
+                        </div>
+                      </div>
+                    </div>
+                  ) : state.currentUserId ? (
                     <div className="text-center space-y-3">
                       {/* Current Player */}
                       <div className="p-3 bg-secondary/50 rounded-lg">
@@ -400,6 +422,12 @@ export default function DraftPage() {
                             Waiting for {currentPlayer?.name || 'player'}...
                           </Badge>
                         )}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-center py-6">
+                      <div className="text-muted-foreground text-sm">
+                        Draft information loading...
                       </div>
                     </div>
                   )}
