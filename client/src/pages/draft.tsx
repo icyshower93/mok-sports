@@ -192,18 +192,15 @@ export default function DraftPage() {
 
   // Local countdown timer for smooth second-by-second updates (FIXED: stable dependencies)
   useEffect(() => {
-    let interval: NodeJS.Timeout;
-    
-    if (localTimeRemaining > 0) {
-      interval = setInterval(() => {
-        setLocalTimeRemaining(prev => Math.max(0, prev - 1));
-      }, 1000);
-    }
+    const interval = setInterval(() => {
+      setLocalTimeRemaining(prev => {
+        if (prev <= 0) return 0; // Stop at 0
+        return prev - 1;
+      });
+    }, 1000);
 
-    return () => {
-      if (interval) clearInterval(interval);
-    };
-  }, [localTimeRemaining > 0]); // Only depend on whether timer should be active
+    return () => clearInterval(interval);
+  }, []); // No dependencies - timer always runs but only decrements when > 0
 
   // Fetch available teams
   const { data: teamsData } = useQuery({
