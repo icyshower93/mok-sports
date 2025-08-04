@@ -221,35 +221,56 @@ export class SnakeDraftManager {
   async handleTimerExpired(draftId: string, userId: string): Promise<void> {
     console.log(`⏰ Timer expired for user ${userId} in draft ${draftId}`);
     
-    const availableTeams = await this.storage.getAvailableNflTeams(draftId);
-    if (availableTeams.length === 0) {
-      console.error('No available teams for auto-pick');
-      return;
+    try {
+      // First, deactivate the timer to prevent double processing
+      await this.storage.deactivateTimer(draftId, userId);
+      
+      const availableTeams = await this.storage.getAvailableNflTeams(draftId);
+      if (availableTeams.length === 0) {
+        console.error('No available teams for auto-pick');
+        return;
+      }
+
+      // Get user's current picks to check conference rule
+      let eligibleTeams = availableTeams;
+      
+      if (this.draftConfig.enableConferenceRule) {
+        eligibleTeams = await this.getConferenceEligibleTeams(draftId, userId, availableTeams);
+      }
+
+      // If no eligible teams due to conference rule, pick from any available
+      if (eligibleTeams.length === 0) {
+        eligibleTeams = availableTeams;
+        console.log(`⚠️ Conference rule forced override for user ${userId}`);
+      }
+
+      // Random selection for auto-pick
+      const randomTeam = eligibleTeams[Math.floor(Math.random() * eligibleTeams.length)];
+      
+      await this.makePick(draftId, {
+        userId,
+        nflTeamId: randomTeam.id,
+        isAutoPick: true
+      });
+
+      console.log(`🤖 Auto-picked ${randomTeam.name} for user ${userId}`);
+      
+      // Advance draft to next pick
+      const newState = await this.advanceDraft(draftId);
+      
+      // Broadcast the update
+      this.websocketManager?.broadcastDraftUpdate(draftId, newState);
+      
+    } catch (error) {
+      console.error(`❌ Error handling timer expiration for user ${userId}:`, error);
+      
+      // Try to at least deactivate the timer
+      try {
+        await this.storage.deactivateTimer(draftId, userId);
+      } catch (deactivateError) {
+        console.error(`Failed to deactivate timer: ${deactivateError}`);
+      }
     }
-
-    // Get user's current picks to check conference rule
-    let eligibleTeams = availableTeams;
-    
-    if (this.draftConfig.enableConferenceRule) {
-      eligibleTeams = await this.getConferenceEligibleTeams(draftId, userId, availableTeams);
-    }
-
-    // If no eligible teams due to conference rule, pick from any available
-    if (eligibleTeams.length === 0) {
-      eligibleTeams = availableTeams;
-      console.log(`⚠️ Conference rule forced override for user ${userId}`);
-    }
-
-    // Random selection for auto-pick
-    const randomTeam = eligibleTeams[Math.floor(Math.random() * eligibleTeams.length)];
-    
-    await this.makePick(draftId, {
-      userId,
-      nflTeamId: randomTeam.id,
-      isAutoPick: true
-    });
-
-    console.log(`🤖 Auto-picked ${randomTeam.name} for user ${userId}`);
   }
 
   /**
@@ -418,10 +439,13 @@ export class SnakeDraftManager {
     const timerKey = `${draftId}-${userId}`;
     let timeLeft = this.draftConfig.pickTimeLimit;
     
+    console.log(`🕐 Starting timer for user ${userId} in draft ${draftId} with ${timeLeft} seconds`);
+    
     const interval = setInterval(async () => {
       timeLeft--;
       
       if (timeLeft <= 0) {
+        console.log(`⏰ Timer reached 0 for user ${userId}, triggering expiration handler`);
         clearInterval(interval);
         this.timerIntervals.delete(timerKey);
         await this.handleTimerExpired(draftId, userId);
