@@ -329,10 +329,17 @@ export default function setupDraftRoutes(app: any, storage: IStorage, webSocketM
       }
 
       const draftState = await draftManager.getDraftState(draftId);
+      
+      // Get current player information
+      let currentPlayer = null;
+      if (draftState.currentUserId) {
+        currentPlayer = await storage.getUser(draftState.currentUserId);
+      }
 
       res.json({
         state: draftState,
-        isCurrentUser: draftState.currentUserId === user.id
+        isCurrentUser: draftState.currentUserId === user.id,
+        currentPlayer: currentPlayer ? { id: currentPlayer.id, name: currentPlayer.name, avatar: currentPlayer.avatar } : null
       });
 
     } catch (error) {

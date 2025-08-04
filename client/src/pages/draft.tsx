@@ -62,6 +62,10 @@ export default function DraftPage() {
   const params = useParams();
   const draftId = (params as any).draftId;
   const [selectedTeam, setSelectedTeam] = useState<string | null>(null);
+  
+  // Local timer state for smooth countdown
+  const [localTimeRemaining, setLocalTimeRemaining] = useState<number>(0);
+  const [lastServerUpdate, setLastServerUpdate] = useState<number>(Date.now());
 
   // Initialize WebSocket connection for real-time updates
   const { connectionStatus, isConnected } = useDraftWebSocket(draftId);
@@ -90,8 +94,28 @@ export default function DraftPage() {
       return response.json();
     },
     enabled: !!draftId,
-    refetchInterval: 2000, // Poll every 2 seconds for real-time updates
+    refetchInterval: 5000, // Poll every 5 seconds (reduced since we have local timer)
+    onSuccess: (data) => {
+      // Update local timer when we get new server data
+      if (data?.timeRemaining !== undefined) {
+        setLocalTimeRemaining(data.timeRemaining);
+        setLastServerUpdate(Date.now());
+      }
+    }
   });
+
+  // Local countdown timer for smooth second-by-second updates
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setLocalTimeRemaining(prev => {
+        const elapsed = Math.floor((Date.now() - lastServerUpdate) / 1000);
+        const newTime = (draftData?.timeRemaining || 0) - elapsed;
+        return Math.max(0, newTime);
+      });
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [lastServerUpdate, draftData?.timeRemaining]);
 
   // Fetch available teams
   const { data: teamsData } = useQuery({
@@ -197,7 +221,11 @@ export default function DraftPage() {
 
   const state: DraftState = draftData.state;
   const isCurrentUser = draftData.isCurrentUser;
+  const currentPlayer = draftData.currentPlayer;
   const teams = teamsData?.teams || {};
+  
+  // Use local timer for smooth countdown, fallback to server data
+  const displayTimeRemaining = localTimeRemaining || state?.timeRemaining || 0;
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -283,38 +311,108 @@ export default function DraftPage() {
                 </CardHeader>
                 <CardContent>
                   {state.currentUserId && (
-                    <div className="text-center">
-                      <div className="text-2xl font-bold mb-2">
-                        {formatTime(state.timeRemaining)}
+                    <div className="text-center space-y-3">
+                      {/* Current Player */}
+                      <div className="p-3 bg-secondary/50 rounded-lg">
+                        <div className="text-sm text-muted-foreground mb-1">Currently Drafting</div>
+                        <div className="flex items-center justify-center space-x-2">
+                          {currentPlayer?.avatar && (
+                            <img 
+                              src={currentPlayer.avatar} 
+                              alt={currentPlayer.name} 
+                              className="w-6 h-6 rounded-full"
+                            />
+                          )}
+                          <div className="font-semibold">
+                            {currentPlayer?.name || 'Finding player...'}
+                          </div>
+                        </div>
                       </div>
-                      <Progress 
-                        value={(state.timeRemaining / state.draft.pickTimeLimit) * 100} 
-                        className="mb-3" 
-                      />
-                      {isCurrentUser ? (
-                        <Badge variant="default" className="text-sm">
-                          <Star className="w-3 h-3 mr-1" />
-                          Your Turn!
-                        </Badge>
-                      ) : (
-                        <Badge variant="outline" className="text-sm">
-                          Waiting for pick...
-                        </Badge>
-                      )}
+                      
+                      {/* Timer */}
+                      <div>
+                        <div className={`text-3xl font-bold mb-2 font-mono ${
+                          displayTimeRemaining <= 10 ? 'text-red-500 animate-pulse' : 
+                          displayTimeRemaining <= 30 ? 'text-orange-500' : 'text-foreground'
+                        }`}>
+                          {formatTime(displayTimeRemaining)}
+                        </div>
+                        <Progress 
+                          value={(displayTimeRemaining / (state.draft.pickTimeLimit || 60)) * 100} 
+                          className={`mb-3 ${displayTimeRemaining <= 10 ? 'bg-red-100' : ''}`}
+                        />
+                        {isCurrentUser ? (
+                          <Badge variant="default" className="text-sm">
+                            <Star className="w-3 h-3 mr-1" />
+                            Your Turn!
+                          </Badge>
+                        ) : (
+                          <Badge variant="outline" className="text-sm">
+                            <Clock className="w-3 h-3 mr-1" />
+                            Waiting for {currentPlayer?.name || 'player'}...
+                          </Badge>
+                        )}
+                      </div>
                     </div>
                   )}
                 </CardContent>
               </Card>
 
-              {/* Draft Picks History */}
+              {/* Draft Order */}
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-lg">Draft Order</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2">
+                    {state.draft.draftOrder?.map((userId, index) => {
+                      const userPicks = state.picks.filter(p => p.user.id === userId);
+                      const isCurrentPick = userId === state.currentUserId;
+                      
+                      return (
+                        <div 
+                          key={userId} 
+                          className={`flex items-center space-x-3 p-2 rounded-lg ${
+                            isCurrentPick ? 'bg-fantasy-purple/10 border border-fantasy-purple' : 'bg-secondary/30'
+                          }`}
+                        >
+                          <div className={`text-sm font-bold w-6 h-6 rounded-full flex items-center justify-center ${
+                            isCurrentPick ? 'bg-fantasy-purple text-white' : 'bg-secondary text-muted-foreground'
+                          }`}>
+                            {index + 1}
+                          </div>
+                          
+                          <div className="flex-1 min-w-0">
+                            <div className="text-sm font-medium truncate">
+                              {userPicks[0]?.user?.name || 'Loading...'}
+                            </div>
+                            <div className="text-xs text-muted-foreground">
+                              {userPicks.length} picks
+                            </div>
+                          </div>
+                          
+                          {isCurrentPick && (
+                            <Badge variant="default" className="text-xs">
+                              <Clock className="w-3 h-3 mr-1" />
+                              Now
+                            </Badge>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Recent Picks */}
               <Card>
                 <CardHeader className="pb-3">
                   <CardTitle className="text-lg">Recent Picks</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <ScrollArea className="h-64">
+                  <ScrollArea className="h-48">
                     <div className="space-y-2">
-                      {state.picks.slice(-10).reverse().map((pick) => (
+                      {state.picks.slice(-8).reverse().map((pick) => (
                         <div key={pick.id} className="flex items-center space-x-3 p-2 rounded-lg bg-secondary/50">
                           <img 
                             src={pick.nflTeam.logoUrl} 
