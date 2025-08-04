@@ -32,7 +32,7 @@ export function NotificationPrompt({
   }, [user, forceShow]);
 
   const requestPermission = async () => {
-    console.warn('[CRITICAL DEBUG] NotificationPrompt: requestPermission called');
+    console.warn('[CRITICAL DEBUG] NotificationPrompt: requestPermission called - REDEPLOYED VERSION');
     if (!('Notification' in window)) {
       console.warn('[CRITICAL DEBUG] NotificationPrompt: Notifications not supported');
       return;
