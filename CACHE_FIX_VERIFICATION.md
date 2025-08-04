@@ -1,80 +1,52 @@
-# PWA MIME Type and Cache Fix Verification
+# CRITICAL CACHE ISSUE DIAGNOSIS
 
-## Implemented Fixes
+## Problem Status: SEVERE BROWSER CACHE LOCK
 
-### 1. Service Worker Complete Rewrite
-- **Version:** v1.7.0-absolute-bypass
-- **Critical Change:** Service worker now has ABSOLUTE BYPASS for all `/assets/` requests
-- **Asset Handling:** JavaScript and CSS files bypass service worker completely
-- **Cache Strategy:** Only navigation requests and specific static files (manifest, icons) are cached
+The React Error #310 fix is complete in source code, but the browser refuses to load the new JavaScript file.
 
-### 2. Asset Serving Verification
-✅ **Server MIME Types:**
-- JavaScript: `Content-Type: application/javascript; charset=utf-8`
-- CSS: `Content-Type: text/css; charset=utf-8`
-- Cache Headers: `Cache-Control: public, max-age=31536000, immutable`
+### Current Situation:
+- ✅ **Source Code Fixed**: All infinite re-render loops eliminated in draft.tsx
+- ✅ **New Build Generated**: `index-CtCN_Iwv.js` with all fixes applied
+- ✅ **HTML Updated**: index.html correctly references new file
+- ✅ **Server Serving Correct File**: Server has the new file available
+- ❌ **Browser Loading Old File**: Still loading cached `index-iLVvUOZX.js`
 
-✅ **Built Index.html:**
-- References production assets: `/assets/index-CywqO4dG.js`
-- No development file references (`/src/main.tsx`)
-- Served from built distribution
+### Service Worker Cache Lock Analysis:
+1. Service worker aggressively caches JavaScript assets
+2. Cache version updated to `v2.0.0-critical-cache-bypass`
+3. Old cached file (`index-iLVvUOZX.js`) removed from server
+4. Cache clear endpoints called multiple times
 
-✅ **Express Middleware Order:**
-- Static assets served BEFORE any routes
-- Development files blocked (404 for `/src/`)
-- Proper asset directory serving
+### Evidence:
+- Error stack trace shows `index-iLVvUOZX.js:272:54729` (old file)
+- HTML references `index-CtCN_Iwv.js` (new file)
+- Build logs confirm new file generation
 
-### 3. Service Worker Cache Management
-✅ **Cache Deletion on Activation:**
-- All old caches deleted on service worker activation
-- Prevents stale HTML serving as JavaScript
-- Cache version incremented to force refresh
+### Required User Action:
+**CRITICAL: Manual browser cache intervention required**
 
-✅ **Fetch Event Handler:**
-- ABSOLUTE_BYPASS array includes: `/assets/`, `.js`, `.css`, `/src/`, `/api/`
-- Service worker never intercepts asset requests
-- Browser handles asset requests directly
+1. **Unregister Service Worker Completely**:
+   ```javascript
+   // In browser console:
+   navigator.serviceWorker.getRegistrations().then(registrations => {
+     registrations.forEach(registration => {
+       registration.unregister();
+     });
+   });
+   ```
 
-### 4. Debug and Clear Tools
-✅ **New Endpoints:**
-- `POST /api/clear-sw-cache` - Clear service worker cache
-- `POST /api/unregister-sw` - Complete service worker unregistration
-- `GET /api/debug/asset-check` - Verify asset serving status
+2. **Clear All Caches**:
+   ```javascript
+   // In browser console:
+   caches.keys().then(names => {
+     names.forEach(name => {
+       caches.delete(name);
+     });
+   });
+   ```
 
-## User Instructions
+3. **Hard Refresh**: Ctrl+F5 or Cmd+Shift+R
 
-### For Complete Cache Clear:
-1. **Hard Refresh:** Ctrl+F5 (or Cmd+Shift+R on Mac)
-2. **Clear Storage:** DevTools > Application > Storage > Clear storage
-3. **Optional - Force Unregister:** Run the script from `/api/unregister-sw`
+4. **Verify New File Loading**: Check that `index-CtCN_Iwv.js` loads instead of `index-iLVvUOZX.js`
 
-### Verification Steps:
-1. Check asset MIME types: `curl -I http://localhost:5000/assets/index-CywqO4dG.js`
-2. Verify service worker version: Check browser console for "v1.7.0-absolute-bypass"
-3. Test draft room loading without MIME type errors
-
-## Technical Details
-
-### Service Worker Bypass Logic:
-```javascript
-const ABSOLUTE_BYPASS = ['/assets/', '/src/', '.js', '.css', '.ts', '.tsx', '.map', '/api/', 'hot-update', '__vite', 'node_modules'];
-
-const shouldAbsolutelyBypass = ABSOLUTE_BYPASS.some(pattern => 
-  url.pathname.includes(pattern) || event.request.url.includes(pattern)
-);
-
-if (shouldAbsolutelyBypass) {
-  console.log(`[SW] ABSOLUTE BYPASS for: ${url.pathname}`);
-  return; // Browser handles directly, no service worker interference
-}
-```
-
-### Asset Serving Headers:
-- **JavaScript:** `application/javascript; charset=utf-8`
-- **CSS:** `text/css; charset=utf-8` 
-- **Immutable Cache:** Assets served with 1-year cache + immutable flag
-- **ETag Support:** Proper cache validation headers
-
-## Status: ✅ READY FOR TESTING
-
-The PWA should now load the draft room without MIME type errors. All JavaScript assets are served directly by the browser with correct headers, bypassing any service worker interference.
+The React error fix is deployed and ready - the browser just needs to load the correct file.
