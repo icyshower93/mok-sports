@@ -82,20 +82,19 @@ export default function DraftPage() {
   const { data: draftData, isLoading, error } = useQuery({
     queryKey: ['draft', draftId],
     queryFn: async () => {
-      const response = await fetch(`/api/drafts/${draftId}`, {
-        credentials: 'include'
-      });
-      
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error(`Draft fetch failed (${response.status}):`, errorText);
-        throw new Error(errorText || 'Failed to fetch draft');
-      }
-      
+      // Use the apiRequest function to include authentication headers
+      const response = await apiRequest('GET', `/api/drafts/${draftId}`);
       return response.json();
     },
     enabled: !!draftId,
-    refetchInterval: 5000 // Poll every 5 seconds (reduced since we have local timer)
+    refetchInterval: 5000, // Poll every 5 seconds (reduced since we have local timer)
+    retry: (failureCount, error) => {
+      // Don't retry on authentication errors
+      if (error instanceof Error && error.message.includes('401')) {
+        return false;
+      }
+      return failureCount < 3;
+    }
   });
 
   // Update local timer when we get new server data
@@ -123,10 +122,8 @@ export default function DraftPage() {
   const { data: teamsData } = useQuery({
     queryKey: ['draft-teams', draftId],
     queryFn: async () => {
-      const response = await fetch(`/api/drafts/${draftId}/available-teams`, {
-        credentials: 'include'
-      });
-      if (!response.ok) throw new Error('Failed to fetch teams');
+      // Use the apiRequest function to include authentication headers
+      const response = await apiRequest('GET', `/api/drafts/${draftId}/available-teams`);
       return response.json();
     },
     enabled: !!draftId,
@@ -136,16 +133,8 @@ export default function DraftPage() {
   // Make pick mutation
   const makePickMutation = useMutation({
     mutationFn: async (nflTeamId: string) => {
-      const response = await fetch(`/api/drafts/${draftId}/pick`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nflTeamId }),
-        credentials: 'include'
-      });
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || 'Failed to make pick');
-      }
+      // Use the apiRequest function to include authentication headers
+      const response = await apiRequest('POST', `/api/drafts/${draftId}/pick`, { nflTeamId });
       return response.json();
     },
     onSuccess: () => {
