@@ -6,6 +6,61 @@ import fs from "fs";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 
+async function setupProductionAssets(app: express.Application) {
+  const distPath = path.resolve(import.meta.dirname, "..", "dist", "public");
+  
+  if (fs.existsSync(distPath)) {
+    console.log('[Server] Serving built assets from:', distPath);
+    
+    // Critical: Serve /assets/* files with correct MIME types FIRST
+    app.use('/assets', (req, res, next) => {
+      console.log('[Assets] Serving asset:', req.path);
+      next();
+    }, express.static(path.join(distPath, 'assets'), {
+      maxAge: '1y', // Cache assets for 1 year
+      etag: true,
+      lastModified: true,
+      setHeaders: (res, filePath) => {
+        console.log('[Assets] Setting headers for:', filePath);
+        if (filePath.endsWith('.js')) {
+          res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
+          res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+          console.log('[Assets] JS file served with correct MIME type');
+        } else if (filePath.endsWith('.css')) {
+          res.setHeader('Content-Type', 'text/css; charset=utf-8');
+          res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+          console.log('[Assets] CSS file served with correct MIME type');
+        } else if (filePath.endsWith('.woff2') || filePath.endsWith('.woff')) {
+          res.setHeader('Content-Type', 'font/woff2');
+          res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+        } else if (filePath.endsWith('.png') || filePath.endsWith('.jpg') || filePath.endsWith('.jpeg')) {
+          res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+        }
+      }
+    }));
+    
+    // Serve manifest.json, service worker, and other root files
+    app.use(express.static(distPath, {
+      index: false, // Don't serve index.html automatically
+      maxAge: '1d', // Cache for 1 day
+      setHeaders: (res, filePath) => {
+        if (filePath.endsWith('manifest.json')) {
+          res.setHeader('Content-Type', 'application/manifest+json');
+        } else if (filePath.endsWith('sw.js') || filePath.endsWith('service-worker.js')) {
+          res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
+          res.setHeader('Cache-Control', 'no-cache'); // Don't cache service worker
+        }
+      }
+    }));
+    
+    console.log('[Server] Static file serving configured for PWA');
+    return true;
+  } else {
+    console.log('[Server] No built assets found at:', distPath);
+    return false;
+  }
+}
+
 const app = express();
 
 // Configure CORS for PWA and cross-origin requests
@@ -78,6 +133,9 @@ app.use((req, res, next) => {
   } catch (error) {
   }
 
+  // CRITICAL: Configure static asset serving BEFORE any other routes
+  const hasBuiltAssets = await setupProductionAssets(app);
+
   const server = await registerRoutes(app);
   
   // Initialize Redis and recover active timers after server restart
@@ -93,32 +151,43 @@ app.use((req, res, next) => {
     console.error('Failed to initialize Redis or recover timers on startup:', error);
   }
 
-  // Serve built static assets for PWA compatibility BEFORE Vite middleware
-  const distPath = path.resolve(import.meta.dirname, "..", "dist", "public");
-  if (fs.existsSync(distPath)) {
-    console.log('[Server] Serving built assets from:', distPath);
-    
-    // Serve assets with correct MIME types
-    app.use('/assets', express.static(path.join(distPath, 'assets'), {
-      setHeaders: (res, filePath) => {
-        if (filePath.endsWith('.js')) {
-          res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
-          console.log('[Server] Serving JS file:', filePath);
-        } else if (filePath.endsWith('.css')) {
-          res.setHeader('Content-Type', 'text/css; charset=utf-8');
-          console.log('[Server] Serving CSS file:', filePath);
+  // Set up Vite or static serving based on environment
+  if (app.get("env") === "development") {
+    // Only use Vite middleware if we don't have built assets
+    // This prevents Vite from intercepting asset requests
+    if (!hasBuiltAssets) {
+      await setupVite(app, server);
+    } else {
+      console.log('[Server] Using built assets, skipping Vite middleware');
+      // Add catch-all for SPA routing (only for non-asset routes)
+      app.get('*', (req, res, next) => {
+        // Don't intercept API routes
+        if (req.path.startsWith('/api/')) {
+          return next();
         }
-      }
-    }));
-    
-    // Serve other static files (manifest, sw.js, etc.)
-    app.use(express.static(distPath, {
-      index: false // Don't serve index.html automatically
-    }));
-    
-    console.log('[Server] Static file serving configured for PWA');
+        
+        // Don't intercept asset requests or static files
+        if (req.path.startsWith('/assets/') || 
+            req.path.endsWith('.js') || 
+            req.path.endsWith('.css') ||
+            req.path.endsWith('.json') ||
+            req.path.endsWith('.ico') ||
+            req.path.endsWith('.png') ||
+            req.path.endsWith('.svg') ||
+            req.path.endsWith('.woff2') ||
+            req.path.endsWith('.manifest') ||
+            req.path === '/sw.js' ||
+            req.path === '/manifest.json') {
+          return next();
+        }
+        
+        // Serve the built index.html for all SPA routes
+        const indexPath = path.resolve(import.meta.dirname, "..", "dist", "public", "index.html");
+        res.sendFile(indexPath);
+      });
+    }
   } else {
-    console.log('[Server] No built assets found at:', distPath);
+    serveStatic(app);
   }
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
@@ -128,15 +197,6 @@ app.use((req, res, next) => {
     res.status(status).json({ message });
     throw err;
   });
-
-  // importantly only setup vite in development and after
-  // setting up all the other routes so the catch-all route
-  // doesn't interfere with the other routes
-  if (app.get("env") === "development") {
-    await setupVite(app, server);
-  } else {
-    serveStatic(app);
-  }
 
   // ALWAYS serve the app on the port specified in the environment variable PORT
   // Other ports are firewalled. Default to 5000 if not specified.

@@ -23,6 +23,7 @@ The server is built with Express.js using TypeScript, following a modular archit
 - **Health Check Endpoints**: `/api/health` endpoint for monitoring database, Redis, and overall system health
 - **Static Asset Optimization**: Proper MIME type serving and cache headers for production deployment
 - **Upstash Redis Integration**: Successfully connected to Upstash Redis for persistent state management across server restarts
+- **Critical MIME Type Fix**: Resolved JavaScript assets returning HTML instead of JS - static assets now served before Vite middleware with correct Content-Type headers
 
 ### Real-Time Draft System
 - **WebSocket Integration**: Real-time draft synchronization using WebSocket connections on `/ws/draft` path
