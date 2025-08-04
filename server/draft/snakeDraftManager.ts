@@ -443,14 +443,23 @@ export class SnakeDraftManager {
     
     const interval = setInterval(async () => {
       timeLeft--;
+      console.log(`🕐 Timer tick for user ${userId}: ${timeLeft}s remaining`);
       
       if (timeLeft <= 0) {
         console.log(`⏰ Timer reached 0 for user ${userId}, triggering expiration handler`);
         clearInterval(interval);
         this.timerIntervals.delete(timerKey);
-        await this.handleTimerExpired(draftId, userId);
+        
+        // Critical: Call the expiration handler immediately
+        setTimeout(async () => {
+          await this.handleTimerExpired(draftId, userId);
+        }, 100); // Small delay to ensure clean state
       } else {
-        await this.storage.updateDraftTimer(draftId, userId, timeLeft);
+        try {
+          await this.storage.updateDraftTimer(draftId, userId, timeLeft);
+        } catch (error) {
+          console.error(`Failed to update timer: ${error}`);
+        }
       }
     }, 1000);
     
