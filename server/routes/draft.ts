@@ -161,6 +161,56 @@ export default function setupDraftRoutes(app: any, storage: IStorage, webSocketM
     }
   });
 
+  // Reset draft for a specific league
+  app.post("/api/draft/reset/:leagueId", async (req: any, res: any) => {
+    try {
+      const user = getAuthenticatedUser(req);
+      if (!user) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+
+      const { leagueId } = req.params;
+      const league = await storage.getLeague(leagueId);
+      if (!league) {
+        return res.status(404).json({ message: "League not found" });
+      }
+
+      // Verify user is league creator
+      if (league.creatorId !== user.id) {
+        return res.status(403).json({ message: "Only league creator can reset draft" });
+      }
+
+      console.log(`[Draft Reset] Resetting draft for league ${leagueId}`);
+
+      // Find and delete any existing draft for this league
+      if (league.draftId) {
+        await storage.deleteDraft(league.draftId);
+        console.log(`[Draft Reset] Deleted draft ${league.draftId}`);
+      }
+
+      // Reset league draft status
+      await storage.updateLeague(leagueId, { 
+        draftStarted: false,
+        draftId: undefined
+      });
+
+      console.log(`[Draft Reset] Reset league ${leagueId} to pre-draft state`);
+
+      res.json({ 
+        message: "Draft reset successfully",
+        leagueId,
+        resetAt: new Date().toISOString()
+      });
+
+    } catch (error) {
+      console.error('Error resetting draft:', error);
+      res.status(500).json({ 
+        message: "Failed to reset draft",
+        error: error instanceof Error ? error.message : "Unknown error"
+      });
+    }
+  });
+
   // Start a draft
   app.post("/api/drafts/:draftId/start",  async (req: any, res: any) => {
     try {

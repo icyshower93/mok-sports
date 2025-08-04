@@ -74,8 +74,7 @@ export function DraftTestingPanel({
   // Reset draft mutation
   const resetDraftMutation = useMutation({
     mutationFn: async () => {
-      if (!draftId) throw new Error('No draft to reset');
-      const response = await apiRequest(`/api/drafts/${draftId}/reset`, {
+      const response = await apiRequest(`/api/draft/reset/${leagueId}`, {
         method: 'POST'
       });
       return response.json();
@@ -83,7 +82,7 @@ export function DraftTestingPanel({
     onSuccess: () => {
       toast({
         title: "Draft Reset",
-        description: "Draft has been reset to pre-draft state.",
+        description: "Draft has been reset to pre-draft state. You can now create a new draft.",
       });
       queryClient.invalidateQueries({ queryKey: [`/api/leagues/${leagueId}`] });
       onReset?.();
@@ -195,34 +194,30 @@ export function DraftTestingPanel({
               </p>
             </div>
 
-            {draftId && (
-              <>
-                <Separator />
-                
-                {/* Draft Controls */}
-                <div className="space-y-3">
-                  <h4 className="text-sm font-semibold flex items-center space-x-2">
-                    <Timer className="w-4 h-4" />
-                    <span>Draft Controls</span>
-                  </h4>
-                  
-                  <Button
-                    onClick={() => resetDraftMutation.mutate()}
-                    disabled={resetDraftMutation.isPending}
-                    variant="destructive"
-                    size="sm"
-                    className="w-full"
-                  >
-                    <RotateCcw className="w-4 h-4 mr-2" />
-                    {resetDraftMutation.isPending ? 'Resetting...' : 'Reset Draft'}
-                  </Button>
-                  
-                  <p className="text-xs text-muted-foreground">
-                    Resets the draft back to pre-draft state. All picks will be cleared.
-                  </p>
-                </div>
-              </>
-            )}
+            <Separator />
+            
+            {/* Draft Controls */}
+            <div className="space-y-3">
+              <h4 className="text-sm font-semibold flex items-center space-x-2">
+                <Timer className="w-4 h-4" />
+                <span>Draft Controls</span>
+              </h4>
+              
+              <Button
+                onClick={() => resetDraftMutation.mutate()}
+                disabled={resetDraftMutation.isPending}
+                variant="destructive"
+                size="sm"
+                className="w-full"
+              >
+                <RotateCcw className="w-4 h-4 mr-2" />
+                {resetDraftMutation.isPending ? 'Resetting...' : 'Reset Draft State'}
+              </Button>
+              
+              <p className="text-xs text-muted-foreground">
+                Completely resets the league draft state. Clears all picks and allows creating a fresh draft.
+              </p>
+            </div>
 
             <Separator />
             
