@@ -22,19 +22,15 @@ import { LeagueWaiting } from "@/pages/league-waiting";
 import NotFound from "@/pages/not-found";
 
 function AppContent() {
-  const { isAuthenticated, isLoading, user } = useAuth();
+  const { user, isLoading } = useAuth();
+  const isAuthenticated = !!user;
   const { isPWA } = usePWADetection();
   
   // Initialize service worker for PWA functionality
   useServiceWorker(false); // Enable service worker for both PWA and web browsers for testing
   
   // Initialize automatic push notification refresh for iOS PWA
-  useAutoPushRefresh({
-    enabled: true,
-    refreshOnOpen: true,
-    refreshOnServiceWorkerActivation: true,
-    debug: true // Enable debug logging to track refresh behavior
-  });
+  useAutoPushRefresh();
 
   // Show install prompt only on mobile devices when not in PWA mode
   // Allow desktop usage for testing/development

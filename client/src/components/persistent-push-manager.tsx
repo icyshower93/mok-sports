@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { usePersistentPushSubscription } from '@/hooks/use-persistent-push-subscription';
-import { useAuth } from '@/lib/auth';
+import { useAuth } from '@/hooks/use-auth';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
