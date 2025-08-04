@@ -13,6 +13,7 @@ import { TeamLogo } from "@/components/team-logo";
 import { apiRequest, AuthTokenManager } from "@/lib/queryClient";
 import { useDraftWebSocket } from "@/hooks/use-draft-websocket";
 import { useAuth } from "@/hooks/use-auth";
+import { trackModuleError } from "@/debug-tracker";
 
 interface NflTeam {
   id: string;
@@ -84,25 +85,87 @@ export default function DraftPage() {
   const { data: draftData, isLoading, error } = useQuery({
     queryKey: ['draft', draftId],
     queryFn: async () => {
-      console.log('[Draft] Fetching draft data for ID:', draftId);
+      console.log('[Draft] === STARTING DRAFT FETCH ===');
+      console.log('[Draft] Draft ID:', draftId);
       console.log('[Draft] Auth status - User:', user?.name, 'Authenticated:', isAuthenticated, 'Loading:', authLoading);
       console.log('[Draft] Token available:', !!AuthTokenManager.getToken());
+      console.log('[Draft] Current URL:', window.location.href);
+      console.log('[Draft] Current pathname:', window.location.pathname);
       
       try {
+        console.log('[Draft] Making API request to:', `/api/drafts/${draftId}`);
+        
         // Use the apiRequest function to include authentication headers
         const response = await apiRequest('GET', `/api/drafts/${draftId}`);
+        
+        console.log('[Draft] Response received:', {
+          status: response.status,
+          statusText: response.statusText,
+          headers: Object.fromEntries(response.headers.entries())
+        });
+        
         const data = await response.json();
         console.log('[Draft] Successfully fetched draft data:', data);
+        console.log('[Draft] === DRAFT FETCH SUCCESS ===');
         return data;
       } catch (error) {
+        console.error('[Draft] === DRAFT FETCH ERROR ===');
         console.error('[Draft] Error fetching draft data:', error);
+        console.error('[Draft] Error type:', typeof error);
+        console.error('[Draft] Error constructor:', error?.constructor?.name);
+        
+        // Track the error for PWA debugging
+        trackModuleError(error, 'draft-fetch');
+        
         console.error('[Draft] Full error details:', {
           message: error instanceof Error ? error.message : 'Unknown error',
+          stack: error instanceof Error ? error.stack : 'No stack trace',
           user: user?.name,
           hasToken: !!AuthTokenManager.getToken(),
           isAuthenticated,
-          authLoading
+          authLoading,
+          draftId,
+          currentUrl: window.location.href
         });
+        
+        // Try to make a direct fetch to see what's happening
+        try {
+          console.log('[Draft] Attempting direct fetch for debugging...');
+          const directResponse = await fetch(`/api/drafts/${draftId}`, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              ...AuthTokenManager.getAuthHeaders()
+            },
+            credentials: 'include'
+          });
+          
+          console.log('[Draft] Direct fetch response:', {
+            status: directResponse.status,
+            statusText: directResponse.statusText,
+            headers: Object.fromEntries(directResponse.headers.entries())
+          });
+          
+          const directText = await directResponse.text();
+          console.log('[Draft] Direct fetch response body:', directText);
+          
+          // Store the response for PWA debugging
+          try {
+            sessionStorage.setItem('mok-last-direct-fetch', JSON.stringify({
+              status: directResponse.status,
+              statusText: directResponse.statusText,
+              headers: Object.fromEntries(directResponse.headers.entries()),
+              body: directText,
+              timestamp: new Date().toISOString()
+            }));
+          } catch (e) {
+            console.warn('[Draft] Could not store direct fetch result');
+          }
+        } catch (directError) {
+          console.error('[Draft] Direct fetch also failed:', directError);
+          trackModuleError(directError, 'direct-fetch');
+        }
+        
         throw error;
       }
     },

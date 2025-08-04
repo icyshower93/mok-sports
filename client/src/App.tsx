@@ -77,7 +77,13 @@ function AppContent() {
         <Route path="/" component={DashboardPage} />
         <Route path="/leagues" component={LeaguesPage} />
         <Route path="/league/waiting" component={LeagueWaiting} />
-        <Route path="/draft/:draftId" component={DraftPage} />
+        <Route path="/draft/:draftId">
+          {(params) => {
+            console.log('[App] Draft route matched with params:', params);
+            console.log('[App] Current location:', window.location.href);
+            return <DraftPage />;
+          }}
+        </Route>
         <Route path="/teams" component={TeamsPage} />
         <Route path="/profile" component={ProfilePage} />
         <Route component={NotFound} />
