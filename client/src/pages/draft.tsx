@@ -4,7 +4,7 @@ import { useLocation, useParams } from "wouter";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
+// import { Progress } from "@/components/ui/progress"; // Using custom progress bar
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Clock, Users, Trophy, Zap, Shield, Star, Wifi, WifiOff } from "lucide-react";
@@ -239,8 +239,41 @@ export default function DraftPage() {
     isCurrentUser: draftData.isCurrentUser
   });
   
-  // Use local timer for smooth countdown, fallback to server data
-  const displayTimeRemaining = localTimeRemaining || state?.timeRemaining || 0;
+  // Enhanced timer state with transition effects
+  const [displayTimeRemaining, setDisplayTimeRemaining] = useState(localTimeRemaining || state?.timeRemaining || 0);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+
+  // Sync with server timer updates and handle smooth countdown
+  useEffect(() => {
+    const serverTime = localTimeRemaining || state?.timeRemaining || 0;
+    
+    if (serverTime !== displayTimeRemaining && !isTransitioning) {
+      setDisplayTimeRemaining(serverTime);
+    }
+    
+    // Start client-side countdown if timer is active
+    if (serverTime > 0) {
+      const interval = setInterval(() => {
+        setDisplayTimeRemaining(prev => {
+          if (prev <= 1) {
+            // Handle timer expiration with flash effect
+            setIsTransitioning(true);
+            clearInterval(interval);
+            
+            // Reset transition state after brief flash
+            setTimeout(() => {
+              setIsTransitioning(false);
+            }, 2000);
+            
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+
+      return () => clearInterval(interval);
+    }
+  }, [localTimeRemaining, state?.timeRemaining, state?.currentUserId]);
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -408,17 +441,64 @@ export default function DraftPage() {
                       
                       {/* Timer */}
                       <div>
-                        <div className={`text-3xl font-bold mb-2 font-mono transition-colors duration-300 ${
+                        <div className={`text-3xl font-bold mb-3 font-mono transition-colors duration-300 ${
                           displayTimeRemaining <= 0 ? 'text-red-500 animate-pulse' : 
                           displayTimeRemaining <= 10 ? 'text-red-500 animate-pulse' : 
                           displayTimeRemaining <= 30 ? 'text-orange-500' : 'text-foreground'
                         }`}>
                           {formatTime(displayTimeRemaining)}
                         </div>
-                        <Progress 
-                          value={(displayTimeRemaining / (state.draft.pickTimeLimit || 60)) * 100} 
-                          className={`mb-3 ${displayTimeRemaining <= 10 ? 'bg-red-100' : ''}`}
-                        />
+                        
+                        {/* Enhanced Progress Bar */}
+                        <div className="w-full max-w-md mx-auto mb-4">
+                          <div 
+                            className="relative h-4 bg-gray-200 dark:bg-gray-700 rounded-full shadow-inner overflow-hidden border border-gray-300 dark:border-gray-600"
+                          >
+                            <div 
+                              className={`h-full rounded-full relative overflow-hidden ${
+                                displayTimeRemaining <= 0 ? 'bg-red-500 animate-pulse shadow-lg' :
+                                displayTimeRemaining <= 10 ? 'bg-gradient-to-r from-red-500 to-red-600 shadow-red-500/50' : 
+                                displayTimeRemaining <= 30 ? 'bg-gradient-to-r from-orange-400 to-orange-500 shadow-orange-500/40' : 
+                                displayTimeRemaining <= 45 ? 'bg-gradient-to-r from-yellow-400 to-orange-400 shadow-yellow-500/40' :
+                                'bg-gradient-to-r from-green-400 to-green-500 shadow-green-500/40'
+                              } ${
+                                displayTimeRemaining <= 10 ? 'shadow-lg' : 'shadow-md'
+                              }`}
+                              style={{
+                                width: `${Math.max(0, (displayTimeRemaining / (state.draft.pickTimeLimit || 60)) * 100)}%`,
+                                transition: displayTimeRemaining <= 0 ? 'none' : 'width 1s linear, background-color 0.5s ease, box-shadow 0.3s ease',
+                                boxShadow: displayTimeRemaining <= 10 ? 
+                                  `0 0 15px ${displayTimeRemaining <= 5 ? 'rgba(239, 68, 68, 0.8)' : 'rgba(239, 68, 68, 0.5)'}` :
+                                  displayTimeRemaining <= 30 ? '0 0 8px rgba(251, 146, 60, 0.4)' : 
+                                  '0 0 5px rgba(34, 197, 94, 0.3)'
+                              }}
+                            >
+                              {/* Animated shimmer effect */}
+                              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-30 animate-pulse"></div>
+                              
+                              {/* Extra urgent pulsing overlay */}
+                              {displayTimeRemaining <= 5 && displayTimeRemaining > 0 && (
+                                <div className="absolute inset-0 bg-red-300 opacity-40 animate-ping"></div>
+                              )}
+                            </div>
+                          </div>
+                          
+                          {/* Time indicators */}
+                          <div className="flex justify-between items-center mt-2 text-xs">
+                            <span className="text-muted-foreground">0:00</span>
+                            <span className={`font-bold text-sm ${
+                              displayTimeRemaining <= 10 ? 'text-red-500 animate-pulse' : 
+                              displayTimeRemaining <= 30 ? 'text-orange-500' : 
+                              'text-muted-foreground'
+                            }`}>
+                              {displayTimeRemaining <= 5 ? '⚡ CRITICAL' :
+                               displayTimeRemaining <= 10 ? '🚨 URGENT' : 
+                               displayTimeRemaining <= 30 ? '⏰ Hurry!' : 
+                               '⏱️ Time remaining'}
+                            </span>
+                            <span className="text-muted-foreground">{formatTime(state.draft.pickTimeLimit || 60)}</span>
+                          </div>
+                        </div>
                         {isCurrentUser ? (
                           <Badge variant="default" className="text-sm">
                             <Star className="w-3 h-3 mr-1" />
