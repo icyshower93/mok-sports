@@ -10,7 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Clock, Users, Trophy, Zap, Shield, Star, Wifi, WifiOff } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { TeamLogo } from "@/components/team-logo";
-import { apiRequest } from "@/lib/queryClient";
+import { apiRequest, AuthTokenManager } from "@/lib/queryClient";
 import { useDraftWebSocket } from "@/hooks/use-draft-websocket";
 
 interface NflTeam {
@@ -82,17 +82,27 @@ export default function DraftPage() {
   const { data: draftData, isLoading, error } = useQuery({
     queryKey: ['draft', draftId],
     queryFn: async () => {
-      // Use the apiRequest function to include authentication headers
-      const response = await apiRequest('GET', `/api/drafts/${draftId}`);
-      return response.json();
+      console.log('[Draft] Fetching draft data for ID:', draftId);
+      try {
+        // Use the apiRequest function to include authentication headers
+        const response = await apiRequest('GET', `/api/drafts/${draftId}`);
+        const data = await response.json();
+        console.log('[Draft] Successfully fetched draft data:', data);
+        return data;
+      } catch (error) {
+        console.error('[Draft] Error fetching draft data:', error);
+        throw error;
+      }
     },
     enabled: !!draftId,
     refetchInterval: 5000, // Poll every 5 seconds (reduced since we have local timer)
     retry: (failureCount, error) => {
       // Don't retry on authentication errors
       if (error instanceof Error && error.message.includes('401')) {
+        console.log('[Draft] Authentication error, not retrying');
         return false;
       }
+      console.log(`[Draft] Retrying fetch, attempt ${failureCount + 1}`);
       return failureCount < 3;
     }
   });
@@ -180,6 +190,16 @@ export default function DraftPage() {
     console.error('Draft error:', error);
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     
+    // Enhanced debug information for troubleshooting
+    console.log('[Draft Debug] Full error details:', {
+      error,
+      errorMessage,
+      draftId,
+      connectionStatus,
+      hasToken: !!AuthTokenManager.getToken(),
+      tokenPreview: AuthTokenManager.getToken()?.substring(0, 20) + '...',
+    });
+    
     return (
       <div className="min-h-screen bg-gradient-to-br from-background to-secondary/20 flex items-center justify-center">
         <Card className="max-w-md">
@@ -187,12 +207,12 @@ export default function DraftPage() {
             <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <Shield className="w-8 h-8 text-red-600" />
             </div>
-            <h2 className="text-xl font-semibold mb-2">Draft Not Found</h2>
+            <h2 className="text-xl font-semibold mb-2">Draft Connection Issue</h2>
             <p className="text-muted-foreground mb-4">
               {errorMessage.includes('404') ? 
                 'No draft exists for this league. The draft may need to be created first.' :
-                errorMessage.includes('403') ?
-                'You are not authorized to view this draft.' :
+                errorMessage.includes('403') || errorMessage.includes('401') ?
+                'Authentication issue detected. The system should auto-authenticate in development mode.' :
                 'Unable to load the draft room. Please try again.'
               }
             </p>
@@ -200,7 +220,9 @@ export default function DraftPage() {
               <strong>Debug info:</strong><br/>
               Draft ID: {draftId}<br/>
               Error: {errorMessage}<br/>
-              WebSocket: {connectionStatus}
+              WebSocket: {connectionStatus}<br/>
+              Has Token: {!!AuthTokenManager.getToken() ? 'Yes' : 'No'}<br/>
+              Mode: Development (Auto-auth enabled)
             </div>
             <div className="space-y-2">
               <Button onClick={() => navigate('/dashboard')} variant="outline">
