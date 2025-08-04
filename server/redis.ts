@@ -9,39 +9,51 @@ export function createRedisClient(): Redis | null {
     return redis;
   }
 
-  // Try Redis connection string first (preferred)
-  const redisUrl = process.env.REDIS_URL;
-  
-  // Fallback to Upstash REST credentials
-  const upstashUrl = process.env.UPSTASH_REDIS_REST_URL;
+  // Check environment variables and clean them
+  let redisUrl = process.env.REDIS_URL;
+  const upstashRestUrl = process.env.UPSTASH_REDIS_REST_URL;
   const upstashToken = process.env.UPSTASH_REDIS_REST_TOKEN;
   
-  if (!redisUrl && !upstashUrl) {
+  // Handle case where UPSTASH_REDIS_REST_URL contains a Redis connection string
+  if (upstashRestUrl && upstashRestUrl.includes('rediss://')) {
+    // Extract the Redis connection string from the environment variable
+    const match = upstashRestUrl.match(/rediss:\/\/[^"]+/);
+    if (match) {
+      redisUrl = match[0];
+      console.log('[Redis] Found Redis connection string in UPSTASH_REDIS_REST_URL');
+    }
+  }
+  
+  if (!redisUrl && !upstashRestUrl) {
     console.log('[Redis] No Redis credentials found - using in-memory fallback');
     return null;
   }
 
   try {
     if (redisUrl) {
-      // Use traditional Redis connection string
+      // Use Redis connection string
       redis = new Redis(redisUrl, {
         maxRetriesPerRequest: 3,
-        retryDelayOnFailover: 100,
         enableReadyCheck: false,
         lazyConnect: true,
         keepAlive: 30000,
         connectTimeout: 10000,
         commandTimeout: 5000,
+        tls: {
+          rejectUnauthorized: false
+        }
       });
       console.log('[Redis] Using Redis connection string');
-    } else if (upstashUrl && upstashToken) {
+    } else if (upstashRestUrl && upstashToken) {
       // Convert Upstash REST URL to Redis connection
-      const url = new URL(upstashUrl);
-      const redisConnectionString = `rediss://default:${upstashToken}@${url.hostname}:6380`;
+      const cleanUrl = upstashRestUrl.replace(/['"]/g, '');
+      const cleanToken = upstashToken.replace(/['"]/g, '');
+      
+      const url = new URL(cleanUrl);
+      const redisConnectionString = `rediss://default:${cleanToken}@${url.hostname}:6380`;
       
       redis = new Redis(redisConnectionString, {
         maxRetriesPerRequest: 3,
-        retryDelayOnFailover: 100,
         enableReadyCheck: false,
         lazyConnect: true,
         keepAlive: 30000,
