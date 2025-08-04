@@ -419,15 +419,35 @@ export class SnakeDraftManager {
     });
     
     if (nextUserId) {
-      await this.startPickTimer(draftId, nextUserId, nextRound, nextPick);
+      // Add 3-second grace period before starting timer
+      console.log(`⏳ Starting 3-second grace period before timer for user ${nextUserId}`);
       
-      // If next user is a robot, trigger auto-pick after delay
-      if (this.robotManager?.isRobot(nextUserId)) {
-        const delay = this.robotManager.simulateRobotPickDelay();
-        setTimeout(() => {
-          this.simulateBotPick(draftId, nextUserId);
-        }, delay);
-      }
+      setTimeout(async () => {
+        // Verify draft state is still valid after grace period
+        const currentDraft = await this.storage.getDraft(draftId);
+        if (!currentDraft || currentDraft.status !== 'active') {
+          console.log(`⚠️ Draft state changed during grace period, skipping timer start`);
+          return;
+        }
+        
+        // Double-check this user is still supposed to pick
+        const currentPickUser = this.getCurrentPickUser(currentDraft);
+        if (currentPickUser !== nextUserId) {
+          console.log(`⚠️ Pick user changed during grace period: expected ${nextUserId}, got ${currentPickUser}`);
+          return;
+        }
+        
+        console.log(`✅ Grace period complete, starting timer for user ${nextUserId}`);
+        await this.startPickTimer(draftId, nextUserId, nextRound, nextPick);
+        
+        // If next user is a robot, trigger auto-pick after delay
+        if (this.robotManager?.isRobot(nextUserId)) {
+          const delay = this.robotManager.simulateRobotPickDelay();
+          setTimeout(() => {
+            this.simulateBotPick(draftId, nextUserId);
+          }, delay);
+        }
+      }, 3000); // 3-second grace period
     }
     
     return await this.getDraftState(draftId);
@@ -439,13 +459,16 @@ export class SnakeDraftManager {
     round: number, 
     pickNumber: number
   ): Promise<void> {
-    // Clear any existing timer for this draft first
-    const existingKey = Array.from(this.timerIntervals.keys()).find(key => key.startsWith(draftId));
-    if (existingKey) {
+    // Clear any existing timers for this draft first (more comprehensive cleanup)
+    const existingKeys = Array.from(this.timerIntervals.keys()).filter(key => key.startsWith(draftId));
+    for (const existingKey of existingKeys) {
       clearInterval(this.timerIntervals.get(existingKey)!);
       this.timerIntervals.delete(existingKey);
       console.log(`🧹 Cleared existing timer: ${existingKey}`);
     }
+
+    // Deactivate any existing timers in database for this draft
+    await this.storage.deactivateAllDraftTimers(draftId);
 
     // Create timer record
     await this.storage.createDraftTimer({

@@ -53,6 +53,7 @@ export interface IStorage {
   // Draft timer methods
   createDraftTimer(timer: InsertDraftTimer): Promise<DraftTimer>;
   updateDraftTimer(draftId: string, userId: string, timeRemaining: number): Promise<void>;
+  deactivateAllDraftTimers(draftId: string): Promise<void>;
   getActiveDraftTimer(draftId: string): Promise<DraftTimer | undefined>;
   deactivateTimer(draftId: string, userId: string): Promise<void>;
   
@@ -443,6 +444,17 @@ export class DatabaseStorage implements IStorage {
         eq(draftTimers.isActive, true)
       ));
     return timer || undefined;
+  }
+
+  async deactivateAllDraftTimers(draftId: string): Promise<void> {
+    await db.update(draftTimers)
+      .set({ isActive: false, updatedAt: new Date() })
+      .where(
+        and(
+          eq(draftTimers.draftId, draftId),
+          eq(draftTimers.isActive, true)
+        )
+      );
   }
 
   async deactivateTimer(draftId: string, userId: string): Promise<void> {
