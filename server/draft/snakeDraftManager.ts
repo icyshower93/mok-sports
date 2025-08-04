@@ -229,6 +229,20 @@ export class SnakeDraftManager {
       // First, deactivate the timer to prevent double processing
       await this.storage.deactivateTimer(draftId, userId);
       
+      // Verify this user should actually be picking
+      const draft = await this.storage.getDraft(draftId);
+      if (!draft) {
+        console.error('Draft not found during timer expiration');
+        return;
+      }
+      
+      const currentPickUser = this.getCurrentPickUser(draft);
+      if (currentPickUser !== userId) {
+        console.error(`Timer mismatch: expected ${userId} but current pick user is ${currentPickUser}`);
+        console.error(`Draft state: Round ${draft.currentRound}, Pick ${draft.currentPick}`);
+        return;
+      }
+      
       const availableTeams = await this.storage.getAvailableNflTeams(draftId);
       if (availableTeams.length === 0) {
         console.error('No available teams for auto-pick');
