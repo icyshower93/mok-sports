@@ -30,19 +30,22 @@ export function useDraftWebSocket(draftId: string | null) {
 
   const connect = useCallback(() => {
     if (!draftId || !user?.id || wsRef.current?.readyState === WebSocket.OPEN) {
+      console.log('[WebSocket] Connect skipped:', { draftId: !!draftId, userId: !!user?.id, wsOpen: wsRef.current?.readyState === WebSocket.OPEN });
       return;
     }
 
+    console.log('[WebSocket] Attempting connection for draft:', draftId, 'user:', user.id);
     setConnectionStatus('connecting');
     
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
     const wsUrl = `${protocol}//${window.location.host}/ws/draft?userId=${user.id}&draftId=${draftId}`;
+    console.log('[WebSocket] Connecting to:', wsUrl);
     
     const ws = new WebSocket(wsUrl);
     wsRef.current = ws;
 
     ws.onopen = () => {
-      console.log('[WebSocket] Connected to draft:', draftId);
+      console.log('[WebSocket] Successfully connected to draft:', draftId, 'for user:', user?.id);
       setConnectionStatus('connected');
       
       // Clear any reconnection timeout

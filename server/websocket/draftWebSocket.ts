@@ -183,6 +183,10 @@ export class DraftWebSocketManager {
   }
 
   public broadcastTimerUpdate(draftId: string, timeRemaining: number) {
+    console.log(`[WebSocket] Broadcasting timer update: ${timeRemaining}s remaining to draft ${draftId}`);
+    const connections = this.connections.get(draftId);
+    console.log(`[WebSocket] Active connections for draft ${draftId}: ${connections?.length || 0}`);
+    
     this.broadcastToDraft(draftId, {
       type: 'timer_update',
       draftId,
