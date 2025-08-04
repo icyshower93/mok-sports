@@ -15,20 +15,18 @@ import SnakeDraftManager from "../draft/snakeDraftManager.js";
 
 const router = Router();
 
-// Authentication middleware
-function authenticateJWT(req: any, res: any, next: any) {
+// Authentication helper function (matches main routes.ts pattern)
+function getAuthenticatedUser(req: any) {
   const token = req.cookies?.auth_token;
   if (!token) {
-    return res.status(401).json({ message: "Not authenticated" });
+    return null;
   }
 
   try {
-    const { verify } = require("jsonwebtoken");
-    const user = verify(token, process.env.JWT_SECRET || "mok-sports-jwt-secret-fallback-key-12345");
-    req.user = user;
-    next();
+    const { verifyJWT } = require("../auth");
+    return verifyJWT(token);
   } catch (error) {
-    return res.status(401).json({ message: "Invalid token" });
+    return null;
   }
 }
 
@@ -36,9 +34,12 @@ export default function setupDraftRoutes(app: any, storage: IStorage) {
   const draftManager = new SnakeDraftManager(storage);
 
   // Create a new draft for a league
-  app.post("/api/drafts", authenticateJWT, async (req: any, res: any) => {
+  app.post("/api/drafts", async (req: any, res: any) => {
     try {
-      const user = req.user;
+      const user = getAuthenticatedUser(req);
+      if (!user) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
       const createDraftSchema = z.object({
         leagueId: z.string(),
         totalRounds: z.number().min(1).max(10).optional(),
@@ -98,9 +99,12 @@ export default function setupDraftRoutes(app: any, storage: IStorage) {
   });
 
   // Start a draft
-  app.post("/api/drafts/:draftId/start", authenticateJWT, async (req: any, res: any) => {
+  app.post("/api/drafts/:draftId/start",  async (req: any, res: any) => {
     try {
-      const user = req.user;
+      const user = getAuthenticatedUser(req);
+      if (!user) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
       const { draftId } = req.params;
 
       const draft = await storage.getDraft(draftId);
@@ -132,9 +136,12 @@ export default function setupDraftRoutes(app: any, storage: IStorage) {
   });
 
   // Get draft state
-  app.get("/api/drafts/:draftId", authenticateJWT, async (req: any, res: any) => {
+  app.get("/api/drafts/:draftId",  async (req: any, res: any) => {
     try {
-      const user = req.user;
+      const user = getAuthenticatedUser(req);
+      if (!user) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
       const { draftId } = req.params;
 
       const draft = await storage.getDraft(draftId);
@@ -167,9 +174,12 @@ export default function setupDraftRoutes(app: any, storage: IStorage) {
   });
 
   // Make a draft pick
-  app.post("/api/drafts/:draftId/pick", authenticateJWT, async (req: any, res: any) => {
+  app.post("/api/drafts/:draftId/pick",  async (req: any, res: any) => {
     try {
-      const user = req.user;
+      const user = getAuthenticatedUser(req);
+      if (!user) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
       const { draftId } = req.params;
       
       const pickSchema = z.object({
@@ -208,9 +218,12 @@ export default function setupDraftRoutes(app: any, storage: IStorage) {
   });
 
   // Get user's draft picks
-  app.get("/api/drafts/:draftId/my-picks", authenticateJWT, async (req: any, res: any) => {
+  app.get("/api/drafts/:draftId/my-picks",  async (req: any, res: any) => {
     try {
-      const user = req.user;
+      const user = getAuthenticatedUser(req);
+      if (!user) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
       const { draftId } = req.params;
 
       const draft = await storage.getDraft(draftId);
@@ -233,7 +246,7 @@ export default function setupDraftRoutes(app: any, storage: IStorage) {
   });
 
   // Get all NFL teams grouped by conference
-  app.get("/api/nfl-teams", authenticateJWT, async (req: any, res: any) => {
+  app.get("/api/nfl-teams",  async (req: any, res: any) => {
     try {
       const teams = await storage.getAllNflTeams();
       
@@ -260,7 +273,7 @@ export default function setupDraftRoutes(app: any, storage: IStorage) {
   });
 
   // Get available teams for a draft
-  app.get("/api/drafts/:draftId/available-teams", authenticateJWT, async (req: any, res: any) => {
+  app.get("/api/drafts/:draftId/available-teams",  async (req: any, res: any) => {
     try {
       const { draftId } = req.params;
 
@@ -296,7 +309,7 @@ export default function setupDraftRoutes(app: any, storage: IStorage) {
   });
 
   // Simulate bot pick (for testing)
-  app.post("/api/drafts/:draftId/simulate-bot", authenticateJWT, async (req: any, res: any) => {
+  app.post("/api/drafts/:draftId/simulate-bot",  async (req: any, res: any) => {
     try {
       const { draftId } = req.params;
       const { userId } = req.body;
