@@ -1,0 +1,161 @@
+[SW] Fetching /public/js/replit-dev-banner.js from network
+sw.js?v=1754335063934:87 [SW] Serving /assets/index-iLVvUOZX.js from cache
+sw.js?v=1754335063934:91 [SW] Fetching /assets/index-Cn_hjswP.css from network
+index-iLVvUOZX.js:228 [Auth] Token check - Has token: false Has user: false Loading: true
+sw.js?v=1754335063934:87 [SW] Serving /favicon.ico from cache
+sw.js?v=1754335063934:87 [SW] Serving /manifest.json from cache
+waiting:1 Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner.
+sw.js?v=1754335070662:15 [SW] Service worker starting, version: v1.4.0-ios-push-fix
+sw.js?v=1754335070662:201 [SW] Service worker script loaded successfully
+sw.js?v=1754335070662:19 [SW] Installing service worker, version: v1.4.0-ios-push-fix
+index-iLVvUOZX.js:228 [SW Hook] Service worker registered successfully
+sw.js?v=1754335070662:23 [SW] Caching static files
+index-iLVvUOZX.js:228 [Auth] Token check - Has token: false Has user: true Loading: false
+index-iLVvUOZX.js:228 [SubscriptionManager] 3:17:50 PM - Permission is granted and no active subscription - auto-creating subscription
+index-iLVvUOZX.js:228 [AutoPushRefresh] Legacy hook delegating to SubscriptionManager
+sw.js?v=1754335070662:26 [SW] Static files cached successfully
+sw.js?v=1754335070662:91 [SW] Fetching /a/ACg8ocJEMs5AzNtfS8vv7POiR-CJvE5EdtZVt27CT0tdYJA64x6-BQyy_Q=s96-c from network
+sw.js?v=1754335070662:91 [SW] Fetching /a/ACg8ocIlUYRsI8z4wKwDJjb1BBPBwCuyYSlVMcLHB5QAXs50P5Fbtg=s96-c from network
+4sw.js?v=1754335070662:91 [SW] Fetching /7.x/robots/svg from network
+svg:1  GET https://api.dicebear.com/7.x/robots/svg?seed=Alpha%20Bot 404 (Not Found)
+Image
+Lh @ index-iLVvUOZX.js:272
+(anonymous) @ index-iLVvUOZX.js:272
+qa @ index-iLVvUOZX.js:40
+Rp @ index-iLVvUOZX.js:40
+Qg @ index-iLVvUOZX.js:40
+wS @ index-iLVvUOZX.js:40
+NS @ index-iLVvUOZX.js:40
+xr @ index-iLVvUOZX.js:40
+_p @ index-iLVvUOZX.js:40
+dr @ index-iLVvUOZX.js:38
+(anonymous) @ index-iLVvUOZX.js:40
+setTimeout
+o @ index-iLVvUOZX.js:48
+i @ index-iLVvUOZX.js:48
+batch @ index-iLVvUOZX.js:48
+fn @ index-iLVvUOZX.js:48
+setData @ index-iLVvUOZX.js:48
+onSuccess @ index-iLVvUOZX.js:48
+p @ index-iLVvUOZX.js:48
+Promise.then
+w @ index-iLVvUOZX.js:48
+start @ index-iLVvUOZX.js:48
+fetch @ index-iLVvUOZX.js:48
+ys @ index-iLVvUOZX.js:48
+setOptions @ index-iLVvUOZX.js:48
+(anonymous) @ index-iLVvUOZX.js:48
+qa @ index-iLVvUOZX.js:40
+vo @ index-iLVvUOZX.js:40
+(anonymous) @ index-iLVvUOZX.js:40
+N @ index-iLVvUOZX.js:25
+_ @ index-iLVvUOZX.js:25Understand this error
+svg:1  GET https://api.dicebear.com/7.x/robots/svg?seed=Beta%20Bot 404 (Not Found)
+Image
+Lh @ index-iLVvUOZX.js:272
+(anonymous) @ index-iLVvUOZX.js:272
+qa @ index-iLVvUOZX.js:40
+Rp @ index-iLVvUOZX.js:40
+Qg @ index-iLVvUOZX.js:40
+wS @ index-iLVvUOZX.js:40
+NS @ index-iLVvUOZX.js:40
+xr @ index-iLVvUOZX.js:40
+_p @ index-iLVvUOZX.js:40
+dr @ index-iLVvUOZX.js:38
+(anonymous) @ index-iLVvUOZX.js:40
+setTimeout
+o @ index-iLVvUOZX.js:48
+i @ index-iLVvUOZX.js:48
+batch @ index-iLVvUOZX.js:48
+fn @ index-iLVvUOZX.js:48
+setData @ index-iLVvUOZX.js:48
+onSuccess @ index-iLVvUOZX.js:48
+p @ index-iLVvUOZX.js:48
+Promise.then
+w @ index-iLVvUOZX.js:48
+start @ index-iLVvUOZX.js:48
+fetch @ index-iLVvUOZX.js:48
+ys @ index-iLVvUOZX.js:48
+setOptions @ index-iLVvUOZX.js:48
+(anonymous) @ index-iLVvUOZX.js:48
+qa @ index-iLVvUOZX.js:40
+vo @ index-iLVvUOZX.js:40
+(anonymous) @ index-iLVvUOZX.js:40
+N @ index-iLVvUOZX.js:25
+_ @ index-iLVvUOZX.js:25Understand this error
+svg:1  GET https://api.dicebear.com/7.x/robots/svg?seed=Gamma%20Bot 404 (Not Found)
+Image
+Lh @ index-iLVvUOZX.js:272
+(anonymous) @ index-iLVvUOZX.js:272
+qa @ index-iLVvUOZX.js:40
+Rp @ index-iLVvUOZX.js:40
+Qg @ index-iLVvUOZX.js:40
+wS @ index-iLVvUOZX.js:40
+NS @ index-iLVvUOZX.js:40
+xr @ index-iLVvUOZX.js:40
+_p @ index-iLVvUOZX.js:40
+dr @ index-iLVvUOZX.js:38
+(anonymous) @ index-iLVvUOZX.js:40
+setTimeout
+o @ index-iLVvUOZX.js:48
+i @ index-iLVvUOZX.js:48
+batch @ index-iLVvUOZX.js:48
+fn @ index-iLVvUOZX.js:48
+setData @ index-iLVvUOZX.js:48
+onSuccess @ index-iLVvUOZX.js:48
+p @ index-iLVvUOZX.js:48
+Promise.then
+w @ index-iLVvUOZX.js:48
+start @ index-iLVvUOZX.js:48
+fetch @ index-iLVvUOZX.js:48
+ys @ index-iLVvUOZX.js:48
+setOptions @ index-iLVvUOZX.js:48
+(anonymous) @ index-iLVvUOZX.js:48
+qa @ index-iLVvUOZX.js:40
+vo @ index-iLVvUOZX.js:40
+(anonymous) @ index-iLVvUOZX.js:40
+N @ index-iLVvUOZX.js:25
+_ @ index-iLVvUOZX.js:25Understand this error
+svg:1  GET https://api.dicebear.com/7.x/robots/svg?seed=Delta%20Bot 404 (Not Found)
+Image
+Lh @ index-iLVvUOZX.js:272
+(anonymous) @ index-iLVvUOZX.js:272
+qa @ index-iLVvUOZX.js:40
+Rp @ index-iLVvUOZX.js:40
+Qg @ index-iLVvUOZX.js:40
+wS @ index-iLVvUOZX.js:40
+NS @ index-iLVvUOZX.js:40
+xr @ index-iLVvUOZX.js:40
+_p @ index-iLVvUOZX.js:40
+dr @ index-iLVvUOZX.js:38
+(anonymous) @ index-iLVvUOZX.js:40
+setTimeout
+o @ index-iLVvUOZX.js:48
+i @ index-iLVvUOZX.js:48
+batch @ index-iLVvUOZX.js:48
+fn @ index-iLVvUOZX.js:48
+setData @ index-iLVvUOZX.js:48
+onSuccess @ index-iLVvUOZX.js:48
+p @ index-iLVvUOZX.js:48
+Promise.then
+w @ index-iLVvUOZX.js:48
+start @ index-iLVvUOZX.js:48
+fetch @ index-iLVvUOZX.js:48
+ys @ index-iLVvUOZX.js:48
+setOptions @ index-iLVvUOZX.js:48
+(anonymous) @ index-iLVvUOZX.js:48
+qa @ index-iLVvUOZX.js:40
+vo @ index-iLVvUOZX.js:40
+(anonymous) @ index-iLVvUOZX.js:40
+N @ index-iLVvUOZX.js:25
+_ @ index-iLVvUOZX.js:25Understand this error
+index-iLVvUOZX.js:228 [SubscriptionManager] 3:17:51 PM - Starting subscription refresh...
+index-iLVvUOZX.js:228 [SubscriptionManager] 3:17:51 PM - Found existing subscription - unsubscribing...
+index-iLVvUOZX.js:228 [SubscriptionManager] 3:17:51 PM - Existing subscription unsubscribed
+index-iLVvUOZX.js:228 [SubscriptionManager] 3:17:51 PM - Creating new push subscription...
+index-iLVvUOZX.js:228 [SubscriptionManager] 3:17:51 PM - Sending subscription to server: https://fcm.googleapis.com/fcm/send/cz_ukKdNR6I:AP...
+sw.js?v=1754335070662:37 [SW] Activating service worker, version: v1.4.0-ios-push-fix
+sw.js?v=1754335070662:43 [SW] Found caches: (2) ['mok-sports-static-v1.4.0-ios-push-fix', 'mok-sports-dynamic-v1.4.0-ios-push-fix']
+sw.js?v=1754335070662:56 [SW] Service worker activated and controlling all clients
+index-iLVvUOZX.js:228 [SubscriptionManager] 3:17:51 PM - Server response: 201 
+index-iLVvUOZX.js:228 [SubscriptionManager] 3:17:51 PM - Subscription registered successfully: Subscription registered successfully
