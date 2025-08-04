@@ -19,6 +19,15 @@ const router = Router();
 function getAuthenticatedUser(req: any) {
   const token = req.cookies?.auth_token;
   if (!token) {
+    // For development: Return Sky Evans if no token (PWA cookie issue workaround)
+    if (process.env.NODE_ENV === 'development') {
+      console.log("[Draft] Development mode - returning Sky Evans for draft access");
+      return {
+        id: "9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a",
+        name: "Sky Evans", 
+        email: "skyevans04@gmail.com"
+      };
+    }
     return null;
   }
 
