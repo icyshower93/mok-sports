@@ -22,7 +22,7 @@ export interface DraftConnection {
 export class DraftWebSocketManager {
   private wss: WebSocketServer;
   private connections: Map<string, DraftConnection[]> = new Map();
-  private heartbeatInterval: NodeJS.Timeout;
+  private heartbeatInterval!: NodeJS.Timeout;
 
   constructor(server: Server) {
     // Create WebSocket server on /ws/draft path

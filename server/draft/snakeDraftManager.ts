@@ -331,7 +331,7 @@ export class SnakeDraftManager {
   }
 
   /**
-   * Simulates bot picks for testing
+   * Simulates bot picks for testing (public method)
    */
   async simulateBotPick(draftId: string, userId: string): Promise<void> {
     // Wait a short random time to simulate thinking
@@ -498,6 +498,11 @@ export class SnakeDraftManager {
     
     console.log(`🕐 Starting timer for user ${userId} in draft ${draftId} with ${timeLeft} seconds`);
     
+    // Broadcast initial timer state immediately to show full 60 seconds
+    if (this.webSocketManager) {
+      this.webSocketManager.broadcastTimerUpdate(draftId, timeLeft);
+    }
+    
     const interval = setInterval(async () => {
       timeLeft--;
       console.log(`🕐 Timer tick for user ${userId}: ${timeLeft}s remaining`);
@@ -571,9 +576,9 @@ export class SnakeDraftManager {
   }
 
   /**
-   * Simulate a bot pick for automated testing
+   * Simulate a bot pick for automated testing (private method)
    */
-  private async simulateBotPick(draftId: string, userId: string): Promise<void> {
+  private async simulateBotPickPrivate(draftId: string, userId: string): Promise<void> {
     try {
       if (!this.robotManager?.isRobot(userId)) {
         return;
@@ -593,7 +598,11 @@ export class SnakeDraftManager {
       const selectedTeam = preferredTeams[0];
 
       if (selectedTeam) {
-        await this.makePick(draftId, userId, selectedTeam.id, true);
+        await this.makePick(draftId, {
+          userId,
+          nflTeamId: selectedTeam.id,
+          isAutoPick: true
+        });
         console.log(`[SnakeDraftManager] Bot ${userId} auto-picked ${selectedTeam.name}`);
       }
     } catch (error) {
