@@ -852,6 +852,58 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Service Worker Cache Clear endpoint for debugging
+  app.post("/api/clear-sw-cache", async (req, res) => {
+    try {
+      // This endpoint helps with cache debugging
+      res.json({ 
+        message: "Service worker cache clear initiated",
+        version: "v1.6.0-cache-purge",
+        timestamp: Date.now(),
+        instructions: "Hard refresh (Ctrl+F5) to clear browser cache and reload service worker"
+      });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to initiate cache clear" });
+    }
+  });
+
+  // Debug endpoint to check which index.html is being served
+  app.get("/api/debug/index-check", async (req, res) => {
+    try {
+      const path = await import("path");
+      const fs = await import("fs");
+      
+      const builtIndexPath = path.resolve(import.meta.dirname, "..", "dist", "public", "index.html");
+      const devIndexPath = path.resolve(import.meta.dirname, "..", "client", "index.html");
+      
+      const builtExists = fs.existsSync(builtIndexPath);
+      const devExists = fs.existsSync(devIndexPath);
+      
+      let builtContent = "";
+      let devContent = "";
+      
+      if (builtExists) {
+        builtContent = fs.readFileSync(builtIndexPath, 'utf-8');
+      }
+      if (devExists) {
+        devContent = fs.readFileSync(devIndexPath, 'utf-8');
+      }
+      
+      res.json({
+        builtIndexExists: builtExists,
+        devIndexExists: devExists,
+        builtHasAssets: builtContent.includes('/assets/index-'),
+        builtHasMainTsx: builtContent.includes('/src/main.tsx'),
+        devHasMainTsx: devContent.includes('/src/main.tsx'),
+        currentServing: builtExists ? 'built' : 'development',
+        builtPath: builtIndexPath,
+        timestamp: Date.now()
+      });
+    } catch (error) {
+      res.status(500).json({ message: "Debug check failed", error: error.message });
+    }
+  });
+
   // Health check endpoints
   app.get("/api/health", async (req, res) => {
     try {

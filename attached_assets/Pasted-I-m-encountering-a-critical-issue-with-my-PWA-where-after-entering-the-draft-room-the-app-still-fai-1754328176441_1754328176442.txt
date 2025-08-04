@@ -1,0 +1,56 @@
+I’m encountering a critical issue with my PWA where after entering the draft room, the app still fails to load correctly. The browser console shows this recurring error:
+
+pgsql
+Copy
+Edit
+Failed to load module script: Expected a JavaScript-or-Wasm module script but the server responded with a MIME type of "text/html".
+Additionally, the service worker logs show it is serving cached assets (e.g., /assets/index-*.js) from cache that return HTML instead of JavaScript. This likely indicates stale or incorrect service worker caching.
+
+Please do the following:
+
+Service Worker Cache Management
+
+Verify and update the service worker (sw.js) to implement strict cache versioning.
+
+On service worker activation, clear all outdated caches that do not match the current cache version.
+
+Ensure the service worker properly updates and fetches the latest production-built assets instead of stale cached ones.
+
+Add logs in the service worker to confirm when caches are deleted and updated.
+
+Static Assets Serving
+
+Double-check the Express server middleware order:
+
+Static file serving middleware for /assets, /manifest.json, /sw.js should be registered before any SPA catch-all routes or Vite middleware.
+
+Confirm that static assets are served with the correct MIME types (e.g., application/javascript for JS, text/css for CSS).
+
+Confirm that requesting assets directly via curl or browser returns the correct content and headers.
+
+Index.html Serving & Routing
+
+Confirm the server serves the production-built index.html from the correct directory (e.g., dist/public/index.html) on all non-asset API routes.
+
+Ensure no references to development source files like /src/main.tsx exist in the served index.html.
+
+Browser Cache / Service Worker Testing
+
+After these fixes, clear the browser cache and unregister any existing service workers.
+
+Perform a hard reload (Ctrl+F5) to ensure fresh assets load.
+
+Verify the draft room loads properly with no MIME type errors and no fallback to HTML responses for JS modules.
+
+Logging & Diagnostics
+
+Add detailed logging on the server for asset requests and service worker lifecycle events.
+
+Provide confirmation that the service worker cache version is incremented and old caches are removed upon activation.
+
+Provide test curl commands or browser network tab outputs showing correct asset serving.
+
+Summary:
+The root cause is stale service worker caches serving outdated HTML fallback responses for JS assets, combined with middleware order causing incorrect asset serving. Fixing service worker cache versioning and middleware order is essential to fix draft room loading errors.
+
+Please confirm when these fixes are applied and ready for testing, and let me know if you need any additional info.
