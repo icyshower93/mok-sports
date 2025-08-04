@@ -1,0 +1,2077 @@
+[AutoPushRefresh] Legacy hook delegating to SubscriptionManager
+index-o4nJcGMy.js:48  GET https://mok-sports-draft-mokfantasysport.replit.app/api/drafts/46160cd7-595b-4f70-9956-795ea53993ff/available-teams 404 (Not Found)
+Zi @ index-o4nJcGMy.js:48
+queryFn @ index-o4nJcGMy.js:272
+s @ index-o4nJcGMy.js:48
+S @ index-o4nJcGMy.js:48
+start @ index-o4nJcGMy.js:48
+fetch @ index-o4nJcGMy.js:48
+ys @ index-o4nJcGMy.js:48
+onSubscribe @ index-o4nJcGMy.js:48
+subscribe @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+yg @ index-o4nJcGMy.js:38
+Ga @ index-o4nJcGMy.js:40
+vo @ index-o4nJcGMy.js:40
+kS @ index-o4nJcGMy.js:40
+xr @ index-o4nJcGMy.js:40
+Dp @ index-o4nJcGMy.js:40
+fr @ index-o4nJcGMy.js:38
+(anonymous) @ index-o4nJcGMy.js:40
+setTimeout
+o @ index-o4nJcGMy.js:48
+i @ index-o4nJcGMy.js:48
+batch @ index-o4nJcGMy.js:48
+fn @ index-o4nJcGMy.js:48
+setData @ index-o4nJcGMy.js:48
+onSuccess @ index-o4nJcGMy.js:48
+p @ index-o4nJcGMy.js:48
+Promise.then
+S @ index-o4nJcGMy.js:48
+start @ index-o4nJcGMy.js:48
+fetch @ index-o4nJcGMy.js:48
+ys @ index-o4nJcGMy.js:48
+onSubscribe @ index-o4nJcGMy.js:48
+subscribe @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+yg @ index-o4nJcGMy.js:38
+Ga @ index-o4nJcGMy.js:40
+vo @ index-o4nJcGMy.js:40
+Dp @ index-o4nJcGMy.js:40
+fr @ index-o4nJcGMy.js:38
+kS @ index-o4nJcGMy.js:40
+xr @ index-o4nJcGMy.js:40
+Yg @ index-o4nJcGMy.js:40
+E @ index-o4nJcGMy.js:25
+_ @ index-o4nJcGMy.js:25Understand this error
+sw.js?v=1754346454432:26 [SW] Static files cached successfully
+index-o4nJcGMy.js:272 [WebSocket] Connected to draft: 46160cd7-595b-4f70-9956-795ea53993ff
+index-o4nJcGMy.js:272 [WebSocket] Unknown message type: connected
+index-o4nJcGMy.js:272 [Draft] Component render started
+index-o4nJcGMy.js:272 [Draft] All useState hooks declared
+index-o4nJcGMy.js:272 [Draft] All hooks declared, starting conditional logic
+index-o4nJcGMy.js:48  GET https://mok-sports-draft-mokfantasysport.replit.app/api/drafts/46160cd7-595b-4f70-9956-795ea53993ff 404 (Not Found)
+Zi @ index-o4nJcGMy.js:48
+queryFn @ index-o4nJcGMy.js:272
+s @ index-o4nJcGMy.js:48
+S @ index-o4nJcGMy.js:48
+start @ index-o4nJcGMy.js:48
+fetch @ index-o4nJcGMy.js:48
+ys @ index-o4nJcGMy.js:48
+onSubscribe @ index-o4nJcGMy.js:48
+subscribe @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+yg @ index-o4nJcGMy.js:38
+Ga @ index-o4nJcGMy.js:40
+vo @ index-o4nJcGMy.js:40
+kS @ index-o4nJcGMy.js:40
+xr @ index-o4nJcGMy.js:40
+Dp @ index-o4nJcGMy.js:40
+fr @ index-o4nJcGMy.js:38
+(anonymous) @ index-o4nJcGMy.js:40
+setTimeout
+o @ index-o4nJcGMy.js:48
+i @ index-o4nJcGMy.js:48
+batch @ index-o4nJcGMy.js:48
+fn @ index-o4nJcGMy.js:48
+setData @ index-o4nJcGMy.js:48
+onSuccess @ index-o4nJcGMy.js:48
+p @ index-o4nJcGMy.js:48
+Promise.then
+S @ index-o4nJcGMy.js:48
+start @ index-o4nJcGMy.js:48
+fetch @ index-o4nJcGMy.js:48
+ys @ index-o4nJcGMy.js:48
+onSubscribe @ index-o4nJcGMy.js:48
+subscribe @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+yg @ index-o4nJcGMy.js:38
+Ga @ index-o4nJcGMy.js:40
+vo @ index-o4nJcGMy.js:40
+Dp @ index-o4nJcGMy.js:40
+fr @ index-o4nJcGMy.js:38
+kS @ index-o4nJcGMy.js:40
+xr @ index-o4nJcGMy.js:40
+Yg @ index-o4nJcGMy.js:40
+E @ index-o4nJcGMy.js:25
+_ @ index-o4nJcGMy.js:25Understand this error
+index-o4nJcGMy.js:272 [Draft] === DRAFT FETCH ERROR ===
+queryFn @ index-o4nJcGMy.js:272
+await in queryFn
+s @ index-o4nJcGMy.js:48
+S @ index-o4nJcGMy.js:48
+start @ index-o4nJcGMy.js:48
+fetch @ index-o4nJcGMy.js:48
+ys @ index-o4nJcGMy.js:48
+onSubscribe @ index-o4nJcGMy.js:48
+subscribe @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+yg @ index-o4nJcGMy.js:38
+Ga @ index-o4nJcGMy.js:40
+vo @ index-o4nJcGMy.js:40
+kS @ index-o4nJcGMy.js:40
+xr @ index-o4nJcGMy.js:40
+Dp @ index-o4nJcGMy.js:40
+fr @ index-o4nJcGMy.js:38
+(anonymous) @ index-o4nJcGMy.js:40
+setTimeout
+o @ index-o4nJcGMy.js:48
+i @ index-o4nJcGMy.js:48
+batch @ index-o4nJcGMy.js:48
+fn @ index-o4nJcGMy.js:48
+setData @ index-o4nJcGMy.js:48
+onSuccess @ index-o4nJcGMy.js:48
+p @ index-o4nJcGMy.js:48
+Promise.then
+S @ index-o4nJcGMy.js:48
+start @ index-o4nJcGMy.js:48
+fetch @ index-o4nJcGMy.js:48
+ys @ index-o4nJcGMy.js:48
+onSubscribe @ index-o4nJcGMy.js:48
+subscribe @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+yg @ index-o4nJcGMy.js:38
+Ga @ index-o4nJcGMy.js:40
+vo @ index-o4nJcGMy.js:40
+Dp @ index-o4nJcGMy.js:40
+fr @ index-o4nJcGMy.js:38
+kS @ index-o4nJcGMy.js:40
+xr @ index-o4nJcGMy.js:40
+Yg @ index-o4nJcGMy.js:40
+E @ index-o4nJcGMy.js:25
+_ @ index-o4nJcGMy.js:25Understand this error
+index-o4nJcGMy.js:272 [Draft] Error fetching draft data: Error: 404: {"message":"Draft not found"}
+    at Lv (index-o4nJcGMy.js:48:43053)
+    at async Zi (index-o4nJcGMy.js:48:43286)
+    at async queryFn (index-o4nJcGMy.js:272:49776)
+queryFn @ index-o4nJcGMy.js:272
+await in queryFn
+s @ index-o4nJcGMy.js:48
+S @ index-o4nJcGMy.js:48
+start @ index-o4nJcGMy.js:48
+fetch @ index-o4nJcGMy.js:48
+ys @ index-o4nJcGMy.js:48
+onSubscribe @ index-o4nJcGMy.js:48
+subscribe @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+yg @ index-o4nJcGMy.js:38
+Ga @ index-o4nJcGMy.js:40
+vo @ index-o4nJcGMy.js:40
+kS @ index-o4nJcGMy.js:40
+xr @ index-o4nJcGMy.js:40
+Dp @ index-o4nJcGMy.js:40
+fr @ index-o4nJcGMy.js:38
+(anonymous) @ index-o4nJcGMy.js:40
+setTimeout
+o @ index-o4nJcGMy.js:48
+i @ index-o4nJcGMy.js:48
+batch @ index-o4nJcGMy.js:48
+fn @ index-o4nJcGMy.js:48
+setData @ index-o4nJcGMy.js:48
+onSuccess @ index-o4nJcGMy.js:48
+p @ index-o4nJcGMy.js:48
+Promise.then
+S @ index-o4nJcGMy.js:48
+start @ index-o4nJcGMy.js:48
+fetch @ index-o4nJcGMy.js:48
+ys @ index-o4nJcGMy.js:48
+onSubscribe @ index-o4nJcGMy.js:48
+subscribe @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+yg @ index-o4nJcGMy.js:38
+Ga @ index-o4nJcGMy.js:40
+vo @ index-o4nJcGMy.js:40
+Dp @ index-o4nJcGMy.js:40
+fr @ index-o4nJcGMy.js:38
+kS @ index-o4nJcGMy.js:40
+xr @ index-o4nJcGMy.js:40
+Yg @ index-o4nJcGMy.js:40
+E @ index-o4nJcGMy.js:25
+_ @ index-o4nJcGMy.js:25Understand this error
+index-o4nJcGMy.js:272 [Draft] Error type: object
+queryFn @ index-o4nJcGMy.js:272
+await in queryFn
+s @ index-o4nJcGMy.js:48
+S @ index-o4nJcGMy.js:48
+start @ index-o4nJcGMy.js:48
+fetch @ index-o4nJcGMy.js:48
+ys @ index-o4nJcGMy.js:48
+onSubscribe @ index-o4nJcGMy.js:48
+subscribe @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+yg @ index-o4nJcGMy.js:38
+Ga @ index-o4nJcGMy.js:40
+vo @ index-o4nJcGMy.js:40
+kS @ index-o4nJcGMy.js:40
+xr @ index-o4nJcGMy.js:40
+Dp @ index-o4nJcGMy.js:40
+fr @ index-o4nJcGMy.js:38
+(anonymous) @ index-o4nJcGMy.js:40
+setTimeout
+o @ index-o4nJcGMy.js:48
+i @ index-o4nJcGMy.js:48
+batch @ index-o4nJcGMy.js:48
+fn @ index-o4nJcGMy.js:48
+setData @ index-o4nJcGMy.js:48
+onSuccess @ index-o4nJcGMy.js:48
+p @ index-o4nJcGMy.js:48
+Promise.then
+S @ index-o4nJcGMy.js:48
+start @ index-o4nJcGMy.js:48
+fetch @ index-o4nJcGMy.js:48
+ys @ index-o4nJcGMy.js:48
+onSubscribe @ index-o4nJcGMy.js:48
+subscribe @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+yg @ index-o4nJcGMy.js:38
+Ga @ index-o4nJcGMy.js:40
+vo @ index-o4nJcGMy.js:40
+Dp @ index-o4nJcGMy.js:40
+fr @ index-o4nJcGMy.js:38
+kS @ index-o4nJcGMy.js:40
+xr @ index-o4nJcGMy.js:40
+Yg @ index-o4nJcGMy.js:40
+E @ index-o4nJcGMy.js:25
+_ @ index-o4nJcGMy.js:25Understand this error
+index-o4nJcGMy.js:272 [Draft] Error constructor: Error
+queryFn @ index-o4nJcGMy.js:272
+await in queryFn
+s @ index-o4nJcGMy.js:48
+S @ index-o4nJcGMy.js:48
+start @ index-o4nJcGMy.js:48
+fetch @ index-o4nJcGMy.js:48
+ys @ index-o4nJcGMy.js:48
+onSubscribe @ index-o4nJcGMy.js:48
+subscribe @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+yg @ index-o4nJcGMy.js:38
+Ga @ index-o4nJcGMy.js:40
+vo @ index-o4nJcGMy.js:40
+kS @ index-o4nJcGMy.js:40
+xr @ index-o4nJcGMy.js:40
+Dp @ index-o4nJcGMy.js:40
+fr @ index-o4nJcGMy.js:38
+(anonymous) @ index-o4nJcGMy.js:40
+setTimeout
+o @ index-o4nJcGMy.js:48
+i @ index-o4nJcGMy.js:48
+batch @ index-o4nJcGMy.js:48
+fn @ index-o4nJcGMy.js:48
+setData @ index-o4nJcGMy.js:48
+onSuccess @ index-o4nJcGMy.js:48
+p @ index-o4nJcGMy.js:48
+Promise.then
+S @ index-o4nJcGMy.js:48
+start @ index-o4nJcGMy.js:48
+fetch @ index-o4nJcGMy.js:48
+ys @ index-o4nJcGMy.js:48
+onSubscribe @ index-o4nJcGMy.js:48
+subscribe @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+yg @ index-o4nJcGMy.js:38
+Ga @ index-o4nJcGMy.js:40
+vo @ index-o4nJcGMy.js:40
+Dp @ index-o4nJcGMy.js:40
+fr @ index-o4nJcGMy.js:38
+kS @ index-o4nJcGMy.js:40
+xr @ index-o4nJcGMy.js:40
+Yg @ index-o4nJcGMy.js:40
+E @ index-o4nJcGMy.js:25
+_ @ index-o4nJcGMy.js:25Understand this error
+index-o4nJcGMy.js:272 [DEBUG] Module Error in draft-fetch: {error: Error: 404: {"message":"Draft not found"}
+    at Lv (https://mok-sports-draft-mokfantasysport.repli…, message: '404: {"message":"Draft not found"}', stack: 'Error: 404: {"message":"Draft not found"}\n    at L…rt.replit.app/assets/index-o4nJcGMy.js:272:49776)', type: 'object', timestamp: '2025-08-04T22:27:34.704Z', …}
+Dh @ index-o4nJcGMy.js:272
+queryFn @ index-o4nJcGMy.js:272
+await in queryFn
+s @ index-o4nJcGMy.js:48
+S @ index-o4nJcGMy.js:48
+start @ index-o4nJcGMy.js:48
+fetch @ index-o4nJcGMy.js:48
+ys @ index-o4nJcGMy.js:48
+onSubscribe @ index-o4nJcGMy.js:48
+subscribe @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+yg @ index-o4nJcGMy.js:38
+Ga @ index-o4nJcGMy.js:40
+vo @ index-o4nJcGMy.js:40
+kS @ index-o4nJcGMy.js:40
+xr @ index-o4nJcGMy.js:40
+Dp @ index-o4nJcGMy.js:40
+fr @ index-o4nJcGMy.js:38
+(anonymous) @ index-o4nJcGMy.js:40
+setTimeout
+o @ index-o4nJcGMy.js:48
+i @ index-o4nJcGMy.js:48
+batch @ index-o4nJcGMy.js:48
+fn @ index-o4nJcGMy.js:48
+setData @ index-o4nJcGMy.js:48
+onSuccess @ index-o4nJcGMy.js:48
+p @ index-o4nJcGMy.js:48
+Promise.then
+S @ index-o4nJcGMy.js:48
+start @ index-o4nJcGMy.js:48
+fetch @ index-o4nJcGMy.js:48
+ys @ index-o4nJcGMy.js:48
+onSubscribe @ index-o4nJcGMy.js:48
+subscribe @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+yg @ index-o4nJcGMy.js:38
+Ga @ index-o4nJcGMy.js:40
+vo @ index-o4nJcGMy.js:40
+Dp @ index-o4nJcGMy.js:40
+fr @ index-o4nJcGMy.js:38
+kS @ index-o4nJcGMy.js:40
+xr @ index-o4nJcGMy.js:40
+Yg @ index-o4nJcGMy.js:40
+E @ index-o4nJcGMy.js:25
+_ @ index-o4nJcGMy.js:25Understand this error
+index-o4nJcGMy.js:272 [Draft] Full error details: {message: '404: {"message":"Draft not found"}', stack: 'Error: 404: {"message":"Draft not found"}\n    at L…rt.replit.app/assets/index-o4nJcGMy.js:272:49776)', user: 'Mok Sports', hasToken: true, isAuthenticated: false, …}
+queryFn @ index-o4nJcGMy.js:272
+await in queryFn
+s @ index-o4nJcGMy.js:48
+S @ index-o4nJcGMy.js:48
+start @ index-o4nJcGMy.js:48
+fetch @ index-o4nJcGMy.js:48
+ys @ index-o4nJcGMy.js:48
+onSubscribe @ index-o4nJcGMy.js:48
+subscribe @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+yg @ index-o4nJcGMy.js:38
+Ga @ index-o4nJcGMy.js:40
+vo @ index-o4nJcGMy.js:40
+kS @ index-o4nJcGMy.js:40
+xr @ index-o4nJcGMy.js:40
+Dp @ index-o4nJcGMy.js:40
+fr @ index-o4nJcGMy.js:38
+(anonymous) @ index-o4nJcGMy.js:40
+setTimeout
+o @ index-o4nJcGMy.js:48
+i @ index-o4nJcGMy.js:48
+batch @ index-o4nJcGMy.js:48
+fn @ index-o4nJcGMy.js:48
+setData @ index-o4nJcGMy.js:48
+onSuccess @ index-o4nJcGMy.js:48
+p @ index-o4nJcGMy.js:48
+Promise.then
+S @ index-o4nJcGMy.js:48
+start @ index-o4nJcGMy.js:48
+fetch @ index-o4nJcGMy.js:48
+ys @ index-o4nJcGMy.js:48
+onSubscribe @ index-o4nJcGMy.js:48
+subscribe @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+yg @ index-o4nJcGMy.js:38
+Ga @ index-o4nJcGMy.js:40
+vo @ index-o4nJcGMy.js:40
+Dp @ index-o4nJcGMy.js:40
+fr @ index-o4nJcGMy.js:38
+kS @ index-o4nJcGMy.js:40
+xr @ index-o4nJcGMy.js:40
+Yg @ index-o4nJcGMy.js:40
+E @ index-o4nJcGMy.js:25
+_ @ index-o4nJcGMy.js:25Understand this error
+index-o4nJcGMy.js:272 [Draft] Attempting direct fetch for debugging...
+index-o4nJcGMy.js:272  GET https://mok-sports-draft-mokfantasysport.replit.app/api/drafts/46160cd7-595b-4f70-9956-795ea53993ff 404 (Not Found)
+queryFn @ index-o4nJcGMy.js:272
+await in queryFn
+s @ index-o4nJcGMy.js:48
+S @ index-o4nJcGMy.js:48
+start @ index-o4nJcGMy.js:48
+fetch @ index-o4nJcGMy.js:48
+ys @ index-o4nJcGMy.js:48
+onSubscribe @ index-o4nJcGMy.js:48
+subscribe @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+yg @ index-o4nJcGMy.js:38
+Ga @ index-o4nJcGMy.js:40
+vo @ index-o4nJcGMy.js:40
+kS @ index-o4nJcGMy.js:40
+xr @ index-o4nJcGMy.js:40
+Dp @ index-o4nJcGMy.js:40
+fr @ index-o4nJcGMy.js:38
+(anonymous) @ index-o4nJcGMy.js:40
+setTimeout
+o @ index-o4nJcGMy.js:48
+i @ index-o4nJcGMy.js:48
+batch @ index-o4nJcGMy.js:48
+fn @ index-o4nJcGMy.js:48
+setData @ index-o4nJcGMy.js:48
+onSuccess @ index-o4nJcGMy.js:48
+p @ index-o4nJcGMy.js:48
+Promise.then
+S @ index-o4nJcGMy.js:48
+start @ index-o4nJcGMy.js:48
+fetch @ index-o4nJcGMy.js:48
+ys @ index-o4nJcGMy.js:48
+onSubscribe @ index-o4nJcGMy.js:48
+subscribe @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+yg @ index-o4nJcGMy.js:38
+Ga @ index-o4nJcGMy.js:40
+vo @ index-o4nJcGMy.js:40
+Dp @ index-o4nJcGMy.js:40
+fr @ index-o4nJcGMy.js:38
+kS @ index-o4nJcGMy.js:40
+xr @ index-o4nJcGMy.js:40
+Yg @ index-o4nJcGMy.js:40
+E @ index-o4nJcGMy.js:25
+_ @ index-o4nJcGMy.js:25Understand this error
+index-o4nJcGMy.js:272 [Draft] Direct fetch response: {status: 404, statusText: '', headers: {…}}
+index-o4nJcGMy.js:272 [Draft] Direct fetch response body: {"message":"Draft not found"}
+index-o4nJcGMy.js:272 [Draft] Retrying fetch, attempt 1
+index-o4nJcGMy.js:228 [SubscriptionManager] 6:27:35 PM - Starting subscription refresh...
+index-o4nJcGMy.js:272 [App] Draft route matched with params: {0: '46160cd7-595b-4f70-9956-795ea53993ff', draftId: '46160cd7-595b-4f70-9956-795ea53993ff'}
+index-o4nJcGMy.js:272 [App] Current location: https://mok-sports-draft-mokfantasysport.replit.app/draft/46160cd7-595b-4f70-9956-795ea53993ff
+index-o4nJcGMy.js:272 [Draft] Component render started
+index-o4nJcGMy.js:272 [Draft] All useState hooks declared
+index-o4nJcGMy.js:272 [Draft] All hooks declared, starting conditional logic
+index-o4nJcGMy.js:228 [SubscriptionManager] 6:27:35 PM - Found existing subscription - unsubscribing...
+index-o4nJcGMy.js:228 [SubscriptionManager] 6:27:35 PM - Existing subscription unsubscribed
+index-o4nJcGMy.js:228 [SubscriptionManager] 6:27:35 PM - Creating new push subscription...
+index-o4nJcGMy.js:228 [SubscriptionManager] 6:27:35 PM - Sending subscription to server: https://fcm.googleapis.com/fcm/send/fcTMFJryvjY:AP...
+sw.js?v=1754346454432:37 [SW] Activating service worker, version: v1.4.0-ios-push-fix
+sw.js?v=1754346454432:43 [SW] Found caches: (2) ['mok-sports-static-v1.4.0-ios-push-fix', 'mok-sports-dynamic-v1.4.0-ios-push-fix']
+sw.js?v=1754346454432:56 [SW] Service worker activated and controlling all clients
+index-o4nJcGMy.js:228 [SubscriptionManager] 6:27:35 PM - Server response: 201 
+index-o4nJcGMy.js:228 [SubscriptionManager] 6:27:35 PM - Subscription registered successfully: Subscription registered successfully
+index-o4nJcGMy.js:272 [App] Draft route matched with params: {0: '46160cd7-595b-4f70-9956-795ea53993ff', draftId: '46160cd7-595b-4f70-9956-795ea53993ff'}
+index-o4nJcGMy.js:272 [App] Current location: https://mok-sports-draft-mokfantasysport.replit.app/draft/46160cd7-595b-4f70-9956-795ea53993ff
+index-o4nJcGMy.js:272 [Draft] Component render started
+index-o4nJcGMy.js:272 [Draft] All useState hooks declared
+index-o4nJcGMy.js:272 [Draft] All hooks declared, starting conditional logic
+index-o4nJcGMy.js:48  GET https://mok-sports-draft-mokfantasysport.replit.app/api/drafts/46160cd7-595b-4f70-9956-795ea53993ff/available-teams 404 (Not Found)
+Zi @ index-o4nJcGMy.js:48
+queryFn @ index-o4nJcGMy.js:272
+s @ index-o4nJcGMy.js:48
+S @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.then
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.catch
+S @ index-o4nJcGMy.js:48
+start @ index-o4nJcGMy.js:48
+fetch @ index-o4nJcGMy.js:48
+ys @ index-o4nJcGMy.js:48
+onSubscribe @ index-o4nJcGMy.js:48
+subscribe @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+yg @ index-o4nJcGMy.js:38
+Ga @ index-o4nJcGMy.js:40
+vo @ index-o4nJcGMy.js:40
+kS @ index-o4nJcGMy.js:40
+xr @ index-o4nJcGMy.js:40
+Dp @ index-o4nJcGMy.js:40
+fr @ index-o4nJcGMy.js:38
+(anonymous) @ index-o4nJcGMy.js:40
+setTimeout
+o @ index-o4nJcGMy.js:48
+i @ index-o4nJcGMy.js:48
+batch @ index-o4nJcGMy.js:48
+fn @ index-o4nJcGMy.js:48
+setData @ index-o4nJcGMy.js:48
+onSuccess @ index-o4nJcGMy.js:48
+p @ index-o4nJcGMy.js:48
+Promise.then
+S @ index-o4nJcGMy.js:48
+start @ index-o4nJcGMy.js:48
+fetch @ index-o4nJcGMy.js:48
+ys @ index-o4nJcGMy.js:48
+onSubscribe @ index-o4nJcGMy.js:48
+subscribe @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+yg @ index-o4nJcGMy.js:38
+Ga @ index-o4nJcGMy.js:40
+vo @ index-o4nJcGMy.js:40
+Dp @ index-o4nJcGMy.js:40
+fr @ index-o4nJcGMy.js:38
+kS @ index-o4nJcGMy.js:40
+xr @ index-o4nJcGMy.js:40
+Yg @ index-o4nJcGMy.js:40
+E @ index-o4nJcGMy.js:25
+_ @ index-o4nJcGMy.js:25Understand this error
+index-o4nJcGMy.js:272 [Draft] === STARTING DRAFT FETCH ===
+index-o4nJcGMy.js:272 [Draft] Draft ID: 46160cd7-595b-4f70-9956-795ea53993ff
+index-o4nJcGMy.js:272 [Draft] Auth status - User: Mok Sports Authenticated: true Loading: false
+index-o4nJcGMy.js:272 [Draft] Token available: true
+index-o4nJcGMy.js:272 [Draft] Current URL: https://mok-sports-draft-mokfantasysport.replit.app/draft/46160cd7-595b-4f70-9956-795ea53993ff
+index-o4nJcGMy.js:272 [Draft] Current pathname: /draft/46160cd7-595b-4f70-9956-795ea53993ff
+index-o4nJcGMy.js:272 [Draft] Making API request to: /api/drafts/46160cd7-595b-4f70-9956-795ea53993ff
+index-o4nJcGMy.js:48  GET https://mok-sports-draft-mokfantasysport.replit.app/api/drafts/46160cd7-595b-4f70-9956-795ea53993ff 404 (Not Found)
+Zi @ index-o4nJcGMy.js:48
+queryFn @ index-o4nJcGMy.js:272
+s @ index-o4nJcGMy.js:48
+S @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.then
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.catch
+S @ index-o4nJcGMy.js:48
+start @ index-o4nJcGMy.js:48
+fetch @ index-o4nJcGMy.js:48
+ys @ index-o4nJcGMy.js:48
+onSubscribe @ index-o4nJcGMy.js:48
+subscribe @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+yg @ index-o4nJcGMy.js:38
+Ga @ index-o4nJcGMy.js:40
+vo @ index-o4nJcGMy.js:40
+kS @ index-o4nJcGMy.js:40
+xr @ index-o4nJcGMy.js:40
+Dp @ index-o4nJcGMy.js:40
+fr @ index-o4nJcGMy.js:38
+(anonymous) @ index-o4nJcGMy.js:40
+setTimeout
+o @ index-o4nJcGMy.js:48
+i @ index-o4nJcGMy.js:48
+batch @ index-o4nJcGMy.js:48
+fn @ index-o4nJcGMy.js:48
+setData @ index-o4nJcGMy.js:48
+onSuccess @ index-o4nJcGMy.js:48
+p @ index-o4nJcGMy.js:48
+Promise.then
+S @ index-o4nJcGMy.js:48
+start @ index-o4nJcGMy.js:48
+fetch @ index-o4nJcGMy.js:48
+ys @ index-o4nJcGMy.js:48
+onSubscribe @ index-o4nJcGMy.js:48
+subscribe @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+yg @ index-o4nJcGMy.js:38
+Ga @ index-o4nJcGMy.js:40
+vo @ index-o4nJcGMy.js:40
+Dp @ index-o4nJcGMy.js:40
+fr @ index-o4nJcGMy.js:38
+kS @ index-o4nJcGMy.js:40
+xr @ index-o4nJcGMy.js:40
+Yg @ index-o4nJcGMy.js:40
+E @ index-o4nJcGMy.js:25
+_ @ index-o4nJcGMy.js:25Understand this error
+index-o4nJcGMy.js:272 [Draft] === DRAFT FETCH ERROR ===
+queryFn @ index-o4nJcGMy.js:272
+await in queryFn
+s @ index-o4nJcGMy.js:48
+S @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.then
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.catch
+S @ index-o4nJcGMy.js:48
+start @ index-o4nJcGMy.js:48
+fetch @ index-o4nJcGMy.js:48
+ys @ index-o4nJcGMy.js:48
+onSubscribe @ index-o4nJcGMy.js:48
+subscribe @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+yg @ index-o4nJcGMy.js:38
+Ga @ index-o4nJcGMy.js:40
+vo @ index-o4nJcGMy.js:40
+kS @ index-o4nJcGMy.js:40
+xr @ index-o4nJcGMy.js:40
+Dp @ index-o4nJcGMy.js:40
+fr @ index-o4nJcGMy.js:38
+(anonymous) @ index-o4nJcGMy.js:40
+setTimeout
+o @ index-o4nJcGMy.js:48
+i @ index-o4nJcGMy.js:48
+batch @ index-o4nJcGMy.js:48
+fn @ index-o4nJcGMy.js:48
+setData @ index-o4nJcGMy.js:48
+onSuccess @ index-o4nJcGMy.js:48
+p @ index-o4nJcGMy.js:48
+Promise.then
+S @ index-o4nJcGMy.js:48
+start @ index-o4nJcGMy.js:48
+fetch @ index-o4nJcGMy.js:48
+ys @ index-o4nJcGMy.js:48
+onSubscribe @ index-o4nJcGMy.js:48
+subscribe @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+yg @ index-o4nJcGMy.js:38
+Ga @ index-o4nJcGMy.js:40
+vo @ index-o4nJcGMy.js:40
+Dp @ index-o4nJcGMy.js:40
+fr @ index-o4nJcGMy.js:38
+kS @ index-o4nJcGMy.js:40
+xr @ index-o4nJcGMy.js:40
+Yg @ index-o4nJcGMy.js:40
+E @ index-o4nJcGMy.js:25
+_ @ index-o4nJcGMy.js:25Understand this error
+index-o4nJcGMy.js:272 [Draft] Error fetching draft data: Error: 404: {"message":"Draft not found"}
+    at Lv (index-o4nJcGMy.js:48:43053)
+    at async Zi (index-o4nJcGMy.js:48:43286)
+    at async queryFn (index-o4nJcGMy.js:272:49776)
+queryFn @ index-o4nJcGMy.js:272
+await in queryFn
+s @ index-o4nJcGMy.js:48
+S @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.then
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.catch
+S @ index-o4nJcGMy.js:48
+start @ index-o4nJcGMy.js:48
+fetch @ index-o4nJcGMy.js:48
+ys @ index-o4nJcGMy.js:48
+onSubscribe @ index-o4nJcGMy.js:48
+subscribe @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+yg @ index-o4nJcGMy.js:38
+Ga @ index-o4nJcGMy.js:40
+vo @ index-o4nJcGMy.js:40
+kS @ index-o4nJcGMy.js:40
+xr @ index-o4nJcGMy.js:40
+Dp @ index-o4nJcGMy.js:40
+fr @ index-o4nJcGMy.js:38
+(anonymous) @ index-o4nJcGMy.js:40
+setTimeout
+o @ index-o4nJcGMy.js:48
+i @ index-o4nJcGMy.js:48
+batch @ index-o4nJcGMy.js:48
+fn @ index-o4nJcGMy.js:48
+setData @ index-o4nJcGMy.js:48
+onSuccess @ index-o4nJcGMy.js:48
+p @ index-o4nJcGMy.js:48
+Promise.then
+S @ index-o4nJcGMy.js:48
+start @ index-o4nJcGMy.js:48
+fetch @ index-o4nJcGMy.js:48
+ys @ index-o4nJcGMy.js:48
+onSubscribe @ index-o4nJcGMy.js:48
+subscribe @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+yg @ index-o4nJcGMy.js:38
+Ga @ index-o4nJcGMy.js:40
+vo @ index-o4nJcGMy.js:40
+Dp @ index-o4nJcGMy.js:40
+fr @ index-o4nJcGMy.js:38
+kS @ index-o4nJcGMy.js:40
+xr @ index-o4nJcGMy.js:40
+Yg @ index-o4nJcGMy.js:40
+E @ index-o4nJcGMy.js:25
+_ @ index-o4nJcGMy.js:25Understand this error
+index-o4nJcGMy.js:272 [Draft] Error type: object
+queryFn @ index-o4nJcGMy.js:272
+await in queryFn
+s @ index-o4nJcGMy.js:48
+S @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.then
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.catch
+S @ index-o4nJcGMy.js:48
+start @ index-o4nJcGMy.js:48
+fetch @ index-o4nJcGMy.js:48
+ys @ index-o4nJcGMy.js:48
+onSubscribe @ index-o4nJcGMy.js:48
+subscribe @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+yg @ index-o4nJcGMy.js:38
+Ga @ index-o4nJcGMy.js:40
+vo @ index-o4nJcGMy.js:40
+kS @ index-o4nJcGMy.js:40
+xr @ index-o4nJcGMy.js:40
+Dp @ index-o4nJcGMy.js:40
+fr @ index-o4nJcGMy.js:38
+(anonymous) @ index-o4nJcGMy.js:40
+setTimeout
+o @ index-o4nJcGMy.js:48
+i @ index-o4nJcGMy.js:48
+batch @ index-o4nJcGMy.js:48
+fn @ index-o4nJcGMy.js:48
+setData @ index-o4nJcGMy.js:48
+onSuccess @ index-o4nJcGMy.js:48
+p @ index-o4nJcGMy.js:48
+Promise.then
+S @ index-o4nJcGMy.js:48
+start @ index-o4nJcGMy.js:48
+fetch @ index-o4nJcGMy.js:48
+ys @ index-o4nJcGMy.js:48
+onSubscribe @ index-o4nJcGMy.js:48
+subscribe @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+yg @ index-o4nJcGMy.js:38
+Ga @ index-o4nJcGMy.js:40
+vo @ index-o4nJcGMy.js:40
+Dp @ index-o4nJcGMy.js:40
+fr @ index-o4nJcGMy.js:38
+kS @ index-o4nJcGMy.js:40
+xr @ index-o4nJcGMy.js:40
+Yg @ index-o4nJcGMy.js:40
+E @ index-o4nJcGMy.js:25
+_ @ index-o4nJcGMy.js:25Understand this error
+index-o4nJcGMy.js:272 [Draft] Error constructor: Error
+queryFn @ index-o4nJcGMy.js:272
+await in queryFn
+s @ index-o4nJcGMy.js:48
+S @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.then
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.catch
+S @ index-o4nJcGMy.js:48
+start @ index-o4nJcGMy.js:48
+fetch @ index-o4nJcGMy.js:48
+ys @ index-o4nJcGMy.js:48
+onSubscribe @ index-o4nJcGMy.js:48
+subscribe @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+yg @ index-o4nJcGMy.js:38
+Ga @ index-o4nJcGMy.js:40
+vo @ index-o4nJcGMy.js:40
+kS @ index-o4nJcGMy.js:40
+xr @ index-o4nJcGMy.js:40
+Dp @ index-o4nJcGMy.js:40
+fr @ index-o4nJcGMy.js:38
+(anonymous) @ index-o4nJcGMy.js:40
+setTimeout
+o @ index-o4nJcGMy.js:48
+i @ index-o4nJcGMy.js:48
+batch @ index-o4nJcGMy.js:48
+fn @ index-o4nJcGMy.js:48
+setData @ index-o4nJcGMy.js:48
+onSuccess @ index-o4nJcGMy.js:48
+p @ index-o4nJcGMy.js:48
+Promise.then
+S @ index-o4nJcGMy.js:48
+start @ index-o4nJcGMy.js:48
+fetch @ index-o4nJcGMy.js:48
+ys @ index-o4nJcGMy.js:48
+onSubscribe @ index-o4nJcGMy.js:48
+subscribe @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+yg @ index-o4nJcGMy.js:38
+Ga @ index-o4nJcGMy.js:40
+vo @ index-o4nJcGMy.js:40
+Dp @ index-o4nJcGMy.js:40
+fr @ index-o4nJcGMy.js:38
+kS @ index-o4nJcGMy.js:40
+xr @ index-o4nJcGMy.js:40
+Yg @ index-o4nJcGMy.js:40
+E @ index-o4nJcGMy.js:25
+_ @ index-o4nJcGMy.js:25Understand this error
+index-o4nJcGMy.js:272 [DEBUG] Module Error in draft-fetch: {error: Error: 404: {"message":"Draft not found"}
+    at Lv (https://mok-sports-draft-mokfantasysport.repli…, message: '404: {"message":"Draft not found"}', stack: 'Error: 404: {"message":"Draft not found"}\n    at L…rt.replit.app/assets/index-o4nJcGMy.js:272:49776)', type: 'object', timestamp: '2025-08-04T22:27:35.894Z', …}
+Dh @ index-o4nJcGMy.js:272
+queryFn @ index-o4nJcGMy.js:272
+await in queryFn
+s @ index-o4nJcGMy.js:48
+S @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.then
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.catch
+S @ index-o4nJcGMy.js:48
+start @ index-o4nJcGMy.js:48
+fetch @ index-o4nJcGMy.js:48
+ys @ index-o4nJcGMy.js:48
+onSubscribe @ index-o4nJcGMy.js:48
+subscribe @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+yg @ index-o4nJcGMy.js:38
+Ga @ index-o4nJcGMy.js:40
+vo @ index-o4nJcGMy.js:40
+kS @ index-o4nJcGMy.js:40
+xr @ index-o4nJcGMy.js:40
+Dp @ index-o4nJcGMy.js:40
+fr @ index-o4nJcGMy.js:38
+(anonymous) @ index-o4nJcGMy.js:40
+setTimeout
+o @ index-o4nJcGMy.js:48
+i @ index-o4nJcGMy.js:48
+batch @ index-o4nJcGMy.js:48
+fn @ index-o4nJcGMy.js:48
+setData @ index-o4nJcGMy.js:48
+onSuccess @ index-o4nJcGMy.js:48
+p @ index-o4nJcGMy.js:48
+Promise.then
+S @ index-o4nJcGMy.js:48
+start @ index-o4nJcGMy.js:48
+fetch @ index-o4nJcGMy.js:48
+ys @ index-o4nJcGMy.js:48
+onSubscribe @ index-o4nJcGMy.js:48
+subscribe @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+yg @ index-o4nJcGMy.js:38
+Ga @ index-o4nJcGMy.js:40
+vo @ index-o4nJcGMy.js:40
+Dp @ index-o4nJcGMy.js:40
+fr @ index-o4nJcGMy.js:38
+kS @ index-o4nJcGMy.js:40
+xr @ index-o4nJcGMy.js:40
+Yg @ index-o4nJcGMy.js:40
+E @ index-o4nJcGMy.js:25
+_ @ index-o4nJcGMy.js:25Understand this error
+index-o4nJcGMy.js:272 [Draft] Full error details: {message: '404: {"message":"Draft not found"}', stack: 'Error: 404: {"message":"Draft not found"}\n    at L…rt.replit.app/assets/index-o4nJcGMy.js:272:49776)', user: 'Mok Sports', hasToken: true, isAuthenticated: true, …}
+queryFn @ index-o4nJcGMy.js:272
+await in queryFn
+s @ index-o4nJcGMy.js:48
+S @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.then
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.catch
+S @ index-o4nJcGMy.js:48
+start @ index-o4nJcGMy.js:48
+fetch @ index-o4nJcGMy.js:48
+ys @ index-o4nJcGMy.js:48
+onSubscribe @ index-o4nJcGMy.js:48
+subscribe @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+yg @ index-o4nJcGMy.js:38
+Ga @ index-o4nJcGMy.js:40
+vo @ index-o4nJcGMy.js:40
+kS @ index-o4nJcGMy.js:40
+xr @ index-o4nJcGMy.js:40
+Dp @ index-o4nJcGMy.js:40
+fr @ index-o4nJcGMy.js:38
+(anonymous) @ index-o4nJcGMy.js:40
+setTimeout
+o @ index-o4nJcGMy.js:48
+i @ index-o4nJcGMy.js:48
+batch @ index-o4nJcGMy.js:48
+fn @ index-o4nJcGMy.js:48
+setData @ index-o4nJcGMy.js:48
+onSuccess @ index-o4nJcGMy.js:48
+p @ index-o4nJcGMy.js:48
+Promise.then
+S @ index-o4nJcGMy.js:48
+start @ index-o4nJcGMy.js:48
+fetch @ index-o4nJcGMy.js:48
+ys @ index-o4nJcGMy.js:48
+onSubscribe @ index-o4nJcGMy.js:48
+subscribe @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+yg @ index-o4nJcGMy.js:38
+Ga @ index-o4nJcGMy.js:40
+vo @ index-o4nJcGMy.js:40
+Dp @ index-o4nJcGMy.js:40
+fr @ index-o4nJcGMy.js:38
+kS @ index-o4nJcGMy.js:40
+xr @ index-o4nJcGMy.js:40
+Yg @ index-o4nJcGMy.js:40
+E @ index-o4nJcGMy.js:25
+_ @ index-o4nJcGMy.js:25Understand this error
+index-o4nJcGMy.js:272 [Draft] Attempting direct fetch for debugging...
+index-o4nJcGMy.js:272  GET https://mok-sports-draft-mokfantasysport.replit.app/api/drafts/46160cd7-595b-4f70-9956-795ea53993ff 404 (Not Found)
+queryFn @ index-o4nJcGMy.js:272
+await in queryFn
+s @ index-o4nJcGMy.js:48
+S @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.then
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.catch
+S @ index-o4nJcGMy.js:48
+start @ index-o4nJcGMy.js:48
+fetch @ index-o4nJcGMy.js:48
+ys @ index-o4nJcGMy.js:48
+onSubscribe @ index-o4nJcGMy.js:48
+subscribe @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+yg @ index-o4nJcGMy.js:38
+Ga @ index-o4nJcGMy.js:40
+vo @ index-o4nJcGMy.js:40
+kS @ index-o4nJcGMy.js:40
+xr @ index-o4nJcGMy.js:40
+Dp @ index-o4nJcGMy.js:40
+fr @ index-o4nJcGMy.js:38
+(anonymous) @ index-o4nJcGMy.js:40
+setTimeout
+o @ index-o4nJcGMy.js:48
+i @ index-o4nJcGMy.js:48
+batch @ index-o4nJcGMy.js:48
+fn @ index-o4nJcGMy.js:48
+setData @ index-o4nJcGMy.js:48
+onSuccess @ index-o4nJcGMy.js:48
+p @ index-o4nJcGMy.js:48
+Promise.then
+S @ index-o4nJcGMy.js:48
+start @ index-o4nJcGMy.js:48
+fetch @ index-o4nJcGMy.js:48
+ys @ index-o4nJcGMy.js:48
+onSubscribe @ index-o4nJcGMy.js:48
+subscribe @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+yg @ index-o4nJcGMy.js:38
+Ga @ index-o4nJcGMy.js:40
+vo @ index-o4nJcGMy.js:40
+Dp @ index-o4nJcGMy.js:40
+fr @ index-o4nJcGMy.js:38
+kS @ index-o4nJcGMy.js:40
+xr @ index-o4nJcGMy.js:40
+Yg @ index-o4nJcGMy.js:40
+E @ index-o4nJcGMy.js:25
+_ @ index-o4nJcGMy.js:25Understand this error
+index-o4nJcGMy.js:272 [Draft] Direct fetch response: {status: 404, statusText: '', headers: {…}}
+index-o4nJcGMy.js:272 [Draft] Direct fetch response body: {"message":"Draft not found"}
+index-o4nJcGMy.js:272 [Draft] Retrying fetch, attempt 2
+index-o4nJcGMy.js:48  GET https://mok-sports-draft-mokfantasysport.replit.app/api/drafts/46160cd7-595b-4f70-9956-795ea53993ff/available-teams 404 (Not Found)
+Zi @ index-o4nJcGMy.js:48
+queryFn @ index-o4nJcGMy.js:272
+s @ index-o4nJcGMy.js:48
+S @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.then
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.catch
+S @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.then
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.catch
+S @ index-o4nJcGMy.js:48
+start @ index-o4nJcGMy.js:48
+fetch @ index-o4nJcGMy.js:48
+ys @ index-o4nJcGMy.js:48
+onSubscribe @ index-o4nJcGMy.js:48
+subscribe @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+yg @ index-o4nJcGMy.js:38
+Ga @ index-o4nJcGMy.js:40
+vo @ index-o4nJcGMy.js:40
+kS @ index-o4nJcGMy.js:40
+xr @ index-o4nJcGMy.js:40
+Dp @ index-o4nJcGMy.js:40
+fr @ index-o4nJcGMy.js:38
+(anonymous) @ index-o4nJcGMy.js:40
+setTimeout
+o @ index-o4nJcGMy.js:48
+i @ index-o4nJcGMy.js:48
+batch @ index-o4nJcGMy.js:48
+fn @ index-o4nJcGMy.js:48
+setData @ index-o4nJcGMy.js:48
+onSuccess @ index-o4nJcGMy.js:48
+p @ index-o4nJcGMy.js:48
+Promise.then
+S @ index-o4nJcGMy.js:48
+start @ index-o4nJcGMy.js:48
+fetch @ index-o4nJcGMy.js:48
+ys @ index-o4nJcGMy.js:48
+onSubscribe @ index-o4nJcGMy.js:48
+subscribe @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+yg @ index-o4nJcGMy.js:38
+Ga @ index-o4nJcGMy.js:40
+vo @ index-o4nJcGMy.js:40
+Dp @ index-o4nJcGMy.js:40
+fr @ index-o4nJcGMy.js:38
+kS @ index-o4nJcGMy.js:40
+xr @ index-o4nJcGMy.js:40
+Yg @ index-o4nJcGMy.js:40
+E @ index-o4nJcGMy.js:25
+_ @ index-o4nJcGMy.js:25Understand this error
+index-o4nJcGMy.js:272 [Draft] === STARTING DRAFT FETCH ===
+index-o4nJcGMy.js:272 [Draft] Draft ID: 46160cd7-595b-4f70-9956-795ea53993ff
+index-o4nJcGMy.js:272 [Draft] Auth status - User: Mok Sports Authenticated: true Loading: false
+index-o4nJcGMy.js:272 [Draft] Token available: true
+index-o4nJcGMy.js:272 [Draft] Current URL: https://mok-sports-draft-mokfantasysport.replit.app/draft/46160cd7-595b-4f70-9956-795ea53993ff
+index-o4nJcGMy.js:272 [Draft] Current pathname: /draft/46160cd7-595b-4f70-9956-795ea53993ff
+index-o4nJcGMy.js:272 [Draft] Making API request to: /api/drafts/46160cd7-595b-4f70-9956-795ea53993ff
+index-o4nJcGMy.js:48  GET https://mok-sports-draft-mokfantasysport.replit.app/api/drafts/46160cd7-595b-4f70-9956-795ea53993ff 404 (Not Found)
+Zi @ index-o4nJcGMy.js:48
+queryFn @ index-o4nJcGMy.js:272
+s @ index-o4nJcGMy.js:48
+S @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.then
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.catch
+S @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.then
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.catch
+S @ index-o4nJcGMy.js:48
+start @ index-o4nJcGMy.js:48
+fetch @ index-o4nJcGMy.js:48
+ys @ index-o4nJcGMy.js:48
+onSubscribe @ index-o4nJcGMy.js:48
+subscribe @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+yg @ index-o4nJcGMy.js:38
+Ga @ index-o4nJcGMy.js:40
+vo @ index-o4nJcGMy.js:40
+kS @ index-o4nJcGMy.js:40
+xr @ index-o4nJcGMy.js:40
+Dp @ index-o4nJcGMy.js:40
+fr @ index-o4nJcGMy.js:38
+(anonymous) @ index-o4nJcGMy.js:40
+setTimeout
+o @ index-o4nJcGMy.js:48
+i @ index-o4nJcGMy.js:48
+batch @ index-o4nJcGMy.js:48
+fn @ index-o4nJcGMy.js:48
+setData @ index-o4nJcGMy.js:48
+onSuccess @ index-o4nJcGMy.js:48
+p @ index-o4nJcGMy.js:48
+Promise.then
+S @ index-o4nJcGMy.js:48
+start @ index-o4nJcGMy.js:48
+fetch @ index-o4nJcGMy.js:48
+ys @ index-o4nJcGMy.js:48
+onSubscribe @ index-o4nJcGMy.js:48
+subscribe @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+yg @ index-o4nJcGMy.js:38
+Ga @ index-o4nJcGMy.js:40
+vo @ index-o4nJcGMy.js:40
+Dp @ index-o4nJcGMy.js:40
+fr @ index-o4nJcGMy.js:38
+kS @ index-o4nJcGMy.js:40
+xr @ index-o4nJcGMy.js:40
+Yg @ index-o4nJcGMy.js:40
+E @ index-o4nJcGMy.js:25
+_ @ index-o4nJcGMy.js:25Understand this error
+index-o4nJcGMy.js:272 [Draft] === DRAFT FETCH ERROR ===
+queryFn @ index-o4nJcGMy.js:272
+await in queryFn
+s @ index-o4nJcGMy.js:48
+S @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.then
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.catch
+S @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.then
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.catch
+S @ index-o4nJcGMy.js:48
+start @ index-o4nJcGMy.js:48
+fetch @ index-o4nJcGMy.js:48
+ys @ index-o4nJcGMy.js:48
+onSubscribe @ index-o4nJcGMy.js:48
+subscribe @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+yg @ index-o4nJcGMy.js:38
+Ga @ index-o4nJcGMy.js:40
+vo @ index-o4nJcGMy.js:40
+kS @ index-o4nJcGMy.js:40
+xr @ index-o4nJcGMy.js:40
+Dp @ index-o4nJcGMy.js:40
+fr @ index-o4nJcGMy.js:38
+(anonymous) @ index-o4nJcGMy.js:40
+setTimeout
+o @ index-o4nJcGMy.js:48
+i @ index-o4nJcGMy.js:48
+batch @ index-o4nJcGMy.js:48
+fn @ index-o4nJcGMy.js:48
+setData @ index-o4nJcGMy.js:48
+onSuccess @ index-o4nJcGMy.js:48
+p @ index-o4nJcGMy.js:48
+Promise.then
+S @ index-o4nJcGMy.js:48
+start @ index-o4nJcGMy.js:48
+fetch @ index-o4nJcGMy.js:48
+ys @ index-o4nJcGMy.js:48
+onSubscribe @ index-o4nJcGMy.js:48
+subscribe @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+yg @ index-o4nJcGMy.js:38
+Ga @ index-o4nJcGMy.js:40
+vo @ index-o4nJcGMy.js:40
+Dp @ index-o4nJcGMy.js:40
+fr @ index-o4nJcGMy.js:38
+kS @ index-o4nJcGMy.js:40
+xr @ index-o4nJcGMy.js:40
+Yg @ index-o4nJcGMy.js:40
+E @ index-o4nJcGMy.js:25
+_ @ index-o4nJcGMy.js:25Understand this error
+index-o4nJcGMy.js:272 [Draft] Error fetching draft data: Error: 404: {"message":"Draft not found"}
+    at Lv (index-o4nJcGMy.js:48:43053)
+    at async Zi (index-o4nJcGMy.js:48:43286)
+    at async queryFn (index-o4nJcGMy.js:272:49776)
+queryFn @ index-o4nJcGMy.js:272
+await in queryFn
+s @ index-o4nJcGMy.js:48
+S @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.then
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.catch
+S @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.then
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.catch
+S @ index-o4nJcGMy.js:48
+start @ index-o4nJcGMy.js:48
+fetch @ index-o4nJcGMy.js:48
+ys @ index-o4nJcGMy.js:48
+onSubscribe @ index-o4nJcGMy.js:48
+subscribe @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+yg @ index-o4nJcGMy.js:38
+Ga @ index-o4nJcGMy.js:40
+vo @ index-o4nJcGMy.js:40
+kS @ index-o4nJcGMy.js:40
+xr @ index-o4nJcGMy.js:40
+Dp @ index-o4nJcGMy.js:40
+fr @ index-o4nJcGMy.js:38
+(anonymous) @ index-o4nJcGMy.js:40
+setTimeout
+o @ index-o4nJcGMy.js:48
+i @ index-o4nJcGMy.js:48
+batch @ index-o4nJcGMy.js:48
+fn @ index-o4nJcGMy.js:48
+setData @ index-o4nJcGMy.js:48
+onSuccess @ index-o4nJcGMy.js:48
+p @ index-o4nJcGMy.js:48
+Promise.then
+S @ index-o4nJcGMy.js:48
+start @ index-o4nJcGMy.js:48
+fetch @ index-o4nJcGMy.js:48
+ys @ index-o4nJcGMy.js:48
+onSubscribe @ index-o4nJcGMy.js:48
+subscribe @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+yg @ index-o4nJcGMy.js:38
+Ga @ index-o4nJcGMy.js:40
+vo @ index-o4nJcGMy.js:40
+Dp @ index-o4nJcGMy.js:40
+fr @ index-o4nJcGMy.js:38
+kS @ index-o4nJcGMy.js:40
+xr @ index-o4nJcGMy.js:40
+Yg @ index-o4nJcGMy.js:40
+E @ index-o4nJcGMy.js:25
+_ @ index-o4nJcGMy.js:25Understand this error
+index-o4nJcGMy.js:272 [Draft] Error type: object
+queryFn @ index-o4nJcGMy.js:272
+await in queryFn
+s @ index-o4nJcGMy.js:48
+S @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.then
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.catch
+S @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.then
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.catch
+S @ index-o4nJcGMy.js:48
+start @ index-o4nJcGMy.js:48
+fetch @ index-o4nJcGMy.js:48
+ys @ index-o4nJcGMy.js:48
+onSubscribe @ index-o4nJcGMy.js:48
+subscribe @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+yg @ index-o4nJcGMy.js:38
+Ga @ index-o4nJcGMy.js:40
+vo @ index-o4nJcGMy.js:40
+kS @ index-o4nJcGMy.js:40
+xr @ index-o4nJcGMy.js:40
+Dp @ index-o4nJcGMy.js:40
+fr @ index-o4nJcGMy.js:38
+(anonymous) @ index-o4nJcGMy.js:40
+setTimeout
+o @ index-o4nJcGMy.js:48
+i @ index-o4nJcGMy.js:48
+batch @ index-o4nJcGMy.js:48
+fn @ index-o4nJcGMy.js:48
+setData @ index-o4nJcGMy.js:48
+onSuccess @ index-o4nJcGMy.js:48
+p @ index-o4nJcGMy.js:48
+Promise.then
+S @ index-o4nJcGMy.js:48
+start @ index-o4nJcGMy.js:48
+fetch @ index-o4nJcGMy.js:48
+ys @ index-o4nJcGMy.js:48
+onSubscribe @ index-o4nJcGMy.js:48
+subscribe @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+yg @ index-o4nJcGMy.js:38
+Ga @ index-o4nJcGMy.js:40
+vo @ index-o4nJcGMy.js:40
+Dp @ index-o4nJcGMy.js:40
+fr @ index-o4nJcGMy.js:38
+kS @ index-o4nJcGMy.js:40
+xr @ index-o4nJcGMy.js:40
+Yg @ index-o4nJcGMy.js:40
+E @ index-o4nJcGMy.js:25
+_ @ index-o4nJcGMy.js:25Understand this error
+index-o4nJcGMy.js:272 [Draft] Error constructor: Error
+queryFn @ index-o4nJcGMy.js:272
+await in queryFn
+s @ index-o4nJcGMy.js:48
+S @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.then
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.catch
+S @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.then
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.catch
+S @ index-o4nJcGMy.js:48
+start @ index-o4nJcGMy.js:48
+fetch @ index-o4nJcGMy.js:48
+ys @ index-o4nJcGMy.js:48
+onSubscribe @ index-o4nJcGMy.js:48
+subscribe @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+yg @ index-o4nJcGMy.js:38
+Ga @ index-o4nJcGMy.js:40
+vo @ index-o4nJcGMy.js:40
+kS @ index-o4nJcGMy.js:40
+xr @ index-o4nJcGMy.js:40
+Dp @ index-o4nJcGMy.js:40
+fr @ index-o4nJcGMy.js:38
+(anonymous) @ index-o4nJcGMy.js:40
+setTimeout
+o @ index-o4nJcGMy.js:48
+i @ index-o4nJcGMy.js:48
+batch @ index-o4nJcGMy.js:48
+fn @ index-o4nJcGMy.js:48
+setData @ index-o4nJcGMy.js:48
+onSuccess @ index-o4nJcGMy.js:48
+p @ index-o4nJcGMy.js:48
+Promise.then
+S @ index-o4nJcGMy.js:48
+start @ index-o4nJcGMy.js:48
+fetch @ index-o4nJcGMy.js:48
+ys @ index-o4nJcGMy.js:48
+onSubscribe @ index-o4nJcGMy.js:48
+subscribe @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+yg @ index-o4nJcGMy.js:38
+Ga @ index-o4nJcGMy.js:40
+vo @ index-o4nJcGMy.js:40
+Dp @ index-o4nJcGMy.js:40
+fr @ index-o4nJcGMy.js:38
+kS @ index-o4nJcGMy.js:40
+xr @ index-o4nJcGMy.js:40
+Yg @ index-o4nJcGMy.js:40
+E @ index-o4nJcGMy.js:25
+_ @ index-o4nJcGMy.js:25Understand this error
+index-o4nJcGMy.js:272 [DEBUG] Module Error in draft-fetch: {error: Error: 404: {"message":"Draft not found"}
+    at Lv (https://mok-sports-draft-mokfantasysport.repli…, message: '404: {"message":"Draft not found"}', stack: 'Error: 404: {"message":"Draft not found"}\n    at L…rt.replit.app/assets/index-o4nJcGMy.js:272:49776)', type: 'object', timestamp: '2025-08-04T22:27:38.130Z', …}
+Dh @ index-o4nJcGMy.js:272
+queryFn @ index-o4nJcGMy.js:272
+await in queryFn
+s @ index-o4nJcGMy.js:48
+S @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.then
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.catch
+S @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.then
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.catch
+S @ index-o4nJcGMy.js:48
+start @ index-o4nJcGMy.js:48
+fetch @ index-o4nJcGMy.js:48
+ys @ index-o4nJcGMy.js:48
+onSubscribe @ index-o4nJcGMy.js:48
+subscribe @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+yg @ index-o4nJcGMy.js:38
+Ga @ index-o4nJcGMy.js:40
+vo @ index-o4nJcGMy.js:40
+kS @ index-o4nJcGMy.js:40
+xr @ index-o4nJcGMy.js:40
+Dp @ index-o4nJcGMy.js:40
+fr @ index-o4nJcGMy.js:38
+(anonymous) @ index-o4nJcGMy.js:40
+setTimeout
+o @ index-o4nJcGMy.js:48
+i @ index-o4nJcGMy.js:48
+batch @ index-o4nJcGMy.js:48
+fn @ index-o4nJcGMy.js:48
+setData @ index-o4nJcGMy.js:48
+onSuccess @ index-o4nJcGMy.js:48
+p @ index-o4nJcGMy.js:48
+Promise.then
+S @ index-o4nJcGMy.js:48
+start @ index-o4nJcGMy.js:48
+fetch @ index-o4nJcGMy.js:48
+ys @ index-o4nJcGMy.js:48
+onSubscribe @ index-o4nJcGMy.js:48
+subscribe @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+yg @ index-o4nJcGMy.js:38
+Ga @ index-o4nJcGMy.js:40
+vo @ index-o4nJcGMy.js:40
+Dp @ index-o4nJcGMy.js:40
+fr @ index-o4nJcGMy.js:38
+kS @ index-o4nJcGMy.js:40
+xr @ index-o4nJcGMy.js:40
+Yg @ index-o4nJcGMy.js:40
+E @ index-o4nJcGMy.js:25
+_ @ index-o4nJcGMy.js:25Understand this error
+index-o4nJcGMy.js:272 [Draft] Full error details: {message: '404: {"message":"Draft not found"}', stack: 'Error: 404: {"message":"Draft not found"}\n    at L…rt.replit.app/assets/index-o4nJcGMy.js:272:49776)', user: 'Mok Sports', hasToken: true, isAuthenticated: true, …}
+queryFn @ index-o4nJcGMy.js:272
+await in queryFn
+s @ index-o4nJcGMy.js:48
+S @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.then
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.catch
+S @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.then
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.catch
+S @ index-o4nJcGMy.js:48
+start @ index-o4nJcGMy.js:48
+fetch @ index-o4nJcGMy.js:48
+ys @ index-o4nJcGMy.js:48
+onSubscribe @ index-o4nJcGMy.js:48
+subscribe @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+yg @ index-o4nJcGMy.js:38
+Ga @ index-o4nJcGMy.js:40
+vo @ index-o4nJcGMy.js:40
+kS @ index-o4nJcGMy.js:40
+xr @ index-o4nJcGMy.js:40
+Dp @ index-o4nJcGMy.js:40
+fr @ index-o4nJcGMy.js:38
+(anonymous) @ index-o4nJcGMy.js:40
+setTimeout
+o @ index-o4nJcGMy.js:48
+i @ index-o4nJcGMy.js:48
+batch @ index-o4nJcGMy.js:48
+fn @ index-o4nJcGMy.js:48
+setData @ index-o4nJcGMy.js:48
+onSuccess @ index-o4nJcGMy.js:48
+p @ index-o4nJcGMy.js:48
+Promise.then
+S @ index-o4nJcGMy.js:48
+start @ index-o4nJcGMy.js:48
+fetch @ index-o4nJcGMy.js:48
+ys @ index-o4nJcGMy.js:48
+onSubscribe @ index-o4nJcGMy.js:48
+subscribe @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+yg @ index-o4nJcGMy.js:38
+Ga @ index-o4nJcGMy.js:40
+vo @ index-o4nJcGMy.js:40
+Dp @ index-o4nJcGMy.js:40
+fr @ index-o4nJcGMy.js:38
+kS @ index-o4nJcGMy.js:40
+xr @ index-o4nJcGMy.js:40
+Yg @ index-o4nJcGMy.js:40
+E @ index-o4nJcGMy.js:25
+_ @ index-o4nJcGMy.js:25Understand this error
+index-o4nJcGMy.js:272 [Draft] Attempting direct fetch for debugging...
+index-o4nJcGMy.js:272  GET https://mok-sports-draft-mokfantasysport.replit.app/api/drafts/46160cd7-595b-4f70-9956-795ea53993ff 404 (Not Found)
+queryFn @ index-o4nJcGMy.js:272
+await in queryFn
+s @ index-o4nJcGMy.js:48
+S @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.then
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.catch
+S @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.then
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.catch
+S @ index-o4nJcGMy.js:48
+start @ index-o4nJcGMy.js:48
+fetch @ index-o4nJcGMy.js:48
+ys @ index-o4nJcGMy.js:48
+onSubscribe @ index-o4nJcGMy.js:48
+subscribe @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+yg @ index-o4nJcGMy.js:38
+Ga @ index-o4nJcGMy.js:40
+vo @ index-o4nJcGMy.js:40
+kS @ index-o4nJcGMy.js:40
+xr @ index-o4nJcGMy.js:40
+Dp @ index-o4nJcGMy.js:40
+fr @ index-o4nJcGMy.js:38
+(anonymous) @ index-o4nJcGMy.js:40
+setTimeout
+o @ index-o4nJcGMy.js:48
+i @ index-o4nJcGMy.js:48
+batch @ index-o4nJcGMy.js:48
+fn @ index-o4nJcGMy.js:48
+setData @ index-o4nJcGMy.js:48
+onSuccess @ index-o4nJcGMy.js:48
+p @ index-o4nJcGMy.js:48
+Promise.then
+S @ index-o4nJcGMy.js:48
+start @ index-o4nJcGMy.js:48
+fetch @ index-o4nJcGMy.js:48
+ys @ index-o4nJcGMy.js:48
+onSubscribe @ index-o4nJcGMy.js:48
+subscribe @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+yg @ index-o4nJcGMy.js:38
+Ga @ index-o4nJcGMy.js:40
+vo @ index-o4nJcGMy.js:40
+Dp @ index-o4nJcGMy.js:40
+fr @ index-o4nJcGMy.js:38
+kS @ index-o4nJcGMy.js:40
+xr @ index-o4nJcGMy.js:40
+Yg @ index-o4nJcGMy.js:40
+E @ index-o4nJcGMy.js:25
+_ @ index-o4nJcGMy.js:25Understand this error
+index-o4nJcGMy.js:272 [Draft] Direct fetch response: {status: 404, statusText: '', headers: {…}}
+index-o4nJcGMy.js:272 [Draft] Direct fetch response body: {"message":"Draft not found"}
+index-o4nJcGMy.js:272 [Draft] Retrying fetch, attempt 3
+index-o4nJcGMy.js:48  GET https://mok-sports-draft-mokfantasysport.replit.app/api/drafts/46160cd7-595b-4f70-9956-795ea53993ff/available-teams 404 (Not Found)
+Zi @ index-o4nJcGMy.js:48
+queryFn @ index-o4nJcGMy.js:272
+s @ index-o4nJcGMy.js:48
+S @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.then
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.catch
+S @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.then
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.catch
+S @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.then
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.catch
+S @ index-o4nJcGMy.js:48
+start @ index-o4nJcGMy.js:48
+fetch @ index-o4nJcGMy.js:48
+ys @ index-o4nJcGMy.js:48
+onSubscribe @ index-o4nJcGMy.js:48
+subscribe @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+yg @ index-o4nJcGMy.js:38
+Ga @ index-o4nJcGMy.js:40
+vo @ index-o4nJcGMy.js:40
+kS @ index-o4nJcGMy.js:40
+xr @ index-o4nJcGMy.js:40
+Dp @ index-o4nJcGMy.js:40
+fr @ index-o4nJcGMy.js:38
+(anonymous) @ index-o4nJcGMy.js:40
+setTimeout
+o @ index-o4nJcGMy.js:48
+i @ index-o4nJcGMy.js:48
+batch @ index-o4nJcGMy.js:48
+fn @ index-o4nJcGMy.js:48
+setData @ index-o4nJcGMy.js:48
+onSuccess @ index-o4nJcGMy.js:48
+p @ index-o4nJcGMy.js:48
+Promise.then
+S @ index-o4nJcGMy.js:48
+start @ index-o4nJcGMy.js:48
+fetch @ index-o4nJcGMy.js:48
+ys @ index-o4nJcGMy.js:48
+onSubscribe @ index-o4nJcGMy.js:48
+subscribe @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+yg @ index-o4nJcGMy.js:38
+Ga @ index-o4nJcGMy.js:40
+vo @ index-o4nJcGMy.js:40
+Dp @ index-o4nJcGMy.js:40
+fr @ index-o4nJcGMy.js:38
+kS @ index-o4nJcGMy.js:40
+xr @ index-o4nJcGMy.js:40
+Yg @ index-o4nJcGMy.js:40
+E @ index-o4nJcGMy.js:25
+_ @ index-o4nJcGMy.js:25Understand this error
+index-o4nJcGMy.js:272 [Draft] === STARTING DRAFT FETCH ===
+index-o4nJcGMy.js:272 [Draft] Draft ID: 46160cd7-595b-4f70-9956-795ea53993ff
+index-o4nJcGMy.js:272 [Draft] Auth status - User: Mok Sports Authenticated: true Loading: false
+index-o4nJcGMy.js:272 [Draft] Token available: true
+index-o4nJcGMy.js:272 [Draft] Current URL: https://mok-sports-draft-mokfantasysport.replit.app/draft/46160cd7-595b-4f70-9956-795ea53993ff
+index-o4nJcGMy.js:272 [Draft] Current pathname: /draft/46160cd7-595b-4f70-9956-795ea53993ff
+index-o4nJcGMy.js:272 [Draft] Making API request to: /api/drafts/46160cd7-595b-4f70-9956-795ea53993ff
+index-o4nJcGMy.js:48  GET https://mok-sports-draft-mokfantasysport.replit.app/api/drafts/46160cd7-595b-4f70-9956-795ea53993ff 404 (Not Found)
+Zi @ index-o4nJcGMy.js:48
+queryFn @ index-o4nJcGMy.js:272
+s @ index-o4nJcGMy.js:48
+S @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.then
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.catch
+S @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.then
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.catch
+S @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.then
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.catch
+S @ index-o4nJcGMy.js:48
+start @ index-o4nJcGMy.js:48
+fetch @ index-o4nJcGMy.js:48
+ys @ index-o4nJcGMy.js:48
+onSubscribe @ index-o4nJcGMy.js:48
+subscribe @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+yg @ index-o4nJcGMy.js:38
+Ga @ index-o4nJcGMy.js:40
+vo @ index-o4nJcGMy.js:40
+kS @ index-o4nJcGMy.js:40
+xr @ index-o4nJcGMy.js:40
+Dp @ index-o4nJcGMy.js:40
+fr @ index-o4nJcGMy.js:38
+(anonymous) @ index-o4nJcGMy.js:40
+setTimeout
+o @ index-o4nJcGMy.js:48
+i @ index-o4nJcGMy.js:48
+batch @ index-o4nJcGMy.js:48
+fn @ index-o4nJcGMy.js:48
+setData @ index-o4nJcGMy.js:48
+onSuccess @ index-o4nJcGMy.js:48
+p @ index-o4nJcGMy.js:48
+Promise.then
+S @ index-o4nJcGMy.js:48
+start @ index-o4nJcGMy.js:48
+fetch @ index-o4nJcGMy.js:48
+ys @ index-o4nJcGMy.js:48
+onSubscribe @ index-o4nJcGMy.js:48
+subscribe @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+yg @ index-o4nJcGMy.js:38
+Ga @ index-o4nJcGMy.js:40
+vo @ index-o4nJcGMy.js:40
+Dp @ index-o4nJcGMy.js:40
+fr @ index-o4nJcGMy.js:38
+kS @ index-o4nJcGMy.js:40
+xr @ index-o4nJcGMy.js:40
+Yg @ index-o4nJcGMy.js:40
+E @ index-o4nJcGMy.js:25
+_ @ index-o4nJcGMy.js:25Understand this error
+index-o4nJcGMy.js:272 [Draft] === DRAFT FETCH ERROR ===
+queryFn @ index-o4nJcGMy.js:272
+await in queryFn
+s @ index-o4nJcGMy.js:48
+S @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.then
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.catch
+S @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.then
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.catch
+S @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.then
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.catch
+S @ index-o4nJcGMy.js:48
+start @ index-o4nJcGMy.js:48
+fetch @ index-o4nJcGMy.js:48
+ys @ index-o4nJcGMy.js:48
+onSubscribe @ index-o4nJcGMy.js:48
+subscribe @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+yg @ index-o4nJcGMy.js:38
+Ga @ index-o4nJcGMy.js:40
+vo @ index-o4nJcGMy.js:40
+kS @ index-o4nJcGMy.js:40
+xr @ index-o4nJcGMy.js:40
+Dp @ index-o4nJcGMy.js:40
+fr @ index-o4nJcGMy.js:38
+(anonymous) @ index-o4nJcGMy.js:40
+setTimeout
+o @ index-o4nJcGMy.js:48
+i @ index-o4nJcGMy.js:48
+batch @ index-o4nJcGMy.js:48
+fn @ index-o4nJcGMy.js:48
+setData @ index-o4nJcGMy.js:48
+onSuccess @ index-o4nJcGMy.js:48
+p @ index-o4nJcGMy.js:48
+Promise.then
+S @ index-o4nJcGMy.js:48
+start @ index-o4nJcGMy.js:48
+fetch @ index-o4nJcGMy.js:48
+ys @ index-o4nJcGMy.js:48
+onSubscribe @ index-o4nJcGMy.js:48
+subscribe @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+yg @ index-o4nJcGMy.js:38
+Ga @ index-o4nJcGMy.js:40
+vo @ index-o4nJcGMy.js:40
+Dp @ index-o4nJcGMy.js:40
+fr @ index-o4nJcGMy.js:38
+kS @ index-o4nJcGMy.js:40
+xr @ index-o4nJcGMy.js:40
+Yg @ index-o4nJcGMy.js:40
+E @ index-o4nJcGMy.js:25
+_ @ index-o4nJcGMy.js:25Understand this error
+index-o4nJcGMy.js:272 [Draft] Error fetching draft data: Error: 404: {"message":"Draft not found"}
+    at Lv (index-o4nJcGMy.js:48:43053)
+    at async Zi (index-o4nJcGMy.js:48:43286)
+    at async queryFn (index-o4nJcGMy.js:272:49776)
+queryFn @ index-o4nJcGMy.js:272
+await in queryFn
+s @ index-o4nJcGMy.js:48
+S @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.then
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.catch
+S @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.then
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.catch
+S @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.then
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.catch
+S @ index-o4nJcGMy.js:48
+start @ index-o4nJcGMy.js:48
+fetch @ index-o4nJcGMy.js:48
+ys @ index-o4nJcGMy.js:48
+onSubscribe @ index-o4nJcGMy.js:48
+subscribe @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+yg @ index-o4nJcGMy.js:38
+Ga @ index-o4nJcGMy.js:40
+vo @ index-o4nJcGMy.js:40
+kS @ index-o4nJcGMy.js:40
+xr @ index-o4nJcGMy.js:40
+Dp @ index-o4nJcGMy.js:40
+fr @ index-o4nJcGMy.js:38
+(anonymous) @ index-o4nJcGMy.js:40
+setTimeout
+o @ index-o4nJcGMy.js:48
+i @ index-o4nJcGMy.js:48
+batch @ index-o4nJcGMy.js:48
+fn @ index-o4nJcGMy.js:48
+setData @ index-o4nJcGMy.js:48
+onSuccess @ index-o4nJcGMy.js:48
+p @ index-o4nJcGMy.js:48
+Promise.then
+S @ index-o4nJcGMy.js:48
+start @ index-o4nJcGMy.js:48
+fetch @ index-o4nJcGMy.js:48
+ys @ index-o4nJcGMy.js:48
+onSubscribe @ index-o4nJcGMy.js:48
+subscribe @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+yg @ index-o4nJcGMy.js:38
+Ga @ index-o4nJcGMy.js:40
+vo @ index-o4nJcGMy.js:40
+Dp @ index-o4nJcGMy.js:40
+fr @ index-o4nJcGMy.js:38
+kS @ index-o4nJcGMy.js:40
+xr @ index-o4nJcGMy.js:40
+Yg @ index-o4nJcGMy.js:40
+E @ index-o4nJcGMy.js:25
+_ @ index-o4nJcGMy.js:25Understand this error
+index-o4nJcGMy.js:272 [Draft] Error type: object
+queryFn @ index-o4nJcGMy.js:272
+await in queryFn
+s @ index-o4nJcGMy.js:48
+S @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.then
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.catch
+S @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.then
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.catch
+S @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.then
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.catch
+S @ index-o4nJcGMy.js:48
+start @ index-o4nJcGMy.js:48
+fetch @ index-o4nJcGMy.js:48
+ys @ index-o4nJcGMy.js:48
+onSubscribe @ index-o4nJcGMy.js:48
+subscribe @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+yg @ index-o4nJcGMy.js:38
+Ga @ index-o4nJcGMy.js:40
+vo @ index-o4nJcGMy.js:40
+kS @ index-o4nJcGMy.js:40
+xr @ index-o4nJcGMy.js:40
+Dp @ index-o4nJcGMy.js:40
+fr @ index-o4nJcGMy.js:38
+(anonymous) @ index-o4nJcGMy.js:40
+setTimeout
+o @ index-o4nJcGMy.js:48
+i @ index-o4nJcGMy.js:48
+batch @ index-o4nJcGMy.js:48
+fn @ index-o4nJcGMy.js:48
+setData @ index-o4nJcGMy.js:48
+onSuccess @ index-o4nJcGMy.js:48
+p @ index-o4nJcGMy.js:48
+Promise.then
+S @ index-o4nJcGMy.js:48
+start @ index-o4nJcGMy.js:48
+fetch @ index-o4nJcGMy.js:48
+ys @ index-o4nJcGMy.js:48
+onSubscribe @ index-o4nJcGMy.js:48
+subscribe @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+yg @ index-o4nJcGMy.js:38
+Ga @ index-o4nJcGMy.js:40
+vo @ index-o4nJcGMy.js:40
+Dp @ index-o4nJcGMy.js:40
+fr @ index-o4nJcGMy.js:38
+kS @ index-o4nJcGMy.js:40
+xr @ index-o4nJcGMy.js:40
+Yg @ index-o4nJcGMy.js:40
+E @ index-o4nJcGMy.js:25
+_ @ index-o4nJcGMy.js:25Understand this error
+index-o4nJcGMy.js:272 [Draft] Error constructor: Error
+queryFn @ index-o4nJcGMy.js:272
+await in queryFn
+s @ index-o4nJcGMy.js:48
+S @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.then
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.catch
+S @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.then
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.catch
+S @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.then
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.catch
+S @ index-o4nJcGMy.js:48
+start @ index-o4nJcGMy.js:48
+fetch @ index-o4nJcGMy.js:48
+ys @ index-o4nJcGMy.js:48
+onSubscribe @ index-o4nJcGMy.js:48
+subscribe @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+yg @ index-o4nJcGMy.js:38
+Ga @ index-o4nJcGMy.js:40
+vo @ index-o4nJcGMy.js:40
+kS @ index-o4nJcGMy.js:40
+xr @ index-o4nJcGMy.js:40
+Dp @ index-o4nJcGMy.js:40
+fr @ index-o4nJcGMy.js:38
+(anonymous) @ index-o4nJcGMy.js:40
+setTimeout
+o @ index-o4nJcGMy.js:48
+i @ index-o4nJcGMy.js:48
+batch @ index-o4nJcGMy.js:48
+fn @ index-o4nJcGMy.js:48
+setData @ index-o4nJcGMy.js:48
+onSuccess @ index-o4nJcGMy.js:48
+p @ index-o4nJcGMy.js:48
+Promise.then
+S @ index-o4nJcGMy.js:48
+start @ index-o4nJcGMy.js:48
+fetch @ index-o4nJcGMy.js:48
+ys @ index-o4nJcGMy.js:48
+onSubscribe @ index-o4nJcGMy.js:48
+subscribe @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+yg @ index-o4nJcGMy.js:38
+Ga @ index-o4nJcGMy.js:40
+vo @ index-o4nJcGMy.js:40
+Dp @ index-o4nJcGMy.js:40
+fr @ index-o4nJcGMy.js:38
+kS @ index-o4nJcGMy.js:40
+xr @ index-o4nJcGMy.js:40
+Yg @ index-o4nJcGMy.js:40
+E @ index-o4nJcGMy.js:25
+_ @ index-o4nJcGMy.js:25Understand this error
+index-o4nJcGMy.js:272 [DEBUG] Module Error in draft-fetch: {error: Error: 404: {"message":"Draft not found"}
+    at Lv (https://mok-sports-draft-mokfantasysport.repli…, message: '404: {"message":"Draft not found"}', stack: 'Error: 404: {"message":"Draft not found"}\n    at L…rt.replit.app/assets/index-o4nJcGMy.js:272:49776)', type: 'object', timestamp: '2025-08-04T22:27:42.351Z', …}
+Dh @ index-o4nJcGMy.js:272
+queryFn @ index-o4nJcGMy.js:272
+await in queryFn
+s @ index-o4nJcGMy.js:48
+S @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.then
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.catch
+S @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.then
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.catch
+S @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.then
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.catch
+S @ index-o4nJcGMy.js:48
+start @ index-o4nJcGMy.js:48
+fetch @ index-o4nJcGMy.js:48
+ys @ index-o4nJcGMy.js:48
+onSubscribe @ index-o4nJcGMy.js:48
+subscribe @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+yg @ index-o4nJcGMy.js:38
+Ga @ index-o4nJcGMy.js:40
+vo @ index-o4nJcGMy.js:40
+kS @ index-o4nJcGMy.js:40
+xr @ index-o4nJcGMy.js:40
+Dp @ index-o4nJcGMy.js:40
+fr @ index-o4nJcGMy.js:38
+(anonymous) @ index-o4nJcGMy.js:40
+setTimeout
+o @ index-o4nJcGMy.js:48
+i @ index-o4nJcGMy.js:48
+batch @ index-o4nJcGMy.js:48
+fn @ index-o4nJcGMy.js:48
+setData @ index-o4nJcGMy.js:48
+onSuccess @ index-o4nJcGMy.js:48
+p @ index-o4nJcGMy.js:48
+Promise.then
+S @ index-o4nJcGMy.js:48
+start @ index-o4nJcGMy.js:48
+fetch @ index-o4nJcGMy.js:48
+ys @ index-o4nJcGMy.js:48
+onSubscribe @ index-o4nJcGMy.js:48
+subscribe @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+yg @ index-o4nJcGMy.js:38
+Ga @ index-o4nJcGMy.js:40
+vo @ index-o4nJcGMy.js:40
+Dp @ index-o4nJcGMy.js:40
+fr @ index-o4nJcGMy.js:38
+kS @ index-o4nJcGMy.js:40
+xr @ index-o4nJcGMy.js:40
+Yg @ index-o4nJcGMy.js:40
+E @ index-o4nJcGMy.js:25
+_ @ index-o4nJcGMy.js:25Understand this error
+index-o4nJcGMy.js:272 [Draft] Full error details: {message: '404: {"message":"Draft not found"}', stack: 'Error: 404: {"message":"Draft not found"}\n    at L…rt.replit.app/assets/index-o4nJcGMy.js:272:49776)', user: 'Mok Sports', hasToken: true, isAuthenticated: true, …}
+queryFn @ index-o4nJcGMy.js:272
+await in queryFn
+s @ index-o4nJcGMy.js:48
+S @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.then
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.catch
+S @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.then
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.catch
+S @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.then
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.catch
+S @ index-o4nJcGMy.js:48
+start @ index-o4nJcGMy.js:48
+fetch @ index-o4nJcGMy.js:48
+ys @ index-o4nJcGMy.js:48
+onSubscribe @ index-o4nJcGMy.js:48
+subscribe @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+yg @ index-o4nJcGMy.js:38
+Ga @ index-o4nJcGMy.js:40
+vo @ index-o4nJcGMy.js:40
+kS @ index-o4nJcGMy.js:40
+xr @ index-o4nJcGMy.js:40
+Dp @ index-o4nJcGMy.js:40
+fr @ index-o4nJcGMy.js:38
+(anonymous) @ index-o4nJcGMy.js:40
+setTimeout
+o @ index-o4nJcGMy.js:48
+i @ index-o4nJcGMy.js:48
+batch @ index-o4nJcGMy.js:48
+fn @ index-o4nJcGMy.js:48
+setData @ index-o4nJcGMy.js:48
+onSuccess @ index-o4nJcGMy.js:48
+p @ index-o4nJcGMy.js:48
+Promise.then
+S @ index-o4nJcGMy.js:48
+start @ index-o4nJcGMy.js:48
+fetch @ index-o4nJcGMy.js:48
+ys @ index-o4nJcGMy.js:48
+onSubscribe @ index-o4nJcGMy.js:48
+subscribe @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+yg @ index-o4nJcGMy.js:38
+Ga @ index-o4nJcGMy.js:40
+vo @ index-o4nJcGMy.js:40
+Dp @ index-o4nJcGMy.js:40
+fr @ index-o4nJcGMy.js:38
+kS @ index-o4nJcGMy.js:40
+xr @ index-o4nJcGMy.js:40
+Yg @ index-o4nJcGMy.js:40
+E @ index-o4nJcGMy.js:25
+_ @ index-o4nJcGMy.js:25Understand this error
+index-o4nJcGMy.js:272 [Draft] Attempting direct fetch for debugging...
+index-o4nJcGMy.js:272  GET https://mok-sports-draft-mokfantasysport.replit.app/api/drafts/46160cd7-595b-4f70-9956-795ea53993ff 404 (Not Found)
+queryFn @ index-o4nJcGMy.js:272
+await in queryFn
+s @ index-o4nJcGMy.js:48
+S @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.then
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.catch
+S @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.then
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.catch
+S @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.then
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.catch
+S @ index-o4nJcGMy.js:48
+start @ index-o4nJcGMy.js:48
+fetch @ index-o4nJcGMy.js:48
+ys @ index-o4nJcGMy.js:48
+onSubscribe @ index-o4nJcGMy.js:48
+subscribe @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+yg @ index-o4nJcGMy.js:38
+Ga @ index-o4nJcGMy.js:40
+vo @ index-o4nJcGMy.js:40
+kS @ index-o4nJcGMy.js:40
+xr @ index-o4nJcGMy.js:40
+Dp @ index-o4nJcGMy.js:40
+fr @ index-o4nJcGMy.js:38
+(anonymous) @ index-o4nJcGMy.js:40
+setTimeout
+o @ index-o4nJcGMy.js:48
+i @ index-o4nJcGMy.js:48
+batch @ index-o4nJcGMy.js:48
+fn @ index-o4nJcGMy.js:48
+setData @ index-o4nJcGMy.js:48
+onSuccess @ index-o4nJcGMy.js:48
+p @ index-o4nJcGMy.js:48
+Promise.then
+S @ index-o4nJcGMy.js:48
+start @ index-o4nJcGMy.js:48
+fetch @ index-o4nJcGMy.js:48
+ys @ index-o4nJcGMy.js:48
+onSubscribe @ index-o4nJcGMy.js:48
+subscribe @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+yg @ index-o4nJcGMy.js:38
+Ga @ index-o4nJcGMy.js:40
+vo @ index-o4nJcGMy.js:40
+Dp @ index-o4nJcGMy.js:40
+fr @ index-o4nJcGMy.js:38
+kS @ index-o4nJcGMy.js:40
+xr @ index-o4nJcGMy.js:40
+Yg @ index-o4nJcGMy.js:40
+E @ index-o4nJcGMy.js:25
+_ @ index-o4nJcGMy.js:25Understand this error
+index-o4nJcGMy.js:272 [Draft] Direct fetch response: {status: 404, statusText: '', headers: {…}}
+index-o4nJcGMy.js:272 [Draft] Direct fetch response body: {"message":"Draft not found"}
+index-o4nJcGMy.js:272 [Draft] Retrying fetch, attempt 4
+index-o4nJcGMy.js:272 [Draft] Component render started
+index-o4nJcGMy.js:272 [Draft] All useState hooks declared
+index-o4nJcGMy.js:272 [Draft] All hooks declared, starting conditional logic
+index-o4nJcGMy.js:272 Draft error: Error: 404: {"message":"Draft not found"}
+    at Lv (index-o4nJcGMy.js:48:43053)
+    at async Zi (index-o4nJcGMy.js:48:43286)
+    at async queryFn (index-o4nJcGMy.js:272:49776)
+PP @ index-o4nJcGMy.js:272
+Sd @ index-o4nJcGMy.js:38
+Bc @ index-o4nJcGMy.js:40
+nv @ index-o4nJcGMy.js:40
+Zg @ index-o4nJcGMy.js:40
+ES @ index-o4nJcGMy.js:40
+Pa @ index-o4nJcGMy.js:40
+Dp @ index-o4nJcGMy.js:40
+fr @ index-o4nJcGMy.js:38
+(anonymous) @ index-o4nJcGMy.js:40
+setTimeout
+o @ index-o4nJcGMy.js:48
+i @ index-o4nJcGMy.js:48
+batch @ index-o4nJcGMy.js:48
+fn @ index-o4nJcGMy.js:48
+a @ index-o4nJcGMy.js:48
+h @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.catch
+S @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.then
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.catch
+S @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.then
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.catch
+S @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.then
+(anonymous) @ index-o4nJcGMy.js:48
+Promise.catch
+S @ index-o4nJcGMy.js:48
+start @ index-o4nJcGMy.js:48
+fetch @ index-o4nJcGMy.js:48
+ys @ index-o4nJcGMy.js:48
+onSubscribe @ index-o4nJcGMy.js:48
+subscribe @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+yg @ index-o4nJcGMy.js:38
+Ga @ index-o4nJcGMy.js:40
+vo @ index-o4nJcGMy.js:40
+kS @ index-o4nJcGMy.js:40
+xr @ index-o4nJcGMy.js:40
+Dp @ index-o4nJcGMy.js:40
+fr @ index-o4nJcGMy.js:38
+(anonymous) @ index-o4nJcGMy.js:40
+setTimeout
+o @ index-o4nJcGMy.js:48
+i @ index-o4nJcGMy.js:48
+batch @ index-o4nJcGMy.js:48
+fn @ index-o4nJcGMy.js:48
+setData @ index-o4nJcGMy.js:48
+onSuccess @ index-o4nJcGMy.js:48
+p @ index-o4nJcGMy.js:48
+Promise.then
+S @ index-o4nJcGMy.js:48
+start @ index-o4nJcGMy.js:48
+fetch @ index-o4nJcGMy.js:48
+ys @ index-o4nJcGMy.js:48
+onSubscribe @ index-o4nJcGMy.js:48
+subscribe @ index-o4nJcGMy.js:48
+(anonymous) @ index-o4nJcGMy.js:48
+yg @ index-o4nJcGMy.js:38
+Ga @ index-o4nJcGMy.js:40
+vo @ index-o4nJcGMy.js:40
+Dp @ index-o4nJcGMy.js:40
+fr @ index-o4nJcGMy.js:38
+kS @ index-o4nJcGMy.js:40
+xr @ index-o4nJcGMy.js:40
+Yg @ index-o4nJcGMy.js:40
+E @ index-o4nJcGMy.js:25
+_ @ index-o4nJcGMy.js:25Understand this error
+index-o4nJcGMy.js:272 [Draft Debug] Full error details: {error: Error: 404: {"message":"Draft not found"}
+    at Lv (https://mok-sports-draft-mokfantasysport.repli…, errorMessage: '404: {"message":"Draft not found"}', draftId: '46160cd7-595b-4f70-9956-795ea53993ff', connectionStatus: 'connected', hasToken: true, …}
+index-o4nJcGMy.js:272 [Draft] Component render started
+index-o4nJcGMy.js:272 [Draft] All useState hooks declared
+index-o4nJcGMy.js:272 [Draft] All hooks declared, starting conditional logic
+index-o4nJcGMy.js:272 Draft error: Error: 404: {"message":"Draft not found"}
+    at Lv (index-o4nJcGMy.js:48:43053)
+    at async Zi (index-o4nJcGMy.js:48:43286)
+    at async queryFn (index-o4nJcGMy.js:272:49776)
+PP @ index-o4nJcGMy.js:272
+Sd @ index-o4nJcGMy.js:38
+Bc @ index-o4nJcGMy.js:40
+nv @ index-o4nJcGMy.js:40
+Zg @ index-o4nJcGMy.js:40
+ES @ index-o4nJcGMy.js:40
+Pa @ index-o4nJcGMy.js:40
+Yg @ index-o4nJcGMy.js:40
+E @ index-o4nJcGMy.js:25
+_ @ index-o4nJcGMy.js:25Understand this error
+index-o4nJcGMy.js:272 [Draft Debug] Full error details: {error: Error: 404: {"message":"Draft not found"}
+    at Lv (https://mok-sports-draft-mokfantasysport.repli…, errorMessage: '404: {"message":"Draft not found"}', draftId: '46160cd7-595b-4f70-9956-795ea53993ff', connectionStatus: 'connected', hasToken: true, …}
