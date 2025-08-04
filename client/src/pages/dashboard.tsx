@@ -12,6 +12,7 @@ import { useLocation } from "wouter";
 import { usePushNotifications } from "@/hooks/use-push-notifications";
 import { NotificationPrompt } from "@/components/notification-prompt";
 import { PWADebugPanel } from "@/components/pwa-debug-panel";
+import { useSubscriptionManager } from "@/hooks/use-subscription-manager";
 
 export default function DashboardPage() {
   const { user, logout } = useAuth();
@@ -19,6 +20,7 @@ export default function DashboardPage() {
   const queryClient = useQueryClient();
   const [, setLocation] = useLocation();
   const { permission } = usePushNotifications();
+  const subscriptionManager = useSubscriptionManager();
   
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [joinDialogOpen, setJoinDialogOpen] = useState(false);

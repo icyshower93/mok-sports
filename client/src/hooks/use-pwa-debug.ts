@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useSubscriptionManager } from './use-subscription-manager';
 
 interface PWADebugInfo {
   isStandalone: boolean;
@@ -15,6 +16,8 @@ interface PWADebugInfo {
 }
 
 export function usePWADebug() {
+  const subscriptionManager = useSubscriptionManager();
+  
   const [debugInfo, setDebugInfo] = useState<PWADebugInfo>({
     isStandalone: false,
     isPWA: false,
@@ -62,23 +65,19 @@ export function usePWADebug() {
       
       // Check service worker
       let serviceWorkerRegistered = false;
-      let hasActiveSubscription = false;
-      let subscriptionEndpoint = null;
       
       if ('serviceWorker' in navigator) {
         try {
           const registration = await navigator.serviceWorker.getRegistration();
           serviceWorkerRegistered = !!registration;
-          
-          if (registration && registration.pushManager) {
-            const subscription = await registration.pushManager.getSubscription();
-            hasActiveSubscription = !!subscription;
-            subscriptionEndpoint = subscription?.endpoint || null;
-          }
         } catch (error) {
           addLog(`Service worker check failed: ${error}`);
         }
       }
+
+      // Use subscription manager for accurate subscription status
+      const hasActiveSubscription = subscriptionManager.hasActiveSubscription;
+      const subscriptionEndpoint = subscriptionManager.subscriptionEndpoint;
 
       const newDebugInfo = {
         isStandalone,
@@ -99,7 +98,11 @@ export function usePWADebug() {
       addLog(`PWA Status Check Complete`);
       addLog(`Standalone: ${isStandalone}, iOS: ${isIOSDevice}, HTTPS: ${isHTTPS}`);
       addLog(`Permission: ${notificationPermission}, Push: ${pushSupported}`);
-      addLog(`SW Registered: ${serviceWorkerRegistered}, Subscription: ${hasActiveSubscription}`);
+      addLog(`SW Registered: ${serviceWorkerRegistered}, Active Subscription: ${hasActiveSubscription}`);
+      
+      if (subscriptionManager.lastRefreshTime) {
+        addLog(`Last subscription refresh: ${new Date(subscriptionManager.lastRefreshTime).toLocaleTimeString()}`);
+      }
       
       return newDebugInfo;
     } catch (error) {
@@ -187,6 +190,8 @@ export function usePWADebug() {
     testNotificationFlow,
     logSubscriptionCreation,
     logSubscriptionPost,
-    clearLogs: () => setLogs([])
+    clearLogs: () => setLogs([]),
+    subscriptionManager,
+    manualRefreshSubscription: subscriptionManager.manualRefresh
   };
 }

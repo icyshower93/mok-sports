@@ -7,7 +7,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
 import { ChevronDown, ChevronUp, RefreshCw, Smartphone, Wifi } from 'lucide-react';
 
 export function PWADebugPanel() {
-  const { debugInfo, logs, addLog, checkPWAStatus, testNotificationFlow, clearLogs } = usePWADebug();
+  const { debugInfo, logs, addLog, checkPWAStatus, testNotificationFlow, clearLogs, subscriptionManager, manualRefreshSubscription } = usePWADebug();
   const [isExpanded, setIsExpanded] = useState(false);
 
   const StatusBadge = ({ condition, label }: { condition: boolean; label: string }) => (
@@ -85,13 +85,23 @@ export function PWADebugPanel() {
 
             {/* Subscription Details */}
             {debugInfo.subscriptionEndpoint && (
-              <div className="text-xs text-gray-600 dark:text-gray-400">
-                <strong>Subscription:</strong> {debugInfo.subscriptionEndpoint.substring(0, 50)}...
+              <div className="text-xs text-gray-600 dark:text-gray-400 space-y-1">
+                <div><strong>Subscription:</strong> {debugInfo.subscriptionEndpoint.substring(0, 50)}...</div>
+                {subscriptionManager.lastRefreshTime && (
+                  <div><strong>Last Refresh:</strong> {new Date(subscriptionManager.lastRefreshTime).toLocaleString()}</div>
+                )}
+                <div><strong>Refresh Count:</strong> {subscriptionManager.refreshCount}</div>
+                {subscriptionManager.isRefreshing && (
+                  <div className="text-blue-600 dark:text-blue-400">🔄 Refreshing subscription...</div>
+                )}
+                {subscriptionManager.error && (
+                  <div className="text-red-600 dark:text-red-400">❌ Error: {subscriptionManager.error}</div>
+                )}
               </div>
             )}
 
             {/* Action Buttons */}
-            <div className="flex gap-2">
+            <div className="flex gap-2 flex-wrap">
               <Button 
                 variant="outline" 
                 size="sm" 
@@ -99,7 +109,17 @@ export function PWADebugPanel() {
                 className="flex items-center gap-1"
               >
                 <RefreshCw className="h-3 w-3" />
-                Refresh Status
+                Check Status
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={manualRefreshSubscription}
+                disabled={subscriptionManager.isRefreshing}
+                className="flex items-center gap-1"
+              >
+                <RefreshCw className={`h-3 w-3 ${subscriptionManager.isRefreshing ? 'animate-spin' : ''}`} />
+                Refresh Subscription
               </Button>
               <Button 
                 variant="outline" 
