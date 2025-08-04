@@ -237,39 +237,81 @@ export default function DraftPage() {
     return conference === 'AFC' ? 'bg-blue-500' : 'bg-red-500';
   };
 
-  const renderTeamGrid = (conferenceTeams: Record<string, NflTeam[]>) => {
-    return Object.entries(conferenceTeams).map(([division, divisionTeams]) => (
+  const renderConferenceTeams = (conference: 'AFC' | 'NFC') => {
+    // Get all teams from available teams and picks to create comprehensive list
+    const allTeams = [...(state.availableTeams || [])];
+    const draftedTeams = state.picks?.map(p => p.nflTeam) || [];
+    
+    // Combine available and drafted teams for complete view
+    const conferenceTeams = [...allTeams, ...draftedTeams]
+      .filter(team => team.conference === conference)
+      .reduce((acc, team) => {
+        if (!acc.some(t => t.id === team.id)) {
+          acc.push(team);
+        }
+        return acc;
+      }, [] as NflTeam[]);
+
+    // Group by division
+    const divisions = conferenceTeams.reduce((acc, team) => {
+      if (!acc[team.division]) acc[team.division] = [];
+      acc[team.division].push(team);
+      return acc;
+    }, {} as Record<string, NflTeam[]>);
+
+    return Object.entries(divisions).map(([division, divisionTeams]) => (
       <div key={division} className="mb-6">
         <h4 className="text-sm font-semibold text-muted-foreground mb-3 uppercase tracking-wide">
           {division}
         </h4>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          {divisionTeams.map((team) => (
-            <Button
-              key={team.id}
-              variant={selectedTeam === team.id ? "default" : "outline"}
-              className={`p-3 h-auto justify-start ${
-                selectedTeam === team.id ? 'ring-2 ring-fantasy-purple' : ''
-              }`}
-              onClick={() => setSelectedTeam(team.id)}
-              disabled={!state?.canMakePick || !isCurrentUser}
-            >
-              <div className="flex items-center space-x-3">
-                <img 
-                  src={team.logoUrl} 
-                  alt={`${team.name} logo`}
-                  className="w-8 h-8"
-                  onError={(e) => {
-                    e.currentTarget.style.display = 'none';
-                  }}
-                />
-                <div className="text-left">
-                  <div className="font-semibold text-sm">{team.city}</div>
-                  <div className="text-xs text-muted-foreground">{team.name}</div>
+        <div className="grid grid-cols-1 gap-2">
+          {divisionTeams.map((team) => {
+            const isDrafted = state.picks?.some(p => p.nflTeam.id === team.id);
+            const draftedBy = isDrafted ? state.picks?.find(p => p.nflTeam.id === team.id) : null;
+            const isAvailable = state.availableTeams?.some(t => t.id === team.id);
+            
+            return (
+              <Button
+                key={team.id}
+                variant={selectedTeam === team.id ? "default" : "outline"}
+                className={`p-3 h-auto justify-start relative ${
+                  selectedTeam === team.id ? 'ring-2 ring-fantasy-purple' : ''
+                } ${isDrafted ? 'opacity-60' : ''}`}
+                onClick={() => isAvailable && setSelectedTeam(team.id)}
+                disabled={!state?.canMakePick || !isCurrentUser || isDrafted}
+              >
+                <div className="flex items-center space-x-3 w-full">
+                  <img 
+                    src={team.logoUrl} 
+                    alt={`${team.name} logo`}
+                    className="w-8 h-8"
+                    onError={(e) => {
+                      e.currentTarget.style.display = 'none';
+                    }}
+                  />
+                  <div className="text-left flex-1">
+                    <div className="font-semibold text-sm">{team.city}</div>
+                    <div className="text-xs text-muted-foreground">{team.name}</div>
+                  </div>
+                  
+                  {isDrafted && draftedBy && (
+                    <div className="text-right">
+                      <div className="text-xs font-medium text-red-600">DRAFTED</div>
+                      <div className="text-xs text-muted-foreground">
+                        R{draftedBy.round} - {draftedBy.user.name}
+                      </div>
+                    </div>
+                  )}
+                  
+                  {isAvailable && !isDrafted && (
+                    <div className="text-xs text-green-600 font-medium">
+                      Available
+                    </div>
+                  )}
                 </div>
-              </div>
-            </Button>
-          ))}
+              </Button>
+            );
+          })}
         </div>
       </div>
     ));
@@ -445,9 +487,9 @@ export default function DraftPage() {
               <Card>
                 <CardHeader className="pb-3">
                   <div className="flex items-center justify-between">
-                    <CardTitle className="text-lg">Available Teams</CardTitle>
+                    <CardTitle className="text-lg">NFL Teams</CardTitle>
                     <div className="text-sm text-muted-foreground">
-                      {(teamsData as any)?.availableCount || 0} / {(teamsData as any)?.totalTeams || 32} remaining
+                      {state.availableTeams?.length || 0} available • {state.picks?.length || 0} drafted
                     </div>
                   </div>
                 </CardHeader>
@@ -470,25 +512,24 @@ export default function DraftPage() {
                   )}
 
                   <ScrollArea className="h-96">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      {/* AFC Conference */}
-                      <div>
-                        <div className="flex items-center space-x-2 mb-4">
-                          <div className="w-3 h-3 rounded-full bg-blue-500" />
-                          <h3 className="text-lg font-semibold">AFC</h3>
-                        </div>
-                        {teams.AFC && renderTeamGrid(teams.AFC)}
-                      </div>
-
-                      {/* NFC Conference */}
-                      <div>
-                        <div className="flex items-center space-x-2 mb-4">
-                          <div className="w-3 h-3 rounded-full bg-red-500" />
-                          <h3 className="text-lg font-semibold">NFC</h3>
-                        </div>
-                        {teams.NFC && renderTeamGrid(teams.NFC)}
-                      </div>
-                    </div>
+                    <Tabs defaultValue="afc" className="w-full">
+                      <TabsList className="grid w-full grid-cols-2 mb-4">
+                        <TabsTrigger value="afc">
+                          AFC ({(state.availableTeams?.filter(team => team.conference === 'AFC')?.length || 0)} available)
+                        </TabsTrigger>
+                        <TabsTrigger value="nfc">
+                          NFC ({(state.availableTeams?.filter(team => team.conference === 'NFC')?.length || 0)} available)
+                        </TabsTrigger>
+                      </TabsList>
+                      
+                      <TabsContent value="afc" className="space-y-4">
+                        {renderConferenceTeams('AFC')}
+                      </TabsContent>
+                      
+                      <TabsContent value="nfc" className="space-y-4">
+                        {renderConferenceTeams('NFC')}
+                      </TabsContent>
+                    </Tabs>
                   </ScrollArea>
                 </CardContent>
               </Card>
