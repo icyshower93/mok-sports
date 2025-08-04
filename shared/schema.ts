@@ -116,6 +116,7 @@ export const insertPushSubscriptionSchema = createInsertSchema(pushSubscriptions
   p256dhKey: true,
   authKey: true,
   userAgent: true,
+  isActive: true,
 });
 
 // Types

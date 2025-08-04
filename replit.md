@@ -47,8 +47,18 @@ This setup allows testing the complete league workflow including:
 - Enhanced service worker to broadcast activation events
 
 **Current League Status**: Test League 1 (EEW2YU) - FULL (6/6 members)
-- Sky Evans (Creator) - Push subscription auto-refresh system active
+- Sky Evans (Creator) - Auto-refresh system fixed, notifications working 
 - Mok Sports + 4 test users + Jordan Smith
+
+## Critical Fix Completed (August 2025)
+**Issue**: Push subscriptions were being created but marked as inactive due to missing `isActive: true` in subscription data.
+
+**Solution**: Fixed subscription creation in server storage layer:
+- Added explicit `isActive: true` to subscription data
+- Fixed JWT authentication for auto-refresh endpoint  
+- Enhanced debugging and logging for subscription creation
+- Verified notification system sends to active subscriptions
+- Auto-refresh system now properly creates active subscriptions
 
 # System Architecture
 

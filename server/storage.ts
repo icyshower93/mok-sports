@@ -240,20 +240,27 @@ export class DatabaseStorage implements IStorage {
       userId,
       endpoint: subscription.endpoint,
       p256dhKey: subscription.keys.p256dh,
-      authKey: subscription.keys.auth
+      authKey: subscription.keys.auth,
+      isActive: true  // CRITICAL FIX: Explicitly set isActive to true
     };
+
+    console.log(`[Storage] Creating push subscription for user ${userId}:`, {
+      endpoint: subscription.endpoint?.substring(0, 50) + '...',
+      hasKeys: !!subscription.keys
+    });
 
     // First, deactivate any existing subscriptions for this user
     await db.update(pushSubscriptions)
       .set({ isActive: false })
       .where(eq(pushSubscriptions.userId, userId));
 
-    // Create new subscription
+    // Create new subscription with isActive: true
     const [pushSub] = await db
       .insert(pushSubscriptions)
       .values(subscriptionData)
       .returning();
     
+    console.log(`[Storage] Successfully created subscription with ID: ${pushSub.id}, isActive: ${pushSub.isActive}`);
     return pushSub;
   }
 

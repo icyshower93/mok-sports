@@ -536,8 +536,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(401).json({ message: "Not authenticated - no auth_token cookie" });
       }
 
-      const jwt = await import("jsonwebtoken");
-      const user = jwt.verify(token, process.env.JWT_SECRET || "mok-sports-jwt-secret-fallback-key-12345") as any;
+      const { verify } = await import("jsonwebtoken");
+      const user = verify(token, process.env.JWT_SECRET || "mok-sports-jwt-secret-fallback-key-12345") as any;
       if (!user || !user.id) {
         return res.status(401).json({ message: "Invalid token format" });
       }
