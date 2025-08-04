@@ -387,20 +387,29 @@ export class SnakeDraftManager {
     let nextRound = draft.currentRound;
     let nextPick = draft.currentPick + 1;
     
-    // Check if round is complete
-    if ((nextPick - 1) % totalUsers === 0 && nextPick > totalUsers) {
+    console.log(`🔄 Advancing draft from Round ${draft.currentRound}, Pick ${draft.currentPick} to Pick ${nextPick}`);
+    
+    // Check if we need to advance to next round
+    // Each round has exactly totalUsers picks
+    const currentRoundStartPick = (draft.currentRound - 1) * totalUsers + 1;
+    const currentRoundEndPick = draft.currentRound * totalUsers;
+    
+    if (nextPick > currentRoundEndPick) {
       nextRound++;
       nextPick = (nextRound - 1) * totalUsers + 1;
+      console.log(`🔄 Advancing to Round ${nextRound}, Pick ${nextPick}`);
     }
     
-    // Check if draft is complete
-    if (nextPick > totalPicks) {
+    // Check if draft is complete (all rounds finished)
+    if (nextRound > draft.totalRounds) {
+      console.log(`🎉 Draft complete! All ${draft.totalRounds} rounds finished with ${totalPicks} total picks`);
       await this.storage.completeDraft(draftId);
       return await this.getDraftState(draftId);
     }
     
     // Update draft progress
     await this.storage.updateDraftProgress(draftId, nextRound, nextPick);
+    console.log(`📊 Updated draft to Round ${nextRound}, Pick ${nextPick}`);
     
     // Start timer for next pick
     const nextUserId = this.getCurrentPickUser({
