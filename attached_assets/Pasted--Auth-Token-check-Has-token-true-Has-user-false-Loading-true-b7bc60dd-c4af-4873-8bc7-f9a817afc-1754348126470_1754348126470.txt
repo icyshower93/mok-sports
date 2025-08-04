@@ -1,0 +1,95 @@
+[Auth] Token check - Has token: true Has user: false Loading: true
+b7bc60dd-c4af-4873-8bc7-f9a817afc429:1 Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner.
+index-OHF5AvRP.js:272 [App] Draft route matched with params: Object
+index-OHF5AvRP.js:272 [App] Current location: https://mok-sports-draft-mokfantasysport.replit.app/draft/b7bc60dd-c4af-4873-8bc7-f9a817afc429
+index-OHF5AvRP.js:272 [Draft] Component render started
+index-OHF5AvRP.js:272 [Draft] All useState hooks declared
+index-OHF5AvRP.js:272 [Draft] All hooks declared, starting conditional logic
+index-OHF5AvRP.js:272 [WebSocket] Attempting connection for draft: b7bc60dd-c4af-4873-8bc7-f9a817afc429 user: d8873675-274c-46f9-ab48-00955c81d875
+index-OHF5AvRP.js:272 [WebSocket] Connecting to: wss://mok-sports-draft-mokfantasysport.replit.app/draft-ws?userId=d8873675-274c-46f9-ab48-00955c81d875&draftId=b7bc60dd-c4af-4873-8bc7-f9a817afc429
+index-OHF5AvRP.js:272 [WebSocket] Current location: https://mok-sports-draft-mokfantasysport.replit.app/draft/b7bc60dd-c4af-4873-8bc7-f9a817afc429
+index-OHF5AvRP.js:272 [WebSocket] Protocol detected: wss:
+index-OHF5AvRP.js:272 [Draft] === STARTING DRAFT FETCH ===
+index-OHF5AvRP.js:272 [Draft] Draft ID: b7bc60dd-c4af-4873-8bc7-f9a817afc429
+index-OHF5AvRP.js:272 [Draft] Auth status - User: Mok Sports Authenticated: false Loading: false
+index-OHF5AvRP.js:272 [Draft] Token available: true
+index-OHF5AvRP.js:272 [Draft] Current URL: https://mok-sports-draft-mokfantasysport.replit.app/draft/b7bc60dd-c4af-4873-8bc7-f9a817afc429
+index-OHF5AvRP.js:272 [Draft] Current pathname: /draft/b7bc60dd-c4af-4873-8bc7-f9a817afc429
+index-OHF5AvRP.js:272 [Draft] Making API request to: /api/drafts/b7bc60dd-c4af-4873-8bc7-f9a817afc429
+index-OHF5AvRP.js:272 [Draft] Timer expiration useEffect called
+index-OHF5AvRP.js:228 [Auth] Token check - Has token: true Has user: true Loading: false
+index-OHF5AvRP.js:272 [App] Draft route matched with params: Object
+index-OHF5AvRP.js:272 [App] Current location: https://mok-sports-draft-mokfantasysport.replit.app/draft/b7bc60dd-c4af-4873-8bc7-f9a817afc429
+index-OHF5AvRP.js:272 [Draft] Component render started
+index-OHF5AvRP.js:272 [Draft] All useState hooks declared
+index-OHF5AvRP.js:272 [Draft] All hooks declared, starting conditional logic
+index-OHF5AvRP.js:228 [SubscriptionManager] 6:55:14 PM - Permission is granted and no active subscription - auto-creating subscription
+index-OHF5AvRP.js:228 [AutoPushRefresh] Legacy hook delegating to SubscriptionManager
+sw.js?v=1754348114183:15 [SW] Service worker starting, version: v1.4.0-ios-push-fix
+sw.js?v=1754348114183:201 [SW] Service worker script loaded successfully
+sw.js?v=1754348114183:19 [SW] Installing service worker, version: v1.4.0-ios-push-fix
+index-OHF5AvRP.js:228 [SW Hook] Service worker registered successfully
+sw.js?v=1754348114183:23 [SW] Caching static files
+index-OHF5AvRP.js:272 [App] Draft route matched with params: Object
+index-OHF5AvRP.js:272 [App] Current location: https://mok-sports-draft-mokfantasysport.replit.app/draft/b7bc60dd-c4af-4873-8bc7-f9a817afc429
+index-OHF5AvRP.js:272 [Draft] Component render started
+index-OHF5AvRP.js:272 [Draft] All useState hooks declared
+index-OHF5AvRP.js:272 [Draft] All hooks declared, starting conditional logic
+index-OHF5AvRP.js:272 [App] Draft route matched with params: Object
+index-OHF5AvRP.js:272 [App] Current location: https://mok-sports-draft-mokfantasysport.replit.app/draft/b7bc60dd-c4af-4873-8bc7-f9a817afc429
+index-OHF5AvRP.js:272 [Draft] Component render started
+index-OHF5AvRP.js:272 [Draft] All useState hooks declared
+index-OHF5AvRP.js:272 [Draft] All hooks declared, starting conditional logic
+sw.js?v=1754348114183:26 [SW] Static files cached successfully
+index-OHF5AvRP.js:272 [WebSocket] Successfully connected to draft: b7bc60dd-c4af-4873-8bc7-f9a817afc429 for user: d8873675-274c-46f9-ab48-00955c81d875
+index-OHF5AvRP.js:272 [WebSocket] Connected to draft successfully
+index-OHF5AvRP.js:272 [Draft] Component render started
+index-OHF5AvRP.js:272 [Draft] All useState hooks declared
+index-OHF5AvRP.js:272 [Draft] All hooks declared, starting conditional logic
+index-OHF5AvRP.js:272 [Draft] Response received: Object
+index-OHF5AvRP.js:272 [Draft] Successfully fetched draft data: Object
+index-OHF5AvRP.js:272 [Draft] === DRAFT FETCH SUCCESS ===
+index-OHF5AvRP.js:272 [Draft] Component render started
+index-OHF5AvRP.js:272 [Draft] All useState hooks declared
+index-OHF5AvRP.js:272 [Draft] All hooks declared, starting conditional logic
+index-OHF5AvRP.js:272 [Draft] Updating local timer from server: 0
+index-OHF5AvRP.js:272 [Draft] Timer expiration useEffect called
+index-OHF5AvRP.js:272 [Draft] Component render started
+index-OHF5AvRP.js:272 [Draft] All useState hooks declared
+index-OHF5AvRP.js:272 [Draft] All hooks declared, starting conditional logic
+index-OHF5AvRP.js:272 [Draft] Component render started
+index-OHF5AvRP.js:272 [Draft] All useState hooks declared
+index-OHF5AvRP.js:272 [Draft] All hooks declared, starting conditional logic
+index-OHF5AvRP.js:228 [SubscriptionManager] 6:55:14 PM - Starting subscription refresh...
+index-OHF5AvRP.js:272 [App] Draft route matched with params: Object
+index-OHF5AvRP.js:272 [App] Current location: https://mok-sports-draft-mokfantasysport.replit.app/draft/b7bc60dd-c4af-4873-8bc7-f9a817afc429
+index-OHF5AvRP.js:272 [Draft] Component render started
+index-OHF5AvRP.js:272 [Draft] All useState hooks declared
+index-OHF5AvRP.js:272 [Draft] All hooks declared, starting conditional logic
+index-OHF5AvRP.js:228 [SubscriptionManager] 6:55:14 PM - Found existing subscription - unsubscribing...
+index-OHF5AvRP.js:228 [SubscriptionManager] 6:55:14 PM - Existing subscription unsubscribed
+index-OHF5AvRP.js:228 [SubscriptionManager] 6:55:14 PM - Creating new push subscription...
+sw.js?v=1754348114183:37 [SW] Activating service worker, version: v1.4.0-ios-push-fix
+sw.js?v=1754348114183:43 [SW] Found caches: Array(2)
+sw.js?v=1754348114183:56 [SW] Service worker activated and controlling all clients
+index-OHF5AvRP.js:228 [SubscriptionManager] 6:55:15 PM - Sending subscription to server: https://fcm.googleapis.com/fcm/send/ff0CFaOCdn0:AP...
+index-OHF5AvRP.js:228 [SubscriptionManager] 6:55:15 PM - Server response: 201 
+index-OHF5AvRP.js:228 [SubscriptionManager] 6:55:15 PM - Subscription registered successfully: Subscription registered successfully
+index-OHF5AvRP.js:272 [App] Draft route matched with params: Object
+index-OHF5AvRP.js:272 [App] Current location: https://mok-sports-draft-mokfantasysport.replit.app/draft/b7bc60dd-c4af-4873-8bc7-f9a817afc429
+index-OHF5AvRP.js:272 [Draft] Component render started
+index-OHF5AvRP.js:272 [Draft] All useState hooks declared
+index-OHF5AvRP.js:272 [Draft] All hooks declared, starting conditional logic
+sw.js?v=1754348114183:87 [SW] Serving /manifest.json from cache
+sw.js?v=1754348114183:87 [SW] Serving /draft/b7bc60dd-c4af-4873-8bc7-f9a817afc429 from cache
+sw.js?v=1754348114183:91 [SW] Fetching /assets/index-Cn_hjswP.css from network
+index-OHF5AvRP.js:272 [Draft] === STARTING DRAFT FETCH ===
+index-OHF5AvRP.js:272 [Draft] Draft ID: b7bc60dd-c4af-4873-8bc7-f9a817afc429
+index-OHF5AvRP.js:272 [Draft] Auth status - User: Mok Sports Authenticated: true Loading: false
+index-OHF5AvRP.js:272 [Draft] Token available: true
+index-OHF5AvRP.js:272 [Draft] Current URL: https://mok-sports-draft-mokfantasysport.replit.app/draft/b7bc60dd-c4af-4873-8bc7-f9a817afc429
+index-OHF5AvRP.js:272 [Draft] Current pathname: /draft/b7bc60dd-c4af-4873-8bc7-f9a817afc429
+index-OHF5AvRP.js:272 [Draft] Making API request to: /api/drafts/b7bc60dd-c4af-4873-8bc7-f9a817afc429
+index-OHF5AvRP.js:272 [Draft] Response received: {status: 200, statusText: '', headers: {…}}
+index-OHF5AvRP.js:272 [Draft] Successfully fetched draft data: {state: {…}, isCurrentUser: false, currentPlayer: {…}}
+index-OHF5AvRP.js:272 [Draft] === DRAFT FETCH SUCCESS ===
