@@ -390,7 +390,7 @@ export function LeagueWaiting() {
                     });
                   }}
                   onDraftStarted={() => {
-                    setLocation(`/draft?id=${league.draftId}`);
+                    setLocation(`/draft/${league.draftId}`);
                   }}
                 />
               )}
@@ -403,7 +403,7 @@ export function LeagueWaiting() {
                     <span className="font-semibold text-fantasy-purple">Draft is Live!</span>
                   </div>
                   <Button 
-                    onClick={() => setLocation(`/draft?id=${league.draftId}`)}
+                    onClick={() => setLocation(`/draft/${league.draftId}`)}
                     className="w-full"
                     size="lg"
                   >

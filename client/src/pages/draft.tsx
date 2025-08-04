@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useLocation } from "wouter";
+import { useLocation, useParams } from "wouter";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -57,8 +57,9 @@ export default function DraftPage() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   
-  // Extract draft ID from URL params
-  const draftId = new URLSearchParams(location.split('?')[1] || '').get('id');
+  // Extract draft ID from URL params using wouter
+  const params = useParams();
+  const draftId = (params as any).draftId;
   const [selectedTeam, setSelectedTeam] = useState<string | null>(null);
 
   // Redirect if no draft ID
