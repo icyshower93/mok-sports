@@ -326,7 +326,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Test endpoint to manually trigger league full notification
+  // Debug endpoint - commented out for production (uncomment to re-enable testing)
+  /*
   app.post("/api/leagues/test-full-notification", async (req, res) => {
     try {
       const { leagueId } = req.body;
@@ -370,6 +371,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Failed to test notification", error: error instanceof Error ? error.message : String(error) });
     }
   });
+  */
 
   // Remove member from league (creator only)
   app.post("/api/leagues/:id/remove-member", async (req, res) => {
@@ -499,6 +501,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   registerSubscriptionValidationRoutes(app);
   
   // Test notification endpoint for debugging (no auth required for testing)
+  // Debug endpoints - commented out for production (uncomment to re-enable testing)
+  /*
   app.post("/api/test/league-full-notification", async (req, res) => {
     try {
       const { leagueId } = req.body;
@@ -535,7 +539,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Test direct notification to specific user (no auth required for testing)
+  /*
   app.post("/api/test/user-notification", async (req, res) => {
     try {
       const { userId, message, title } = req.body;
@@ -623,7 +627,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Debug endpoint to check push subscription status
   app.get("/api/test/push-status/:email", async (req, res) => {
     try {
       const { email } = req.params;
@@ -656,6 +659,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Failed to check push status" });
     }
   });
+  */
 
   // Push notification routes
   app.get("/api/push/vapid-key", async (req, res) => {

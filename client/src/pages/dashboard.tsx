@@ -11,8 +11,9 @@ import { useToast } from "@/hooks/use-toast";
 import { useLocation } from "wouter";
 import { usePushNotifications } from "@/hooks/use-push-notifications";
 import { NotificationPrompt } from "@/components/notification-prompt";
-import { PWADebugPanel } from "@/components/pwa-debug-panel";
-import { PushDiagnosticPanel } from "@/components/push-diagnostic-panel";
+// Debug panels removed for production - can be re-enabled by uncommenting imports below
+// import { PWADebugPanel } from "@/components/pwa-debug-panel";
+// import { PushDiagnosticPanel } from "@/components/push-diagnostic-panel";
 import { PersistentPushManager } from "@/components/persistent-push-manager";
 
 export default function DashboardPage() {
@@ -51,20 +52,14 @@ export default function DashboardPage() {
     }
   }, [userLeagues, setLocation]);
 
-  // Show notification prompt for newly logged in users (ALWAYS SHOW FOR TESTING)
+  // Show notification prompt for newly logged in users
   useEffect(() => {
-    console.warn('[CRITICAL DEBUG] Dashboard notification prompt effect:', {
-      hasUser: !!user,
-      userEmail: user?.email,
-      permission,
-      shouldShow: user && permission === 'default'
-    });
-    
     if (user && permission === 'default') {
-      console.warn('[CRITICAL DEBUG] Setting showNotificationPrompt to true for testing');
-      setShowNotificationPrompt(true);
-      // Remove session storage restrictions for testing
-      // sessionStorage.setItem('notification-prompt-shown', 'true');
+      const hasShownBefore = sessionStorage.getItem('notification-prompt-shown');
+      if (!hasShownBefore) {
+        setShowNotificationPrompt(true);
+        sessionStorage.setItem('notification-prompt-shown', 'true');
+      }
     }
   }, [user, permission]);
 
@@ -302,24 +297,25 @@ export default function DashboardPage() {
             </Dialog>
           </div>
 
-          {(permission === 'default' || permission === 'denied') && !showNotificationPrompt && (
+          {showNotificationPrompt && (
             <div className="mt-8">
               <NotificationPrompt
-                onPermissionGranted={() => showWelcomeNotification()}
-                onDismiss={() => {}}
-                forceShow={permission === 'denied'}
+                onPermissionGranted={() => {
+                  showWelcomeNotification();
+                  setShowNotificationPrompt(false);
+                }}
+                onDismiss={() => setShowNotificationPrompt(false)}
+                forceShow={false}
               />
             </div>
           )}
           
-          {/* Persistent Push Notification Manager */}
-          <PersistentPushManager showManualControls={true} />
+          {/* Persistent Push Notification Manager - background operation only */}
+          <PersistentPushManager showManualControls={false} />
           
-          {/* PWA Debug Panel for iOS testing */}
-          <PWADebugPanel />
-          
-          {/* Push Notification Diagnostics Panel */}
-          <PushDiagnosticPanel />
+          {/* Debug panels removed for production - uncomment below to re-enable */}
+          {/* <PWADebugPanel /> */}
+          {/* <PushDiagnosticPanel /> */}
         </div>
       </div>
     </MainLayout>
