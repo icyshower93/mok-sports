@@ -31,6 +31,7 @@ The server is built with Express.js using TypeScript, following a modular archit
 - **State Persistence**: Draft state persists across page reloads and reconnections with automatic timer restoration
 - **Robot Testing System**: 4 automated bot users (Alpha, Beta, Gamma, Delta Bot) for comprehensive draft testing
 - **Timer Recovery**: Enhanced timer system with immediate expiration handling and server restart resilience
+- **React Error #310 Resolved**: Fixed critical Rules of Hooks violations where useEffect was called after conditional returns (January 4, 2025)
 
 ### Testing Infrastructure  
 - **Draft Reset Functionality**: Complete draft state reset for iterative testing

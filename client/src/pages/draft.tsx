@@ -57,6 +57,8 @@ interface DraftState {
 }
 
 export default function DraftPage() {
+  console.log('[Draft] Component render started');
+  
   const [location, navigate] = useLocation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -73,6 +75,8 @@ export default function DraftPage() {
   
   // Timer transition state - MUST be declared before any conditional returns
   const [isTransitioning, setIsTransitioning] = useState(false);
+
+  console.log('[Draft] All useState hooks declared');
 
   // Initialize WebSocket connection for real-time updates
   const { connectionStatus, isConnected } = useDraftWebSocket(draftId);
@@ -242,6 +246,22 @@ export default function DraftPage() {
     },
   });
 
+  // CRITICAL: Timer expiration effect MUST be here before any returns
+  // Handle timer expiration flash effect only (FIXED: stable dependencies)
+  useEffect(() => {
+    console.log('[Draft] Timer expiration useEffect called');
+    if (localTimeRemaining === 0 && draftData?.state?.timeRemaining > 0) {
+      console.log('[Draft] Setting transition state');
+      setIsTransitioning(true);
+      const timeout = setTimeout(() => {
+        setIsTransitioning(false);
+      }, 2000);
+      return () => clearTimeout(timeout);
+    }
+  }, [localTimeRemaining, draftData?.state?.timeRemaining]);
+
+  console.log('[Draft] All hooks declared, starting conditional logic');
+
   const handleMakePick = () => {
     if (selectedTeam) {
       makePickMutation.mutate(selectedTeam);
@@ -320,17 +340,6 @@ export default function DraftPage() {
   const isCurrentUser = draftData.isCurrentUser;
   const currentPlayer = draftData.currentPlayer;
   const teams = teamsData?.teams || {};
-  
-  // Handle timer expiration flash effect only (FIXED: stable dependencies)
-  useEffect(() => {
-    if (localTimeRemaining === 0 && draftData?.state?.timeRemaining > 0) {
-      setIsTransitioning(true);
-      const timeout = setTimeout(() => {
-        setIsTransitioning(false);
-      }, 2000);
-      return () => clearTimeout(timeout);
-    }
-  }, [localTimeRemaining, draftData?.state?.timeRemaining]); // Use draftData ref instead of state
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
