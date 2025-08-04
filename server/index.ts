@@ -1,6 +1,8 @@
 import express, { type Request, Response, NextFunction } from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import path from "path";
+import fs from "fs";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 
@@ -85,6 +87,34 @@ app.use((req, res, next) => {
     await draftManager.recoverActiveTimers();
   } catch (error) {
     console.error('Failed to recover timers on startup:', error);
+  }
+
+  // Serve built static assets for PWA compatibility BEFORE Vite middleware
+  const distPath = path.resolve(import.meta.dirname, "..", "dist", "public");
+  if (fs.existsSync(distPath)) {
+    console.log('[Server] Serving built assets from:', distPath);
+    
+    // Serve assets with correct MIME types
+    app.use('/assets', express.static(path.join(distPath, 'assets'), {
+      setHeaders: (res, filePath) => {
+        if (filePath.endsWith('.js')) {
+          res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
+          console.log('[Server] Serving JS file:', filePath);
+        } else if (filePath.endsWith('.css')) {
+          res.setHeader('Content-Type', 'text/css; charset=utf-8');
+          console.log('[Server] Serving CSS file:', filePath);
+        }
+      }
+    }));
+    
+    // Serve other static files (manifest, sw.js, etc.)
+    app.use(express.static(distPath, {
+      index: false // Don't serve index.html automatically
+    }));
+    
+    console.log('[Server] Static file serving configured for PWA');
+  } else {
+    console.log('[Server] No built assets found at:', distPath);
   }
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
