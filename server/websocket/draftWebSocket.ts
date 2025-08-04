@@ -56,6 +56,14 @@ export class DraftWebSocketManager {
     this.wss.on('listening', () => {
       console.log('[WebSocket] WebSocket server started listening');
     });
+
+    // Force immediate connection logging for debugging
+    setInterval(() => {
+      const totalConnections = Array.from(this.connections.values()).reduce((sum, conns) => sum + conns.length, 0);
+      if (totalConnections > 0) {
+        console.log('[WebSocket] Status check - Total active connections:', totalConnections);
+      }
+    }, 10000); // Every 10 seconds
   }
 
   private handleConnection(ws: WebSocket, request: any) {
