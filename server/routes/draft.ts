@@ -248,6 +248,61 @@ export default function setupDraftRoutes(app: any, storage: IStorage, webSocketM
     }
   });
 
+  // Get draft by league ID - needed for frontend navigation
+  app.get("/api/drafts/league/:leagueId", async (req: any, res: any) => {
+    try {
+      const user = getAuthenticatedUser(req);
+      if (!user) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+      
+      const { leagueId } = req.params;
+      console.log(`[Draft] Looking for draft in league ${leagueId}`);
+      
+      // Verify user is in the league
+      const league = await storage.getLeague(leagueId);
+      if (!league) {
+        console.log(`[Draft] League ${leagueId} not found`);
+        return res.status(404).json({ message: "League not found" });
+      }
+
+      const isInLeague = league.members.some(m => m.id === user.id);
+      if (!isInLeague) {
+        return res.status(403).json({ message: "Not authorized to view this league's draft" });
+      }
+
+      // Get the draft for this league
+      const draft = await storage.getLeagueDraft(leagueId);
+      if (!draft) {
+        console.log(`[Draft] No draft found for league ${leagueId}`);
+        return res.status(404).json({ message: "No draft exists for this league" });
+      }
+
+      console.log(`[Draft] Found draft ${draft.id} for league ${leagueId}, status: ${draft.status}`);
+
+      // Get draft picks
+      const picks = await storage.getDraftPicks(draft.id);
+      
+      // Get available teams
+      const availableTeams = await storage.getAvailableNflTeams(draft.id);
+      
+      // Get active timer if any
+      const activeTimer = await storage.getActiveDraftTimer(draft.id);
+
+      res.json({
+        draft,
+        picks,
+        availableTeams,
+        activeTimer,
+        timeRemaining: activeTimer?.timeRemaining || 0
+      });
+
+    } catch (error) {
+      console.error('Error getting draft by league ID:', error);
+      res.status(500).json({ message: "Failed to get draft" });
+    }
+  });
+
   // Get draft state
   app.get("/api/drafts/:draftId",  async (req: any, res: any) => {
     try {

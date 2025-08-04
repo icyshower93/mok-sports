@@ -76,7 +76,19 @@ export default function DraftPage() {
   // Fetch draft state with polling for real-time updates
   const { data: draftData, isLoading, error } = useQuery({
     queryKey: ['draft', draftId],
-    queryFn: () => apiRequest(`/api/drafts/${draftId}`).then(r => r.json()),
+    queryFn: async () => {
+      const response = await fetch(`/api/drafts/${draftId}`, {
+        credentials: 'include'
+      });
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error(`Draft fetch failed (${response.status}):`, errorText);
+        throw new Error(errorText || 'Failed to fetch draft');
+      }
+      
+      return response.json();
+    },
     enabled: !!draftId,
     refetchInterval: 2000, // Poll every 2 seconds for real-time updates
   });
@@ -144,6 +156,9 @@ export default function DraftPage() {
   }
 
   if (error || !draftData) {
+    console.error('Draft error:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    
     return (
       <div className="min-h-screen bg-gradient-to-br from-background to-secondary/20 flex items-center justify-center">
         <Card className="max-w-md">
@@ -153,11 +168,27 @@ export default function DraftPage() {
             </div>
             <h2 className="text-xl font-semibold mb-2">Draft Not Found</h2>
             <p className="text-muted-foreground mb-4">
-              The draft you're looking for doesn't exist or you don't have permission to view it.
+              {errorMessage.includes('404') ? 
+                'No draft exists for this league. The draft may need to be created first.' :
+                errorMessage.includes('403') ?
+                'You are not authorized to view this draft.' :
+                'Unable to load the draft room. Please try again.'
+              }
             </p>
-            <Button onClick={() => navigate('/dashboard')}>
-              Return to Dashboard
-            </Button>
+            <div className="text-xs text-muted-foreground mb-4 p-2 bg-secondary rounded">
+              <strong>Debug info:</strong><br/>
+              Draft ID: {draftId}<br/>
+              Error: {errorMessage}<br/>
+              WebSocket: {connectionStatus}
+            </div>
+            <div className="space-y-2">
+              <Button onClick={() => navigate('/dashboard')} variant="outline">
+                Return to Dashboard
+              </Button>
+              <Button onClick={() => window.location.reload()}>
+                Try Again
+              </Button>
+            </div>
           </CardContent>
         </Card>
       </div>
