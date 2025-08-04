@@ -30,8 +30,8 @@ function getAuthenticatedUser(req: any) {
   }
 }
 
-export default function setupDraftRoutes(app: any, storage: IStorage) {
-  const draftManager = new SnakeDraftManager(storage);
+export default function setupDraftRoutes(app: any, storage: IStorage, webSocketManager?: any, robotManager?: any) {
+  const draftManager = new SnakeDraftManager(storage, {}, webSocketManager, robotManager);
 
   // Create a new draft for a league
   app.post("/api/drafts", async (req: any, res: any) => {
@@ -95,6 +95,69 @@ export default function setupDraftRoutes(app: any, storage: IStorage) {
         });
       }
       res.status(500).json({ message: "Failed to create draft" });
+    }
+  });
+
+  // Reset draft for testing purposes
+  app.post("/api/drafts/:draftId/reset", async (req: any, res: any) => {
+    try {
+      const user = getAuthenticatedUser(req);
+      if (!user) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+
+      const { draftId } = req.params;
+      const draft = await storage.getDraft(draftId);
+      if (!draft) {
+        return res.status(404).json({ message: "Draft not found" });
+      }
+
+      // Verify user is league creator
+      const league = await storage.getLeague(draft.leagueId);
+      if (!league || league.creatorId !== user.id) {
+        return res.status(403).json({ message: "Only league creator can reset draft" });
+      }
+
+      // Reset draft to pre-draft state
+      await storage.deleteDraft(draftId);
+      await storage.updateLeague(league.id, { 
+        draftStarted: false 
+      });
+
+      res.json({ message: "Draft reset successfully" });
+    } catch (error) {
+      console.error('Error resetting draft:', error);
+      res.status(500).json({ message: "Failed to reset draft" });
+    }
+  });
+
+  // Add robots to league for testing
+  app.post("/api/leagues/:leagueId/add-robots", async (req: any, res: any) => {
+    try {
+      const user = getAuthenticatedUser(req);
+      if (!user) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+
+      const { leagueId } = req.params;
+      const league = await storage.getLeague(leagueId);
+      if (!league) {
+        return res.status(404).json({ message: "League not found" });
+      }
+
+      if (league.creatorId !== user.id) {
+        return res.status(403).json({ message: "Only league creator can add robots" });
+      }
+
+      if (robotManager) {
+        await robotManager.addRobotsToLeague(leagueId);
+        res.json({ message: "Robots added to league successfully" });
+      } else {
+        res.status(500).json({ message: "Robot manager not available" });
+      }
+    } catch (error) {
+      console.error('Error adding robots:', error);
+      res.status(500).json({ message: "Failed to add robots" });
     }
   });
 

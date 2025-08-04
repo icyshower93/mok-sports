@@ -12,6 +12,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { queryClient } from "@/lib/queryClient";
 import { DraftNotificationReminder } from "@/components/draft-notification-reminder";
 import DraftControls from "@/components/draft-controls";
+import { DraftTestingPanel } from "@/components/draft-testing-panel";
 
 interface League {
   id: string;
@@ -411,6 +412,18 @@ export function LeagueWaiting() {
                   </Button>
                 </div>
               )}
+
+              {/* Testing Panel */}
+              <DraftTestingPanel
+                leagueId={league.id}
+                draftId={league.draftId}
+                isCreator={user?.id === league.creatorId}
+                connectionStatus="disconnected"
+                onReset={() => {
+                  queryClient.invalidateQueries({ queryKey: [`/api/leagues/${leagueId}`] });
+                  setLocation(`/league/waiting?id=${leagueId}`);
+                }}
+              />
 
               {/* League Status */}
               <div className="text-center pt-4 border-t">

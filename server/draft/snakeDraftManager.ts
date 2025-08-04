@@ -46,9 +46,15 @@ export class SnakeDraftManager {
   private storage: IStorage;
   private timerIntervals: Map<string, NodeJS.Timeout> = new Map();
   private draftConfig: DraftConfig;
+  private draftStateCache: Map<string, DraftState> = new Map();
+  private lastTimerUpdate: Map<string, number> = new Map();
+  private webSocketManager?: any; // Will be injected
+  private robotManager?: any; // Will be injected for robot handling
 
-  constructor(storage: IStorage, config?: Partial<DraftConfig>) {
+  constructor(storage: IStorage, config?: Partial<DraftConfig>, webSocketManager?: any, robotManager?: any) {
     this.storage = storage;
+    this.webSocketManager = webSocketManager;
+    this.robotManager = robotManager;
     this.draftConfig = {
       totalRounds: 5,
       pickTimeLimit: 60,
@@ -181,6 +187,18 @@ export class SnakeDraftManager {
       // Get the pick with user and team data
       const picks = await this.storage.getDraftPicks(draftId);
       const pickWithData = picks.find(p => p.id === newPick.id);
+
+      // Broadcast pick to all connected users via WebSocket
+      if (this.webSocketManager) {
+        if (pickRequest.isAutoPick) {
+          this.webSocketManager.broadcastAutoPick(draftId, pickWithData, nextState);
+        } else {
+          this.webSocketManager.broadcastPickMade(draftId, pickWithData, nextState);
+        }
+      }
+
+      // Update cache
+      this.draftStateCache.set(draftId, nextState);
 
       return {
         success: true,
@@ -368,6 +386,14 @@ export class SnakeDraftManager {
     
     if (nextUserId) {
       await this.startPickTimer(draftId, nextUserId, nextRound, nextPick);
+      
+      // If next user is a robot, trigger auto-pick after delay
+      if (this.robotManager?.isRobot(nextUserId)) {
+        const delay = this.robotManager.simulateRobotPickDelay();
+        setTimeout(() => {
+          this.simulateBotPick(draftId, nextUserId);
+        }, delay);
+      }
     }
     
     return await this.getDraftState(draftId);
@@ -445,6 +471,37 @@ export class SnakeDraftManager {
     }
 
     return { isViolation: false, allowOverride: false, message: '' };
+  }
+
+  /**
+   * Simulate a bot pick for automated testing
+   */
+  private async simulateBotPick(draftId: string, userId: string): Promise<void> {
+    try {
+      if (!this.robotManager?.isRobot(userId)) {
+        return;
+      }
+
+      console.log(`[SnakeDraftManager] Simulating bot pick for ${userId}`);
+      
+      // Get available teams
+      const availableTeams = await this.storage.getAvailableNflTeams(draftId);
+      if (availableTeams.length === 0) {
+        console.log('[SnakeDraftManager] No available teams for bot pick');
+        return;
+      }
+
+      // Get robot's preferred team
+      const preferredTeams = this.robotManager.getRobotTeamPreference(userId, availableTeams);
+      const selectedTeam = preferredTeams[0];
+
+      if (selectedTeam) {
+        await this.makePick(draftId, userId, selectedTeam.id, true);
+        console.log(`[SnakeDraftManager] Bot ${userId} auto-picked ${selectedTeam.name}`);
+      }
+    } catch (error) {
+      console.error('[SnakeDraftManager] Error in bot pick simulation:', error);
+    }
   }
 
   private async getConferenceEligibleTeams(

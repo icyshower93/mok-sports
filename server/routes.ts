@@ -661,9 +661,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
   */
 
-  // Draft routes
+  // Initialize Robot manager for draft system  
+  const { RobotManager } = await import("./testing/robotManager.js");
+  const robotManager = new RobotManager(storage);
+  
+  // Initialize robots
+  await robotManager.initializeRobots();
+  console.log('[System] Robot users initialized for testing');
+
+  // Draft routes with Robot support (WebSocket will be added to server after creation)
   const { default: setupDraftRoutes } = await import("./routes/draft.js");
-  setupDraftRoutes(app, storage);
+  setupDraftRoutes(app, storage, null, robotManager);
+
+  // Note: WebSocket manager will be initialized after server creation
 
   // Push notification routes
   app.get("/api/push/vapid-key", async (req, res) => {

@@ -146,7 +146,8 @@ export class DatabaseStorage implements IStorage {
         joinedAt: member.joinedAt.toISOString(),
       })),
       draftId: draft?.id,
-      draftStatus: draft?.status
+      draftStatus: draft?.status,
+      draftStarted: !!draft && draft.status !== 'not_started'
     };
   }
 
@@ -216,6 +217,24 @@ export class DatabaseStorage implements IStorage {
       .from(leagueMembers)
       .where(and(eq(leagueMembers.userId, userId), eq(leagueMembers.leagueId, leagueId)));
     return !!existing;
+  }
+
+  async updateLeague(leagueId: string, updates: Partial<League>): Promise<void> {
+    await db.update(leagues)
+      .set(updates)
+      .where(eq(leagues.id, leagueId));
+  }
+
+  async deleteDraft(draftId: string): Promise<void> {
+    // Delete all related data
+    await db.delete(draftTimers).where(eq(draftTimers.draftId, draftId));
+    await db.delete(draftPicks).where(eq(draftPicks.draftId, draftId));
+    await db.delete(drafts).where(eq(drafts.id, draftId));
+  }
+
+  async getUserByEmail(email: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.email, email));
+    return user || undefined;
   }
 
   async getLeagueMembers(leagueId: string): Promise<Array<{ userId: string; joinedAt: string }>> {

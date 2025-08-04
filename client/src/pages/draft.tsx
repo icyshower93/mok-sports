@@ -7,9 +7,10 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { ScrollArea } from "@/components/ui/scroll-area";
 // import { Separator } from "@/components/ui/separator";
-import { Clock, Users, Trophy, Zap, Shield, Star } from "lucide-react";
+import { Clock, Users, Trophy, Zap, Shield, Star, Wifi, WifiOff } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
+import { useDraftWebSocket } from "@/hooks/use-draft-websocket";
 
 interface NflTeam {
   id: string;
@@ -61,6 +62,9 @@ export default function DraftPage() {
   const params = useParams();
   const draftId = (params as any).draftId;
   const [selectedTeam, setSelectedTeam] = useState<string | null>(null);
+
+  // Initialize WebSocket connection for real-time updates
+  const { connectionStatus, isConnected } = useDraftWebSocket(draftId);
 
   // Redirect if no draft ID
   useEffect(() => {
