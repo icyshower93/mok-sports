@@ -598,7 +598,7 @@ export class SnakeDraftManager {
       pick: pickNumber
     };
     
-    await this.redisStateManager.setTimer(draftId, redisTimer);
+    await this.redisStateManager.setTimer(draftId, userId, this.draftConfig.pickTimeLimit);
 
     // Create database timer record for persistence
     await this.storage.createDraftTimer({
@@ -614,13 +614,16 @@ export class SnakeDraftManager {
     // Set up local interval for broadcasting updates
     const timerKey = `${draftId}-${userId}`;
     
+    // Initialize local timer counter
+    let localTimeRemaining = this.draftConfig.pickTimeLimit;
+    
     const interval = setInterval(async () => {
-      // Get current time remaining from Redis
-      const timeRemaining = await this.redisStateManager.getTimeRemaining(draftId);
+      // Decrement local timer
+      localTimeRemaining--;
       
-      console.log(`🕐 Timer tick for user ${userId}: ${timeRemaining}s remaining`);
+      console.log(`🕐 Timer tick for user ${userId}: ${localTimeRemaining}s remaining`);
       
-      if (timeRemaining <= 0) {
+      if (localTimeRemaining <= 0) {
         console.log(`⏰ Timer expired for user ${userId}, triggering expiration handler`);
         clearInterval(interval);
         this.timerIntervals.delete(timerKey);
@@ -637,14 +640,17 @@ export class SnakeDraftManager {
             console.error(`❌ Timer expiration handler failed for ${userId}:`, error);
           });
       } else {
+        // Update Redis with current time remaining
+        await this.redisStateManager.updateTimeRemaining(draftId, localTimeRemaining);
+        
         // Broadcast timer update
         if (this.webSocketManager) {
-          this.webSocketManager.broadcastTimerUpdate(draftId, timeRemaining);
+          this.webSocketManager.broadcastTimerUpdate(draftId, localTimeRemaining);
         }
         
         // Update database timer for persistence
         try {
-          await this.storage.updateDraftTimer(draftId, userId, timeRemaining);
+          await this.storage.updateDraftTimer(draftId, userId, localTimeRemaining);
         } catch (error) {
           console.error(`Failed to update timer: ${error}`);
         }
