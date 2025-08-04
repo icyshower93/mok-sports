@@ -66,76 +66,7 @@ export class SnakeDraftManager {
     // Skip timer recovery for now - focus on fixing core timer mechanism
   }
 
-  /**
-   * Recover timers that were lost due to server restart
-   */
-  private async recoverLostTimers(): Promise<void> {
-    try {
-      console.log('🔄 Checking for lost timers...');
-      
-      // Get active timers using the storage methods
-      const activeDrafts = await this.storage.getActiveDrafts();
-      const activeTimers = [];
-      
-      for (const draft of activeDrafts) {
-        const timer = await this.storage.getActiveDraftTimer(draft.id);
-        if (timer) {
-          activeTimers.push({
-            ...timer,
-            status: draft.status
-          });
-        }
-      }
-
-      for (const timer of activeTimers) {
-        const elapsed = Math.floor((Date.now() - new Date(timer.timer_started_at).getTime()) / 1000);
-        const timeLeft = Math.max(0, timer.time_remaining - elapsed);
-        
-        if (timeLeft <= 0) {
-          console.log(`⚠️ Found expired timer for user ${timer.user_id}, processing immediately...`);
-          await this.handleTimerExpired(timer.draft_id, timer.user_id);
-        } else {
-          console.log(`🕐 Restarting timer for user ${timer.user_id} with ${timeLeft}s remaining`);
-          this.restartTimer(timer.draft_id, timer.user_id, timeLeft);
-        }
-      }
-    } catch (error) {
-      console.error('Error recovering lost timers:', error);
-    }
-  }
-
-  /**
-   * Restart an existing timer with correct remaining time
-   */
-  private restartTimer(draftId: string, userId: string, timeLeft: number): void {
-    const timerKey = `${draftId}-${userId}`;
-    
-    // Clear any existing timer first
-    const existingInterval = this.timerIntervals.get(timerKey);
-    if (existingInterval) {
-      clearInterval(existingInterval);
-    }
-    
-    const interval = setInterval(async () => {
-      timeLeft--;
-      
-      if (timeLeft <= 0) {
-        console.log(`⏰ Recovered timer expired for user ${userId}, processing auto-pick`);
-        clearInterval(interval);
-        this.timerIntervals.delete(timerKey);
-        
-        await this.handleTimerExpired(draftId, userId);
-      } else {
-        try {
-          await this.storage.updateDraftTimer(draftId, userId, timeLeft);
-        } catch (error) {
-          console.error(`Failed to update recovered timer: ${error}`);
-        }
-      }
-    }, 1000);
-    
-    this.timerIntervals.set(timerKey, interval);
-  }
+  // Removed broken timer recovery methods - focusing on core timer fix
 
   /**
    * Creates a new draft for a league with randomized snake order
@@ -635,6 +566,41 @@ export class SnakeDraftManager {
       }
       return true;
     });
+  }
+
+  /**
+   * Force restart all active timers (for debugging server restart issues)
+   */
+  // Manual timer restart method removed due to storage interface limitations
+
+  /**
+   * Create timer interval without database record (for restarts)
+   */
+  private createTimerInterval(draftId: string, userId: string, initialTime: number): void {
+    const timerKey = `${draftId}-${userId}`;
+    let timeLeft = initialTime;
+    
+    const interval = setInterval(async () => {
+      timeLeft--;
+      console.log(`🕐 Timer tick for user ${userId}: ${timeLeft}s remaining`);
+      
+      if (timeLeft <= 0) {
+        console.log(`⏰ Timer expired for user ${userId}, processing auto-pick`);
+        clearInterval(interval);
+        this.timerIntervals.delete(timerKey);
+        
+        // Execute expiration immediately
+        await this.handleTimerExpired(draftId, userId);
+      } else {
+        try {
+          await this.storage.updateDraftTimer(draftId, userId, timeLeft);
+        } catch (error) {
+          console.error(`Failed to update timer: ${error}`);
+        }
+      }
+    }, 1000);
+    
+    this.timerIntervals.set(timerKey, interval);
   }
 
   /**
