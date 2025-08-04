@@ -182,7 +182,7 @@ export default function DraftPage() {
     }
   });
 
-  // Update local timer when we get new server data
+  // Update local timer when we get new server data (FIXED: removed dependency loop)
   useEffect(() => {
     if (draftData?.state?.timeRemaining !== undefined) {
       setLocalTimeRemaining(draftData.state.timeRemaining);
@@ -190,18 +190,20 @@ export default function DraftPage() {
     }
   }, [draftData?.state?.timeRemaining]);
 
-  // Local countdown timer for smooth second-by-second updates
+  // Local countdown timer for smooth second-by-second updates (FIXED: stable dependencies)
   useEffect(() => {
-    const interval = setInterval(() => {
-      setLocalTimeRemaining(prev => {
-        const elapsed = Math.floor((Date.now() - lastServerUpdate) / 1000);
-        const newTime = (draftData?.state?.timeRemaining || 0) - elapsed;
-        return Math.max(0, newTime);
-      });
-    }, 1000);
+    let interval: NodeJS.Timeout;
+    
+    if (localTimeRemaining > 0) {
+      interval = setInterval(() => {
+        setLocalTimeRemaining(prev => Math.max(0, prev - 1));
+      }, 1000);
+    }
 
-    return () => clearInterval(interval);
-  }, [lastServerUpdate, draftData?.state?.timeRemaining]);
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [localTimeRemaining > 0]); // Only depend on whether timer should be active
 
   // Fetch available teams
   const { data: teamsData } = useQuery({
@@ -326,41 +328,19 @@ export default function DraftPage() {
     isCurrentUser: draftData.isCurrentUser
   });
   
-  // Enhanced timer state with transition effects
-  const [displayTimeRemaining, setDisplayTimeRemaining] = useState(localTimeRemaining || state?.timeRemaining || 0);
+  // Simplified timer display - use localTimeRemaining directly (FIXED: removed duplicate timer)
   const [isTransitioning, setIsTransitioning] = useState(false);
-
-  // Sync with server timer updates and handle smooth countdown
+  
+  // Handle timer expiration flash effect only
   useEffect(() => {
-    const serverTime = localTimeRemaining || state?.timeRemaining || 0;
-    
-    if (serverTime !== displayTimeRemaining && !isTransitioning) {
-      setDisplayTimeRemaining(serverTime);
+    if (localTimeRemaining === 0 && state?.timeRemaining > 0) {
+      setIsTransitioning(true);
+      const timeout = setTimeout(() => {
+        setIsTransitioning(false);
+      }, 2000);
+      return () => clearTimeout(timeout);
     }
-    
-    // Start client-side countdown if timer is active
-    if (serverTime > 0) {
-      const interval = setInterval(() => {
-        setDisplayTimeRemaining(prev => {
-          if (prev <= 1) {
-            // Handle timer expiration with flash effect
-            setIsTransitioning(true);
-            clearInterval(interval);
-            
-            // Reset transition state after brief flash
-            setTimeout(() => {
-              setIsTransitioning(false);
-            }, 2000);
-            
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-
-      return () => clearInterval(interval);
-    }
-  }, [localTimeRemaining, state?.timeRemaining, state?.currentUserId]);
+  }, [localTimeRemaining, state?.timeRemaining]);
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -529,11 +509,11 @@ export default function DraftPage() {
                       {/* Timer */}
                       <div>
                         <div className={`text-3xl font-bold mb-3 font-mono transition-colors duration-300 ${
-                          displayTimeRemaining <= 0 ? 'text-red-500 animate-pulse' : 
-                          displayTimeRemaining <= 10 ? 'text-red-500 animate-pulse' : 
-                          displayTimeRemaining <= 30 ? 'text-orange-500' : 'text-foreground'
+                          localTimeRemaining <= 0 ? 'text-red-500 animate-pulse' : 
+                          localTimeRemaining <= 10 ? 'text-red-500 animate-pulse' : 
+                          localTimeRemaining <= 30 ? 'text-orange-500' : 'text-foreground'
                         }`}>
-                          {formatTime(displayTimeRemaining)}
+                          {formatTime(localTimeRemaining)}
                         </div>
                         
                         {/* Enhanced Progress Bar */}
@@ -543,20 +523,20 @@ export default function DraftPage() {
                           >
                             <div 
                               className={`h-full rounded-full relative overflow-hidden ${
-                                displayTimeRemaining <= 0 ? 'bg-red-500 animate-pulse shadow-lg' :
-                                displayTimeRemaining <= 10 ? 'bg-gradient-to-r from-red-500 to-red-600 shadow-red-500/50' : 
-                                displayTimeRemaining <= 30 ? 'bg-gradient-to-r from-orange-400 to-orange-500 shadow-orange-500/40' : 
-                                displayTimeRemaining <= 45 ? 'bg-gradient-to-r from-yellow-400 to-orange-400 shadow-yellow-500/40' :
+                                localTimeRemaining <= 0 ? 'bg-red-500 animate-pulse shadow-lg' :
+                                localTimeRemaining <= 10 ? 'bg-gradient-to-r from-red-500 to-red-600 shadow-red-500/50' : 
+                                localTimeRemaining <= 30 ? 'bg-gradient-to-r from-orange-400 to-orange-500 shadow-orange-500/40' : 
+                                localTimeRemaining <= 45 ? 'bg-gradient-to-r from-yellow-400 to-orange-400 shadow-yellow-500/40' :
                                 'bg-gradient-to-r from-green-400 to-green-500 shadow-green-500/40'
                               } ${
-                                displayTimeRemaining <= 10 ? 'shadow-lg' : 'shadow-md'
+                                localTimeRemaining <= 10 ? 'shadow-lg' : 'shadow-md'
                               }`}
                               style={{
-                                width: `${Math.max(0, (displayTimeRemaining / (state.draft.pickTimeLimit || 60)) * 100)}%`,
-                                transition: displayTimeRemaining <= 0 ? 'none' : 'width 1s linear, background-color 0.5s ease, box-shadow 0.3s ease',
-                                boxShadow: displayTimeRemaining <= 10 ? 
-                                  `0 0 15px ${displayTimeRemaining <= 5 ? 'rgba(239, 68, 68, 0.8)' : 'rgba(239, 68, 68, 0.5)'}` :
-                                  displayTimeRemaining <= 30 ? '0 0 8px rgba(251, 146, 60, 0.4)' : 
+                                width: `${Math.max(0, (localTimeRemaining / (state.draft.pickTimeLimit || 60)) * 100)}%`,
+                                transition: localTimeRemaining <= 0 ? 'none' : 'width 1s linear, background-color 0.5s ease, box-shadow 0.3s ease',
+                                boxShadow: localTimeRemaining <= 10 ? 
+                                  `0 0 15px ${localTimeRemaining <= 5 ? 'rgba(239, 68, 68, 0.8)' : 'rgba(239, 68, 68, 0.5)'}` :
+                                  localTimeRemaining <= 30 ? '0 0 8px rgba(251, 146, 60, 0.4)' : 
                                   '0 0 5px rgba(34, 197, 94, 0.3)'
                               }}
                             >
@@ -564,7 +544,7 @@ export default function DraftPage() {
                               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-30 animate-pulse"></div>
                               
                               {/* Extra urgent pulsing overlay */}
-                              {displayTimeRemaining <= 5 && displayTimeRemaining > 0 && (
+                              {localTimeRemaining <= 5 && localTimeRemaining > 0 && (
                                 <div className="absolute inset-0 bg-red-300 opacity-40 animate-ping"></div>
                               )}
                             </div>
@@ -574,13 +554,13 @@ export default function DraftPage() {
                           <div className="flex justify-between items-center mt-2 text-xs">
                             <span className="text-muted-foreground">0:00</span>
                             <span className={`font-bold text-sm ${
-                              displayTimeRemaining <= 10 ? 'text-red-500 animate-pulse' : 
-                              displayTimeRemaining <= 30 ? 'text-orange-500' : 
+                              localTimeRemaining <= 10 ? 'text-red-500 animate-pulse' : 
+                              localTimeRemaining <= 30 ? 'text-orange-500' : 
                               'text-muted-foreground'
                             }`}>
-                              {displayTimeRemaining <= 5 ? '⚡ CRITICAL' :
-                               displayTimeRemaining <= 10 ? '🚨 URGENT' : 
-                               displayTimeRemaining <= 30 ? '⏰ Hurry!' : 
+                              {localTimeRemaining <= 5 ? '⚡ CRITICAL' :
+                               localTimeRemaining <= 10 ? '🚨 URGENT' : 
+                               localTimeRemaining <= 30 ? '⏰ Hurry!' : 
                                '⏱️ Time remaining'}
                             </span>
                             <span className="text-muted-foreground">{formatTime(state.draft.pickTimeLimit || 60)}</span>
