@@ -148,6 +148,14 @@ export function useAutoPushRefresh(options: AutoPushRefreshOptions = {}) {
         };
 
         log('Sending subscription to server:', subscriptionData);
+        
+        // Always log this attempt even without debug flag for critical debugging
+        console.warn('[CRITICAL DEBUG] Auto-refresh attempting subscription creation:', {
+          endpoint: subscriptionData.endpoint?.substring(0, 50) + '...',
+          hasKeys: !!(subscriptionData.keys?.p256dh && subscriptionData.keys?.auth),
+          timestamp: new Date().toISOString()
+        });
+        
         const response = await fetch('/api/subscribe', {
           method: 'POST',
           headers: {
@@ -160,6 +168,13 @@ export function useAutoPushRefresh(options: AutoPushRefreshOptions = {}) {
         const responseText = await response.text();
         log('Server response status:', response.status);
         log('Server response text:', responseText);
+        
+        // Always log response for critical debugging
+        console.warn('[CRITICAL DEBUG] Auto-refresh server response:', {
+          status: response.status,
+          responseText: responseText.substring(0, 200),
+          timestamp: new Date().toISOString()
+        });
 
         if (!response.ok) {
           throw new Error(`Server responded with status: ${response.status} - ${responseText}`);
