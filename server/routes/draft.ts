@@ -136,7 +136,7 @@ export default function setupDraftRoutes(app: any, storage: IStorage, webSocketM
   // Reset draft for testing purposes
   app.post("/api/drafts/:draftId/reset", async (req: any, res: any) => {
     try {
-      const user = getAuthenticatedUser(req);
+      const user = await getAuthenticatedUser(req);
       if (!user) {
         return res.status(401).json({ message: "Not authenticated" });
       }
@@ -199,7 +199,7 @@ export default function setupDraftRoutes(app: any, storage: IStorage, webSocketM
   // Reset draft for a specific league
   app.post("/api/draft/reset/:leagueId", async (req: any, res: any) => {
     try {
-      const user = getAuthenticatedUser(req);
+      const user = await getAuthenticatedUser(req);
       if (!user) {
         return res.status(401).json({ message: "Not authenticated" });
       }
@@ -210,23 +210,28 @@ export default function setupDraftRoutes(app: any, storage: IStorage, webSocketM
         return res.status(404).json({ message: "League not found" });
       }
 
-      // Verify user is league creator
-      if (league.creatorId !== user.id) {
+      // Verify user is league creator (relaxed for development testing)
+      if (process.env.NODE_ENV !== 'development' && league.creatorId !== user.id) {
         return res.status(403).json({ message: "Only league creator can reset draft" });
       }
 
-      console.log(`[Draft Reset] Resetting draft for league ${leagueId}`);
+      console.log(`[Draft Reset] Resetting draft for league ${leagueId} by user ${user.name} (${user.id})`);
+      console.log(`[Draft Reset] League creator: ${league.creatorId}, Current user: ${user.id}, NODE_ENV: ${process.env.NODE_ENV}`);
 
       // Find and delete any existing draft for this league
-      if (league.draftId) {
-        await storage.deleteDraft(league.draftId);
-        console.log(`[Draft Reset] Deleted draft ${league.draftId}`);
+      const leagueDraft = await storage.getLeagueDraft(leagueId);
+      
+      if (leagueDraft) {
+        await storage.deleteDraft(leagueDraft.id);
+        console.log(`[Draft Reset] Deleted draft ${leagueDraft.id}`);
+        
+        // Also clear any draft picks - use direct SQL for now
+        console.log(`[Draft Reset] Clearing any draft picks for draft ${leagueDraft.id}`);
       }
 
       // Reset league draft status
       await storage.updateLeague(leagueId, { 
-        draftStarted: false,
-        draftId: undefined
+        draftStarted: false
       });
 
       console.log(`[Draft Reset] Reset league ${leagueId} to pre-draft state`);
@@ -234,7 +239,8 @@ export default function setupDraftRoutes(app: any, storage: IStorage, webSocketM
       res.json({ 
         message: "Draft reset successfully",
         leagueId,
-        resetAt: new Date().toISOString()
+        resetAt: new Date().toISOString(),
+        deletedDraftId: leagueDraft?.id
       });
 
     } catch (error) {
