@@ -28,6 +28,7 @@ The server is built with Express.js using TypeScript, following a modular archit
 - **Robot User Management**: Automated addition/removal of bot users to leagues
 - **Real-Time Monitoring**: WebSocket connection status tracking and automatic reconnection
 - **Timer Diagnostics**: Real-time timer monitoring and manual intervention capabilities for testing
+- **Draft Order Verification**: 6-user snake draft order: Beta Bot → Mok Sports → Delta Bot → Alpha Bot → Gamma Bot → Sky Evans
 
 ## Data Storage Solutions
 
