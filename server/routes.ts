@@ -69,8 +69,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   }
 
-  // Testing login endpoint (development only)
+  // Testing endpoints (development only)
   if (process.env.NODE_ENV === "development") {
+    // Timer recovery endpoint for debugging
+    app.post("/api/testing/timer-recovery", async (req, res) => {
+      try {
+        const { draftManager } = require("./websocket/draftWebSocket");
+        if (draftManager && draftManager.recoverLostTimers) {
+          await draftManager.recoverLostTimers();
+          res.json({ success: true, message: "Timer recovery completed" });
+        } else {
+          res.status(500).json({ error: "Draft manager not available" });
+        }
+      } catch (error) {
+        console.error("Timer recovery error:", error);
+        res.status(500).json({ error: error.message });
+      }
+    });
+
     app.post("/api/auth/testing/login", async (req, res) => {
       try {
         const { userId } = req.body;

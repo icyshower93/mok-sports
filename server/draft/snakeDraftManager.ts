@@ -62,6 +62,73 @@ export class SnakeDraftManager {
       maxTeamsPerConference: 3, // No more than 3 teams from same conference per user
       ...config
     };
+    
+    // Recover any lost timers on startup
+    setTimeout(() => this.recoverLostTimers(), 1000);
+  }
+
+  /**
+   * Recover timers that were lost due to server restart
+   */
+  private async recoverLostTimers(): Promise<void> {
+    try {
+      console.log('🔄 Checking for lost timers...');
+      
+      const activeTimers = await this.storage.query(`
+        SELECT dt.*, d.status 
+        FROM draft_timers dt 
+        JOIN drafts d ON dt.draft_id = d.id 
+        WHERE dt.is_active = true AND d.status = 'active'
+      `);
+
+      for (const timer of activeTimers) {
+        const elapsed = Math.floor((Date.now() - new Date(timer.timer_started_at).getTime()) / 1000);
+        const timeLeft = Math.max(0, timer.time_remaining - elapsed);
+        
+        if (timeLeft <= 0) {
+          console.log(`⚠️ Found expired timer for user ${timer.user_id}, processing immediately...`);
+          await this.handleTimerExpired(timer.draft_id, timer.user_id);
+        } else {
+          console.log(`🕐 Restarting timer for user ${timer.user_id} with ${timeLeft}s remaining`);
+          this.restartTimer(timer.draft_id, timer.user_id, timeLeft);
+        }
+      }
+    } catch (error) {
+      console.error('Error recovering lost timers:', error);
+    }
+  }
+
+  /**
+   * Restart an existing timer with correct remaining time
+   */
+  private restartTimer(draftId: string, userId: string, timeLeft: number): void {
+    const timerKey = `${draftId}-${userId}`;
+    
+    // Clear any existing timer first
+    const existingInterval = this.timerIntervals.get(timerKey);
+    if (existingInterval) {
+      clearInterval(existingInterval);
+    }
+    
+    const interval = setInterval(async () => {
+      timeLeft--;
+      
+      if (timeLeft <= 0) {
+        console.log(`⏰ Recovered timer expired for user ${userId}, processing auto-pick`);
+        clearInterval(interval);
+        this.timerIntervals.delete(timerKey);
+        
+        await this.handleTimerExpired(draftId, userId);
+      } else {
+        try {
+          await this.storage.updateDraftTimer(draftId, userId, timeLeft);
+        } catch (error) {
+          console.error(`Failed to update recovered timer: ${error}`);
+        }
+      }
+    }, 1000);
+    
+    this.timerIntervals.set(timerKey, interval);
   }
 
   /**
@@ -450,10 +517,10 @@ export class SnakeDraftManager {
         clearInterval(interval);
         this.timerIntervals.delete(timerKey);
         
-        // Critical: Call the expiration handler immediately
-        setTimeout(async () => {
-          await this.handleTimerExpired(draftId, userId);
-        }, 100); // Small delay to ensure clean state
+        // Critical: Call the expiration handler immediately without delay
+        this.handleTimerExpired(draftId, userId).catch(error => {
+          console.error(`❌ Timer expiration handler failed for ${userId}:`, error);
+        });
       } else {
         try {
           await this.storage.updateDraftTimer(draftId, userId, timeLeft);
