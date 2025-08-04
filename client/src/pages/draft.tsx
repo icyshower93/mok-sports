@@ -406,49 +406,160 @@ export default function DraftPage() {
                 </CardContent>
               </Card>
 
-              {/* Draft Order */}
+              {/* Snake Draft Order */}
               <Card>
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-lg">Draft Order</CardTitle>
+                  <CardTitle className="text-lg flex items-center space-x-2">
+                    <span>Snake Draft Order</span>
+                    <Badge variant="outline" className="text-xs">Round {state.draft.currentRound}</Badge>
+                  </CardTitle>
+                  <div className="text-xs text-muted-foreground">
+                    Direction changes each round
+                  </div>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-2">
-                    {state.draft.draftOrder?.map((userId, index) => {
-                      const userPicks = state.picks.filter(p => p.user.id === userId);
-                      const isCurrentPick = userId === state.currentUserId;
-                      
-                      return (
-                        <div 
-                          key={userId} 
-                          className={`flex items-center space-x-3 p-2 rounded-lg ${
-                            isCurrentPick ? 'bg-fantasy-purple/10 border border-fantasy-purple' : 'bg-secondary/30'
-                          }`}
-                        >
-                          <div className={`text-sm font-bold w-6 h-6 rounded-full flex items-center justify-center ${
-                            isCurrentPick ? 'bg-fantasy-purple text-white' : 'bg-secondary text-muted-foreground'
-                          }`}>
-                            {index + 1}
+                  {(() => {
+                    // Calculate snake draft order for current round
+                    const baseOrder = state.draft.draftOrder || [];
+                    const isOddRound = state.draft.currentRound % 2 === 1;
+                    const currentRoundOrder = isOddRound ? baseOrder : [...baseOrder].reverse();
+                    
+                    // Find current pick index and calculate upcoming picks
+                    const currentPickIndex = currentRoundOrder.findIndex(userId => userId === state.currentUserId);
+                    const totalPicks = currentRoundOrder.length;
+                    
+                    return (
+                      <div className="space-y-3">
+                        {/* Round Direction Indicator */}
+                        <div className="flex items-center justify-center space-x-2 p-2 bg-secondary/30 rounded-lg">
+                          <div className="text-xs font-medium">
+                            Round {state.draft.currentRound} Direction:
                           </div>
-                          
-                          <div className="flex-1 min-w-0">
-                            <div className="text-sm font-medium truncate">
-                              {userPicks[0]?.user?.name || 'Loading...'}
-                            </div>
-                            <div className="text-xs text-muted-foreground">
-                              {userPicks.length} picks
-                            </div>
+                          <div className="flex items-center space-x-1">
+                            {isOddRound ? (
+                              <>
+                                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                                <div className="text-xs">→</div>
+                                <div className="w-2 h-2 bg-blue-300 rounded-full"></div>
+                                <div className="text-xs">→</div>
+                                <div className="w-2 h-2 bg-blue-100 rounded-full"></div>
+                              </>
+                            ) : (
+                              <>
+                                <div className="w-2 h-2 bg-red-100 rounded-full"></div>
+                                <div className="text-xs">←</div>
+                                <div className="w-2 h-2 bg-red-300 rounded-full"></div>
+                                <div className="text-xs">←</div>
+                                <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                              </>
+                            )}
                           </div>
-                          
-                          {isCurrentPick && (
-                            <Badge variant="default" className="text-xs">
-                              <Clock className="w-3 h-3 mr-1" />
-                              Now
-                            </Badge>
-                          )}
                         </div>
-                      );
-                    })}
-                  </div>
+
+                        {/* Draft Positions */}
+                        <div className="space-y-1">
+                          {currentRoundOrder.map((userId, index) => {
+                            const userPicks = state.picks.filter(p => p.user.id === userId);
+                            const isCurrentPick = userId === state.currentUserId;
+                            const isUpNext = index === currentPickIndex + 1;
+                            const isJustPicked = index === currentPickIndex - 1;
+                            const pickPosition = index + 1;
+                            
+                            // Calculate actual pick number in the draft
+                            const pickNumber = ((state.draft.currentRound - 1) * totalPicks) + pickPosition;
+                            
+                            let statusColor = 'bg-secondary/30';
+                            let statusText = '';
+                            let statusBadge = null;
+                            
+                            if (isCurrentPick) {
+                              statusColor = 'bg-fantasy-purple/20 border-2 border-fantasy-purple';
+                              statusText = 'Drafting Now';
+                              statusBadge = (
+                                <Badge variant="default" className="text-xs animate-pulse">
+                                  <Clock className="w-3 h-3 mr-1" />
+                                  NOW
+                                </Badge>
+                              );
+                            } else if (isUpNext) {
+                              statusColor = 'bg-orange-100 dark:bg-orange-900/30 border border-orange-300';
+                              statusText = 'Up Next';
+                              statusBadge = (
+                                <Badge variant="outline" className="text-xs bg-orange-50 text-orange-700 border-orange-300">
+                                  NEXT
+                                </Badge>
+                              );
+                            } else if (isJustPicked) {
+                              statusColor = 'bg-green-100 dark:bg-green-900/30 border border-green-300';
+                              statusText = 'Just Picked';
+                              statusBadge = (
+                                <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-300">
+                                  DONE
+                                </Badge>
+                              );
+                            }
+                            
+                            return (
+                              <div 
+                                key={userId} 
+                                className={`flex items-center space-x-3 p-3 rounded-lg transition-all ${statusColor}`}
+                              >
+                                {/* Position Number with Direction Arrow */}
+                                <div className="flex items-center space-x-2">
+                                  <div className={`text-sm font-bold w-7 h-7 rounded-full flex items-center justify-center ${
+                                    isCurrentPick ? 'bg-fantasy-purple text-white' : 
+                                    isUpNext ? 'bg-orange-500 text-white' :
+                                    isJustPicked ? 'bg-green-500 text-white' :
+                                    'bg-secondary text-muted-foreground'
+                                  }`}>
+                                    {pickPosition}
+                                  </div>
+                                  
+                                  {/* Snake Direction Indicator */}
+                                  {index < currentRoundOrder.length - 1 && (
+                                    <div className="text-xs text-muted-foreground">
+                                      {isOddRound ? '↓' : '↑'}
+                                    </div>
+                                  )}
+                                </div>
+                                
+                                <div className="flex-1 min-w-0">
+                                  <div className="flex items-center justify-between">
+                                    <div>
+                                      <div className="text-sm font-medium truncate">
+                                        {userPicks[0]?.user?.name || 'Loading...'}
+                                      </div>
+                                      <div className="text-xs text-muted-foreground">
+                                        Pick #{pickNumber} • {userPicks.length} teams drafted
+                                      </div>
+                                    </div>
+                                    {statusBadge}
+                                  </div>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+
+                        {/* Next Round Preview */}
+                        {state.draft.currentRound < state.draft.totalRounds && (
+                          <div className="mt-4 p-3 bg-secondary/20 rounded-lg border border-dashed border-secondary">
+                            <div className="text-xs font-medium text-muted-foreground mb-2">
+                              Round {state.draft.currentRound + 1} Preview:
+                            </div>
+                            <div className="flex items-center space-x-2 text-xs text-muted-foreground">
+                              <span>Direction will be:</span>
+                              {(state.draft.currentRound + 1) % 2 === 1 ? (
+                                <span className="text-blue-600 font-medium">Forward →</span>
+                              ) : (
+                                <span className="text-red-600 font-medium">← Reverse</span>
+                              )}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })()}
                 </CardContent>
               </Card>
 
