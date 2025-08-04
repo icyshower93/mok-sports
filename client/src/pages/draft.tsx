@@ -9,6 +9,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Clock, Users, Trophy, Zap, Shield, Star, Wifi, WifiOff } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { TeamLogo } from "@/components/team-logo";
 import { apiRequest } from "@/lib/queryClient";
 import { useDraftWebSocket } from "@/hooks/use-draft-websocket";
 
@@ -288,13 +289,11 @@ export default function DraftPage() {
                 disabled={!state?.canMakePick || !isCurrentUser || isDrafted}
               >
                 <div className="flex items-center space-x-3 w-full">
-                  <img 
-                    src={team.logoUrl} 
-                    alt={`${team.name} logo`}
-                    className="w-8 h-8"
-                    onError={(e) => {
-                      e.currentTarget.style.display = 'none';
-                    }}
+                  <TeamLogo 
+                    logoUrl={team.logoUrl}
+                    teamCode={team.code}
+                    teamName={`${team.city} ${team.name}`}
+                    size="lg"
                   />
                   <div className="text-left flex-1">
                     <div className="font-semibold text-sm">{team.city}</div>
@@ -463,13 +462,11 @@ export default function DraftPage() {
                     <div className="space-y-2">
                       {state.picks.slice(-8).reverse().map((pick) => (
                         <div key={pick.id} className="flex items-center space-x-3 p-2 rounded-lg bg-secondary/50">
-                          <img 
-                            src={pick.nflTeam.logoUrl} 
-                            alt={`${pick.nflTeam.name} logo`}
-                            className="w-6 h-6"
-                            onError={(e) => {
-                              e.currentTarget.style.display = 'none';
-                            }}
+                          <TeamLogo 
+                            logoUrl={pick.nflTeam.logoUrl}
+                            teamCode={pick.nflTeam.code}
+                            teamName={`${pick.nflTeam.city} ${pick.nflTeam.name}`}
+                            size="md"
                           />
                           <div className="flex-1 min-w-0">
                             <div className="text-sm font-medium truncate">
