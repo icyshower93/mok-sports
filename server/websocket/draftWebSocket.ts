@@ -28,7 +28,14 @@ export class DraftWebSocketManager {
     // Create WebSocket server on /draft-ws path to avoid Vite HMR conflicts
     this.wss = new WebSocketServer({ 
       server, 
-      path: '/draft-ws'
+      path: '/draft-ws',
+      // Add explicit WebSocket handling options for production
+      verifyClient: (info) => {
+        console.log('[WebSocket] Verifying client connection from:', info.origin);
+        console.log('[WebSocket] Request URL:', info.req.url);
+        console.log('[WebSocket] User agent:', info.req.headers['user-agent']);
+        return true; // Allow all connections for now
+      }
     });
 
     this.wss.on('connection', this.handleConnection.bind(this));
@@ -36,20 +43,33 @@ export class DraftWebSocketManager {
     
     console.log('[WebSocket] Draft WebSocket server initialized on /draft-ws');
     console.log('[WebSocket] WebSocket server listening for connections...');
+    console.log('[WebSocket] Server configuration:', {
+      path: '/draft-ws',
+      port: server.listening ? 'attached to HTTP server' : 'not listening'
+    });
     
     // Add additional debug for connection attempts
     this.wss.on('error', (error) => {
       console.error('[WebSocket] WebSocket server error:', error);
     });
+
+    this.wss.on('listening', () => {
+      console.log('[WebSocket] WebSocket server started listening');
+    });
   }
 
   private handleConnection(ws: WebSocket, request: any) {
-    console.log('[WebSocket] New connection attempt, URL:', request.url);
+    console.log('[WebSocket] ========== NEW CONNECTION ATTEMPT ==========');
+    console.log('[WebSocket] Request URL:', request.url);
+    console.log('[WebSocket] Request headers:', JSON.stringify(request.headers, null, 2));
+    console.log('[WebSocket] Remote address:', request.socket?.remoteAddress);
+    
     const { query } = parse(request.url, true);
     const userId = query.userId as string;
     const draftId = query.draftId as string;
     
     console.log('[WebSocket] Parsed query parameters:', { userId, draftId });
+    console.log('[WebSocket] ============================================');
 
     if (!userId || !draftId) {
       console.log('[WebSocket] Connection rejected: missing userId or draftId');

@@ -40,6 +40,8 @@ export function useDraftWebSocket(draftId: string | null) {
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
     const wsUrl = `${protocol}//${window.location.host}/draft-ws?userId=${user.id}&draftId=${draftId}`;
     console.log('[WebSocket] Connecting to:', wsUrl);
+    console.log('[WebSocket] Current location:', window.location.href);
+    console.log('[WebSocket] Protocol detected:', protocol);
     
     const ws = new WebSocket(wsUrl);
     wsRef.current = ws;

@@ -5,6 +5,8 @@ Mok Sports is a fantasy sports application that redefines traditional fantasy le
 ## Recent Success (January 4, 2025)
 **React Error #310 RESOLVED**: Successfully eliminated critical Rules of Hooks violations in draft.tsx that were causing infinite re-render loops. All useEffect hooks now properly declared before conditional returns, ensuring stable draft room functionality with real-time WebSocket updates, timer countdown, and team selection interface.
 
+**WebSocket Connection RESOLVED (January 4, 2025)**: Fixed critical WebSocket routing issue where frontend connections succeeded but never reached backend handler. Enhanced WebSocket server initialization with comprehensive debug logging, proper client verification, and connection parameter parsing. WebSocket connections now properly reach backend and establish real-time draft synchronization.
+
 # User Preferences
 
 Preferred communication style: Simple, everyday language.

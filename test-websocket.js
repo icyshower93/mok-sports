@@ -3,8 +3,8 @@ import WebSocket from 'ws';
 
 console.log('Testing WebSocket connection to draft server...');
 
-// Test connection to the draft WebSocket endpoint
-const ws = new WebSocket('ws://localhost:5000/draft-ws', {
+// Test connection to the draft WebSocket endpoint with proper parameters
+const ws = new WebSocket('ws://localhost:5000/draft-ws?userId=test-user-123&draftId=test-draft-456', {
   headers: {
     'Origin': 'http://localhost:5000'
   }
