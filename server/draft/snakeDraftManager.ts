@@ -235,6 +235,44 @@ export class SnakeDraftManager {
   }
 
   /**
+   * Resets the current pick timer for a user
+   */
+  async resetPickTimer(draftId: string, userId: string): Promise<{ success: boolean; error?: string }> {
+    try {
+      const draft = await this.storage.getDraft(draftId);
+      if (!draft) {
+        return { success: false, error: 'Draft not found' };
+      }
+
+      if (draft.status !== 'active') {
+        return { success: false, error: 'Draft is not active' };
+      }
+
+      // Check if it's the user's turn
+      const currentUser = this.getCurrentPickUser(draft);
+      if (currentUser !== userId) {
+        return { success: false, error: 'Not your turn to pick' };
+      }
+
+      // Stop current timer
+      await this.stopPickTimer(draftId, userId);
+
+      // Start new timer with full time
+      await this.startPickTimer(draftId, userId, draft.currentRound, draft.currentPick);
+
+      console.log(`🔄 Timer reset for user ${userId} in draft ${draftId}`);
+      
+      return { success: true };
+    } catch (error) {
+      console.error('Error resetting timer:', error);
+      return { 
+        success: false, 
+        error: error instanceof Error ? error.message : 'Unknown error' 
+      };
+    }
+  }
+
+  /**
    * Simulates bot picks for testing
    */
   async simulateBotPick(draftId: string, userId: string): Promise<void> {
