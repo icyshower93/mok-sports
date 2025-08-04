@@ -35,6 +35,12 @@ export class DraftWebSocketManager {
     this.startHeartbeat();
     
     console.log('[WebSocket] Draft WebSocket server initialized on /draft-ws');
+    console.log('[WebSocket] WebSocket server listening for connections...');
+    
+    // Add additional debug for connection attempts
+    this.wss.on('error', (error) => {
+      console.error('[WebSocket] WebSocket server error:', error);
+    });
   }
 
   private handleConnection(ws: WebSocket, request: any) {
