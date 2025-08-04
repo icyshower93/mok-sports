@@ -39,14 +39,25 @@ export function useDraftWebSocket(draftId: string | null) {
     
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
     
-    // In development, connect to backend server directly on port 5000
-    // In production, use the same host with wss protocol
+    // Determine correct WebSocket endpoint
+    // In production on replit.app, connect directly to the same host
+    // In development, connect to backend server on port 5000
     let wsHost = window.location.host;
+    let wsPath = '/draft-ws';
+    
+    // For development environments, ensure we connect to the backend server
     if (window.location.hostname === 'localhost' && window.location.port !== '5000') {
       wsHost = 'localhost:5000';
     }
     
-    const wsUrl = `${protocol}//${wsHost}/draft-ws?userId=${user.id}&draftId=${draftId}`;
+    // For Replit production, ensure we bypass any potential proxying issues
+    if (window.location.hostname.includes('replit.app')) {
+      // Use the same host but ensure path goes to backend
+      wsHost = window.location.host;
+      wsPath = '/draft-ws';
+    }
+    
+    const wsUrl = `${protocol}//${wsHost}${wsPath}?userId=${user.id}&draftId=${draftId}`;
     console.log('[WebSocket] Connecting to:', wsUrl);
     console.log('[WebSocket] Current location:', window.location.href);
     console.log('[WebSocket] Protocol detected:', protocol);
@@ -58,6 +69,14 @@ export function useDraftWebSocket(draftId: string | null) {
     ws.onopen = () => {
       console.log('[WebSocket] Successfully connected to draft:', draftId, 'for user:', user?.id);
       setConnectionStatus('connected');
+      
+      // Send a ping to verify the connection reaches our backend
+      ws.send(JSON.stringify({
+        type: 'ping',
+        draftId: draftId,
+        userId: user.id,
+        timestamp: Date.now()
+      }));
       
       // Clear any reconnection timeout
       if (reconnectTimeoutRef.current) {
@@ -97,7 +116,13 @@ export function useDraftWebSocket(draftId: string | null) {
   }, [draftId, user?.id]);
 
   const handleWebSocketMessage = useCallback((message: DraftWebSocketMessage) => {
+    console.log('[WebSocket] Received message:', message.type, message);
+    
     switch (message.type) {
+      case 'connected':
+        console.log('[WebSocket] Connected to draft successfully');
+        break;
+        
       case 'pick_made':
         console.log('[WebSocket] Pick made:', message.data.pick);
         

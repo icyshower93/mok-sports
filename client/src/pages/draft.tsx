@@ -80,6 +80,38 @@ export default function DraftPage() {
 
   // Initialize WebSocket connection for real-time updates
   const { connectionStatus, isConnected } = useDraftWebSocket(draftId);
+  
+  // Timer fallback polling to ensure UI shows current timer
+  useEffect(() => {
+    if (!draftId) return;
+    
+    const pollTimer = setInterval(async () => {
+      try {
+        const response = await fetch(`/api/drafts/${draftId}`);
+        const data = await response.json();
+        if (data.success && data.data.state.timeRemaining !== undefined) {
+          console.log('[Timer Fallback] Updated timer:', data.data.state.timeRemaining, 'seconds');
+          // Update query cache with current timer
+          queryClient.setQueryData(['draft', draftId], (oldData: any) => {
+            if (oldData) {
+              return {
+                ...oldData,
+                state: {
+                  ...oldData.state,
+                  timeRemaining: data.data.state.timeRemaining
+                }
+              };
+            }
+            return data.data;
+          });
+        }
+      } catch (error) {
+        console.error('[Timer Fallback] Error:', error);
+      }
+    }, 2000);
+
+    return () => clearInterval(pollTimer);
+  }, [draftId, queryClient]);
 
   // Redirect if no draft ID
   useEffect(() => {
