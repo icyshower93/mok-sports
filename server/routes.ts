@@ -367,7 +367,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
     } catch (error) {
       console.error(`🧪 [TEST ERROR]`, error);
-      res.status(500).json({ message: "Failed to test notification", error: error.message });
+      res.status(500).json({ message: "Failed to test notification", error: error instanceof Error ? error.message : String(error) });
     }
   });
 

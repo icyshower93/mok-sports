@@ -221,26 +221,33 @@ export class DatabaseStorage implements IStorage {
   getVapidKeys(): { publicKey: string; privateKey: string } {
     try {
       // Use environment variables or generate valid VAPID keys
-      let publicKey: string = process.env.VAPID_PUBLIC_KEY || '';
-      let privateKey: string = process.env.VAPID_PRIVATE_KEY || '';
+      let publicKey: string = process.env.VAPID_PUBLIC_KEY?.trim() || '';
+      let privateKey: string = process.env.VAPID_PRIVATE_KEY?.trim() || '';
       
-      // If no environment keys, generate new ones
-      if (!publicKey || !privateKey) {
+      console.log(`[VAPID] Environment check - Public key length: ${publicKey.length}, Private key length: ${privateKey.length}`);
+      
+      // If no environment keys or they're too short, generate new ones
+      if (!publicKey || !privateKey || publicKey.length < 80 || privateKey.length < 40) {
+        console.log(`[VAPID] Generating new VAPID keys (env keys invalid/missing)`);
         const vapidKeys = webpush.generateVAPIDKeys();
         publicKey = vapidKeys.publicKey;
         privateKey = vapidKeys.privateKey;
-        
+        console.log(`[VAPID] Generated keys - Public: ${publicKey.length} chars, Private: ${privateKey.length} chars`);
+        console.log(`[VAPID] WARNING: Using temporary keys - notifications may fail for existing subscriptions`);
+      } else {
+        console.log(`[VAPID] Using environment VAPID keys`);
       }
       
       // Set up web-push with VAPID details
       webpush.setVapidDetails(
-        'mailto:admin@moksports.com',
+        'mailto:mokfantasysports@gmail.com',
         publicKey,
         privateKey
       );
       
       return { publicKey, privateKey };
     } catch (error) {
+      console.error(`[VAPID] Failed to configure VAPID keys:`, error);
       throw new Error('Failed to generate VAPID keys');
     }
   }

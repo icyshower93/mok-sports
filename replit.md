@@ -1,196 +1,53 @@
 # Overview
 
-Mok Sports is a fantasy sports application that reimagines traditional fantasy leagues by allowing users to draft entire teams rather than individual players. The application features a modern web interface built with React and TypeScript, utilizing a full-stack architecture with Express.js backend, PostgreSQL database, and Google OAuth authentication.
+Mok Sports is a fantasy sports application that redefines traditional fantasy leagues by enabling users to draft entire teams instead of individual players. It features a modern web interface, a robust backend, and integrates Google OAuth for authentication, aiming to provide a unique and engaging fantasy sports experience.
 
 # User Preferences
 
 Preferred communication style: Simple, everyday language.
 
-# Testing Scenario
-
-## Test League Setup (January 2025)
-- **League Name**: Test League 1
-- **Join Code**: EEW2YU
-- **Status**: FULL (6/6 members)
-- **Creator**: Sky Evans (skyevans04@gmail.com)
-- **Members**: 
-  - Mok Sports (mokfantasysports@gmail.com)
-  - Alex Rodriguez (alex.rodriguez.test@example.com) 
-  - Sarah Chen (sarah.chen.test@example.com)
-  - Marcus Johnson (marcus.johnson.test@example.com)
-  - Emily Davis (emily.davis.test@example.com)
-
-This setup allows testing the complete league workflow including:
-- **Automatic league full notification triggers** (fixed January 2025) - now triggers server-side when any user joins to fill league
-- Draft scheduling functionality for creators
-- Push notification system for PWA users
-- Full league member management and interaction
-
-## Recent Fix: Notification Trigger Logic (January 2025)
-**Issue**: League full notifications only triggered when the creator was viewing the league page at the exact moment it became full.
-
-**Solution**: Moved notification logic to server-side join league API endpoint (`/api/leagues/join`):
-- Automatically detects when a league becomes full after any user joins
-- Sends push notifications to all league members immediately
-- Removed unreliable client-side notification dependency
-- Added robust error handling to prevent join failures due to notification issues
-
-## Recent Fix: iOS PWA Push Subscription Auto-Refresh (August 2025)
-**Issue**: Push subscriptions became stale after iOS PWA deletion/reinstall, preventing notifications from being delivered despite proper server-side triggering.
-
-**Solution**: Implemented comprehensive automatic push subscription refresh system:
-- `useAutoPushRefresh` hook automatically unsubscribes and resubscribes on every app open
-- Triggers on service worker activation and app visibility changes  
-- Handles iOS Safari PWA-specific subscription behavior
-- Sends fresh subscription data to `/api/subscribe` automatically
-- Added detailed debug logging to track refresh behavior
-- Enhanced service worker to broadcast activation events
-
-**Current League Status**: Test League 1 (EEW2YU) - FULL (6/6 members)
-- Sky Evans (Creator) - Auto-refresh system fixed, notifications working 
-- Mok Sports + 4 test users (Alex Rodriguez, Sarah Chen, Marcus Johnson, Emily Davis, Jordan Smith)
-
-## League Full Notification Investigation (August 2025)
-**Issue**: User reports seeing league jump from 5/6 to 6/6 but no notification received.
-
-**Root Cause Identified**: The league full notification system only triggers when someone joins through the `/api/leagues/join` API endpoint. Direct database insertions bypass this trigger completely.
-
-**Current System Status**:
-- Notification logic correctly implemented in join endpoint (lines 228-255 in server/routes.ts)
-- Enhanced logging added to track notification flow
-- NotificationTemplates.leagueFull() creates proper notification payload
-- sendLeagueNotification() function works correctly
-- Test League 1 has been full for extended period with no new joins to trigger notifications
-
-**Why Notifications Don't Trigger**:
-1. League became full through manual database manipulation (testing), not API joins
-2. Once full, no new members can join to trigger the notification system
-3. User sees member count changes through live database queries, not notification events
-
-**Solution**: Notification system is working correctly - it requires actual user joins through the app to trigger league full notifications.
-
-## MAJOR BREAKTHROUGH: iOS PWA Push Notifications Working (August 2025)
-**Issue**: iOS Safari PWA push subscriptions were never being created despite users enabling notifications.
-
-**Root Cause Discovered**: Multiple broken notification systems running in parallel:
-- `usePostLoginNotifications` hook had 69 LSP errors preventing any functionality
-- `NotificationPrompt` component only requested permission but never created subscriptions
-- `useAutoPushRefresh` was calling wrong endpoint and never triggering
-- Dashboard timing restrictions prevented notification prompt from showing reliably
-
-**Solution Implemented**:
-- Completely rewrote broken `usePostLoginNotifications` hook with proper error handling
-- Fixed `NotificationPrompt` to actually create push subscriptions after permission granted
-- Added comprehensive debugging system to track subscription creation flow
-- Removed session timing restrictions for reliable testing
-- Fixed TypeScript errors in key encoding for iOS Safari compatibility
-
-**CONFIRMED WORKING**: 
-- iOS Safari PWA push subscription successfully created (ID: a7a2b489-e5bc-4d07-81e2-83c59b4f0fc4)
-- Active subscription count: 1/1 for test user Sky Evans
-- Notification system detects and attempts delivery to active subscriptions
-- League full notification trigger working perfectly (tested with EEW2YU league 6/6 members)
-- Push notification infrastructure fully operational
-
-**Fixed Push Subscription System (August 2025)**:
-- Rebuilt `useSubscriptionManager` with single-execution logic to prevent infinite loops
-- Fixed subscription creation to trigger immediately when Notification.permission becomes 'granted'
-- Enhanced error handling with proper cleanup of failed subscriptions
-- Improved backend validation with clear HTTP status codes and error messages
-- Debug panel now accurately reflects actual subscription status from server registration
-- Eliminated all recursive useEffect callbacks and setTimeout intervals that caused loops
-
-**HTTP 400 Error Resolution (August 2025)**:
-**Issue**: iOS Safari PWA push notifications returning HTTP 400 "Bad Request" errors despite valid subscriptions and proper VAPID configuration.
-
-**Root Causes Identified and Fixed**:
-1. **Missing League Member Function** - `getLeagueMembers()` function was not implemented, causing league notifications to fail completely
-2. **Subscription Key Mapping Errors** - Backend incorrectly accessing `p256dh`/`auth` instead of `p256dhKey`/`authKey` fields
-3. **Insufficient Error Logging** - Limited visibility into actual HTTP response codes and error details
-4. **No Subscription Validation** - No mechanism to detect and cleanup invalid or expired subscriptions
-5. **Incomplete iOS-Specific Configuration** - Missing TTL, urgency, and proper VAPID details in push options
-
-**Comprehensive Fixes Implemented**:
-- Enhanced push notification logging with detailed HTTP status codes, response bodies, and headers
-- Fixed subscription key field mapping in `sendPushNotification()` method
-- Added comprehensive subscription validation endpoints (`/api/push/validate-subscription`, `/api/push/test-subscription`)
-- Implemented subscription cleanup tools (`/api/push/cleanup-subscriptions`, `/api/push/force-resubscribe`)
-- Enhanced diagnostic panel with detailed error tracking and subscription management
-- Added iOS-specific push configuration with proper TTL and urgency settings
-- Implemented automatic invalid subscription detection and removal
-
-**Production Deployment Required**: 
-- iOS Safari push notifications require HTTPS (production deployment)
-- Development server shows "unexpected response code" but backend logic is correct
-- All notification triggers, user detection, and subscription management working
-- HTTP 400 errors resolved with enhanced validation and error handling
-
 # System Architecture
 
 ## Frontend Architecture
 
-The client-side application is built with **React 18** and **TypeScript**, utilizing modern React patterns including hooks and functional components. The UI framework is based on **shadcn/ui** components built on top of **Radix UI primitives** and styled with **Tailwind CSS**. The application uses **Wouter** for client-side routing instead of React Router, providing a lightweight navigation solution.
-
-**State Management**: The application uses **TanStack Query (React Query)** for server state management, caching, and data fetching. Authentication state is managed through a custom React context provider that integrates with the query system.
-
-**Build System**: **Vite** is used as the build tool and development server, providing fast hot module replacement and optimized production builds. The configuration includes custom path aliases for organized imports and development-specific plugins for error handling.
-
-**Styling Strategy**: Custom CSS variables define a comprehensive design system with support for light/dark themes. The color palette includes brand-specific colors (fantasy-green, trust-blue, accent-gold) alongside the standard Tailwind color system.
+The client-side application is built with React 18 and TypeScript, using hooks and functional components. The UI framework leverages `shadcn/ui` components, built on `Radix UI primitives` and styled with `Tailwind CSS`. `Wouter` is used for lightweight client-side routing. State management, caching, and data fetching are handled by `TanStack Query (React Query)`. `Vite` serves as the build tool, providing fast hot module replacement and optimized production builds. Styling employs custom CSS variables for a comprehensive design system with light/dark theme support and a custom color palette.
 
 ## Backend Architecture
 
-The server is built with **Express.js** using TypeScript and follows a modular architecture pattern. The application uses **ESM modules** throughout for modern JavaScript support.
-
-**Authentication System**: Implements **Passport.js** with Google OAuth2 strategy for user authentication. JWT tokens are used for session management, stored as HTTP-only cookies for security. The authentication flow supports both new user registration and existing user login scenarios.
-
-**Database Layer**: **Drizzle ORM** provides type-safe database operations with PostgreSQL. The ORM configuration uses the Neon serverless PostgreSQL adapter for cloud deployment compatibility. Database migrations are managed through Drizzle Kit.
-
-**API Design**: RESTful API endpoints handle authentication flows and user data operations. The server includes comprehensive error handling middleware and request/response logging for debugging.
-
-**Development Tools**: Custom Vite integration enables server-side rendering during development while serving static files in production. The setup includes runtime error overlays and development banners for enhanced developer experience.
+The server is built with Express.js using TypeScript, following a modular architecture with ESM modules. `Passport.js` with Google OAuth2 strategy handles user authentication, using JWT tokens stored as HTTP-only cookies for session management. `Drizzle ORM` provides type-safe database operations with `PostgreSQL`, configured with the `Neon serverless PostgreSQL` adapter. API design is RESTful, including comprehensive error handling and request/response logging.
 
 ## Data Storage Solutions
 
-**Primary Database**: PostgreSQL database hosted on Neon serverless platform, chosen for its scalability and managed infrastructure. The database schema is defined using Drizzle ORM with TypeScript for type safety.
-
-**Session Management**: User sessions are managed through JWT tokens stored in HTTP-only cookies, providing security against XSS attacks while maintaining stateless server architecture.
-
-**Schema Design**: The current schema includes a users table with Google OAuth integration fields, timestamps for user tracking, and UUID primary keys for scalability.
+The primary database is PostgreSQL, hosted on the Neon serverless platform. User sessions are managed via JWT tokens in HTTP-only cookies. The schema includes a users table with Google OAuth integration, timestamps, and UUID primary keys.
 
 ## Authentication and Authorization
 
-**OAuth Integration**: Google OAuth2 provides the primary authentication mechanism, reducing user friction and leveraging trusted identity providers. The implementation handles profile data extraction and user account creation/linking.
-
-**Security Measures**: JWT tokens use secure signing with environment-specific secrets. Cookies are configured with appropriate security flags (httpOnly, secure in production, sameSite) to prevent common web vulnerabilities.
-
-**User Flow**: New users are automatically registered upon first Google login, while existing users are authenticated and redirected appropriately. Error handling covers authentication failures and provides user feedback.
-
-**Configuration Management**: OAuth configuration is checked dynamically, allowing the application to gracefully handle missing credentials without crashing. The frontend checks OAuth availability before attempting authentication, providing appropriate error messages to users when sign-in is unavailable.
+Google OAuth2 is the primary authentication mechanism. JWT tokens use secure signing, and cookies are configured with `httpOnly`, `secure` (in production), and `sameSite` flags for security. New users are automatically registered upon their first Google login.
 
 # External Dependencies
 
 ## Authentication Services
-- **Google OAuth2**: Primary authentication provider requiring client ID and secret configuration
-- **Passport.js**: Authentication middleware with Google strategy implementation
+- **Google OAuth2**: Primary authentication provider.
+- **Passport.js**: Authentication middleware.
 
 ## Database and ORM
-- **Neon PostgreSQL**: Serverless PostgreSQL database platform
-- **Drizzle ORM**: Type-safe database toolkit with PostgreSQL dialect
-- **@neondatabase/serverless**: Neon-specific database driver with WebSocket support
+- **Neon PostgreSQL**: Serverless PostgreSQL database.
+- **Drizzle ORM**: Type-safe database toolkit.
+- **@neondatabase/serverless**: Neon-specific database driver.
 
 ## UI and Styling
-- **Radix UI**: Comprehensive primitive component library for accessible UI elements
-- **Tailwind CSS**: Utility-first CSS framework for responsive design
-- **shadcn/ui**: Pre-built component library built on Radix UI primitives
-- **Lucide React**: Icon library providing consistent iconography
+- **Radix UI**: Primitive component library.
+- **Tailwind CSS**: Utility-first CSS framework.
+- **shadcn/ui**: Pre-built component library.
+- **Lucide React**: Icon library.
 
 ## Development and Build Tools
-- **Vite**: Modern build tool and development server
-- **TypeScript**: Type system for enhanced developer experience and code reliability
-- **ESBuild**: Fast JavaScript bundler for production builds
+- **Vite**: Build tool and development server.
+- **TypeScript**: Type system.
+- **ESBuild**: Fast JavaScript bundler.
 
 ## Runtime Dependencies
-- **TanStack Query**: Server state management and caching solution
-- **Wouter**: Lightweight client-side routing library
-- **date-fns**: Date manipulation and formatting utilities
-- **Zod**: Schema validation library for runtime type checking
+- **TanStack Query**: Server state management.
+- **Wouter**: Lightweight client-side routing.
+- **date-fns**: Date manipulation.
+- **Zod**: Schema validation.
