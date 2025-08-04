@@ -756,38 +756,7 @@ export class SnakeDraftManager {
    */
   // Manual timer restart method removed due to storage interface limitations
 
-  /**
-   * Recover active timers after server restart
-   */
-  async recoverActiveTimers(): Promise<void> {
-    console.log('🔄 Recovering active timers after restart...');
-    
-    try {
-      const activeTimers = await this.storage.getActiveTimers();
-      
-      for (const timer of activeTimers) {
-        const now = Date.now();
-        const startTime = new Date(timer.timerStartedAt).getTime();
-        const elapsed = Math.floor((now - startTime) / 1000);
-        const remaining = Math.max(0, timer.timeRemaining - elapsed);
-        
-        console.log(`🕐 Recovering timer for user ${timer.userId}: ${remaining}s remaining (${elapsed}s elapsed)`);
-        
-        if (remaining <= 0) {
-          // Timer already expired - trigger auto-pick immediately
-          console.log(`⏰ Timer was expired, triggering auto-pick for user ${timer.userId}`);
-          await this.handleTimerExpired(timer.draftId, timer.userId);
-        } else {
-          // Timer still active - recreate interval
-          this.createTimerInterval(timer.draftId, timer.userId, remaining);
-        }
-      }
-      
-      console.log(`✅ Recovered ${activeTimers.length} active timers`);
-    } catch (error) {
-      console.error('❌ Error recovering timers:', error);
-    }
-  }
+
 
   /**
    * Create timer interval without database record (for restarts)
