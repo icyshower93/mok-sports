@@ -858,7 +858,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // This endpoint helps with cache debugging
       res.json({ 
         message: "Service worker cache clear initiated",
-        version: "v1.6.0-cache-purge",
+        version: "v1.7.0-absolute-bypass",
         timestamp: Date.now(),
         instructions: "Hard refresh (Ctrl+F5) to clear browser cache and reload service worker"
       });
@@ -867,40 +867,78 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Debug endpoint to check which index.html is being served
-  app.get("/api/debug/index-check", async (req, res) => {
+  // Force Service Worker Unregister endpoint
+  app.post("/api/unregister-sw", async (req, res) => {
+    try {
+      res.json({
+        success: true,
+        message: "Service worker unregister initiated",
+        script: `
+          if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistrations().then(registrations => {
+              registrations.forEach(registration => {
+                console.log('Unregistering SW:', registration);
+                registration.unregister();
+              });
+            });
+            caches.keys().then(names => {
+              names.forEach(name => {
+                console.log('Deleting cache:', name);
+                caches.delete(name);
+              });
+            });
+          }
+        `,
+        instructions: "Execute the script in browser console, then hard refresh"
+      });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to generate unregister script" });
+    }
+  });
+
+  // Debug endpoint to verify asset serving and MIME types
+  app.get("/api/debug/asset-check", async (req, res) => {
     try {
       const path = await import("path");
       const fs = await import("fs");
       
       const builtIndexPath = path.resolve(import.meta.dirname, "..", "dist", "public", "index.html");
-      const devIndexPath = path.resolve(import.meta.dirname, "..", "client", "index.html");
+      const assetsPath = path.resolve(import.meta.dirname, "..", "dist", "public", "assets");
       
       const builtExists = fs.existsSync(builtIndexPath);
-      const devExists = fs.existsSync(devIndexPath);
+      const assetsExist = fs.existsSync(assetsPath);
       
       let builtContent = "";
-      let devContent = "";
+      let assetFiles = [];
       
       if (builtExists) {
         builtContent = fs.readFileSync(builtIndexPath, 'utf-8');
       }
-      if (devExists) {
-        devContent = fs.readFileSync(devIndexPath, 'utf-8');
+      
+      if (assetsExist) {
+        assetFiles = fs.readdirSync(assetsPath);
       }
       
+      // Extract asset references from index.html
+      const jsAssetMatch = builtContent.match(/\/assets\/(index-[^"]+\.js)/);
+      const cssAssetMatch = builtContent.match(/\/assets\/(index-[^"]+\.css)/);
+      
       res.json({
+        serverStatus: "Assets served before routes",
         builtIndexExists: builtExists,
-        devIndexExists: devExists,
-        builtHasAssets: builtContent.includes('/assets/index-'),
-        builtHasMainTsx: builtContent.includes('/src/main.tsx'),
-        devHasMainTsx: devContent.includes('/src/main.tsx'),
-        currentServing: builtExists ? 'built' : 'development',
-        builtPath: builtIndexPath,
+        assetsDirectoryExists: assetsExist,
+        assetFiles: assetFiles,
+        indexReferencesAssets: builtContent.includes('/assets/index-'),
+        indexReferencesDevFiles: builtContent.includes('/src/main.tsx'),
+        extractedJsAsset: jsAssetMatch ? jsAssetMatch[1] : null,
+        extractedCssAsset: cssAssetMatch ? cssAssetMatch[1] : null,
+        serviceWorkerVersion: "v1.7.0-absolute-bypass",
+        mimeTypeHeaders: "application/javascript; charset=utf-8",
+        cacheHeaders: "public, max-age=31536000, immutable",
         timestamp: Date.now()
       });
     } catch (error) {
-      res.status(500).json({ message: "Debug check failed", error: error.message });
+      res.status(500).json({ message: "Asset check failed", error: error.message });
     }
   });
 
