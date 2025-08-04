@@ -12,6 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 import { TeamLogo } from "@/components/team-logo";
 import { apiRequest, AuthTokenManager } from "@/lib/queryClient";
 import { useDraftWebSocket } from "@/hooks/use-draft-websocket";
+import { useAuth } from "@/hooks/use-auth";
 
 interface NflTeam {
   id: string;
@@ -58,6 +59,7 @@ export default function DraftPage() {
   const [location, navigate] = useLocation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { user, isLoading: authLoading, isAuthenticated } = useAuth();
   
   // Extract draft ID from URL params using wouter
   const params = useParams();
@@ -83,6 +85,9 @@ export default function DraftPage() {
     queryKey: ['draft', draftId],
     queryFn: async () => {
       console.log('[Draft] Fetching draft data for ID:', draftId);
+      console.log('[Draft] Auth status - User:', user?.name, 'Authenticated:', isAuthenticated, 'Loading:', authLoading);
+      console.log('[Draft] Token available:', !!AuthTokenManager.getToken());
+      
       try {
         // Use the apiRequest function to include authentication headers
         const response = await apiRequest('GET', `/api/drafts/${draftId}`);
@@ -91,10 +96,17 @@ export default function DraftPage() {
         return data;
       } catch (error) {
         console.error('[Draft] Error fetching draft data:', error);
+        console.error('[Draft] Full error details:', {
+          message: error instanceof Error ? error.message : 'Unknown error',
+          user: user?.name,
+          hasToken: !!AuthTokenManager.getToken(),
+          isAuthenticated,
+          authLoading
+        });
         throw error;
       }
     },
-    enabled: !!draftId,
+    enabled: !!draftId && !authLoading, // Wait for auth to load before making requests
     refetchInterval: 5000, // Poll every 5 seconds (reduced since we have local timer)
     retry: (failureCount, error) => {
       // Don't retry on authentication errors
@@ -173,7 +185,8 @@ export default function DraftPage() {
 
   if (!draftId) return null;
 
-  if (isLoading) {
+  // Show loading while auth is still loading
+  if (authLoading || isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-background to-secondary/20 flex items-center justify-center">
         <div className="text-center">

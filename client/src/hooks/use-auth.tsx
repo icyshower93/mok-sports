@@ -68,9 +68,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // PWA Token Recovery - check localStorage on app startup
   useEffect(() => {
     const storedToken = AuthTokenManager.getToken();
+    console.log('[Auth] Token check - Has token:', !!storedToken, 'Has user:', !!user, 'Loading:', isLoading);
+    
     if (storedToken && !user && !isLoading) {
       console.log('[Auth] Found stored token, refreshing authentication...');
       queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
+    }
+    
+    // For development: If no token and no user, try development login
+    if (!storedToken && !user && !isLoading && process.env.NODE_ENV === 'development') {
+      console.log('[Auth] Development mode - attempting automatic login for Sky Evans');
+      // Auto-login for development mode
+      fetch('/api/auth/testing/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({})
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success && data.token) {
+          console.log('[Auth] Development auto-login successful');
+          AuthTokenManager.setToken(data.token);
+          queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
+        }
+      })
+      .catch(err => console.log('[Auth] Development auto-login failed:', err));
     }
   }, [user, isLoading, queryClient]);
 
