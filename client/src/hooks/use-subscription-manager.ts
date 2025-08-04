@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { useAuth } from './use-auth';
 
 interface SubscriptionState {
@@ -177,15 +177,32 @@ export function useSubscriptionManager() {
     return refreshSubscription();
   }, [refreshSubscription, addLog]);
 
-  // Auto-refresh when permission becomes granted
+  // Auto-refresh when permission becomes granted (removed - now handled directly in notification prompt)
   const handlePermissionGranted = useCallback(() => {
-    if (Notification.permission === 'granted' && !isProcessingRef.current) {
-      addLog('Permission granted - creating subscription');
-      setTimeout(() => {
-        refreshSubscription();
-      }, 1000); // Small delay to allow app to settle
+    addLog('handlePermissionGranted called - this should now be handled by direct manualRefresh call');
+    // This function is kept for compatibility but logic moved to notification prompt
+  }, [addLog]);
+
+  // Auto-trigger subscription creation when permission becomes 'granted'
+  useEffect(() => {
+    if (Notification.permission === 'granted' && 
+        isAuthenticated && 
+        user && 
+        !state.hasActiveSubscription && 
+        !isProcessingRef.current) {
+      
+      addLog('Permission is granted and no active subscription - auto-creating subscription');
+      
+      // Small delay to ensure all components are initialized
+      const timer = setTimeout(() => {
+        if (!isProcessingRef.current) {
+          refreshSubscription();
+        }
+      }, 500);
+      
+      return () => clearTimeout(timer);
     }
-  }, [refreshSubscription, addLog]);
+  }, [Notification.permission, isAuthenticated, user, state.hasActiveSubscription, refreshSubscription, addLog]);
 
   return {
     ...state,

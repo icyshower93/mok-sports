@@ -54,8 +54,9 @@ export function NotificationPrompt({
         addLog('Permission granted - creating subscription...');
         setIsVisible(false);
         
-        // Immediately trigger subscription creation
-        subscriptionManager.handlePermissionGranted();
+        // Immediately call refreshSubscription to create and register the subscription
+        const subscriptionSuccess = await subscriptionManager.manualRefresh();
+        addLog(`Subscription creation result: ${subscriptionSuccess ? 'SUCCESS' : 'FAILED'}`);
         
         onPermissionGranted?.();
       } else {
