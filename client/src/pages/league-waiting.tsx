@@ -421,7 +421,8 @@ export function LeagueWaiting() {
                 connectionStatus="disconnected"
                 onReset={() => {
                   queryClient.invalidateQueries({ queryKey: [`/api/leagues/${leagueId}`] });
-                  setLocation(`/league/waiting?id=${leagueId}`);
+                  // Force refresh the page data
+                  window.location.reload();
                 }}
               />
 

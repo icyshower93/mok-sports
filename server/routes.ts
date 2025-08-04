@@ -673,7 +673,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const { default: setupDraftRoutes } = await import("./routes/draft.js");
   setupDraftRoutes(app, storage, null, robotManager);
 
-  // Note: WebSocket manager will be initialized after server creation
+  // WebSocket will be initialized after server creation
 
   // Push notification routes
   app.get("/api/push/vapid-key", async (req, res) => {

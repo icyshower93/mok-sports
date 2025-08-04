@@ -26,7 +26,7 @@ import {
   Pause,
   Settings
 } from "lucide-react";
-import { apiRequest } from "@/lib/queryClient";
+import { queryClient } from "@/lib/queryClient";
 
 interface DraftTestingPanelProps {
   leagueId: string;
@@ -50,9 +50,19 @@ export function DraftTestingPanel({
   // Add robots to league mutation
   const addRobotsMutation = useMutation({
     mutationFn: async () => {
-      const response = await apiRequest(`/api/leagues/${leagueId}/add-robots`, {
-        method: 'POST'
+      const response = await fetch(`/api/leagues/${leagueId}/add-robots`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
       });
+      
+      if (!response.ok) {
+        const error = await response.text();
+        throw new Error(error || 'Failed to add robots');
+      }
+      
       return response.json();
     },
     onSuccess: () => {
@@ -74,9 +84,19 @@ export function DraftTestingPanel({
   // Reset draft mutation
   const resetDraftMutation = useMutation({
     mutationFn: async () => {
-      const response = await apiRequest(`/api/draft/reset/${leagueId}`, {
-        method: 'POST'
+      const response = await fetch(`/api/draft/reset/${leagueId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
       });
+      
+      if (!response.ok) {
+        const error = await response.text();
+        throw new Error(error || 'Failed to reset draft');
+      }
+      
       return response.json();
     },
     onSuccess: () => {

@@ -64,6 +64,11 @@ export interface IStorage {
   deactivatePushSubscriptions(userId: string): Promise<void>;
   sendPushNotification(subscriptions: PushSubscription[], notification: any): Promise<any[]>;
   getLeagueMembers(leagueId: string): Promise<Array<{ userId: string; joinedAt: string }>>;
+  
+  // Additional methods for draft management
+  updateLeague(leagueId: string, updates: Partial<League>): Promise<void>;
+  deleteDraft(draftId: string): Promise<void>;
+  getUserByEmail(email: string): Promise<User | undefined>;
 }
 
 export class DatabaseStorage implements IStorage {
