@@ -77,6 +77,15 @@ app.use((req, res, next) => {
   }
 
   const server = await registerRoutes(app);
+  
+  // Recover active timers after server restart
+  try {
+    const { default: SnakeDraftManager } = await import("./draft/snakeDraftManager");
+    const draftManager = new SnakeDraftManager(storage);
+    await draftManager.recoverActiveTimers();
+  } catch (error) {
+    console.error('Failed to recover timers on startup:', error);
+  }
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;

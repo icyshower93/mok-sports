@@ -454,6 +454,13 @@ export class DatabaseStorage implements IStorage {
       ));
   }
 
+  async getActiveTimers(): Promise<DraftTimer[]> {
+    return await db.select()
+      .from(draftTimers)
+      .where(eq(draftTimers.isActive, true))
+      .orderBy(draftTimers.timerStartedAt);
+  }
+
   // Push notification methods
   getVapidKeys(): { publicKey: string; privateKey: string } {
     try {
