@@ -7,6 +7,7 @@ import { generateJoinCode } from "./utils";
 import { insertLeagueSchema } from "@shared/schema";
 import { z } from "zod";
 import { registerPushNotificationRoutes } from "./routes/push-notifications";
+import { registerPushDiagnosticsRoutes } from "./routes/push-diagnostics";
 import "./auth"; // Initialize passport strategies
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -440,6 +441,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Register push notification routes
   registerPushNotificationRoutes(app);
+  
+  // Register push diagnostics routes
+  registerPushDiagnosticsRoutes(app);
   
   // Test notification endpoint for debugging (no auth required for testing)
   app.post("/api/test/league-full-notification", async (req, res) => {

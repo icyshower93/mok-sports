@@ -12,6 +12,7 @@ import { useLocation } from "wouter";
 import { usePushNotifications } from "@/hooks/use-push-notifications";
 import { NotificationPrompt } from "@/components/notification-prompt";
 import { PWADebugPanel } from "@/components/pwa-debug-panel";
+import { PushDiagnosticPanel } from "@/components/push-diagnostic-panel";
 import { useSubscriptionManager } from "@/hooks/use-subscription-manager";
 
 export default function DashboardPage() {
@@ -313,6 +314,9 @@ export default function DashboardPage() {
           
           {/* PWA Debug Panel for iOS testing */}
           <PWADebugPanel />
+          
+          {/* Push Notification Diagnostics Panel */}
+          <PushDiagnosticPanel />
         </div>
       </div>
     </MainLayout>

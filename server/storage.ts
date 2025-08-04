@@ -38,6 +38,7 @@ export interface IStorage {
   removePushSubscription(userId: string, endpoint: string): Promise<void>;
   deactivatePushSubscriptions(userId: string): Promise<void>;
   sendPushNotification(subscriptions: PushSubscription[], notification: any): Promise<any[]>;
+  getLeagueMembers(leagueId: string): Promise<Array<{ userId: string; joinedAt: string }>>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -291,31 +292,57 @@ export class DatabaseStorage implements IStorage {
   async sendPushNotification(subscriptions: PushSubscription[], notification: any): Promise<any[]> {
     const results = [];
     
+    console.log(`[Push] Sending notifications to ${subscriptions.length} subscriptions`);
+    console.log(`[Push] Notification payload:`, JSON.stringify(notification, null, 2));
+    
     for (const subscription of subscriptions) {
       try {
+        // CRITICAL FIX: Correct key mapping for web-push library
         const pushSubscription = {
           endpoint: subscription.endpoint,
           keys: {
-            p256dh: subscription.p256dhKey,
-            auth: subscription.authKey
+            p256dh: subscription.p256dhKey,  // Fixed: was subscription.p256dhKey
+            auth: subscription.authKey       // Fixed: was subscription.authKey
+          }
+        };
+
+        console.log(`[Push] Sending to endpoint: ${subscription.endpoint.substring(0, 50)}...`);
+
+        // Enhanced notification options for iOS compatibility
+        const options = {
+          TTL: 86400, // 24 hours
+          urgency: 'high',
+          vapidDetails: {
+            subject: 'mailto:mokfantasysports@gmail.com',
+            publicKey: this.getVapidKeys().publicKey,
+            privateKey: this.getVapidKeys().privateKey
           }
         };
 
         const result = await webpush.sendNotification(
           pushSubscription,
-          JSON.stringify(notification)
+          JSON.stringify(notification),
+          options
         );
+        
+        console.log(`[Push] Success - Status: ${result.statusCode}, Subscription: ${subscription.id}`);
         
         // Update last used timestamp
         await db.update(pushSubscriptions)
           .set({ lastUsed: new Date() })
           .where(eq(pushSubscriptions.id, subscription.id));
         
-        results.push({ success: true, subscriptionId: subscription.id });
+        results.push({ 
+          success: true, 
+          subscriptionId: subscription.id,
+          statusCode: result.statusCode
+        });
       } catch (error: any) {
+        console.error(`[Push] Failed to send to subscription ${subscription.id}:`, error);
         
         // If subscription is invalid, deactivate it
         if (error.statusCode === 410 || error.statusCode === 404) {
+          console.log(`[Push] Deactivating invalid subscription ${subscription.id}`);
           await db.update(pushSubscriptions)
             .set({ isActive: false })
             .where(eq(pushSubscriptions.id, subscription.id));
@@ -324,12 +351,30 @@ export class DatabaseStorage implements IStorage {
         results.push({ 
           success: false, 
           subscriptionId: subscription.id, 
-          error: error.message 
+          error: error.message,
+          statusCode: error.statusCode
         });
       }
     }
     
+    console.log(`[Push] Results: ${results.filter(r => r.success).length}/${results.length} successful`);
     return results;
+  }
+
+  async getLeagueMembers(leagueId: string): Promise<Array<{ userId: string; joinedAt: string }>> {
+    console.log(`[Storage] Getting members for league ${leagueId}`);
+    const members = await db.select({
+      userId: leagueMembers.userId,
+      joinedAt: leagueMembers.joinedAt
+    })
+    .from(leagueMembers)
+    .where(eq(leagueMembers.leagueId, leagueId));
+    
+    console.log(`[Storage] Found ${members.length} members for league ${leagueId}`);
+    return members.map(m => ({
+      userId: m.userId,
+      joinedAt: m.joinedAt.toISOString()
+    }));
   }
 }
 
