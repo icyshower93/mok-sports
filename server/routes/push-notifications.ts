@@ -66,7 +66,99 @@ export function registerPushNotificationRoutes(app: Express) {
     res.json({ publicKey });
   });
 
-  // Subscribe to push notifications
+  // Subscribe to push notifications (enhanced)
+  app.post("/api/subscribe", authenticateJWT, async (req, res) => {
+    try {
+      const user = req.user as any;
+      const { subscription } = req.body;
+      
+      if (!user) {
+        return res.status(401).json({ error: "Not authenticated" });
+      }
+
+      // Enhanced validation
+      if (!subscription || !subscription.endpoint || !subscription.keys) {
+        return res.status(400).json({ 
+          error: "Invalid subscription data",
+          details: {
+            hasSubscription: !!subscription,
+            hasEndpoint: !!subscription?.endpoint,
+            hasKeys: !!subscription?.keys,
+            hasP256dh: !!subscription?.keys?.p256dh,
+            hasAuth: !!subscription?.keys?.auth
+          }
+        });
+      }
+
+      console.log(`[Subscribe] Creating push subscription for user ${user.id}`);
+      console.log(`[Subscribe] Endpoint: ${subscription.endpoint.substring(0, 50)}...`);
+      console.log(`[Subscribe] Keys valid: p256dh=${!!subscription.keys.p256dh}, auth=${!!subscription.keys.auth}`);
+
+      // Check if this subscription already exists
+      const existingSubscriptions = await storage.getUserPushSubscriptions(user.id);
+      const existingEndpoint = existingSubscriptions.find(sub => sub.endpoint === subscription.endpoint);
+      
+      if (existingEndpoint) {
+        console.log(`[Subscribe] Subscription already exists for endpoint, updating last used`);
+        return res.json({ 
+          success: true, 
+          message: "Subscription already exists",
+          subscriptionId: existingEndpoint.id,
+          action: "existing"
+        });
+      }
+
+      // Create the subscription in the database
+      const pushSubscription = await storage.createPushSubscription(user.id, subscription);
+      
+      console.log(`[Subscribe] Push subscription created with ID: ${pushSubscription.id}`);
+
+      res.json({ 
+        success: true, 
+        message: "Subscription created successfully",
+        subscriptionId: pushSubscription.id,
+        action: "created"
+      });
+    } catch (error) {
+      console.error("[Subscribe] Error creating push subscription:", error);
+      res.status(500).json({ 
+        error: "Failed to create subscription",
+        details: error instanceof Error ? error.message : "Unknown error"
+      });
+    }
+  });
+
+  // Unsubscribe from push notifications
+  app.post("/api/unsubscribe", authenticateJWT, async (req, res) => {
+    try {
+      const user = req.user as any;
+      const { endpoint } = req.body;
+      
+      if (!user) {
+        return res.status(401).json({ error: "Not authenticated" });
+      }
+      
+      if (!endpoint) {
+        return res.status(400).json({ error: "Endpoint required" });
+      }
+      
+      await storage.removePushSubscription(user.id, endpoint);
+      
+      res.json({ 
+        success: true,
+        message: "Subscription removed successfully",
+        userId: user.id
+      });
+      
+    } catch (error) {
+      res.status(500).json({ 
+        error: "Failed to remove subscription",
+        details: error instanceof Error ? error.message : "Unknown error"
+      });
+    }
+  });
+
+  // Subscribe to push notifications (legacy endpoint)
   app.post("/api/push/subscribe", authenticateJWT, async (req, res) => {
     try {
       const user = req.user as any;
@@ -166,6 +258,136 @@ export function registerPushNotificationRoutes(app: Express) {
     } catch (error) {
       res.status(500).json({ 
         error: "Failed to get subscription status",
+        details: error instanceof Error ? error.message : "Unknown error"
+      });
+    }
+  });
+
+  // Validate existing subscription endpoint
+  app.post("/api/push/validate-subscription", authenticateJWT, async (req, res) => {
+    try {
+      const user = req.user as any;
+      const { endpoint } = req.body;
+      
+      if (!user) {
+        return res.status(401).json({ error: "Not authenticated" });
+      }
+
+      if (!endpoint) {
+        return res.status(400).json({ error: "Endpoint required" });
+      }
+
+      // Check if subscription exists in database
+      const subscriptions = await storage.getUserPushSubscriptions(user.id);
+      const subscription = subscriptions.find(sub => sub.endpoint === endpoint);
+      
+      if (!subscription) {
+        return res.json({ 
+          valid: false, 
+          reason: "not_found",
+          message: "Subscription not found in database" 
+        });
+      }
+
+      // Test the subscription with a silent notification
+      try {
+        const testResult = await storage.sendPushNotification([subscription], {
+          title: "Subscription Validation",
+          body: "Testing push subscription validity",
+          icon: "/icon-192x192.png",
+          data: {
+            url: "/dashboard",
+            type: "validation_test",
+            timestamp: Date.now(),
+            silent: true
+          }
+        });
+
+        const wasSuccessful = testResult[0]?.success;
+        
+        res.json({
+          valid: wasSuccessful,
+          reason: wasSuccessful ? "valid" : "send_failed",
+          message: wasSuccessful ? "Subscription is valid" : "Subscription failed validation test",
+          testResult: testResult[0]
+        });
+        
+      } catch (error) {
+        res.json({
+          valid: false,
+          reason: "test_error", 
+          message: `Validation test failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+        });
+      }
+      
+    } catch (error) {
+      res.status(500).json({ 
+        error: "Failed to validate subscription",
+        details: error instanceof Error ? error.message : "Unknown error"
+      });
+    }
+  });
+
+  // Cleanup invalid subscriptions
+  app.post("/api/push/cleanup-subscriptions", authenticateJWT, async (req, res) => {
+    try {
+      const user = req.user as any;
+      
+      if (!user) {
+        return res.status(401).json({ error: "Not authenticated" });
+      }
+
+      const subscriptions = await storage.getUserPushSubscriptions(user.id);
+      const cleanupResults = [];
+      
+      for (const subscription of subscriptions) {
+        try {
+          // Test each subscription
+          const testResult = await storage.sendPushNotification([subscription], {
+            title: "Subscription Cleanup Test",
+            body: "Testing subscription validity",
+            icon: "/icon-192x192.png", 
+            data: {
+              url: "/dashboard",
+              type: "cleanup_test",
+              timestamp: Date.now(),
+              silent: true
+            }
+          });
+          
+          if (!testResult[0]?.success) {
+            // Remove invalid subscription
+            await storage.removePushSubscription(user.id, subscription.endpoint);
+            cleanupResults.push({
+              endpoint: subscription.endpoint.substring(0, 50) + '...',
+              action: 'removed',
+              reason: testResult[0]?.error || 'failed_test'
+            });
+          } else {
+            cleanupResults.push({
+              endpoint: subscription.endpoint.substring(0, 50) + '...',
+              action: 'kept',
+              reason: 'valid'
+            });
+          }
+        } catch (error) {
+          cleanupResults.push({
+            endpoint: subscription.endpoint.substring(0, 50) + '...',
+            action: 'error',
+            reason: error instanceof Error ? error.message : 'Unknown error'
+          });
+        }
+      }
+      
+      res.json({
+        message: "Subscription cleanup completed",
+        totalSubscriptions: subscriptions.length,
+        results: cleanupResults
+      });
+      
+    } catch (error) {
+      res.status(500).json({ 
+        error: "Failed to cleanup subscriptions",
         details: error instanceof Error ? error.message : "Unknown error"
       });
     }

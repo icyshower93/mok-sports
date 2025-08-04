@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useAuth } from "@/hooks/use-auth";
+import { useAuth } from "@/lib/auth";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { MainLayout } from "@/components/layout/main-layout";
 import { Button } from "@/components/ui/button";
@@ -13,7 +13,7 @@ import { usePushNotifications } from "@/hooks/use-push-notifications";
 import { NotificationPrompt } from "@/components/notification-prompt";
 import { PWADebugPanel } from "@/components/pwa-debug-panel";
 import { PushDiagnosticPanel } from "@/components/push-diagnostic-panel";
-import { useSubscriptionManager } from "@/hooks/use-subscription-manager";
+import { PersistentPushManager } from "@/components/persistent-push-manager";
 
 export default function DashboardPage() {
   const { user, logout } = useAuth();
@@ -21,7 +21,7 @@ export default function DashboardPage() {
   const queryClient = useQueryClient();
   const [, setLocation] = useLocation();
   const { permission } = usePushNotifications();
-  const subscriptionManager = useSubscriptionManager();
+
   
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [joinDialogOpen, setJoinDialogOpen] = useState(false);
@@ -311,6 +311,9 @@ export default function DashboardPage() {
               />
             </div>
           )}
+          
+          {/* Persistent Push Notification Manager */}
+          <PersistentPushManager showManualControls={true} />
           
           {/* PWA Debug Panel for iOS testing */}
           <PWADebugPanel />
