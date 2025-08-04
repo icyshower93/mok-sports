@@ -232,6 +232,13 @@ export default function DraftPage() {
   const currentPlayer = draftData.currentPlayer;
   const teams = teamsData?.teams || {};
   
+  // Debug log to verify API data structure
+  console.log('Draft data structure:', {
+    currentPlayer: draftData.currentPlayer,
+    currentUserId: state?.currentUserId,
+    isCurrentUser: draftData.isCurrentUser
+  });
+  
   // Use local timer for smooth countdown, fallback to server data
   const displayTimeRemaining = localTimeRemaining || state?.timeRemaining || 0;
 
