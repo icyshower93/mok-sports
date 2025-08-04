@@ -432,25 +432,30 @@ export class SnakeDraftManager {
     });
     
     if (nextUserId) {
-      // Add 3-second grace period before starting timer
-      console.log(`⏳ Starting 3-second grace period before timer for user ${nextUserId}`);
+      // Add brief 1.5-second transition period for smooth UI flow
+      console.log(`⏳ Starting 1.5-second transition before timer for user ${nextUserId}`);
+      
+      // Broadcast transition state immediately
+      if (this.webSocketManager) {
+        this.webSocketManager.broadcastDraftUpdate(draftId, await this.getDraftState(draftId));
+      }
       
       setTimeout(async () => {
-        // Verify draft state is still valid after grace period
+        // Verify draft state is still valid after transition
         const currentDraft = await this.storage.getDraft(draftId);
         if (!currentDraft || currentDraft.status !== 'active') {
-          console.log(`⚠️ Draft state changed during grace period, skipping timer start`);
+          console.log(`⚠️ Draft state changed during transition, skipping timer start`);
           return;
         }
         
         // Double-check this user is still supposed to pick
         const currentPickUser = this.getCurrentPickUser(currentDraft);
         if (currentPickUser !== nextUserId) {
-          console.log(`⚠️ Pick user changed during grace period: expected ${nextUserId}, got ${currentPickUser}`);
+          console.log(`⚠️ Pick user changed during transition: expected ${nextUserId}, got ${currentPickUser}`);
           return;
         }
         
-        console.log(`✅ Grace period complete, starting timer for user ${nextUserId}`);
+        console.log(`✅ Transition complete, starting timer for user ${nextUserId}`);
         await this.startPickTimer(draftId, nextUserId, nextRound, nextPick);
         
         // If next user is a robot, trigger auto-pick after delay
@@ -460,7 +465,7 @@ export class SnakeDraftManager {
             this.simulateBotPick(draftId, nextUserId);
           }, delay);
         }
-      }, 3000); // 3-second grace period
+      }, 1500); // 1.5-second smooth transition
     }
     
     return await this.getDraftState(draftId);

@@ -408,7 +408,8 @@ export default function DraftPage() {
                       
                       {/* Timer */}
                       <div>
-                        <div className={`text-3xl font-bold mb-2 font-mono ${
+                        <div className={`text-3xl font-bold mb-2 font-mono transition-colors duration-300 ${
+                          displayTimeRemaining <= 0 ? 'text-red-500 animate-pulse' : 
                           displayTimeRemaining <= 10 ? 'text-red-500 animate-pulse' : 
                           displayTimeRemaining <= 30 ? 'text-orange-500' : 'text-foreground'
                         }`}>

@@ -209,6 +209,15 @@ export class DraftWebSocketManager {
     });
   }
 
+  public broadcastDraftUpdate(draftId: string, state: any) {
+    this.broadcastToDraft(draftId, {
+      type: 'draft_update',
+      draftId,
+      data: state,
+      timestamp: Date.now()
+    });
+  }
+
   private broadcastToDraft(draftId: string, message: any) {
     const draftConnections = this.connections.get(draftId);
     if (!draftConnections) {
