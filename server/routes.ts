@@ -661,6 +661,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
   */
 
+  // Draft routes
+  const { default: setupDraftRoutes } = await import("./routes/draft.js");
+  setupDraftRoutes(app, storage);
+
   // Push notification routes
   app.get("/api/push/vapid-key", async (req, res) => {
     const token = req.cookies?.auth_token;

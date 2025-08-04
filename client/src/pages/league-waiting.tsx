@@ -4,13 +4,14 @@ import { MainLayout } from "@/components/layout/main-layout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Copy, Users, Clock, Share2, RefreshCw, LogOut, Crown, X, Calendar, CalendarClock } from "lucide-react";
+import { Copy, Users, Clock, Share2, RefreshCw, LogOut, Crown, X, Calendar, CalendarClock, Play } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
 import { useLocation } from "wouter";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { queryClient } from "@/lib/queryClient";
 import { DraftNotificationReminder } from "@/components/draft-notification-reminder";
+import DraftControls from "@/components/draft-controls";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
@@ -26,6 +27,7 @@ interface League {
   creatorId: string;
   draftScheduledAt?: string;
   draftStarted: boolean;
+  draftId?: string;
   members: {
     id: string;
     name: string;
@@ -460,6 +462,45 @@ export function LeagueWaiting() {
                   <p className="text-sm text-muted-foreground">
                     {new Date(league.draftScheduledAt).toLocaleString()}
                   </p>
+                </div>
+              )}
+
+              {/* Draft Controls - for creating and starting drafts */}
+              {user?.id === league.creatorId && isLeagueFull && (
+                <DraftControls
+                  leagueId={league.id}
+                  canCreateDraft={!league.draftId}
+                  canStartDraft={!!league.draftId && !league.draftStarted}
+                  draftId={league.draftId}
+                  onDraftCreated={(draftId: string) => {
+                    // Update league data with draft ID
+                    queryClient.invalidateQueries({ queryKey: [`/api/leagues/${leagueId}`] });
+                    toast({
+                      title: "Draft created!",
+                      description: "Your snake draft is ready to begin.",
+                    });
+                  }}
+                  onDraftStarted={() => {
+                    // Navigate to draft room
+                    setLocation(`/draft?id=${league.draftId}`);
+                  }}
+                />
+              )}
+
+              {/* Show draft room button if draft is active */}
+              {league.draftId && league.draftStarted && (
+                <div className="text-center p-4 bg-fantasy-purple/10 rounded-lg">
+                  <div className="flex items-center justify-center gap-2 mb-3">
+                    <Play className="w-5 h-5 text-fantasy-purple" />
+                    <span className="font-semibold text-fantasy-purple">Draft is Live!</span>
+                  </div>
+                  <Button 
+                    onClick={() => setLocation(`/draft?id=${league.draftId}`)}
+                    className="w-full"
+                    size="lg"
+                  >
+                    Enter Draft Room
+                  </Button>
                 </div>
               )}
 

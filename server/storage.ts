@@ -1,9 +1,12 @@
 import { 
-  users, leagues, leagueMembers, nflTeams, pushSubscriptions,
+  users, leagues, leagueMembers, nflTeams, pushSubscriptions, drafts, draftPicks, draftTimers,
   type User, type InsertUser,
   type League, type InsertLeague,
   type LeagueMember, type InsertLeagueMember,
-  type NflTeam, type PushSubscription, type InsertPushSubscription
+  type NflTeam, type PushSubscription, type InsertPushSubscription,
+  type Draft, type InsertDraft,
+  type DraftPick, type InsertDraftPick,
+  type DraftTimer, type InsertDraftTimer
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, sql } from "drizzle-orm";
@@ -19,7 +22,7 @@ export interface IStorage {
   
   // League methods
   createLeague(league: InsertLeague & { joinCode: string }): Promise<League>;
-  getLeague(id: string): Promise<(League & { memberCount: number; members: Array<{ id: string; name: string; avatar: string | null; joinedAt: string }> }) | undefined>;
+  getLeague(id: string): Promise<(League & { memberCount: number; members: Array<{ id: string; name: string; avatar: string | null; joinedAt: string }>; draftId?: string; draftStatus?: string }) | undefined>;
   getLeagueByName(name: string): Promise<League | undefined>;
   getLeagueByJoinCode(joinCode: string): Promise<League | undefined>;
   getUserLeagues(userId: string): Promise<Array<League & { memberCount: number; isCreator: boolean }>>;
@@ -30,6 +33,28 @@ export interface IStorage {
   
   // NFL Teams methods
   getAllNflTeams(): Promise<NflTeam[]>;
+  getNflTeamsByConference(conference: 'AFC' | 'NFC'): Promise<NflTeam[]>;
+  getAvailableNflTeams(draftId: string): Promise<NflTeam[]>;
+  
+  // Draft methods
+  createDraft(draft: InsertDraft): Promise<Draft>;
+  getDraft(draftId: string): Promise<Draft | undefined>;
+  getLeagueDraft(leagueId: string): Promise<Draft | undefined>;
+  updateDraftStatus(draftId: string, status: string): Promise<void>;
+  updateDraftProgress(draftId: string, round: number, pick: number): Promise<void>;
+  startDraft(draftId: string): Promise<void>;
+  completeDraft(draftId: string): Promise<void>;
+  
+  // Draft picks methods
+  createDraftPick(pick: InsertDraftPick): Promise<DraftPick>;
+  getDraftPicks(draftId: string): Promise<Array<DraftPick & { user: User; nflTeam: NflTeam }>>;
+  getUserDraftPicks(draftId: string, userId: string): Promise<Array<DraftPick & { nflTeam: NflTeam }>>;
+  
+  // Draft timer methods
+  createDraftTimer(timer: InsertDraftTimer): Promise<DraftTimer>;
+  updateDraftTimer(draftId: string, userId: string, timeRemaining: number): Promise<void>;
+  getActiveDraftTimer(draftId: string): Promise<DraftTimer | undefined>;
+  deactivateTimer(draftId: string, userId: string): Promise<void>;
   
   // Push notification methods
   getVapidKeys(): { publicKey: string; privateKey: string };
@@ -91,7 +116,7 @@ export class DatabaseStorage implements IStorage {
     return newLeague;
   }
 
-  async getLeague(id: string): Promise<(League & { memberCount: number; members: Array<{ id: string; name: string; avatar: string | null; joinedAt: string }> }) | undefined> {
+  async getLeague(id: string): Promise<(League & { memberCount: number; members: Array<{ id: string; name: string; avatar: string | null; joinedAt: string }>; draftId?: string; draftStatus?: string }) | undefined> {
     const [league] = await db.select().from(leagues).where(eq(leagues.id, id));
     if (!league) return undefined;
     
@@ -110,13 +135,18 @@ export class DatabaseStorage implements IStorage {
       .where(eq(leagueMembers.leagueId, id))
       .orderBy(leagueMembers.joinedAt);
     
+    // Get draft information if it exists
+    const draft = await this.getLeagueDraft(id);
+
     return { 
       ...league, 
       memberCount,
       members: members.map(member => ({
         ...member,
         joinedAt: member.joinedAt.toISOString(),
-      }))
+      })),
+      draftId: draft?.id,
+      draftStatus: draft?.status
     };
   }
 
@@ -215,6 +245,194 @@ export class DatabaseStorage implements IStorage {
   // NFL Teams methods
   async getAllNflTeams(): Promise<NflTeam[]> {
     return await db.select().from(nflTeams);
+  }
+
+  async getNflTeamsByConference(conference: 'AFC' | 'NFC'): Promise<NflTeam[]> {
+    return await db.select()
+      .from(nflTeams)
+      .where(eq(nflTeams.conference, conference));
+  }
+
+  async getAvailableNflTeams(draftId: string): Promise<NflTeam[]> {
+    // Get all teams that haven't been picked in this draft
+    const pickedTeamIds = await db.select({ nflTeamId: draftPicks.nflTeamId })
+      .from(draftPicks)
+      .where(eq(draftPicks.draftId, draftId));
+    
+    const pickedIds = pickedTeamIds.map(p => p.nflTeamId);
+    
+    if (pickedIds.length === 0) {
+      return await this.getAllNflTeams();
+    }
+    
+    return await db.select()
+      .from(nflTeams)
+      .where(sql`${nflTeams.id} NOT IN (${sql.join(pickedIds.map(id => sql.raw(`'${id}'`)), sql`, `)})`);
+  }
+
+  // Draft methods
+  async createDraft(draft: InsertDraft): Promise<Draft> {
+    const [newDraft] = await db
+      .insert(drafts)
+      .values(draft)
+      .returning();
+    return newDraft;
+  }
+
+  async getDraft(draftId: string): Promise<Draft | undefined> {
+    const [draft] = await db.select().from(drafts).where(eq(drafts.id, draftId));
+    return draft || undefined;
+  }
+
+  async getLeagueDraft(leagueId: string): Promise<Draft | undefined> {
+    const [draft] = await db.select().from(drafts).where(eq(drafts.leagueId, leagueId));
+    return draft || undefined;
+  }
+
+  async updateDraftStatus(draftId: string, status: string): Promise<void> {
+    await db.update(drafts)
+      .set({ status })
+      .where(eq(drafts.id, draftId));
+  }
+
+  async updateDraftProgress(draftId: string, round: number, pick: number): Promise<void> {
+    await db.update(drafts)
+      .set({ currentRound: round, currentPick: pick })
+      .where(eq(drafts.id, draftId));
+  }
+
+  async startDraft(draftId: string): Promise<void> {
+    await db.update(drafts)
+      .set({ 
+        status: 'active',
+        startedAt: new Date()
+      })
+      .where(eq(drafts.id, draftId));
+  }
+
+  async completeDraft(draftId: string): Promise<void> {
+    await db.update(drafts)
+      .set({ 
+        status: 'completed',
+        completedAt: new Date()
+      })
+      .where(eq(drafts.id, draftId));
+  }
+
+  // Draft picks methods
+  async createDraftPick(pick: InsertDraftPick): Promise<DraftPick> {
+    const [newPick] = await db
+      .insert(draftPicks)
+      .values(pick)
+      .returning();
+    return newPick;
+  }
+
+  async getDraftPicks(draftId: string): Promise<Array<DraftPick & { user: User; nflTeam: NflTeam }>> {
+    return await db.select({
+      id: draftPicks.id,
+      draftId: draftPicks.draftId,
+      userId: draftPicks.userId,
+      nflTeamId: draftPicks.nflTeamId,
+      round: draftPicks.round,
+      pickNumber: draftPicks.pickNumber,
+      pickTime: draftPicks.pickTime,
+      isAutoPick: draftPicks.isAutoPick,
+      createdAt: draftPicks.createdAt,
+      user: {
+        id: users.id,
+        name: users.name,
+        email: users.email,
+        avatar: users.avatar,
+        googleId: users.googleId,
+        createdAt: users.createdAt,
+        lastLoginAt: users.lastLoginAt
+      },
+      nflTeam: {
+        id: nflTeams.id,
+        code: nflTeams.code,
+        name: nflTeams.name,
+        city: nflTeams.city,
+        conference: nflTeams.conference,
+        division: nflTeams.division,
+        logoUrl: nflTeams.logoUrl,
+        createdAt: nflTeams.createdAt
+      }
+    })
+    .from(draftPicks)
+    .innerJoin(users, eq(draftPicks.userId, users.id))
+    .innerJoin(nflTeams, eq(draftPicks.nflTeamId, nflTeams.id))
+    .where(eq(draftPicks.draftId, draftId))
+    .orderBy(draftPicks.pickNumber);
+  }
+
+  async getUserDraftPicks(draftId: string, userId: string): Promise<Array<DraftPick & { nflTeam: NflTeam }>> {
+    return await db.select({
+      id: draftPicks.id,
+      draftId: draftPicks.draftId,
+      userId: draftPicks.userId,
+      nflTeamId: draftPicks.nflTeamId,
+      round: draftPicks.round,
+      pickNumber: draftPicks.pickNumber,
+      pickTime: draftPicks.pickTime,
+      isAutoPick: draftPicks.isAutoPick,
+      createdAt: draftPicks.createdAt,
+      nflTeam: {
+        id: nflTeams.id,
+        code: nflTeams.code,
+        name: nflTeams.name,
+        city: nflTeams.city,
+        conference: nflTeams.conference,
+        division: nflTeams.division,
+        logoUrl: nflTeams.logoUrl,
+        createdAt: nflTeams.createdAt
+      }
+    })
+    .from(draftPicks)
+    .innerJoin(nflTeams, eq(draftPicks.nflTeamId, nflTeams.id))
+    .where(and(
+      eq(draftPicks.draftId, draftId),
+      eq(draftPicks.userId, userId)
+    ))
+    .orderBy(draftPicks.round);
+  }
+
+  // Draft timer methods
+  async createDraftTimer(timer: InsertDraftTimer): Promise<DraftTimer> {
+    const [newTimer] = await db
+      .insert(draftTimers)
+      .values(timer)
+      .returning();
+    return newTimer;
+  }
+
+  async updateDraftTimer(draftId: string, userId: string, timeRemaining: number): Promise<void> {
+    await db.update(draftTimers)
+      .set({ timeRemaining })
+      .where(and(
+        eq(draftTimers.draftId, draftId),
+        eq(draftTimers.userId, userId),
+        eq(draftTimers.isActive, true)
+      ));
+  }
+
+  async getActiveDraftTimer(draftId: string): Promise<DraftTimer | undefined> {
+    const [timer] = await db.select()
+      .from(draftTimers)
+      .where(and(
+        eq(draftTimers.draftId, draftId),
+        eq(draftTimers.isActive, true)
+      ));
+    return timer || undefined;
+  }
+
+  async deactivateTimer(draftId: string, userId: string): Promise<void> {
+    await db.update(draftTimers)
+      .set({ isActive: false })
+      .where(and(
+        eq(draftTimers.draftId, draftId),
+        eq(draftTimers.userId, userId)
+      ));
   }
 
   // Push notification methods

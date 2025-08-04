@@ -1,0 +1,331 @@
+/**
+ * Draft API Routes
+ * 
+ * Handles all draft-related API endpoints including:
+ * - Creating and starting drafts
+ * - Making picks
+ * - Getting draft state
+ * - Real-time updates
+ */
+
+import { Router } from "express";
+import { z } from "zod";
+import { IStorage } from "../storage.js";
+import SnakeDraftManager from "../draft/snakeDraftManager.js";
+
+const router = Router();
+
+// Authentication middleware
+function authenticateJWT(req: any, res: any, next: any) {
+  const token = req.cookies?.auth_token;
+  if (!token) {
+    return res.status(401).json({ message: "Not authenticated" });
+  }
+
+  try {
+    const { verify } = require("jsonwebtoken");
+    const user = verify(token, process.env.JWT_SECRET || "mok-sports-jwt-secret-fallback-key-12345");
+    req.user = user;
+    next();
+  } catch (error) {
+    return res.status(401).json({ message: "Invalid token" });
+  }
+}
+
+export default function setupDraftRoutes(app: any, storage: IStorage) {
+  const draftManager = new SnakeDraftManager(storage);
+
+  // Create a new draft for a league
+  app.post("/api/drafts", authenticateJWT, async (req: any, res: any) => {
+    try {
+      const user = req.user;
+      const createDraftSchema = z.object({
+        leagueId: z.string(),
+        totalRounds: z.number().min(1).max(10).optional(),
+        pickTimeLimit: z.number().min(30).max(300).optional()
+      });
+
+      const { leagueId, totalRounds, pickTimeLimit } = createDraftSchema.parse(req.body);
+
+      // Verify user is league creator
+      const league = await storage.getLeague(leagueId);
+      if (!league) {
+        return res.status(404).json({ message: "League not found" });
+      }
+
+      if (league.creatorId !== user.id) {
+        return res.status(403).json({ message: "Only league creator can create draft" });
+      }
+
+      // Check if draft already exists
+      const existingDraft = await storage.getLeagueDraft(leagueId);
+      if (existingDraft) {
+        return res.status(400).json({ message: "Draft already exists for this league" });
+      }
+
+      // Check if league is full
+      if (league.memberCount < league.maxTeams) {
+        return res.status(400).json({ message: "League must be full before creating draft" });
+      }
+
+      // Get league members for draft order
+      const memberIds = league.members.map(m => m.id);
+
+      // Create draft with custom config if provided
+      const customConfig: any = {};
+      if (totalRounds) customConfig.totalRounds = totalRounds;
+      if (pickTimeLimit) customConfig.pickTimeLimit = pickTimeLimit;
+
+      const draftManagerWithConfig = new SnakeDraftManager(storage, customConfig);
+      const draft = await draftManagerWithConfig.createDraft(leagueId, memberIds);
+
+      res.status(201).json({
+        message: "Draft created successfully",
+        draft,
+        draftOrder: draft.draftOrder
+      });
+
+    } catch (error) {
+      console.error('Error creating draft:', error);
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ 
+          message: "Validation error", 
+          errors: error.errors 
+        });
+      }
+      res.status(500).json({ message: "Failed to create draft" });
+    }
+  });
+
+  // Start a draft
+  app.post("/api/drafts/:draftId/start", authenticateJWT, async (req: any, res: any) => {
+    try {
+      const user = req.user;
+      const { draftId } = req.params;
+
+      const draft = await storage.getDraft(draftId);
+      if (!draft) {
+        return res.status(404).json({ message: "Draft not found" });
+      }
+
+      // Verify user is league creator
+      const league = await storage.getLeague(draft.leagueId);
+      if (!league || league.creatorId !== user.id) {
+        return res.status(403).json({ message: "Only league creator can start draft" });
+      }
+
+      if (draft.status !== 'not_started') {
+        return res.status(400).json({ message: "Draft has already been started" });
+      }
+
+      const draftState = await draftManager.startDraft(draftId);
+
+      res.json({
+        message: "Draft started successfully",
+        state: draftState
+      });
+
+    } catch (error) {
+      console.error('Error starting draft:', error);
+      res.status(500).json({ message: "Failed to start draft" });
+    }
+  });
+
+  // Get draft state
+  app.get("/api/drafts/:draftId", authenticateJWT, async (req: any, res: any) => {
+    try {
+      const user = req.user;
+      const { draftId } = req.params;
+
+      const draft = await storage.getDraft(draftId);
+      if (!draft) {
+        return res.status(404).json({ message: "Draft not found" });
+      }
+
+      // Verify user is in the league
+      const league = await storage.getLeague(draft.leagueId);
+      if (!league) {
+        return res.status(404).json({ message: "League not found" });
+      }
+
+      const isInLeague = league.members.some(m => m.id === user.id);
+      if (!isInLeague) {
+        return res.status(403).json({ message: "Not authorized to view this draft" });
+      }
+
+      const draftState = await draftManager.getDraftState(draftId);
+
+      res.json({
+        state: draftState,
+        isCurrentUser: draftState.currentUserId === user.id
+      });
+
+    } catch (error) {
+      console.error('Error getting draft state:', error);
+      res.status(500).json({ message: "Failed to get draft state" });
+    }
+  });
+
+  // Make a draft pick
+  app.post("/api/drafts/:draftId/pick", authenticateJWT, async (req: any, res: any) => {
+    try {
+      const user = req.user;
+      const { draftId } = req.params;
+      
+      const pickSchema = z.object({
+        nflTeamId: z.string()
+      });
+
+      const { nflTeamId } = pickSchema.parse(req.body);
+
+      const result = await draftManager.makePick(draftId, {
+        userId: user.id,
+        nflTeamId
+      });
+
+      if (!result.success) {
+        return res.status(400).json({ 
+          message: result.error || "Failed to make pick" 
+        });
+      }
+
+      res.json({
+        message: "Pick made successfully",
+        pick: result.pick,
+        newState: result.newState
+      });
+
+    } catch (error) {
+      console.error('Error making draft pick:', error);
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ 
+          message: "Validation error", 
+          errors: error.errors 
+        });
+      }
+      res.status(500).json({ message: "Failed to make pick" });
+    }
+  });
+
+  // Get user's draft picks
+  app.get("/api/drafts/:draftId/my-picks", authenticateJWT, async (req: any, res: any) => {
+    try {
+      const user = req.user;
+      const { draftId } = req.params;
+
+      const draft = await storage.getDraft(draftId);
+      if (!draft) {
+        return res.status(404).json({ message: "Draft not found" });
+      }
+
+      const userPicks = await storage.getUserDraftPicks(draftId, user.id);
+
+      res.json({
+        picks: userPicks,
+        totalPicks: userPicks.length,
+        remainingPicks: draft.totalRounds - userPicks.length
+      });
+
+    } catch (error) {
+      console.error('Error getting user draft picks:', error);
+      res.status(500).json({ message: "Failed to get picks" });
+    }
+  });
+
+  // Get all NFL teams grouped by conference
+  app.get("/api/nfl-teams", authenticateJWT, async (req: any, res: any) => {
+    try {
+      const teams = await storage.getAllNflTeams();
+      
+      const groupedTeams = teams.reduce((acc, team) => {
+        if (!acc[team.conference]) {
+          acc[team.conference] = {};
+        }
+        if (!acc[team.conference][team.division]) {
+          acc[team.conference][team.division] = [];
+        }
+        acc[team.conference][team.division].push(team);
+        return acc;
+      }, {} as Record<string, Record<string, typeof teams>>);
+
+      res.json({
+        teams: groupedTeams,
+        totalTeams: teams.length
+      });
+
+    } catch (error) {
+      console.error('Error getting NFL teams:', error);
+      res.status(500).json({ message: "Failed to get NFL teams" });
+    }
+  });
+
+  // Get available teams for a draft
+  app.get("/api/drafts/:draftId/available-teams", authenticateJWT, async (req: any, res: any) => {
+    try {
+      const { draftId } = req.params;
+
+      const draft = await storage.getDraft(draftId);
+      if (!draft) {
+        return res.status(404).json({ message: "Draft not found" });
+      }
+
+      const availableTeams = await storage.getAvailableNflTeams(draftId);
+      
+      // Group by conference for easier UI rendering
+      const groupedTeams = availableTeams.reduce((acc, team) => {
+        if (!acc[team.conference]) {
+          acc[team.conference] = {};
+        }
+        if (!acc[team.conference][team.division]) {
+          acc[team.conference][team.division] = [];
+        }
+        acc[team.conference][team.division].push(team);
+        return acc;
+      }, {} as Record<string, Record<string, typeof availableTeams>>);
+
+      res.json({
+        teams: groupedTeams,
+        availableCount: availableTeams.length,
+        totalTeams: 32
+      });
+
+    } catch (error) {
+      console.error('Error getting available teams:', error);
+      res.status(500).json({ message: "Failed to get available teams" });
+    }
+  });
+
+  // Simulate bot pick (for testing)
+  app.post("/api/drafts/:draftId/simulate-bot", authenticateJWT, async (req: any, res: any) => {
+    try {
+      const { draftId } = req.params;
+      const { userId } = req.body;
+
+      if (!userId) {
+        return res.status(400).json({ message: "User ID required" });
+      }
+
+      const draft = await storage.getDraft(draftId);
+      if (!draft) {
+        return res.status(404).json({ message: "Draft not found" });
+      }
+
+      const currentUserId = (draftManager as any).getCurrentPickUser(draft);
+      if (currentUserId !== userId) {
+        return res.status(400).json({ message: "Not this user's turn" });
+      }
+
+      await draftManager.simulateBotPick(draftId, userId);
+      const newState = await draftManager.getDraftState(draftId);
+
+      res.json({
+        message: "Bot pick simulated",
+        newState
+      });
+
+    } catch (error) {
+      console.error('Error simulating bot pick:', error);
+      res.status(500).json({ message: "Failed to simulate bot pick" });
+    }
+  });
+}

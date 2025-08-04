@@ -1,0 +1,441 @@
+/**
+ * Snake Draft Manager
+ * 
+ * Handles the core snake draft logic including:
+ * - Draft order generation and snake pattern
+ * - Turn management and auto-pick functionality
+ * - Conference validation rules
+ * - Real-time state management
+ * - Bot user simulation
+ */
+
+import { IStorage } from "../storage.js";
+import type { Draft, DraftPick, NflTeam, User } from "@shared/schema";
+
+export interface DraftState {
+  draft: Draft;
+  currentUserId: string | null;
+  timeRemaining: number;
+  picks: Array<DraftPick & { user: User; nflTeam: NflTeam }>;
+  availableTeams: NflTeam[];
+  isUserTurn: boolean;
+  canMakePick: boolean;
+}
+
+export interface PickRequest {
+  userId: string;
+  nflTeamId: string;
+  isAutoPick?: boolean;
+}
+
+export interface PickResult {
+  success: boolean;
+  pick?: DraftPick & { user: User; nflTeam: NflTeam };
+  error?: string;
+  newState?: DraftState;
+}
+
+export interface DraftConfig {
+  totalRounds: number;
+  pickTimeLimit: number; // seconds
+  enableConferenceRule: boolean;
+  maxTeamsPerConference: number;
+}
+
+export class SnakeDraftManager {
+  private storage: IStorage;
+  private timerIntervals: Map<string, NodeJS.Timeout> = new Map();
+  private draftConfig: DraftConfig;
+
+  constructor(storage: IStorage, config?: Partial<DraftConfig>) {
+    this.storage = storage;
+    this.draftConfig = {
+      totalRounds: 5,
+      pickTimeLimit: 60,
+      enableConferenceRule: true,
+      maxTeamsPerConference: 3, // No more than 3 teams from same conference per user
+      ...config
+    };
+  }
+
+  /**
+   * Creates a new draft for a league with randomized snake order
+   */
+  async createDraft(leagueId: string, memberIds: string[]): Promise<Draft> {
+    // Shuffle the member IDs to create random draft order
+    const shuffledOrder = this.shuffleArray([...memberIds]);
+    
+    const draftData = {
+      leagueId,
+      totalRounds: this.draftConfig.totalRounds,
+      pickTimeLimit: this.draftConfig.pickTimeLimit,
+      draftOrder: shuffledOrder
+    };
+
+    return await this.storage.createDraft(draftData);
+  }
+
+  /**
+   * Starts the draft and begins the first pick timer
+   */
+  async startDraft(draftId: string): Promise<DraftState> {
+    await this.storage.startDraft(draftId);
+    const draft = await this.storage.getDraft(draftId);
+    
+    if (!draft) {
+      throw new Error('Draft not found');
+    }
+
+    // Start timer for first pick
+    await this.startPickTimer(draftId, draft.draftOrder[0], 1, 1);
+    
+    return await this.getDraftState(draftId);
+  }
+
+  /**
+   * Gets the current draft state for real-time updates
+   */
+  async getDraftState(draftId: string): Promise<DraftState> {
+    const draft = await this.storage.getDraft(draftId);
+    if (!draft) {
+      throw new Error('Draft not found');
+    }
+
+    const picks = await this.storage.getDraftPicks(draftId);
+    const availableTeams = await this.storage.getAvailableNflTeams(draftId);
+    const currentUserId = this.getCurrentPickUser(draft);
+    const timer = await this.storage.getActiveDraftTimer(draftId);
+
+    return {
+      draft,
+      currentUserId,
+      timeRemaining: timer?.timeRemaining || 0,
+      picks,
+      availableTeams,
+      isUserTurn: !!currentUserId,
+      canMakePick: draft.status === 'active' && !!currentUserId
+    };
+  }
+
+  /**
+   * Makes a draft pick for a user
+   */
+  async makePick(draftId: string, pickRequest: PickRequest): Promise<PickResult> {
+    try {
+      const draft = await this.storage.getDraft(draftId);
+      if (!draft) {
+        return { success: false, error: 'Draft not found' };
+      }
+
+      if (draft.status !== 'active') {
+        return { success: false, error: 'Draft is not active' };
+      }
+
+      const currentUserId = this.getCurrentPickUser(draft);
+      if (!currentUserId || currentUserId !== pickRequest.userId) {
+        return { success: false, error: 'Not your turn to pick' };
+      }
+
+      // Validate team is available
+      const availableTeams = await this.storage.getAvailableNflTeams(draftId);
+      const selectedTeam = availableTeams.find(team => team.id === pickRequest.nflTeamId);
+      
+      if (!selectedTeam) {
+        return { success: false, error: 'Team is not available' };
+      }
+
+      // Check conference rule if enabled
+      if (this.draftConfig.enableConferenceRule) {
+        const conferenceViolation = await this.checkConferenceRule(
+          draftId,
+          pickRequest.userId,
+          selectedTeam
+        );
+        
+        if (conferenceViolation.isViolation && !conferenceViolation.allowOverride) {
+          return { 
+            success: false, 
+            error: `Conference rule violation: ${conferenceViolation.message}` 
+          };
+        }
+      }
+
+      // Create the pick
+      const pickData = {
+        draftId,
+        userId: pickRequest.userId,
+        nflTeamId: pickRequest.nflTeamId,
+        round: draft.currentRound,
+        pickNumber: draft.currentPick,
+        isAutoPick: pickRequest.isAutoPick || false
+      };
+
+      const newPick = await this.storage.createDraftPick(pickData);
+
+      // Stop current timer
+      await this.stopPickTimer(draftId, pickRequest.userId);
+
+      // Move to next pick
+      const nextState = await this.advanceDraft(draftId);
+
+      // Get the pick with user and team data
+      const picks = await this.storage.getDraftPicks(draftId);
+      const pickWithData = picks.find(p => p.id === newPick.id);
+
+      return {
+        success: true,
+        pick: pickWithData,
+        newState: nextState
+      };
+
+    } catch (error) {
+      console.error('Error making draft pick:', error);
+      return { 
+        success: false, 
+        error: error instanceof Error ? error.message : 'Unknown error' 
+      };
+    }
+  }
+
+  /**
+   * Handles auto-pick when timer expires
+   */
+  async handleTimerExpired(draftId: string, userId: string): Promise<void> {
+    console.log(`⏰ Timer expired for user ${userId} in draft ${draftId}`);
+    
+    const availableTeams = await this.storage.getAvailableNflTeams(draftId);
+    if (availableTeams.length === 0) {
+      console.error('No available teams for auto-pick');
+      return;
+    }
+
+    // Get user's current picks to check conference rule
+    let eligibleTeams = availableTeams;
+    
+    if (this.draftConfig.enableConferenceRule) {
+      eligibleTeams = await this.getConferenceEligibleTeams(draftId, userId, availableTeams);
+    }
+
+    // If no eligible teams due to conference rule, pick from any available
+    if (eligibleTeams.length === 0) {
+      eligibleTeams = availableTeams;
+      console.log(`⚠️ Conference rule forced override for user ${userId}`);
+    }
+
+    // Random selection for auto-pick
+    const randomTeam = eligibleTeams[Math.floor(Math.random() * eligibleTeams.length)];
+    
+    await this.makePick(draftId, {
+      userId,
+      nflTeamId: randomTeam.id,
+      isAutoPick: true
+    });
+
+    console.log(`🤖 Auto-picked ${randomTeam.name} for user ${userId}`);
+  }
+
+  /**
+   * Simulates bot picks for testing
+   */
+  async simulateBotPick(draftId: string, userId: string): Promise<void> {
+    // Wait a short random time to simulate thinking
+    await new Promise(resolve => setTimeout(resolve, Math.random() * 2000 + 500));
+    
+    const availableTeams = await this.storage.getAvailableNflTeams(draftId);
+    if (availableTeams.length === 0) return;
+
+    let eligibleTeams = availableTeams;
+    
+    if (this.draftConfig.enableConferenceRule) {
+      eligibleTeams = await this.getConferenceEligibleTeams(draftId, userId, availableTeams);
+      if (eligibleTeams.length === 0) {
+        eligibleTeams = availableTeams; // Override rule if necessary
+      }
+    }
+
+    // Smart bot selection: prefer teams from different conferences
+    const randomTeam = eligibleTeams[Math.floor(Math.random() * eligibleTeams.length)];
+    
+    await this.makePick(draftId, {
+      userId,
+      nflTeamId: randomTeam.id,
+      isAutoPick: false // Bot picks are not auto-picks
+    });
+
+    console.log(`🤖 Bot picked ${randomTeam.name}`);
+  }
+
+  // Private helper methods
+
+  private shuffleArray<T>(array: T[]): T[] {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+  }
+
+  getCurrentPickUser(draft: Draft): string | null {
+    if (draft.status !== 'active') return null;
+    
+    const { currentRound, currentPick, draftOrder } = draft;
+    const totalUsers = draftOrder.length;
+    
+    // Snake draft logic: alternate direction each round
+    let userIndex: number;
+    
+    if (currentRound % 2 === 1) {
+      // Odd rounds: 1 → N (forward)
+      userIndex = (currentPick - 1) % totalUsers;
+    } else {
+      // Even rounds: N → 1 (reverse)
+      userIndex = totalUsers - 1 - ((currentPick - 1) % totalUsers);
+    }
+    
+    return draftOrder[userIndex] || null;
+  }
+
+  private async advanceDraft(draftId: string): Promise<DraftState> {
+    const draft = await this.storage.getDraft(draftId);
+    if (!draft) throw new Error('Draft not found');
+
+    const totalUsers = draft.draftOrder.length;
+    const totalPicks = totalUsers * draft.totalRounds;
+    
+    let nextRound = draft.currentRound;
+    let nextPick = draft.currentPick + 1;
+    
+    // Check if round is complete
+    if ((nextPick - 1) % totalUsers === 0 && nextPick > totalUsers) {
+      nextRound++;
+      nextPick = (nextRound - 1) * totalUsers + 1;
+    }
+    
+    // Check if draft is complete
+    if (nextPick > totalPicks) {
+      await this.storage.completeDraft(draftId);
+      return await this.getDraftState(draftId);
+    }
+    
+    // Update draft progress
+    await this.storage.updateDraftProgress(draftId, nextRound, nextPick);
+    
+    // Start timer for next pick
+    const nextUserId = this.getCurrentPickUser({
+      ...draft,
+      currentRound: nextRound,
+      currentPick: nextPick
+    });
+    
+    if (nextUserId) {
+      await this.startPickTimer(draftId, nextUserId, nextRound, nextPick);
+    }
+    
+    return await this.getDraftState(draftId);
+  }
+
+  private async startPickTimer(
+    draftId: string, 
+    userId: string, 
+    round: number, 
+    pickNumber: number
+  ): Promise<void> {
+    // Create timer record
+    await this.storage.createDraftTimer({
+      draftId,
+      userId,
+      round,
+      pickNumber,
+      timeRemaining: this.draftConfig.pickTimeLimit
+    });
+
+    // Set up countdown interval
+    const timerKey = `${draftId}-${userId}`;
+    let timeLeft = this.draftConfig.pickTimeLimit;
+    
+    const interval = setInterval(async () => {
+      timeLeft--;
+      
+      if (timeLeft <= 0) {
+        clearInterval(interval);
+        this.timerIntervals.delete(timerKey);
+        await this.handleTimerExpired(draftId, userId);
+      } else {
+        await this.storage.updateDraftTimer(draftId, userId, timeLeft);
+      }
+    }, 1000);
+    
+    this.timerIntervals.set(timerKey, interval);
+  }
+
+  private async stopPickTimer(draftId: string, userId: string): Promise<void> {
+    const timerKey = `${draftId}-${userId}`;
+    const interval = this.timerIntervals.get(timerKey);
+    
+    if (interval) {
+      clearInterval(interval);
+      this.timerIntervals.delete(timerKey);
+    }
+    
+    await this.storage.deactivateTimer(draftId, userId);
+  }
+
+  private async checkConferenceRule(
+    draftId: string,
+    userId: string,
+    selectedTeam: NflTeam
+  ): Promise<{ isViolation: boolean; allowOverride: boolean; message: string }> {
+    const userPicks = await this.storage.getUserDraftPicks(draftId, userId);
+    const conferenceCount = userPicks.filter(
+      pick => pick.nflTeam.conference === selectedTeam.conference
+    ).length;
+
+    if (conferenceCount >= this.draftConfig.maxTeamsPerConference) {
+      const availableOtherConference = await this.storage.getAvailableNflTeams(draftId);
+      const hasOtherOptions = availableOtherConference.some(
+        team => team.conference !== selectedTeam.conference
+      );
+
+      return {
+        isViolation: true,
+        allowOverride: !hasOtherOptions,
+        message: hasOtherOptions 
+          ? `Already have ${conferenceCount} ${selectedTeam.conference} teams`
+          : `Conference rule override: no other options available`
+      };
+    }
+
+    return { isViolation: false, allowOverride: false, message: '' };
+  }
+
+  private async getConferenceEligibleTeams(
+    draftId: string,
+    userId: string,
+    availableTeams: NflTeam[]
+  ): Promise<NflTeam[]> {
+    const userPicks = await this.storage.getUserDraftPicks(draftId, userId);
+    const afcCount = userPicks.filter(p => p.nflTeam.conference === 'AFC').length;
+    const nfcCount = userPicks.filter(p => p.nflTeam.conference === 'NFC').length;
+
+    return availableTeams.filter(team => {
+      if (team.conference === 'AFC' && afcCount >= this.draftConfig.maxTeamsPerConference) {
+        return false;
+      }
+      if (team.conference === 'NFC' && nfcCount >= this.draftConfig.maxTeamsPerConference) {
+        return false;
+      }
+      return true;
+    });
+  }
+
+  /**
+   * Cleanup method to clear all timers
+   */
+  cleanup(): void {
+    this.timerIntervals.forEach(interval => clearInterval(interval));
+    this.timerIntervals.clear();
+  }
+}
+
+export default SnakeDraftManager;

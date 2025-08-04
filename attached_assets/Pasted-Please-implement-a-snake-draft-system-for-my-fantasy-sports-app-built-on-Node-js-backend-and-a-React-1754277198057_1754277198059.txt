@@ -1,0 +1,99 @@
+Please implement a snake draft system for my fantasy sports app built on Node.js backend and a React or vanilla JS frontend (hosted on Replit). The module must be modular, pluggable, testable, and fully compatible with my existing project.
+
+🧠 Core Draft Logic
+On draft start, randomize the draft order for all users in the league.
+
+Use snake format:
+
+Round 1: 1 → N
+
+Round 2: N → 1
+
+Round 3: 1 → N
+
+… up to 5 rounds per user
+
+Each user drafts 5 teams
+
+Total draft pool: 32 teams → 30 drafted, 2 remain as free agents
+
+Each user has a 60-second timer to pick. On timeout:
+
+Auto-pick a random available team
+
+Bot users (test accounts):
+
+Instantly pick random valid team on their turn
+
+📜 Draft Rules
+Draft from a fixed list of 32 teams, grouped by conference
+
+When a team is picked:
+
+Mark as drafted
+
+Make unselectable
+
+Rule: No two teams from the same conference per user
+
+If not enough options remain, gracefully allow the rule to be broken with a warning
+
+🖥️ UI Requirements (Mobile-First)
+Design the Draft Room screen with:
+
+Live draft order showing:
+
+Whose turn it is (highlighted)
+
+Timer countdown
+
+Team list grouped by conference, with:
+
+Team name + logo
+
+Greyed out when picked
+
+Each user’s drafted teams shown live
+
+After draft:
+
+Display full team rosters per user
+
+Style:
+
+Simple, clean layout
+
+Large, tappable elements
+
+Responsive for mobile use
+
+🔄 Real-time Sync
+Use WebSockets or polling to:
+
+Broadcast draft picks and timeouts in real time to all users
+
+Restore user state if someone refreshes or rejoins mid-draft
+
+🧪 Testing & Resets
+Allow simulation of full drafts with only bots (for test runs)
+
+If a user disconnects or does not pick:
+
+Auto-pick for them after timeout
+
+If conference rule prevents valid pick:
+
+Show alert, then allow override
+
+Add ability to reset draft state to before draft began
+
+Useful for testing or re-running drafts
+
+⚙️ Dev Expectations
+Write clean, modular, well-commented code
+
+Isolate logic where possible (e.g., snakeDraftManager.js)
+
+Include server + client-side components as needed
+
+Support easy integration into current project (hosted on Replit)
