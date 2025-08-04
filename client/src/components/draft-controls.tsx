@@ -34,10 +34,11 @@ export default function DraftControls({
   const [pickTimeLimit, setPickTimeLimit] = useState(60);
   const totalRounds = 5; // Fixed to 5 rounds for 6-person leagues
 
-  // Create draft mutation
-  const createDraftMutation = useMutation({
+  // Combined create and start draft mutation
+  const createAndStartDraftMutation = useMutation({
     mutationFn: async () => {
-      const response = await fetch('/api/drafts', {
+      // First create the draft
+      const createResponse = await fetch('/api/drafts', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -47,32 +48,49 @@ export default function DraftControls({
         }),
         credentials: 'include'
       });
-      if (!response.ok) {
-        const error = await response.json();
+      
+      if (!createResponse.ok) {
+        const error = await createResponse.json();
         throw new Error(error.message || 'Failed to create draft');
       }
-      return response.json();
+      
+      const createData = await createResponse.json();
+      const newDraftId = createData.draft.id;
+      
+      // Then immediately start the draft
+      const startResponse = await fetch(`/api/drafts/${newDraftId}/start`, {
+        method: 'POST',
+        credentials: 'include'
+      });
+      
+      if (!startResponse.ok) {
+        const error = await startResponse.json();
+        throw new Error(error.message || 'Failed to start draft');
+      }
+      
+      return { ...createData, draftId: newDraftId };
     },
     onSuccess: (data) => {
       toast({
-        title: "Draft created successfully!",
-        description: `Draft order randomized with ${totalRounds} rounds.`,
+        title: "Draft started!",
+        description: "The live draft is now beginning. Good luck!",
       });
       queryClient.invalidateQueries({ queryKey: ['league', leagueId] });
-      if (onDraftCreated) {
-        onDraftCreated(data.draft.id);
+      queryClient.invalidateQueries({ queryKey: ['draft', data.draftId] });
+      if (onDraftStarted) {
+        onDraftStarted();
       }
     },
     onError: (error: Error) => {
       toast({
-        title: "Failed to create draft",
+        title: "Failed to start draft",
         description: error.message,
         variant: "destructive",
       });
     },
   });
 
-  // Start draft mutation
+  // Legacy start draft mutation (for existing drafts)
   const startDraftMutation = useMutation({
     mutationFn: async () => {
       if (!draftId) throw new Error('No draft ID');
@@ -103,6 +121,7 @@ export default function DraftControls({
     },
   });
 
+  // Show the component if we can create a new draft OR start an existing one
   if (!canCreateDraft && !canStartDraft) {
     return null;
   }
@@ -179,11 +198,13 @@ export default function DraftControls({
             )}
 
             <Button
-              onClick={() => createDraftMutation.mutate()}
-              disabled={createDraftMutation.isPending}
+              onClick={() => createAndStartDraftMutation.mutate()}
+              disabled={createAndStartDraftMutation.isPending}
               className="w-full"
+              size="lg"
             >
-              {createDraftMutation.isPending ? 'Creating Draft...' : 'Create Draft'}
+              <Play className="w-4 h-4 mr-2" />
+              {createAndStartDraftMutation.isPending ? 'Starting Draft...' : 'Start Draft Now'}
             </Button>
           </>
         )}
