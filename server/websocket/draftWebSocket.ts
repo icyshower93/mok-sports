@@ -63,10 +63,13 @@ export class DraftWebSocketManager {
       this.connections.set(draftId, []);
       console.log(`[WebSocket] Created new connection array for draft ${draftId}`);
     }
+    
+    console.log(`[WebSocket] Before adding connection - draft ${draftId} has ${this.connections.get(draftId)?.length || 0} connections`);
     this.connections.get(draftId)!.push(connection);
     
     const totalConnections = this.connections.get(draftId)!.length;
-    console.log(`[WebSocket] User ${userId} connected to draft ${draftId}. Total connections: ${totalConnections}`);
+    console.log(`[WebSocket] After adding connection - User ${userId} connected to draft ${draftId}. Total connections: ${totalConnections}`);
+    console.log(`[WebSocket] All connections for draft ${draftId}:`, this.connections.get(draftId)?.map(c => c.userId));
 
     // Handle incoming messages
     ws.on('message', (data) => {

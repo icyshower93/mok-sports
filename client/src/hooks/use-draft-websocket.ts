@@ -134,6 +134,14 @@ export function useDraftWebSocket(draftId: string | null) {
         });
         break;
 
+      case 'connected':
+        console.log('[WebSocket] Connected to draft successfully');
+        break;
+
+      case 'pong':
+        console.log('[WebSocket] Received pong from server');
+        break;
+
       case 'draft_completed':
         console.log('[WebSocket] Draft completed');
         
