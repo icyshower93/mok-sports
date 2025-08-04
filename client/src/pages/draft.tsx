@@ -192,6 +192,7 @@ export default function DraftPage() {
   // Update local timer when we get new server data (FIXED: removed dependency loop)
   useEffect(() => {
     if (draftData?.state?.timeRemaining !== undefined) {
+      console.log('[Draft] Updating local timer from server:', draftData.state.timeRemaining);
       setLocalTimeRemaining(draftData.state.timeRemaining);
       setLastServerUpdate(Date.now());
     }

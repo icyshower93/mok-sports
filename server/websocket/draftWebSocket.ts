@@ -38,9 +38,12 @@ export class DraftWebSocketManager {
   }
 
   private handleConnection(ws: WebSocket, request: any) {
+    console.log('[WebSocket] New connection attempt, URL:', request.url);
     const { query } = parse(request.url, true);
     const userId = query.userId as string;
     const draftId = query.draftId as string;
+    
+    console.log('[WebSocket] Parsed query parameters:', { userId, draftId });
 
     if (!userId || !draftId) {
       console.log('[WebSocket] Connection rejected: missing userId or draftId');
@@ -58,10 +61,12 @@ export class DraftWebSocketManager {
     // Add to connections map
     if (!this.connections.has(draftId)) {
       this.connections.set(draftId, []);
+      console.log(`[WebSocket] Created new connection array for draft ${draftId}`);
     }
     this.connections.get(draftId)!.push(connection);
-
-    console.log(`[WebSocket] User ${userId} connected to draft ${draftId}`);
+    
+    const totalConnections = this.connections.get(draftId)!.length;
+    console.log(`[WebSocket] User ${userId} connected to draft ${draftId}. Total connections: ${totalConnections}`);
 
     // Handle incoming messages
     ws.on('message', (data) => {

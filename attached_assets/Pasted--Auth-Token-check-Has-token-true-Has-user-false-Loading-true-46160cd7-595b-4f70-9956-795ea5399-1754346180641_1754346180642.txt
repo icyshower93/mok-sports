@@ -1,0 +1,87 @@
+[Auth] Token check - Has token: true Has user: false Loading: true
+46160cd7-595b-4f70-9956-795ea53993ff:1 Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner.
+index-o4nJcGMy.js:272 [App] Draft route matched with params: {0: '46160cd7-595b-4f70-9956-795ea53993ff', draftId: '46160cd7-595b-4f70-9956-795ea53993ff'}
+index-o4nJcGMy.js:272 [App] Current location: https://mok-sports-draft-mokfantasysport.replit.app/draft/46160cd7-595b-4f70-9956-795ea53993ff
+index-o4nJcGMy.js:272 [Draft] Component render started
+index-o4nJcGMy.js:272 [Draft] All useState hooks declared
+index-o4nJcGMy.js:272 [Draft] All hooks declared, starting conditional logic
+index-o4nJcGMy.js:272 [Draft] === STARTING DRAFT FETCH ===
+index-o4nJcGMy.js:272 [Draft] Draft ID: 46160cd7-595b-4f70-9956-795ea53993ff
+index-o4nJcGMy.js:272 [Draft] Auth status - User: Mok Sports Authenticated: false Loading: false
+index-o4nJcGMy.js:272 [Draft] Token available: true
+index-o4nJcGMy.js:272 [Draft] Current URL: https://mok-sports-draft-mokfantasysport.replit.app/draft/46160cd7-595b-4f70-9956-795ea53993ff
+index-o4nJcGMy.js:272 [Draft] Current pathname: /draft/46160cd7-595b-4f70-9956-795ea53993ff
+index-o4nJcGMy.js:272 [Draft] Making API request to: /api/drafts/46160cd7-595b-4f70-9956-795ea53993ff
+index-o4nJcGMy.js:272 [Draft] Timer expiration useEffect called
+sw.js?v=1754346167129:15 [SW] Service worker starting, version: v1.4.0-ios-push-fix
+sw.js?v=1754346167129:201 [SW] Service worker script loaded successfully
+index-o4nJcGMy.js:228 [Auth] Token check - Has token: true Has user: true Loading: false
+sw.js?v=1754346167129:19 [SW] Installing service worker, version: v1.4.0-ios-push-fix
+sw.js?v=1754346167129:23 [SW] Caching static files
+index-o4nJcGMy.js:272 [App] Draft route matched with params: {0: '46160cd7-595b-4f70-9956-795ea53993ff', draftId: '46160cd7-595b-4f70-9956-795ea53993ff'}
+index-o4nJcGMy.js:272 [App] Current location: https://mok-sports-draft-mokfantasysport.replit.app/draft/46160cd7-595b-4f70-9956-795ea53993ff
+index-o4nJcGMy.js:272 [Draft] Component render started
+index-o4nJcGMy.js:272 [Draft] All useState hooks declared
+index-o4nJcGMy.js:272 [Draft] All hooks declared, starting conditional logic
+index-o4nJcGMy.js:228 [SubscriptionManager] 6:22:47 PM - Permission is granted and no active subscription - auto-creating subscription
+index-o4nJcGMy.js:228 [AutoPushRefresh] Legacy hook delegating to SubscriptionManager
+index-o4nJcGMy.js:228 [SW Hook] Service worker registered successfully
+index-o4nJcGMy.js:272 [App] Draft route matched with params: {0: '46160cd7-595b-4f70-9956-795ea53993ff', draftId: '46160cd7-595b-4f70-9956-795ea53993ff'}
+index-o4nJcGMy.js:272 [App] Current location: https://mok-sports-draft-mokfantasysport.replit.app/draft/46160cd7-595b-4f70-9956-795ea53993ff
+index-o4nJcGMy.js:272 [Draft] Component render started
+index-o4nJcGMy.js:272 [Draft] All useState hooks declared
+index-o4nJcGMy.js:272 [Draft] All hooks declared, starting conditional logic
+index-o4nJcGMy.js:272 [App] Draft route matched with params: {0: '46160cd7-595b-4f70-9956-795ea53993ff', draftId: '46160cd7-595b-4f70-9956-795ea53993ff'}
+index-o4nJcGMy.js:272 [App] Current location: https://mok-sports-draft-mokfantasysport.replit.app/draft/46160cd7-595b-4f70-9956-795ea53993ff
+index-o4nJcGMy.js:272 [Draft] Component render started
+index-o4nJcGMy.js:272 [Draft] All useState hooks declared
+index-o4nJcGMy.js:272 [Draft] All hooks declared, starting conditional logic
+index-o4nJcGMy.js:272 [WebSocket] Connected to draft: 46160cd7-595b-4f70-9956-795ea53993ff
+index-o4nJcGMy.js:272 [WebSocket] Unknown message type: connected
+index-o4nJcGMy.js:272 [Draft] Component render started
+index-o4nJcGMy.js:272 [Draft] All useState hooks declared
+index-o4nJcGMy.js:272 [Draft] All hooks declared, starting conditional logic
+sw.js?v=1754346167129:26 [SW] Static files cached successfully
+index-o4nJcGMy.js:272 [Draft] Response received: {status: 200, statusText: '', headers: {…}}
+index-o4nJcGMy.js:272 [Draft] Successfully fetched draft data: {state: {…}, isCurrentUser: true, currentPlayer: {…}}
+index-o4nJcGMy.js:272 [Draft] === DRAFT FETCH SUCCESS ===
+index-o4nJcGMy.js:272 [Draft] Component render started
+index-o4nJcGMy.js:272 [Draft] All useState hooks declared
+index-o4nJcGMy.js:272 [Draft] All hooks declared, starting conditional logic
+index-o4nJcGMy.js:272 [Draft] Timer expiration useEffect called
+index-o4nJcGMy.js:272 [Draft] Component render started
+index-o4nJcGMy.js:272 [Draft] All useState hooks declared
+index-o4nJcGMy.js:272 [Draft] All hooks declared, starting conditional logic
+index-o4nJcGMy.js:272 [Draft] Component render started
+index-o4nJcGMy.js:272 [Draft] All useState hooks declared
+index-o4nJcGMy.js:272 [Draft] All hooks declared, starting conditional logic
+index-o4nJcGMy.js:228 [SubscriptionManager] 6:22:47 PM - Starting subscription refresh...
+index-o4nJcGMy.js:272 [App] Draft route matched with params: {0: '46160cd7-595b-4f70-9956-795ea53993ff', draftId: '46160cd7-595b-4f70-9956-795ea53993ff'}
+index-o4nJcGMy.js:272 [App] Current location: https://mok-sports-draft-mokfantasysport.replit.app/draft/46160cd7-595b-4f70-9956-795ea53993ff
+index-o4nJcGMy.js:272 [Draft] Component render started
+index-o4nJcGMy.js:272 [Draft] All useState hooks declared
+index-o4nJcGMy.js:272 [Draft] All hooks declared, starting conditional logic
+index-o4nJcGMy.js:228 [SubscriptionManager] 6:22:47 PM - Found existing subscription - unsubscribing...
+index-o4nJcGMy.js:228 [SubscriptionManager] 6:22:47 PM - Existing subscription unsubscribed
+index-o4nJcGMy.js:228 [SubscriptionManager] 6:22:47 PM - Creating new push subscription...
+index-o4nJcGMy.js:228 [SubscriptionManager] 6:22:48 PM - Sending subscription to server: https://fcm.googleapis.com/fcm/send/dtFhSfQdhFk:AP...
+sw.js?v=1754346167129:37 [SW] Activating service worker, version: v1.4.0-ios-push-fix
+sw.js?v=1754346167129:43 [SW] Found caches: (2) ['mok-sports-static-v1.4.0-ios-push-fix', 'mok-sports-dynamic-v1.4.0-ios-push-fix']
+sw.js?v=1754346167129:56 [SW] Service worker activated and controlling all clients
+index-o4nJcGMy.js:228 [SubscriptionManager] 6:22:48 PM - Server response: 201 
+index-o4nJcGMy.js:228 [SubscriptionManager] 6:22:48 PM - Subscription registered successfully: Subscription registered successfully
+index-o4nJcGMy.js:272 [App] Draft route matched with params: {0: '46160cd7-595b-4f70-9956-795ea53993ff', draftId: '46160cd7-595b-4f70-9956-795ea53993ff'}
+index-o4nJcGMy.js:272 [App] Current location: https://mok-sports-draft-mokfantasysport.replit.app/draft/46160cd7-595b-4f70-9956-795ea53993ff
+index-o4nJcGMy.js:272 [Draft] Component render started
+index-o4nJcGMy.js:272 [Draft] All useState hooks declared
+index-o4nJcGMy.js:272 [Draft] All hooks declared, starting conditional logic
+index-o4nJcGMy.js:272 [Draft] === STARTING DRAFT FETCH ===
+index-o4nJcGMy.js:272 [Draft] Draft ID: 46160cd7-595b-4f70-9956-795ea53993ff
+index-o4nJcGMy.js:272 [Draft] Auth status - User: Mok Sports Authenticated: true Loading: false
+index-o4nJcGMy.js:272 [Draft] Token available: true
+index-o4nJcGMy.js:272 [Draft] Current URL: https://mok-sports-draft-mokfantasysport.replit.app/draft/46160cd7-595b-4f70-9956-795ea53993ff
+index-o4nJcGMy.js:272 [Draft] Current pathname: /draft/46160cd7-595b-4f70-9956-795ea53993ff
+index-o4nJcGMy.js:272 [Draft] Making API request to: /api/drafts/46160cd7-595b-4f70-9956-795ea53993ff
+index-o4nJcGMy.js:272 [Draft] Response received: {status: 200, statusText: '', headers: {…}}
+index-o4nJcGMy.js:272 [Draft] Successfully fetched draft data: {state: {…}, isCurrentUser: true, currentPlayer: {…}}
+index-o4nJcGMy.js:272 [Draft] === DRAFT FETCH SUCCESS ===

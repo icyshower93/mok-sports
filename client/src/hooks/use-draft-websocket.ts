@@ -13,9 +13,9 @@ import { useAuth } from './use-auth';
 import { useToast } from './use-toast';
 
 export interface DraftWebSocketMessage {
-  type: 'pick_made' | 'timer_update' | 'draft_state' | 'auto_pick' | 'draft_completed';
+  type: 'pick_made' | 'timer_update' | 'draft_state' | 'auto_pick' | 'draft_completed' | 'connected' | 'pong';
   draftId: string;
-  data: any;
+  data?: any;
   timestamp: number;
 }
 
@@ -151,6 +151,14 @@ export function useDraftWebSocket(draftId: string | null) {
         
         // Refresh draft data for reconnections
         queryClient.invalidateQueries({ queryKey: ['draft', draftId] });
+        break;
+
+      case 'connected':
+        console.log('[WebSocket] Connection acknowledged by server');
+        break;
+
+      case 'pong':
+        console.log('[WebSocket] Pong received from server');
         break;
 
       default:
