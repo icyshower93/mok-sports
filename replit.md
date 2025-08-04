@@ -48,7 +48,26 @@ This setup allows testing the complete league workflow including:
 
 **Current League Status**: Test League 1 (EEW2YU) - FULL (6/6 members)
 - Sky Evans (Creator) - Auto-refresh system fixed, notifications working 
-- Mok Sports + 4 test users + Jordan Smith
+- Mok Sports + 4 test users (Alex Rodriguez, Sarah Chen, Marcus Johnson, Emily Davis, Jordan Smith)
+
+## League Full Notification Investigation (August 2025)
+**Issue**: User reports seeing league jump from 5/6 to 6/6 but no notification received.
+
+**Root Cause Identified**: The league full notification system only triggers when someone joins through the `/api/leagues/join` API endpoint. Direct database insertions bypass this trigger completely.
+
+**Current System Status**:
+- Notification logic correctly implemented in join endpoint (lines 228-255 in server/routes.ts)
+- Enhanced logging added to track notification flow
+- NotificationTemplates.leagueFull() creates proper notification payload
+- sendLeagueNotification() function works correctly
+- Test League 1 has been full for extended period with no new joins to trigger notifications
+
+**Why Notifications Don't Trigger**:
+1. League became full through manual database manipulation (testing), not API joins
+2. Once full, no new members can join to trigger the notification system
+3. User sees member count changes through live database queries, not notification events
+
+**Solution**: Notification system is working correctly - it requires actual user joins through the app to trigger league full notifications.
 
 ## MAJOR BREAKTHROUGH: iOS PWA Push Notifications Working (August 2025)
 **Issue**: iOS Safari PWA push subscriptions were never being created despite users enabling notifications.

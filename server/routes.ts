@@ -227,29 +227,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Check if league just became full and send notifications using reusable pattern
       const newMemberCount = await storage.getLeagueMemberCount(league.id);
-      console.log(`League ${league.name} member count after join: ${newMemberCount}/${league.maxTeams}`);
+      console.log(`🔍 [JOIN LEAGUE] ${league.name} member count after join: ${newMemberCount}/${league.maxTeams}`);
       
       if (newMemberCount === league.maxTeams) {
-        console.log(`League ${league.name} is now full! Sending notifications...`);
-        
-        // Use the reusable notification pattern
-        const { sendLeagueNotification, NotificationTemplates } = await import("./utils/notification-patterns.js");
+        console.log(`🎯 [LEAGUE FULL] ${league.name} is now full! Sending notifications...`);
         
         try {
+          // Use the reusable notification pattern
+          const { sendLeagueNotification, NotificationTemplates } = await import("./utils/notification-patterns.js");
+          
           const notification = NotificationTemplates.leagueFull(league.name, league.id);
+          console.log(`📱 [NOTIFICATION] Creating notification:`, JSON.stringify(notification, null, 2));
+          
           const result = await sendLeagueNotification(league.id, notification);
           
           if (result.success) {
-            console.log(`Successfully sent league full notifications to ${result.sentCount} devices`);
+            console.log(`✅ [SUCCESS] Successfully sent league full notifications to ${result.sentCount} devices`);
           } else {
-            console.error('Failed to send league full notifications:', result.errors);
+            console.error(`❌ [FAILED] Failed to send league full notifications:`, result.errors);
           }
+          
+          console.log(`📊 [RESULT] Full notification result:`, JSON.stringify(result, null, 2));
         } catch (notificationError) {
-          console.error('Failed to send league full notifications:', notificationError);
+          console.error(`💥 [ERROR] Exception in notification sending:`, notificationError);
           // Don't fail the join request if notifications fail
         }
       } else {
-        console.log(`League ${league.name} not full yet (${newMemberCount}/${league.maxTeams}) - no notifications sent`);
+        console.log(`ℹ️ [NOT FULL] League ${league.name} not full yet (${newMemberCount}/${league.maxTeams}) - no notifications sent`);
       }
 
       // Return the league with updated member count
@@ -319,6 +323,51 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json({ message: "Successfully left league" });
     } catch (error) {
       res.status(500).json({ message: "Failed to leave league" });
+    }
+  });
+
+  // Test endpoint to manually trigger league full notification
+  app.post("/api/leagues/test-full-notification", async (req, res) => {
+    try {
+      const { leagueId } = req.body;
+      if (!leagueId) {
+        return res.status(400).json({ message: "League ID is required" });
+      }
+
+      console.log(`🧪 [TEST] Manually testing league full notification for league ${leagueId}`);
+      
+      // Get league info
+      const league = await storage.getLeague(leagueId);
+      if (!league) {
+        return res.status(404).json({ message: "League not found" });
+      }
+
+      console.log(`🧪 [TEST] League: ${league.name}`);
+      
+      // Check current member count
+      const memberCount = await storage.getLeagueMemberCount(league.id);
+      console.log(`🧪 [TEST] Member count: ${memberCount}/${league.maxTeams}`);
+      
+      // Force trigger notification regardless of member count for testing
+      const { sendLeagueNotification, NotificationTemplates } = await import("./utils/notification-patterns.js");
+      
+      const notification = NotificationTemplates.leagueFull(league.name, league.id);
+      console.log(`🧪 [TEST] Creating test notification:`, JSON.stringify(notification, null, 2));
+      
+      const result = await sendLeagueNotification(league.id, notification);
+      
+      console.log(`🧪 [TEST] Notification result:`, JSON.stringify(result, null, 2));
+      
+      res.json({
+        success: true,
+        league: league.name,
+        memberCount: `${memberCount}/${league.maxTeams}`,
+        notificationResult: result
+      });
+      
+    } catch (error) {
+      console.error(`🧪 [TEST ERROR]`, error);
+      res.status(500).json({ message: "Failed to test notification", error: error.message });
     }
   });
 
