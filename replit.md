@@ -21,11 +21,13 @@ The server is built with Express.js using TypeScript, following a modular archit
 - **Snake Draft Manager**: Comprehensive draft logic with timer management, auto-pick functionality, and conference rule validation
 - **State Persistence**: Draft state persists across page reloads and reconnections with automatic timer restoration
 - **Robot Testing System**: 4 automated bot users (Alpha, Beta, Gamma, Delta Bot) for comprehensive draft testing
+- **Timer Recovery**: Enhanced timer system with immediate expiration handling and server restart resilience
 
 ### Testing Infrastructure  
 - **Draft Reset Functionality**: Complete draft state reset for iterative testing
 - **Robot User Management**: Automated addition/removal of bot users to leagues
 - **Real-Time Monitoring**: WebSocket connection status tracking and automatic reconnection
+- **Timer Diagnostics**: Real-time timer monitoring and manual intervention capabilities for testing
 
 ## Data Storage Solutions
 

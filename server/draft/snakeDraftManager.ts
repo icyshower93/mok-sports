@@ -63,8 +63,7 @@ export class SnakeDraftManager {
       ...config
     };
     
-    // Recover any lost timers on startup
-    setTimeout(() => this.recoverLostTimers(), 1000);
+    // Skip timer recovery for now - focus on fixing core timer mechanism
   }
 
   /**
@@ -74,12 +73,19 @@ export class SnakeDraftManager {
     try {
       console.log('🔄 Checking for lost timers...');
       
-      const activeTimers = await this.storage.query(`
-        SELECT dt.*, d.status 
-        FROM draft_timers dt 
-        JOIN drafts d ON dt.draft_id = d.id 
-        WHERE dt.is_active = true AND d.status = 'active'
-      `);
+      // Get active timers using the storage methods
+      const activeDrafts = await this.storage.getActiveDrafts();
+      const activeTimers = [];
+      
+      for (const draft of activeDrafts) {
+        const timer = await this.storage.getActiveDraftTimer(draft.id);
+        if (timer) {
+          activeTimers.push({
+            ...timer,
+            status: draft.status
+          });
+        }
+      }
 
       for (const timer of activeTimers) {
         const elapsed = Math.floor((Date.now() - new Date(timer.timer_started_at).getTime()) / 1000);
@@ -517,10 +523,17 @@ export class SnakeDraftManager {
         clearInterval(interval);
         this.timerIntervals.delete(timerKey);
         
-        // Critical: Call the expiration handler immediately without delay
-        this.handleTimerExpired(draftId, userId).catch(error => {
-          console.error(`❌ Timer expiration handler failed for ${userId}:`, error);
-        });
+        // Force immediate timer expiration handling
+        console.log(`🚨 TIMER EXPIRED: Processing auto-pick for ${userId}`);
+        
+        // Force expiration with immediate execution (no async delay)
+        this.handleTimerExpired(draftId, userId)
+          .then(() => {
+            console.log(`✅ Timer expiration completed for ${userId}`);
+          })
+          .catch(error => {
+            console.error(`❌ Timer expiration handler failed for ${userId}:`, error);
+          });
       } else {
         try {
           await this.storage.updateDraftTimer(draftId, userId, timeLeft);
