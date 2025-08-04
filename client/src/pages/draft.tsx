@@ -313,31 +313,24 @@ export default function DraftPage() {
     );
   }
 
+  // Move all state hooks BEFORE any conditional logic or early returns
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  
   const state: DraftState = draftData.state;
   const isCurrentUser = draftData.isCurrentUser;
   const currentPlayer = draftData.currentPlayer;
   const teams = teamsData?.teams || {};
   
-  // Debug log to verify API data structure
-  console.log('Draft data structure:', {
-    currentPlayer: draftData.currentPlayer,
-    currentUserId: state?.currentUserId,
-    isCurrentUser: draftData.isCurrentUser
-  });
-  
-  // Simplified timer display - use localTimeRemaining directly (FIXED: removed duplicate timer)
-  const [isTransitioning, setIsTransitioning] = useState(false);
-  
-  // Handle timer expiration flash effect only
+  // Handle timer expiration flash effect only (FIXED: stable dependencies)
   useEffect(() => {
-    if (localTimeRemaining === 0 && state?.timeRemaining > 0) {
+    if (localTimeRemaining === 0 && draftData?.state?.timeRemaining > 0) {
       setIsTransitioning(true);
       const timeout = setTimeout(() => {
         setIsTransitioning(false);
       }, 2000);
       return () => clearTimeout(timeout);
     }
-  }, [localTimeRemaining, state?.timeRemaining]);
+  }, [localTimeRemaining, draftData?.state?.timeRemaining]); // Use draftData ref instead of state
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -349,6 +342,7 @@ export default function DraftPage() {
     return conference === 'AFC' ? 'bg-blue-500' : 'bg-red-500';
   };
 
+  // Create stable conference team renderer (FIXED: prevent re-render loops)
   const renderConferenceTeams = (conference: 'AFC' | 'NFC') => {
     // Get all teams from available teams and picks to create comprehensive list
     const allTeams = [...(state.availableTeams || [])];

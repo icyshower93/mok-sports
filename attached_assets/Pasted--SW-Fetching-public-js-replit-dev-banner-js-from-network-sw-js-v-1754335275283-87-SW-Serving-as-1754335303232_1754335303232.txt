@@ -1,0 +1,251 @@
+[SW] Fetching /public/js/replit-dev-banner.js from network
+sw.js?v=1754335275283:87 [SW] Serving /assets/index-iLVvUOZX.js from cache
+sw.js?v=1754335275283:91 [SW] Fetching /assets/index-Cn_hjswP.css from network
+index-iLVvUOZX.js:228 [Auth] Token check - Has token: false Has user: false Loading: true
+sw.js?v=1754335275283:87 [SW] Serving /favicon.ico from cache
+sw.js?v=1754335275283:87 [SW] Serving /manifest.json from cache
+d6b1f88c-cc81-4d7c-950f-95661c86fda3:1 Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner.
+index-iLVvUOZX.js:272 [App] Draft route matched with params: {0: 'd6b1f88c-cc81-4d7c-950f-95661c86fda3', draftId: 'd6b1f88c-cc81-4d7c-950f-95661c86fda3'}
+index-iLVvUOZX.js:272 [App] Current location: https://mok-sports-draft-mokfantasysport.replit.app/draft/d6b1f88c-cc81-4d7c-950f-95661c86fda3
+index-iLVvUOZX.js:272 [Draft] === STARTING DRAFT FETCH ===
+index-iLVvUOZX.js:272 [Draft] Draft ID: d6b1f88c-cc81-4d7c-950f-95661c86fda3
+index-iLVvUOZX.js:272 [Draft] Auth status - User: Mok Sports Authenticated: false Loading: false
+index-iLVvUOZX.js:272 [Draft] Token available: false
+index-iLVvUOZX.js:272 [Draft] Current URL: https://mok-sports-draft-mokfantasysport.replit.app/draft/d6b1f88c-cc81-4d7c-950f-95661c86fda3
+index-iLVvUOZX.js:272 [Draft] Current pathname: /draft/d6b1f88c-cc81-4d7c-950f-95661c86fda3
+index-iLVvUOZX.js:272 [Draft] Making API request to: /api/drafts/d6b1f88c-cc81-4d7c-950f-95661c86fda3
+index-iLVvUOZX.js:228 [Auth] Token check - Has token: false Has user: true Loading: false
+sw.js?v=1754335280905:15 [SW] Service worker starting, version: v1.4.0-ios-push-fix
+sw.js?v=1754335280905:201 [SW] Service worker script loaded successfully
+sw.js?v=1754335280905:19 [SW] Installing service worker, version: v1.4.0-ios-push-fix
+sw.js?v=1754335280905:23 [SW] Caching static files
+index-iLVvUOZX.js:272 [App] Draft route matched with params: {0: 'd6b1f88c-cc81-4d7c-950f-95661c86fda3', draftId: 'd6b1f88c-cc81-4d7c-950f-95661c86fda3'}
+index-iLVvUOZX.js:272 [App] Current location: https://mok-sports-draft-mokfantasysport.replit.app/draft/d6b1f88c-cc81-4d7c-950f-95661c86fda3
+index-iLVvUOZX.js:228 [SubscriptionManager] 3:21:20 PM - Permission is granted and no active subscription - auto-creating subscription
+index-iLVvUOZX.js:228 [AutoPushRefresh] Legacy hook delegating to SubscriptionManager
+index-iLVvUOZX.js:228 [SW Hook] Service worker registered successfully
+index-iLVvUOZX.js:272 [App] Draft route matched with params: {0: 'd6b1f88c-cc81-4d7c-950f-95661c86fda3', draftId: 'd6b1f88c-cc81-4d7c-950f-95661c86fda3'}
+index-iLVvUOZX.js:272 [App] Current location: https://mok-sports-draft-mokfantasysport.replit.app/draft/d6b1f88c-cc81-4d7c-950f-95661c86fda3
+index-iLVvUOZX.js:272 [App] Draft route matched with params: {0: 'd6b1f88c-cc81-4d7c-950f-95661c86fda3', draftId: 'd6b1f88c-cc81-4d7c-950f-95661c86fda3'}
+index-iLVvUOZX.js:272 [App] Current location: https://mok-sports-draft-mokfantasysport.replit.app/draft/d6b1f88c-cc81-4d7c-950f-95661c86fda3
+index-iLVvUOZX.js:272 [WebSocket] Connected to draft: d6b1f88c-cc81-4d7c-950f-95661c86fda3
+index-iLVvUOZX.js:272 [WebSocket] Unknown message type: connected
+sw.js?v=1754335280905:26 [SW] Static files cached successfully
+index-iLVvUOZX.js:272 [App] Draft route matched with params: {0: 'd6b1f88c-cc81-4d7c-950f-95661c86fda3', draftId: 'd6b1f88c-cc81-4d7c-950f-95661c86fda3'}
+index-iLVvUOZX.js:272 [App] Current location: https://mok-sports-draft-mokfantasysport.replit.app/draft/d6b1f88c-cc81-4d7c-950f-95661c86fda3
+index-iLVvUOZX.js:272 [Draft] Response received: {status: 200, statusText: '', headers: {…}}
+index-iLVvUOZX.js:272 [Draft] Successfully fetched draft data: {state: {…}, isCurrentUser: false, currentPlayer: null}
+index-iLVvUOZX.js:272 [Draft] === DRAFT FETCH SUCCESS ===
+index-iLVvUOZX.js:272 Draft data structure: {currentPlayer: null, currentUserId: null, isCurrentUser: false}
+index-iLVvUOZX.js:272 Draft data structure: {currentPlayer: null, currentUserId: null, isCurrentUser: false}
+index-iLVvUOZX.js:40 Error: Minified React error #310; visit https://reactjs.org/docs/error-decoder.html?invariant=310 for the full message or use the non-minified dev environment for full errors and additional helpful warnings.
+    at Tt (index-iLVvUOZX.js:38:17593)
+    at Ul (index-iLVvUOZX.js:38:17846)
+    at Object.useState (index-iLVvUOZX.js:38:24656)
+    at te.useState (index-iLVvUOZX.js:9:6397)
+    at Pj (index-iLVvUOZX.js:272:54729)
+    at xd (index-iLVvUOZX.js:38:16998)
+    at Wc (index-iLVvUOZX.js:40:3139)
+    at ev (index-iLVvUOZX.js:40:44737)
+    at Xg (index-iLVvUOZX.js:40:39727)
+    at CS (index-iLVvUOZX.js:40:39655)
+Uc @ index-iLVvUOZX.js:40
+s.componentDidCatch.n.callback @ index-iLVvUOZX.js:40
+hp @ index-iLVvUOZX.js:38
+Rp @ index-iLVvUOZX.js:40
+Qg @ index-iLVvUOZX.js:40
+wS @ index-iLVvUOZX.js:40
+NS @ index-iLVvUOZX.js:40
+xr @ index-iLVvUOZX.js:40
+_p @ index-iLVvUOZX.js:40
+dr @ index-iLVvUOZX.js:38
+(anonymous) @ index-iLVvUOZX.js:40
+setTimeout
+o @ index-iLVvUOZX.js:48
+i @ index-iLVvUOZX.js:48
+batch @ index-iLVvUOZX.js:48
+fn @ index-iLVvUOZX.js:48
+setData @ index-iLVvUOZX.js:48
+onSuccess @ index-iLVvUOZX.js:48
+p @ index-iLVvUOZX.js:48
+Promise.then
+w @ index-iLVvUOZX.js:48
+start @ index-iLVvUOZX.js:48
+fetch @ index-iLVvUOZX.js:48
+ys @ index-iLVvUOZX.js:48
+onSubscribe @ index-iLVvUOZX.js:48
+subscribe @ index-iLVvUOZX.js:48
+(anonymous) @ index-iLVvUOZX.js:48
+gg @ index-iLVvUOZX.js:38
+qa @ index-iLVvUOZX.js:40
+vo @ index-iLVvUOZX.js:40
+NS @ index-iLVvUOZX.js:40
+xr @ index-iLVvUOZX.js:40
+_p @ index-iLVvUOZX.js:40
+dr @ index-iLVvUOZX.js:38
+(anonymous) @ index-iLVvUOZX.js:40
+setTimeout
+o @ index-iLVvUOZX.js:48
+i @ index-iLVvUOZX.js:48
+batch @ index-iLVvUOZX.js:48
+fn @ index-iLVvUOZX.js:48
+setData @ index-iLVvUOZX.js:48
+onSuccess @ index-iLVvUOZX.js:48
+p @ index-iLVvUOZX.js:48
+Promise.then
+w @ index-iLVvUOZX.js:48
+start @ index-iLVvUOZX.js:48
+fetch @ index-iLVvUOZX.js:48
+ys @ index-iLVvUOZX.js:48
+onSubscribe @ index-iLVvUOZX.js:48
+subscribe @ index-iLVvUOZX.js:48
+(anonymous) @ index-iLVvUOZX.js:48
+gg @ index-iLVvUOZX.js:38
+qa @ index-iLVvUOZX.js:40
+vo @ index-iLVvUOZX.js:40
+_p @ index-iLVvUOZX.js:40
+dr @ index-iLVvUOZX.js:38
+NS @ index-iLVvUOZX.js:40
+xr @ index-iLVvUOZX.js:40
+qg @ index-iLVvUOZX.js:40
+N @ index-iLVvUOZX.js:25
+_ @ index-iLVvUOZX.js:25Understand this error
+index-iLVvUOZX.js:228 ErrorBoundary caught an error: Minified React error #310; visit https://reactjs.org/docs/error-decoder.html?invariant=310 for the full message or use the non-minified dev environment for full errors and additional helpful warnings.
+componentDidCatch @ index-iLVvUOZX.js:228
+s.componentDidCatch.n.callback @ index-iLVvUOZX.js:40
+hp @ index-iLVvUOZX.js:38
+Rp @ index-iLVvUOZX.js:40
+Qg @ index-iLVvUOZX.js:40
+wS @ index-iLVvUOZX.js:40
+NS @ index-iLVvUOZX.js:40
+xr @ index-iLVvUOZX.js:40
+_p @ index-iLVvUOZX.js:40
+dr @ index-iLVvUOZX.js:38
+(anonymous) @ index-iLVvUOZX.js:40
+setTimeout
+o @ index-iLVvUOZX.js:48
+i @ index-iLVvUOZX.js:48
+batch @ index-iLVvUOZX.js:48
+fn @ index-iLVvUOZX.js:48
+setData @ index-iLVvUOZX.js:48
+onSuccess @ index-iLVvUOZX.js:48
+p @ index-iLVvUOZX.js:48
+Promise.then
+w @ index-iLVvUOZX.js:48
+start @ index-iLVvUOZX.js:48
+fetch @ index-iLVvUOZX.js:48
+ys @ index-iLVvUOZX.js:48
+onSubscribe @ index-iLVvUOZX.js:48
+subscribe @ index-iLVvUOZX.js:48
+(anonymous) @ index-iLVvUOZX.js:48
+gg @ index-iLVvUOZX.js:38
+qa @ index-iLVvUOZX.js:40
+vo @ index-iLVvUOZX.js:40
+NS @ index-iLVvUOZX.js:40
+xr @ index-iLVvUOZX.js:40
+_p @ index-iLVvUOZX.js:40
+dr @ index-iLVvUOZX.js:38
+(anonymous) @ index-iLVvUOZX.js:40
+setTimeout
+o @ index-iLVvUOZX.js:48
+i @ index-iLVvUOZX.js:48
+batch @ index-iLVvUOZX.js:48
+fn @ index-iLVvUOZX.js:48
+setData @ index-iLVvUOZX.js:48
+onSuccess @ index-iLVvUOZX.js:48
+p @ index-iLVvUOZX.js:48
+Promise.then
+w @ index-iLVvUOZX.js:48
+start @ index-iLVvUOZX.js:48
+fetch @ index-iLVvUOZX.js:48
+ys @ index-iLVvUOZX.js:48
+onSubscribe @ index-iLVvUOZX.js:48
+subscribe @ index-iLVvUOZX.js:48
+(anonymous) @ index-iLVvUOZX.js:48
+gg @ index-iLVvUOZX.js:38
+qa @ index-iLVvUOZX.js:40
+vo @ index-iLVvUOZX.js:40
+_p @ index-iLVvUOZX.js:40
+dr @ index-iLVvUOZX.js:38
+NS @ index-iLVvUOZX.js:40
+xr @ index-iLVvUOZX.js:40
+qg @ index-iLVvUOZX.js:40
+N @ index-iLVvUOZX.js:25
+_ @ index-iLVvUOZX.js:25Understand this error
+index-iLVvUOZX.js:228 Component stack: 
+    at Pj (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-iLVvUOZX.js:272:48883)
+    at Tn (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-iLVvUOZX.js:48:3201)
+    at fb (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-iLVvUOZX.js:48:4017)
+    at b2 (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-iLVvUOZX.js:272:114269)
+    at Sk (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-iLVvUOZX.js:228:57441)
+    at u (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-iLVvUOZX.js:48:45795)
+    at Hy (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-iLVvUOZX.js:228:50417)
+    at wk (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-iLVvUOZX.js:228:56913)
+    at Ob (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-iLVvUOZX.js:48:40146)
+    at Pk (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-iLVvUOZX.js:228:70254)
+    at C2
+componentDidCatch @ index-iLVvUOZX.js:228
+s.componentDidCatch.n.callback @ index-iLVvUOZX.js:40
+hp @ index-iLVvUOZX.js:38
+Rp @ index-iLVvUOZX.js:40
+Qg @ index-iLVvUOZX.js:40
+wS @ index-iLVvUOZX.js:40
+NS @ index-iLVvUOZX.js:40
+xr @ index-iLVvUOZX.js:40
+_p @ index-iLVvUOZX.js:40
+dr @ index-iLVvUOZX.js:38
+(anonymous) @ index-iLVvUOZX.js:40
+setTimeout
+o @ index-iLVvUOZX.js:48
+i @ index-iLVvUOZX.js:48
+batch @ index-iLVvUOZX.js:48
+fn @ index-iLVvUOZX.js:48
+setData @ index-iLVvUOZX.js:48
+onSuccess @ index-iLVvUOZX.js:48
+p @ index-iLVvUOZX.js:48
+Promise.then
+w @ index-iLVvUOZX.js:48
+start @ index-iLVvUOZX.js:48
+fetch @ index-iLVvUOZX.js:48
+ys @ index-iLVvUOZX.js:48
+onSubscribe @ index-iLVvUOZX.js:48
+subscribe @ index-iLVvUOZX.js:48
+(anonymous) @ index-iLVvUOZX.js:48
+gg @ index-iLVvUOZX.js:38
+qa @ index-iLVvUOZX.js:40
+vo @ index-iLVvUOZX.js:40
+NS @ index-iLVvUOZX.js:40
+xr @ index-iLVvUOZX.js:40
+_p @ index-iLVvUOZX.js:40
+dr @ index-iLVvUOZX.js:38
+(anonymous) @ index-iLVvUOZX.js:40
+setTimeout
+o @ index-iLVvUOZX.js:48
+i @ index-iLVvUOZX.js:48
+batch @ index-iLVvUOZX.js:48
+fn @ index-iLVvUOZX.js:48
+setData @ index-iLVvUOZX.js:48
+onSuccess @ index-iLVvUOZX.js:48
+p @ index-iLVvUOZX.js:48
+Promise.then
+w @ index-iLVvUOZX.js:48
+start @ index-iLVvUOZX.js:48
+fetch @ index-iLVvUOZX.js:48
+ys @ index-iLVvUOZX.js:48
+onSubscribe @ index-iLVvUOZX.js:48
+subscribe @ index-iLVvUOZX.js:48
+(anonymous) @ index-iLVvUOZX.js:48
+gg @ index-iLVvUOZX.js:38
+qa @ index-iLVvUOZX.js:40
+vo @ index-iLVvUOZX.js:40
+_p @ index-iLVvUOZX.js:40
+dr @ index-iLVvUOZX.js:38
+NS @ index-iLVvUOZX.js:40
+xr @ index-iLVvUOZX.js:40
+qg @ index-iLVvUOZX.js:40
+N @ index-iLVvUOZX.js:25
+_ @ index-iLVvUOZX.js:25Understand this error
+index-iLVvUOZX.js:272 [WebSocket] Connection closed: 1000 Client disconnect
+sw.js?v=1754335280905:37 [SW] Activating service worker, version: v1.4.0-ios-push-fix
+sw.js?v=1754335280905:43 [SW] Found caches: (2) ['mok-sports-static-v1.4.0-ios-push-fix', 'mok-sports-dynamic-v1.4.0-ios-push-fix']
+sw.js?v=1754335280905:56 [SW] Service worker activated and controlling all clients
