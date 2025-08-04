@@ -989,6 +989,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const { default: setupDraftRoutes } = await import("./routes/draft.js");
   setupDraftRoutes(app, storage, webSocketManager, robotManager);
   
+  // Add WebSocket status endpoint for debugging
+  app.get('/api/websocket/status/:draftId', async (req, res) => {
+    const { draftId } = req.params;
+    const connectionCount = webSocketManager.getDraftConnectionCount(draftId);
+    const connectedUsers = webSocketManager.getConnectedUsers(draftId);
+    
+    res.json({
+      draftId,
+      connectionCount,
+      connectedUsers,
+      timestamp: new Date().toISOString()
+    });
+  });
+  
   console.log('[WebSocket] Draft WebSocket server initialized and connected');
   
   return httpServer;
