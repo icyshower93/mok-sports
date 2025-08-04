@@ -570,7 +570,7 @@ export class SnakeDraftManager {
     return await this.getDraftState(draftId);
   }
 
-  private async startPickTimer(
+  async startPickTimer(
     draftId: string, 
     userId: string, 
     round: number, 

@@ -274,6 +274,24 @@ export default function setupDraftRoutes(app: any, storage: IStorage, webSocketM
       }
 
       if (draft.status !== 'not_started') {
+        // If draft is already active, try to recover/restart the timer
+        if (draft.status === 'active') {
+          console.log(`[Draft Start] Draft already active, attempting to restart current timer`);
+          const draftState = await draftManager.getDraftState(draftId);
+          
+          // Restart timer for current pick
+          const currentPickUser = draftManager.getCurrentPickUser(draft);
+          if (currentPickUser) {
+            console.log(`[Draft Start] Restarting timer for current pick user: ${currentPickUser}`);
+            await draftManager.startPickTimer(draftId, currentPickUser, draft.currentRound, draft.currentPick);
+          }
+          
+          return res.json({
+            message: "Draft timer restarted successfully",
+            state: draftState
+          });
+        }
+        
         return res.status(400).json({ message: "Draft has already been started" });
       }
 
