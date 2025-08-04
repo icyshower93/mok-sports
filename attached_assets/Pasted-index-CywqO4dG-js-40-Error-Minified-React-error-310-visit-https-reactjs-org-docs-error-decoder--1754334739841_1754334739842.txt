@@ -1,0 +1,32 @@
+index-CywqO4dG.js:40 Error: Minified React error #310; visit https://reactjs.org/docs/error-decoder.html?invariant=310 for the full message or use the non-minified dev environment for full errors and additional helpful warnings.
+    at At (index-CywqO4dG.js:38:17593)
+    at Vl (index-CywqO4dG.js:38:17846)
+    at Object.useState (index-CywqO4dG.js:38:24656)
+    at te.useState (index-CywqO4dG.js:9:6397)
+    at Rj (index-CywqO4dG.js:272:54919)
+    at bd (index-CywqO4dG.js:38:16998)
+    at Hc (index-CywqO4dG.js:40:3139)
+    at rv (index-CywqO4dG.js:40:44737)
+    at ev (index-CywqO4dG.js:40:39727)
+    at kS (index-CywqO4dG.js:40:39655)
+
+index-CywqO4dG.js:228 ErrorBoundary caught an error: Minified React error #310; visit https://reactjs.org/docs/error-decoder.html?invariant=310 for the full message or use the non-minified dev environment for full errors and additional helpful warnings.
+index-CywqO4dG.js:228 Component stack: 
+    at Rj (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CywqO4dG.js:272:48887)
+    at Rn (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CywqO4dG.js:48:3201)
+    at mb (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CywqO4dG.js:48:4017)
+    at N2 (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CywqO4dG.js:272:114636)
+    at Ek (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CywqO4dG.js:228:57441)
+    at u (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CywqO4dG.js:48:45795)
+    at qy (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CywqO4dG.js:228:50417)
+    at Ck (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CywqO4dG.js:228:56913)
+    at Mb (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CywqO4dG.js:48:40146)
+    at Rk (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CywqO4dG.js:228:70254)
+    at k2
+index-CywqO4dG.js:272 [WebSocket] Connection closed: 1000 Client disconnect
+sw.js?v=1754334728661:37 [SW] Activating service worker, version: v1.4.0-ios-push-fix
+sw.js?v=1754334728661:43 [SW] Found caches: 
+(2) ['mok-sports-static-v1.4.0-ios-push-fix', 'mok-sports-dynamic-v1.4.0-ios-push-fix']
+sw.js?v=1754334728661:56 [SW] Service worker activated and controlling all clients
+﻿
+
