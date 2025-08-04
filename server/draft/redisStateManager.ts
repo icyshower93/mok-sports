@@ -112,6 +112,28 @@ export class RedisStateManager {
     return Math.floor(remaining);
   }
 
+  async updateTimeRemaining(draftId: string, timeRemaining: number): Promise<void> {
+    const timer = await this.getTimer(draftId);
+    if (!timer) return;
+
+    // Update the timer with new remaining time
+    const updatedTimer: TimerData = {
+      ...timer,
+      startTime: Date.now() - ((timer.duration - timeRemaining) * 1000)
+    };
+
+    if (this.isRedisAvailable()) {
+      try {
+        await this.redis!.setex(`timer:${draftId}`, timeRemaining, JSON.stringify(updatedTimer));
+      } catch (error) {
+        console.error('[RedisStateManager] Failed to update timer, using fallback:', error);
+        this.inMemoryState.set(`timer:${draftId}`, { ...updatedTimer, expires: Date.now() + (timeRemaining * 1000) });
+      }
+    } else {
+      this.inMemoryState.set(`timer:${draftId}`, { ...updatedTimer, expires: Date.now() + (timeRemaining * 1000) });
+    }
+  }
+
   async deleteTimer(draftId: string): Promise<void> {
     if (this.isRedisAvailable()) {
       try {
