@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { ScrollArea } from "@/components/ui/scroll-area";
-// import { Separator } from "@/components/ui/separator";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Clock, Users, Trophy, Zap, Shield, Star, Wifi, WifiOff } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
@@ -94,33 +94,40 @@ export default function DraftPage() {
       return response.json();
     },
     enabled: !!draftId,
-    refetchInterval: 5000, // Poll every 5 seconds (reduced since we have local timer)
-    onSuccess: (data) => {
-      // Update local timer when we get new server data
-      if (data?.timeRemaining !== undefined) {
-        setLocalTimeRemaining(data.timeRemaining);
-        setLastServerUpdate(Date.now());
-      }
-    }
+    refetchInterval: 5000 // Poll every 5 seconds (reduced since we have local timer)
   });
+
+  // Update local timer when we get new server data
+  useEffect(() => {
+    if (draftData?.state?.timeRemaining !== undefined) {
+      setLocalTimeRemaining(draftData.state.timeRemaining);
+      setLastServerUpdate(Date.now());
+    }
+  }, [draftData?.state?.timeRemaining]);
 
   // Local countdown timer for smooth second-by-second updates
   useEffect(() => {
     const interval = setInterval(() => {
       setLocalTimeRemaining(prev => {
         const elapsed = Math.floor((Date.now() - lastServerUpdate) / 1000);
-        const newTime = (draftData?.timeRemaining || 0) - elapsed;
+        const newTime = (draftData?.state?.timeRemaining || 0) - elapsed;
         return Math.max(0, newTime);
       });
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [lastServerUpdate, draftData?.timeRemaining]);
+  }, [lastServerUpdate, draftData?.state?.timeRemaining]);
 
   // Fetch available teams
   const { data: teamsData } = useQuery({
     queryKey: ['draft-teams', draftId],
-    queryFn: () => apiRequest(`/api/drafts/${draftId}/available-teams`).then(r => r.json()),
+    queryFn: async () => {
+      const response = await fetch(`/api/drafts/${draftId}/available-teams`, {
+        credentials: 'include'
+      });
+      if (!response.ok) throw new Error('Failed to fetch teams');
+      return response.json();
+    },
     enabled: !!draftId,
     refetchInterval: 5000,
   });

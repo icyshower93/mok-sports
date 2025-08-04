@@ -8,7 +8,7 @@
  */
 
 import { IStorage } from "../storage.js";
-import type { User } from "../shared/schema.js";
+import type { User } from "../../shared/schema.js";
 
 export interface RobotUser {
   id: string;

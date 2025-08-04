@@ -69,6 +69,43 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   }
 
+  // Testing login endpoint (development only)
+  if (process.env.NODE_ENV === "development") {
+    app.post("/api/auth/testing/login", async (req, res) => {
+      try {
+        const { userId } = req.body;
+        
+        let user;
+        if (userId) {
+          user = await storage.getUser(userId);
+        } else {
+          // Default to Sky Evans for testing
+          user = await storage.getUserByEmail("skyevans04@gmail.com");
+        }
+        
+        if (!user) {
+          return res.status(404).json({ message: "User not found" });
+        }
+
+        const token = generateJWT(user);
+        
+        const cookieOptions = {
+          httpOnly: true,
+          secure: false,
+          sameSite: "lax" as const,
+          maxAge: 7 * 24 * 60 * 60 * 1000,
+          path: '/'
+        };
+        
+        res.cookie("auth_token", token, cookieOptions);
+        res.json({ success: true, user: { id: user.id, name: user.name, email: user.email } });
+      } catch (error) {
+        console.error("Testing login error:", error);
+        res.status(500).json({ message: "Login failed" });
+      }
+    });
+  }
+
   // Check OAuth configuration status
   app.get("/api/auth/config", (req, res) => {
     res.json({ 
