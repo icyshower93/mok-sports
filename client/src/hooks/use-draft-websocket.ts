@@ -38,7 +38,7 @@ export function useDraftWebSocket(draftId: string | null) {
     setConnectionStatus('connecting');
     
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const wsUrl = `${protocol}//${window.location.host}/ws/draft?userId=${user.id}&draftId=${draftId}`;
+    const wsUrl = `${protocol}//${window.location.host}/draft-ws?userId=${user.id}&draftId=${draftId}`;
     console.log('[WebSocket] Connecting to:', wsUrl);
     
     const ws = new WebSocket(wsUrl);

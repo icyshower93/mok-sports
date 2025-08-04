@@ -25,16 +25,16 @@ export class DraftWebSocketManager {
   private heartbeatInterval!: NodeJS.Timeout;
 
   constructor(server: Server) {
-    // Create WebSocket server on /ws/draft path
+    // Create WebSocket server on /draft-ws path to avoid Vite HMR conflicts
     this.wss = new WebSocketServer({ 
       server, 
-      path: '/ws/draft'
+      path: '/draft-ws'
     });
 
     this.wss.on('connection', this.handleConnection.bind(this));
     this.startHeartbeat();
     
-    console.log('[WebSocket] Draft WebSocket server initialized on /ws/draft');
+    console.log('[WebSocket] Draft WebSocket server initialized on /draft-ws');
   }
 
   private handleConnection(ws: WebSocket, request: any) {
