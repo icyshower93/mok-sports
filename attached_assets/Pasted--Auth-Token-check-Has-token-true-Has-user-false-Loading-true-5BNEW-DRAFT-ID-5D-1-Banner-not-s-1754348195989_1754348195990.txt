@@ -1,0 +1,840 @@
+[Auth] Token check - Has token: true Has user: false Loading: true
+%5BNEW_DRAFT_ID%5D:1 Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner.
+index-OHF5AvRP.js:272 [App] Draft route matched with params: Object
+index-OHF5AvRP.js:272 [App] Current location: https://mok-sports-draft-mokfantasysport.replit.app/draft/%5BNEW_DRAFT_ID%5D
+index-OHF5AvRP.js:272 [Draft] Component render started
+index-OHF5AvRP.js:272 [Draft] All useState hooks declared
+index-OHF5AvRP.js:272 [Draft] All hooks declared, starting conditional logic
+index-OHF5AvRP.js:272 [WebSocket] Attempting connection for draft: [NEW_DRAFT_ID] user: d8873675-274c-46f9-ab48-00955c81d875
+index-OHF5AvRP.js:272 [WebSocket] Connecting to: wss://mok-sports-draft-mokfantasysport.replit.app/draft-ws?userId=d8873675-274c-46f9-ab48-00955c81d875&draftId=[NEW_DRAFT_ID]
+index-OHF5AvRP.js:272 [WebSocket] Current location: https://mok-sports-draft-mokfantasysport.replit.app/draft/%5BNEW_DRAFT_ID%5D
+index-OHF5AvRP.js:272 [WebSocket] Protocol detected: wss:
+index-OHF5AvRP.js:272 [Draft] === STARTING DRAFT FETCH ===
+index-OHF5AvRP.js:272 [Draft] Draft ID: [NEW_DRAFT_ID]
+index-OHF5AvRP.js:272 [Draft] Auth status - User: Mok Sports Authenticated: false Loading: false
+index-OHF5AvRP.js:272 [Draft] Token available: true
+index-OHF5AvRP.js:272 [Draft] Current URL: https://mok-sports-draft-mokfantasysport.replit.app/draft/%5BNEW_DRAFT_ID%5D
+index-OHF5AvRP.js:272 [Draft] Current pathname: /draft/%5BNEW_DRAFT_ID%5D
+index-OHF5AvRP.js:272 [Draft] Making API request to: /api/drafts/[NEW_DRAFT_ID]
+index-OHF5AvRP.js:272 [Draft] Timer expiration useEffect called
+index-OHF5AvRP.js:228 [Auth] Token check - Has token: true Has user: true Loading: false
+index-OHF5AvRP.js:272 [App] Draft route matched with params: Object
+index-OHF5AvRP.js:272 [App] Current location: https://mok-sports-draft-mokfantasysport.replit.app/draft/%5BNEW_DRAFT_ID%5D
+index-OHF5AvRP.js:272 [Draft] Component render started
+index-OHF5AvRP.js:272 [Draft] All useState hooks declared
+index-OHF5AvRP.js:272 [Draft] All hooks declared, starting conditional logic
+sw.js?v=1754348170792:15 [SW] Service worker starting, version: v1.4.0-ios-push-fix
+sw.js?v=1754348170792:201 [SW] Service worker script loaded successfully
+sw.js?v=1754348170792:19 [SW] Installing service worker, version: v1.4.0-ios-push-fix
+sw.js?v=1754348170792:23 [SW] Caching static files
+index-OHF5AvRP.js:228 [SubscriptionManager] 6:56:10 PM - Permission is granted and no active subscription - auto-creating subscription
+index-OHF5AvRP.js:228 [AutoPushRefresh] Legacy hook delegating to SubscriptionManager
+index-OHF5AvRP.js:228 [SW Hook] Service worker registered successfully
+index-OHF5AvRP.js:272 [App] Draft route matched with params: Object
+index-OHF5AvRP.js:272 [App] Current location: https://mok-sports-draft-mokfantasysport.replit.app/draft/%5BNEW_DRAFT_ID%5D
+index-OHF5AvRP.js:272 [Draft] Component render started
+index-OHF5AvRP.js:272 [Draft] All useState hooks declared
+index-OHF5AvRP.js:272 [Draft] All hooks declared, starting conditional logic
+index-OHF5AvRP.js:272 [App] Draft route matched with params: Object
+index-OHF5AvRP.js:272 [App] Current location: https://mok-sports-draft-mokfantasysport.replit.app/draft/%5BNEW_DRAFT_ID%5D
+index-OHF5AvRP.js:272 [Draft] Component render started
+index-OHF5AvRP.js:272 [Draft] All useState hooks declared
+index-OHF5AvRP.js:272 [Draft] All hooks declared, starting conditional logic
+/api/drafts/[NEW_DRAFT_ID]:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+index-OHF5AvRP.js:272 [Draft] === DRAFT FETCH ERROR ===
+queryFn @ index-OHF5AvRP.js:272Understand this error
+index-OHF5AvRP.js:272 [Draft] Error fetching draft data: Error: 404: {"message":"Draft not found"}
+    at Lv (index-OHF5AvRP.js:48:43053)
+    at async Zi (index-OHF5AvRP.js:48:43286)
+    at async queryFn (index-OHF5AvRP.js:272:50520)
+queryFn @ index-OHF5AvRP.js:272Understand this error
+index-OHF5AvRP.js:272 [Draft] Error type: object
+queryFn @ index-OHF5AvRP.js:272Understand this error
+index-OHF5AvRP.js:272 [Draft] Error constructor: Error
+queryFn @ index-OHF5AvRP.js:272Understand this error
+index-OHF5AvRP.js:272 [DEBUG] Module Error in draft-fetch: Object
+Dh @ index-OHF5AvRP.js:272Understand this error
+index-OHF5AvRP.js:272 [Draft] Full error details: Object
+queryFn @ index-OHF5AvRP.js:272Understand this error
+index-OHF5AvRP.js:272 [Draft] Attempting direct fetch for debugging...
+/api/drafts/[NEW_DRAFT_ID]/available-teams:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+sw.js?v=1754348170792:26 [SW] Static files cached successfully
+index-OHF5AvRP.js:272 [App] Draft route matched with params: Object
+index-OHF5AvRP.js:272 [App] Current location: https://mok-sports-draft-mokfantasysport.replit.app/draft/%5BNEW_DRAFT_ID%5D
+index-OHF5AvRP.js:272 [Draft] Component render started
+index-OHF5AvRP.js:272 [Draft] All useState hooks declared
+index-OHF5AvRP.js:272 [Draft] All hooks declared, starting conditional logic
+index-OHF5AvRP.js:272 [WebSocket] Successfully connected to draft: [NEW_DRAFT_ID] for user: d8873675-274c-46f9-ab48-00955c81d875
+index-OHF5AvRP.js:272 [WebSocket] Connected to draft successfully
+index-OHF5AvRP.js:272 [Draft] Component render started
+index-OHF5AvRP.js:272 [Draft] All useState hooks declared
+index-OHF5AvRP.js:272 [Draft] All hooks declared, starting conditional logic
+/api/drafts/[NEW_DRAFT_ID]:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+index-OHF5AvRP.js:272 [Draft] Direct fetch response: Object
+index-OHF5AvRP.js:272 [Draft] Direct fetch response body: {"message":"Draft not found"}
+index-OHF5AvRP.js:272 [Draft] Retrying fetch, attempt 1
+index-OHF5AvRP.js:228 [SubscriptionManager] 6:56:11 PM - Starting subscription refresh...
+index-OHF5AvRP.js:272 [App] Draft route matched with params: Object
+index-OHF5AvRP.js:272 [App] Current location: https://mok-sports-draft-mokfantasysport.replit.app/draft/%5BNEW_DRAFT_ID%5D
+index-OHF5AvRP.js:272 [Draft] Component render started
+index-OHF5AvRP.js:272 [Draft] All useState hooks declared
+index-OHF5AvRP.js:272 [Draft] All hooks declared, starting conditional logic
+index-OHF5AvRP.js:228 [SubscriptionManager] 6:56:11 PM - Found existing subscription - unsubscribing...
+index-OHF5AvRP.js:228 [SubscriptionManager] 6:56:11 PM - Existing subscription unsubscribed
+index-OHF5AvRP.js:228 [SubscriptionManager] 6:56:11 PM - Creating new push subscription...
+index-OHF5AvRP.js:228 [SubscriptionManager] 6:56:11 PM - Sending subscription to server: https://fcm.googleapis.com/fcm/send/f2KJsbIrc84:AP...
+index-OHF5AvRP.js:228 [SubscriptionManager] 6:56:12 PM - Server response: 201 
+index-OHF5AvRP.js:228 [SubscriptionManager] 6:56:12 PM - Subscription registered successfully: Subscription registered successfully
+index-OHF5AvRP.js:272 [App] Draft route matched with params: Object
+index-OHF5AvRP.js:272 [App] Current location: https://mok-sports-draft-mokfantasysport.replit.app/draft/%5BNEW_DRAFT_ID%5D
+index-OHF5AvRP.js:272 [Draft] Component render started
+index-OHF5AvRP.js:272 [Draft] All useState hooks declared
+index-OHF5AvRP.js:272 [Draft] All hooks declared, starting conditional logic
+sw.js?v=1754348170792:37 [SW] Activating service worker, version: v1.4.0-ios-push-fix
+sw.js?v=1754348170792:43 [SW] Found caches: Array(2)
+sw.js?v=1754348170792:56 [SW] Service worker activated and controlling all clients
+index-OHF5AvRP.js:272 [Draft] === STARTING DRAFT FETCH ===
+index-OHF5AvRP.js:272 [Draft] Draft ID: [NEW_DRAFT_ID]
+index-OHF5AvRP.js:272 [Draft] Auth status - User: Mok Sports Authenticated: true Loading: false
+index-OHF5AvRP.js:272 [Draft] Token available: true
+index-OHF5AvRP.js:272 [Draft] Current URL: https://mok-sports-draft-mokfantasysport.replit.app/draft/%5BNEW_DRAFT_ID%5D
+index-OHF5AvRP.js:272 [Draft] Current pathname: /draft/%5BNEW_DRAFT_ID%5D
+index-OHF5AvRP.js:272 [Draft] Making API request to: /api/drafts/[NEW_DRAFT_ID]
+/api/drafts/[NEW_DRAFT_ID]/available-teams:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+/api/drafts/[NEW_DRAFT_ID]:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+index-OHF5AvRP.js:272 [Draft] === DRAFT FETCH ERROR ===
+queryFn @ index-OHF5AvRP.js:272Understand this error
+index-OHF5AvRP.js:272 [Draft] Error fetching draft data: Error: 404: {"message":"Draft not found"}
+    at Lv (index-OHF5AvRP.js:48:43053)
+    at async Zi (index-OHF5AvRP.js:48:43286)
+    at async queryFn (index-OHF5AvRP.js:272:50520)
+queryFn @ index-OHF5AvRP.js:272Understand this error
+index-OHF5AvRP.js:272 [Draft] Error type: object
+queryFn @ index-OHF5AvRP.js:272Understand this error
+index-OHF5AvRP.js:272 [Draft] Error constructor: Error
+queryFn @ index-OHF5AvRP.js:272Understand this error
+index-OHF5AvRP.js:272 [DEBUG] Module Error in draft-fetch: Object
+Dh @ index-OHF5AvRP.js:272Understand this error
+index-OHF5AvRP.js:272 [Draft] Full error details: Object
+queryFn @ index-OHF5AvRP.js:272Understand this error
+index-OHF5AvRP.js:272 [Draft] Attempting direct fetch for debugging...
+/api/drafts/[NEW_DRAFT_ID]:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+index-OHF5AvRP.js:272 [Draft] Direct fetch response: Object
+index-OHF5AvRP.js:272 [Draft] Direct fetch response body: {"message":"Draft not found"}
+index-OHF5AvRP.js:272 [Draft] Retrying fetch, attempt 2
+/api/drafts/[NEW_DRAFT_ID]/available-teams:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+index-OHF5AvRP.js:272 [Draft] === STARTING DRAFT FETCH ===
+index-OHF5AvRP.js:272 [Draft] Draft ID: [NEW_DRAFT_ID]
+index-OHF5AvRP.js:272 [Draft] Auth status - User: Mok Sports Authenticated: true Loading: false
+index-OHF5AvRP.js:272 [Draft] Token available: true
+index-OHF5AvRP.js:272 [Draft] Current URL: https://mok-sports-draft-mokfantasysport.replit.app/draft/%5BNEW_DRAFT_ID%5D
+index-OHF5AvRP.js:272 [Draft] Current pathname: /draft/%5BNEW_DRAFT_ID%5D
+index-OHF5AvRP.js:272 [Draft] Making API request to: /api/drafts/[NEW_DRAFT_ID]
+/api/drafts/[NEW_DRAFT_ID]:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+index-OHF5AvRP.js:272 [Draft] === DRAFT FETCH ERROR ===
+queryFn @ index-OHF5AvRP.js:272Understand this error
+index-OHF5AvRP.js:272 [Draft] Error fetching draft data: Error: 404: {"message":"Draft not found"}
+    at Lv (index-OHF5AvRP.js:48:43053)
+    at async Zi (index-OHF5AvRP.js:48:43286)
+    at async queryFn (index-OHF5AvRP.js:272:50520)
+queryFn @ index-OHF5AvRP.js:272Understand this error
+index-OHF5AvRP.js:272 [Draft] Error type: object
+queryFn @ index-OHF5AvRP.js:272Understand this error
+index-OHF5AvRP.js:272 [Draft] Error constructor: Error
+queryFn @ index-OHF5AvRP.js:272Understand this error
+index-OHF5AvRP.js:272 [DEBUG] Module Error in draft-fetch: Object
+Dh @ index-OHF5AvRP.js:272Understand this error
+index-OHF5AvRP.js:272 [Draft] Full error details: Object
+queryFn @ index-OHF5AvRP.js:272Understand this error
+index-OHF5AvRP.js:272 [Draft] Attempting direct fetch for debugging...
+/api/drafts/[NEW_DRAFT_ID]:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+index-OHF5AvRP.js:272 [Draft] Direct fetch response: Object
+index-OHF5AvRP.js:272 [Draft] Direct fetch response body: {"message":"Draft not found"}
+index-OHF5AvRP.js:272 [Draft] Retrying fetch, attempt 3
+/api/drafts/[NEW_DRAFT_ID]/available-teams:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+index-OHF5AvRP.js:272 [Draft] === STARTING DRAFT FETCH ===
+index-OHF5AvRP.js:272 [Draft] Draft ID: [NEW_DRAFT_ID]
+index-OHF5AvRP.js:272 [Draft] Auth status - User: Mok Sports Authenticated: true Loading: false
+index-OHF5AvRP.js:272 [Draft] Token available: true
+index-OHF5AvRP.js:272 [Draft] Current URL: https://mok-sports-draft-mokfantasysport.replit.app/draft/%5BNEW_DRAFT_ID%5D
+index-OHF5AvRP.js:272 [Draft] Current pathname: /draft/%5BNEW_DRAFT_ID%5D
+index-OHF5AvRP.js:272 [Draft] Making API request to: /api/drafts/[NEW_DRAFT_ID]
+/api/drafts/[NEW_DRAFT_ID]:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+index-OHF5AvRP.js:272 [Draft] === DRAFT FETCH ERROR ===
+queryFn @ index-OHF5AvRP.js:272Understand this error
+index-OHF5AvRP.js:272 [Draft] Error fetching draft data: Error: 404: {"message":"Draft not found"}
+    at Lv (index-OHF5AvRP.js:48:43053)
+    at async Zi (index-OHF5AvRP.js:48:43286)
+    at async queryFn (index-OHF5AvRP.js:272:50520)
+queryFn @ index-OHF5AvRP.js:272Understand this error
+index-OHF5AvRP.js:272 [Draft] Error type: object
+queryFn @ index-OHF5AvRP.js:272Understand this error
+index-OHF5AvRP.js:272 [Draft] Error constructor: Error
+queryFn @ index-OHF5AvRP.js:272Understand this error
+index-OHF5AvRP.js:272 [DEBUG] Module Error in draft-fetch: Object
+Dh @ index-OHF5AvRP.js:272Understand this error
+index-OHF5AvRP.js:272 [Draft] Full error details: Object
+queryFn @ index-OHF5AvRP.js:272Understand this error
+index-OHF5AvRP.js:272 [Draft] Attempting direct fetch for debugging...
+/api/drafts/[NEW_DRAFT_ID]:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+index-OHF5AvRP.js:272 [Draft] Direct fetch response: Object
+index-OHF5AvRP.js:272 [Draft] Direct fetch response body: {"message":"Draft not found"}
+index-OHF5AvRP.js:272 [Draft] Retrying fetch, attempt 4
+index-OHF5AvRP.js:272 [Draft] Component render started
+index-OHF5AvRP.js:272 [Draft] All useState hooks declared
+index-OHF5AvRP.js:272 [Draft] All hooks declared, starting conditional logic
+index-OHF5AvRP.js:272 Draft error: Error: 404: {"message":"Draft not found"}
+    at Lv (index-OHF5AvRP.js:48:43053)
+    at async Zi (index-OHF5AvRP.js:48:43286)
+    at async queryFn (index-OHF5AvRP.js:272:50520)
+jj @ index-OHF5AvRP.js:272Understand this error
+index-OHF5AvRP.js:272 [Draft Debug] Full error details: Object
+index-OHF5AvRP.js:272 [Draft] Component render started
+index-OHF5AvRP.js:272 [Draft] All useState hooks declared
+index-OHF5AvRP.js:272 [Draft] All hooks declared, starting conditional logic
+index-OHF5AvRP.js:272 Draft error: Error: 404: {"message":"Draft not found"}
+    at Lv (index-OHF5AvRP.js:48:43053)
+    at async Zi (index-OHF5AvRP.js:48:43286)
+    at async queryFn (index-OHF5AvRP.js:272:50520)
+jj @ index-OHF5AvRP.js:272Understand this error
+index-OHF5AvRP.js:272 [Draft Debug] Full error details: Object
+sw.js?v=1754348170792:87 [SW] Serving /draft/%5BNEW_DRAFT_ID%5D from cache
+sw.js?v=1754348170792:91 [SW] Fetching /assets/index-Cn_hjswP.css from network
+sw.js?v=1754348170792:87 [SW] Serving /manifest.json from cache
+index-OHF5AvRP.js:48  GET https://mok-sports-draft-mokfantasysport.replit.app/api/drafts/[NEW_DRAFT_ID]/available-teams 404 (Not Found)
+Zi @ index-OHF5AvRP.js:48
+queryFn @ index-OHF5AvRP.js:272
+s @ index-OHF5AvRP.js:48
+w @ index-OHF5AvRP.js:48
+start @ index-OHF5AvRP.js:48
+fetch @ index-OHF5AvRP.js:48
+ys @ index-OHF5AvRP.js:48
+(anonymous) @ index-OHF5AvRP.js:48Understand this error
+index-OHF5AvRP.js:272 [Draft] === STARTING DRAFT FETCH ===
+index-OHF5AvRP.js:272 [Draft] Draft ID: [NEW_DRAFT_ID]
+index-OHF5AvRP.js:272 [Draft] Auth status - User: Mok Sports Authenticated: true Loading: false
+index-OHF5AvRP.js:272 [Draft] Token available: true
+index-OHF5AvRP.js:272 [Draft] Current URL: https://mok-sports-draft-mokfantasysport.replit.app/draft/%5BNEW_DRAFT_ID%5D
+index-OHF5AvRP.js:272 [Draft] Current pathname: /draft/%5BNEW_DRAFT_ID%5D
+index-OHF5AvRP.js:272 [Draft] Making API request to: /api/drafts/[NEW_DRAFT_ID]
+index-OHF5AvRP.js:272 [Draft] Component render started
+index-OHF5AvRP.js:272 [Draft] All useState hooks declared
+index-OHF5AvRP.js:272 [Draft] All hooks declared, starting conditional logic
+index-OHF5AvRP.js:272 [Draft] Component render started
+index-OHF5AvRP.js:272 [Draft] All useState hooks declared
+index-OHF5AvRP.js:272 [Draft] All hooks declared, starting conditional logic
+index-OHF5AvRP.js:48  GET https://mok-sports-draft-mokfantasysport.replit.app/api/drafts/[NEW_DRAFT_ID] 404 (Not Found)
+Zi @ index-OHF5AvRP.js:48
+queryFn @ index-OHF5AvRP.js:272
+s @ index-OHF5AvRP.js:48
+w @ index-OHF5AvRP.js:48
+start @ index-OHF5AvRP.js:48
+fetch @ index-OHF5AvRP.js:48
+ys @ index-OHF5AvRP.js:48
+(anonymous) @ index-OHF5AvRP.js:48Understand this error
+index-OHF5AvRP.js:272 [Draft] === DRAFT FETCH ERROR ===
+queryFn @ index-OHF5AvRP.js:272
+await in queryFn
+s @ index-OHF5AvRP.js:48
+w @ index-OHF5AvRP.js:48
+start @ index-OHF5AvRP.js:48
+fetch @ index-OHF5AvRP.js:48
+ys @ index-OHF5AvRP.js:48
+(anonymous) @ index-OHF5AvRP.js:48Understand this error
+index-OHF5AvRP.js:272 [Draft] Error fetching draft data: Error: 404: {"message":"Draft not found"}
+    at Lv (index-OHF5AvRP.js:48:43053)
+    at async Zi (index-OHF5AvRP.js:48:43286)
+    at async queryFn (index-OHF5AvRP.js:272:50520)
+queryFn @ index-OHF5AvRP.js:272
+await in queryFn
+s @ index-OHF5AvRP.js:48
+w @ index-OHF5AvRP.js:48
+start @ index-OHF5AvRP.js:48
+fetch @ index-OHF5AvRP.js:48
+ys @ index-OHF5AvRP.js:48
+(anonymous) @ index-OHF5AvRP.js:48Understand this error
+index-OHF5AvRP.js:272 [Draft] Error type: object
+queryFn @ index-OHF5AvRP.js:272
+await in queryFn
+s @ index-OHF5AvRP.js:48
+w @ index-OHF5AvRP.js:48
+start @ index-OHF5AvRP.js:48
+fetch @ index-OHF5AvRP.js:48
+ys @ index-OHF5AvRP.js:48
+(anonymous) @ index-OHF5AvRP.js:48Understand this error
+index-OHF5AvRP.js:272 [Draft] Error constructor: Error
+queryFn @ index-OHF5AvRP.js:272
+await in queryFn
+s @ index-OHF5AvRP.js:48
+w @ index-OHF5AvRP.js:48
+start @ index-OHF5AvRP.js:48
+fetch @ index-OHF5AvRP.js:48
+ys @ index-OHF5AvRP.js:48
+(anonymous) @ index-OHF5AvRP.js:48Understand this error
+index-OHF5AvRP.js:272 [DEBUG] Module Error in draft-fetch: {error: Error: 404: {"message":"Draft not found"}
+    at Lv (https://mok-sports-draft-mokfantasysport.repli…, message: '404: {"message":"Draft not found"}', stack: 'Error: 404: {"message":"Draft not found"}\n    at L…rt.replit.app/assets/index-OHF5AvRP.js:272:50520)', type: 'object', timestamp: '2025-08-04T22:56:23.686Z', …}
+Dh @ index-OHF5AvRP.js:272
+queryFn @ index-OHF5AvRP.js:272
+await in queryFn
+s @ index-OHF5AvRP.js:48
+w @ index-OHF5AvRP.js:48
+start @ index-OHF5AvRP.js:48
+fetch @ index-OHF5AvRP.js:48
+ys @ index-OHF5AvRP.js:48
+(anonymous) @ index-OHF5AvRP.js:48Understand this error
+index-OHF5AvRP.js:272 [Draft] Full error details: {message: '404: {"message":"Draft not found"}', stack: 'Error: 404: {"message":"Draft not found"}\n    at L…rt.replit.app/assets/index-OHF5AvRP.js:272:50520)', user: 'Mok Sports', hasToken: true, isAuthenticated: true, …}
+queryFn @ index-OHF5AvRP.js:272
+await in queryFn
+s @ index-OHF5AvRP.js:48
+w @ index-OHF5AvRP.js:48
+start @ index-OHF5AvRP.js:48
+fetch @ index-OHF5AvRP.js:48
+ys @ index-OHF5AvRP.js:48
+(anonymous) @ index-OHF5AvRP.js:48Understand this error
+index-OHF5AvRP.js:272 [Draft] Attempting direct fetch for debugging...
+index-OHF5AvRP.js:272  GET https://mok-sports-draft-mokfantasysport.replit.app/api/drafts/[NEW_DRAFT_ID] 404 (Not Found)
+queryFn @ index-OHF5AvRP.js:272
+await in queryFn
+s @ index-OHF5AvRP.js:48
+w @ index-OHF5AvRP.js:48
+start @ index-OHF5AvRP.js:48
+fetch @ index-OHF5AvRP.js:48
+ys @ index-OHF5AvRP.js:48
+(anonymous) @ index-OHF5AvRP.js:48Understand this error
+index-OHF5AvRP.js:272 [Draft] Direct fetch response: {status: 404, statusText: '', headers: {…}}
+index-OHF5AvRP.js:272 [Draft] Direct fetch response body: {"message":"Draft not found"}
+index-OHF5AvRP.js:272 [Draft] Retrying fetch, attempt 1
+index-OHF5AvRP.js:48  GET https://mok-sports-draft-mokfantasysport.replit.app/api/drafts/[NEW_DRAFT_ID]/available-teams 404 (Not Found)
+Zi @ index-OHF5AvRP.js:48
+queryFn @ index-OHF5AvRP.js:272
+s @ index-OHF5AvRP.js:48
+w @ index-OHF5AvRP.js:48
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.then
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.catch
+w @ index-OHF5AvRP.js:48
+start @ index-OHF5AvRP.js:48
+fetch @ index-OHF5AvRP.js:48
+ys @ index-OHF5AvRP.js:48
+(anonymous) @ index-OHF5AvRP.js:48Understand this error
+index-OHF5AvRP.js:272 [Draft] === STARTING DRAFT FETCH ===
+index-OHF5AvRP.js:272 [Draft] Draft ID: [NEW_DRAFT_ID]
+index-OHF5AvRP.js:272 [Draft] Auth status - User: Mok Sports Authenticated: true Loading: false
+index-OHF5AvRP.js:272 [Draft] Token available: true
+index-OHF5AvRP.js:272 [Draft] Current URL: https://mok-sports-draft-mokfantasysport.replit.app/draft/%5BNEW_DRAFT_ID%5D
+index-OHF5AvRP.js:272 [Draft] Current pathname: /draft/%5BNEW_DRAFT_ID%5D
+index-OHF5AvRP.js:272 [Draft] Making API request to: /api/drafts/[NEW_DRAFT_ID]
+index-OHF5AvRP.js:48  GET https://mok-sports-draft-mokfantasysport.replit.app/api/drafts/[NEW_DRAFT_ID] 404 (Not Found)
+Zi @ index-OHF5AvRP.js:48
+queryFn @ index-OHF5AvRP.js:272
+s @ index-OHF5AvRP.js:48
+w @ index-OHF5AvRP.js:48
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.then
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.catch
+w @ index-OHF5AvRP.js:48
+start @ index-OHF5AvRP.js:48
+fetch @ index-OHF5AvRP.js:48
+ys @ index-OHF5AvRP.js:48
+(anonymous) @ index-OHF5AvRP.js:48Understand this error
+index-OHF5AvRP.js:272 [Draft] === DRAFT FETCH ERROR ===
+queryFn @ index-OHF5AvRP.js:272
+await in queryFn
+s @ index-OHF5AvRP.js:48
+w @ index-OHF5AvRP.js:48
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.then
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.catch
+w @ index-OHF5AvRP.js:48
+start @ index-OHF5AvRP.js:48
+fetch @ index-OHF5AvRP.js:48
+ys @ index-OHF5AvRP.js:48
+(anonymous) @ index-OHF5AvRP.js:48Understand this error
+index-OHF5AvRP.js:272 [Draft] Error fetching draft data: Error: 404: {"message":"Draft not found"}
+    at Lv (index-OHF5AvRP.js:48:43053)
+    at async Zi (index-OHF5AvRP.js:48:43286)
+    at async queryFn (index-OHF5AvRP.js:272:50520)
+queryFn @ index-OHF5AvRP.js:272
+await in queryFn
+s @ index-OHF5AvRP.js:48
+w @ index-OHF5AvRP.js:48
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.then
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.catch
+w @ index-OHF5AvRP.js:48
+start @ index-OHF5AvRP.js:48
+fetch @ index-OHF5AvRP.js:48
+ys @ index-OHF5AvRP.js:48
+(anonymous) @ index-OHF5AvRP.js:48Understand this error
+index-OHF5AvRP.js:272 [Draft] Error type: object
+queryFn @ index-OHF5AvRP.js:272
+await in queryFn
+s @ index-OHF5AvRP.js:48
+w @ index-OHF5AvRP.js:48
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.then
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.catch
+w @ index-OHF5AvRP.js:48
+start @ index-OHF5AvRP.js:48
+fetch @ index-OHF5AvRP.js:48
+ys @ index-OHF5AvRP.js:48
+(anonymous) @ index-OHF5AvRP.js:48Understand this error
+index-OHF5AvRP.js:272 [Draft] Error constructor: Error
+queryFn @ index-OHF5AvRP.js:272
+await in queryFn
+s @ index-OHF5AvRP.js:48
+w @ index-OHF5AvRP.js:48
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.then
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.catch
+w @ index-OHF5AvRP.js:48
+start @ index-OHF5AvRP.js:48
+fetch @ index-OHF5AvRP.js:48
+ys @ index-OHF5AvRP.js:48
+(anonymous) @ index-OHF5AvRP.js:48Understand this error
+index-OHF5AvRP.js:272 [DEBUG] Module Error in draft-fetch: {error: Error: 404: {"message":"Draft not found"}
+    at Lv (https://mok-sports-draft-mokfantasysport.repli…, message: '404: {"message":"Draft not found"}', stack: 'Error: 404: {"message":"Draft not found"}\n    at L…rt.replit.app/assets/index-OHF5AvRP.js:272:50520)', type: 'object', timestamp: '2025-08-04T22:56:24.870Z', …}
+Dh @ index-OHF5AvRP.js:272
+queryFn @ index-OHF5AvRP.js:272
+await in queryFn
+s @ index-OHF5AvRP.js:48
+w @ index-OHF5AvRP.js:48
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.then
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.catch
+w @ index-OHF5AvRP.js:48
+start @ index-OHF5AvRP.js:48
+fetch @ index-OHF5AvRP.js:48
+ys @ index-OHF5AvRP.js:48
+(anonymous) @ index-OHF5AvRP.js:48Understand this error
+index-OHF5AvRP.js:272 [Draft] Full error details: {message: '404: {"message":"Draft not found"}', stack: 'Error: 404: {"message":"Draft not found"}\n    at L…rt.replit.app/assets/index-OHF5AvRP.js:272:50520)', user: 'Mok Sports', hasToken: true, isAuthenticated: true, …}
+queryFn @ index-OHF5AvRP.js:272
+await in queryFn
+s @ index-OHF5AvRP.js:48
+w @ index-OHF5AvRP.js:48
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.then
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.catch
+w @ index-OHF5AvRP.js:48
+start @ index-OHF5AvRP.js:48
+fetch @ index-OHF5AvRP.js:48
+ys @ index-OHF5AvRP.js:48
+(anonymous) @ index-OHF5AvRP.js:48Understand this error
+index-OHF5AvRP.js:272 [Draft] Attempting direct fetch for debugging...
+index-OHF5AvRP.js:272  GET https://mok-sports-draft-mokfantasysport.replit.app/api/drafts/[NEW_DRAFT_ID] 404 (Not Found)
+queryFn @ index-OHF5AvRP.js:272
+await in queryFn
+s @ index-OHF5AvRP.js:48
+w @ index-OHF5AvRP.js:48
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.then
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.catch
+w @ index-OHF5AvRP.js:48
+start @ index-OHF5AvRP.js:48
+fetch @ index-OHF5AvRP.js:48
+ys @ index-OHF5AvRP.js:48
+(anonymous) @ index-OHF5AvRP.js:48Understand this error
+index-OHF5AvRP.js:272 [Draft] Direct fetch response: {status: 404, statusText: '', headers: {…}}
+index-OHF5AvRP.js:272 [Draft] Direct fetch response body: {"message":"Draft not found"}
+index-OHF5AvRP.js:272 [Draft] Retrying fetch, attempt 2
+index-OHF5AvRP.js:48  GET https://mok-sports-draft-mokfantasysport.replit.app/api/drafts/[NEW_DRAFT_ID]/available-teams 404 (Not Found)
+Zi @ index-OHF5AvRP.js:48
+queryFn @ index-OHF5AvRP.js:272
+s @ index-OHF5AvRP.js:48
+w @ index-OHF5AvRP.js:48
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.then
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.catch
+w @ index-OHF5AvRP.js:48
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.then
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.catch
+w @ index-OHF5AvRP.js:48
+start @ index-OHF5AvRP.js:48
+fetch @ index-OHF5AvRP.js:48
+ys @ index-OHF5AvRP.js:48
+(anonymous) @ index-OHF5AvRP.js:48Understand this error
+index-OHF5AvRP.js:272 [Draft] === STARTING DRAFT FETCH ===
+index-OHF5AvRP.js:272 [Draft] Draft ID: [NEW_DRAFT_ID]
+index-OHF5AvRP.js:272 [Draft] Auth status - User: Mok Sports Authenticated: true Loading: false
+index-OHF5AvRP.js:272 [Draft] Token available: true
+index-OHF5AvRP.js:272 [Draft] Current URL: https://mok-sports-draft-mokfantasysport.replit.app/draft/%5BNEW_DRAFT_ID%5D
+index-OHF5AvRP.js:272 [Draft] Current pathname: /draft/%5BNEW_DRAFT_ID%5D
+index-OHF5AvRP.js:272 [Draft] Making API request to: /api/drafts/[NEW_DRAFT_ID]
+index-OHF5AvRP.js:48  GET https://mok-sports-draft-mokfantasysport.replit.app/api/drafts/[NEW_DRAFT_ID] 404 (Not Found)
+Zi @ index-OHF5AvRP.js:48
+queryFn @ index-OHF5AvRP.js:272
+s @ index-OHF5AvRP.js:48
+w @ index-OHF5AvRP.js:48
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.then
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.catch
+w @ index-OHF5AvRP.js:48
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.then
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.catch
+w @ index-OHF5AvRP.js:48
+start @ index-OHF5AvRP.js:48
+fetch @ index-OHF5AvRP.js:48
+ys @ index-OHF5AvRP.js:48
+(anonymous) @ index-OHF5AvRP.js:48Understand this error
+index-OHF5AvRP.js:272 [Draft] === DRAFT FETCH ERROR ===
+queryFn @ index-OHF5AvRP.js:272
+await in queryFn
+s @ index-OHF5AvRP.js:48
+w @ index-OHF5AvRP.js:48
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.then
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.catch
+w @ index-OHF5AvRP.js:48
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.then
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.catch
+w @ index-OHF5AvRP.js:48
+start @ index-OHF5AvRP.js:48
+fetch @ index-OHF5AvRP.js:48
+ys @ index-OHF5AvRP.js:48
+(anonymous) @ index-OHF5AvRP.js:48Understand this error
+index-OHF5AvRP.js:272 [Draft] Error fetching draft data: Error: 404: {"message":"Draft not found"}
+    at Lv (index-OHF5AvRP.js:48:43053)
+    at async Zi (index-OHF5AvRP.js:48:43286)
+    at async queryFn (index-OHF5AvRP.js:272:50520)
+queryFn @ index-OHF5AvRP.js:272
+await in queryFn
+s @ index-OHF5AvRP.js:48
+w @ index-OHF5AvRP.js:48
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.then
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.catch
+w @ index-OHF5AvRP.js:48
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.then
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.catch
+w @ index-OHF5AvRP.js:48
+start @ index-OHF5AvRP.js:48
+fetch @ index-OHF5AvRP.js:48
+ys @ index-OHF5AvRP.js:48
+(anonymous) @ index-OHF5AvRP.js:48Understand this error
+index-OHF5AvRP.js:272 [Draft] Error type: object
+queryFn @ index-OHF5AvRP.js:272
+await in queryFn
+s @ index-OHF5AvRP.js:48
+w @ index-OHF5AvRP.js:48
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.then
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.catch
+w @ index-OHF5AvRP.js:48
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.then
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.catch
+w @ index-OHF5AvRP.js:48
+start @ index-OHF5AvRP.js:48
+fetch @ index-OHF5AvRP.js:48
+ys @ index-OHF5AvRP.js:48
+(anonymous) @ index-OHF5AvRP.js:48Understand this error
+index-OHF5AvRP.js:272 [Draft] Error constructor: Error
+queryFn @ index-OHF5AvRP.js:272
+await in queryFn
+s @ index-OHF5AvRP.js:48
+w @ index-OHF5AvRP.js:48
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.then
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.catch
+w @ index-OHF5AvRP.js:48
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.then
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.catch
+w @ index-OHF5AvRP.js:48
+start @ index-OHF5AvRP.js:48
+fetch @ index-OHF5AvRP.js:48
+ys @ index-OHF5AvRP.js:48
+(anonymous) @ index-OHF5AvRP.js:48Understand this error
+index-OHF5AvRP.js:272 [DEBUG] Module Error in draft-fetch: {error: Error: 404: {"message":"Draft not found"}
+    at Lv (https://mok-sports-draft-mokfantasysport.repli…, message: '404: {"message":"Draft not found"}', stack: 'Error: 404: {"message":"Draft not found"}\n    at L…rt.replit.app/assets/index-OHF5AvRP.js:272:50520)', type: 'object', timestamp: '2025-08-04T22:56:27.057Z', …}
+Dh @ index-OHF5AvRP.js:272
+queryFn @ index-OHF5AvRP.js:272
+await in queryFn
+s @ index-OHF5AvRP.js:48
+w @ index-OHF5AvRP.js:48
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.then
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.catch
+w @ index-OHF5AvRP.js:48
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.then
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.catch
+w @ index-OHF5AvRP.js:48
+start @ index-OHF5AvRP.js:48
+fetch @ index-OHF5AvRP.js:48
+ys @ index-OHF5AvRP.js:48
+(anonymous) @ index-OHF5AvRP.js:48Understand this error
+index-OHF5AvRP.js:272 [Draft] Full error details: {message: '404: {"message":"Draft not found"}', stack: 'Error: 404: {"message":"Draft not found"}\n    at L…rt.replit.app/assets/index-OHF5AvRP.js:272:50520)', user: 'Mok Sports', hasToken: true, isAuthenticated: true, …}
+queryFn @ index-OHF5AvRP.js:272
+await in queryFn
+s @ index-OHF5AvRP.js:48
+w @ index-OHF5AvRP.js:48
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.then
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.catch
+w @ index-OHF5AvRP.js:48
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.then
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.catch
+w @ index-OHF5AvRP.js:48
+start @ index-OHF5AvRP.js:48
+fetch @ index-OHF5AvRP.js:48
+ys @ index-OHF5AvRP.js:48
+(anonymous) @ index-OHF5AvRP.js:48Understand this error
+index-OHF5AvRP.js:272 [Draft] Attempting direct fetch for debugging...
+index-OHF5AvRP.js:272  GET https://mok-sports-draft-mokfantasysport.replit.app/api/drafts/[NEW_DRAFT_ID] 404 (Not Found)
+queryFn @ index-OHF5AvRP.js:272
+await in queryFn
+s @ index-OHF5AvRP.js:48
+w @ index-OHF5AvRP.js:48
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.then
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.catch
+w @ index-OHF5AvRP.js:48
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.then
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.catch
+w @ index-OHF5AvRP.js:48
+start @ index-OHF5AvRP.js:48
+fetch @ index-OHF5AvRP.js:48
+ys @ index-OHF5AvRP.js:48
+(anonymous) @ index-OHF5AvRP.js:48Understand this error
+index-OHF5AvRP.js:272 [Draft] Direct fetch response: {status: 404, statusText: '', headers: {…}}
+index-OHF5AvRP.js:272 [Draft] Direct fetch response body: {"message":"Draft not found"}
+index-OHF5AvRP.js:272 [Draft] Retrying fetch, attempt 3
+index-OHF5AvRP.js:48  GET https://mok-sports-draft-mokfantasysport.replit.app/api/drafts/[NEW_DRAFT_ID]/available-teams 404 (Not Found)
+Zi @ index-OHF5AvRP.js:48
+queryFn @ index-OHF5AvRP.js:272
+s @ index-OHF5AvRP.js:48
+w @ index-OHF5AvRP.js:48
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.then
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.catch
+w @ index-OHF5AvRP.js:48
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.then
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.catch
+w @ index-OHF5AvRP.js:48
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.then
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.catch
+w @ index-OHF5AvRP.js:48
+start @ index-OHF5AvRP.js:48
+fetch @ index-OHF5AvRP.js:48
+ys @ index-OHF5AvRP.js:48
+(anonymous) @ index-OHF5AvRP.js:48Understand this error
+index-OHF5AvRP.js:272 [Draft] === STARTING DRAFT FETCH ===
+index-OHF5AvRP.js:272 [Draft] Draft ID: [NEW_DRAFT_ID]
+index-OHF5AvRP.js:272 [Draft] Auth status - User: Mok Sports Authenticated: true Loading: false
+index-OHF5AvRP.js:272 [Draft] Token available: true
+index-OHF5AvRP.js:272 [Draft] Current URL: https://mok-sports-draft-mokfantasysport.replit.app/draft/%5BNEW_DRAFT_ID%5D
+index-OHF5AvRP.js:272 [Draft] Current pathname: /draft/%5BNEW_DRAFT_ID%5D
+index-OHF5AvRP.js:272 [Draft] Making API request to: /api/drafts/[NEW_DRAFT_ID]
+index-OHF5AvRP.js:48  GET https://mok-sports-draft-mokfantasysport.replit.app/api/drafts/[NEW_DRAFT_ID] 404 (Not Found)
+Zi @ index-OHF5AvRP.js:48
+queryFn @ index-OHF5AvRP.js:272
+s @ index-OHF5AvRP.js:48
+w @ index-OHF5AvRP.js:48
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.then
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.catch
+w @ index-OHF5AvRP.js:48
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.then
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.catch
+w @ index-OHF5AvRP.js:48
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.then
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.catch
+w @ index-OHF5AvRP.js:48
+start @ index-OHF5AvRP.js:48
+fetch @ index-OHF5AvRP.js:48
+ys @ index-OHF5AvRP.js:48
+(anonymous) @ index-OHF5AvRP.js:48Understand this error
+index-OHF5AvRP.js:272 [Draft] === DRAFT FETCH ERROR ===
+queryFn @ index-OHF5AvRP.js:272
+await in queryFn
+s @ index-OHF5AvRP.js:48
+w @ index-OHF5AvRP.js:48
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.then
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.catch
+w @ index-OHF5AvRP.js:48
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.then
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.catch
+w @ index-OHF5AvRP.js:48
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.then
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.catch
+w @ index-OHF5AvRP.js:48
+start @ index-OHF5AvRP.js:48
+fetch @ index-OHF5AvRP.js:48
+ys @ index-OHF5AvRP.js:48
+(anonymous) @ index-OHF5AvRP.js:48Understand this error
+index-OHF5AvRP.js:272 [Draft] Error fetching draft data: Error: 404: {"message":"Draft not found"}
+    at Lv (index-OHF5AvRP.js:48:43053)
+    at async Zi (index-OHF5AvRP.js:48:43286)
+    at async queryFn (index-OHF5AvRP.js:272:50520)
+queryFn @ index-OHF5AvRP.js:272
+await in queryFn
+s @ index-OHF5AvRP.js:48
+w @ index-OHF5AvRP.js:48
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.then
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.catch
+w @ index-OHF5AvRP.js:48
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.then
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.catch
+w @ index-OHF5AvRP.js:48
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.then
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.catch
+w @ index-OHF5AvRP.js:48
+start @ index-OHF5AvRP.js:48
+fetch @ index-OHF5AvRP.js:48
+ys @ index-OHF5AvRP.js:48
+(anonymous) @ index-OHF5AvRP.js:48Understand this error
+index-OHF5AvRP.js:272 [Draft] Error type: object
+queryFn @ index-OHF5AvRP.js:272
+await in queryFn
+s @ index-OHF5AvRP.js:48
+w @ index-OHF5AvRP.js:48
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.then
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.catch
+w @ index-OHF5AvRP.js:48
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.then
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.catch
+w @ index-OHF5AvRP.js:48
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.then
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.catch
+w @ index-OHF5AvRP.js:48
+start @ index-OHF5AvRP.js:48
+fetch @ index-OHF5AvRP.js:48
+ys @ index-OHF5AvRP.js:48
+(anonymous) @ index-OHF5AvRP.js:48Understand this error
+index-OHF5AvRP.js:272 [Draft] Error constructor: Error
+queryFn @ index-OHF5AvRP.js:272
+await in queryFn
+s @ index-OHF5AvRP.js:48
+w @ index-OHF5AvRP.js:48
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.then
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.catch
+w @ index-OHF5AvRP.js:48
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.then
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.catch
+w @ index-OHF5AvRP.js:48
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.then
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.catch
+w @ index-OHF5AvRP.js:48
+start @ index-OHF5AvRP.js:48
+fetch @ index-OHF5AvRP.js:48
+ys @ index-OHF5AvRP.js:48
+(anonymous) @ index-OHF5AvRP.js:48Understand this error
+index-OHF5AvRP.js:272 [DEBUG] Module Error in draft-fetch: {error: Error: 404: {"message":"Draft not found"}
+    at Lv (https://mok-sports-draft-mokfantasysport.repli…, message: '404: {"message":"Draft not found"}', stack: 'Error: 404: {"message":"Draft not found"}\n    at L…rt.replit.app/assets/index-OHF5AvRP.js:272:50520)', type: 'object', timestamp: '2025-08-04T22:56:31.227Z', …}
+Dh @ index-OHF5AvRP.js:272
+queryFn @ index-OHF5AvRP.js:272
+await in queryFn
+s @ index-OHF5AvRP.js:48
+w @ index-OHF5AvRP.js:48
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.then
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.catch
+w @ index-OHF5AvRP.js:48
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.then
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.catch
+w @ index-OHF5AvRP.js:48
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.then
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.catch
+w @ index-OHF5AvRP.js:48
+start @ index-OHF5AvRP.js:48
+fetch @ index-OHF5AvRP.js:48
+ys @ index-OHF5AvRP.js:48
+(anonymous) @ index-OHF5AvRP.js:48Understand this error
+index-OHF5AvRP.js:272 [Draft] Full error details: {message: '404: {"message":"Draft not found"}', stack: 'Error: 404: {"message":"Draft not found"}\n    at L…rt.replit.app/assets/index-OHF5AvRP.js:272:50520)', user: 'Mok Sports', hasToken: true, isAuthenticated: true, …}
+queryFn @ index-OHF5AvRP.js:272
+await in queryFn
+s @ index-OHF5AvRP.js:48
+w @ index-OHF5AvRP.js:48
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.then
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.catch
+w @ index-OHF5AvRP.js:48
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.then
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.catch
+w @ index-OHF5AvRP.js:48
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.then
+(anonymous) @ index-OHF5AvRP.js:48
+Promise.catch
+w @ index-OHF5AvRP.js:48
+start @ index-OHF5AvRP.js:48
+fetch @ index-OHF5AvRP.js:48
+ys @ index-OHF5AvRP.js:48
+(anonymous) @ index-OHF5AvRP.js:48Understand this error
+index-OHF5AvRP.js:272 [Draft] Attempting direct fetch for debugging...
