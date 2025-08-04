@@ -47,19 +47,20 @@ export default function DashboardPage() {
     }
   }, [userLeagues, setLocation]);
 
-  // Show notification prompt for newly logged in users
+  // Show notification prompt for newly logged in users (ALWAYS SHOW FOR TESTING)
   useEffect(() => {
+    console.warn('[CRITICAL DEBUG] Dashboard notification prompt effect:', {
+      hasUser: !!user,
+      userEmail: user?.email,
+      permission,
+      shouldShow: user && permission === 'default'
+    });
+    
     if (user && permission === 'default') {
-      const loginTime = sessionStorage.getItem('login-time');
-      const promptShown = sessionStorage.getItem('notification-prompt-shown');
-      
-      if (loginTime && !promptShown) {
-        const timeSinceLogin = Date.now() - parseInt(loginTime);
-        if (timeSinceLogin < 5 * 60 * 1000) {
-          setShowNotificationPrompt(true);
-          sessionStorage.setItem('notification-prompt-shown', 'true');
-        }
-      }
+      console.warn('[CRITICAL DEBUG] Setting showNotificationPrompt to true for testing');
+      setShowNotificationPrompt(true);
+      // Remove session storage restrictions for testing
+      // sessionStorage.setItem('notification-prompt-shown', 'true');
     }
   }, [user, permission]);
 
