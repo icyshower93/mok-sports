@@ -104,21 +104,36 @@ export function usePostLoginNotifications() {
 
   // Request permission and setup subscription (POST-LOGIN ONLY)
   const requestPermissionPostLogin = useCallback(async (): Promise<boolean> => {
+    console.warn('[CRITICAL DEBUG] requestPermissionPostLogin called for user:', user?.email);
+    console.warn('[CRITICAL DEBUG] Prerequisites check:', { 
+      isAuthenticated, 
+      hasUser: !!user, 
+      isNotificationSupported, 
+      isPWA 
+    });
+    
     if (!isAuthenticated || !user || !isNotificationSupported || !isPWA) {
+      console.warn('[CRITICAL DEBUG] Prerequisites failed, aborting permission request');
       return false;
     }
 
+    console.warn('[CRITICAL DEBUG] Setting processing state and requesting permission...');
     setState(prev => ({ ...prev, isProcessing: true, error: null }));
 
     try {
       // On iOS Safari, this MUST be triggered by user gesture
+      console.warn('[CRITICAL DEBUG] Requesting notification permission...');
       const permission = await Notification.requestPermission();
+      console.warn('[CRITICAL DEBUG] Permission result:', permission);
       
       if (permission === 'granted') {
+        console.warn('[CRITICAL DEBUG] Permission granted! Creating push subscription...');
         // Create push subscription
         const subscription = await createPushSubscription();
+        console.warn('[CRITICAL DEBUG] Push subscription result:', !!subscription);
         
         if (subscription) {
+          console.warn('[CRITICAL DEBUG] Subscription created successfully! Sending welcome notification...');
           // Send welcome notification for first-time setup
           if (state.isFirstTimeSetup) {
             await sendWelcomeNotification('first-time');
@@ -135,7 +150,10 @@ export function usePostLoginNotifications() {
             isFirstTimeSetup: false,
           }));
           
+          console.warn('[CRITICAL DEBUG] requestPermissionPostLogin completed successfully!');
           return true;
+        } else {
+          console.warn('[CRITICAL DEBUG] Failed to create push subscription');
         }
       }
       
@@ -246,6 +264,7 @@ export function usePostLoginNotifications() {
     ...state,
     isNotificationSupported,
     requestPermissionPostLogin,
+    enableNotifications: requestPermissionPostLogin, // Alias for compatibility
     checkCurrentStatus,
   };
 }

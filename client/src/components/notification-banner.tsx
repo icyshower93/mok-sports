@@ -8,25 +8,28 @@ interface NotificationBannerProps {
   onDismiss?: () => void;
 }
 
+export function NotificationBanner({ onDismiss }: NotificationBannerProps) {
   const { 
     showEnableBanner, 
     permissionStatus, 
     subscriptionActive, 
     isProcessing, 
     error, 
-    isSupported,
+    isNotificationSupported,
     enableNotifications 
   } = usePostLoginNotifications();
   
   const [dismissed, setDismissed] = useState(false);
 
-  if (!isSupported || !showEnableBanner || dismissed) {
+  if (!isNotificationSupported || !showEnableBanner || dismissed) {
     return null;
   }
 
   const handleEnableClick = async () => {
+    console.warn('[CRITICAL DEBUG] NotificationBanner: Enable button clicked');
     // iOS Safari requires this to be triggered by user gesture
     const success = await enableNotifications();
+    console.warn('[CRITICAL DEBUG] NotificationBanner: Enable result:', success);
     if (success) {
       setDismissed(true);
       onDismiss?.();
@@ -61,6 +64,7 @@ interface NotificationBannerProps {
         title: 'Complete Notification Setup',
         description: 'Finish setting up notifications to receive league updates.',
         showButton: true,
+        buttonText: 'Complete Setup'
       };
     }
     
@@ -68,21 +72,27 @@ interface NotificationBannerProps {
       title: 'Enable Notifications',
       description: 'Get notified about draft times, league updates, and important announcements.',
       showButton: true,
+      buttonText: 'Enable Notifications'
     };
   };
 
   const { title, description, showButton, buttonText } = getMessage();
 
   return (
+    <Card className="mb-4">
       <CardContent className="flex items-center justify-between p-4">
         <div className="flex items-center space-x-3 flex-1">
           {getStatusIcon()}
           <div className="flex-1">
+            <h4 className="text-sm font-medium">
               {title}
             </h4>
+            <p className="text-sm text-muted-foreground">
               {description}
             </p>
             {error && (
+              <p className="text-sm text-red-500 mt-1">
+                {error}
               </p>
             )}
           </div>
@@ -95,6 +105,7 @@ interface NotificationBannerProps {
               disabled={isProcessing}
               size="sm"
             >
+              {isProcessing ? 'Setting up...' : buttonText}
             </Button>
           )}
           <Button
