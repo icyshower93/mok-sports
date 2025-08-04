@@ -38,10 +38,19 @@ export function useDraftWebSocket(draftId: string | null) {
     setConnectionStatus('connecting');
     
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const wsUrl = `${protocol}//${window.location.host}/draft-ws?userId=${user.id}&draftId=${draftId}`;
+    
+    // In development, connect to backend server directly on port 5000
+    // In production, use the same host with wss protocol
+    let wsHost = window.location.host;
+    if (window.location.hostname === 'localhost' && window.location.port !== '5000') {
+      wsHost = 'localhost:5000';
+    }
+    
+    const wsUrl = `${protocol}//${wsHost}/draft-ws?userId=${user.id}&draftId=${draftId}`;
     console.log('[WebSocket] Connecting to:', wsUrl);
     console.log('[WebSocket] Current location:', window.location.href);
     console.log('[WebSocket] Protocol detected:', protocol);
+    console.log('[WebSocket] Target host:', wsHost);
     
     const ws = new WebSocket(wsUrl);
     wsRef.current = ws;
