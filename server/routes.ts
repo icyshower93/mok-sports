@@ -981,9 +981,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   const httpServer = createServer(app);
   
+  console.log('[Server] 🚀 HTTP server created, initializing WebSocket...');
+  
   // Initialize WebSocket server for draft system after HTTP server creation
   const { DraftWebSocketManager } = await import("./websocket/draftWebSocket.js");
   const webSocketManager = new DraftWebSocketManager(httpServer);
+  
+  console.log('[Server] ✅ WebSocket server initialized on /draft-ws path');
   
   // Re-initialize draft routes with WebSocket support
   const { default: setupDraftRoutes } = await import("./routes/draft.js");

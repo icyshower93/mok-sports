@@ -31,9 +31,13 @@ export class DraftWebSocketManager {
       path: '/draft-ws',
       // Add explicit WebSocket handling options for production
       verifyClient: (info) => {
-        console.log('[WebSocket] Verifying client connection from:', info.origin);
+        console.log('[WebSocket] 🔍 VERIFYING CLIENT CONNECTION');
+        console.log('[WebSocket] Origin:', info.origin);
         console.log('[WebSocket] Request URL:', info.req.url);
-        console.log('[WebSocket] User agent:', info.req.headers['user-agent']);
+        console.log('[WebSocket] Method:', info.req.method);
+        console.log('[WebSocket] Headers:', JSON.stringify(info.req.headers, null, 2));
+        console.log('[WebSocket] Remote address:', info.req.socket?.remoteAddress);
+        console.log('[WebSocket] ✅ CLIENT VERIFICATION: APPROVED');
         return true; // Allow all connections for now
       }
     });
@@ -67,20 +71,23 @@ export class DraftWebSocketManager {
   }
 
   private handleConnection(ws: WebSocket, request: any) {
-    console.log('[WebSocket] ========== NEW CONNECTION ATTEMPT ==========');
+    console.log('[WebSocket] ========== NEW CONNECTION RECEIVED ==========');
     console.log('[WebSocket] Request URL:', request.url);
     console.log('[WebSocket] Request headers:', JSON.stringify(request.headers, null, 2));
     console.log('[WebSocket] Remote address:', request.socket?.remoteAddress);
+    console.log('[WebSocket] Connection ready state:', ws.readyState);
     
     const { query } = parse(request.url, true);
     const userId = query.userId as string;
     const draftId = query.draftId as string;
     
-    console.log('[WebSocket] Parsed query parameters:', { userId, draftId });
-    console.log('[WebSocket] ============================================');
+    console.log('[WebSocket] Extracted parameters:');
+    console.log(`[WebSocket] - userId: ${userId}`);
+    console.log(`[WebSocket] - draftId: ${draftId}`);
+    console.log('[WebSocket] ================================================');
 
     if (!userId || !draftId) {
-      console.log('[WebSocket] Connection rejected: missing userId or draftId');
+      console.log('[WebSocket] ❌ CONNECTION REJECTED: Missing userId or draftId');
       ws.close(1000, 'Missing required parameters');
       return;
     }
@@ -91,6 +98,10 @@ export class DraftWebSocketManager {
       socket: ws,
       isAlive: true
     };
+
+    console.log('[WebSocket] ✅ CONNECTION APPROVED - Creating connection object');
+    console.log(`[WebSocket] - User: ${userId}`);
+    console.log(`[WebSocket] - Draft: ${draftId}`);
 
     // Add to connections map
     if (!this.connections.has(draftId)) {
