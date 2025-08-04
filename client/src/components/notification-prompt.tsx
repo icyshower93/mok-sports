@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Bell, X, CheckCircle2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/hooks/use-auth';
+import { usePWADebug } from '@/hooks/use-pwa-debug';
 
 interface NotificationPromptProps {
   className?: string;
@@ -22,6 +23,7 @@ export function NotificationPrompt({
   const [isVisible, setIsVisible] = useState(false);
   const [isRequestingPermission, setIsRequestingPermission] = useState(false);
   const { user } = useAuth();
+  const { addLog, logSubscriptionCreation, logSubscriptionPost } = usePWADebug();
 
   useEffect(() => {
     if ('Notification' in window) {
@@ -32,28 +34,29 @@ export function NotificationPrompt({
   }, [user, forceShow]);
 
   const requestPermission = async () => {
-    console.warn('[CRITICAL DEBUG] NotificationPrompt: requestPermission called - REDEPLOYED VERSION');
+    addLog('NotificationPrompt: requestPermission called');
     if (!('Notification' in window)) {
-      console.warn('[CRITICAL DEBUG] NotificationPrompt: Notifications not supported');
+      addLog('Notifications not supported in this browser');
       return;
     }
 
     setIsRequestingPermission(true);
-    console.warn('[CRITICAL DEBUG] NotificationPrompt: Requesting permission...');
+    addLog('Requesting notification permission...');
     
     try {
       const result = await Notification.requestPermission();
-      console.warn('[CRITICAL DEBUG] NotificationPrompt: Permission result:', result);
+      addLog(`Permission result: ${result}`);
       setPermission(result);
       
       if (result === 'granted') {
-        console.warn('[CRITICAL DEBUG] NotificationPrompt: Permission granted, calling onPermissionGranted');
+        addLog('Permission granted - creating push subscription...');
         onPermissionGranted?.();
         setIsVisible(false);
         
-        // CRITICAL: Create the actual push subscription since NotificationPrompt doesn't do it
-        console.warn('[CRITICAL DEBUG] NotificationPrompt: Now creating push subscription...');
+        // Create the actual push subscription
         await createPushSubscriptionForPrompt();
+      } else {
+        addLog(`Permission ${result} - no subscription created`);
       }
     } catch (error) {
       console.error('Error requesting notification permission:', error);
@@ -62,10 +65,9 @@ export function NotificationPrompt({
     }
   };
 
-  // Create push subscription for NotificationPrompt (since it wasn't creating them)
   const createPushSubscriptionForPrompt = async () => {
     try {
-      console.warn('[CRITICAL DEBUG] Creating push subscription via NotificationPrompt...');
+      addLog('Creating push subscription...');
       const registration = await navigator.serviceWorker.getRegistration();
       if (!registration) {
         throw new Error('Service worker not registered');
@@ -79,6 +81,8 @@ export function NotificationPrompt({
         userVisibleOnly: true,
         applicationServerKey: publicKey
       });
+
+      logSubscriptionCreation(true, { endpoint: subscription.endpoint });
 
       // Send subscription to server
       const response = await fetch('/api/push/subscribe', {
@@ -95,13 +99,15 @@ export function NotificationPrompt({
       });
 
       if (response.ok) {
-        console.warn('[CRITICAL DEBUG] Push subscription created successfully via NotificationPrompt!');
+        const result = await response.json();
+        logSubscriptionPost(true, result);
       } else {
-        console.error('[CRITICAL DEBUG] Failed to save push subscription:', await response.text());
+        const error = await response.text();
+        logSubscriptionPost(false, { error });
       }
       
     } catch (error) {
-      console.error('[CRITICAL DEBUG] Failed to create push subscription:', error);
+      logSubscriptionCreation(false, { error: error instanceof Error ? error.message : 'Unknown error' });
     }
   };
 

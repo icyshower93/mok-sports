@@ -1,0 +1,15 @@
+# Replit Deployment Configuration for iOS PWA Push Notifications
+# This ensures HTTPS deployment required for iOS Safari push notifications
+
+# Use autoscale deployment for automatic HTTPS
+deployment.type = "autoscale"
+
+# Ensure all environment variables are passed through
+deployment.env.passthrough = true
+
+# Required for PWA functionality
+deployment.build.command = "npm run build"
+deployment.run.command = "npm start"
+
+# Enable TLS/HTTPS automatically
+deployment.tls.enabled = true

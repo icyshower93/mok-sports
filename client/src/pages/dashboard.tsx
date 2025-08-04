@@ -11,6 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useLocation } from "wouter";
 import { usePushNotifications } from "@/hooks/use-push-notifications";
 import { NotificationPrompt } from "@/components/notification-prompt";
+import { PWADebugPanel } from "@/components/pwa-debug-panel";
 
 export default function DashboardPage() {
   const { user, logout } = useAuth();
@@ -307,6 +308,9 @@ export default function DashboardPage() {
               />
             </div>
           )}
+          
+          {/* PWA Debug Panel for iOS testing */}
+          <PWADebugPanel />
         </div>
       </div>
     </MainLayout>
