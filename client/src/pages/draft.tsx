@@ -468,6 +468,25 @@ export default function DraftPage() {
                             // Calculate actual pick number in the draft
                             const pickNumber = ((state.draft.currentRound - 1) * totalPicks) + pickPosition;
                             
+                            // Get user name - try multiple sources
+                            let userName = 'Loading...';
+                            if (userPicks.length > 0 && userPicks[0].user?.name) {
+                              userName = userPicks[0].user.name;
+                            } else if (currentPlayer && currentPlayer.id === userId) {
+                              userName = currentPlayer.name;
+                            } else {
+                              // Fallback to known user names based on userId
+                              const userNameMap: Record<string, string> = {
+                                '320ca071-16f9-41e0-b991-663da88afbc0': 'Beta Bot',
+                                'd8873675-274c-46f9-ab48-00955c81d875': 'Mok Sports',
+                                'f159aa72-dee8-4847-8ccc-22ecf9f27695': 'Delta Bot',
+                                '8dce55ed-86ab-4723-a7c6-9ade8cd7aaae': 'Alpha Bot',
+                                '766992a8-44f0-4d0e-a65f-987237e67a35': 'Gamma Bot',
+                                '9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a': 'Sky Evans'
+                              };
+                              userName = userNameMap[userId] || 'Unknown User';
+                            }
+                            
                             let statusColor = 'bg-secondary/30';
                             let statusText = '';
                             let statusBadge = null;
@@ -527,7 +546,7 @@ export default function DraftPage() {
                                   <div className="flex items-center justify-between">
                                     <div>
                                       <div className="text-sm font-medium truncate">
-                                        {userPicks[0]?.user?.name || 'Loading...'}
+                                        {userName}
                                       </div>
                                       <div className="text-xs text-muted-foreground">
                                         Pick #{pickNumber} • {userPicks.length} teams drafted
