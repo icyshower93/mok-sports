@@ -169,7 +169,7 @@ export default function setupDraftRoutes(app: any, storage: IStorage, webSocketM
   // Add robots to league for testing
   app.post("/api/leagues/:leagueId/add-robots", async (req: any, res: any) => {
     try {
-      const user = getAuthenticatedUser(req);
+      const user = await getAuthenticatedUser(req);
       if (!user) {
         return res.status(401).json({ message: "Not authenticated" });
       }
@@ -255,7 +255,7 @@ export default function setupDraftRoutes(app: any, storage: IStorage, webSocketM
   // Start a draft
   app.post("/api/drafts/:draftId/start",  async (req: any, res: any) => {
     try {
-      const user = getAuthenticatedUser(req);
+      const user = await getAuthenticatedUser(req);
       if (!user) {
         return res.status(401).json({ message: "Not authenticated" });
       }
@@ -268,6 +268,7 @@ export default function setupDraftRoutes(app: any, storage: IStorage, webSocketM
 
       // Verify user is league creator
       const league = await storage.getLeague(draft.leagueId);
+      console.log(`[Draft Start] User ${user.id} attempting to start draft. League creator: ${league?.creatorId}`);
       if (!league || league.creatorId !== user.id) {
         return res.status(403).json({ message: "Only league creator can start draft" });
       }
@@ -292,7 +293,7 @@ export default function setupDraftRoutes(app: any, storage: IStorage, webSocketM
   // Get draft by league ID - needed for frontend navigation
   app.get("/api/drafts/league/:leagueId", async (req: any, res: any) => {
     try {
-      const user = getAuthenticatedUser(req);
+      const user = await getAuthenticatedUser(req);
       if (!user) {
         return res.status(401).json({ message: "Not authenticated" });
       }
@@ -347,7 +348,7 @@ export default function setupDraftRoutes(app: any, storage: IStorage, webSocketM
   // Get draft state
   app.get("/api/drafts/:draftId",  async (req: any, res: any) => {
     try {
-      const user = getAuthenticatedUser(req);
+      const user = await getAuthenticatedUser(req);
       if (!user) {
         return res.status(401).json({ message: "Not authenticated" });
       }
@@ -392,7 +393,7 @@ export default function setupDraftRoutes(app: any, storage: IStorage, webSocketM
   // Make a draft pick
   app.post("/api/drafts/:draftId/pick",  async (req: any, res: any) => {
     try {
-      const user = getAuthenticatedUser(req);
+      const user = await getAuthenticatedUser(req);
       if (!user) {
         return res.status(401).json({ message: "Not authenticated" });
       }
@@ -436,7 +437,7 @@ export default function setupDraftRoutes(app: any, storage: IStorage, webSocketM
   // Get user's draft picks
   app.get("/api/drafts/:draftId/my-picks",  async (req: any, res: any) => {
     try {
-      const user = getAuthenticatedUser(req);
+      const user = await getAuthenticatedUser(req);
       if (!user) {
         return res.status(401).json({ message: "Not authenticated" });
       }
