@@ -391,13 +391,11 @@ export class SnakeDraftManager {
     console.log(`🔄 Advancing draft from Round ${draft.currentRound}, Pick ${draft.currentPick} to Pick ${nextPick}`);
     
     // Check if we need to advance to next round
-    // Each round has exactly totalUsers picks
-    const currentRoundStartPick = (draft.currentRound - 1) * totalUsers + 1;
+    // Each round has exactly totalUsers picks  
     const currentRoundEndPick = draft.currentRound * totalUsers;
     
     if (nextPick > currentRoundEndPick) {
       nextRound++;
-      nextPick = (nextRound - 1) * totalUsers + 1;
       console.log(`🔄 Advancing to Round ${nextRound}, Pick ${nextPick}`);
     }
     
