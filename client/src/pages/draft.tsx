@@ -81,36 +81,45 @@ export default function DraftPage() {
   // Initialize WebSocket connection for real-time updates
   const { connectionStatus, isConnected } = useDraftWebSocket(draftId);
   
-  // Timer fallback polling to ensure UI shows current timer
+  // Enhanced timer polling with proper refresh mechanism
   useEffect(() => {
     if (!draftId) return;
     
+    console.log('[Timer Fallback] Starting enhanced timer polling for draft:', draftId);
+    
+    let pollCounter = 0;
     const pollTimer = setInterval(async () => {
+      pollCounter++;
       try {
-        const response = await fetch(`/api/drafts/${draftId}`);
-        const data = await response.json();
-        if (data.success && data.data.state.timeRemaining !== undefined) {
-          console.log('[Timer Fallback] Updated timer:', data.data.state.timeRemaining, 'seconds');
-          // Update query cache with current timer
-          queryClient.setQueryData(['draft', draftId], (oldData: any) => {
-            if (oldData) {
-              return {
-                ...oldData,
-                state: {
-                  ...oldData.state,
-                  timeRemaining: data.data.state.timeRemaining
-                }
-              };
-            }
-            return data.data;
-          });
+        const response = await fetch(`/api/drafts/${draftId}?cache=${Date.now()}`, {
+          headers: {
+            'Cache-Control': 'no-cache',
+            'Pragma': 'no-cache'
+          }
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          
+          console.log(`[Timer Fallback] Poll #${pollCounter} - Timer:`, data.data?.state?.timeRemaining, 
+                     'Round:', data.data?.state?.draft?.currentRound, 
+                     'Pick:', data.data?.state?.draft?.currentPick);
+          
+          if (data.success && data.data) {
+            // Always invalidate first, then set fresh data
+            queryClient.invalidateQueries({ queryKey: ['draft', draftId] });
+            queryClient.setQueryData(['draft', draftId], data.data);
+          }
         }
       } catch (error) {
-        console.error('[Timer Fallback] Error:', error);
+        console.error('[Timer Fallback] Poll error:', error);
       }
-    }, 2000);
+    }, 1500); // Poll every 1.5 seconds for responsiveness
 
-    return () => clearInterval(pollTimer);
+    return () => {
+      console.log('[Timer Fallback] Cleanup - stopping timer polling');
+      clearInterval(pollTimer);
+    };
   }, [draftId, queryClient]);
 
   // Redirect if no draft ID
@@ -227,6 +236,11 @@ export default function DraftPage() {
       console.log('[Draft] Updating local timer from server:', draftData.state.timeRemaining);
       setLocalTimeRemaining(draftData.state.timeRemaining);
       setLastServerUpdate(Date.now());
+      
+      // Force immediate UI update if timer is greater than 0
+      if (draftData.state.timeRemaining > 0) {
+        console.log('[Draft] Active timer detected, forcing render');
+      }
     }
   }, [draftData?.state?.timeRemaining]);
 

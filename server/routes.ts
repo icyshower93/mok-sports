@@ -575,6 +575,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Register subscription validation routes
   registerSubscriptionValidationRoutes(app);
   
+  // Temporary timer restart endpoint for production issues
+  app.post('/api/testing/restart-timer', async (req, res) => {
+    try {
+      const { draftId, userId } = req.body;
+      
+      if (!draftId || !userId) {
+        return res.status(400).json({ message: 'Missing draftId or userId' });
+      }
+
+      console.log(`⚡ Manual timer restart requested for draft ${draftId}, user ${userId}`);
+      
+      // Import and use the snake draft manager
+      const { SnakeDraftManager } = await import('./draft/snakeDraftManager.js');
+      const draftManager = new SnakeDraftManager();
+      await draftManager.startTimer(draftId, userId, 60);
+      
+      res.json({ message: 'Timer restarted successfully' });
+    } catch (error: any) {
+      console.error('Error restarting timer:', error);
+      res.status(500).json({ message: 'Failed to restart timer', error: error?.message || 'Unknown error' });
+    }
+  });
+  
   // Test notification endpoint for debugging (no auth required for testing)
   // Debug endpoints - commented out for production (uncomment to re-enable testing)
   /*
