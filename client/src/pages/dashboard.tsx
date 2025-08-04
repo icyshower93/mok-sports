@@ -54,10 +54,29 @@ export default function DashboardPage() {
   const [showNotificationPrompt, setShowNotificationPrompt] = useState(false);
 
   // Check if user is already in a league
-  const { data: userLeagues } = useQuery({
+  const { data: userLeagues, isLoading: leaguesLoading, refetch: refetchLeagues } = useQuery({
     queryKey: ['/api/leagues/user'],
     enabled: !!user,
+    refetchOnWindowFocus: true, // Re-check leagues when PWA regains focus
+    staleTime: 0, // Always fetch fresh league data for PWA
   });
+
+  // Debug logging for PWA troubleshooting
+  useEffect(() => {
+    if (user) {
+      console.log('[Dashboard] User authenticated:', user);
+      console.log('[Dashboard] User leagues loading:', leaguesLoading);
+      console.log('[Dashboard] User leagues data:', userLeagues);
+    }
+  }, [user, userLeagues, leaguesLoading]);
+
+  // Force refresh leagues data if user is authenticated but no leagues found
+  useEffect(() => {
+    if (user && !leaguesLoading && (!userLeagues || userLeagues.length === 0)) {
+      console.log('[Dashboard] User authenticated but no leagues found, refreshing...');
+      refetchLeagues();
+    }
+  }, [user, userLeagues, leaguesLoading, refetchLeagues]);
 
   // Redirect to league waiting room if user is already in a league
   useEffect(() => {
@@ -69,6 +88,7 @@ export default function DashboardPage() {
       // Find the most recent active league
       const activeLeague = userLeagues.find((league: any) => league.isActive && league.id);
       if (activeLeague && activeLeague.id) {
+        console.log('[Dashboard] Redirecting to league waiting room:', activeLeague.id);
         setLocation(`/league/waiting?id=${activeLeague.id}`);
         return;
       }

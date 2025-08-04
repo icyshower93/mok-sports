@@ -34,7 +34,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     queryKey: ["/api/auth/me"],
     retry: false,
     enabled: true,
-    refetchOnWindowFocus: false,
+    refetchOnWindowFocus: true, // Re-check auth when PWA regains focus
     refetchOnMount: true,
     staleTime: 0, // Always check fresh authentication status
     gcTime: 0, // Don't cache auth responses (renamed from cacheTime in v5)
@@ -64,6 +64,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setIsAuthenticated(false);
     }
   }, [user, error, isLoading]);
+
+  // PWA Token Recovery - check localStorage on app startup
+  useEffect(() => {
+    const storedToken = AuthTokenManager.getToken();
+    if (storedToken && !user && !isLoading) {
+      console.log('[Auth] Found stored token, refreshing authentication...');
+      queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
+    }
+  }, [user, isLoading, queryClient]);
 
   // Check URL params for auth success/error and extract token
   useEffect(() => {
