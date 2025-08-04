@@ -16,6 +16,24 @@ import { NotificationPrompt } from "@/components/notification-prompt";
 // import { PushDiagnosticPanel } from "@/components/push-diagnostic-panel";
 import { PersistentPushManager } from "@/components/persistent-push-manager";
 
+// Development helper for quick login
+const testLogin = async (userId?: string) => {
+  try {
+    const response = await fetch('/api/auth/testing/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId }),
+      credentials: 'include'
+    });
+    const result = await response.json();
+    if (result.success) {
+      window.location.reload();
+    }
+  } catch (error) {
+    console.error('Test login failed:', error);
+  }
+};
+
 export default function DashboardPage() {
   const { user, logout } = useAuth();
   const { toast } = useToast();
@@ -170,7 +188,30 @@ export default function DashboardPage() {
   };
 
   if (!user) {
-    return null;
+    return (
+      <MainLayout>
+        <div className="container mx-auto px-4 py-8 text-center">
+          <h1 className="text-2xl font-bold mb-4">Welcome to Mok Sports</h1>
+          <p className="text-muted-foreground mb-6">Please sign in to continue</p>
+          <div className="space-y-4">
+            <Button onClick={() => window.location.href = "/api/auth/google"}>
+              Sign in with Google
+            </Button>
+            {process.env.NODE_ENV === 'development' && (
+              <div className="space-y-2">
+                <p className="text-sm text-muted-foreground">Development Login:</p>
+                <Button 
+                  variant="outline" 
+                  onClick={() => testLogin('9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a')}
+                >
+                  Login as Sky Evans
+                </Button>
+              </div>
+            )}
+          </div>
+        </div>
+      </MainLayout>
+    );
   }
 
   const firstName = user.name?.split(" ")[0] || "Player";

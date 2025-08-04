@@ -75,16 +75,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
     app.post("/api/testing/timer-recovery", async (req, res) => {
       try {
         const draftWebSocket = await import("./websocket/draftWebSocket");
-        const draftManager = draftWebSocket.draftManager;
-        if (draftManager && draftManager.forceRestartActiveTimers) {
-          await draftManager.forceRestartActiveTimers();
+        if (draftWebSocket && draftWebSocket.recoverActiveTimers) {
+          await draftWebSocket.recoverActiveTimers();
           res.json({ success: true, message: "Timer recovery completed" });
         } else {
           res.status(500).json({ error: "Draft manager not available" });
         }
-      } catch (error) {
+      } catch (error: any) {
         console.error("Timer recovery error:", error);
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ error: error?.message || "Unknown error" });
       }
     });
 
