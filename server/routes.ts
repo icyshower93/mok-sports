@@ -40,7 +40,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
             secure: isProduction,
             sameSite: isProduction ? "none" as const : "lax" as const,
             maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-            path: '/'
+            path: '/',
+            domain: undefined // Let browser set domain automatically
           };
           
           
@@ -135,17 +136,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
     const token = req.cookies?.auth_token;
     
     if (!token) {
+      console.log("[Auth] No token found. Available cookies:", Object.keys(req.cookies || {}));
+      console.log("[Auth] All cookies:", req.cookies);
+      console.log("[Auth] Headers:", req.headers.cookie);
       return res.status(401).json({ message: "Not authenticated" });
     }
 
-    const { verifyJWT } = require("./auth");
-    const user = verifyJWT(token);
-    
-    if (!user) {
-      return res.status(401).json({ message: "Invalid token" });
-    }
+    try {
+      const { verifyJWT } = require("./auth");
+      const user = verifyJWT(token);
+      
+      if (!user) {
+        console.log("[Auth] Invalid token");
+        return res.status(401).json({ message: "Invalid token" });
+      }
 
-    res.json(user);
+      console.log("[Auth] User authenticated:", user.name);
+      res.json(user);
+    } catch (error) {
+      console.error("[Auth] Token verification error:", error);
+      return res.status(401).json({ message: "Token verification failed" });
+    }
   });
 
   // Logout
