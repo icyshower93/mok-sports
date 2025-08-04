@@ -15,13 +15,29 @@ import SnakeDraftManager from "../draft/snakeDraftManager.js";
 
 const router = Router();
 
-// Authentication helper function (matches main routes.ts pattern)
-function getAuthenticatedUser(req: any) {
-  const token = req.cookies?.auth_token;
+// Authentication helper function that supports both header and cookie tokens
+async function getAuthenticatedUser(req: any) {
+  // Try Authorization header first (PWA-friendly)
+  const authHeader = req.headers.authorization;
+  let token = null;
+  
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    token = authHeader.substring(7);
+    console.log("[Draft Auth] Using Bearer token from header");
+  } else {
+    // Fallback to cookie
+    token = req.cookies?.auth_token;
+    if (token) {
+      console.log("[Draft Auth] Using token from cookie");
+    }
+  }
+  
   if (!token) {
+    console.log("[Draft Auth] No token found in header or cookies");
+    
     // For development: Return Sky Evans if no token (PWA cookie issue workaround)
     if (process.env.NODE_ENV === 'development') {
-      console.log("[Draft] Development mode - returning Sky Evans for draft access");
+      console.log("[Draft Auth] Development mode - returning Sky Evans for draft access");
       return {
         id: "9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a",
         name: "Sky Evans", 
@@ -32,9 +48,19 @@ function getAuthenticatedUser(req: any) {
   }
 
   try {
-    const { verifyJWT } = require("../auth");
-    return verifyJWT(token);
+    // Use dynamic import for ES modules
+    const authModule = await import("../auth.js");
+    const user = authModule.verifyJWT(token);
+    
+    if (!user || typeof user === 'string') {
+      console.log("[Draft Auth] Invalid token or wrong format");
+      return null;
+    }
+
+    console.log("[Draft Auth] User authenticated:", (user as any).name);
+    return user as any;
   } catch (error) {
+    console.error("[Draft Auth] Token verification error:", error);
     return null;
   }
 }
@@ -45,7 +71,7 @@ export default function setupDraftRoutes(app: any, storage: IStorage, webSocketM
   // Create a new draft for a league
   app.post("/api/drafts", async (req: any, res: any) => {
     try {
-      const user = getAuthenticatedUser(req);
+      const user = await getAuthenticatedUser(req);
       if (!user) {
         return res.status(401).json({ message: "Not authenticated" });
       }

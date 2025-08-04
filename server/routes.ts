@@ -50,7 +50,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           // Note: Welcome notifications are now handled by the client-side post-login flow
           // This ensures proper timing and user interaction context for notifications
 
-          res.redirect("/?auth=success");
+          // Redirect with token in URL for PWA compatibility (will be stored in localStorage)
+          res.redirect(`/?auth=success&token=${encodeURIComponent(token)}`);
         } catch (error) {
           res.redirect("/?error=auth_failed");
         }
@@ -115,7 +116,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         };
         
         res.cookie("auth_token", token, cookieOptions);
-        res.json({ success: true, user: { id: user.id, name: user.name, email: user.email } });
+        res.json({ 
+          success: true, 
+          user: { id: user.id, name: user.name, email: user.email },
+          token: token // Include token in response for PWA localStorage storage
+        });
       } catch (error) {
         console.error("Testing login error:", error);
         res.status(500).json({ message: "Login failed" });
@@ -131,45 +136,67 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
-  // Get current user
-  app.get("/api/auth/me", (req, res) => {
-    const token = req.cookies?.auth_token;
+  // Authentication middleware that supports both header and cookie tokens
+  async function getAuthenticatedUser(req: any) {
+    // Try Authorization header first (PWA-friendly)
+    const authHeader = req.headers.authorization;
+    let token = null;
+    
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      token = authHeader.substring(7);
+      console.log("[Auth] Using Bearer token from header");
+    } else {
+      // Fallback to cookie
+      token = req.cookies?.auth_token;
+      if (token) {
+        console.log("[Auth] Using token from cookie");
+      }
+    }
     
     if (!token) {
-      console.log("[Auth] No token found. Available cookies:", Object.keys(req.cookies || {}));
-      console.log("[Auth] All cookies:", req.cookies);
-      console.log("[Auth] Headers:", req.headers.cookie);
-      console.log("[Auth] User-Agent:", req.headers['user-agent']);
+      console.log("[Auth] No token found in header or cookies");
+      console.log("[Auth] Available cookies:", Object.keys(req.cookies || {}));
+      console.log("[Auth] Authorization header:", authHeader);
       
       // For development: Return Sky Evans as authenticated user if no token but request seems valid
       if (process.env.NODE_ENV === 'development') {
         console.log("[Auth] Development mode - returning Sky Evans");
-        const skyEvans = {
+        return {
           id: "9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a",
           name: "Sky Evans", 
           email: "skyevans04@gmail.com"
         };
-        return res.json(skyEvans);
       }
       
-      return res.status(401).json({ message: "Not authenticated" });
+      return null;
     }
 
     try {
-      const { verifyJWT } = require("./auth");
-      const user = verifyJWT(token);
+      const { verifyJWT: verify } = await import("./auth.js");
+      const user = verify(token);
       
-      if (!user) {
-        console.log("[Auth] Invalid token");
-        return res.status(401).json({ message: "Invalid token" });
+      if (!user || typeof user === 'string') {
+        console.log("[Auth] Invalid token or wrong format");
+        return null;
       }
 
-      console.log("[Auth] User authenticated:", user.name);
-      res.json(user);
+      console.log("[Auth] User authenticated:", (user as any).name);
+      return user as any;
     } catch (error) {
       console.error("[Auth] Token verification error:", error);
-      return res.status(401).json({ message: "Token verification failed" });
+      return null;
     }
+  }
+
+  // Get current user
+  app.get("/api/auth/me", async (req, res) => {
+    const user = await getAuthenticatedUser(req);
+    
+    if (!user) {
+      return res.status(401).json({ message: "Not authenticated" });
+    }
+    
+    res.json(user);
   });
 
   // Logout
@@ -181,15 +208,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // League routes
   app.post("/api/leagues", async (req, res) => {
     try {
-      const token = req.cookies?.auth_token;
-      if (!token) {
-        return res.status(401).json({ message: "Not authenticated" });
-      }
-
-      const { verifyJWT } = require("./auth");
-      const user = verifyJWT(token);
+      const user = await getAuthenticatedUser(req);
       if (!user) {
-        return res.status(401).json({ message: "Invalid token" });
+        return res.status(401).json({ message: "Not authenticated" });
       }
 
       // Validate request body - only validate what comes from frontend
@@ -242,15 +263,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get("/api/leagues/user", async (req, res) => {
     try {
-      const token = req.cookies?.auth_token;
-      if (!token) {
-        return res.status(401).json({ message: "Not authenticated" });
-      }
-
-      const { verifyJWT } = require("./auth");
-      const user = verifyJWT(token);
+      const user = await getAuthenticatedUser(req);
       if (!user) {
-        return res.status(401).json({ message: "Invalid token" });
+        return res.status(401).json({ message: "Not authenticated" });
       }
 
       const leagues = await storage.getUserLeagues(user.id);
@@ -262,15 +277,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/leagues/join", async (req, res) => {
     try {
-      const token = req.cookies?.auth_token;
-      if (!token) {
-        return res.status(401).json({ message: "Not authenticated" });
-      }
-
-      const { verifyJWT } = require("./auth");
-      const user = verifyJWT(token);
+      const user = await getAuthenticatedUser(req);
       if (!user) {
-        return res.status(401).json({ message: "Invalid token" });
+        return res.status(401).json({ message: "Not authenticated" });
       }
 
       const { joinCode } = req.body;
@@ -344,15 +353,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get specific league
   app.get("/api/leagues/:id", async (req, res) => {
     try {
-      const token = req.cookies?.auth_token;
-      if (!token) {
-        return res.status(401).json({ message: "Not authenticated" });
-      }
-
-      const { verifyJWT } = require("./auth");
-      const user = verifyJWT(token);
+      const user = getAuthenticatedUser(req);
       if (!user) {
-        return res.status(401).json({ message: "Invalid token" });
+        return res.status(401).json({ message: "Not authenticated" });
       }
 
       const { id } = req.params;
@@ -377,15 +380,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Leave league
   app.post("/api/leagues/:id/leave", async (req, res) => {
     try {
-      const token = req.cookies?.auth_token;
-      if (!token) {
-        return res.status(401).json({ message: "Not authenticated" });
-      }
-
-      const { verifyJWT } = require("./auth");
-      const user = verifyJWT(token);
+      const user = getAuthenticatedUser(req);
       if (!user) {
-        return res.status(401).json({ message: "Invalid token" });
+        return res.status(401).json({ message: "Not authenticated" });
       }
 
       const { id } = req.params;

@@ -26,7 +26,12 @@ const testLogin = async (userId?: string) => {
       credentials: 'include'
     });
     const result = await response.json();
-    if (result.success) {
+    if (result.success && result.token) {
+      // Store token for PWA compatibility
+      const { AuthTokenManager } = await import('@/lib/queryClient');
+      AuthTokenManager.setToken(result.token);
+      window.location.reload();
+    } else if (result.success) {
       window.location.reload();
     }
   } catch (error) {

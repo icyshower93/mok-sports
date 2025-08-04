@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { apiRequest } from "@/lib/queryClient";
+import { apiRequest, AuthTokenManager } from "@/lib/queryClient";
 
 interface User {
   id: string;
@@ -50,6 +50,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     mutationFn: () => apiRequest("POST", "/api/auth/logout"),
     onSuccess: () => {
       setIsAuthenticated(false);
+      AuthTokenManager.removeToken(); // Clear stored token
       queryClient.clear();
       window.location.href = "/";
     },
@@ -64,19 +65,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, [user, error, isLoading]);
 
-  // Check URL params for auth success/error
+  // Check URL params for auth success/error and extract token
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const authStatus = urlParams.get("auth");
+    const token = urlParams.get("token");
     const error = urlParams.get("error");
 
-    if (authStatus === "success") {
+    if (authStatus === "success" && token) {
+      // Store the token for PWA compatibility
+      AuthTokenManager.setToken(token);
+      setIsAuthenticated(true);
+      sessionStorage.setItem('login-time', Date.now().toString());
+      queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
+      window.history.replaceState({}, document.title, "/");
+    } else if (authStatus === "success") {
+      // Fallback for cookie-only auth
       setIsAuthenticated(true);
       sessionStorage.setItem('login-time', Date.now().toString());
       queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
       window.history.replaceState({}, document.title, "/");
     } else if (error) {
       setIsAuthenticated(false);
+      AuthTokenManager.removeToken();
       window.history.replaceState({}, document.title, "/");
     }
   }, [queryClient]);
