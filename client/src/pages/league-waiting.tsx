@@ -4,7 +4,7 @@ import { MainLayout } from "@/components/layout/main-layout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Copy, Users, Clock, Share2, RefreshCw, LogOut, Crown, X, Calendar, CalendarClock, Play } from "lucide-react";
+import { Copy, Users, Clock, Share2, RefreshCw, LogOut, Crown, X, Play } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
 import { useLocation } from "wouter";
@@ -12,9 +12,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { queryClient } from "@/lib/queryClient";
 import { DraftNotificationReminder } from "@/components/draft-notification-reminder";
 import DraftControls from "@/components/draft-controls";
-import { Input } from "@/components/ui/input";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
 
 interface League {
   id: string;
@@ -41,8 +38,7 @@ export function LeagueWaiting() {
   const { toast } = useToast();
   const [, setLocation] = useLocation();
   const [leagueId, setLeagueId] = useState<string | null>(null);
-  const [scheduleDialogOpen, setScheduleDialogOpen] = useState(false);
-  const [draftDateTime, setDraftDateTime] = useState("");
+
   const [previousMemberCount, setPreviousMemberCount] = useState<number>(0);
   const [notificationSent, setNotificationSent] = useState<boolean>(false);
 
@@ -125,39 +121,6 @@ export function LeagueWaiting() {
     },
     onError: (error: any) => {
       console.error('Failed to send league full notifications:', error);
-    },
-  });
-
-  // Schedule draft mutation
-  const scheduleDraftMutation = useMutation({
-    mutationFn: async (draftDateTime: string) => {
-      const response = await fetch(`/api/leagues/${leagueId}/schedule-draft`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ draftDateTime }),
-      });
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || 'Failed to schedule draft');
-      }
-      return response.json();
-    },
-    onSuccess: () => {
-      toast({
-        title: "Draft Scheduled!",
-        description: "All league members will be notified about the draft time.",
-      });
-      setScheduleDialogOpen(false);
-      setDraftDateTime("");
-      refetch(); // Refresh league data
-    },
-    onError: (error: any) => {
-      toast({
-        title: "Error",
-        description: error.message || "Failed to schedule draft",
-        variant: "destructive",
-      });
     },
   });
 
@@ -331,7 +294,7 @@ export function LeagueWaiting() {
 
             <CardContent className="space-y-6">
               {/* Draft notification reminder for leagues with full capacity */}
-              {league.memberCount === league.maxTeams && league.draftScheduledAt && (
+              {league.memberCount === league.maxTeams && (
                 <DraftNotificationReminder
                   leagueName={league.name}
                 />
@@ -397,71 +360,18 @@ export function LeagueWaiting() {
                 </div>
               </div>
 
-              {/* Draft Scheduling (only for creator when league is full) */}
-              {user?.id === league.creatorId && isLeagueFull && !league.draftScheduledAt && (
+              {/* League Full - Ready to Draft */}
+              {user?.id === league.creatorId && isLeagueFull && (
                 <div className="space-y-3">
-                  <h3 className="font-semibold text-center">League is Full!</h3>
-                  <p className="text-sm text-muted-foreground text-center">
-                    All spots are filled. Schedule your draft to get started.
-                  </p>
-                  <Dialog open={scheduleDialogOpen} onOpenChange={setScheduleDialogOpen}>
-                    <DialogTrigger asChild>
-                      <Button className="w-full" variant="default">
-                        <CalendarClock className="w-4 h-4 mr-2" />
-                        Schedule Draft
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent>
-                      <DialogHeader>
-                        <DialogTitle>Schedule Draft</DialogTitle>
-                      </DialogHeader>
-                      <div className="space-y-4">
-                        <div>
-                          <Label htmlFor="draft-datetime">Draft Date & Time</Label>
-                          <Input
-                            id="draft-datetime"
-                            type="datetime-local"
-                            value={draftDateTime}
-                            onChange={(e) => setDraftDateTime(e.target.value)}
-                            min={new Date().toISOString().slice(0, 16)}
-                          />
-                        </div>
-                        <div className="flex gap-2">
-                          <Button
-                            onClick={() => {
-                              if (draftDateTime) {
-                                scheduleDraftMutation.mutate(draftDateTime);
-                              }
-                            }}
-                            disabled={!draftDateTime || scheduleDraftMutation.isPending}
-                            className="flex-1"
-                          >
-                            {scheduleDraftMutation.isPending ? "Scheduling..." : "Schedule Draft"}
-                          </Button>
-                          <Button
-                            variant="outline"
-                            onClick={() => setScheduleDialogOpen(false)}
-                            className="flex-1"
-                          >
-                            Cancel
-                          </Button>
-                        </div>
-                      </div>
-                    </DialogContent>
-                  </Dialog>
-                </div>
-              )}
-
-              {/* Show draft time if scheduled */}
-              {league.draftScheduledAt && (
-                <div className="text-center p-4 bg-fantasy-green/10 rounded-lg">
-                  <div className="flex items-center justify-center gap-2 mb-2">
-                    <Calendar className="w-5 h-5 text-fantasy-green" />
-                    <span className="font-semibold text-fantasy-green">Draft Scheduled</span>
+                  <div className="text-center p-4 bg-fantasy-green/10 rounded-lg">
+                    <div className="flex items-center justify-center gap-2 mb-2">
+                      <Users className="w-5 h-5 text-fantasy-green" />
+                      <span className="font-semibold text-fantasy-green">League is Full!</span>
+                    </div>
+                    <p className="text-sm text-muted-foreground">
+                      All 6 spots are filled. You can now start the snake draft.
+                    </p>
                   </div>
-                  <p className="text-sm text-muted-foreground">
-                    {new Date(league.draftScheduledAt).toLocaleString()}
-                  </p>
                 </div>
               )}
 
@@ -473,7 +383,6 @@ export function LeagueWaiting() {
                   canStartDraft={!!league.draftId && !league.draftStarted}
                   draftId={league.draftId}
                   onDraftCreated={(draftId: string) => {
-                    // Update league data with draft ID
                     queryClient.invalidateQueries({ queryKey: [`/api/leagues/${leagueId}`] });
                     toast({
                       title: "Draft created!",
@@ -481,7 +390,6 @@ export function LeagueWaiting() {
                     });
                   }}
                   onDraftStarted={() => {
-                    // Navigate to draft room
                     setLocation(`/draft?id=${league.draftId}`);
                   }}
                 />

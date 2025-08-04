@@ -31,8 +31,8 @@ export default function DraftControls({
   const queryClient = useQueryClient();
   
   const [showSettings, setShowSettings] = useState(false);
-  const [totalRounds, setTotalRounds] = useState(5);
   const [pickTimeLimit, setPickTimeLimit] = useState(60);
+  const totalRounds = 5; // Fixed to 5 rounds for 6-person leagues
 
   // Create draft mutation
   const createDraftMutation = useMutation({
@@ -133,26 +133,14 @@ export default function DraftControls({
 
             {showSettings && (
               <div className="space-y-4 p-4 bg-secondary/50 rounded-lg">
-                <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-4">
                   <div>
-                    <Label htmlFor="totalRounds" className="text-sm">
+                    <Label className="text-sm">
                       Total Rounds
                     </Label>
-                    <Select 
-                      value={totalRounds.toString()} 
-                      onValueChange={(value) => setTotalRounds(Number(value))}
-                    >
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="3">3 Rounds</SelectItem>
-                        <SelectItem value="4">4 Rounds</SelectItem>
-                        <SelectItem value="5">5 Rounds</SelectItem>
-                        <SelectItem value="6">6 Rounds</SelectItem>
-                        <SelectItem value="7">7 Rounds</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <div className="text-sm text-muted-foreground mt-1">
+                      Fixed at 5 rounds for 6-person leagues
+                    </div>
                   </div>
                   
                   <div>
