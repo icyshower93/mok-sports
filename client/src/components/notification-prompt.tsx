@@ -5,6 +5,7 @@ import { Bell, X, CheckCircle2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/hooks/use-auth';
 import { usePWADebug } from '@/hooks/use-pwa-debug';
+import { useSubscriptionManager } from '@/hooks/use-subscription-manager';
 
 interface NotificationPromptProps {
   className?: string;
@@ -23,7 +24,8 @@ export function NotificationPrompt({
   const [isVisible, setIsVisible] = useState(false);
   const [isRequestingPermission, setIsRequestingPermission] = useState(false);
   const { user } = useAuth();
-  const { addLog, logSubscriptionCreation, logSubscriptionPost } = usePWADebug();
+  const { addLog } = usePWADebug();
+  const subscriptionManager = useSubscriptionManager();
 
   useEffect(() => {
     if ('Notification' in window) {
@@ -49,65 +51,23 @@ export function NotificationPrompt({
       setPermission(result);
       
       if (result === 'granted') {
-        addLog('Permission granted - creating push subscription...');
-        onPermissionGranted?.();
+        addLog('Permission granted - triggering subscription manager...');
         setIsVisible(false);
         
-        // Create the actual push subscription
-        await createPushSubscriptionForPrompt();
+        // Trigger subscription manager to create subscription immediately
+        setTimeout(() => {
+          subscriptionManager.manualRefresh();
+        }, 500);
+        
+        onPermissionGranted?.();
       } else {
         addLog(`Permission ${result} - no subscription created`);
       }
     } catch (error) {
       console.error('Error requesting notification permission:', error);
+      addLog(`Permission request error: ${error}`);
     } finally {
       setIsRequestingPermission(false);
-    }
-  };
-
-  const createPushSubscriptionForPrompt = async () => {
-    try {
-      addLog('Creating push subscription...');
-      const registration = await navigator.serviceWorker.getRegistration();
-      if (!registration) {
-        throw new Error('Service worker not registered');
-      }
-
-      // Get VAPID key from server
-      const vapidResponse = await fetch('/api/push/vapid-key');
-      const { publicKey } = await vapidResponse.json();
-
-      const subscription = await registration.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: publicKey
-      });
-
-      logSubscriptionCreation(true, { endpoint: subscription.endpoint });
-
-      // Send subscription to server
-      const response = await fetch('/api/push/subscribe', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({
-          endpoint: subscription.endpoint,
-          keys: {
-            p256dh: btoa(String.fromCharCode.apply(null, Array.from(new Uint8Array(subscription.getKey('p256dh')!)))),
-            auth: btoa(String.fromCharCode.apply(null, Array.from(new Uint8Array(subscription.getKey('auth')!))))
-          }
-        })
-      });
-
-      if (response.ok) {
-        const result = await response.json();
-        logSubscriptionPost(true, result);
-      } else {
-        const error = await response.text();
-        logSubscriptionPost(false, { error });
-      }
-      
-    } catch (error) {
-      logSubscriptionCreation(false, { error: error instanceof Error ? error.message : 'Unknown error' });
     }
   };
 

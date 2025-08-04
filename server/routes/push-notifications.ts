@@ -70,23 +70,46 @@ export function registerPushNotificationRoutes(app: Express) {
   app.post("/api/push/subscribe", authenticateJWT, async (req, res) => {
     try {
       const user = req.user as any;
-      const subscription = req.body;
+      const { endpoint, keys } = req.body;
       
       if (!user) {
         return res.status(401).json({ error: "Not authenticated" });
       }
-      
+
+      // Validate subscription data
+      if (!endpoint || !keys || !keys.p256dh || !keys.auth) {
+        return res.status(400).json({ 
+          error: "Invalid subscription data",
+          details: "Missing endpoint or keys (p256dh, auth)"
+        });
+      }
+
+      // Create the subscription object
+      const subscription = {
+        endpoint,
+        keys: {
+          p256dh: keys.p256dh,
+          auth: keys.auth
+        }
+      };
+
+      console.log(`[Push] Creating subscription for user ${user.id}: ${endpoint.substring(0, 50)}...`);
       
       await storage.createPushSubscription(user.id, subscription);
       
-      res.json({ 
-        message: "Subscription created successfully",
-        userId: user.id
+      console.log(`[Push] Subscription created successfully for user ${user.id}`);
+      
+      res.status(201).json({ 
+        success: true,
+        message: "Subscription registered successfully",
+        userId: user.id,
+        endpoint: endpoint.substring(0, 50) + "..."
       });
       
     } catch (error) {
+      console.error('[Push] Subscription creation failed:', error);
       res.status(500).json({ 
-        error: "Failed to create subscription",
+        error: "Failed to register subscription",
         details: error instanceof Error ? error.message : "Unknown error"
       });
     }

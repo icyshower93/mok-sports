@@ -93,30 +93,53 @@ export function useSubscriptionManager() {
     try {
       addLog('Sending subscription to server...');
       
+      // Ensure keys exist before converting
+      const p256dhKey = subscription.getKey('p256dh');
+      const authKey = subscription.getKey('auth');
+      
+      if (!p256dhKey || !authKey) {
+        throw new Error('Subscription keys missing');
+      }
+
+      const subscriptionData = {
+        endpoint: subscription.endpoint,
+        keys: {
+          p256dh: btoa(String.fromCharCode(...Array.from(new Uint8Array(p256dhKey)))),
+          auth: btoa(String.fromCharCode(...Array.from(new Uint8Array(authKey))))
+        }
+      };
+
+      addLog(`Subscription data: ${JSON.stringify({ endpoint: subscriptionData.endpoint, keysPresent: true })}`);
+      
       const response = await fetch('/api/push/subscribe', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
         credentials: 'include',
-        body: JSON.stringify({
-          endpoint: subscription.endpoint,
-          keys: {
-            p256dh: btoa(String.fromCharCode(...Array.from(new Uint8Array(subscription.getKey('p256dh')!)))),
-            auth: btoa(String.fromCharCode(...Array.from(new Uint8Array(subscription.getKey('auth')!))))
-          }
-        })
+        body: JSON.stringify(subscriptionData)
       });
+
+      addLog(`Server response: ${response.status} ${response.statusText}`);
 
       if (response.ok) {
         const result = await response.json();
-        addLog(`Subscription sent successfully: ${result.message || 'OK'}`);
+        addLog(`Subscription registered successfully: ${result.message || result.success || 'OK'}`);
         return true;
       } else {
-        const error = await response.text();
-        addLog(`Failed to send subscription: ${error}`);
+        let errorMessage = `HTTP ${response.status}`;
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.error || errorData.message || errorMessage;
+        } catch {
+          errorMessage = await response.text() || errorMessage;
+        }
+        addLog(`Failed to register subscription: ${errorMessage}`);
         return false;
       }
     } catch (error) {
-      addLog(`Error sending subscription: ${error}`);
+      addLog(`Error sending subscription: ${error instanceof Error ? error.message : error}`);
       return false;
     }
   }, [addLog]);
@@ -139,20 +162,33 @@ export function useSubscriptionManager() {
     try {
       // Check current subscription
       let subscription = await getCurrentSubscription();
+      let createdNew = false;
       
-      // If no subscription exists, create one
-      if (!subscription) {
-        addLog('No existing subscription - creating new one');
+      // If no subscription exists or force refresh, create one
+      if (!subscription || force) {
+        addLog(subscription ? 'Force refresh - creating new subscription' : 'No existing subscription - creating new one');
+        
+        // Unsubscribe existing if force refresh
+        if (subscription && force) {
+          try {
+            await subscription.unsubscribe();
+            addLog('Unsubscribed existing subscription for force refresh');
+          } catch (error) {
+            addLog(`Warning: Failed to unsubscribe existing: ${error}`);
+          }
+        }
+        
         subscription = await createNewSubscription();
+        createdNew = true;
       } else {
-        addLog('Found existing subscription - refreshing with server');
+        addLog('Found existing subscription - validating with server');
       }
 
       if (!subscription) {
         throw new Error('Failed to create subscription');
       }
 
-      // Always send to server to ensure it's active
+      // Send to server to register/validate
       const serverSuccess = await sendSubscriptionToServer(subscription);
       
       if (serverSuccess) {
@@ -166,10 +202,19 @@ export function useSubscriptionManager() {
           error: null
         }));
         
-        addLog(`Subscription refresh SUCCESS - Count: ${state.refreshCount + 1}`);
+        addLog(`Subscription refresh SUCCESS - ${createdNew ? 'New' : 'Existing'} subscription registered`);
         return true;
       } else {
-        throw new Error('Failed to register subscription with server');
+        // If server registration failed, try to clean up the subscription
+        if (createdNew && subscription) {
+          try {
+            await subscription.unsubscribe();
+            addLog('Cleaned up failed subscription');
+          } catch (cleanupError) {
+            addLog(`Warning: Failed to cleanup subscription: ${cleanupError}`);
+          }
+        }
+        throw new Error('Server registration failed');
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
@@ -184,7 +229,7 @@ export function useSubscriptionManager() {
       
       return false;
     }
-  }, [shouldManageSubscription, state.isRefreshing, state.refreshCount, getCurrentSubscription, createNewSubscription, sendSubscriptionToServer, addLog]);
+  }, [shouldManageSubscription, state.isRefreshing, getCurrentSubscription, createNewSubscription, sendSubscriptionToServer, addLog]);
 
   // Initialize subscription management
   const initializeSubscription = useCallback(async () => {
@@ -200,38 +245,46 @@ export function useSubscriptionManager() {
   // Auto-refresh on app lifecycle events
   useEffect(() => {
     if (!shouldManageSubscription()) {
+      addLog('Subscription management requirements not met - waiting for user authentication and permission');
       return;
     }
 
-    // Initial refresh
-    initializeSubscription();
+    // Initial refresh with delay to allow app to settle
+    addLog('Initializing subscription management...');
+    const initTimer = setTimeout(() => {
+      initializeSubscription();
+    }, 1000);
 
     // Refresh on visibility change (app comes to foreground)
     const handleVisibilityChange = () => {
-      if (!document.hidden) {
-        addLog('App became visible - refreshing subscription');
-        setTimeout(() => refreshSubscription(false), 1000);
+      if (!document.hidden && !state.isRefreshing) {
+        addLog('App became visible - checking subscription');
+        setTimeout(() => refreshSubscription(false), 2000);
       }
     };
 
     // Refresh on service worker update/activation
     const handleServiceWorkerMessage = (event: MessageEvent) => {
-      if (event.data?.type === 'SW_ACTIVATED') {
+      if (event.data?.type === 'SW_ACTIVATED' && !state.isRefreshing) {
         addLog(`Service worker activated (${event.data.version}) - refreshing subscription`);
-        setTimeout(() => refreshSubscription(true), 1000);
+        setTimeout(() => refreshSubscription(true), 1500);
       }
     };
 
     const handleServiceWorkerUpdate = () => {
-      addLog('Service worker updated - refreshing subscription');
-      setTimeout(() => refreshSubscription(true), 2000);
+      if (!state.isRefreshing) {
+        addLog('Service worker updated - refreshing subscription');
+        setTimeout(() => refreshSubscription(true), 2000);
+      }
     };
 
-    // Set up periodic refresh (every 5 minutes)
+    // Set up periodic refresh (every 10 minutes, less aggressive)
     refreshIntervalRef.current = setInterval(() => {
-      addLog('Periodic subscription refresh');
-      refreshSubscription(false);
-    }, 5 * 60 * 1000);
+      if (!state.isRefreshing) {
+        addLog('Periodic subscription check');
+        refreshSubscription(false);
+      }
+    }, 10 * 60 * 1000);
 
     document.addEventListener('visibilitychange', handleVisibilityChange);
     
@@ -242,6 +295,7 @@ export function useSubscriptionManager() {
     }
 
     return () => {
+      clearTimeout(initTimer);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker.removeEventListener('controllerchange', handleServiceWorkerUpdate);
@@ -251,7 +305,7 @@ export function useSubscriptionManager() {
         clearInterval(refreshIntervalRef.current);
       }
     };
-  }, [shouldManageSubscription, initializeSubscription, refreshSubscription, addLog]);
+  }, [shouldManageSubscription, initializeSubscription, refreshSubscription, addLog, state.isRefreshing]);
 
   // Manual refresh function for debugging
   const manualRefresh = useCallback(() => {
