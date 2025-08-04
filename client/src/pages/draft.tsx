@@ -70,6 +70,9 @@ export default function DraftPage() {
   // Local timer state for smooth countdown
   const [localTimeRemaining, setLocalTimeRemaining] = useState<number>(0);
   const [lastServerUpdate, setLastServerUpdate] = useState<number>(Date.now());
+  
+  // Timer transition state - MUST be declared before any conditional returns
+  const [isTransitioning, setIsTransitioning] = useState(false);
 
   // Initialize WebSocket connection for real-time updates
   const { connectionStatus, isConnected } = useDraftWebSocket(draftId);
@@ -313,9 +316,6 @@ export default function DraftPage() {
     );
   }
 
-  // Move all state hooks BEFORE any conditional logic or early returns
-  const [isTransitioning, setIsTransitioning] = useState(false);
-  
   const state: DraftState = draftData.state;
   const isCurrentUser = draftData.isCurrentUser;
   const currentPlayer = draftData.currentPlayer;

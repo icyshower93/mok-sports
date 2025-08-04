@@ -1,0 +1,60 @@
+Failed to load resource: the server responded with a status of 404 ()Understand this error
+svg:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+svg:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+index-CtCN_Iwv.js:272 [Push Persistence] Subscription successfully sent to backend
+sw.js?v=1754336043951:37 [SW] Activating service worker, version: v1.4.0-ios-push-fix
+sw.js?v=1754336043951:43 [SW] Found caches: Array(2)
+sw.js?v=1754336043951:56 [SW] Service worker activated and controlling all clients
+index-CtCN_Iwv.js:272 [App] Draft route matched with params: Object
+index-CtCN_Iwv.js:272 [App] Current location: https://mok-sports-draft-mokfantasysport.replit.app/draft/d6b1f88c-cc81-4d7c-950f-95661c86fda3
+index-CtCN_Iwv.js:272 [Draft] === STARTING DRAFT FETCH ===
+index-CtCN_Iwv.js:272 [Draft] Draft ID: d6b1f88c-cc81-4d7c-950f-95661c86fda3
+index-CtCN_Iwv.js:272 [Draft] Auth status - User: Mok Sports Authenticated: true Loading: false
+index-CtCN_Iwv.js:272 [Draft] Token available: true
+index-CtCN_Iwv.js:272 [Draft] Current URL: https://mok-sports-draft-mokfantasysport.replit.app/draft/d6b1f88c-cc81-4d7c-950f-95661c86fda3
+index-CtCN_Iwv.js:272 [Draft] Current pathname: /draft/d6b1f88c-cc81-4d7c-950f-95661c86fda3
+index-CtCN_Iwv.js:272 [Draft] Making API request to: /api/drafts/d6b1f88c-cc81-4d7c-950f-95661c86fda3
+sw.js?v=1754336043951:87 [SW] Serving /favicon.ico from cache
+index-CtCN_Iwv.js:272 [Draft] Response received: Object
+index-CtCN_Iwv.js:272 [Draft] Successfully fetched draft data: Object
+index-CtCN_Iwv.js:272 [Draft] === DRAFT FETCH SUCCESS ===
+index-CtCN_Iwv.js:40 Error: Minified React error #310; visit https://reactjs.org/docs/error-decoder.html?invariant=310 for the full message or use the non-minified dev environment for full errors and additional helpful warnings.
+    at Tt (index-CtCN_Iwv.js:38:17593)
+    at Wl (index-CtCN_Iwv.js:38:17846)
+    at Object.useState (index-CtCN_Iwv.js:38:24656)
+    at te.useState (index-CtCN_Iwv.js:9:6397)
+    at PP (index-CtCN_Iwv.js:272:54518)
+    at wd (index-CtCN_Iwv.js:38:16998)
+    at Bc (index-CtCN_Iwv.js:40:3139)
+    at tv (index-CtCN_Iwv.js:40:44737)
+    at Jg (index-CtCN_Iwv.js:40:39727)
+    at ES (index-CtCN_Iwv.js:40:39655)
+Wc @ index-CtCN_Iwv.js:40Understand this error
+index-CtCN_Iwv.js:228 ErrorBoundary caught an error: Minified React error #310; visit https://reactjs.org/docs/error-decoder.html?invariant=310 for the full message or use the non-minified dev environment for full errors and additional helpful warnings.
+componentDidCatch @ index-CtCN_Iwv.js:228Understand this error
+index-CtCN_Iwv.js:228 Component stack: 
+    at PP (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CtCN_Iwv.js:272:48885)
+    at Rn (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CtCN_Iwv.js:48:3201)
+    at pb (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CtCN_Iwv.js:48:4017)
+    at C2 (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CtCN_Iwv.js:272:114188)
+    at bk (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CtCN_Iwv.js:228:57441)
+    at u (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CtCN_Iwv.js:48:45795)
+    at Ky (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CtCN_Iwv.js:228:50417)
+    at Sk (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CtCN_Iwv.js:228:56913)
+    at _b (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CtCN_Iwv.js:48:40146)
+    at Pk (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CtCN_Iwv.js:228:70254)
+    at E2
+componentDidCatch @ index-CtCN_Iwv.js:228Understand this error
+index-CtCN_Iwv.js:272 WebSocket connection to 'wss://mok-sports-draft-mokfantasysport.replit.app/ws/draft?userId=d8873675-274c-46f9-ab48-00955c81d875&draftId=d6b1f88c-cc81-4d7c-950f-95661c86fda3' failed: WebSocket is closed before the connection is established.
+(anonymous) @ index-CtCN_Iwv.js:272Understand this warning
+index-CtCN_Iwv.js:272 [WebSocket] Connection error: Event
+S.onerror @ index-CtCN_Iwv.js:272Understand this error
+index-CtCN_Iwv.js:272 [WebSocket] Connection closed: 1006 
+index-CtCN_Iwv.js:228 [SubscriptionManager] 3:34:06 PM - Server response: 201 
+index-CtCN_Iwv.js:228 [SubscriptionManager] 3:34:06 PM - Subscription registered successfully: Subscription registered successfully
+sw.js?v=1754336043951:87 [SW] Serving /draft/d6b1f88c-cc81-4d7c-950f-95661c86fda3 from cache
+sw.js?v=1754336043951:91 [SW] Fetching /assets/index-Cn_hjswP.css from network
+sw.js?v=1754336043951:87 [SW] Serving /manifest.json from cache
+index-CtCN_Iwv.js:272 [WebSocket] Attempting to reconnect...
+index-CtCN_Iwv.js:272 [WebSocket] Connected to draft: d6b1f88c-cc81-4d7c-950f-95661c86fda3
+index-CtCN_Iwv.js:272 [WebSocket] Unknown message type: connected
