@@ -78,6 +78,8 @@ export function usePWADebug() {
       // Use subscription manager for accurate subscription status
       const hasActiveSubscription = subscriptionManager.hasActiveSubscription;
       const subscriptionEndpoint = subscriptionManager.subscriptionEndpoint;
+      
+      addLog(`Subscription Manager Status: active=${hasActiveSubscription}, endpoint=${subscriptionEndpoint ? 'present' : 'none'}`);
 
       const newDebugInfo = {
         isStandalone,

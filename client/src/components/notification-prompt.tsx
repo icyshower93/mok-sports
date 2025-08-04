@@ -51,13 +51,11 @@ export function NotificationPrompt({
       setPermission(result);
       
       if (result === 'granted') {
-        addLog('Permission granted - triggering subscription manager...');
+        addLog('Permission granted - creating subscription...');
         setIsVisible(false);
         
-        // Trigger subscription manager to create subscription immediately
-        setTimeout(() => {
-          subscriptionManager.manualRefresh();
-        }, 500);
+        // Immediately trigger subscription creation
+        subscriptionManager.handlePermissionGranted();
         
         onPermissionGranted?.();
       } else {

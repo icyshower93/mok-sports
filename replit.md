@@ -73,12 +73,13 @@ This setup allows testing the complete league workflow including:
 - League full notification trigger working perfectly (tested with EEW2YU league 6/6 members)
 - Push notification infrastructure fully operational
 
-**Comprehensive Auto-Refresh System Implemented (August 2025)**:
-- Created robust `useSubscriptionManager` hook that maintains active subscriptions
-- Auto-refresh triggers: app load, visibility change, service worker updates, periodic (5min)
-- Always re-establishes subscription even after PWA restart/refresh
-- Enhanced debug panel shows real-time subscription status and refresh history
-- Fixed iOS PWA subscription persistence issues after league rejoin/app restart
+**Fixed Push Subscription System (August 2025)**:
+- Rebuilt `useSubscriptionManager` with single-execution logic to prevent infinite loops
+- Fixed subscription creation to trigger immediately when Notification.permission becomes 'granted'
+- Enhanced error handling with proper cleanup of failed subscriptions
+- Improved backend validation with clear HTTP status codes and error messages
+- Debug panel now accurately reflects actual subscription status from server registration
+- Eliminated all recursive useEffect callbacks and setTimeout intervals that caused loops
 
 **Production Deployment Required**: 
 - iOS Safari push notifications require HTTPS (production deployment)

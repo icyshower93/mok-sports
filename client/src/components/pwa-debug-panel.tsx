@@ -114,12 +114,15 @@ export function PWADebugPanel() {
               <Button 
                 variant="outline" 
                 size="sm" 
-                onClick={manualRefreshSubscription}
+                onClick={() => {
+                  console.log('[Debug] Manual refresh button clicked');
+                  manualRefreshSubscription();
+                }}
                 disabled={subscriptionManager.isRefreshing}
                 className="flex items-center gap-1"
               >
                 <RefreshCw className={`h-3 w-3 ${subscriptionManager.isRefreshing ? 'animate-spin' : ''}`} />
-                Refresh Subscription
+                {subscriptionManager.isRefreshing ? 'Refreshing...' : 'Refresh Subscription'}
               </Button>
               <Button 
                 variant="outline" 
