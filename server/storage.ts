@@ -188,11 +188,20 @@ export class DatabaseStorage implements IStorage {
     return !!existing;
   }
 
-  async getLeagueMembers(leagueId: string): Promise<LeagueMember[]> {
-    return await db
-      .select()
-      .from(leagueMembers)
-      .where(eq(leagueMembers.leagueId, leagueId));
+  async getLeagueMembers(leagueId: string): Promise<Array<{ userId: string; joinedAt: string }>> {
+    console.log(`[Storage] Getting members for league ${leagueId}`);
+    const members = await db.select({
+      userId: leagueMembers.userId,
+      joinedAt: leagueMembers.joinedAt
+    })
+    .from(leagueMembers)
+    .where(eq(leagueMembers.leagueId, leagueId));
+    
+    console.log(`[Storage] Found ${members.length} members for league ${leagueId}`);
+    return members.map(m => ({
+      userId: m.userId,
+      joinedAt: m.joinedAt.toISOString()
+    }));
   }
 
   async getLeagueMemberCount(leagueId: string): Promise<number> {
@@ -293,39 +302,91 @@ export class DatabaseStorage implements IStorage {
     const results = [];
     
     console.log(`[Push] Sending notifications to ${subscriptions.length} subscriptions`);
+    console.log(`[Push] Notification payload size: ${JSON.stringify(notification).length} bytes`);
     console.log(`[Push] Notification payload:`, JSON.stringify(notification, null, 2));
     
-    for (const subscription of subscriptions) {
+    // Validate VAPID keys before sending
+    const vapidKeys = this.getVapidKeys();
+    if (!vapidKeys.publicKey || !vapidKeys.privateKey) {
+      console.error(`[Push] VAPID keys missing - public: ${!!vapidKeys.publicKey}, private: ${!!vapidKeys.privateKey}`);
+      return [{ success: false, error: 'VAPID keys not configured' }];
+    }
+    
+    console.log(`[Push] VAPID public key length: ${vapidKeys.publicKey.length}`);
+    console.log(`[Push] VAPID private key length: ${vapidKeys.privateKey.length}`);
+    
+    for (let i = 0; i < subscriptions.length; i++) {
+      const subscription = subscriptions[i];
+      console.log(`[Push] Processing subscription ${i + 1}/${subscriptions.length}: ${subscription.id}`);
+      
       try {
-        // CRITICAL FIX: Correct key mapping for web-push library
+        // Validate subscription data before sending
+        if (!subscription.endpoint) {
+          throw new Error('Missing endpoint');
+        }
+        if (!subscription.p256dhKey) {
+          throw new Error('Missing p256dhKey');
+        }
+        if (!subscription.authKey) {
+          throw new Error('Missing authKey');
+        }
+        
+        console.log(`[Push] Subscription validation passed for ${subscription.id}`);
+        console.log(`[Push] Endpoint: ${subscription.endpoint}`);
+        console.log(`[Push] p256dhKey length: ${subscription.p256dhKey.length}`);
+        console.log(`[Push] authKey length: ${subscription.authKey.length}`);
+        console.log(`[Push] Created: ${subscription.createdAt}`);
+        console.log(`[Push] Last used: ${subscription.lastUsed || 'Never'}`);
+        
+        // Build push subscription object
         const pushSubscription = {
           endpoint: subscription.endpoint,
           keys: {
-            p256dh: subscription.p256dhKey,  // Fixed: was subscription.p256dhKey
-            auth: subscription.authKey       // Fixed: was subscription.authKey
+            p256dh: subscription.p256dhKey,
+            auth: subscription.authKey
           }
         };
 
-        console.log(`[Push] Sending to endpoint: ${subscription.endpoint.substring(0, 50)}...`);
+        // Validate JSON payload
+        let payloadString;
+        try {
+          payloadString = JSON.stringify(notification);
+          console.log(`[Push] JSON payload validated, size: ${payloadString.length} bytes`);
+        } catch (jsonError) {
+          console.error(`[Push] JSON serialization failed:`, jsonError);
+          throw new Error(`Invalid JSON payload: ${jsonError instanceof Error ? jsonError.message : 'Unknown error'}`);
+        }
 
         // Enhanced notification options for iOS compatibility
         const options = {
           TTL: 86400, // 24 hours
-          urgency: 'high',
+          urgency: 'high' as const,
           vapidDetails: {
             subject: 'mailto:mokfantasysports@gmail.com',
-            publicKey: this.getVapidKeys().publicKey,
-            privateKey: this.getVapidKeys().privateKey
+            publicKey: vapidKeys.publicKey,
+            privateKey: vapidKeys.privateKey
           }
         };
 
+        console.log(`[Push] Sending to ${subscription.endpoint.substring(0, 50)}... with options:`, {
+          TTL: options.TTL,
+          urgency: options.urgency,
+          vapidSubject: options.vapidDetails.subject
+        });
+
+        const startTime = Date.now();
         const result = await webpush.sendNotification(
           pushSubscription,
-          JSON.stringify(notification),
+          payloadString,
           options
         );
+        const duration = Date.now() - startTime;
         
-        console.log(`[Push] Success - Status: ${result.statusCode}, Subscription: ${subscription.id}`);
+        console.log(`[Push] SUCCESS - Subscription ${subscription.id}`);
+        console.log(`[Push] - Status Code: ${result.statusCode}`);
+        console.log(`[Push] - Duration: ${duration}ms`);
+        console.log(`[Push] - Headers:`, result.headers);
+        console.log(`[Push] - Body:`, result.body);
         
         // Update last used timestamp
         await db.update(pushSubscriptions)
@@ -335,47 +396,74 @@ export class DatabaseStorage implements IStorage {
         results.push({ 
           success: true, 
           subscriptionId: subscription.id,
-          statusCode: result.statusCode
+          statusCode: result.statusCode,
+          duration,
+          headers: result.headers,
+          body: result.body
         });
-      } catch (error: any) {
-        console.error(`[Push] Failed to send to subscription ${subscription.id}:`, error);
         
-        // If subscription is invalid, deactivate it
-        if (error.statusCode === 410 || error.statusCode === 404) {
-          console.log(`[Push] Deactivating invalid subscription ${subscription.id}`);
+      } catch (error: any) {
+        console.error(`[Push] FAILED - Subscription ${subscription.id}:`);
+        console.error(`[Push] - Error Message: ${error.message}`);
+        console.error(`[Push] - Status Code: ${error.statusCode}`);
+        console.error(`[Push] - Response Body: ${error.body}`);
+        console.error(`[Push] - Headers: ${JSON.stringify(error.headers)}`);
+        console.error(`[Push] - Full Error:`, error);
+        
+        // Handle specific error codes
+        if (error.statusCode === 400) {
+          console.error(`[Push] HTTP 400 BAD REQUEST for subscription ${subscription.id}`);
+          console.error(`[Push] - Endpoint: ${subscription.endpoint}`);
+          console.error(`[Push] - p256dh length: ${subscription.p256dhKey?.length || 'MISSING'}`);
+          console.error(`[Push] - auth length: ${subscription.authKey?.length || 'MISSING'}`);
+          console.error(`[Push] - Payload size: ${JSON.stringify(notification).length} bytes`);
+          
+          // Mark as problematic but don't deactivate immediately for 400 errors
+          // 400 errors might be temporary or configuration issues
+        } else if (error.statusCode === 410 || error.statusCode === 404) {
+          console.log(`[Push] Deactivating invalid subscription ${subscription.id} (${error.statusCode})`);
           await db.update(pushSubscriptions)
             .set({ isActive: false })
             .where(eq(pushSubscriptions.id, subscription.id));
+        } else if (error.statusCode === 413) {
+          console.error(`[Push] Payload too large (413) for subscription ${subscription.id}`);
+        } else if (error.statusCode === 429) {
+          console.error(`[Push] Rate limited (429) for subscription ${subscription.id}`);
         }
         
         results.push({ 
           success: false, 
           subscriptionId: subscription.id, 
           error: error.message,
-          statusCode: error.statusCode
+          statusCode: error.statusCode,
+          responseBody: error.body,
+          headers: error.headers,
+          endpoint: subscription.endpoint.substring(0, 50) + '...'
         });
       }
     }
     
-    console.log(`[Push] Results: ${results.filter(r => r.success).length}/${results.length} successful`);
+    const successCount = results.filter(r => r.success).length;
+    const failureCount = results.filter(r => !r.success).length;
+    console.log(`[Push] SUMMARY: ${successCount} successful, ${failureCount} failed out of ${results.length} total`);
+    
+    // Log error breakdown
+    const errorBreakdown = results
+      .filter(r => !r.success)
+      .reduce((acc, r) => {
+        const status = r.statusCode || 'unknown';
+        acc[status] = (acc[status] || 0) + 1;
+        return acc;
+      }, {} as Record<string, number>);
+    
+    if (Object.keys(errorBreakdown).length > 0) {
+      console.log(`[Push] Error breakdown:`, errorBreakdown);
+    }
+    
     return results;
   }
 
-  async getLeagueMembers(leagueId: string): Promise<Array<{ userId: string; joinedAt: string }>> {
-    console.log(`[Storage] Getting members for league ${leagueId}`);
-    const members = await db.select({
-      userId: leagueMembers.userId,
-      joinedAt: leagueMembers.joinedAt
-    })
-    .from(leagueMembers)
-    .where(eq(leagueMembers.leagueId, leagueId));
-    
-    console.log(`[Storage] Found ${members.length} members for league ${leagueId}`);
-    return members.map(m => ({
-      userId: m.userId,
-      joinedAt: m.joinedAt.toISOString()
-    }));
-  }
+
 }
 
 export const storage = new DatabaseStorage();

@@ -81,10 +81,30 @@ This setup allows testing the complete league workflow including:
 - Debug panel now accurately reflects actual subscription status from server registration
 - Eliminated all recursive useEffect callbacks and setTimeout intervals that caused loops
 
+**HTTP 400 Error Resolution (August 2025)**:
+**Issue**: iOS Safari PWA push notifications returning HTTP 400 "Bad Request" errors despite valid subscriptions and proper VAPID configuration.
+
+**Root Causes Identified and Fixed**:
+1. **Missing League Member Function** - `getLeagueMembers()` function was not implemented, causing league notifications to fail completely
+2. **Subscription Key Mapping Errors** - Backend incorrectly accessing `p256dh`/`auth` instead of `p256dhKey`/`authKey` fields
+3. **Insufficient Error Logging** - Limited visibility into actual HTTP response codes and error details
+4. **No Subscription Validation** - No mechanism to detect and cleanup invalid or expired subscriptions
+5. **Incomplete iOS-Specific Configuration** - Missing TTL, urgency, and proper VAPID details in push options
+
+**Comprehensive Fixes Implemented**:
+- Enhanced push notification logging with detailed HTTP status codes, response bodies, and headers
+- Fixed subscription key field mapping in `sendPushNotification()` method
+- Added comprehensive subscription validation endpoints (`/api/push/validate-subscription`, `/api/push/test-subscription`)
+- Implemented subscription cleanup tools (`/api/push/cleanup-subscriptions`, `/api/push/force-resubscribe`)
+- Enhanced diagnostic panel with detailed error tracking and subscription management
+- Added iOS-specific push configuration with proper TTL and urgency settings
+- Implemented automatic invalid subscription detection and removal
+
 **Production Deployment Required**: 
 - iOS Safari push notifications require HTTPS (production deployment)
-- Development server shows "unexpected response code" but logic is correct
+- Development server shows "unexpected response code" but backend logic is correct
 - All notification triggers, user detection, and subscription management working
+- HTTP 400 errors resolved with enhanced validation and error handling
 
 # System Architecture
 

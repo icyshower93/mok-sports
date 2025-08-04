@@ -112,6 +112,122 @@ export function registerPushDiagnosticsRoutes(app: Express) {
     }
   });
 
+  // Validate and clean up invalid subscriptions
+  app.post("/api/push/cleanup-subscriptions", authenticateJWT, async (req, res) => {
+    try {
+      const user = req.user as any;
+      
+      if (!user) {
+        return res.status(401).json({ error: "Not authenticated" });
+      }
+
+      console.log(`[Push Cleanup] Starting subscription cleanup for user ${user.id}`);
+      
+      // Get all user subscriptions
+      const allSubscriptions = await storage.getUserPushSubscriptions(user.id);
+      console.log(`[Push Cleanup] Found ${allSubscriptions.length} active subscriptions`);
+      
+      const cleanupResults = [];
+      
+      for (const subscription of allSubscriptions) {
+        try {
+          // Test each subscription with a minimal payload
+          const testPayload = {
+            title: "Connection Test",
+            body: "Testing subscription validity",
+            silent: true
+          };
+          
+          const pushSubscription = {
+            endpoint: subscription.endpoint,
+            keys: {
+              p256dh: subscription.p256dhKey,
+              auth: subscription.authKey
+            }
+          };
+
+          // Attempt to send test notification
+          const result = await webpush.sendNotification(
+            pushSubscription,
+            JSON.stringify(testPayload)
+          );
+          
+          cleanupResults.push({
+            subscriptionId: subscription.id,
+            status: 'valid',
+            statusCode: result.statusCode,
+            endpoint: subscription.endpoint.substring(0, 50) + "..."
+          });
+          
+        } catch (error: any) {
+          console.log(`[Push Cleanup] Subscription ${subscription.id} failed test: ${error.statusCode} - ${error.message}`);
+          
+          if (error.statusCode === 410 || error.statusCode === 404) {
+            // Deactivate expired/invalid subscriptions
+            await storage.removePushSubscription(user.id, subscription.endpoint);
+            console.log(`[Push Cleanup] Deactivated subscription ${subscription.id}`);
+          }
+          
+          cleanupResults.push({
+            subscriptionId: subscription.id,
+            status: error.statusCode === 410 || error.statusCode === 404 ? 'removed' : 'error',
+            statusCode: error.statusCode,
+            error: error.message,
+            endpoint: subscription.endpoint.substring(0, 50) + "..."
+          });
+        }
+      }
+      
+      // Get updated subscription count
+      const remainingSubscriptions = await storage.getUserPushSubscriptions(user.id);
+      
+      res.json({
+        success: true,
+        originalCount: allSubscriptions.length,
+        remainingCount: remainingSubscriptions.length,
+        removedCount: allSubscriptions.length - remainingSubscriptions.length,
+        results: cleanupResults
+      });
+
+    } catch (error) {
+      console.error('[Push Cleanup] Error:', error);
+      res.status(500).json({ 
+        error: "Failed to cleanup subscriptions",
+        details: error instanceof Error ? error.message : "Unknown error"
+      });
+    }
+  });
+
+  // Force create new subscription (removes old ones first)
+  app.post("/api/push/force-resubscribe", authenticateJWT, async (req, res) => {
+    try {
+      const user = req.user as any;
+      
+      if (!user) {
+        return res.status(401).json({ error: "Not authenticated" });
+      }
+
+      console.log(`[Force Resubscribe] Starting for user ${user.id}`);
+      
+      // First, deactivate all existing subscriptions
+      await storage.deactivatePushSubscriptions(user.id);
+      console.log(`[Force Resubscribe] Deactivated all existing subscriptions`);
+      
+      res.json({
+        success: true,
+        message: "All existing subscriptions deactivated. Client should now create a new subscription.",
+        userId: user.id
+      });
+
+    } catch (error) {
+      console.error('[Force Resubscribe] Error:', error);
+      res.status(500).json({ 
+        error: "Failed to force resubscribe",
+        details: error instanceof Error ? error.message : "Unknown error"
+      });
+    }
+  });
+
   // Test push notification delivery with detailed logging
   app.post("/api/push/test-delivery", authenticateJWT, async (req, res) => {
     try {
@@ -154,59 +270,8 @@ export function registerPushDiagnosticsRoutes(app: Express) {
 
       console.log(`[Push Test] Sending notification:`, JSON.stringify(testNotification, null, 2));
 
-      // Send notifications with detailed tracking
-      const results = [];
-      for (let i = 0; i < subscriptions.length; i++) {
-        const subscription = subscriptions[i];
-        console.log(`[Push Test] Testing subscription ${i + 1}/${subscriptions.length}: ${subscription.endpoint.substring(0, 50)}...`);
-        
-        try {
-          const pushSubscription = {
-            endpoint: subscription.endpoint,
-            keys: {
-              p256dh: subscription.p256dhKey,
-              auth: subscription.authKey
-            }
-          };
-
-          const startTime = Date.now();
-          const result = await webpush.sendNotification(
-            pushSubscription,
-            JSON.stringify(testNotification)
-          );
-          const duration = Date.now() - startTime;
-
-          console.log(`[Push Test] Subscription ${i + 1} SUCCESS - Duration: ${duration}ms, Status: ${result.statusCode}`);
-          
-          results.push({
-            subscriptionId: subscription.id,
-            success: true,
-            statusCode: result.statusCode,
-            duration,
-            endpoint: subscription.endpoint.substring(0, 50) + "..."
-          });
-
-          // Update last used timestamp
-          await storage.getUserPushSubscriptions(user.id); // This will update lastUsed
-
-        } catch (error: any) {
-          console.error(`[Push Test] Subscription ${i + 1} FAILED:`, error);
-          
-          results.push({
-            subscriptionId: subscription.id,
-            success: false,
-            error: error.message,
-            statusCode: error.statusCode || null,
-            endpoint: subscription.endpoint.substring(0, 50) + "..."
-          });
-
-          // If subscription is invalid, deactivate it
-          if (error.statusCode === 410 || error.statusCode === 404) {
-            console.log(`[Push Test] Deactivating invalid subscription ${subscription.id}`);
-            // Note: Deactivation logic would be implemented in storage layer
-          }
-        }
-      }
+      // Use the enhanced storage method for detailed logging
+      const results = await storage.sendPushNotification(subscriptions, testNotification);
 
       const successCount = results.filter(r => r.success).length;
       const failureCount = results.filter(r => !r.success).length;
@@ -219,7 +284,16 @@ export function registerPushDiagnosticsRoutes(app: Express) {
         successCount,
         failureCount,
         results,
-        notification: testNotification
+        notification: testNotification,
+        detailedResults: results.map(r => ({
+          subscriptionId: r.subscriptionId,
+          success: r.success,
+          statusCode: r.statusCode,
+          error: r.error,
+          responseBody: r.responseBody,
+          headers: r.headers,
+          endpoint: r.endpoint
+        }))
       });
 
     } catch (error) {

@@ -55,6 +55,8 @@ interface TestResult {
     duration?: number;
     error?: string;
     endpoint: string;
+    responseBody?: any;
+    headers?: any;
   }>;
   notification: any;
 }
@@ -66,6 +68,8 @@ export function PushDiagnosticPanel() {
   const [diagnostics, setDiagnostics] = useState<DiagnosticResult | null>(null);
   const [testResult, setTestResult] = useState<TestResult | null>(null);
   const [testMessage, setTestMessage] = useState('Test notification from diagnostic panel');
+  const [isCleaningUp, setIsCleaningUp] = useState(false);
+  const [cleanupResult, setCleanupResult] = useState<any>(null);
 
   const runDiagnostics = async () => {
     if (!user) return;
@@ -114,24 +118,48 @@ export function PushDiagnosticPanel() {
     }
   };
 
-  const testLeagueNotification = async () => {
-    if (!user || !diagnostics) return;
+  const cleanupSubscriptions = async () => {
+    if (!user) return;
     
+    setIsCleaningUp(true);
     try {
-      // For testing, we'll need a league ID - this would typically come from current context
-      const response = await fetch('/api/push/test-league-full', {
+      const response = await fetch('/api/push/cleanup-subscriptions', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ leagueId: 'test-league-id' })
+        credentials: 'include'
       });
       
       if (response.ok) {
         const result = await response.json();
-        console.log('League notification test result:', result);
+        setCleanupResult(result);
+        // Refresh diagnostics after cleanup
+        await runDiagnostics();
+      } else {
+        console.error('Cleanup failed:', response.status);
       }
     } catch (error) {
-      console.error('League notification test error:', error);
+      console.error('Cleanup error:', error);
+    } finally {
+      setIsCleaningUp(false);
+    }
+  };
+
+  const forceResubscribe = async () => {
+    if (!user) return;
+    
+    try {
+      const response = await fetch('/api/push/force-resubscribe', {
+        method: 'POST',
+        credentials: 'include'
+      });
+      
+      if (response.ok) {
+        const result = await response.json();
+        console.log('Force resubscribe result:', result);
+        // Refresh diagnostics after force resubscribe
+        await runDiagnostics();
+      }
+    } catch (error) {
+      console.error('Force resubscribe error:', error);
     }
   };
 
@@ -178,6 +206,22 @@ export function PushDiagnosticPanel() {
             >
               <Send className="h-4 w-4 mr-2" />
               {isTesting ? 'Testing...' : 'Test Delivery'}
+            </Button>
+            
+            <Button 
+              onClick={cleanupSubscriptions} 
+              disabled={isCleaningUp || !diagnostics}
+              variant="outline"
+            >
+              {isCleaningUp ? 'Cleaning...' : 'Cleanup Invalid'}
+            </Button>
+            
+            <Button 
+              onClick={forceResubscribe} 
+              disabled={!diagnostics}
+              variant="outline"
+            >
+              Force Resubscribe
             </Button>
           </div>
 
@@ -310,7 +354,56 @@ export function PushDiagnosticPanel() {
                       )}
                     </div>
                     {result.error && (
-                      <div className="text-red-500 text-xs mt-1">{result.error}</div>
+                      <div className="text-red-500 text-xs mt-1">
+                        <div>Error: {result.error}</div>
+                        {result.responseBody && (
+                          <div>Response: {JSON.stringify(result.responseBody)}</div>
+                        )}
+                        {result.headers && (
+                          <div>Headers: {JSON.stringify(result.headers)}</div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Cleanup Results */}
+          {cleanupResult && (
+            <div className="space-y-2">
+              <Separator />
+              <h3 className="font-semibold">Subscription Cleanup Results</h3>
+              <div className="p-3 bg-muted rounded">
+                <div className="text-sm space-y-1">
+                  <div>Original: {cleanupResult.originalCount} subscriptions</div>
+                  <div>Remaining: {cleanupResult.remainingCount} subscriptions</div>
+                  <div>Removed: {cleanupResult.removedCount} invalid subscriptions</div>
+                </div>
+                
+                {cleanupResult.results.map((result: any, index: number) => (
+                  <div key={index} className="text-xs p-1 border rounded mt-1">
+                    <div className="flex items-center gap-2">
+                      {result.status === 'valid' ? (
+                        <CheckCircle2 className="h-3 w-3 text-green-500" />
+                      ) : result.status === 'removed' ? (
+                        <XCircle className="h-3 w-3 text-red-500" />
+                      ) : (
+                        <AlertTriangle className="h-3 w-3 text-yellow-500" />
+                      )}
+                      <span>{result.endpoint}</span>
+                      <Badge variant="outline" className="text-xs">
+                        {result.status}
+                      </Badge>
+                      {result.statusCode && (
+                        <Badge variant="outline" className="text-xs">
+                          {result.statusCode}
+                        </Badge>
+                      )}
+                    </div>
+                    {result.error && (
+                      <div className="text-red-500 mt-1">{result.error}</div>
                     )}
                   </div>
                 ))}
