@@ -9,43 +9,72 @@ export function createRedisClient(): Redis | null {
     return redis;
   }
 
+  // Try Redis connection string first (preferred)
   const redisUrl = process.env.REDIS_URL;
   
-  if (!redisUrl) {
-    console.log('[Redis] No REDIS_URL environment variable found - using in-memory fallback');
+  // Fallback to Upstash REST credentials
+  const upstashUrl = process.env.UPSTASH_REDIS_REST_URL;
+  const upstashToken = process.env.UPSTASH_REDIS_REST_TOKEN;
+  
+  if (!redisUrl && !upstashUrl) {
+    console.log('[Redis] No Redis credentials found - using in-memory fallback');
     return null;
   }
 
   try {
-    redis = new Redis(redisUrl, {
-      maxRetriesPerRequest: 3,
-      retryDelayOnFailover: 100,
-      enableReadyCheck: false,
-      lazyConnect: true,
-      keepAlive: 30000,
-      connectTimeout: 10000,
-      commandTimeout: 5000,
-    });
+    if (redisUrl) {
+      // Use traditional Redis connection string
+      redis = new Redis(redisUrl, {
+        maxRetriesPerRequest: 3,
+        retryDelayOnFailover: 100,
+        enableReadyCheck: false,
+        lazyConnect: true,
+        keepAlive: 30000,
+        connectTimeout: 10000,
+        commandTimeout: 5000,
+      });
+      console.log('[Redis] Using Redis connection string');
+    } else if (upstashUrl && upstashToken) {
+      // Convert Upstash REST URL to Redis connection
+      const url = new URL(upstashUrl);
+      const redisConnectionString = `rediss://default:${upstashToken}@${url.hostname}:6380`;
+      
+      redis = new Redis(redisConnectionString, {
+        maxRetriesPerRequest: 3,
+        retryDelayOnFailover: 100,
+        enableReadyCheck: false,
+        lazyConnect: true,
+        keepAlive: 30000,
+        connectTimeout: 10000,
+        commandTimeout: 5000,
+        tls: {
+          rejectUnauthorized: false
+        }
+      });
+      console.log('[Redis] Using Upstash REST credentials converted to Redis connection');
+    }
 
-    redis.on('connect', () => {
-      console.log('[Redis] Connected successfully');
-      redisAvailable = true;
-    });
+    if (redis) {
+      redis.on('connect', () => {
+        console.log('[Redis] Connected successfully');
+        redisAvailable = true;
+      });
 
-    redis.on('error', (err) => {
-      console.error('[Redis] Connection error:', err);
-      redisAvailable = false;
-    });
+      redis.on('error', (err) => {
+        console.error('[Redis] Connection error:', err);
+        redisAvailable = false;
+      });
 
-    redis.on('ready', () => {
-      console.log('[Redis] Ready for commands');
-      redisAvailable = true;
-    });
+      redis.on('ready', () => {
+        console.log('[Redis] Ready for commands');
+        redisAvailable = true;
+      });
 
-    redis.on('end', () => {
-      console.log('[Redis] Connection ended');
-      redisAvailable = false;
-    });
+      redis.on('end', () => {
+        console.log('[Redis] Connection ended');
+        redisAvailable = false;
+      });
+    }
 
     return redis;
   } catch (error) {
