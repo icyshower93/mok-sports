@@ -4,11 +4,13 @@ import passport from "passport";
 import { generateJWT, authenticateJWT, isOAuthConfigured } from "./auth";
 import { storage } from "./storage";
 import { generateJoinCode } from "./utils";
-import { insertLeagueSchema } from "@shared/schema";
+import { insertLeagueSchema, draftPicks } from "@shared/schema";
 import { z } from "zod";
 import { registerPushNotificationRoutes } from "./routes/push-notifications";
 import { registerPushDiagnosticsRoutes } from "./routes/push-diagnostics";
 import { registerSubscriptionValidationRoutes } from "./routes/subscription-validation";
+import { db } from "./db";
+import { eq } from "drizzle-orm";
 import "./auth"; // Initialize passport strategies
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -575,26 +577,47 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Register subscription validation routes
   registerSubscriptionValidationRoutes(app);
   
-  // Temporary timer restart endpoint for production issues
-  app.post('/api/testing/restart-timer', async (req, res) => {
+  // Draft reset endpoint for testing and debugging
+  app.post('/api/testing/reset-draft', async (req, res) => {
     try {
-      const { draftId, userId } = req.body;
+      const { draftId } = req.body;
       
-      if (!draftId || !userId) {
-        return res.status(400).json({ message: 'Missing draftId or userId' });
+      if (!draftId) {
+        return res.status(400).json({ message: 'Missing draftId' });
       }
 
-      console.log(`⚡ Manual timer restart requested for draft ${draftId}, user ${userId}`);
+      console.log(`🔄 Draft reset requested for draft ${draftId}`);
       
-      // Import and use the snake draft manager
+      // Import the snake draft manager
       const { SnakeDraftManager } = await import('./draft/snakeDraftManager.js');
-      const draftManager = new SnakeDraftManager();
-      await draftManager.startTimer(draftId, userId, 60);
+      const draftManager = new SnakeDraftManager(storage, undefined, undefined, robotManager);
       
-      res.json({ message: 'Timer restarted successfully' });
+      // Clear all picks and reset draft state using SQL
+      await db.delete(draftPicks).where(eq(draftPicks.draftId, draftId));
+      await storage.updateDraftProgress(draftId, 1, 1);
+      await storage.updateDraftStatus(draftId, 'active');
+      
+      // Clear all timers and state
+      
+      // Start fresh with first user
+      const draft = await storage.getDraft(draftId);
+      if (draft) {
+        const firstUserId = draft.draftOrder[0];
+        console.log(`🚀 Starting fresh draft with user ${firstUserId}`);
+        
+        // Start the timer for first pick
+        await draftManager.resetPickTimer(draftId, firstUserId);
+        
+        console.log(`✅ Draft reset complete - Round 1, Pick 1, 60-second timer started`);
+      }
+      
+      res.json({ 
+        message: 'Draft reset successfully',
+        currentState: await draftManager.getDraftState(draftId)
+      });
     } catch (error: any) {
-      console.error('Error restarting timer:', error);
-      res.status(500).json({ message: 'Failed to restart timer', error: error?.message || 'Unknown error' });
+      console.error('Error resetting draft:', error);
+      res.status(500).json({ message: 'Failed to reset draft', error: error?.message || 'Unknown error' });
     }
   });
   

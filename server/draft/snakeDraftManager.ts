@@ -209,6 +209,7 @@ export class SnakeDraftManager {
     const availableTeams = await this.storage.getAvailableNflTeams(draftId);
     const currentUserId = this.getCurrentPickUser(draft);
     const timeRemaining = await this.redisStateManager.getTimeRemaining(draftId);
+    console.log(`[DEBUG] API Timer lookup for draft ${draftId}: ${timeRemaining}s remaining`);
 
     const state: DraftState = {
       draft,
