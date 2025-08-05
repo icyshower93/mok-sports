@@ -37,8 +37,8 @@ export class DraftWebSocketManager {
       console.log('[WebSocket] Origin:', request.headers.origin);
       console.log('[WebSocket] Headers:', JSON.stringify(request.headers, null, 2));
       
-      // Check if this is a draft WebSocket request
-      if (request.url?.startsWith('/draft-ws')) {
+      // Check if this is a draft WebSocket request (handle both paths for compatibility)
+      if (request.url?.startsWith('/draft-ws') || request.url?.startsWith('/ws/draft')) {
         console.log('[WebSocket] ✅ HANDLING DRAFT WEBSOCKET UPGRADE');
         
         this.wss.handleUpgrade(request, socket, head, (ws) => {

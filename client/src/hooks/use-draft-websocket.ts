@@ -50,11 +50,10 @@ export function useDraftWebSocket(draftId: string | null) {
       wsHost = 'localhost:5000';
     }
     
-    // For Replit production, ensure we bypass any potential proxying issues
+    // For Replit production, use production-compatible path
     if (window.location.hostname.includes('replit.app')) {
-      // Use the same host but ensure path goes to backend
       wsHost = window.location.host;
-      wsPath = '/draft-ws';
+      wsPath = '/draft-ws'; // Server handles both /draft-ws and /ws/draft
     }
     
     const wsUrl = `${protocol}//${wsHost}${wsPath}?userId=${user.id}&draftId=${draftId}`;
@@ -207,14 +206,6 @@ export function useDraftWebSocket(draftId: string | null) {
         
         // Refresh draft data for reconnections
         queryClient.invalidateQueries({ queryKey: ['draft', draftId] });
-        break;
-
-      case 'connected':
-        console.log('[WebSocket] Connection acknowledged by server');
-        break;
-
-      case 'pong':
-        console.log('[WebSocket] Pong received from server');
         break;
 
       default:
