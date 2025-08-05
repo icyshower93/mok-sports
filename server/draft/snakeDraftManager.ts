@@ -189,12 +189,15 @@ export class SnakeDraftManager {
    * First checks Redis cache, falls back to database if needed
    */
   async getDraftState(draftId: string): Promise<DraftState> {
+    // Always get fresh timer data from Redis first
+    const timeRemaining = await this.redisStateManager.getTimeRemaining(draftId);
+    console.log(`[DEBUG] Fresh timer lookup for draft ${draftId}: ${timeRemaining}s remaining`);
+    
     // Try to get from Redis cache first
     let cachedState = await this.redisStateManager.getDraftState(draftId);
     
     if (cachedState) {
-      // Update time remaining from Redis timer
-      const timeRemaining = await this.redisStateManager.getTimeRemaining(draftId);
+      // Update with fresh time remaining
       cachedState.timeRemaining = timeRemaining;
       return cachedState;
     }
@@ -208,13 +211,11 @@ export class SnakeDraftManager {
     const picks = await this.storage.getDraftPicks(draftId);
     const availableTeams = await this.storage.getAvailableNflTeams(draftId);
     const currentUserId = this.getCurrentPickUser(draft);
-    const timeRemaining = await this.redisStateManager.getTimeRemaining(draftId);
-    console.log(`[DEBUG] API Timer lookup for draft ${draftId}: ${timeRemaining}s remaining`);
 
     const state: DraftState = {
       draft,
       currentUserId,
-      timeRemaining,
+      timeRemaining, // Already defined at the top of the function
       picks,
       availableTeams,
       isUserTurn: !!currentUserId,

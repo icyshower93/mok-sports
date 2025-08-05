@@ -588,9 +588,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       console.log(`🔄 Draft reset requested for draft ${draftId}`);
       
-      // Import the snake draft manager
-      const { SnakeDraftManager } = await import('./draft/snakeDraftManager.js');
-      const draftManager = new SnakeDraftManager(storage, undefined, undefined, robotManager);
+      // Import the global snake draft manager instance
+      const { globalDraftManager } = await import('./draft/globalDraftManager.js');
       
       // Clear all picks and reset draft state using SQL
       await db.delete(draftPicks).where(eq(draftPicks.draftId, draftId));
@@ -605,15 +604,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const firstUserId = draft.draftOrder[0];
         console.log(`🚀 Starting fresh draft with user ${firstUserId}`);
         
-        // Start the timer for first pick
-        await draftManager.resetPickTimer(draftId, firstUserId);
+        // Start the timer for first pick using global manager
+        await globalDraftManager.resetPickTimer(draftId, firstUserId);
         
         console.log(`✅ Draft reset complete - Round 1, Pick 1, 60-second timer started`);
       }
       
       res.json({ 
         message: 'Draft reset successfully',
-        currentState: await draftManager.getDraftState(draftId)
+        currentState: await globalDraftManager.getDraftState(draftId)
       });
     } catch (error: any) {
       console.error('Error resetting draft:', error);
@@ -1037,7 +1036,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Re-initialize draft routes with WebSocket support
   const { default: setupDraftRoutes } = await import("./routes/draft.js");
-  setupDraftRoutes(app, storage, webSocketManager, robotManager);
+  await setupDraftRoutes(app, storage, webSocketManager, robotManager);
   
   // Add WebSocket status endpoint for debugging
   app.get('/api/websocket/status/:draftId', async (req, res) => {

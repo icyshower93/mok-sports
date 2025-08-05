@@ -65,8 +65,10 @@ async function getAuthenticatedUser(req: any) {
   }
 }
 
-export default function setupDraftRoutes(app: any, storage: IStorage, webSocketManager?: any, robotManager?: any) {
-  const draftManager = new SnakeDraftManager(storage, {}, webSocketManager, robotManager);
+export default async function setupDraftRoutes(app: any, storage: IStorage, webSocketManager?: any, robotManager?: any) {
+  // Import global singleton instance to share timer state across all routes
+  const { globalDraftManager } = await import("../draft/globalDraftManager.js");
+  const draftManager = globalDraftManager;
 
   // Create a new draft for a league
   app.post("/api/drafts", async (req: any, res: any) => {
