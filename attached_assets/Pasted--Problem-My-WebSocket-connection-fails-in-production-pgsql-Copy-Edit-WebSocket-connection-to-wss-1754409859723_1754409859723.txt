@@ -1,0 +1,71 @@
+ Problem:
+My WebSocket connection fails in production:
+
+pgsql
+Copy
+Edit
+WebSocket connection to 'wss://mok-sports-draft-mokfantasysport.replit.app/ws/draft?...' failed
+In Dev, it works perfectly.
+
+WebSocket client count = 0, confirming connection never reaches the server.
+
+Backend is working — /api/drafts/:id returns correct state and timer.
+
+But frontend is stuck at 0:00 because it’s not receiving any WebSocket events.
+
+✅ Fix Checklist I’ve Partially Applied:
+1. ✅ Dynamic WebSocket URL (Client-Side)
+ts
+Copy
+Edit
+const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
+const socket = new WebSocket(`${protocol}://${window.location.host}/ws/draft?userId=${userId}&draftId=${draftId}`);
+2. ✅ http.createServer() + Upgrade Handling
+In my backend:
+
+ts
+Copy
+Edit
+import express from 'express';
+import http from 'http';
+import WebSocket from 'ws';
+
+const app = express();
+const server = http.createServer(app);
+
+const wss = new WebSocket.Server({ noServer: true });
+
+server.on('upgrade', (req, socket, head) => {
+  console.log('Upgrade request for', req.url);
+
+  if (req.url?.startsWith('/ws/draft')) {
+    console.log('Handling WebSocket upgrade for draft');
+    wss.handleUpgrade(req, socket, head, ws => {
+      wss.emit('connection', ws, req);
+    });
+  } else {
+    console.log('Rejected non-WS upgrade:', req.url);
+    socket.destroy();
+  }
+});
+
+server.listen(process.env.PORT || 5000, () => {
+  console.log('Server running...');
+});
+3. ⚠️ Replit Proxy / Static Server Issue?
+This might be where the problem lies.
+
+In dev, Vite proxies /ws to ws://localhost:5000, which works.
+
+In prod, React is built into static files, but I’m unsure if Replit is routing WebSocket upgrade requests to my Node server correctly.
+
+❓ Things I Need Help With:
+Is Replit blocking or mishandling WebSocket upgrade requests?
+
+WebSocket requests to wss://mok-sports-draft-mokfantasysport.replit.app/ws/draft?... never hit the server.
+
+I verified this by logging inside server.on('upgrade', ...), and the logs don’t appear.
+
+Is there something I need to add to .replit, replit.nix, or the run command to enable WS upgrades properly?
+
+Can you confirm that WebSocket upgrades are supported for custom WS paths (/ws/draft) on Replit?

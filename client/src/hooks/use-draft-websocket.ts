@@ -100,18 +100,30 @@ export function useDraftWebSocket(draftId: string | null) {
       setConnectionStatus('disconnected');
       wsRef.current = null;
 
-      // Attempt to reconnect after delay if not intentionally closed
+      // In production environments where WebSocket might be blocked,
+      // don't attempt infinite reconnects
       if (event.code !== 1000 && draftId && user?.id) {
-        reconnectTimeoutRef.current = setTimeout(() => {
-          console.log('[WebSocket] Attempting to reconnect...');
-          connect();
-        }, 3000);
+        if (window.location.hostname.includes('replit.app')) {
+          console.log('[WebSocket] Production WebSocket closed, relying on HTTP polling fallback');
+          // Don't reconnect in production - use HTTP polling instead
+        } else {
+          // In development, try to reconnect normally
+          reconnectTimeoutRef.current = setTimeout(() => {
+            console.log('[WebSocket] Attempting to reconnect...');
+            connect();
+          }, 3000);
+        }
       }
     };
 
     ws.onerror = (error) => {
       console.error('[WebSocket] Connection error:', error);
       setConnectionStatus('disconnected');
+      
+      // In production, don't keep retrying failed WebSocket connections
+      if (window.location.hostname.includes('replit.app')) {
+        console.log('[WebSocket] Production WebSocket failed, will rely on HTTP polling');
+      }
     };
   }, [draftId, user?.id]);
 

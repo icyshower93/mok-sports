@@ -25,20 +25,29 @@ export class DraftWebSocketManager {
   private heartbeatInterval!: NodeJS.Timeout;
 
   constructor(server: Server) {
-    // Create WebSocket server on /draft-ws path to avoid Vite HMR conflicts
+    // Create WebSocket server with manual upgrade handling for better Replit compatibility
     this.wss = new WebSocketServer({ 
-      server, 
-      path: '/draft-ws',
-      // Add explicit WebSocket handling options for production
-      verifyClient: (info: any) => {
-        console.log('[WebSocket] 🔍 VERIFYING CLIENT CONNECTION');
-        console.log('[WebSocket] Origin:', info.origin);
-        console.log('[WebSocket] Request URL:', info.req.url);
-        console.log('[WebSocket] Method:', info.req.method);
-        console.log('[WebSocket] Headers:', JSON.stringify(info.req.headers, null, 2));
-        console.log('[WebSocket] Remote address:', info.req.socket?.remoteAddress);
-        console.log('[WebSocket] ✅ CLIENT VERIFICATION: APPROVED');
-        return true; // Allow all connections for now
+      noServer: true // Manual upgrade handling
+    });
+    
+    // Handle upgrade requests manually to ensure compatibility with Replit
+    server.on('upgrade', (request, socket, head) => {
+      console.log('[WebSocket] 🔍 UPGRADE REQUEST RECEIVED');
+      console.log('[WebSocket] URL:', request.url);
+      console.log('[WebSocket] Origin:', request.headers.origin);
+      console.log('[WebSocket] Headers:', JSON.stringify(request.headers, null, 2));
+      
+      // Check if this is a draft WebSocket request
+      if (request.url?.startsWith('/draft-ws')) {
+        console.log('[WebSocket] ✅ HANDLING DRAFT WEBSOCKET UPGRADE');
+        
+        this.wss.handleUpgrade(request, socket, head, (ws) => {
+          console.log('[WebSocket] 🚀 WEBSOCKET UPGRADE SUCCESSFUL');
+          this.wss.emit('connection', ws, request);
+        });
+      } else {
+        console.log('[WebSocket] ❌ REJECTING NON-DRAFT UPGRADE:', request.url);
+        socket.destroy();
       }
     });
 
