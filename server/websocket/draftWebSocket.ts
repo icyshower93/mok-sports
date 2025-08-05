@@ -23,6 +23,16 @@ export class DraftWebSocketManager {
   private wss: WebSocketServer;
   private connections: Map<string, DraftConnection[]> = new Map();
   private heartbeatInterval!: NodeJS.Timeout;
+  private connectionStats = {
+    totalConnections: 0,
+    activeConnections: 0,
+    messagesPerSecond: 0,
+    errors: 0,
+    messageCount: 0,
+    disconnections: 0,
+    lastResetTime: Date.now()
+  };
+  private metricsInterval!: NodeJS.Timeout;
 
   constructor(server: Server) {
     // Create WebSocket server with manual upgrade handling for better Replit compatibility
@@ -53,6 +63,7 @@ export class DraftWebSocketManager {
 
     this.wss.on('connection', this.handleConnection.bind(this));
     this.startHeartbeat();
+    this.startMetricsCollection();
     
     console.log('[WebSocket] Draft WebSocket server initialized on /draft-ws');
     console.log('[WebSocket] WebSocket server listening for connections...');
@@ -125,25 +136,46 @@ export class DraftWebSocketManager {
     console.log(`[WebSocket] After adding connection - User ${userId} connected to draft ${draftId}. Total connections: ${totalConnections}`);
     console.log(`[WebSocket] All connections for draft ${draftId}:`, this.connections.get(draftId)?.map(c => c.userId));
 
+    // Update connection stats
+    this.connectionStats.totalConnections++;
+    this.connectionStats.activeConnections++;
+
     // Handle incoming messages
     ws.on('message', (data) => {
       try {
+        this.connectionStats.messageCount++;
         const message = JSON.parse(data.toString());
+        
+        // Handle ping/pong for heartbeat
+        if (message.type === 'ping') {
+          console.log(`[WebSocket] Ping received from user ${userId}`);
+          connection.isAlive = true;
+          ws.send(JSON.stringify({
+            type: 'pong',
+            timestamp: Date.now()
+          }));
+          return;
+        }
+        
         this.handleMessage(connection, message);
       } catch (error) {
         console.error('[WebSocket] Error parsing message:', error);
+        this.connectionStats.errors++;
       }
     });
 
     // Handle connection close
     ws.on('close', () => {
       this.removeConnection(connection);
+      this.connectionStats.activeConnections--;
+      this.connectionStats.disconnections++;
       console.log(`[WebSocket] User ${userId} disconnected from draft ${draftId}`);
     });
 
     // Handle errors
     ws.on('error', (error) => {
       console.error('[WebSocket] Connection error:', error);
+      this.connectionStats.errors++;
       this.removeConnection(connection);
     });
 
@@ -222,6 +254,29 @@ export class DraftWebSocketManager {
         }
       });
     }, 30000); // 30 seconds
+  }
+
+  private startMetricsCollection() {
+    // Calculate messages per second and log metrics every 30 seconds
+    this.metricsInterval = setInterval(() => {
+      const now = Date.now();
+      const timeDiffSeconds = (now - this.connectionStats.lastResetTime) / 1000;
+      this.connectionStats.messagesPerSecond = this.connectionStats.messageCount / timeDiffSeconds;
+      
+      // Log comprehensive metrics
+      console.log('[WebSocket] ========== CONNECTION METRICS ==========');
+      console.log(`[WebSocket] Total connections: ${this.connectionStats.totalConnections}`);
+      console.log(`[WebSocket] Active connections: ${this.connectionStats.activeConnections}`);
+      console.log(`[WebSocket] Messages/sec: ${this.connectionStats.messagesPerSecond.toFixed(2)}`);
+      console.log(`[WebSocket] Total messages: ${this.connectionStats.messageCount}`);
+      console.log(`[WebSocket] Errors: ${this.connectionStats.errors}`);
+      console.log(`[WebSocket] Disconnections: ${this.connectionStats.disconnections}`);
+      console.log('[WebSocket] =============================================');
+      
+      // Reset counters for next period
+      this.connectionStats.messageCount = 0;
+      this.connectionStats.lastResetTime = now;
+    }, 30000); // Every 30 seconds
   }
 
   // Public methods for broadcasting events
@@ -310,10 +365,35 @@ export class DraftWebSocketManager {
     return draftConnections?.some(c => c.userId === userId) || false;
   }
 
+  public getConnectionStats() {
+    return {
+      ...this.connectionStats,
+      draftConnections: Object.fromEntries(
+        Array.from(this.connections.entries()).map(([draftId, connections]) => [
+          draftId,
+          {
+            count: connections.length,
+            users: connections.map(c => c.userId)
+          }
+        ])
+      )
+    };
+  }
+
   public cleanup() {
     if (this.heartbeatInterval) {
       clearInterval(this.heartbeatInterval);
     }
-    this.wss.close();
+    if (this.metricsInterval) {
+      clearInterval(this.metricsInterval);
+    }
+    
+    // Close all connections
+    this.wss.clients.forEach(ws => {
+      ws.terminate();
+    });
+    
+    this.connections.clear();
+    console.log('[WebSocket] WebSocket manager cleaned up');
   }
 }

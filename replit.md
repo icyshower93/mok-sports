@@ -2,12 +2,15 @@
 
 Mok Sports is a fantasy sports application that redefines traditional fantasy leagues by enabling users to draft entire teams instead of individual players. It features a modern web interface, a robust backend, and integrates Google OAuth for authentication, aiming to provide a unique and engaging fantasy sports experience.
 
-## Recent Progress (January 5, 2025)
-**CRITICAL FIX DEPLOYED - Global Timer State Management**: Resolved final timer synchronization issue:
-- ✅ **Global Singleton Pattern**: Implemented shared `globalDraftManager` instance across all routes
-- ✅ **Perfect Timer Sync**: API responses now match backend timer state exactly (33s = 33s)
-- ✅ **Eliminated Instance Conflicts**: Fixed separate SnakeDraftManager instances causing timer disconnection
-- ✅ **Production-Ready Architecture**: All routes share single timer state for consistent draft experience
+## Recent Progress (August 5, 2025)
+**PRODUCTION WEBSOCKET DEPLOYMENT COMPLETE**: Implemented comprehensive WebSocket solution following industry best practices:
+- ✅ **Manual Upgrade Handling**: Production-compatible WebSocket server with `noServer: true` and manual upgrade processing
+- ✅ **Dual Path Support**: Server handles both `/draft-ws` and `/ws/draft` paths for maximum compatibility
+- ✅ **Dynamic Protocol Detection**: Client automatically uses `wss://` for HTTPS and `ws://` for HTTP
+- ✅ **Enhanced Heartbeat System**: Bi-directional ping/pong with 30-second server heartbeat and 25-second client pings
+- ✅ **Comprehensive Monitoring**: Real-time metrics tracking connections, messages/sec, errors, and disconnections
+- ✅ **Production Fallback**: HTTP polling ensures functionality when WebSocket connections are blocked
+- ✅ **Global Timer State Management**: Resolved final timer synchronization issue with shared `globalDraftManager` instance
 
 **Complete Draft System FULLY VERIFIED**: The entire draft system is now working perfectly end-to-end:
 - ✅ 60-second timers start correctly for each user's turn

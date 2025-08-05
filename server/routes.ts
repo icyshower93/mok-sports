@@ -1057,6 +1057,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
       timestamp: new Date().toISOString()
     });
   });
+
+  // Add comprehensive WebSocket metrics endpoint
+  app.get('/api/websocket/metrics', async (req, res) => {
+    const stats = webSocketManager.getConnectionStats();
+    
+    res.json({
+      ...stats,
+      timestamp: new Date().toISOString(),
+      uptime: process.uptime()
+    });
+  });
   
   console.log('[WebSocket] Draft WebSocket server initialized and connected');
   

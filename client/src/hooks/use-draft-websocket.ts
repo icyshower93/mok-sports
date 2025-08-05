@@ -76,6 +76,20 @@ export function useDraftWebSocket(draftId: string | null) {
         userId: user.id,
         timestamp: Date.now()
       }));
+
+      // Set up client-side heartbeat ping every 25 seconds
+      const heartbeatTimer = setInterval(() => {
+        if (ws.readyState === WebSocket.OPEN) {
+          ws.send(JSON.stringify({
+            type: 'ping',
+            draftId: draftId,
+            userId: user.id,
+            timestamp: Date.now()
+          }));
+        } else {
+          clearInterval(heartbeatTimer);
+        }
+      }, 25000);
       
       // Clear any reconnection timeout
       if (reconnectTimeoutRef.current) {
