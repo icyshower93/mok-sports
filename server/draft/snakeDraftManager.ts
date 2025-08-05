@@ -193,20 +193,13 @@ export class SnakeDraftManager {
     const timeRemaining = await this.redisStateManager.getTimeRemaining(draftId);
     console.log(`[DEBUG] Fresh timer lookup for draft ${draftId}: ${timeRemaining}s remaining`);
     
-    // Try to get from Redis cache first
-    let cachedState = await this.redisStateManager.getDraftState(draftId);
-    
-    if (cachedState) {
-      // Update with fresh time remaining
-      cachedState.timeRemaining = timeRemaining;
-      return cachedState;
-    }
-
-    // Fallback to database and rebuild state
+    // Always fetch fresh data from database to ensure accuracy
     const draft = await this.storage.getDraft(draftId);
     if (!draft) {
       throw new Error('Draft not found');
     }
+
+    console.log(`🔍 [DraftState] Fresh database fetch - Round ${draft.currentRound}, Pick ${draft.currentPick}`);
 
     const picks = await this.storage.getDraftPicks(draftId);
     const availableTeams = await this.storage.getAvailableNflTeams(draftId);
@@ -215,14 +208,16 @@ export class SnakeDraftManager {
     const state: DraftState = {
       draft,
       currentUserId,
-      timeRemaining, // Already defined at the top of the function
+      timeRemaining,
       picks,
       availableTeams,
       isUserTurn: !!currentUserId,
       canMakePick: draft.status === 'active' && !!currentUserId
     };
 
-    // Cache the state in Redis for future requests
+    console.log(`🔍 [DraftState] Returning state - Round ${state.draft.currentRound}, Pick ${state.draft.currentPick}, Timer: ${state.timeRemaining}s`);
+
+    // Cache the fresh state in Redis for future requests
     await this.redisStateManager.setDraftState(draftId, state);
     
     return state;
@@ -522,8 +517,13 @@ export class SnakeDraftManager {
     }
     
     // Update draft progress
-    await this.storage.updateDraftProgress(draftId, nextRound, nextPick);
-    console.log(`📊 Updated draft to Round ${nextRound}, Pick ${nextPick}`);
+    try {
+      await this.storage.updateDraftProgress(draftId, nextRound, nextPick);
+      console.log(`📊 Updated draft to Round ${nextRound}, Pick ${nextPick}`);
+    } catch (error) {
+      console.error(`❌ Failed to update draft progress in database:`, error);
+      throw error;
+    }
     
     // Start timer for next pick
     const nextUserId = this.getCurrentPickUser({

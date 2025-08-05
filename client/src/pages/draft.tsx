@@ -81,7 +81,7 @@ export default function DraftPage() {
   // Initialize WebSocket connection for real-time updates
   const { connectionStatus, isConnected } = useDraftWebSocket(draftId);
   
-  // Enhanced timer polling with proper refresh mechanism
+  // Enhanced timer polling with aggressive refresh for synchronization
   useEffect(() => {
     if (!draftId) return;
     
@@ -103,18 +103,23 @@ export default function DraftPage() {
           
           console.log(`[Timer Fallback] Poll #${pollCounter} - Timer:`, data.data?.state?.timeRemaining, 
                      'Round:', data.data?.state?.draft?.currentRound, 
-                     'Pick:', data.data?.state?.draft?.currentPick);
+                     'Pick:', data.data?.state?.draft?.currentPick,
+                     'Current User:', data.data?.state?.currentUserId);
           
           if (data.success && data.data) {
-            // Always invalidate first, then set fresh data
+            // Force complete refresh of draft data
+            queryClient.removeQueries({ queryKey: ['draft', draftId] });
             queryClient.invalidateQueries({ queryKey: ['draft', draftId] });
             queryClient.setQueryData(['draft', draftId], data.data);
+            
+            // Also refresh picks data
+            queryClient.invalidateQueries({ queryKey: ['draft-teams', draftId] });
           }
         }
       } catch (error) {
         console.error('[Timer Fallback] Poll error:', error);
       }
-    }, 1500); // Poll every 1.5 seconds for responsiveness
+    }, 1000); // Increase polling frequency to 1 second for better sync
 
     return () => {
       console.log('[Timer Fallback] Cleanup - stopping timer polling');

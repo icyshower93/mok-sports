@@ -318,9 +318,22 @@ export class DatabaseStorage implements IStorage {
   }
 
   async updateDraftProgress(draftId: string, round: number, pick: number): Promise<void> {
-    await db.update(drafts)
-      .set({ currentRound: round, currentPick: pick })
-      .where(eq(drafts.id, draftId));
+    console.log(`🔄 [Storage] Updating draft ${draftId} to Round ${round}, Pick ${pick}`);
+    try {
+      const result = await db.update(drafts)
+        .set({ currentRound: round, currentPick: pick, updatedAt: new Date() })
+        .where(eq(drafts.id, draftId))
+        .returning({ id: drafts.id, currentRound: drafts.currentRound, currentPick: drafts.currentPick });
+      
+      if (result.length > 0) {
+        console.log(`✅ [Storage] Database updated successfully:`, result[0]);
+      } else {
+        console.error(`❌ [Storage] No draft found with ID ${draftId} for update`);
+      }
+    } catch (error) {
+      console.error(`❌ [Storage] Failed to update draft progress:`, error);
+      throw error;
+    }
   }
 
   async startDraft(draftId: string): Promise<void> {

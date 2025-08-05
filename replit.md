@@ -17,11 +17,13 @@ Mok Sports is a fantasy sports application that redefines traditional fantasy le
 - ✅ Timer countdown works with real-time server logs (59s, 58s, 57s...)
 - ✅ Auto-pick triggers precisely when timer reaches 0:00
 - ✅ Draft advances seamlessly to next user with fresh 60-second timer
-- ✅ Snake draft progression confirmed (Round 1 Pick 1 → Round 1 Pick 2)
+- ✅ Snake draft progression confirmed (Round 1 Pick 1 → Round 1 Pick 2 → Pick 3 → Pick 4 → Pick 5)
 - ✅ Enhanced timer fallback polling system deployed for UI updates
 - ✅ **API Timer Sync**: Frontend receives accurate timer data from backend
 - ✅ **WebSocket Server Verification**: Direct NodeJS connections work perfectly (tested with ping/pong)
 - ✅ **Timer Smoothness Confirmed**: Backend maintains perfect 1-second intervals consistently
+- ✅ **Database Synchronization FIXED**: Resolved Redis cache invalidation issue causing stale draft state
+- ✅ **Frontend Polling Enhanced**: 1-second aggressive polling ensures UI synchronization even without WebSocket
 
 **Draft Reset System IMPLEMENTED**: Complete reset functionality ensures reliable testing:
 - ✅ All draft picks cleared and reset to Round 1, Pick 1
