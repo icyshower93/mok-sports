@@ -30,7 +30,7 @@ export class DraftWebSocketManager {
       server, 
       path: '/draft-ws',
       // Add explicit WebSocket handling options for production
-      verifyClient: (info) => {
+      verifyClient: (info: any) => {
         console.log('[WebSocket] 🔍 VERIFYING CLIENT CONNECTION');
         console.log('[WebSocket] Origin:', info.origin);
         console.log('[WebSocket] Request URL:', info.req.url);

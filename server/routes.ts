@@ -1034,6 +1034,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   console.log('[Server] ✅ WebSocket server initialized on /draft-ws path');
   
+  // Inject WebSocket manager into global draft manager
+  const { globalDraftManager } = await import("./draft/globalDraftManager.js");
+  globalDraftManager.webSocketManager = webSocketManager;
+  globalDraftManager.robotManager = robotManager;
+  console.log('[Server] ✅ Global draft manager updated with WebSocket and Robot managers');
+  
   // Re-initialize draft routes with WebSocket support
   const { default: setupDraftRoutes } = await import("./routes/draft.js");
   await setupDraftRoutes(app, storage, webSocketManager, robotManager);
