@@ -62,6 +62,13 @@ export function useDraftWebSocket(draftId: string | null) {
     console.log('[WebSocket] Protocol detected:', protocol);
     console.log('[WebSocket] Target host:', wsHost);
     
+    // Close any existing connection first
+    if (wsRef.current) {
+      console.log('[WebSocket] Closing existing connection before creating new one');
+      wsRef.current.close();
+      wsRef.current = null;
+    }
+    
     const ws = new WebSocket(wsUrl);
     wsRef.current = ws;
 
@@ -131,6 +138,12 @@ export function useDraftWebSocket(draftId: string | null) {
 
     ws.onerror = (error) => {
       console.error('[WebSocket] Connection error:', error);
+      console.error('[WebSocket] Error details:', {
+        type: error.type,
+        target: error.target?.readyState,
+        url: wsUrl,
+        timestamp: new Date().toISOString()
+      });
       setConnectionStatus('disconnected');
       
       // In production, don't keep retrying failed WebSocket connections
