@@ -407,6 +407,18 @@ export default function DraftPage() {
   const currentPlayer = draftData.currentPlayer;
   const teams = teamsData?.teams || {};
 
+  // INTENSIVE DEBUG LOGGING FOR TIMER ISSUE
+  console.log('🔍 [TIMER DEBUG] === FRONTEND DATA RECEIVED ===');
+  console.log('🔍 [TIMER DEBUG] Server Time:', state.timeRemaining);
+  console.log('🔍 [TIMER DEBUG] Local Time:', localTimeRemaining);
+  console.log('🔍 [TIMER DEBUG] Current User ID:', state.currentUserId);
+  console.log('🔍 [TIMER DEBUG] Draft Round/Pick:', state.draft.currentRound, '/', state.draft.currentPick);
+  console.log('🔍 [TIMER DEBUG] Draft Order:', state.draft.draftOrder);
+  console.log('🔍 [TIMER DEBUG] Current Player Name:', currentPlayer?.name);
+  console.log('🔍 [TIMER DEBUG] Is Current User:', isCurrentUser);
+  console.log('🔍 [TIMER DEBUG] Full Draft Data:', draftData);
+  console.log('🔍 [TIMER DEBUG] ===========================');
+
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
