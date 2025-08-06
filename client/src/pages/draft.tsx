@@ -243,39 +243,19 @@ export default function DraftPage() {
     }
   });
 
-  // Update local timer when we get new server data - FORCE IMMEDIATE UPDATE
+  // CRITICAL FIX: Force immediate timer display from server data
   useEffect(() => {
-    if (draftData?.state?.timeRemaining !== undefined && !isLoading) {
+    // Update immediately when draft data loads or changes - bypass all delays
+    if (draftData?.state && typeof draftData.state.timeRemaining === 'number') {
       const serverTime = draftData.state.timeRemaining;
-      const currentPick = draftData.state.draft?.currentPick;
-      const currentRound = draftData.state.draft?.currentRound;
-      
-      console.log(`[Draft] 🚀 IMMEDIATE TIMER UPDATE - Server: ${serverTime}s, Setting Local: ${serverTime}s`);
-      
-      // FORCE IMMEDIATE UPDATE - Always use server time
+      console.log(`[Draft] 🔥 FORCING TIMER UPDATE: ${localTimeRemaining} → ${serverTime} (from server)`);
       setLocalTimeRemaining(serverTime);
       setLastServerUpdate(Date.now());
     }
-  }, [draftData?.state?.timeRemaining, draftData?.state?.draft?.currentPick, isLoading]);
+  }, [draftData]);
 
-  // Local countdown timer for smooth second-by-second updates (DISABLED WHEN SERVER DATA FRESH)
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const timeSinceLastUpdate = Date.now() - lastServerUpdate;
-      
-      // Only use local countdown if server data is older than 2 seconds
-      if (timeSinceLastUpdate > 2000) {
-        setLocalTimeRemaining(prev => {
-          if (prev <= 0) return 0; // Stop at 0
-          const newTime = prev - 1;
-          console.log(`[Draft] 📉 Local countdown: ${prev}s → ${newTime}s (no fresh server data)`);
-          return newTime;
-        });
-      }
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [lastServerUpdate]); // Depend on server update timing
+  // Local countdown disabled - use server data only for now
+  // This prevents conflicts between local countdown and server sync
 
   // Fetch available teams
   const { data: teamsData } = useQuery({
