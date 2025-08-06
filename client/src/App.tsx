@@ -15,7 +15,7 @@ import { DesktopNotice } from "@/components/desktop-notice";
 import LoginPage from "@/pages/login";
 import DashboardPage from "@/pages/dashboard";
 import LeaguesPage from "@/pages/leagues";
-import DraftPageNew from "@/pages/draft-new";
+import DraftPage from "@/pages/draft";
 import ProfilePage from "@/pages/profile";
 import TeamsPage from "@/pages/teams";
 import { LeagueWaiting } from "@/pages/league-waiting";
@@ -81,7 +81,7 @@ function AppContent() {
           {(params) => {
             console.log('[App] Draft route matched with params:', params);
             console.log('[App] Current location:', window.location.href);
-            return <DraftPageNew />;
+            return <DraftPage />;
           }}
         </Route>
         <Route path="/teams" component={TeamsPage} />
