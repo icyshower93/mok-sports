@@ -112,12 +112,20 @@ export function useDraftWebSocket(draftId: string | null) {
     };
 
     ws.onmessage = (event) => {
+      console.log('[WebSocket] 📨 RAW MESSAGE RECEIVED');
+      console.log('[WebSocket] 📨 Event data:', event.data);
+      console.log('[WebSocket] 📨 Event type:', typeof event.data);
+      console.log('[WebSocket] 📨 Socket ready state:', ws.readyState);
+      console.log('[WebSocket] 📨 Timestamp:', new Date().toISOString());
+      
       try {
         const message: DraftWebSocketMessage = JSON.parse(event.data);
+        console.log('[WebSocket] ✅ PARSE SUCCESS - Message type:', message.type);
         setLastMessage(message);
         handleWebSocketMessage(message);
       } catch (error) {
-        console.error('[WebSocket] Error parsing message:', error);
+        console.error('[WebSocket] 🚨 PARSE ERROR:', error);
+        console.error('[WebSocket] 🚨 Raw data that failed:', event.data);
       }
     };
 
@@ -161,7 +169,11 @@ export function useDraftWebSocket(draftId: string | null) {
   }, [draftId, user?.id]);
 
   const handleWebSocketMessage = useCallback((message: DraftWebSocketMessage) => {
-    console.log('[WebSocket] Received message:', message.type, message);
+    console.log('[WebSocket] 🔍 COMPREHENSIVE DEBUG - Received message:', message.type, message);
+    console.log('[WebSocket] 🔍 Raw message data:', JSON.stringify(message, null, 2));
+    console.log('[WebSocket] 🔍 Message timestamp:', new Date().toISOString());
+    console.log('[WebSocket] 🔍 Current draft ID:', draftId);
+    console.log('[WebSocket] 🔍 Current user ID:', user?.id);
     
     switch (message.type) {
       case 'connected':
@@ -198,10 +210,14 @@ export function useDraftWebSocket(draftId: string | null) {
         break;
 
       case 'timer_update':
-        console.log('[WebSocket] Timer update:', message.data.timeRemaining);
+        console.log('[WebSocket] ⏰ TIMER UPDATE - Received:', message.data.timeRemaining, 'seconds');
+        console.log('[WebSocket] ⏰ TIMER UPDATE - Full message:', message);
+        console.log('[WebSocket] ⏰ TIMER UPDATE - Message timestamp:', new Date().toISOString());
+        console.log('[WebSocket] ⏰ TIMER UPDATE - Draft ID match:', message.data?.draftId === draftId);
         
         // Update timer state in cache if needed
         queryClient.setQueryData(['draft', draftId], (oldData: any) => {
+          console.log('[WebSocket] ⏰ TIMER UPDATE - Updating cache with oldData:', !!oldData);
           if (oldData) {
             return {
               ...oldData,
