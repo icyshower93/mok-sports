@@ -12,6 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 import { TeamLogo } from "@/components/team-logo";
 import { apiRequest, AuthTokenManager } from "@/lib/queryClient";
 import { useDraftWebSocket } from "@/hooks/use-draft-websocket";
+import { useSimpleWebSocket } from "@/hooks/use-simple-websocket";
 import { useAuth } from "@/hooks/use-auth";
 import { trackModuleError } from "@/debug-tracker";
 
@@ -81,6 +82,9 @@ export default function DraftPage() {
 
   // Initialize WebSocket connection for real-time timer updates
   const { connectionStatus, isConnected, lastMessage } = useDraftWebSocket(draftId);
+  
+  // TEMPORARY: Test simple WebSocket implementation
+  const { status: simpleStatus, isConnected: simpleConnected } = useSimpleWebSocket(draftId, user?.id || '');
 
   // Redirect if no draft ID
   useEffect(() => {
