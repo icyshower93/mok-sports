@@ -223,7 +223,7 @@ export default function DraftPage() {
       }
     },
     enabled: !!draftId && !authLoading, // Wait for auth to load before making requests
-    refetchInterval: 5000, // Poll every 5 seconds (reduced since we have local timer)
+    refetchInterval: 1000, // Poll every 1 second for immediate sync with backend state
     retry: (failureCount, error) => {
       // Don't retry on authentication errors
       if (error instanceof Error && error.message.includes('401')) {
@@ -235,19 +235,22 @@ export default function DraftPage() {
     }
   });
 
-  // Update local timer when we get new server data (FIXED: removed dependency loop)
+  // Update local timer when we get new server data (FORCE SYNC TO FIX STALE STATE)
   useEffect(() => {
     if (draftData?.state?.timeRemaining !== undefined) {
-      console.log('[Draft] Updating local timer from server:', draftData.state.timeRemaining);
-      setLocalTimeRemaining(draftData.state.timeRemaining);
+      const serverTime = draftData.state.timeRemaining;
+      console.log(`[Draft] FORCING timer sync - Server: ${serverTime}s, Local: ${localTimeRemaining}s, Pick: ${draftData.state.draft?.currentPick}`);
+      
+      // CRITICAL: Always force update to server time to prevent stale display
+      setLocalTimeRemaining(serverTime);
       setLastServerUpdate(Date.now());
       
-      // Force immediate UI update if timer is greater than 0
-      if (draftData.state.timeRemaining > 0) {
-        console.log('[Draft] Active timer detected, forcing render');
+      // Clear transition states that might be causing display issues
+      if (serverTime > 0) {
+        setIsTransitioning(false);
       }
     }
-  }, [draftData?.state?.timeRemaining]);
+  }, [draftData?.state?.timeRemaining, draftData?.state?.draft?.currentPick, draftData?.state?.draft?.currentRound]);
 
   // Local countdown timer for smooth second-by-second updates (FIXED: stable dependencies)
   useEffect(() => {
