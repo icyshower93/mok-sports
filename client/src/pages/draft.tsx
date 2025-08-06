@@ -345,10 +345,16 @@ export default function DraftPage() {
   const currentPlayer = draftData.currentPlayer;
   const teams = teamsData?.teams || {};
 
-  // DEBUG LOGGING
+  // DEBUG LOGGING AND CRITICAL TIMER SYNC FIX
   console.log('🔍 [TIMER DEBUG] Server Time:', state.timeRemaining);
   console.log('🔍 [TIMER DEBUG] Display Time:', displayTime);
   console.log('🔍 [TIMER DEBUG] Current Player:', currentPlayer?.name);
+  
+  // CRITICAL FIX: Force timer sync with server data when different
+  if (state.timeRemaining !== displayTime && state.timeRemaining > 0) {
+    console.log('🔄 [TIMER SYNC] Forcing timer sync from API:', state.timeRemaining);
+    setDisplayTime(state.timeRemaining);
+  }
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
