@@ -57,12 +57,15 @@ interface DraftState {
 }
 
 export default function DraftPage() {
-  console.log('[Draft] Component render started');
+  console.log('[Draft] Component render started - TIME:', Date.now());
   
   const [location, navigate] = useLocation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { user, isLoading: authLoading, isAuthenticated } = useAuth();
+  
+  // EMERGENCY DEBUG - Check if this line is reached
+  console.log('[Draft] EMERGENCY DEBUG: Auth loaded, authLoading:', authLoading, 'user:', !!user, 'rendered at:', new Date().toISOString());
   
   // Extract draft ID from URL params using wouter
   const params = useParams();

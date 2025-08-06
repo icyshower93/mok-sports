@@ -1,0 +1,220 @@
+[Auth] Token check - Has token: true Has user: false Loading: true
+bc40e0fa-d58a-4662-8395-0a7f44b71cbb:1 Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner.
+index-DfBrd4NC.js:272 [App] Draft route matched with params: {0: 'bc40e0fa-d58a-4662-8395-0a7f44b71cbb', draftId: 'bc40e0fa-d58a-4662-8395-0a7f44b71cbb'}
+index-DfBrd4NC.js:272 [App] Current location: https://mok-sports-draft-mokfantasysport.replit.app/draft/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-DfBrd4NC.js:272 [Draft] Component render started
+index-DfBrd4NC.js:272 [Draft] All useState hooks declared
+index-DfBrd4NC.js:272 [Draft] All hooks declared, starting conditional logic
+index-DfBrd4NC.js:272 [WebSocket] Attempting connection for draft: bc40e0fa-d58a-4662-8395-0a7f44b71cbb user: d8873675-274c-46f9-ab48-00955c81d875
+index-DfBrd4NC.js:272 [WebSocket] Connecting to: wss://mok-sports-draft-mokfantasysport.replit.app/draft-ws?userId=d8873675-274c-46f9-ab48-00955c81d875&draftId=bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-DfBrd4NC.js:272 [WebSocket] Current location: https://mok-sports-draft-mokfantasysport.replit.app/draft/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-DfBrd4NC.js:272 [WebSocket] Protocol detected: wss:
+index-DfBrd4NC.js:272 [WebSocket] Target host: mok-sports-draft-mokfantasysport.replit.app
+index-DfBrd4NC.js:272 [Timer Fallback] Starting enhanced timer polling for draft: bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-DfBrd4NC.js:272 [Draft] === STARTING DRAFT FETCH ===
+index-DfBrd4NC.js:272 [Draft] Draft ID: bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-DfBrd4NC.js:272 [Draft] Auth status - User: Mok Sports Authenticated: false Loading: false
+index-DfBrd4NC.js:272 [Draft] Token available: true
+index-DfBrd4NC.js:272 [Draft] Current URL: https://mok-sports-draft-mokfantasysport.replit.app/draft/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-DfBrd4NC.js:272 [Draft] Current pathname: /draft/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-DfBrd4NC.js:272 [Draft] Making API request to: /api/drafts/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-DfBrd4NC.js:272 [Draft] Timer expiration useEffect called
+index-DfBrd4NC.js:228 [Auth] Token check - Has token: true Has user: true Loading: false
+index-DfBrd4NC.js:272 [App] Draft route matched with params: {0: 'bc40e0fa-d58a-4662-8395-0a7f44b71cbb', draftId: 'bc40e0fa-d58a-4662-8395-0a7f44b71cbb'}
+index-DfBrd4NC.js:272 [App] Current location: https://mok-sports-draft-mokfantasysport.replit.app/draft/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-DfBrd4NC.js:272 [Draft] Component render started
+index-DfBrd4NC.js:272 [Draft] All useState hooks declared
+index-DfBrd4NC.js:272 [Draft] All hooks declared, starting conditional logic
+index-DfBrd4NC.js:272 [Draft] === STARTING DRAFT FETCH ===
+index-DfBrd4NC.js:272 [Draft] Draft ID: bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-DfBrd4NC.js:272 [Draft] Auth status - User: Mok Sports Authenticated: true Loading: false
+index-DfBrd4NC.js:272 [Draft] Token available: true
+index-DfBrd4NC.js:272 [Draft] Current URL: https://mok-sports-draft-mokfantasysport.replit.app/draft/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-DfBrd4NC.js:272 [Draft] Current pathname: /draft/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-DfBrd4NC.js:272 [Draft] Making API request to: /api/drafts/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-DfBrd4NC.js:228 [SubscriptionManager] 3:02:57 AM - Permission is granted and no active subscription - auto-creating subscription
+index-DfBrd4NC.js:228 [AutoPushRefresh] Legacy hook delegating to SubscriptionManager
+sw.js?v=1754463777046:15 [SW] Service worker starting, version: v1.4.0-ios-push-fix
+sw.js?v=1754463777046:201 [SW] Service worker script loaded successfully
+sw.js?v=1754463777046:19 [SW] Installing service worker, version: v1.4.0-ios-push-fix
+sw.js?v=1754463777046:23 [SW] Caching static files
+index-DfBrd4NC.js:228 [SW Hook] Service worker registered successfully
+index-DfBrd4NC.js:272 [App] Draft route matched with params: {0: 'bc40e0fa-d58a-4662-8395-0a7f44b71cbb', draftId: 'bc40e0fa-d58a-4662-8395-0a7f44b71cbb'}
+index-DfBrd4NC.js:272 [App] Current location: https://mok-sports-draft-mokfantasysport.replit.app/draft/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-DfBrd4NC.js:272 [Draft] Component render started
+index-DfBrd4NC.js:272 [Draft] All useState hooks declared
+index-DfBrd4NC.js:272 [Draft] All hooks declared, starting conditional logic
+index-DfBrd4NC.js:272 [Draft] === STARTING DRAFT FETCH ===
+index-DfBrd4NC.js:272 [Draft] Draft ID: bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-DfBrd4NC.js:272 [Draft] Auth status - User: Mok Sports Authenticated: true Loading: false
+index-DfBrd4NC.js:272 [Draft] Token available: true
+index-DfBrd4NC.js:272 [Draft] Current URL: https://mok-sports-draft-mokfantasysport.replit.app/draft/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-DfBrd4NC.js:272 [Draft] Current pathname: /draft/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-DfBrd4NC.js:272 [Draft] Making API request to: /api/drafts/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-DfBrd4NC.js:272 [Draft] Component render started
+index-DfBrd4NC.js:272 [Draft] All useState hooks declared
+index-DfBrd4NC.js:272 [Draft] All hooks declared, starting conditional logic
+index-DfBrd4NC.js:272 [Draft] === STARTING DRAFT FETCH ===
+index-DfBrd4NC.js:272 [Draft] Draft ID: bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-DfBrd4NC.js:272 [Draft] Auth status - User: Mok Sports Authenticated: true Loading: false
+index-DfBrd4NC.js:272 [Draft] Token available: true
+index-DfBrd4NC.js:272 [Draft] Current URL: https://mok-sports-draft-mokfantasysport.replit.app/draft/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-DfBrd4NC.js:272 [Draft] Current pathname: /draft/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-DfBrd4NC.js:272 [Draft] Making API request to: /api/drafts/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+sw.js?v=1754463777046:26 [SW] Static files cached successfully
+index-DfBrd4NC.js:272 [WebSocket] Successfully connected to draft: bc40e0fa-d58a-4662-8395-0a7f44b71cbb for user: d8873675-274c-46f9-ab48-00955c81d875
+index-DfBrd4NC.js:272 [WebSocket] Received message: connected {type: 'connected', draftId: 'bc40e0fa-d58a-4662-8395-0a7f44b71cbb', timestamp: 1754463777255}
+index-DfBrd4NC.js:272 [WebSocket] Connected to draft successfully
+index-DfBrd4NC.js:272 [Draft] Component render started
+index-DfBrd4NC.js:272 [Draft] All useState hooks declared
+index-DfBrd4NC.js:272 [Draft] All hooks declared, starting conditional logic
+index-DfBrd4NC.js:272 [Draft] === STARTING DRAFT FETCH ===
+index-DfBrd4NC.js:272 [Draft] Draft ID: bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-DfBrd4NC.js:272 [Draft] Auth status - User: Mok Sports Authenticated: true Loading: false
+index-DfBrd4NC.js:272 [Draft] Token available: true
+index-DfBrd4NC.js:272 [Draft] Current URL: https://mok-sports-draft-mokfantasysport.replit.app/draft/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-DfBrd4NC.js:272 [Draft] Current pathname: /draft/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-DfBrd4NC.js:272 [Draft] Making API request to: /api/drafts/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-DfBrd4NC.js:272 [WebSocket] Received message: pong {type: 'pong', timestamp: 1754463777302}
+index-DfBrd4NC.js:272 [WebSocket] Received pong from server
+index-DfBrd4NC.js:272 [Draft] Component render started
+index-DfBrd4NC.js:272 [Draft] All useState hooks declared
+index-DfBrd4NC.js:272 [Draft] All hooks declared, starting conditional logic
+index-DfBrd4NC.js:272 [Draft] === STARTING DRAFT FETCH ===
+index-DfBrd4NC.js:272 [Draft] Draft ID: bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-DfBrd4NC.js:272 [Draft] Auth status - User: Mok Sports Authenticated: true Loading: false
+index-DfBrd4NC.js:272 [Draft] Token available: true
+index-DfBrd4NC.js:272 [Draft] Current URL: https://mok-sports-draft-mokfantasysport.replit.app/draft/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-DfBrd4NC.js:272 [Draft] Current pathname: /draft/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-DfBrd4NC.js:272 [Draft] Making API request to: /api/drafts/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-DfBrd4NC.js:272 [Draft] Response received: {status: 200, statusText: '', headers: {…}}
+index-DfBrd4NC.js:272 [Draft] Successfully fetched draft data: {state: {…}, isCurrentUser: false, currentPlayer: {…}}
+index-DfBrd4NC.js:272 [Draft] === DRAFT FETCH SUCCESS ===
+index-DfBrd4NC.js:228 [SubscriptionManager] 3:02:57 AM - Starting subscription refresh...
+index-DfBrd4NC.js:272 [App] Draft route matched with params: {0: 'bc40e0fa-d58a-4662-8395-0a7f44b71cbb', draftId: 'bc40e0fa-d58a-4662-8395-0a7f44b71cbb'}
+index-DfBrd4NC.js:272 [App] Current location: https://mok-sports-draft-mokfantasysport.replit.app/draft/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-DfBrd4NC.js:272 [Draft] Component render started
+index-DfBrd4NC.js:272 [Draft] All useState hooks declared
+index-DfBrd4NC.js:272 [Draft] All hooks declared, starting conditional logic
+index-DfBrd4NC.js:272 [Draft] === STARTING DRAFT FETCH ===
+index-DfBrd4NC.js:272 [Draft] Draft ID: bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-DfBrd4NC.js:272 [Draft] Auth status - User: Mok Sports Authenticated: true Loading: false
+index-DfBrd4NC.js:272 [Draft] Token available: true
+index-DfBrd4NC.js:272 [Draft] Current URL: https://mok-sports-draft-mokfantasysport.replit.app/draft/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-DfBrd4NC.js:272 [Draft] Current pathname: /draft/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-DfBrd4NC.js:272 [Draft] Making API request to: /api/drafts/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-DfBrd4NC.js:228 [SubscriptionManager] 3:02:57 AM - Found existing subscription - unsubscribing...
+index-DfBrd4NC.js:228 [SubscriptionManager] 3:02:57 AM - Existing subscription unsubscribed
+index-DfBrd4NC.js:228 [SubscriptionManager] 3:02:57 AM - Creating new push subscription...
+index-DfBrd4NC.js:272 [Draft] Response received: {status: 200, statusText: '', headers: {…}}
+index-DfBrd4NC.js:272 [Draft] Successfully fetched draft data: {state: {…}, isCurrentUser: false, currentPlayer: {…}}
+index-DfBrd4NC.js:272 [Draft] === DRAFT FETCH SUCCESS ===
+index-DfBrd4NC.js:272 [Draft] Response received: {status: 200, statusText: '', headers: {…}}
+index-DfBrd4NC.js:272 [Draft] Successfully fetched draft data: {state: {…}, isCurrentUser: false, currentPlayer: {…}}
+index-DfBrd4NC.js:272 [Draft] === DRAFT FETCH SUCCESS ===
+sw.js?v=1754463777046:37 [SW] Activating service worker, version: v1.4.0-ios-push-fix
+sw.js?v=1754463777046:43 [SW] Found caches: (2) ['mok-sports-static-v1.4.0-ios-push-fix', 'mok-sports-dynamic-v1.4.0-ios-push-fix']
+sw.js?v=1754463777046:56 [SW] Service worker activated and controlling all clients
+index-DfBrd4NC.js:228 [SubscriptionManager] 3:02:58 AM - Sending subscription to server: https://fcm.googleapis.com/fcm/send/dVNSyQO3ci8:AP...
+index-DfBrd4NC.js:272 [Draft] Response received: {status: 200, statusText: '', headers: {…}}
+index-DfBrd4NC.js:272 [Draft] Successfully fetched draft data: {state: {…}, isCurrentUser: false, currentPlayer: {…}}
+index-DfBrd4NC.js:272 [Draft] === DRAFT FETCH SUCCESS ===
+index-DfBrd4NC.js:228 [SubscriptionManager] 3:02:58 AM - Server response: 201 
+index-DfBrd4NC.js:272 [Timer Fallback] Poll #1 - Timer: 0 Round: 1 Pick: 1 Current User: 766992a8-44f0-4d0e-a65f-987237e67a35 Full Data: {state: {…}, isCurrentUser: false, currentPlayer: {…}}
+index-DfBrd4NC.js:228 [SubscriptionManager] 3:02:58 AM - Subscription registered successfully: Subscription registered successfully
+index-DfBrd4NC.js:272 [App] Draft route matched with params: {0: 'bc40e0fa-d58a-4662-8395-0a7f44b71cbb', draftId: 'bc40e0fa-d58a-4662-8395-0a7f44b71cbb'}
+index-DfBrd4NC.js:272 [App] Current location: https://mok-sports-draft-mokfantasysport.replit.app/draft/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-DfBrd4NC.js:272 [Draft] Component render started
+index-DfBrd4NC.js:272 [Draft] All useState hooks declared
+index-DfBrd4NC.js:272 [Draft] All hooks declared, starting conditional logic
+index-DfBrd4NC.js:272 [Draft] === STARTING DRAFT FETCH ===
+index-DfBrd4NC.js:272 [Draft] Draft ID: bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-DfBrd4NC.js:272 [Draft] Auth status - User: Mok Sports Authenticated: true Loading: false
+index-DfBrd4NC.js:272 [Draft] Token available: true
+index-DfBrd4NC.js:272 [Draft] Current URL: https://mok-sports-draft-mokfantasysport.replit.app/draft/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-DfBrd4NC.js:272 [Draft] Current pathname: /draft/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-DfBrd4NC.js:272 [Draft] Making API request to: /api/drafts/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-DfBrd4NC.js:272 [Draft] Response received: {status: 200, statusText: '', headers: {…}}
+index-DfBrd4NC.js:272 [Draft] Successfully fetched draft data: {state: {…}, isCurrentUser: false, currentPlayer: {…}}
+index-DfBrd4NC.js:272 [Draft] === DRAFT FETCH SUCCESS ===
+index-DfBrd4NC.js:272 [Draft] Response received: {status: 200, statusText: '', headers: {…}}
+index-DfBrd4NC.js:272 [Draft] Successfully fetched draft data: {state: {…}, isCurrentUser: false, currentPlayer: {…}}
+index-DfBrd4NC.js:272 [Draft] === DRAFT FETCH SUCCESS ===
+index-DfBrd4NC.js:272 [Draft] Response received: {status: 200, statusText: '', headers: {…}}
+index-DfBrd4NC.js:272 [Draft] Successfully fetched draft data: {state: {…}, isCurrentUser: false, currentPlayer: {…}}
+index-DfBrd4NC.js:272 [Draft] === DRAFT FETCH SUCCESS ===
+index-DfBrd4NC.js:272 [Timer Fallback] Poll #2 - Timer: 0 Round: 1 Pick: 1 Current User: 766992a8-44f0-4d0e-a65f-987237e67a35 Full Data: {state: {…}, isCurrentUser: false, currentPlayer: {…}}
+index-DfBrd4NC.js:272 [Draft] Response received: {status: 200, statusText: '', headers: {…}}
+index-DfBrd4NC.js:272 [Draft] Successfully fetched draft data: {state: {…}, isCurrentUser: false, currentPlayer: {…}}
+index-DfBrd4NC.js:272 [Draft] === DRAFT FETCH SUCCESS ===
+index-DfBrd4NC.js:272 [Timer Fallback] Poll #3 - Timer: 0 Round: 1 Pick: 1 Current User: 766992a8-44f0-4d0e-a65f-987237e67a35 Full Data: {state: {…}, isCurrentUser: false, currentPlayer: {…}}
+index-DfBrd4NC.js:272 [Draft] === STARTING DRAFT FETCH ===
+index-DfBrd4NC.js:272 [Draft] Draft ID: bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-DfBrd4NC.js:272 [Draft] Auth status - User: Mok Sports Authenticated: true Loading: false
+index-DfBrd4NC.js:272 [Draft] Token available: true
+index-DfBrd4NC.js:272 [Draft] Current URL: https://mok-sports-draft-mokfantasysport.replit.app/draft/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-DfBrd4NC.js:272 [Draft] Current pathname: /draft/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-DfBrd4NC.js:272 [Draft] Making API request to: /api/drafts/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-DfBrd4NC.js:272 [Draft] Response received: {status: 200, statusText: '', headers: {…}}
+index-DfBrd4NC.js:272 [Draft] Successfully fetched draft data: {state: {…}, isCurrentUser: false, currentPlayer: {…}}
+index-DfBrd4NC.js:272 [Draft] === DRAFT FETCH SUCCESS ===
+index-DfBrd4NC.js:272 [Draft] Component render started
+index-DfBrd4NC.js:272 [Draft] All useState hooks declared
+index-DfBrd4NC.js:272 [Draft] All hooks declared, starting conditional logic
+index-DfBrd4NC.js:272 [Draft] === STARTING DRAFT FETCH ===
+index-DfBrd4NC.js:272 [Draft] Draft ID: bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-DfBrd4NC.js:272 [Draft] Auth status - User: Mok Sports Authenticated: true Loading: false
+index-DfBrd4NC.js:272 [Draft] Token available: true
+index-DfBrd4NC.js:272 [Draft] Current URL: https://mok-sports-draft-mokfantasysport.replit.app/draft/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-DfBrd4NC.js:272 [Draft] Current pathname: /draft/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-DfBrd4NC.js:272 [Draft] Making API request to: /api/drafts/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-DfBrd4NC.js:272 [Draft] Component render started
+index-DfBrd4NC.js:272 [Draft] All useState hooks declared
+index-DfBrd4NC.js:272 [Draft] All hooks declared, starting conditional logic
+index-DfBrd4NC.js:272 [Draft] Response received: {status: 200, statusText: '', headers: {…}}
+index-DfBrd4NC.js:272 [Draft] Successfully fetched draft data: {state: {…}, isCurrentUser: false, currentPlayer: {…}}
+index-DfBrd4NC.js:272 [Draft] === DRAFT FETCH SUCCESS ===
+index-DfBrd4NC.js:272 [Draft] Component render started
+index-DfBrd4NC.js:272 [Draft] All useState hooks declared
+index-DfBrd4NC.js:272 [Draft] All hooks declared, starting conditional logic
+index-DfBrd4NC.js:272 [Draft] === STARTING DRAFT FETCH ===
+index-DfBrd4NC.js:272 [Draft] Draft ID: bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-DfBrd4NC.js:272 [Draft] Auth status - User: Mok Sports Authenticated: true Loading: false
+index-DfBrd4NC.js:272 [Draft] Token available: true
+index-DfBrd4NC.js:272 [Draft] Current URL: https://mok-sports-draft-mokfantasysport.replit.app/draft/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-DfBrd4NC.js:272 [Draft] Current pathname: /draft/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-DfBrd4NC.js:272 [Draft] Making API request to: /api/drafts/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-DfBrd4NC.js:272 [Draft] Component render started
+index-DfBrd4NC.js:272 [Draft] All useState hooks declared
+index-DfBrd4NC.js:272 [Draft] All hooks declared, starting conditional logic
+index-DfBrd4NC.js:272 [Draft] Response received: {status: 200, statusText: '', headers: {…}}
+index-DfBrd4NC.js:272 [Draft] Successfully fetched draft data: {state: {…}, isCurrentUser: false, currentPlayer: {…}}
+index-DfBrd4NC.js:272 [Draft] === DRAFT FETCH SUCCESS ===
+index-DfBrd4NC.js:272 [Draft] Component render started
+index-DfBrd4NC.js:272 [Draft] All useState hooks declared
+index-DfBrd4NC.js:272 [Draft] All hooks declared, starting conditional logic
+index-DfBrd4NC.js:272 [Draft] === STARTING DRAFT FETCH ===
+index-DfBrd4NC.js:272 [Draft] Draft ID: bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-DfBrd4NC.js:272 [Draft] Auth status - User: Mok Sports Authenticated: true Loading: false
+index-DfBrd4NC.js:272 [Draft] Token available: true
+index-DfBrd4NC.js:272 [Draft] Current URL: https://mok-sports-draft-mokfantasysport.replit.app/draft/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-DfBrd4NC.js:272 [Draft] Current pathname: /draft/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-DfBrd4NC.js:272 [Draft] Making API request to: /api/drafts/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-DfBrd4NC.js:272 [Timer Fallback] Poll #4 - Timer: 0 Round: 1 Pick: 1 Current User: 766992a8-44f0-4d0e-a65f-987237e67a35 Full Data: {state: {…}, isCurrentUser: false, currentPlayer: {…}}
+index-DfBrd4NC.js:272 [Draft] Response received: {status: 200, statusText: '', headers: {…}}
+index-DfBrd4NC.js:272 [Draft] Successfully fetched draft data: {state: {…}, isCurrentUser: false, currentPlayer: {…}}
+index-DfBrd4NC.js:272 [Draft] === DRAFT FETCH SUCCESS ===
+index-DfBrd4NC.js:272 [Draft] Component render started
+index-DfBrd4NC.js:272 [Draft] All useState hooks declared
+index-DfBrd4NC.js:272 [Draft] All hooks declared, starting conditional logic
+index-DfBrd4NC.js:272 [Draft] === STARTING DRAFT FETCH ===
+index-DfBrd4NC.js:272 [Draft] Draft ID: bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-DfBrd4NC.js:272 [Draft] Auth status - User: Mok Sports Authenticated: true Loading: false
+index-DfBrd4NC.js:272 [Draft] Token available: true
+index-DfBrd4NC.js:272 [Draft] Current URL: https://mok-sports-draft-mokfantasysport.replit.app/draft/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-DfBrd4NC.js:272 [Draft] Current pathname: /draft/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-DfBrd4NC.js:272 [Draft] Making API request to: /api/drafts/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-DfBrd4NC.js:272 [Timer Fallback] Poll #5 - Timer: 0 Round: 1 Pick: 1 Current User: 766992a8-44f0-4d0e-a65f-987237e67a35 Full Data: {state: {…}, isCurrentUser: false, currentPlayer: {…}}
+index-DfBrd4NC.js:272 [Draft] Response received: {status: 200, statusText: '', headers: {…}}
+index-DfBrd4NC.js:272 [Draft] Successfully fetched draft data: {state: {…}, isCurrentUser: false, currentPlayer: {…}}
+index-DfBrd4NC.js:272 [Draft] === DRAFT FETCH SUCCESS ===
