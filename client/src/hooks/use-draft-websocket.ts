@@ -107,7 +107,7 @@ export function useDraftWebSocket(draftId: string | null) {
     }
     
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const wsUrl = `${protocol}//${window.location.host}/draft-ws?userId=${user.id}&draftId=${draftId}`;
+    const wsUrl = `${protocol}//${window.location.host}/draft-ws?userId=${user!.id}&draftId=${draftId}`;
     
     console.log('[WebSocket] Creating WebSocket connection to:', wsUrl);
     console.log('[WebSocket] Timestamp:', new Date().toISOString());
@@ -125,29 +125,59 @@ export function useDraftWebSocket(draftId: string | null) {
     
     const ws = wsRef.current;
 
+    // Store reference for cleanup
+    let heartbeatTimer: NodeJS.Timeout | null = null;
+
     ws.onopen = () => {
-      console.log('[WebSocket] Successfully connected to draft:', draftId, 'for user:', user?.id);
+      console.log('[WebSocket] ✅ CONNECTION OPENED');
+      console.log('[WebSocket] Ready state:', ws.readyState);
+      console.log('[WebSocket] URL:', ws.url);
+      console.log('[WebSocket] Connected for draft:', draftId, 'user:', user?.id);
+      
       setConnectionStatus('connected');
       
-      // Send a ping to verify the connection reaches our backend
-      ws.send(JSON.stringify({
-        type: 'ping',
-        draftId: draftId,
-        userId: user.id,
-        timestamp: Date.now()
-      }));
-
-      // Set up client-side heartbeat ping every 25 seconds
-      const heartbeatTimer = setInterval(() => {
+      // Send initial ping with robust error handling
+      try {
         if (ws.readyState === WebSocket.OPEN) {
-          ws.send(JSON.stringify({
+          const pingMessage = JSON.stringify({
             type: 'ping',
             draftId: draftId,
-            userId: user.id,
+            userId: user!.id,
             timestamp: Date.now()
-          }));
+          });
+          ws.send(pingMessage);
+          console.log('[WebSocket] ✅ Initial ping sent successfully');
         } else {
-          clearInterval(heartbeatTimer);
+          console.log('[WebSocket] ❌ Cannot send ping, socket not open:', ws.readyState);
+        }
+      } catch (error) {
+        console.error('[WebSocket] ❌ Failed to send initial ping:', error);
+      }
+
+      // Set up heartbeat with cleanup tracking
+      heartbeatTimer = setInterval(() => {
+        try {
+          if (ws.readyState === WebSocket.OPEN) {
+            ws.send(JSON.stringify({
+              type: 'ping',
+              draftId: draftId,
+              userId: user!.id,
+              timestamp: Date.now()
+            }));
+            console.log('[WebSocket] 💓 Heartbeat sent');
+          } else {
+            console.log('[WebSocket] 💔 Heartbeat stopped - socket not open:', ws.readyState);
+            if (heartbeatTimer) {
+              clearInterval(heartbeatTimer);
+              heartbeatTimer = null;
+            }
+          }
+        } catch (error) {
+          console.error('[WebSocket] 💔 Heartbeat failed:', error);
+          if (heartbeatTimer) {
+            clearInterval(heartbeatTimer);
+            heartbeatTimer = null;
+          }
         }
       }, 25000);
       
@@ -159,20 +189,25 @@ export function useDraftWebSocket(draftId: string | null) {
     };
 
     ws.onmessage = (event) => {
-      console.log('[WebSocket] 📨 RAW MESSAGE RECEIVED');
-      console.log('[WebSocket] 📨 Event data:', event.data);
-      console.log('[WebSocket] 📨 Event type:', typeof event.data);
-      console.log('[WebSocket] 📨 Socket ready state:', ws.readyState);
-      console.log('[WebSocket] 📨 Timestamp:', new Date().toISOString());
+      console.log('[WebSocket] 📨 MESSAGE RECEIVED');
+      console.log('[WebSocket] 📨 Raw data:', event.data);
+      console.log('[WebSocket] 📨 Socket state:', ws.readyState);
       
       try {
         const message: DraftWebSocketMessage = JSON.parse(event.data);
-        console.log('[WebSocket] ✅ PARSE SUCCESS - Message type:', message.type);
+        console.log('[WebSocket] ✅ Parsed message type:', message.type);
+        
+        // Update last message state
         setLastMessage(message);
+        
+        // Handle the message
         handleWebSocketMessage(message);
+        
+        console.log('[WebSocket] ✅ Message processed successfully');
       } catch (error) {
-        console.error('[WebSocket] 🚨 PARSE ERROR:', error);
-        console.error('[WebSocket] 🚨 Raw data that failed:', event.data);
+        console.error('[WebSocket] 🚨 JSON Parse failed:', error);
+        console.error('[WebSocket] 🚨 Failed data:', event.data);
+        console.error('[WebSocket] 🚨 Data type:', typeof event.data);
       }
     };
 
@@ -324,30 +359,42 @@ export function useDraftWebSocket(draftId: string | null) {
     }
   }, []);
 
-  // Connect when draft ID changes - SIMPLIFIED VERSION
+  // ROBUST CONNECTION MANAGEMENT - Fixed React lifecycle issues
   useEffect(() => {
-    console.log('[WebSocket] Effect triggered - draftId:', !!draftId, 'userId:', !!user?.id);
+    console.log('[WebSocket] ==== EFFECT TRIGGERED ====');
+    console.log('[WebSocket] Dependencies - draftId:', !!draftId, 'userId:', !!user?.id);
+    console.log('[WebSocket] Current connection state:', connectionStatus);
+    console.log('[WebSocket] wsRef exists:', !!wsRef.current);
     
     if (draftId && user?.id) {
-      console.log('[WebSocket] Starting connection attempt...');
+      console.log('[WebSocket] ✅ Dependencies ready - initiating connection');
       connect();
     } else {
-      console.log('[WebSocket] Missing dependencies, skipping connection');
+      console.log('[WebSocket] ❌ Missing dependencies - disconnecting if needed');
+      if (wsRef.current) {
+        disconnect();
+      }
     }
-  }, [draftId, user?.id]); // Simplified - no cleanup, no connect dependency
+    
+    // NO CLEANUP FUNCTION - let connections live until explicitly closed
+  }, [draftId, user?.id]);
 
-  // Cleanup only on unmount
+  // Component unmount cleanup ONLY
   useEffect(() => {
-    return () => {
-      console.log('[WebSocket] Component unmounting - cleaning up');
+    const cleanupOnUnmount = () => {
+      console.log('[WebSocket] 🧹 COMPONENT UNMOUNTING - Final cleanup');
       if (wsRef.current) {
         wsRef.current.close(1000, 'Component unmount');
+        wsRef.current = null;
       }
       if (reconnectTimeoutRef.current) {
         clearTimeout(reconnectTimeoutRef.current);
+        reconnectTimeoutRef.current = null;
       }
     };
-  }, []);
+
+    return cleanupOnUnmount;
+  }, []); // Empty dependency - only run on mount/unmount
 
   return {
     connectionStatus,
