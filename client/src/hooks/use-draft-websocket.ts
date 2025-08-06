@@ -348,17 +348,19 @@ export function useDraftWebSocket(draftId: string | null) {
       disconnect();
     }
 
+    // Only disconnect when dependencies actually change
     return () => {
-      disconnect();
+      console.log('[WebSocket] Effect cleanup triggered');
     };
-  }, [draftId, user?.id, connect, disconnect]);
+  }, [draftId, user?.id]);
 
-  // Cleanup on unmount
+  // Cleanup on unmount only
   useEffect(() => {
     return () => {
+      console.log('[WebSocket] Component unmounting, disconnecting WebSocket');
       disconnect();
     };
-  }, [disconnect]);
+  }, []);
 
   return {
     connectionStatus,
