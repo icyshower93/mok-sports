@@ -675,10 +675,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.json({ success: false, message: 'No current pick user found' });
       }
 
-      console.log(`🚀 Starting fresh timer for user ${currentUserId} in draft ${draftId}`);
+      console.log(`🚀 Starting fresh timer for user ${currentUserId} in draft ${draftId} (Round ${draft.currentRound}, Pick ${draft.currentPick})`);
       
-      // Start timer for current user
-      await globalDraftManager.startPickTimer(draftId, currentUserId, 60);
+      // Start timer for current user with proper round and pick numbers
+      await globalDraftManager.startPickTimer(draftId, currentUserId, draft.currentRound, draft.currentPick);
       
       console.log('✅ Timer restarted successfully');
       res.json({ 
