@@ -86,13 +86,28 @@ export default function DraftPageNew() {
   // Initialize WebSocket connection
   const { connectionStatus, isConnected } = useDraftWebSocket(draftId);
   
-  // Main draft query with aggressive cache busting
+  // Main draft query with direct fetch to avoid body/method conflicts
   const { data: draftData, isLoading, error } = useQuery({
-    queryKey: ['draft-new', draftId, Date.now()],
+    queryKey: ['/api/drafts', draftId],
     queryFn: async () => {
       if (!draftId) return null;
-      const response = await apiRequest('GET', `/api/drafts/${draftId}?bust=${Date.now()}`);
-      return response.json();
+      console.log('[Draft] Direct fetch for draft:', draftId);
+      
+      const response = await fetch(`/api/drafts/${draftId}?cache=${Date.now()}`, {
+        method: 'GET',
+        headers: {
+          ...AuthTokenManager.getAuthHeaders(),
+        },
+        credentials: 'include',
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Draft fetch failed: ${response.status} ${response.statusText}`);
+      }
+      
+      const data = await response.json();
+      console.log('[Draft] API Response received:', data);
+      return data;
     },
     enabled: !!draftId && !authLoading,
     refetchInterval: 1000,
