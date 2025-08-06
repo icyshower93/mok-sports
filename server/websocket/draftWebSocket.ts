@@ -40,24 +40,43 @@ export class DraftWebSocketManager {
       noServer: true // Manual upgrade handling
     });
     
-    // PERMANENT FIX: Enhanced upgrade handling with better error handling and logging
+    // PERMANENT FIX: Enhanced upgrade handling for Reserved VM with better error handling and logging
     server.on('upgrade', (request, socket, head) => {
-      console.log('[WebSocket] 🔍 UPGRADE REQUEST RECEIVED');
+      console.log('[WebSocket] 🔍 UPGRADE REQUEST RECEIVED (Reserved VM)');
       console.log('[WebSocket] URL:', request.url);
       console.log('[WebSocket] Origin:', request.headers.origin);
       console.log('[WebSocket] User-Agent:', request.headers['user-agent']);
       console.log('[WebSocket] Connection header:', request.headers.connection);
       console.log('[WebSocket] Upgrade header:', request.headers.upgrade);
+      console.log('[WebSocket] Host header:', request.headers.host);
+      console.log('[WebSocket] X-Forwarded-For:', request.headers['x-forwarded-for']);
+      console.log('[WebSocket] X-Forwarded-Proto:', request.headers['x-forwarded-proto']);
       
       // Check if this is a draft WebSocket request (handle both paths for compatibility)
       if (request.url?.startsWith('/draft-ws') || request.url?.startsWith('/ws/draft') || request.url?.startsWith('/ws')) {
         console.log('[WebSocket] ✅ HANDLING WEBSOCKET UPGRADE for path:', request.url);
         
         try {
+          // PERMANENT FIX: Enhanced upgrade handling for Reserved VM
           this.wss.handleUpgrade(request, socket, head, (ws) => {
-            console.log('[WebSocket] 🚀 WEBSOCKET UPGRADE SUCCESSFUL');
+            console.log('[WebSocket] 🚀 WEBSOCKET UPGRADE SUCCESSFUL (Reserved VM)');
             console.log('[WebSocket] WebSocket ready state:', ws.readyState);
+            console.log('[WebSocket] WebSocket protocol:', ws.protocol);
+            console.log('[WebSocket] WebSocket extensions:', ws.extensions);
             console.log('[WebSocket] Emitting connection event');
+            
+            // Set immediate ping on connection for Reserved VM health
+            setTimeout(() => {
+              if (ws.readyState === 1) { // OPEN
+                try {
+                  ws.ping();
+                  console.log('[WebSocket] Initial health ping sent');
+                } catch (pingError) {
+                  console.log('[WebSocket] Initial ping failed:', pingError);
+                }
+              }
+            }, 100);
+            
             this.wss.emit('connection', ws, request);
           });
         } catch (error) {
@@ -123,17 +142,28 @@ export class DraftWebSocketManager {
       return;
     }
 
-    // PERMANENT FIX: Send immediate connection confirmation
-    console.log('[WebSocket] ✅ CONNECTION APPROVED - Sending immediate confirmation');
+    // PERMANENT FIX: Send immediate connection confirmation for Reserved VM
+    console.log('[WebSocket] ✅ CONNECTION APPROVED - Sending immediate confirmation for Reserved VM');
     try {
-      ws.send(JSON.stringify({
+      // Send connection confirmation with draft state for immediate sync
+      const confirmationMessage = {
         type: 'connected',
         draftId: draftId,
         userId: userId,
         timestamp: Date.now(),
-        message: 'WebSocket connection established successfully'
-      }));
+        message: 'WebSocket connection established successfully on Reserved VM'
+      };
+      
+      ws.send(JSON.stringify(confirmationMessage));
       console.log('[WebSocket] ✅ Connection confirmation sent successfully');
+      
+      // PERMANENT FIX: Immediately send current draft state to prevent stuck drafts
+      setTimeout(() => {
+        if (ws.readyState === 1) { // OPEN
+          this.broadcastDraftState(draftId);
+          console.log('[WebSocket] ✅ Initial draft state broadcasted for immediate sync');
+        }
+      }, 100);
     } catch (error) {
       console.error('[WebSocket] ❌ Failed to send connection confirmation:', error);
     }
@@ -300,24 +330,35 @@ export class DraftWebSocketManager {
   }
 
   private startHeartbeat() {
+    console.log('[WebSocket] ❤️ Starting enhanced heartbeat system for Reserved VM');
+    
     this.heartbeatInterval = setInterval(() => {
+      console.log('[WebSocket] 💓 Heartbeat check running...');
+      
       this.wss.clients.forEach((ws: any) => {
         const connections = Array.from(this.connections.values()).flat();
         const connection = connections.find(c => c.socket === ws);
         
         if (connection) {
           if (!connection.isAlive) {
-            console.log(`[WebSocket] Terminating dead connection for user ${connection.userId}`);
+            console.log(`[WebSocket] Terminating dead connection for user ${connection.userId} in draft ${connection.draftId}`);
             ws.terminate();
             this.removeConnection(connection);
             return;
           }
           
+          // PERMANENT FIX: Enhanced ping handling for Reserved VM
           connection.isAlive = false;
-          ws.ping();
+          try {
+            ws.ping();
+          } catch (error) {
+            console.log(`[WebSocket] ❌ Ping failed for ${connection.userId}, terminating connection:`, error);
+            ws.terminate();
+            this.removeConnection(connection);
+          }
         }
       });
-    }, 30000); // 30 seconds
+    }, 20000); // Faster heartbeat for Reserved VM (reduced from 30000ms to 20000ms)
   }
 
   private startMetricsCollection() {
@@ -364,16 +405,27 @@ export class DraftWebSocketManager {
   }
 
   public broadcastTimerUpdate(draftId: string, timeRemaining: number) {
-    console.log(`[WebSocket] Broadcasting timer update: ${timeRemaining}s remaining to draft ${draftId}`);
+    console.log(`[WebSocket] Broadcasting timer update: ${timeRemaining}s remaining to draft ${draftId} (Reserved VM)`);
     const connections = this.connections.get(draftId);
     console.log(`[WebSocket] Active connections for draft ${draftId}: ${connections?.length || 0}`);
     
-    this.broadcastToDraft(draftId, {
-      type: 'timer_update',
-      draftId,
-      data: { timeRemaining },
-      timestamp: Date.now()
-    });
+    // PERMANENT FIX: Enhanced timer broadcasting for Reserved VM with validation
+    if (timeRemaining >= 0 && timeRemaining <= 60) {
+      const timerMessage = {
+        type: 'timer_update',
+        draftId,
+        data: { 
+          timeRemaining,
+          serverTimestamp: Date.now() // Add server timestamp for sync validation
+        },
+        timestamp: Date.now()
+      };
+      
+      this.broadcastToDraft(draftId, timerMessage);
+      console.log(`[WebSocket] ✅ Valid timer update broadcasted: ${timeRemaining}s`);
+    } else {
+      console.log(`[WebSocket] ❌ Invalid timer value not broadcasted: ${timeRemaining}s`);
+    }
   }
 
   public broadcastDraftCompleted(draftId: string) {

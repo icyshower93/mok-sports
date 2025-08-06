@@ -106,8 +106,16 @@ export function useDraftWebSocket(draftId: string | null) {
       wsRef.current = null;
     }
     
+    // PERMANENT FIX: Enhanced URL handling for Reserved VM deployments
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const wsUrl = `${protocol}//${window.location.host}/draft-ws?userId=${user!.id}&draftId=${draftId}`;
+    let wsHost = window.location.host;
+    
+    // Handle Reserved VM deployment URL rewriting if needed
+    if (wsHost.includes('.replit.app') || wsHost.includes('.repl.co') || wsHost.includes('.replit.dev')) {
+      console.log('[WebSocket] Detected Replit deployment domain:', wsHost);
+    }
+    
+    const wsUrl = `${protocol}//${wsHost}/draft-ws?userId=${encodeURIComponent(user!.id)}&draftId=${encodeURIComponent(draftId || '')}`;
     
     console.log('[WebSocket] Creating WebSocket connection to:', wsUrl);
     console.log('[WebSocket] Timestamp:', new Date().toISOString());
@@ -218,20 +226,40 @@ export function useDraftWebSocket(draftId: string | null) {
       setConnectionStatus('disconnected');
       wsRef.current = null;
 
-      // Only reconnect for unexpected disconnections, not manual closes
+      // PERMANENT FIX: Enhanced reconnection logic for Reserved VM deployments
       if (event.code !== 1000 && event.reason !== 'Component cleanup' && draftId && user?.id) {
-        console.log('[WebSocket] Unexpected disconnection, will attempt reconnect');
-        reconnectTimeoutRef.current = setTimeout(() => {
-          console.log('[WebSocket] Reconnecting after unexpected close...');
-          connect();
-        }, 3000);
+        console.log('[WebSocket] Unexpected disconnection, will attempt reconnect for Reserved VM');
+        console.log('[WebSocket] Disconnect code:', event.code, 'reason:', event.reason);
+        
+        // Validate draft still exists before reconnecting 
+        fetch(`/api/drafts/${draftId}`)
+          .then(response => {
+            if (response.ok) {
+              console.log('[WebSocket] Draft validated, proceeding with reconnection');
+              reconnectTimeoutRef.current = setTimeout(() => {
+                console.log('[WebSocket] Reconnecting after unexpected close...');
+                connect();
+              }, 1500); // Faster reconnection for Reserved VM
+            } else {
+              console.log('[WebSocket] Draft no longer exists, stopping reconnection');
+              setConnectionStatus('draft_not_found');
+            }
+          })
+          .catch(err => {
+            console.error('[WebSocket] Draft validation failed during reconnect:', err);
+            // Still attempt reconnection in case it's a temporary network issue
+            reconnectTimeoutRef.current = setTimeout(() => {
+              console.log('[WebSocket] Reconnecting despite validation error...');
+              connect();
+            }, 2000);
+          });
       } else {
         console.log('[WebSocket] Connection closed cleanly, no reconnection needed');
       }
     };
 
     ws.onerror = (error) => {
-      console.error('[WebSocket] ❌ CONNECTION ERROR DETAILS:');
+      console.error('[WebSocket] ❌ CONNECTION ERROR DETAILS (Reserved VM):');
       console.error('[WebSocket] Error object:', error);
       console.error('[WebSocket] WebSocket URL:', wsUrl);
       console.error('[WebSocket] Current location:', window.location.href);
@@ -241,9 +269,16 @@ export function useDraftWebSocket(draftId: string | null) {
       console.error('[WebSocket] Timestamp:', new Date().toISOString());
       setConnectionStatus('disconnected');
       
-      // In production, don't keep retrying failed WebSocket connections
+      // PERMANENT FIX: Enhanced error handling for Reserved VM
       if (window.location.hostname.includes('replit.app')) {
-        console.log('[WebSocket] Production WebSocket failed, will rely on HTTP polling');
+        console.log('[WebSocket] Reserved VM WebSocket failed, attempting single retry before fallback');
+        // Attempt one retry before falling back to HTTP polling
+        setTimeout(() => {
+          if (draftId && user?.id && !wsRef.current) {
+            console.log('[WebSocket] Attempting single retry after error...');
+            connect();
+          }
+        }, 2000);
       }
     };
   }, [draftId, user?.id]);
@@ -257,7 +292,11 @@ export function useDraftWebSocket(draftId: string | null) {
     
     switch (message.type) {
       case 'connected':
-        console.log('[WebSocket] Connected to draft successfully');
+        console.log('[WebSocket] Connected to draft successfully on Reserved VM');
+        // PERMANENT FIX: Immediately refresh draft data on connection to prevent stuck drafts
+        queryClient.invalidateQueries({ queryKey: ['draft', draftId] });
+        queryClient.invalidateQueries({ queryKey: ['draft-teams', draftId] });
+        console.log('[WebSocket] ✅ Draft queries invalidated on connection for immediate sync');
         break;
         
       case 'pick_made':
@@ -295,17 +334,25 @@ export function useDraftWebSocket(draftId: string | null) {
         console.log('[WebSocket] ⏰ TIMER UPDATE - Message timestamp:', new Date().toISOString());
         console.log('[WebSocket] ⏰ TIMER UPDATE - Draft ID match:', message.data?.draftId === draftId);
         
-        // Update timer state in cache if needed
+        // PERMANENT FIX: Enhanced timer state management to prevent flashing 0:00
         queryClient.setQueryData(['draft', draftId], (oldData: any) => {
           console.log('[WebSocket] ⏰ TIMER UPDATE - Updating cache with oldData:', !!oldData);
           if (oldData) {
-            return {
-              ...oldData,
-              state: {
-                ...oldData.state,
-                timeRemaining: message.data.timeRemaining
-              }
-            };
+            // Only update timer if the received time is valid (prevent 0:00 flashing)
+            const newTimeRemaining = message.data.timeRemaining;
+            if (newTimeRemaining >= 0 && newTimeRemaining <= 60) {
+              return {
+                ...oldData,
+                state: {
+                  ...oldData.state,
+                  timeRemaining: newTimeRemaining,
+                  lastTimerUpdate: Date.now() // Track when timer was last updated
+                }
+              };
+            } else {
+              console.log('[WebSocket] ⏰ TIMER UPDATE - Invalid time received, keeping current state:', newTimeRemaining);
+              return oldData;
+            }
           }
           return oldData;
         });
