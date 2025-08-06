@@ -109,10 +109,9 @@ export default function DraftPage() {
                      'Full Data:', data);
           
           if (data && data.state) {
-            // Force complete refresh of draft data
-            queryClient.removeQueries({ queryKey: ['draft', draftId] });
-            queryClient.invalidateQueries({ queryKey: ['draft', draftId] });
+            // Update draft data in cache
             queryClient.setQueryData(['draft', draftId], data);
+            queryClient.invalidateQueries({ queryKey: ['draft', draftId] });
             
             // Also refresh picks data
             queryClient.invalidateQueries({ queryKey: ['draft-teams', draftId] });
@@ -138,7 +137,7 @@ export default function DraftPage() {
 
   // Fetch draft state with polling for real-time updates
   const { data: draftData, isLoading, error } = useQuery({
-    queryKey: ['draft', draftId, Date.now()], // Force fresh queries
+    queryKey: ['draft', draftId], // Remove timestamp to allow proper caching
     queryFn: async () => {
       console.log('[Draft] === STARTING DRAFT FETCH ===');
       console.log('[Draft] Draft ID:', draftId);
