@@ -228,7 +228,10 @@ export default function DraftPage() {
       }
     },
     enabled: !!draftId && !authLoading, // Wait for auth to load before making requests
-    refetchInterval: 3000, // Reduce polling frequency to prevent render loops
+    refetchInterval: 1000, // Fast polling to sync timer data
+    refetchIntervalInBackground: true, // Keep polling when tab not focused
+    staleTime: 0, // Always refetch - timer data is always stale
+    cacheTime: 0, // Don't cache timer data - always fresh
     retry: (failureCount, error) => {
       // Don't retry on authentication errors
       if (error instanceof Error && error.message.includes('401')) {
@@ -240,25 +243,20 @@ export default function DraftPage() {
     }
   });
 
-  // Update local timer when we get new server data (AGGRESSIVE SYNC TO FIX FLASHING 0:00)
+  // Update local timer when we get new server data - FORCE IMMEDIATE UPDATE
   useEffect(() => {
-    if (draftData?.state?.timeRemaining !== undefined) {
+    if (draftData?.state?.timeRemaining !== undefined && !isLoading) {
       const serverTime = draftData.state.timeRemaining;
       const currentPick = draftData.state.draft?.currentPick;
       const currentRound = draftData.state.draft?.currentRound;
       
-      console.log(`[Draft] TIMER SYNC DEBUG - Server: ${serverTime}s, Local: ${localTimeRemaining}s, Pick: R${currentRound}P${currentPick}`);
+      console.log(`[Draft] 🚀 IMMEDIATE TIMER UPDATE - Server: ${serverTime}s, Setting Local: ${serverTime}s`);
       
-      // FORCE: Always sync with server time - ignore local countdown when server data available
-      if (serverTime !== localTimeRemaining) {
-        console.log(`[Draft] 🔄 CORRECTING timer: ${localTimeRemaining}s → ${serverTime}s`);
-        setLocalTimeRemaining(serverTime);
-        setLastServerUpdate(Date.now());
-      }
-      
-      // Timer sync completed
+      // FORCE IMMEDIATE UPDATE - Always use server time
+      setLocalTimeRemaining(serverTime);
+      setLastServerUpdate(Date.now());
     }
-  }, [draftData?.state?.timeRemaining, draftData?.state?.draft?.currentPick, draftData?.state?.draft?.currentRound, draftData?.isLoading]);
+  }, [draftData?.state?.timeRemaining, draftData?.state?.draft?.currentPick, isLoading]);
 
   // Local countdown timer for smooth second-by-second updates (DISABLED WHEN SERVER DATA FRESH)
   useEffect(() => {
