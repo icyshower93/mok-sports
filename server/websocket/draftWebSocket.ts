@@ -191,6 +191,31 @@ export class DraftWebSocketManager {
           }));
           return;
         }
+
+        // Handle client identification
+        if (message.type === 'identify') {
+          console.log(`[WebSocket] Client identified - UserID: ${userId}, ConnectionID: ${message.connectionId}`);
+          console.log(`[WebSocket] Client User-Agent: ${message.userAgent}`);
+          connection.isAlive = true;
+          ws.send(JSON.stringify({
+            type: 'identified',
+            connectionId: message.connectionId,
+            timestamp: Date.now()
+          }));
+          return;
+        }
+
+        // Handle keep-alive
+        if (message.type === 'keep_alive') {
+          console.log(`[WebSocket] Keep-alive from user ${userId}, ConnectionID: ${message.connectionId}`);
+          connection.isAlive = true;
+          ws.send(JSON.stringify({
+            type: 'keep_alive_ack',
+            connectionId: message.connectionId,
+            timestamp: Date.now()
+          }));
+          return;
+        }
         
         this.handleMessage(connection, message);
       } catch (error) {

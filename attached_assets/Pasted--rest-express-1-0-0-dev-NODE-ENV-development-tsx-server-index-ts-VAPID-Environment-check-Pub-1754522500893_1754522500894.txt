@@ -1,0 +1,96 @@
+> rest-express@1.0.0 dev
+> NODE_ENV=development tsx server/index.ts
+
+[VAPID] Environment check - Public key length: 87, Private key length: 43
+[VAPID] Using environment VAPID keys
+[Server] Serving built assets from: /home/runner/workspace/dist/public
+[Server] Static file serving configured for PWA
+[DB] New client connected to pool
+[RobotManager] Initialized 4 robot users
+[System] Robot users initialized for testing
+[Server] 🚀 HTTP server created, initializing WebSocket...
+[WebSocket] Draft WebSocket server initialized on /draft-ws
+[WebSocket] WebSocket server listening for connections...
+[WebSocket] Server configuration: { path: '/draft-ws', port: 'not listening' }
+[Server] ✅ WebSocket server initialized (handles /draft-ws and /ws/draft paths)
+[Redis] Found Redis connection string in UPSTASH_REDIS_REST_URL
+[Redis] Using Redis connection string
+[RedisStateManager] Initialized
+[Server] ✅ Global draft manager updated with WebSocket and Robot managers
+[WebSocket] Draft WebSocket server initialized and connected
+[Redis] Client initialized
+[RedisStateManager] Initialized
+🔄 Recovering active timers after restart...
+✅ Recovered 0 active timers
+[Server] Using built assets, skipping Vite middleware
+[Auth] No token found in header or cookies
+[Auth] Available cookies: []
+[Auth] Authorization header: undefined
+[Auth] Development mode - returning Sky Evans
+[Draft Auth] No token found in header or cookies
+[Draft Auth] Development mode - returning Sky Evans for draft access
+[Auth] No token found in header or cookies
+[Auth] Available cookies: []
+[Auth] Authorization header: undefined
+[Auth] Development mode - returning Sky Evans
+[DB] New client connected to pool
+[DEBUG] Fresh timer lookup for draft 82b3103b-161d-42ae-9b64-60fb907fdec2: 0s remaining
+🔍 [DraftState] Fresh database fetch - Round 1, Pick 1
+🔍 [DraftState] Returning state - Round 1, Pick 1, Timer: 0s
+[Draft Auth] No token found in header or cookies
+[Draft Auth] Development mode - returning Sky Evans for draft access
+[WebSocket] 🔍 UPGRADE REQUEST RECEIVED
+[WebSocket] URL: /draft-ws?userId=9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a&draftId=82b3103b-161d-42ae-9b64-60fb907fdec2
+[WebSocket] Origin: http://127.0.0.1:5000
+[WebSocket] User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/118.0.5993.88 Safari/537.36
+[WebSocket] Connection header: Upgrade
+[WebSocket] Upgrade header: websocket
+[WebSocket] ✅ HANDLING WEBSOCKET UPGRADE for path: /draft-ws?userId=9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a&draftId=82b3103b-161d-42ae-9b64-60fb907fdec2
+[WebSocket] 🚀 WEBSOCKET UPGRADE SUCCESSFUL
+[WebSocket] WebSocket ready state: 1
+[WebSocket] Emitting connection event
+[WebSocket] ========== NEW CONNECTION RECEIVED ==========
+[WebSocket] Request URL: /draft-ws?userId=9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a&draftId=82b3103b-161d-42ae-9b64-60fb907fdec2
+[WebSocket] Remote address: 127.0.0.1
+[WebSocket] Connection ready state: 1
+[WebSocket] Connection timestamp: 2025-08-06T23:20:28.144Z
+[WebSocket] Extracted parameters:
+[WebSocket] - userId: 9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a
+[WebSocket] - draftId: 82b3103b-161d-42ae-9b64-60fb907fdec2
+[WebSocket] ================================================
+[WebSocket] ✅ CONNECTION APPROVED - Sending immediate confirmation
+[WebSocket] ✅ Connection confirmation sent successfully
+[WebSocket] ✅ CONNECTION APPROVED - Creating connection object
+[WebSocket] - User: 9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a
+[WebSocket] - Draft: 82b3103b-161d-42ae-9b64-60fb907fdec2
+[WebSocket] Created new connection array for draft 82b3103b-161d-42ae-9b64-60fb907fdec2
+[WebSocket] Before adding connection - draft 82b3103b-161d-42ae-9b64-60fb907fdec2 has 0 connections
+[WebSocket] ✅ User 9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a connected to draft 82b3103b-161d-42ae-9b64-60fb907fdec2. Total connections: 1
+[WebSocket] All active users for draft 82b3103b-161d-42ae-9b64-60fb907fdec2: [ '9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a' ]
+[WebSocket] Ping received from user 9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a
+[DEBUG] Fresh timer lookup for draft 82b3103b-161d-42ae-9b64-60fb907fdec2: 0s remaining
+🔍 [DraftState] Fresh database fetch - Round 1, Pick 1
+🔍 [DraftState] Returning state - Round 1, Pick 1, Timer: 0s
+[WebSocket] CLOSE EVENT - User 9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a disconnecting
+[WebSocket] Close code: 1001, reason: 
+[WebSocket] Connection was alive for: 0
+[WebSocket] User 9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a disconnected from draft 82b3103b-161d-42ae-9b64-60fb907fdec2
+[Auth] No token found in header or cookies
+[Auth] Available cookies: []
+[Auth] Authorization header: undefined
+[Auth] Development mode - returning Sky Evans
+[WebSocket] ========== CONNECTION METRICS ==========
+[WebSocket] Total connections: 1
+[WebSocket] Active connections: 0
+[WebSocket] Messages/sec: 0.03
+[WebSocket] Total messages: 1
+[WebSocket] Errors: 0
+[WebSocket] Disconnections: 1
+[WebSocket] =============================================
+[WebSocket] ========== CONNECTION METRICS ==========
+[WebSocket] Total connections: 1
+[WebSocket] Active connections: 0
+[WebSocket] Messages/sec: 0.00
+[WebSocket] Total messages: 0
+[WebSocket] Errors: 0
+[WebSocket] Disconnections: 1

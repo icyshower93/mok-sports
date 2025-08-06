@@ -14,6 +14,7 @@ import { apiRequest, AuthTokenManager } from "@/lib/queryClient";
 import { useDraftWebSocket } from "@/hooks/use-draft-websocket";
 import { useSimpleWebSocket } from "@/hooks/use-simple-websocket";
 import { usePersistentWebSocket } from "@/hooks/use-persistent-websocket";
+import { useStableWebSocket } from "@/hooks/use-stable-websocket";
 import { useAuth } from "@/hooks/use-auth";
 import { trackModuleError } from "@/debug-tracker";
 
@@ -89,6 +90,9 @@ export default function DraftPage() {
   
   // TEST: Persistent WebSocket with browser-specific handling
   const { status: persistentStatus, isConnected: persistentConnected, connectionAttempts } = usePersistentWebSocket(draftId, user?.id || '');
+  
+  // FINAL TEST: Stable WebSocket implementation
+  const { status: stableStatus, isConnected: stableConnected, connectionId } = useStableWebSocket(draftId, user?.id || '');
 
   // Redirect if no draft ID
   useEffect(() => {
@@ -481,6 +485,8 @@ export default function DraftPage() {
                 <div>Original: {connectionStatus}</div>
                 <div>Simple: {simpleStatus}</div>
                 <div>Persistent: {persistentStatus} (attempts: {connectionAttempts})</div>
+                <div>Stable: {stableStatus} (ID: {connectionId})</div>
+                <div>Stable: {stableStatus} (ID: {connectionId})</div>
               </div>
             </div>
           </div>
