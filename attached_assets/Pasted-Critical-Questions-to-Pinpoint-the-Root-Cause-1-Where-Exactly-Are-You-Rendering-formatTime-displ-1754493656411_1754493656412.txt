@@ -1,0 +1,99 @@
+Critical Questions to Pinpoint the Root Cause
+🔎 1. Where Exactly Are You Rendering formatTime(displayTime)?
+Please show the exact JSX line like this:
+
+tsx
+Copy
+Edit
+<span>{formatTime(displayTime)}</span>
+If displayTime is draftData?.state?.timeRemaining ?? 0, this should always reflect backend updates.
+
+BUT if the render looks like:
+
+tsx
+Copy
+Edit
+const [localDisplayTime, setLocalDisplayTime] = useState(0);
+// ...
+useEffect(() => {
+  setLocalDisplayTime(draftData?.state?.timeRemaining ?? 0);
+}, [draftData]);
+// ...
+<span>{formatTime(localDisplayTime)}</span>
+⛔ That would break it — because you're relying on useEffect to sync state, which has a delay.
+
+🔎 2. Is the Component Actually Re-Rendering When the Query Refetches?
+Even though console.log() is logging new values, React won’t re-render if:
+
+The component holding <span>{formatTime(...)</span> is not reacting to prop/state change.
+
+It’s wrapped in React.memo() or has a stale closure.
+
+✅ Add this directly inside the component (not in useEffect):
+
+tsx
+Copy
+Edit
+console.log("[RENDER CHECK] Rendering display, timeRemaining:", draftData?.state?.timeRemaining);
+You should see this log every second.
+
+If you do not, then:
+
+You're logging inside a useEffect, not render.
+
+The component isn't rerendering despite state changing.
+
+🔎 3. Is the Component Tree Blocking Updates?
+React Query uses context under the hood. If your component is wrapped like this:
+
+tsx
+Copy
+Edit
+<DraftProvider>
+  <TimerDisplay />
+</DraftProvider>
+And DraftProvider is memoized or does shallow comparisons, it might block re-renders. Especially if TimerDisplay is reading data via context instead of directly from useQuery.
+
+✅ Make sure the component consuming the timer is directly reading from useQuery(), or from a context that re-renders when data changes.
+
+✅ Final Debug Checklist
+Please do the following in draft.tsx (or the actual component showing the timer):
+
+Replace display with direct render:
+
+tsx
+Copy
+Edit
+<p>Time Remaining: {formatTime(draftData?.state?.timeRemaining ?? -1)}</p>
+Place console in render, not useEffect:
+
+tsx
+Copy
+Edit
+console.log("[RENDER] timeRemaining = ", draftData?.state?.timeRemaining);
+Verify that number changes every second:
+If this number updates in console but NOT in the DOM, then:
+
+You have stale closure
+
+OR a conflicting render-blocking wrapper
+
+Temporarily move this block to top of the page:
+Just to eliminate layout bugs or context issues:
+
+tsx
+Copy
+Edit
+// Very top of draft.tsx:
+export default function DraftPage() {
+  const { data: draftData } = useQuery(...);
+  console.log("Timer:", draftData?.state?.timeRemaining);
+
+  return (
+    <div>
+      <h1>Timer: {formatTime(draftData?.state?.timeRemaining ?? -1)}</h1>
+    </div>
+  );
+}
+If this now works... the issue is somewhere in your component hierarchy blocking re-renders or overwriting state.
+

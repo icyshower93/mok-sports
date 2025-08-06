@@ -65,13 +65,33 @@ export default function DraftPage() {
   const queryClient = useQueryClient();
   const { user, isLoading: authLoading, isAuthenticated } = useAuth();
   
+  // Extract draft ID early for critical test
+  const params = useParams();
+  const draftId = (params as any).draftId;
+  
+  // CRITICAL TEST - TOP OF PAGE TIMER (bypassing all component hierarchy)
+  const { data: testDraftData } = useQuery({
+    queryKey: ['draft-test', draftId],
+    queryFn: async () => {
+      if (!draftId) return null;
+      const response = await apiRequest('GET', `/api/drafts/${draftId}?test=${Date.now()}`);
+      return response.json();
+    },
+    enabled: !!draftId && !authLoading,
+    refetchInterval: 1000,
+    refetchIntervalInBackground: true,
+    staleTime: 0,
+    gcTime: 0
+  });
+  
+  console.log(`[CRITICAL TEST] Top-level timer: ${testDraftData?.state?.timeRemaining}`);
+  
+  // If this shows a different timer (or the timer works here), we know it's a component hierarchy issue
+  
   // EMERGENCY DEBUG - Check if this line is reached  
   console.log('[Draft] EMERGENCY DEBUG: Auth loaded, authLoading:', authLoading, 'user:', !!user, 'isAuthenticated:', isAuthenticated, 'rendered at:', new Date().toISOString());
   console.log('[Draft] RENDER TIMING - Time since component start:', Date.now() - performance.now());
   
-  // Extract draft ID from URL params using wouter
-  const params = useParams();
-  const draftId = (params as any).draftId;
   const [selectedTeam, setSelectedTeam] = useState<string | null>(null);
   
   // Removed local timer state - using server data directly
@@ -204,8 +224,9 @@ export default function DraftPage() {
   // Display timer directly from server data - with debugging
   const displayTime = draftData?.state?.timeRemaining ?? 0;
   
+  // CRITICAL DEBUG - IN RENDER, NOT USEEFFECT
+  console.log(`[RENDER CHECK] Rendering display, timeRemaining: ${draftData?.state?.timeRemaining}`);
   console.log(`[Draft] USING draftId: ${draftId}`);
-  console.log(`[Draft] REAL-TIME SERVER DATA - Timer: ${draftData?.state?.timeRemaining}s`);
   
   // Force re-render logging on data change
   useEffect(() => {
@@ -444,7 +465,13 @@ export default function DraftPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-secondary/20">
-      <div className="container mx-auto px-4 py-6">
+      {/* CRITICAL TEST DISPLAY - TOP OF PAGE */}
+      <div className="fixed top-0 left-0 z-50 bg-red-500 text-white p-2 text-sm font-mono">
+        CRITICAL TEST Timer: {testDraftData?.state?.timeRemaining ?? 'loading'} 
+        | formatTime: {testDraftData?.state?.timeRemaining ? formatTime(testDraftData.state.timeRemaining) : 'N/A'}
+      </div>
+      
+      <div className="container mx-auto px-4 py-6 pt-16">
         <div className="max-w-7xl mx-auto">
           
           {/* Header */}
@@ -525,7 +552,7 @@ export default function DraftPage() {
                           displayTime <= 10 ? 'text-red-500 animate-pulse' : 
                           displayTime <= 30 ? 'text-orange-500' : 'text-foreground'
                         }`}>
-                          {formatTime(displayTime)}
+                          {formatTime(draftData?.state?.timeRemaining ?? -1)}
                         </div>
                         
                         {/* Enhanced Progress Bar */}
