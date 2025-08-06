@@ -22,10 +22,10 @@ async function setupProductionAssets(app: express.Application) {
       lastModified: true,
       setHeaders: (res, filePath) => {
         console.log('[Assets] Setting headers for:', filePath);
-        if (filePath.endsWith('.js') || filePath.endsWith('.mjs')) {
+        if (filePath.endsWith('.js')) {
           res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
           res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
-          console.log('[Assets] JS file served with correct MIME type:', filePath);
+          console.log('[Assets] JS file served with correct MIME type');
         } else if (filePath.endsWith('.css')) {
           res.setHeader('Content-Type', 'text/css; charset=utf-8');
           res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
@@ -135,15 +135,12 @@ app.use((req, res, next) => {
 
   // CRITICAL: Configure static asset serving BEFORE any other routes
   const hasBuiltAssets = await setupProductionAssets(app);
-  console.log('[Server] Built assets status:', hasBuiltAssets);
 
-  // Only block development files in production with built assets
-  if (hasBuiltAssets && app.get("env") === "production") {
-    app.use('/src', (req, res, next) => {
-      console.log('[Server] BLOCKING development file request in production:', req.path);
-      res.status(404).json({ error: 'Development files not available in production' });
-    });
-  }
+  // Add middleware to prevent caching of development files
+  app.use('/src', (req, res, next) => {
+    console.log('[Server] BLOCKING development file request:', req.path);
+    res.status(404).json({ error: 'Development files not available in production' });
+  });
 
   const server = await registerRoutes(app);
   
@@ -160,40 +157,42 @@ app.use((req, res, next) => {
     console.error('Failed to initialize Redis or recover timers on startup:', error);
   }
 
-  // Set up static serving for both development (with built assets) and production
-  if (hasBuiltAssets) {
-    console.log('[Server] Using built assets for static serving');
-    // Add catch-all for SPA routing after all static routes are configured
-    app.get('*', (req, res, next) => {
-      // Don't intercept API routes - let them go to registerRoutes
-      if (req.path.startsWith('/api/')) {
-        return next();
-      }
-      
-      // Don't intercept asset requests - already handled by static middleware above
-      if (req.path.startsWith('/assets/') || 
-          req.path.endsWith('.js') || 
-          req.path.endsWith('.css') ||
-          req.path.endsWith('.json') ||
-          req.path.endsWith('.ico') ||
-          req.path.endsWith('.png') ||
-          req.path.endsWith('.svg') ||
-          req.path.endsWith('.woff2') ||
-          req.path.endsWith('.manifest') ||
-          req.path === '/sw.js' ||
-          req.path === '/manifest.json') {
-        return next();
-      }
-      
-      // Serve the built index.html for all SPA routes
-      const indexPath = path.resolve(import.meta.dirname, "..", "dist", "public", "index.html");
-      res.sendFile(indexPath);
-    });
-  } else if (app.get("env") === "development") {
+  // Set up Vite or static serving based on environment
+  if (app.get("env") === "development") {
     // Only use Vite middleware if we don't have built assets
-    await setupVite(app, server);
+    // This prevents Vite from intercepting asset requests
+    if (!hasBuiltAssets) {
+      await setupVite(app, server);
+    } else {
+      console.log('[Server] Using built assets, skipping Vite middleware');
+      // Add catch-all for SPA routing (only for non-asset routes)
+      app.get('*', (req, res, next) => {
+        // Don't intercept API routes
+        if (req.path.startsWith('/api/')) {
+          return next();
+        }
+        
+        // Don't intercept asset requests or static files
+        if (req.path.startsWith('/assets/') || 
+            req.path.endsWith('.js') || 
+            req.path.endsWith('.css') ||
+            req.path.endsWith('.json') ||
+            req.path.endsWith('.ico') ||
+            req.path.endsWith('.png') ||
+            req.path.endsWith('.svg') ||
+            req.path.endsWith('.woff2') ||
+            req.path.endsWith('.manifest') ||
+            req.path === '/sw.js' ||
+            req.path === '/manifest.json') {
+          return next();
+        }
+        
+        // Serve the built index.html for all SPA routes
+        const indexPath = path.resolve(import.meta.dirname, "..", "dist", "public", "index.html");
+        res.sendFile(indexPath);
+      });
+    }
   } else {
-    // Production mode without built assets - fallback
     serveStatic(app);
   }
 

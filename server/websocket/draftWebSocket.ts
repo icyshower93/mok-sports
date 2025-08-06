@@ -56,9 +56,8 @@ export class DraftWebSocketManager {
           this.wss.emit('connection', ws, request);
         });
       } else {
-        // Don't handle non-draft websockets - let other handlers take care of them
-        console.log('[WebSocket] ⚡ SKIPPING NON-DRAFT UPGRADE (letting Vite handle):', request.url);
-        // Don't destroy the socket - let other upgrade handlers process it
+        console.log('[WebSocket] ❌ REJECTING NON-DRAFT UPGRADE:', request.url);
+        socket.destroy();
       }
     });
 

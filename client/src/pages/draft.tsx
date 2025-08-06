@@ -14,7 +14,6 @@ import { apiRequest, AuthTokenManager } from "@/lib/queryClient";
 import { useDraftWebSocket } from "@/hooks/use-draft-websocket";
 import { useAuth } from "@/hooks/use-auth";
 import { trackModuleError } from "@/debug-tracker";
-import { BUILD_TIMESTAMP } from "../build-timestamp";
 
 interface NflTeam {
   id: string;
@@ -58,41 +57,21 @@ interface DraftState {
 }
 
 export default function DraftPage() {
-  console.log('[Draft] Component render started - TIME:', Date.now(), 'BUILD:', BUILD_TIMESTAMP);
-  console.log('[Draft] FIRST DEBUG LINE - Component starting - NO localTimeRemaining ANYWHERE');
+  console.log('[Draft] Component render started - TIME:', Date.now());
+  console.log('[Draft] FIRST DEBUG LINE - Component starting');
   
   const [location, navigate] = useLocation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { user, isLoading: authLoading, isAuthenticated } = useAuth();
   
-  // Extract draft ID early for critical test
-  const params = useParams();
-  const draftId = (params as any).draftId;
-  
-  // CRITICAL TEST - TOP OF PAGE TIMER (bypassing all component hierarchy)
-  const { data: testDraftData } = useQuery({
-    queryKey: ['draft-test', draftId],
-    queryFn: async () => {
-      if (!draftId) return null;
-      const response = await apiRequest('GET', `/api/drafts/${draftId}?test=${Date.now()}`);
-      return response.json();
-    },
-    enabled: !!draftId && !authLoading,
-    refetchInterval: 1000,
-    refetchIntervalInBackground: true,
-    staleTime: 0,
-    gcTime: 0
-  });
-  
-  console.log(`[CRITICAL TEST] Top-level timer: ${testDraftData?.state?.timeRemaining}`);
-  
-  // If this shows a different timer (or the timer works here), we know it's a component hierarchy issue
-  
   // EMERGENCY DEBUG - Check if this line is reached  
   console.log('[Draft] EMERGENCY DEBUG: Auth loaded, authLoading:', authLoading, 'user:', !!user, 'isAuthenticated:', isAuthenticated, 'rendered at:', new Date().toISOString());
   console.log('[Draft] RENDER TIMING - Time since component start:', Date.now() - performance.now());
   
+  // Extract draft ID from URL params using wouter
+  const params = useParams();
+  const draftId = (params as any).draftId;
   const [selectedTeam, setSelectedTeam] = useState<string | null>(null);
   
   // Removed local timer state - using server data directly
@@ -127,17 +106,18 @@ export default function DraftPage() {
       try {
         console.log('[Draft] Making API request to:', `/api/drafts/${draftId}`);
         
-        // Use the apiRequest function with cache-busting headers
-        const response = await apiRequest('GET', `/api/drafts/${draftId}?cache=${Date.now()}`, {
-          headers: {
-            'Cache-Control': 'no-cache, no-store, must-revalidate',
-            'Pragma': 'no-cache',
-            'Expires': '0'
-          }
+        // Use the apiRequest function to include authentication headers
+        const response = await apiRequest('GET', `/api/drafts/${draftId}`);
+        
+        console.log('[Draft] Response received:', {
+          status: response.status,
+          statusText: response.statusText,
+          headers: Object.fromEntries(response.headers.entries())
         });
         
         const data = await response.json();
-        console.log(`[Draft] FRESH DATA FETCHED - Timer: ${data.state?.timeRemaining}s, Round: ${data.state?.draft?.currentRound}, Pick: ${data.state?.draft?.currentPick}`);
+        console.log('[Draft] Successfully fetched draft data:', data);
+        console.log('[Draft] === DRAFT FETCH SUCCESS ===');
         return data;
       } catch (error) {
         console.error('[Draft] === DRAFT FETCH ERROR ===');
@@ -202,10 +182,9 @@ export default function DraftPage() {
     },
     enabled: !!draftId && !authLoading, // Wait for auth to load before making requests
     refetchInterval: 1000, // Refetch every 1 second for real-time timer
-    refetchIntervalInBackground: true, // Continue polling when tab not focused
+    refetchIntervalInBackground: true, // Continue polling in background
     staleTime: 0, // Never trust cached data - always stale
     gcTime: 0, // React Query v5: disable caching completely for real-time data
-    networkMode: 'always', // Always try to refetch regardless of network status
     retry: (failureCount, error) => {
       // Don't retry on authentication errors
       if (error instanceof Error && error.message.includes('401')) {
@@ -222,17 +201,8 @@ export default function DraftPage() {
     console.error('Draft fetch error:', error);
   }
 
-  // Display timer directly from server data - with debugging
+  // Display timer directly from server data
   const displayTime = draftData?.state?.timeRemaining ?? 0;
-  
-  // CRITICAL DEBUG - IN RENDER, NOT USEEFFECT
-  console.log(`[RENDER CHECK] Rendering display, timeRemaining: ${draftData?.state?.timeRemaining}`);
-  console.log(`[Draft] USING draftId: ${draftId}`);
-  
-  // Force re-render logging on data change
-  useEffect(() => {
-    console.log(`[Draft] 🔄 COMPONENT RE-RENDER - Server Timer: ${draftData?.state?.timeRemaining}s`);
-  }, [draftData?.state?.timeRemaining]);
 
   // Local countdown disabled - use server data only for now
   // This prevents conflicts between local countdown and server sync
@@ -276,8 +246,8 @@ export default function DraftPage() {
 
   // Timer expiration monitoring (simplified)
   useEffect(() => {
-    console.log('[Draft] Timer expiration useEffect called - displayTime:', displayTime);
-  }, [displayTime, draftData?.state?.timeRemaining]);
+    console.log('[Draft] Timer expiration useEffect called');
+  }, [localTimeRemaining, draftData?.state?.timeRemaining]);
 
   console.log('[Draft] All hooks declared, starting conditional logic');
   console.log('[Draft] RENDER DEBUG - authLoading:', authLoading, 'isLoading:', isLoading, 'error:', !!error, 'draftData:', !!draftData, 'isAuthenticated:', isAuthenticated, 'Time:', Date.now());
@@ -366,7 +336,7 @@ export default function DraftPage() {
   // INTENSIVE DEBUG LOGGING FOR TIMER ISSUE
   console.log('🔍 [TIMER DEBUG] === FRONTEND DATA RECEIVED ===');
   console.log('🔍 [TIMER DEBUG] Server Time:', state.timeRemaining);
-  console.log('🔍 [TIMER DEBUG] Display Time:', displayTime);
+  console.log('🔍 [TIMER DEBUG] Local Time:', localTimeRemaining);
   console.log('🔍 [TIMER DEBUG] Current User ID:', state.currentUserId);
   console.log('🔍 [TIMER DEBUG] Draft Round/Pick:', state.draft.currentRound, '/', state.draft.currentPick);
   console.log('🔍 [TIMER DEBUG] Draft Order:', state.draft.draftOrder);
@@ -466,13 +436,7 @@ export default function DraftPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-secondary/20">
-      {/* CRITICAL TEST DISPLAY - TOP OF PAGE */}
-      <div className="fixed top-0 left-0 z-50 bg-red-500 text-white p-2 text-sm font-mono">
-        CRITICAL TEST Timer: {testDraftData?.state?.timeRemaining ?? 'loading'} 
-        | formatTime: {testDraftData?.state?.timeRemaining ? formatTime(testDraftData.state.timeRemaining) : 'N/A'}
-      </div>
-      
-      <div className="container mx-auto px-4 py-6 pt-16">
+      <div className="container mx-auto px-4 py-6">
         <div className="max-w-7xl mx-auto">
           
           {/* Header */}
@@ -553,7 +517,7 @@ export default function DraftPage() {
                           displayTime <= 10 ? 'text-red-500 animate-pulse' : 
                           displayTime <= 30 ? 'text-orange-500' : 'text-foreground'
                         }`}>
-                          {formatTime(draftData?.state?.timeRemaining ?? -1)}
+                          {formatTime(displayTime)}
                         </div>
                         
                         {/* Enhanced Progress Bar */}
