@@ -248,10 +248,16 @@ export default function DraftPage() {
       const currentRound = draftData.state.draft?.currentRound;
       
       console.log(`[Draft] TIMER SYNC DEBUG - Server: ${serverTime}s, Local: ${localTimeRemaining}s, Pick: R${currentRound}P${currentPick}`);
-      console.log(`[Draft] 🚨 API STRUCTURE CRITICAL - fullData:`, JSON.stringify(draftData));
-      console.log(`[Draft] 🚨 API STRUCTURE CRITICAL - stateOnly:`, JSON.stringify(draftData?.state));
-      console.log(`[Draft] 🚨 API STRUCTURE CRITICAL - timerPath:`, draftData?.state?.timeRemaining);
-      console.log(`[Draft] 🚨 EXACT TIMER PATH:`, draftData.state.timeRemaining);
+      
+      // CRITICAL: Direct API inspection without JSON.stringify
+      console.log(`[Draft] 🔍 DIRECT API INSPECTION:`);
+      console.log(`[Draft] 🔍 typeof draftData:`, typeof draftData);
+      console.log(`[Draft] 🔍 draftData keys:`, Object.keys(draftData || {}));
+      console.log(`[Draft] 🔍 draftData.state:`, draftData?.state);
+      console.log(`[Draft] 🔍 typeof draftData.state:`, typeof draftData?.state);
+      console.log(`[Draft] 🔍 draftData.state keys:`, Object.keys(draftData?.state || {}));
+      console.log(`[Draft] 🔍 DIRECT TIMER:`, draftData?.state?.timeRemaining);
+      console.log(`[Draft] 🔍 TIMER TYPE:`, typeof draftData?.state?.timeRemaining);
       
       // FORCE: Always sync with server time - ignore local countdown when server data available
       if (serverTime !== localTimeRemaining) {
