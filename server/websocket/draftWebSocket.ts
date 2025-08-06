@@ -200,7 +200,11 @@ export class DraftWebSocketManager {
     });
 
     // Handle connection close
-    ws.on('close', () => {
+    ws.on('close', (code, reason) => {
+      console.log(`[WebSocket] CLOSE EVENT - User ${userId} disconnecting`);
+      console.log(`[WebSocket] Close code: ${code}, reason: ${reason.toString()}`);
+      console.log(`[WebSocket] Connection was alive for:`, Date.now() - Date.parse(new Date().toISOString()));
+      
       this.removeConnection(connection);
       this.connectionStats.activeConnections--;
       this.connectionStats.disconnections++;

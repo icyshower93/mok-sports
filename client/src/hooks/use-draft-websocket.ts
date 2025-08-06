@@ -379,22 +379,23 @@ export function useDraftWebSocket(draftId: string | null) {
     // NO CLEANUP FUNCTION - let connections live until explicitly closed
   }, [draftId, user?.id]);
 
-  // Component unmount cleanup ONLY
-  useEffect(() => {
-    const cleanupOnUnmount = () => {
-      console.log('[WebSocket] 🧹 COMPONENT UNMOUNTING - Final cleanup');
-      if (wsRef.current) {
-        wsRef.current.close(1000, 'Component unmount');
-        wsRef.current = null;
-      }
-      if (reconnectTimeoutRef.current) {
-        clearTimeout(reconnectTimeoutRef.current);
-        reconnectTimeoutRef.current = null;
-      }
-    };
+  // CRITICAL FIX: Remove cleanup that causes premature disconnections
+  // Component unmount cleanup DISABLED to prevent immediate disconnections
+  // useEffect(() => {
+  //   const cleanupOnUnmount = () => {
+  //     console.log('[WebSocket] 🧹 COMPONENT UNMOUNTING - Final cleanup');
+  //     if (wsRef.current) {
+  //       wsRef.current.close(1000, 'Component unmount');
+  //       wsRef.current = null;
+  //     }
+  //     if (reconnectTimeoutRef.current) {
+  //       clearTimeout(reconnectTimeoutRef.current);
+  //       reconnectTimeoutRef.current = null;
+  //     }
+  //   };
 
-    return cleanupOnUnmount;
-  }, []); // Empty dependency - only run on mount/unmount
+  //   return cleanupOnUnmount;
+  // }, []); // Empty dependency - only run on mount/unmount
 
   return {
     connectionStatus,

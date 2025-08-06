@@ -54,13 +54,14 @@ export function useSimpleWebSocket(draftId: string, userId: string) {
       setStatus('disconnected');
     };
 
-    // Cleanup ONLY on unmount or parameter change
-    return () => {
-      console.log('[SimpleWS] Cleanup - closing connection');
-      if (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING) {
-        ws.close(1000, 'Component cleanup');
-      }
-    };
+    // CRITICAL: NO CLEANUP - Let connection persist
+    // The cleanup function may be causing premature disconnections
+    // return () => {
+    //   console.log('[SimpleWS] Cleanup - closing connection');
+    //   if (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING) {
+    //     ws.close(1000, 'Component cleanup');
+    //   }
+    // };
   }, [draftId, userId]);
 
   return {
