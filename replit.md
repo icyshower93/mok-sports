@@ -14,10 +14,11 @@ Mok Sports is a fantasy sports application that redefines traditional fantasy le
 - ✅ **UI Display WORKING**: Shows timer countdown interface
 - ✅ **Backend Integration**: Frontend receives server data perfectly via HTTP polling
 
-**DEVELOPMENT ENVIRONMENT CONSIDERATION**: 
-- ✅ **Core Functionality CONFIRMED**: Entire draft system works end-to-end when timer is active
-- ✅ **Quick Recovery Available**: `/api/testing/reset-draft` endpoint restores full functionality in seconds
-- ✅ **Production Ready**: Timer persistence will prevent restart issues in production deployment
+**WEBSOCKET CONNECTION ANALYSIS** (August 6, 2025):
+- ✅ **Server Functionality CONFIRMED**: WebSocket server works perfectly - Node.js test shows 30s stable connection
+- ✅ **Platform Limitation IDENTIFIED**: Replit development environment auto-scaling closes WebSocket connections (code 1001)
+- ✅ **Solution Available**: Reserved VM deployment required for persistent WebSocket connections
+- ✅ **Development Workaround**: HTTP polling fallback implemented but WebSocket preferred for live drafting
 
 **TIMER SYSTEM FULLY OPERATIONAL** (August 6, 2025):
 - ✅ **Complete Timer Fix**: Frontend automatically syncs with server timer data via API

@@ -83,8 +83,8 @@ export default function DraftPage() {
 
   console.log('[Draft] All useState hooks declared');
 
-  // Use Replit-optimized connection as primary (HTTP fallback works reliably)
-  const { status: connectionStatus, isConnected, lastMessage, connectionType } = useReplitWebSocket(draftId, user?.id || '');
+  // Use primary WebSocket connection for live drafting
+  const { connectionStatus, isConnected, lastMessage } = useDraftWebSocket(draftId);
   
   // Keep diagnostic implementations for comparison (can be removed later)
   const { status: originalStatus } = useDraftWebSocket(draftId);
@@ -478,26 +478,24 @@ export default function DraftPage() {
                 {state.draft.status.toUpperCase()}
               </Badge>
               
-              {/* Connection Status Display */}
+              {/* WebSocket Connection Status */}
               <div className="flex items-center space-x-2 text-xs">
                 {isConnected ? 
                   <Wifi className="w-3 h-3 text-green-500" /> : 
                   <WifiOff className="w-3 h-3 text-red-500" />
                 }
                 <span className={isConnected ? 'text-green-600' : 'text-red-600'}>
-                  {connectionType === 'HTTP' ? 'Live Updates (HTTP)' : 
-                   isConnected ? 'Connected (WebSocket)' : 'Connecting...'}
+                  {isConnected ? 'Live Draft (WebSocket)' : 'Connecting to draft...'}
                 </span>
               </div>
               
-              {/* DIAGNOSTIC: All implementation statuses */}
-              <div className="text-xs text-muted-foreground space-y-1 mt-2">
-                <div>Active: {connectionStatus} ({connectionType})</div>
-                <div>Original: {originalStatus}</div>
-                <div>Simple: {simpleStatus}</div>
-                <div>Persistent: {persistentStatus} (attempts: {connectionAttempts})</div>
-                <div>Stable: {stableStatus} (ID: {connectionId})</div>
-              </div>
+              {/* Environment Notice */}
+              {!isConnected && (
+                <div className="text-xs text-amber-600 mt-2 p-2 bg-amber-50 dark:bg-amber-900/20 rounded">
+                  Development environment: WebSocket connections are limited by platform auto-scaling.
+                  For stable WebSocket connections, deploy as Reserved VM.
+                </div>
+              )}
             </div>
           </div>
 
