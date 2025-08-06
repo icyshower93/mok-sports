@@ -255,7 +255,7 @@ export default function DraftPage() {
   // Timer expiration monitoring (simplified)
   useEffect(() => {
     console.log('[Draft] Timer expiration useEffect called');
-  }, [localTimeRemaining, draftData?.state?.timeRemaining]);
+  }, [displayTime, draftData?.state?.timeRemaining]);
 
   console.log('[Draft] All hooks declared, starting conditional logic');
   console.log('[Draft] RENDER DEBUG - authLoading:', authLoading, 'isLoading:', isLoading, 'error:', !!error, 'draftData:', !!draftData, 'isAuthenticated:', isAuthenticated, 'Time:', Date.now());
@@ -344,7 +344,7 @@ export default function DraftPage() {
   // INTENSIVE DEBUG LOGGING FOR TIMER ISSUE
   console.log('🔍 [TIMER DEBUG] === FRONTEND DATA RECEIVED ===');
   console.log('🔍 [TIMER DEBUG] Server Time:', state.timeRemaining);
-  console.log('🔍 [TIMER DEBUG] Local Time:', localTimeRemaining);
+  console.log('🔍 [TIMER DEBUG] Display Time:', displayTime);
   console.log('🔍 [TIMER DEBUG] Current User ID:', state.currentUserId);
   console.log('🔍 [TIMER DEBUG] Draft Round/Pick:', state.draft.currentRound, '/', state.draft.currentPick);
   console.log('🔍 [TIMER DEBUG] Draft Order:', state.draft.draftOrder);
