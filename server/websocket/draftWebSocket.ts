@@ -40,23 +40,32 @@ export class DraftWebSocketManager {
       noServer: true // Manual upgrade handling
     });
     
-    // Handle upgrade requests manually to ensure compatibility with Replit
+    // PERMANENT FIX: Enhanced upgrade handling with better error handling and logging
     server.on('upgrade', (request, socket, head) => {
       console.log('[WebSocket] 🔍 UPGRADE REQUEST RECEIVED');
       console.log('[WebSocket] URL:', request.url);
       console.log('[WebSocket] Origin:', request.headers.origin);
-      console.log('[WebSocket] Headers:', JSON.stringify(request.headers, null, 2));
+      console.log('[WebSocket] User-Agent:', request.headers['user-agent']);
+      console.log('[WebSocket] Connection header:', request.headers.connection);
+      console.log('[WebSocket] Upgrade header:', request.headers.upgrade);
       
       // Check if this is a draft WebSocket request (handle both paths for compatibility)
-      if (request.url?.startsWith('/draft-ws') || request.url?.startsWith('/ws/draft')) {
-        console.log('[WebSocket] ✅ HANDLING DRAFT WEBSOCKET UPGRADE');
+      if (request.url?.startsWith('/draft-ws') || request.url?.startsWith('/ws/draft') || request.url?.startsWith('/ws')) {
+        console.log('[WebSocket] ✅ HANDLING WEBSOCKET UPGRADE for path:', request.url);
         
-        this.wss.handleUpgrade(request, socket, head, (ws) => {
-          console.log('[WebSocket] 🚀 WEBSOCKET UPGRADE SUCCESSFUL');
-          this.wss.emit('connection', ws, request);
-        });
+        try {
+          this.wss.handleUpgrade(request, socket, head, (ws) => {
+            console.log('[WebSocket] 🚀 WEBSOCKET UPGRADE SUCCESSFUL');
+            console.log('[WebSocket] WebSocket ready state:', ws.readyState);
+            console.log('[WebSocket] Emitting connection event');
+            this.wss.emit('connection', ws, request);
+          });
+        } catch (error) {
+          console.error('[WebSocket] ❌ UPGRADE ERROR:', error);
+          socket.destroy();
+        }
       } else {
-        console.log('[WebSocket] ❌ REJECTING NON-DRAFT UPGRADE:', request.url);
+        console.log('[WebSocket] ❌ REJECTING NON-WEBSOCKET UPGRADE:', request.url);
         socket.destroy();
       }
     });
@@ -93,9 +102,9 @@ export class DraftWebSocketManager {
   private handleConnection(ws: WebSocket, request: any) {
     console.log('[WebSocket] ========== NEW CONNECTION RECEIVED ==========');
     console.log('[WebSocket] Request URL:', request.url);
-    console.log('[WebSocket] Request headers:', JSON.stringify(request.headers, null, 2));
     console.log('[WebSocket] Remote address:', request.socket?.remoteAddress);
     console.log('[WebSocket] Connection ready state:', ws.readyState);
+    console.log('[WebSocket] Connection timestamp:', new Date().toISOString());
     
     const { query } = parse(request.url, true);
     const userId = query.userId as string;
@@ -108,8 +117,25 @@ export class DraftWebSocketManager {
 
     if (!userId || !draftId) {
       console.log('[WebSocket] ❌ CONNECTION REJECTED: Missing userId or draftId');
+      console.log('[WebSocket] Query object:', JSON.stringify(query, null, 2));
+      console.log('[WebSocket] Available query keys:', Object.keys(query));
       ws.close(1000, 'Missing required parameters');
       return;
+    }
+
+    // PERMANENT FIX: Send immediate connection confirmation
+    console.log('[WebSocket] ✅ CONNECTION APPROVED - Sending immediate confirmation');
+    try {
+      ws.send(JSON.stringify({
+        type: 'connected',
+        draftId: draftId,
+        userId: userId,
+        timestamp: Date.now(),
+        message: 'WebSocket connection established successfully'
+      }));
+      console.log('[WebSocket] ✅ Connection confirmation sent successfully');
+    } catch (error) {
+      console.error('[WebSocket] ❌ Failed to send connection confirmation:', error);
     }
 
     const connection: DraftConnection = {
@@ -123,18 +149,27 @@ export class DraftWebSocketManager {
     console.log(`[WebSocket] - User: ${userId}`);
     console.log(`[WebSocket] - Draft: ${draftId}`);
 
-    // Add to connections map
+    // PERMANENT FIX: Add to connections map with enhanced error handling
     if (!this.connections.has(draftId)) {
       this.connections.set(draftId, []);
       console.log(`[WebSocket] Created new connection array for draft ${draftId}`);
     }
     
     console.log(`[WebSocket] Before adding connection - draft ${draftId} has ${this.connections.get(draftId)?.length || 0} connections`);
+    
+    // Remove any existing connections for the same user to prevent duplicates
+    const existingConnections = this.connections.get(draftId)!;
+    const filteredConnections = existingConnections.filter(conn => conn.userId !== userId);
+    if (filteredConnections.length !== existingConnections.length) {
+      console.log(`[WebSocket] Removed ${existingConnections.length - filteredConnections.length} existing connections for user ${userId}`);
+      this.connections.set(draftId, filteredConnections);
+    }
+    
     this.connections.get(draftId)!.push(connection);
     
     const totalConnections = this.connections.get(draftId)!.length;
-    console.log(`[WebSocket] After adding connection - User ${userId} connected to draft ${draftId}. Total connections: ${totalConnections}`);
-    console.log(`[WebSocket] All connections for draft ${draftId}:`, this.connections.get(draftId)?.map(c => c.userId));
+    console.log(`[WebSocket] ✅ User ${userId} connected to draft ${draftId}. Total connections: ${totalConnections}`);
+    console.log(`[WebSocket] All active users for draft ${draftId}:`, this.connections.get(draftId)?.map(c => c.userId));
 
     // Update connection stats
     this.connectionStats.totalConnections++;
