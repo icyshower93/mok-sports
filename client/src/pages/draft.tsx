@@ -74,9 +74,7 @@ export default function DraftPage() {
   const draftId = (params as any).draftId;
   const [selectedTeam, setSelectedTeam] = useState<string | null>(null);
   
-  // Local timer state for smooth countdown
-  const [localTimeRemaining, setLocalTimeRemaining] = useState<number>(0);
-  const [lastServerUpdate, setLastServerUpdate] = useState<number>(Date.now());
+  // Removed local timer state - using server data directly
   
   // Remove transitioning state - no longer needed
 
@@ -85,52 +83,7 @@ export default function DraftPage() {
   // Initialize WebSocket connection for real-time updates
   const { connectionStatus, isConnected } = useDraftWebSocket(draftId);
   
-  // Enhanced timer polling with aggressive refresh for synchronization
-  useEffect(() => {
-    if (!draftId) return;
-    
-    console.log('[Timer Fallback] Starting enhanced timer polling for draft:', draftId);
-    
-    let pollCounter = 0;
-    const pollTimer = setInterval(async () => {
-      pollCounter++;
-      try {
-        const response = await fetch(`/api/drafts/${draftId}?cache=${Date.now()}`, {
-          headers: {
-            'Cache-Control': 'no-cache, no-store, must-revalidate',
-            'Pragma': 'no-cache',
-            'Expires': '0'
-          }
-        });
-        
-        if (response.ok) {
-          const data = await response.json();
-          
-          console.log(`[Timer Fallback] Poll #${pollCounter} - Timer:`, data.state?.timeRemaining, 
-                     'Round:', data.state?.draft?.currentRound, 
-                     'Pick:', data.state?.draft?.currentPick,
-                     'Current User:', data.state?.currentUserId,
-                     'Full Data:', data);
-          
-          if (data && data.state) {
-            // Update draft data in cache
-            queryClient.setQueryData(['draft', draftId], data);
-            queryClient.invalidateQueries({ queryKey: ['draft', draftId] });
-            
-            // Also refresh picks data
-            queryClient.invalidateQueries({ queryKey: ['draft-teams', draftId] });
-          }
-        }
-      } catch (error) {
-        console.error('[Timer Fallback] Poll error:', error);
-      }
-    }, 2000); // Reduce polling frequency to prevent excessive renders
-
-    return () => {
-      console.log('[Timer Fallback] Cleanup - stopping timer polling');
-      clearInterval(pollTimer);
-    };
-  }, [draftId, queryClient]);
+  // Removed redundant polling - React Query handles this
 
   // Redirect if no draft ID
   useEffect(() => {
@@ -243,9 +196,13 @@ export default function DraftPage() {
     }
   });
 
-  // Display timer directly from server data - no local state needed
+  // Log errors for debugging
+  if (error) {
+    console.error('Draft fetch error:', error);
+  }
+
+  // Display timer directly from server data
   const displayTime = draftData?.state?.timeRemaining ?? 0;
-  console.log(`[Draft] 🚀 DIRECT TIMER DISPLAY: ${displayTime}s (from server data)`);
 
   // Local countdown disabled - use server data only for now
   // This prevents conflicts between local countdown and server sync

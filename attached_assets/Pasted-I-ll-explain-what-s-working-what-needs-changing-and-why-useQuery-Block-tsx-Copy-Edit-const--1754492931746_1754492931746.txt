@@ -1,0 +1,100 @@
+I'll explain what's working, what needs changing, and why.
+
+🔍 useQuery Block
+tsx
+Copy
+Edit
+const { data, isLoading, error } = useQuery({
+  queryKey: ['draft', draftId],
+  queryFn: () => fetchDraft(draftId),
+  refetchInterval: 1000,
+  staleTime: 0,
+  gcTime: 0,
+});
+✅ Correct config for real-time data:
+
+refetchInterval: 1000 – polls every second (good).
+
+staleTime: 0 – forces fresh fetch each time (good).
+
+gcTime: 0 – disables caching (also good for live updates).
+
+⚠️ Missing error handling or logging
+Right now, if fetchDraft() fails, you won’t know unless you inspect the browser console. If you're not already doing it, consider:
+
+tsx
+Copy
+Edit
+if (error) {
+  console.error('Draft fetch error:', error);
+}
+🔍 Timer Display Block
+tsx
+Copy
+Edit
+<p className="text-xl font-bold">
+  {formatTime(data?.state?.timeRemaining ?? 0)}
+</p>
+✅ You're now using live server data:
+This directly displays the backend value from data.state.timeRemaining. This is correct and solves the "local stale state" problem.
+
+⚠️ Potential issue: formatTime() might cache or miscalculate
+Make sure formatTime() is not based on any stale localTimeRemaining state. If it's just a plain conversion function (like turning 58 into "0:58"), you're good.
+
+🔍 Previous culprit (likely removed now):
+tsx
+Copy
+Edit
+const [localTimeRemaining, setLocalTimeRemaining] = useState(...);
+If this still exists and is used in rendering, it would override server-synced data.
+
+You should fully remove:
+
+any useEffect(() => setInterval(...)) timers
+
+any localTimeRemaining state updates
+
+anything that tries to tick the timer manually on the frontend
+
+Let the backend timer + React Query polling do all the work.
+
+✅ Summary of What’s Good
+You're using refetchInterval to sync every second.
+
+You're not using stale local state for timer rendering.
+
+You're rendering from data.state.timeRemaining directly.
+
+The fallback ?? 0 is a good guard for when data is still loading.
+
+🧼 Bonus: Clean version (if you want it even tighter)
+tsx
+Copy
+Edit
+const {
+  data,
+  isLoading,
+  error,
+} = useQuery({
+  queryKey: ['draft', draftId],
+  queryFn: () => fetchDraft(draftId),
+  refetchInterval: 1000,
+  staleTime: 0,
+  gcTime: 0,
+});
+
+if (error) {
+  console.error('Error fetching draft:', error);
+}
+
+return (
+  <div>
+    {isLoading ? (
+      <p>Loading timer...</p>
+    ) : (
+      <p className="text-xl font-bold">
+        {formatTime(data?.state?.timeRemaining ?? 0)}
+      </p>
+    )}
+  </div>
+);
