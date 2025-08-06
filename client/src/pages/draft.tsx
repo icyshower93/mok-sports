@@ -15,6 +15,7 @@ import { useDraftWebSocket } from "@/hooks/use-draft-websocket";
 import { useSimpleWebSocket } from "@/hooks/use-simple-websocket";
 import { usePersistentWebSocket } from "@/hooks/use-persistent-websocket";
 import { useStableWebSocket } from "@/hooks/use-stable-websocket";
+import { useReplitWebSocket } from "@/hooks/use-replit-websocket";
 import { useAuth } from "@/hooks/use-auth";
 import { trackModuleError } from "@/debug-tracker";
 
@@ -93,6 +94,9 @@ export default function DraftPage() {
   
   // FINAL TEST: Stable WebSocket implementation
   const { status: stableStatus, isConnected: stableConnected, connectionId } = useStableWebSocket(draftId, user?.id || '');
+  
+  // REPLIT-OPTIMIZED: WebSocket with HTTP fallback
+  const { status: replitStatus, isConnected: replitConnected, connectionType, reconnectAttempts } = useReplitWebSocket(draftId, user?.id || '');
 
   // Redirect if no draft ID
   useEffect(() => {
@@ -486,7 +490,7 @@ export default function DraftPage() {
                 <div>Simple: {simpleStatus}</div>
                 <div>Persistent: {persistentStatus} (attempts: {connectionAttempts})</div>
                 <div>Stable: {stableStatus} (ID: {connectionId})</div>
-                <div>Stable: {stableStatus} (ID: {connectionId})</div>
+                <div>Replit: {replitStatus} ({connectionType}, attempts: {reconnectAttempts})</div>
               </div>
             </div>
           </div>
