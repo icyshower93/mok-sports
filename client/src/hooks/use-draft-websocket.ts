@@ -25,15 +25,17 @@ export function useDraftWebSocket(draftId: string | null) {
   const queryClient = useQueryClient();
   const wsRef = useRef<WebSocket | null>(null);
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const [connectionStatus, setConnectionStatus] = useState<'connecting' | 'connected' | 'disconnected'>('disconnected');
+  const [connectionStatus, setConnectionStatus] = useState<'connecting' | 'connected' | 'disconnected' | 'draft_not_found'>('disconnected');
   const [lastMessage, setLastMessage] = useState<DraftWebSocketMessage | null>(null);
+  const previousDraftIdRef = useRef<string | null>(null);
 
   const connect = useCallback(() => {
     console.log('[WebSocket] Connect called with:', { 
       draftId, 
       userId: user?.id, 
       userLoaded: !!user,
-      wsState: wsRef.current?.readyState 
+      wsState: wsRef.current?.readyState,
+      previousDraftId: previousDraftIdRef.current
     });
     
     if (!draftId || !user?.id || wsRef.current?.readyState === WebSocket.OPEN) {
@@ -46,8 +48,48 @@ export function useDraftWebSocket(draftId: string | null) {
       return;
     }
 
-    console.log('[WebSocket] Attempting connection for draft:', draftId, 'user:', user.id);
+    // PERMANENT FIX: Handle draft changes (reset scenario)
+    if (previousDraftIdRef.current && previousDraftIdRef.current !== draftId) {
+      console.log('[WebSocket] Draft changed - closing old connection and establishing new one');
+      if (wsRef.current) {
+        wsRef.current.close();
+        wsRef.current = null;
+      }
+      // Clear any reconnection attempts for old draft
+      if (reconnectTimeoutRef.current) {
+        clearTimeout(reconnectTimeoutRef.current);
+        reconnectTimeoutRef.current = null;
+      }
+    }
+    
+    previousDraftIdRef.current = draftId;
+
+    // PERMANENT FIX: Validate draft exists before attempting WebSocket connection
+    console.log('[WebSocket] Validating draft exists before connection...');
     setConnectionStatus('connecting');
+    
+    fetch(`/api/drafts/${draftId}`)
+      .then(response => {
+        if (!response.ok) {
+          console.log('[WebSocket] Draft not found, aborting connection');
+          setConnectionStatus('draft_not_found');
+          return Promise.reject(new Error('Draft not found'));
+        }
+        console.log('[WebSocket] Draft exists, proceeding with WebSocket connection');
+        return response.json();
+      })
+      .then(() => {
+        // Proceed with actual WebSocket connection
+        connectToWebSocket();
+      })
+      .catch(err => {
+        console.error('[WebSocket] Draft validation failed:', err);
+        setConnectionStatus('draft_not_found');
+      });
+  }, [draftId, user?.id]);
+
+  const connectToWebSocket = useCallback(() => {
+    console.log('[WebSocket] Attempting WebSocket connection for draft:', draftId, 'user:', user?.id);
     
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
     
@@ -296,11 +338,13 @@ export function useDraftWebSocket(draftId: string | null) {
     }
   }, []);
 
-  // Connect when draft ID changes
+  // Connect when draft ID changes - Enhanced for seamless reset workflow
   useEffect(() => {
     if (draftId && user?.id) {
+      console.log('[WebSocket] Dependencies ready, attempting connection...');
       connect();
     } else {
+      console.log('[WebSocket] Disconnecting due to missing dependencies:', { draftId: !!draftId, userId: !!user?.id });
       disconnect();
     }
 

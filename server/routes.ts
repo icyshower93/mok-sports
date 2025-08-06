@@ -4,7 +4,7 @@ import passport from "passport";
 import { generateJWT, authenticateJWT, isOAuthConfigured } from "./auth";
 import { storage } from "./storage";
 import { generateJoinCode } from "./utils";
-import { insertLeagueSchema, draftPicks } from "@shared/schema";
+import { insertLeagueSchema, draftPicks, drafts, draftTimers } from "@shared/schema";
 import { z } from "zod";
 import { registerPushNotificationRoutes } from "./routes/push-notifications";
 import { registerPushDiagnosticsRoutes } from "./routes/push-diagnostics";
@@ -577,42 +577,63 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Register subscription validation routes
   registerSubscriptionValidationRoutes(app);
   
-  // Draft reset endpoint for testing and debugging
+  // Draft reset endpoint - Creates new draft for seamless WebSocket connection
   app.post('/api/testing/reset-draft', async (req, res) => {
     try {
-      const { draftId } = req.body;
+      const { leagueId } = req.body;
       
-      if (!draftId) {
-        return res.status(400).json({ message: 'Missing draftId' });
+      if (!leagueId) {
+        return res.status(400).json({ message: 'Missing leagueId' });
       }
 
-      console.log(`🔄 Draft reset requested for draft ${draftId}`);
+      console.log(`🔄 Draft reset requested for league ${leagueId}`);
       
-      // Import the global snake draft manager instance
-      const { globalDraftManager } = await import('./draft/globalDraftManager.js');
-      
-      // Clear all picks and reset draft state using SQL
-      await db.delete(draftPicks).where(eq(draftPicks.draftId, draftId));
-      await storage.updateDraftProgress(draftId, 1, 1);
-      await storage.updateDraftStatus(draftId, 'active');
-      
-      // Clear all timers and state
-      
-      // Start fresh with first user
-      const draft = await storage.getDraft(draftId);
-      if (draft) {
-        const firstUserId = draft.draftOrder[0];
-        console.log(`🚀 Starting fresh draft with user ${firstUserId}`);
-        
-        // Start the timer for first pick using global manager
-        await globalDraftManager.resetPickTimer(draftId, firstUserId);
-        
-        console.log(`✅ Draft reset complete - Round 1, Pick 1, 60-second timer started`);
+      // Get league to ensure it exists
+      const league = await storage.getLeague(leagueId);
+      if (!league) {
+        return res.status(404).json({ message: 'League not found' });
       }
+
+      // Delete any existing draft for this league
+      const existingDraft = await storage.getDraftByLeagueId(leagueId);
+      if (existingDraft) {
+        console.log(`🗑️ Deleting existing draft ${existingDraft.id}`);
+        await db.delete(draftPicks).where(eq(draftPicks.draftId, existingDraft.id));
+        await db.delete(draftTimers).where(eq(draftTimers.draftId, existingDraft.id));
+        await db.delete(drafts).where(eq(drafts.id, existingDraft.id));
+      }
+
+      // Create a fresh new draft
+      const newDraftId = crypto.randomUUID();
+      const leagueMembers = await storage.getLeagueMembers(leagueId);
+      const draftOrder = leagueMembers.map(member => member.id);
+      
+      console.log(`🆕 Creating new draft ${newDraftId} with ${draftOrder.length} users`);
+      
+      const newDraft = await storage.createDraft({
+        id: newDraftId,
+        leagueId,
+        status: 'active',
+        currentRound: 1,
+        currentPick: 1,
+        totalRounds: 5,
+        pickTimeLimit: 60,
+        draftOrder
+      });
+
+      // Start timer for first user
+      const { globalDraftManager } = await import('./draft/globalDraftManager.js');
+      const firstUserId = draftOrder[0];
+      console.log(`🚀 Starting fresh draft timer for user ${firstUserId}`);
+      
+      await globalDraftManager.startPickTimer(newDraftId, firstUserId, 1, 1);
+      
+      console.log(`✅ New draft created successfully: ${newDraftId}`);
       
       res.json({ 
-        message: 'Draft reset successfully',
-        currentState: await globalDraftManager.getDraftState(draftId)
+        message: 'New draft created successfully',
+        draftId: newDraftId,
+        currentState: await globalDraftManager.getDraftState(newDraftId)
       });
     } catch (error: any) {
       console.error('Error resetting draft:', error);

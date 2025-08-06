@@ -6,9 +6,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Play, Settings, Users, Clock } from "lucide-react";
+import { Play, Settings, Users, Clock, RotateCcw } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
+import { useLocation } from "wouter";
 
 interface DraftControlsProps {
   leagueId: string;
@@ -29,6 +30,7 @@ export default function DraftControls({
 }: DraftControlsProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [, setLocation] = useLocation();
   
   const [showSettings, setShowSettings] = useState(false);
   const [pickTimeLimit, setPickTimeLimit] = useState(60);
@@ -136,6 +138,47 @@ export default function DraftControls({
     },
   });
 
+  // SEAMLESS RESET: Create new draft and auto-navigate to it
+  const resetDraftMutation = useMutation({
+    mutationFn: async () => {
+      const response = await fetch('/api/testing/reset-draft', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ leagueId }),
+        credentials: 'include'
+      });
+      
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Failed to reset draft');
+      }
+      
+      return response.json();
+    },
+    onSuccess: (data) => {
+      toast({
+        title: "Draft Reset Complete!",
+        description: "New draft created with fresh timer. Joining draft room...",
+      });
+      
+      // Invalidate all relevant queries
+      queryClient.invalidateQueries({ queryKey: ['league', leagueId] });
+      queryClient.invalidateQueries({ queryKey: ['draft'] });
+      
+      // Automatically navigate to the new draft room
+      setTimeout(() => {
+        setLocation(`/draft/${data.draftId}`);
+      }, 1000);
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Failed to reset draft",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
   // Show the component if we can create a new draft OR start an existing one
   if (!canCreateDraft && !canStartDraft) {
     return null;
@@ -235,14 +278,52 @@ export default function DraftControls({
               </span>
             </div>
             
+            <div className="flex space-x-2">
+              <Button
+                onClick={() => startDraftMutation.mutate()}
+                disabled={startDraftMutation.isPending}
+                className="flex-1"
+                size="lg"
+              >
+                <Play className="w-4 h-4 mr-2" />
+                {startDraftMutation.isPending ? 'Starting...' : 'Start Draft'}
+              </Button>
+              
+              <Button
+                onClick={() => resetDraftMutation.mutate()}
+                disabled={resetDraftMutation.isPending}
+                variant="outline"
+                size="lg"
+                className="px-3"
+                title="Reset Draft - Creates new draft with fresh timer"
+              >
+                <RotateCcw className="w-4 h-4" />
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {/* Reset option for existing drafts without start capability */}
+        {draftId && !canStartDraft && (
+          <div className="space-y-3">
+            <div className="flex items-center space-x-2">
+              <Badge variant="outline" className="text-xs">
+                Draft Active
+              </Badge>
+              <span className="text-sm text-muted-foreground">
+                Draft is currently in progress
+              </span>
+            </div>
+            
             <Button
-              onClick={() => startDraftMutation.mutate()}
-              disabled={startDraftMutation.isPending}
+              onClick={() => resetDraftMutation.mutate()}
+              disabled={resetDraftMutation.isPending}
+              variant="outline"
               className="w-full"
               size="lg"
             >
-              <Play className="w-4 h-4 mr-2" />
-              {startDraftMutation.isPending ? 'Starting Draft...' : 'Start Draft Now'}
+              <RotateCcw className="w-4 h-4 mr-2" />
+              {resetDraftMutation.isPending ? 'Resetting...' : 'Reset Draft'}
             </Button>
           </div>
         )}

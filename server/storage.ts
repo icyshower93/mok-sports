@@ -306,6 +306,11 @@ export class DatabaseStorage implements IStorage {
     return draft || undefined;
   }
 
+  async getDraftByLeagueId(leagueId: string): Promise<Draft | undefined> {
+    const [draft] = await db.select().from(drafts).where(eq(drafts.leagueId, leagueId));
+    return draft || undefined;
+  }
+
   async getLeagueDraft(leagueId: string): Promise<Draft | undefined> {
     const [draft] = await db.select().from(drafts).where(eq(drafts.leagueId, leagueId));
     return draft || undefined;
