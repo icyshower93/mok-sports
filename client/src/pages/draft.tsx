@@ -235,34 +235,45 @@ export default function DraftPage() {
     }
   });
 
-  // Update local timer when we get new server data (FORCE SYNC TO FIX STALE STATE)
+  // Update local timer when we get new server data (AGGRESSIVE SYNC TO FIX FLASHING 0:00)
   useEffect(() => {
     if (draftData?.state?.timeRemaining !== undefined) {
       const serverTime = draftData.state.timeRemaining;
-      console.log(`[Draft] FORCING timer sync - Server: ${serverTime}s, Local: ${localTimeRemaining}s, Pick: ${draftData.state.draft?.currentPick}`);
+      const currentPick = draftData.state.draft?.currentPick;
+      const currentRound = draftData.state.draft?.currentRound;
       
-      // CRITICAL: Always force update to server time to prevent stale display
-      setLocalTimeRemaining(serverTime);
-      setLastServerUpdate(Date.now());
+      console.log(`[Draft] TIMER SYNC DEBUG - Server: ${serverTime}s, Local: ${localTimeRemaining}s, Pick: R${currentRound}P${currentPick}`);
       
-      // Clear transition states that might be causing display issues
-      if (serverTime > 0) {
-        setIsTransitioning(false);
+      // FORCE: Always sync with server time - ignore local countdown when server data available
+      if (serverTime !== localTimeRemaining) {
+        console.log(`[Draft] 🔄 CORRECTING timer: ${localTimeRemaining}s → ${serverTime}s`);
+        setLocalTimeRemaining(serverTime);
+        setLastServerUpdate(Date.now());
       }
+      
+      // Clear any transition states
+      setIsTransitioning(false);
     }
-  }, [draftData?.state?.timeRemaining, draftData?.state?.draft?.currentPick, draftData?.state?.draft?.currentRound]);
+  }, [draftData?.state?.timeRemaining, draftData?.state?.draft?.currentPick, draftData?.state?.draft?.currentRound, draftData?.isLoading]);
 
-  // Local countdown timer for smooth second-by-second updates (FIXED: stable dependencies)
+  // Local countdown timer for smooth second-by-second updates (DISABLED WHEN SERVER DATA FRESH)
   useEffect(() => {
     const interval = setInterval(() => {
-      setLocalTimeRemaining(prev => {
-        if (prev <= 0) return 0; // Stop at 0
-        return prev - 1;
-      });
+      const timeSinceLastUpdate = Date.now() - lastServerUpdate;
+      
+      // Only use local countdown if server data is older than 2 seconds
+      if (timeSinceLastUpdate > 2000) {
+        setLocalTimeRemaining(prev => {
+          if (prev <= 0) return 0; // Stop at 0
+          const newTime = prev - 1;
+          console.log(`[Draft] 📉 Local countdown: ${prev}s → ${newTime}s (no fresh server data)`);
+          return newTime;
+        });
+      }
     }, 1000);
 
     return () => clearInterval(interval);
-  }, []); // No dependencies - timer always runs but only decrements when > 0
+  }, [lastServerUpdate]); // Depend on server update timing
 
   // Fetch available teams
   const { data: teamsData } = useQuery({
