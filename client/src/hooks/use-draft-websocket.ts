@@ -140,7 +140,7 @@ export function useDraftWebSocket(draftId: string | null) {
       console.error('[WebSocket] Connection error:', error);
       console.error('[WebSocket] Error details:', {
         type: error.type,
-        target: error.target?.readyState,
+        target: (error.target as WebSocket)?.readyState,
         url: wsUrl,
         timestamp: new Date().toISOString()
       });

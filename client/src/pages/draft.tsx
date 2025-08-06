@@ -74,16 +74,13 @@ export default function DraftPage() {
   const draftId = (params as any).draftId;
   const [selectedTeam, setSelectedTeam] = useState<string | null>(null);
   
-  // Removed local timer state - using server data directly
-  
-  // Remove transitioning state - no longer needed
+  // Server timer state - single source of truth
+  const [serverTime, setServerTime] = useState<number>(0);
 
   console.log('[Draft] All useState hooks declared');
 
-  // Initialize WebSocket connection for real-time updates
-  const { connectionStatus, isConnected } = useDraftWebSocket(draftId);
-  
-  // Removed redundant polling - React Query handles this
+  // Initialize WebSocket connection for real-time timer updates
+  const { connectionStatus, isConnected, lastMessage } = useDraftWebSocket(draftId);
 
   // Redirect if no draft ID
   useEffect(() => {
@@ -181,10 +178,9 @@ export default function DraftPage() {
       }
     },
     enabled: !!draftId && !authLoading, // Wait for auth to load before making requests
-    refetchInterval: 1000, // Refetch every 1 second for real-time timer
-    refetchIntervalInBackground: true, // Continue polling in background
+    refetchInterval: 5000, // Reduced polling - WebSocket handles timer updates
     staleTime: 0, // Never trust cached data - always stale
-    gcTime: 0, // React Query v5: disable caching completely for real-time data
+    gcTime: 0, // React Query v5: disable caching completely
     retry: (failureCount, error) => {
       // Don't retry on authentication errors
       if (error instanceof Error && error.message.includes('401')) {
@@ -201,8 +197,24 @@ export default function DraftPage() {
     console.error('Draft fetch error:', error);
   }
 
-  // Display timer directly from server data
-  const displayTime = draftData?.state?.timeRemaining ?? 0;
+  // WebSocket timer updates - single source of truth
+  useEffect(() => {
+    if (lastMessage?.type === 'timer_update') {
+      console.log('[Draft] Received timer update via WebSocket:', lastMessage.data?.timeRemaining);
+      setServerTime(lastMessage.data?.timeRemaining || 0);
+    }
+  }, [lastMessage]);
+
+  // Initialize timer from server data when first loaded
+  useEffect(() => {
+    if (draftData?.state?.timeRemaining !== undefined) {
+      setServerTime(draftData.state.timeRemaining);
+      console.log('[Draft] Initialized timer from server:', draftData.state.timeRemaining);
+    }
+  }, [draftData?.state?.timeRemaining]);
+
+  // Display timer from WebSocket updates or fallback to server data
+  const displayTime = serverTime || draftData?.state?.timeRemaining || 0;
 
   // Local countdown disabled - use server data only for now
   // This prevents conflicts between local countdown and server sync
