@@ -14,6 +14,7 @@ import { apiRequest, AuthTokenManager } from "@/lib/queryClient";
 import { useDraftWebSocket } from "@/hooks/use-draft-websocket";
 import { useAuth } from "@/hooks/use-auth";
 import { trackModuleError } from "@/debug-tracker";
+import { BUILD_TIMESTAMP } from "../build-timestamp";
 
 interface NflTeam {
   id: string;
@@ -57,8 +58,8 @@ interface DraftState {
 }
 
 export default function DraftPage() {
-  console.log('[Draft] Component render started - TIME:', Date.now());
-  console.log('[Draft] FIRST DEBUG LINE - Component starting');
+  console.log('[Draft] Component render started - TIME:', Date.now(), 'BUILD:', BUILD_TIMESTAMP);
+  console.log('[Draft] FIRST DEBUG LINE - Component starting - NO localTimeRemaining ANYWHERE');
   
   const [location, navigate] = useLocation();
   const { toast } = useToast();
@@ -275,7 +276,7 @@ export default function DraftPage() {
 
   // Timer expiration monitoring (simplified)
   useEffect(() => {
-    console.log('[Draft] Timer expiration useEffect called');
+    console.log('[Draft] Timer expiration useEffect called - displayTime:', displayTime);
   }, [displayTime, draftData?.state?.timeRemaining]);
 
   console.log('[Draft] All hooks declared, starting conditional logic');

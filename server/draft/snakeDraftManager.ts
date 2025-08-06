@@ -617,15 +617,15 @@ export class SnakeDraftManager {
     const timerKey = `${draftId}-${userId}`;
     
     // Initialize local timer counter
-    let localTimeRemaining = this.draftConfig.pickTimeLimit;
+    let timeRemaining = this.draftConfig.pickTimeLimit;
     
     const interval = setInterval(async () => {
       // Decrement local timer
-      localTimeRemaining--;
+      timeRemaining--;
       
-      console.log(`🕐 Timer tick for user ${userId}: ${localTimeRemaining}s remaining`);
+      console.log(`🕐 Timer tick for user ${userId}: ${timeRemaining}s remaining`);
       
-      if (localTimeRemaining <= 0) {
+      if (timeRemaining <= 0) {
         console.log(`⏰ Timer expired for user ${userId}, triggering expiration handler`);
         clearInterval(interval);
         this.timerIntervals.delete(timerKey);
@@ -643,16 +643,16 @@ export class SnakeDraftManager {
           });
       } else {
         // Update Redis with current time remaining
-        await this.redisStateManager.updateTimeRemaining(draftId, localTimeRemaining);
+        await this.redisStateManager.updateTimeRemaining(draftId, timeRemaining);
         
         // Broadcast timer update
         if (this.webSocketManager) {
-          this.webSocketManager.broadcastTimerUpdate(draftId, localTimeRemaining);
+          this.webSocketManager.broadcastTimerUpdate(draftId, timeRemaining);
         }
         
         // Update database timer for persistence
         try {
-          await this.storage.updateDraftTimer(draftId, userId, localTimeRemaining);
+          await this.storage.updateDraftTimer(draftId, userId, timeRemaining);
         } catch (error) {
           console.error(`Failed to update timer: ${error}`);
         }
