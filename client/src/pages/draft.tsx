@@ -205,16 +205,18 @@ export default function DraftPage() {
     }
   }, [lastMessage]);
 
-  // Initialize timer from server data when first loaded
+  // CRITICAL FIX: Force timer sync on EVERY API refresh, not just when timeRemaining changes
   useEffect(() => {
     if (draftData?.state?.timeRemaining !== undefined) {
+      console.log('[TIMER SYNC] API data refresh - Current serverTime:', serverTime, 'API timeRemaining:', draftData.state.timeRemaining);
       setServerTime(draftData.state.timeRemaining);
-      console.log('[Draft] Initialized timer from server:', draftData.state.timeRemaining);
+      console.log('[TIMER SYNC] Updated serverTime to:', draftData.state.timeRemaining);
     }
-  }, [draftData?.state?.timeRemaining]);
+  }, [draftData]); // Watch entire draftData object, not just timeRemaining
 
   // Display timer from WebSocket updates or fallback to server data
   const displayTime = serverTime || draftData?.state?.timeRemaining || 0;
+  console.log('[TIMER DISPLAY] serverTime:', serverTime, 'apiTime:', draftData?.state?.timeRemaining, 'displayTime:', displayTime);
 
   // Local countdown disabled - use server data only for now
   // This prevents conflicts between local countdown and server sync
