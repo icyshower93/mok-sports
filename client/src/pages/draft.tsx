@@ -120,7 +120,7 @@ export default function DraftPage() {
       } catch (error) {
         console.error('[Timer Fallback] Poll error:', error);
       }
-    }, 1000); // Increase polling frequency to 1 second for better sync
+    }, 2000); // Reduce polling frequency to prevent excessive renders
 
     return () => {
       console.log('[Timer Fallback] Cleanup - stopping timer polling');
@@ -224,7 +224,7 @@ export default function DraftPage() {
       }
     },
     enabled: !!draftId && !authLoading, // Wait for auth to load before making requests
-    refetchInterval: 1000, // Poll every 1 second for immediate sync with backend state
+    refetchInterval: 3000, // Reduce polling frequency to prevent render loops
     retry: (failureCount, error) => {
       // Don't retry on authentication errors
       if (error instanceof Error && error.message.includes('401')) {
@@ -340,7 +340,7 @@ export default function DraftPage() {
   }, [localTimeRemaining, draftData?.state?.timeRemaining]);
 
   console.log('[Draft] All hooks declared, starting conditional logic');
-  console.log('[Draft] RENDER DEBUG - authLoading:', authLoading, 'isLoading:', isLoading, 'error:', !!error, 'draftData:', !!draftData, 'isAuthenticated:', isAuthenticated);
+  console.log('[Draft] RENDER DEBUG - authLoading:', authLoading, 'isLoading:', isLoading, 'error:', !!error, 'draftData:', !!draftData, 'isAuthenticated:', isAuthenticated, 'Time:', Date.now());
 
   const handleMakePick = () => {
     if (selectedTeam) {
