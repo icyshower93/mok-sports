@@ -23,6 +23,8 @@ Mok Sports is a fantasy sports application that redefines traditional fantasy le
 - ✅ **Cache Strategy**: Production-grade asset caching with immutable headers
 - ✅ **Component Architecture**: New `draft-new.tsx` eliminates all compilation conflicts
 - ✅ **Development Stability**: Built assets work in both development and production modes
+- ✅ **API Fix**: Resolved "GET request with body" error in draft data fetching
+- ✅ **UI Enhancement**: Added draft participants panel to show all users and their positions
 
 **Draft Reset System IMPLEMENTED**: Complete reset functionality ensures reliable testing:
 - ✅ All draft picks cleared and reset to Round 1, Pick 1

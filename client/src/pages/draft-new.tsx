@@ -350,6 +350,60 @@ export default function DraftPageNew() {
                 </CardContent>
               </Card>
 
+              {/* Draft Order */}
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <Users className="w-5 h-5" />
+                    Draft Participants
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2">
+                    {state?.draft?.draftOrder?.map((userId, index) => {
+                      const playerPick = state.picks?.find(p => p.user.id === userId);
+                      const isActive = userId === state.currentUserId;
+                      
+                      return (
+                        <div 
+                          key={userId}
+                          className={`flex items-center justify-between p-3 rounded-lg border ${
+                            isActive ? 'bg-fantasy-purple/10 border-fantasy-purple' : 'bg-secondary/30'
+                          }`}
+                        >
+                          <div className="flex items-center space-x-3">
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
+                              isActive ? 'bg-fantasy-purple text-white' : 'bg-secondary text-muted-foreground'
+                            }`}>
+                              {index + 1}
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              {playerPick?.user?.avatar && (
+                                <img 
+                                  src={playerPick.user.avatar} 
+                                  alt={playerPick.user.name} 
+                                  className="w-6 h-6 rounded-full"
+                                />
+                              )}
+                              <span className={`font-medium ${isActive ? 'text-fantasy-purple' : ''}`}>
+                                {playerPick?.user?.name || 'Loading...'}
+                              </span>
+                            </div>
+                          </div>
+                          
+                          {isActive && (
+                            <Badge variant="default" className="text-xs">
+                              <Clock className="w-3 h-3 mr-1" />
+                              {formatTime(serverTimer)}
+                            </Badge>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </CardContent>
+              </Card>
+
               {/* Make Pick Button */}
               {isCurrentUser && state?.canMakePick && (
                 <Card>
