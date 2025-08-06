@@ -606,7 +606,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Create a fresh new draft
       const newDraftId = crypto.randomUUID();
       const leagueMembers = await storage.getLeagueMembers(leagueId);
-      const draftOrder = leagueMembers.map(member => member.id);
+      const draftOrder = leagueMembers.map(member => member.userId);
       
       console.log(`🆕 Creating new draft ${newDraftId} with ${draftOrder.length} users`);
       
@@ -626,7 +626,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const firstUserId = draftOrder[0];
       console.log(`🚀 Starting fresh draft timer for user ${firstUserId}`);
       
-      await globalDraftManager.startPickTimer(newDraftId, firstUserId, 1, 1);
+      if (firstUserId) {
+        await globalDraftManager.startPickTimer(newDraftId, firstUserId, 1, 1);
+      } else {
+        console.error('❌ No first user found in draft order');
+      }
       
       console.log(`✅ New draft created successfully: ${newDraftId}`);
       

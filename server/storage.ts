@@ -240,17 +240,19 @@ export class DatabaseStorage implements IStorage {
     return user || undefined;
   }
 
-  async getLeagueMembers(leagueId: string): Promise<Array<{ userId: string; joinedAt: string }>> {
+  async getLeagueMembers(leagueId: string): Promise<Array<{ id: string; userId: string; joinedAt: string }>> {
     console.log(`[Storage] Getting members for league ${leagueId}`);
     const members = await db.select({
+      id: leagueMembers.userId, // Use userId as id for draft order
       userId: leagueMembers.userId,
       joinedAt: leagueMembers.joinedAt
     })
     .from(leagueMembers)
     .where(eq(leagueMembers.leagueId, leagueId));
     
-    console.log(`[Storage] Found ${members.length} members for league ${leagueId}`);
+    console.log(`[Storage] Found ${members.length} members for league ${leagueId}:`, members.map(m => m.userId));
     return members.map(m => ({
+      id: m.userId,
       userId: m.userId,
       joinedAt: m.joinedAt.toISOString()
     }));
