@@ -314,16 +314,28 @@ export default function DraftPage() {
   });
 
   // CRITICAL: Timer expiration effect MUST be here before any returns
-  // Handle timer expiration flash effect only (FIXED: stable dependencies)
+  // Handle timer expiration and transition detection
   useEffect(() => {
     console.log('[Draft] Timer expiration useEffect called');
-    if (localTimeRemaining === 0 && draftData?.state?.timeRemaining > 0) {
-      console.log('[Draft] Setting transition state');
+    const serverTime = draftData?.state?.timeRemaining;
+    
+    // Detect transitions: when server shows 0 and local shows 0, we're likely in transition period
+    if (localTimeRemaining === 0 && serverTime === 0) {
+      console.log('[Draft] Detected transition period - showing transition state');
       setIsTransitioning(true);
+      
+      // Clear transition state after 3 seconds
       const timeout = setTimeout(() => {
+        console.log('[Draft] Clearing transition state');
         setIsTransitioning(false);
-      }, 2000);
+      }, 3000);
       return () => clearTimeout(timeout);
+    }
+    
+    // If server shows fresh timer (>50s), immediately clear transition
+    if (serverTime && serverTime > 50) {
+      console.log('[Draft] Fresh timer detected - clearing transition state');
+      setIsTransitioning(false);
     }
   }, [localTimeRemaining, draftData?.state?.timeRemaining]);
 
@@ -592,7 +604,7 @@ export default function DraftPage() {
                           localTimeRemaining <= 10 ? 'text-red-500 animate-pulse' : 
                           localTimeRemaining <= 30 ? 'text-orange-500' : 'text-foreground'
                         }`}>
-                          {formatTime(localTimeRemaining)}
+                          {localTimeRemaining === 0 && isTransitioning ? 'Transitioning...' : formatTime(localTimeRemaining)}
                         </div>
                         
                         {/* Enhanced Progress Bar */}
@@ -602,17 +614,18 @@ export default function DraftPage() {
                           >
                             <div 
                               className={`h-full rounded-full relative overflow-hidden ${
+                                isTransitioning && localTimeRemaining === 0 ? 'bg-blue-500 animate-pulse shadow-lg' :
                                 localTimeRemaining <= 0 ? 'bg-red-500 animate-pulse shadow-lg' :
                                 localTimeRemaining <= 10 ? 'bg-gradient-to-r from-red-500 to-red-600 shadow-red-500/50' : 
                                 localTimeRemaining <= 30 ? 'bg-gradient-to-r from-orange-400 to-orange-500 shadow-orange-500/40' : 
                                 localTimeRemaining <= 45 ? 'bg-gradient-to-r from-yellow-400 to-orange-400 shadow-yellow-500/40' :
                                 'bg-gradient-to-r from-green-400 to-green-500 shadow-green-500/40'
                               } ${
-                                localTimeRemaining <= 10 ? 'shadow-lg' : 'shadow-md'
+                                localTimeRemaining <= 10 || isTransitioning ? 'shadow-lg' : 'shadow-md'
                               }`}
                               style={{
-                                width: `${Math.max(0, (localTimeRemaining / (state.draft.pickTimeLimit || 60)) * 100)}%`,
-                                transition: localTimeRemaining <= 0 ? 'none' : 'width 1s linear, background-color 0.5s ease, box-shadow 0.3s ease',
+                                width: `${isTransitioning && localTimeRemaining === 0 ? '100%' : Math.max(0, (localTimeRemaining / (state.draft.pickTimeLimit || 60)) * 100)}%`,
+                                transition: localTimeRemaining <= 0 && !isTransitioning ? 'none' : 'width 1s linear, background-color 0.5s ease, box-shadow 0.3s ease',
                                 boxShadow: localTimeRemaining <= 10 ? 
                                   `0 0 15px ${localTimeRemaining <= 5 ? 'rgba(239, 68, 68, 0.8)' : 'rgba(239, 68, 68, 0.5)'}` :
                                   localTimeRemaining <= 30 ? '0 0 8px rgba(251, 146, 60, 0.4)' : 
