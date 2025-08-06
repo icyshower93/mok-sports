@@ -39,22 +39,16 @@ export function useDraftWebSocket(draftId: string | null) {
     
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
     
-    // Determine correct WebSocket endpoint
-    // In production on replit.app, connect directly to the same host
-    // In development, connect to backend server on port 5000
+    // Simplified WebSocket endpoint logic
+    // Always connect to same host (Vite proxies to backend in dev, same server in prod)
     let wsHost = window.location.host;
     let wsPath = '/draft-ws';
     
-    // For development environments, ensure we connect to the backend server
-    if (window.location.hostname === 'localhost' && window.location.port !== '5000') {
-      wsHost = 'localhost:5000';
-    }
-    
-    // For Replit production, use production-compatible path
-    if (window.location.hostname.includes('replit.app')) {
-      wsHost = window.location.host;
-      wsPath = '/draft-ws'; // Server handles both /draft-ws and /ws/draft
-    }
+    console.log('[WebSocket] Environment detection:', {
+      hostname: window.location.hostname,
+      port: window.location.port,
+      protocol: window.location.protocol
+    });
     
     const wsUrl = `${protocol}//${wsHost}${wsPath}?userId=${user.id}&draftId=${draftId}`;
     console.log('[WebSocket] Connecting to:', wsUrl);
