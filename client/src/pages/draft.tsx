@@ -83,20 +83,14 @@ export default function DraftPage() {
 
   console.log('[Draft] All useState hooks declared');
 
-  // Initialize WebSocket connection for real-time timer updates
-  const { connectionStatus, isConnected, lastMessage } = useDraftWebSocket(draftId);
+  // Use Replit-optimized connection as primary (HTTP fallback works reliably)
+  const { status: connectionStatus, isConnected, lastMessage, connectionType } = useReplitWebSocket(draftId, user?.id || '');
   
-  // TEMPORARY: Test simple WebSocket implementation
-  const { status: simpleStatus, isConnected: simpleConnected } = useSimpleWebSocket(draftId, user?.id || '');
-  
-  // TEST: Persistent WebSocket with browser-specific handling
-  const { status: persistentStatus, isConnected: persistentConnected, connectionAttempts } = usePersistentWebSocket(draftId, user?.id || '');
-  
-  // FINAL TEST: Stable WebSocket implementation
-  const { status: stableStatus, isConnected: stableConnected, connectionId } = useStableWebSocket(draftId, user?.id || '');
-  
-  // REPLIT-OPTIMIZED: WebSocket with HTTP fallback
-  const { status: replitStatus, isConnected: replitConnected, connectionType, reconnectAttempts } = useReplitWebSocket(draftId, user?.id || '');
+  // Keep diagnostic implementations for comparison (can be removed later)
+  const { status: originalStatus } = useDraftWebSocket(draftId);
+  const { status: simpleStatus } = useSimpleWebSocket(draftId, user?.id || '');
+  const { status: persistentStatus, connectionAttempts } = usePersistentWebSocket(draftId, user?.id || '');
+  const { status: stableStatus, connectionId } = useStableWebSocket(draftId, user?.id || '');
 
   // Redirect if no draft ID
   useEffect(() => {
@@ -484,13 +478,25 @@ export default function DraftPage() {
                 {state.draft.status.toUpperCase()}
               </Badge>
               
-              {/* TEMPORARY: WebSocket Status Comparison */}
-              <div className="text-xs text-muted-foreground space-y-1">
-                <div>Original: {connectionStatus}</div>
+              {/* Connection Status Display */}
+              <div className="flex items-center space-x-2 text-xs">
+                {isConnected ? 
+                  <Wifi className="w-3 h-3 text-green-500" /> : 
+                  <WifiOff className="w-3 h-3 text-red-500" />
+                }
+                <span className={isConnected ? 'text-green-600' : 'text-red-600'}>
+                  {connectionType === 'HTTP' ? 'Live Updates (HTTP)' : 
+                   isConnected ? 'Connected (WebSocket)' : 'Connecting...'}
+                </span>
+              </div>
+              
+              {/* DIAGNOSTIC: All implementation statuses */}
+              <div className="text-xs text-muted-foreground space-y-1 mt-2">
+                <div>Active: {connectionStatus} ({connectionType})</div>
+                <div>Original: {originalStatus}</div>
                 <div>Simple: {simpleStatus}</div>
                 <div>Persistent: {persistentStatus} (attempts: {connectionAttempts})</div>
                 <div>Stable: {stableStatus} (ID: {connectionId})</div>
-                <div>Replit: {replitStatus} ({connectionType}, attempts: {reconnectAttempts})</div>
               </div>
             </div>
           </div>
