@@ -248,9 +248,13 @@ export default function DraftPage() {
       const currentRound = draftData.state.draft?.currentRound;
       
       console.log(`[Draft] TIMER SYNC DEBUG - Server: ${serverTime}s, Local: ${localTimeRemaining}s, Pick: R${currentRound}P${currentPick}`);
-      console.log(`[Draft] RAW DRAFT DATA:`, JSON.stringify(draftData, null, 2));
-      console.log(`[Draft] RAW TIMER PATH:`, draftData?.state?.timeRemaining);
-      console.log(`[Draft] DIRECT TIMER ACCESS:`, draftData.state.timeRemaining);
+      console.log(`[Draft] API STRUCTURE DEBUG:`, {
+        fullData: draftData,
+        stateOnly: draftData?.state,
+        timerPath: draftData?.state?.timeRemaining,
+        draftPath: draftData?.state?.draft,
+        directTime: draftData.state.timeRemaining
+      });
       
       // FORCE: Always sync with server time - ignore local countdown when server data available
       if (serverTime !== localTimeRemaining) {

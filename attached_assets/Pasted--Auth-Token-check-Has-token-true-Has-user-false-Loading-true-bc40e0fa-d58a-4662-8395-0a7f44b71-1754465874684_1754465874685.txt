@@ -1,0 +1,200 @@
+[Auth] Token check - Has token: true Has user: false Loading: true
+bc40e0fa-d58a-4662-8395-0a7f44b71cbb:1 Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner.
+index-BKKmJDin.js:272 [App] Draft route matched with params: {0: 'bc40e0fa-d58a-4662-8395-0a7f44b71cbb', draftId: 'bc40e0fa-d58a-4662-8395-0a7f44b71cbb'}
+index-BKKmJDin.js:272 [App] Current location: https://mok-sports-draft-mokfantasysport.replit.app/draft/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-BKKmJDin.js:272 [Draft] Component render started - TIME: 1754465863215
+index-BKKmJDin.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-BKKmJDin.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: false rendered at: 2025-08-06T07:37:43.215Z
+index-BKKmJDin.js:272 [Draft] RENDER TIMING - Time since component start: 1754465862927.3
+index-BKKmJDin.js:272 [Draft] All useState hooks declared
+index-BKKmJDin.js:272 [Draft] All hooks declared, starting conditional logic
+index-BKKmJDin.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: false Time: 1754465863216
+index-BKKmJDin.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-BKKmJDin.js:272 [WebSocket] Attempting connection for draft: bc40e0fa-d58a-4662-8395-0a7f44b71cbb user: d8873675-274c-46f9-ab48-00955c81d875
+index-BKKmJDin.js:272 [WebSocket] Connecting to: wss://mok-sports-draft-mokfantasysport.replit.app/draft-ws?userId=d8873675-274c-46f9-ab48-00955c81d875&draftId=bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-BKKmJDin.js:272 [WebSocket] Current location: https://mok-sports-draft-mokfantasysport.replit.app/draft/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-BKKmJDin.js:272 [WebSocket] Protocol detected: wss:
+index-BKKmJDin.js:272 [WebSocket] Target host: mok-sports-draft-mokfantasysport.replit.app
+index-BKKmJDin.js:272 [Timer Fallback] Starting enhanced timer polling for draft: bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-BKKmJDin.js:272 [Draft] === STARTING DRAFT FETCH ===
+index-BKKmJDin.js:272 [Draft] Draft ID: bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-BKKmJDin.js:272 [Draft] Auth status - User: Mok Sports Authenticated: false Loading: false
+index-BKKmJDin.js:272 [Draft] Token available: true
+index-BKKmJDin.js:272 [Draft] Current URL: https://mok-sports-draft-mokfantasysport.replit.app/draft/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-BKKmJDin.js:272 [Draft] Current pathname: /draft/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-BKKmJDin.js:272 [Draft] Making API request to: /api/drafts/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-BKKmJDin.js:272 [Draft] Timer expiration useEffect called
+index-BKKmJDin.js:228 [Auth] Token check - Has token: true Has user: true Loading: false
+index-BKKmJDin.js:272 [App] Draft route matched with params: {0: 'bc40e0fa-d58a-4662-8395-0a7f44b71cbb', draftId: 'bc40e0fa-d58a-4662-8395-0a7f44b71cbb'}
+index-BKKmJDin.js:272 [App] Current location: https://mok-sports-draft-mokfantasysport.replit.app/draft/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-BKKmJDin.js:272 [Draft] Component render started - TIME: 1754465863219
+index-BKKmJDin.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-BKKmJDin.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-06T07:37:43.220Z
+index-BKKmJDin.js:272 [Draft] RENDER TIMING - Time since component start: 1754465862928
+index-BKKmJDin.js:272 [Draft] All useState hooks declared
+index-BKKmJDin.js:272 [Draft] All hooks declared, starting conditional logic
+index-BKKmJDin.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754465863220
+index-BKKmJDin.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-BKKmJDin.js:228 [SubscriptionManager] 3:37:43 AM - Permission is granted and no active subscription - auto-creating subscription
+index-BKKmJDin.js:228 [AutoPushRefresh] Legacy hook delegating to SubscriptionManager
+index-BKKmJDin.js:272 [App] Draft route matched with params: {0: 'bc40e0fa-d58a-4662-8395-0a7f44b71cbb', draftId: 'bc40e0fa-d58a-4662-8395-0a7f44b71cbb'}
+index-BKKmJDin.js:272 [App] Current location: https://mok-sports-draft-mokfantasysport.replit.app/draft/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-BKKmJDin.js:272 [Draft] Component render started - TIME: 1754465863223
+index-BKKmJDin.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-BKKmJDin.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-06T07:37:43.224Z
+index-BKKmJDin.js:272 [Draft] RENDER TIMING - Time since component start: 1754465862928
+index-BKKmJDin.js:272 [Draft] All useState hooks declared
+index-BKKmJDin.js:272 [Draft] All hooks declared, starting conditional logic
+index-BKKmJDin.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754465863224
+index-BKKmJDin.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+sw.js?v=1754465863140:15 [SW] Service worker starting, version: v1.4.0-ios-push-fix
+sw.js?v=1754465863140:201 [SW] Service worker script loaded successfully
+sw.js?v=1754465863140:19 [SW] Installing service worker, version: v1.4.0-ios-push-fix
+index-BKKmJDin.js:228 [SW Hook] Service worker registered successfully
+sw.js?v=1754465863140:23 [SW] Caching static files
+index-BKKmJDin.js:272 [App] Draft route matched with params: {0: 'bc40e0fa-d58a-4662-8395-0a7f44b71cbb', draftId: 'bc40e0fa-d58a-4662-8395-0a7f44b71cbb'}
+index-BKKmJDin.js:272 [App] Current location: https://mok-sports-draft-mokfantasysport.replit.app/draft/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-BKKmJDin.js:272 [Draft] Component render started - TIME: 1754465863227
+index-BKKmJDin.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-BKKmJDin.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-06T07:37:43.227Z
+index-BKKmJDin.js:272 [Draft] RENDER TIMING - Time since component start: 1754465862927.8
+index-BKKmJDin.js:272 [Draft] All useState hooks declared
+index-BKKmJDin.js:272 [Draft] All hooks declared, starting conditional logic
+index-BKKmJDin.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754465863227
+index-BKKmJDin.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-BKKmJDin.js:272 [Draft] Component render started - TIME: 1754465863352
+index-BKKmJDin.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-BKKmJDin.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-06T07:37:43.352Z
+index-BKKmJDin.js:272 [Draft] RENDER TIMING - Time since component start: 1754465862927.7
+index-BKKmJDin.js:272 [Draft] All useState hooks declared
+index-BKKmJDin.js:272 [Draft] All hooks declared, starting conditional logic
+index-BKKmJDin.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754465863352
+index-BKKmJDin.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+sw.js?v=1754465863140:26 [SW] Static files cached successfully
+index-BKKmJDin.js:272 [WebSocket] Successfully connected to draft: bc40e0fa-d58a-4662-8395-0a7f44b71cbb for user: d8873675-274c-46f9-ab48-00955c81d875
+index-BKKmJDin.js:272 [WebSocket] Received message: connected {type: 'connected', draftId: 'bc40e0fa-d58a-4662-8395-0a7f44b71cbb', timestamp: 1754465863437}
+index-BKKmJDin.js:272 [WebSocket] Connected to draft successfully
+index-BKKmJDin.js:272 [Draft] Component render started - TIME: 1754465863407
+index-BKKmJDin.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-BKKmJDin.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-06T07:37:43.407Z
+index-BKKmJDin.js:272 [Draft] RENDER TIMING - Time since component start: 1754465862927.4
+index-BKKmJDin.js:272 [Draft] All useState hooks declared
+index-BKKmJDin.js:272 [Draft] All hooks declared, starting conditional logic
+index-BKKmJDin.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754465863407
+index-BKKmJDin.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-BKKmJDin.js:272 [WebSocket] Received message: pong {type: 'pong', timestamp: 1754465863490}
+index-BKKmJDin.js:272 [WebSocket] Received pong from server
+index-BKKmJDin.js:272 [Draft] Component render started - TIME: 1754465863465
+index-BKKmJDin.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-BKKmJDin.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-06T07:37:43.465Z
+index-BKKmJDin.js:272 [Draft] RENDER TIMING - Time since component start: 1754465862927.1
+index-BKKmJDin.js:272 [Draft] All useState hooks declared
+index-BKKmJDin.js:272 [Draft] All hooks declared, starting conditional logic
+index-BKKmJDin.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754465863466
+index-BKKmJDin.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-BKKmJDin.js:272 [Draft] Response received: {status: 200, statusText: '', headers: {…}}
+index-BKKmJDin.js:272 [Draft] Successfully fetched draft data: {state: {…}, isCurrentUser: false, currentPlayer: {…}}
+index-BKKmJDin.js:272 [Draft] === DRAFT FETCH SUCCESS ===
+index-BKKmJDin.js:272 [Draft] Component render started - TIME: 1754465863528
+index-BKKmJDin.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-BKKmJDin.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-06T07:37:43.528Z
+index-BKKmJDin.js:272 [Draft] RENDER TIMING - Time since component start: 1754465862927.8
+index-BKKmJDin.js:272 [Draft] All useState hooks declared
+index-BKKmJDin.js:272 [Draft] All hooks declared, starting conditional logic
+index-BKKmJDin.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: false error: false draftData: true isAuthenticated: true Time: 1754465863528
+index-BKKmJDin.js:272 🔍 [TIMER DEBUG] === FRONTEND DATA RECEIVED ===
+index-BKKmJDin.js:272 🔍 [TIMER DEBUG] Server Time: 0
+index-BKKmJDin.js:272 🔍 [TIMER DEBUG] Local Time: 0
+index-BKKmJDin.js:272 🔍 [TIMER DEBUG] Current User ID: 8dce55ed-86ab-4723-a7c6-9ade8cd7aaae
+index-BKKmJDin.js:272 🔍 [TIMER DEBUG] Draft Round/Pick: 1 / 2
+index-BKKmJDin.js:272 🔍 [TIMER DEBUG] Draft Order: (6) ['766992a8-44f0-4d0e-a65f-987237e67a35', '8dce55ed-86ab-4723-a7c6-9ade8cd7aaae', 'd8873675-274c-46f9-ab48-00955c81d875', 'f159aa72-dee8-4847-8ccc-22ecf9f27695', '9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a', '320ca071-16f9-41e0-b991-663da88afbc0']
+index-BKKmJDin.js:272 🔍 [TIMER DEBUG] Current Player Name: Alpha Bot
+index-BKKmJDin.js:272 🔍 [TIMER DEBUG] Is Current User: false
+index-BKKmJDin.js:272 🔍 [TIMER DEBUG] Full Draft Data: {state: {…}, isCurrentUser: false, currentPlayer: {…}}
+index-BKKmJDin.js:272 🔍 [TIMER DEBUG] ===========================
+index-BKKmJDin.js:272 [Draft] TIMER SYNC DEBUG - Server: 0s, Local: 0s, Pick: R1P2
+index-BKKmJDin.js:272 [Draft] Timer expiration useEffect called
+index-BKKmJDin.js:272 [Draft] Detected transition period - showing transition state
+index-BKKmJDin.js:272 [Draft] Component render started - TIME: 1754465863544
+index-BKKmJDin.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-BKKmJDin.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-06T07:37:43.544Z
+index-BKKmJDin.js:272 [Draft] RENDER TIMING - Time since component start: 1754465862927.3
+index-BKKmJDin.js:272 [Draft] All useState hooks declared
+index-BKKmJDin.js:272 [Draft] All hooks declared, starting conditional logic
+index-BKKmJDin.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: false error: false draftData: true isAuthenticated: true Time: 1754465863544
+index-BKKmJDin.js:272 🔍 [TIMER DEBUG] === FRONTEND DATA RECEIVED ===
+index-BKKmJDin.js:272 🔍 [TIMER DEBUG] Server Time: 0
+index-BKKmJDin.js:272 🔍 [TIMER DEBUG] Local Time: 0
+index-BKKmJDin.js:272 🔍 [TIMER DEBUG] Current User ID: 8dce55ed-86ab-4723-a7c6-9ade8cd7aaae
+index-BKKmJDin.js:272 🔍 [TIMER DEBUG] Draft Round/Pick: 1 / 2
+index-BKKmJDin.js:272 🔍 [TIMER DEBUG] Draft Order: (6) ['766992a8-44f0-4d0e-a65f-987237e67a35', '8dce55ed-86ab-4723-a7c6-9ade8cd7aaae', 'd8873675-274c-46f9-ab48-00955c81d875', 'f159aa72-dee8-4847-8ccc-22ecf9f27695', '9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a', '320ca071-16f9-41e0-b991-663da88afbc0']
+index-BKKmJDin.js:272 🔍 [TIMER DEBUG] Current Player Name: Alpha Bot
+index-BKKmJDin.js:272 🔍 [TIMER DEBUG] Is Current User: false
+index-BKKmJDin.js:272 🔍 [TIMER DEBUG] Full Draft Data: {state: {…}, isCurrentUser: false, currentPlayer: {…}}
+index-BKKmJDin.js:272 🔍 [TIMER DEBUG] ===========================
+index-BKKmJDin.js:228 [SubscriptionManager] 3:37:43 AM - Starting subscription refresh...
+index-BKKmJDin.js:272 [App] Draft route matched with params: {0: 'bc40e0fa-d58a-4662-8395-0a7f44b71cbb', draftId: 'bc40e0fa-d58a-4662-8395-0a7f44b71cbb'}
+index-BKKmJDin.js:272 [App] Current location: https://mok-sports-draft-mokfantasysport.replit.app/draft/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-BKKmJDin.js:272 [Draft] Component render started - TIME: 1754465863723
+index-BKKmJDin.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-BKKmJDin.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-06T07:37:43.723Z
+index-BKKmJDin.js:272 [Draft] RENDER TIMING - Time since component start: 1754465862927.4
+index-BKKmJDin.js:272 [Draft] All useState hooks declared
+index-BKKmJDin.js:272 [Draft] All hooks declared, starting conditional logic
+index-BKKmJDin.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: false error: false draftData: true isAuthenticated: true Time: 1754465863723
+index-BKKmJDin.js:272 🔍 [TIMER DEBUG] === FRONTEND DATA RECEIVED ===
+index-BKKmJDin.js:272 🔍 [TIMER DEBUG] Server Time: 0
+index-BKKmJDin.js:272 🔍 [TIMER DEBUG] Local Time: 0
+index-BKKmJDin.js:272 🔍 [TIMER DEBUG] Current User ID: 8dce55ed-86ab-4723-a7c6-9ade8cd7aaae
+index-BKKmJDin.js:272 🔍 [TIMER DEBUG] Draft Round/Pick: 1 / 2
+index-BKKmJDin.js:272 🔍 [TIMER DEBUG] Draft Order: (6) ['766992a8-44f0-4d0e-a65f-987237e67a35', '8dce55ed-86ab-4723-a7c6-9ade8cd7aaae', 'd8873675-274c-46f9-ab48-00955c81d875', 'f159aa72-dee8-4847-8ccc-22ecf9f27695', '9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a', '320ca071-16f9-41e0-b991-663da88afbc0']
+index-BKKmJDin.js:272 🔍 [TIMER DEBUG] Current Player Name: Alpha Bot
+index-BKKmJDin.js:272 🔍 [TIMER DEBUG] Is Current User: false
+index-BKKmJDin.js:272 🔍 [TIMER DEBUG] Full Draft Data: {state: {…}, isCurrentUser: false, currentPlayer: {…}}
+index-BKKmJDin.js:272 🔍 [TIMER DEBUG] ===========================
+index-BKKmJDin.js:228 [SubscriptionManager] 3:37:43 AM - Found existing subscription - unsubscribing...
+index-BKKmJDin.js:228 [SubscriptionManager] 3:37:43 AM - Existing subscription unsubscribed
+index-BKKmJDin.js:228 [SubscriptionManager] 3:37:43 AM - Creating new push subscription...
+index-BKKmJDin.js:228 [SubscriptionManager] 3:37:44 AM - Sending subscription to server: https://fcm.googleapis.com/fcm/send/eX2ZgqcU7bY:AP...
+sw.js?v=1754465863140:37 [SW] Activating service worker, version: v1.4.0-ios-push-fix
+sw.js?v=1754465863140:43 [SW] Found caches: (2) ['mok-sports-static-v1.4.0-ios-push-fix', 'mok-sports-dynamic-v1.4.0-ios-push-fix']
+sw.js?v=1754465863140:56 [SW] Service worker activated and controlling all clients
+index-BKKmJDin.js:228 [SubscriptionManager] 3:37:44 AM - Server response: 201 
+index-BKKmJDin.js:228 [SubscriptionManager] 3:37:44 AM - Subscription registered successfully: Subscription registered successfully
+index-BKKmJDin.js:272 [App] Draft route matched with params: {0: 'bc40e0fa-d58a-4662-8395-0a7f44b71cbb', draftId: 'bc40e0fa-d58a-4662-8395-0a7f44b71cbb'}
+index-BKKmJDin.js:272 [App] Current location: https://mok-sports-draft-mokfantasysport.replit.app/draft/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-BKKmJDin.js:272 [Draft] Component render started - TIME: 1754465864439
+index-BKKmJDin.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-BKKmJDin.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-06T07:37:44.439Z
+index-BKKmJDin.js:272 [Draft] RENDER TIMING - Time since component start: 1754465862927.7
+index-BKKmJDin.js:272 [Draft] All useState hooks declared
+index-BKKmJDin.js:272 [Draft] All hooks declared, starting conditional logic
+index-BKKmJDin.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: false error: false draftData: true isAuthenticated: true Time: 1754465864439
+index-BKKmJDin.js:272 🔍 [TIMER DEBUG] === FRONTEND DATA RECEIVED ===
+index-BKKmJDin.js:272 🔍 [TIMER DEBUG] Server Time: 0
+index-BKKmJDin.js:272 🔍 [TIMER DEBUG] Local Time: 0
+index-BKKmJDin.js:272 🔍 [TIMER DEBUG] Current User ID: 8dce55ed-86ab-4723-a7c6-9ade8cd7aaae
+index-BKKmJDin.js:272 🔍 [TIMER DEBUG] Draft Round/Pick: 1 / 2
+index-BKKmJDin.js:272 🔍 [TIMER DEBUG] Draft Order: (6) ['766992a8-44f0-4d0e-a65f-987237e67a35', '8dce55ed-86ab-4723-a7c6-9ade8cd7aaae', 'd8873675-274c-46f9-ab48-00955c81d875', 'f159aa72-dee8-4847-8ccc-22ecf9f27695', '9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a', '320ca071-16f9-41e0-b991-663da88afbc0']
+index-BKKmJDin.js:272 🔍 [TIMER DEBUG] Current Player Name: Alpha Bot
+index-BKKmJDin.js:272 🔍 [TIMER DEBUG] Is Current User: false
+index-BKKmJDin.js:272 🔍 [TIMER DEBUG] Full Draft Data: {state: {…}, isCurrentUser: false, currentPlayer: {…}}
+index-BKKmJDin.js:272 🔍 [TIMER DEBUG] ===========================
+index-BKKmJDin.js:272 [Timer Fallback] Poll #1 - Timer: 0 Round: 1 Pick: 2 Current User: 8dce55ed-86ab-4723-a7c6-9ade8cd7aaae Full Data: {state: {…}, isCurrentUser: false, currentPlayer: {…}}
+index-BKKmJDin.js:272 [Draft] === STARTING DRAFT FETCH ===
+index-BKKmJDin.js:272 [Draft] Draft ID: bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-BKKmJDin.js:272 [Draft] Auth status - User: Mok Sports Authenticated: true Loading: false
+index-BKKmJDin.js:272 [Draft] Token available: true
+index-BKKmJDin.js:272 [Draft] Current URL: https://mok-sports-draft-mokfantasysport.replit.app/draft/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-BKKmJDin.js:272 [Draft] Current pathname: /draft/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-BKKmJDin.js:272 [Draft] Making API request to: /api/drafts/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-BKKmJDin.js:272 [Draft] Response received: {status: 200, statusText: '', headers: {…}}
+index-BKKmJDin.js:272 [Draft] Successfully fetched draft data: {state: {…}, isCurrentUser: false, currentPlayer: {…}}
+index-BKKmJDin.js:272 [Draft] === DRAFT FETCH SUCCESS ===
+index-BKKmJDin.js:272 [Draft] Clearing transition state
+index-BKKmJDin.js:272 [Draft] Component render started - TIME: 1754465866538
+index-BKKmJDin.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-BKKmJDin.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-06T07:37:46.538Z
+index-BKKmJDin.js:272 [Draft] RENDER TIMING - Time since component start: 1754465862927.9
+index-BKKmJDin.js:272 [Draft] All useState hooks declared
+index-BKKmJDin.js:272 [Draft] All hooks declared, starting condition
