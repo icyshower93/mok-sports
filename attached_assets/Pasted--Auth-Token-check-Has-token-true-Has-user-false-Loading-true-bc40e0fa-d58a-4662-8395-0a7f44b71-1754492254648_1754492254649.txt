@@ -1,0 +1,236 @@
+[Auth] Token check - Has token: true Has user: false Loading: true
+bc40e0fa-d58a-4662-8395-0a7f44b71cbb:1 Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner.
+index-SzqfBcqg.js:272 [App] Draft route matched with params: {0: 'bc40e0fa-d58a-4662-8395-0a7f44b71cbb', draftId: 'bc40e0fa-d58a-4662-8395-0a7f44b71cbb'}
+index-SzqfBcqg.js:272 [App] Current location: https://mok-sports-draft-mokfantasysport.replit.app/draft/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-SzqfBcqg.js:272 [Draft] Component render started - TIME: 1754492232745
+index-SzqfBcqg.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-SzqfBcqg.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: false rendered at: 2025-08-06T14:57:12.746Z
+index-SzqfBcqg.js:272 [Draft] RENDER TIMING - Time since component start: 1754492232378.4
+index-SzqfBcqg.js:272 [Draft] All useState hooks declared
+index-SzqfBcqg.js:272 [Draft] All hooks declared, starting conditional logic
+index-SzqfBcqg.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: false Time: 1754492232746
+index-SzqfBcqg.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-SzqfBcqg.js:272 [WebSocket] Attempting connection for draft: bc40e0fa-d58a-4662-8395-0a7f44b71cbb user: d8873675-274c-46f9-ab48-00955c81d875
+index-SzqfBcqg.js:272 [WebSocket] Connecting to: wss://mok-sports-draft-mokfantasysport.replit.app/draft-ws?userId=d8873675-274c-46f9-ab48-00955c81d875&draftId=bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-SzqfBcqg.js:272 [WebSocket] Current location: https://mok-sports-draft-mokfantasysport.replit.app/draft/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-SzqfBcqg.js:272 [WebSocket] Protocol detected: wss:
+index-SzqfBcqg.js:272 [WebSocket] Target host: mok-sports-draft-mokfantasysport.replit.app
+index-SzqfBcqg.js:272 [Timer Fallback] Starting enhanced timer polling for draft: bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-SzqfBcqg.js:272 [Draft] === STARTING DRAFT FETCH ===
+index-SzqfBcqg.js:272 [Draft] Draft ID: bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-SzqfBcqg.js:272 [Draft] Auth status - User: Mok Sports Authenticated: false Loading: false
+index-SzqfBcqg.js:272 [Draft] Token available: true
+index-SzqfBcqg.js:272 [Draft] Current URL: https://mok-sports-draft-mokfantasysport.replit.app/draft/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-SzqfBcqg.js:272 [Draft] Current pathname: /draft/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-SzqfBcqg.js:272 [Draft] Making API request to: /api/drafts/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-SzqfBcqg.js:272 [Draft] Timer expiration useEffect called
+index-SzqfBcqg.js:228 [Auth] Token check - Has token: true Has user: true Loading: false
+index-SzqfBcqg.js:272 [App] Draft route matched with params: {0: 'bc40e0fa-d58a-4662-8395-0a7f44b71cbb', draftId: 'bc40e0fa-d58a-4662-8395-0a7f44b71cbb'}
+index-SzqfBcqg.js:272 [App] Current location: https://mok-sports-draft-mokfantasysport.replit.app/draft/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-SzqfBcqg.js:272 [Draft] Component render started - TIME: 1754492232752
+index-SzqfBcqg.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-SzqfBcqg.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-06T14:57:12.752Z
+index-SzqfBcqg.js:272 [Draft] RENDER TIMING - Time since component start: 1754492232377.7
+index-SzqfBcqg.js:272 [Draft] All useState hooks declared
+index-SzqfBcqg.js:272 [Draft] All hooks declared, starting conditional logic
+index-SzqfBcqg.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754492232753
+index-SzqfBcqg.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-SzqfBcqg.js:228 [SubscriptionManager] 10:57:12 AM - Permission is granted and no active subscription - auto-creating subscription
+index-SzqfBcqg.js:228 [AutoPushRefresh] Legacy hook delegating to SubscriptionManager
+sw.js?v=1754492232666:15 [SW] Service worker starting, version: v1.4.0-ios-push-fix
+sw.js?v=1754492232666:201 [SW] Service worker script loaded successfully
+sw.js?v=1754492232666:19 [SW] Installing service worker, version: v1.4.0-ios-push-fix
+index-SzqfBcqg.js:228 [SW Hook] Service worker registered successfully
+sw.js?v=1754492232666:23 [SW] Caching static files
+index-SzqfBcqg.js:272 [App] Draft route matched with params: {0: 'bc40e0fa-d58a-4662-8395-0a7f44b71cbb', draftId: 'bc40e0fa-d58a-4662-8395-0a7f44b71cbb'}
+index-SzqfBcqg.js:272 [App] Current location: https://mok-sports-draft-mokfantasysport.replit.app/draft/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-SzqfBcqg.js:272 [Draft] Component render started - TIME: 1754492232755
+index-SzqfBcqg.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-SzqfBcqg.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-06T14:57:12.755Z
+index-SzqfBcqg.js:272 [Draft] RENDER TIMING - Time since component start: 1754492232378
+index-SzqfBcqg.js:272 [Draft] All useState hooks declared
+index-SzqfBcqg.js:272 [Draft] All hooks declared, starting conditional logic
+index-SzqfBcqg.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754492232755
+index-SzqfBcqg.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-SzqfBcqg.js:272 [App] Draft route matched with params: {0: 'bc40e0fa-d58a-4662-8395-0a7f44b71cbb', draftId: 'bc40e0fa-d58a-4662-8395-0a7f44b71cbb'}
+index-SzqfBcqg.js:272 [App] Current location: https://mok-sports-draft-mokfantasysport.replit.app/draft/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-SzqfBcqg.js:272 [Draft] Component render started - TIME: 1754492232759
+index-SzqfBcqg.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-SzqfBcqg.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-06T14:57:12.759Z
+index-SzqfBcqg.js:272 [Draft] RENDER TIMING - Time since component start: 1754492232377.8
+index-SzqfBcqg.js:272 [Draft] All useState hooks declared
+index-SzqfBcqg.js:272 [Draft] All hooks declared, starting conditional logic
+index-SzqfBcqg.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754492232759
+index-SzqfBcqg.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-SzqfBcqg.js:272 [Draft] Component render started - TIME: 1754492232895
+index-SzqfBcqg.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-SzqfBcqg.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-06T14:57:12.895Z
+index-SzqfBcqg.js:272 [Draft] RENDER TIMING - Time since component start: 1754492232378.2
+index-SzqfBcqg.js:272 [Draft] All useState hooks declared
+index-SzqfBcqg.js:272 [Draft] All hooks declared, starting conditional logic
+index-SzqfBcqg.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754492232895
+index-SzqfBcqg.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-SzqfBcqg.js:272 [WebSocket] Successfully connected to draft: bc40e0fa-d58a-4662-8395-0a7f44b71cbb for user: d8873675-274c-46f9-ab48-00955c81d875
+index-SzqfBcqg.js:272 [WebSocket] Received message: connected {type: 'connected', draftId: 'bc40e0fa-d58a-4662-8395-0a7f44b71cbb', timestamp: 1754492232955}
+index-SzqfBcqg.js:272 [WebSocket] Connected to draft successfully
+index-SzqfBcqg.js:272 [Draft] Component render started - TIME: 1754492232905
+index-SzqfBcqg.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-SzqfBcqg.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-06T14:57:12.905Z
+index-SzqfBcqg.js:272 [Draft] RENDER TIMING - Time since component start: 1754492232378.1
+index-SzqfBcqg.js:272 [Draft] All useState hooks declared
+index-SzqfBcqg.js:272 [Draft] All hooks declared, starting conditional logic
+index-SzqfBcqg.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754492232905
+index-SzqfBcqg.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+sw.js?v=1754492232666:26 [SW] Static files cached successfully
+index-SzqfBcqg.js:272 [WebSocket] Received message: pong {type: 'pong', timestamp: 1754492233004}
+index-SzqfBcqg.js:272 [WebSocket] Received pong from server
+index-SzqfBcqg.js:272 [Draft] Component render started - TIME: 1754492232952
+index-SzqfBcqg.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-SzqfBcqg.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-06T14:57:12.952Z
+index-SzqfBcqg.js:272 [Draft] RENDER TIMING - Time since component start: 1754492232377.9
+index-SzqfBcqg.js:272 [Draft] All useState hooks declared
+index-SzqfBcqg.js:272 [Draft] All hooks declared, starting conditional logic
+index-SzqfBcqg.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754492232952
+index-SzqfBcqg.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-SzqfBcqg.js:272 [Draft] Response received: {status: 200, statusText: '', headers: {…}}
+index-SzqfBcqg.js:272 [Draft] Successfully fetched draft data: {state: {…}, isCurrentUser: false, currentPlayer: {…}}
+index-SzqfBcqg.js:272 [Draft] === DRAFT FETCH SUCCESS ===
+index-SzqfBcqg.js:272 [Draft] Component render started - TIME: 1754492233139
+index-SzqfBcqg.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-SzqfBcqg.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-06T14:57:13.139Z
+index-SzqfBcqg.js:272 [Draft] RENDER TIMING - Time since component start: 1754492232378.5
+index-SzqfBcqg.js:272 [Draft] All useState hooks declared
+index-SzqfBcqg.js:272 [Draft] All hooks declared, starting conditional logic
+index-SzqfBcqg.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: false error: false draftData: true isAuthenticated: true Time: 1754492233140
+index-SzqfBcqg.js:272 🔍 [TIMER DEBUG] === FRONTEND DATA RECEIVED ===
+index-SzqfBcqg.js:272 🔍 [TIMER DEBUG] Server Time: 0
+index-SzqfBcqg.js:272 🔍 [TIMER DEBUG] Local Time: 0
+index-SzqfBcqg.js:272 🔍 [TIMER DEBUG] Current User ID: 766992a8-44f0-4d0e-a65f-987237e67a35
+index-SzqfBcqg.js:272 🔍 [TIMER DEBUG] Draft Round/Pick: 1 / 1
+index-SzqfBcqg.js:272 🔍 [TIMER DEBUG] Draft Order: (6) ['766992a8-44f0-4d0e-a65f-987237e67a35', '8dce55ed-86ab-4723-a7c6-9ade8cd7aaae', 'd8873675-274c-46f9-ab48-00955c81d875', 'f159aa72-dee8-4847-8ccc-22ecf9f27695', '9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a', '320ca071-16f9-41e0-b991-663da88afbc0']
+index-SzqfBcqg.js:272 🔍 [TIMER DEBUG] Current Player Name: Gamma Bot
+index-SzqfBcqg.js:272 🔍 [TIMER DEBUG] Is Current User: false
+index-SzqfBcqg.js:272 🔍 [TIMER DEBUG] Full Draft Data: {state: {…}, isCurrentUser: false, currentPlayer: {…}}
+index-SzqfBcqg.js:272 🔍 [TIMER DEBUG] ===========================
+index-SzqfBcqg.js:272 [Draft] TIMER SYNC DEBUG - Server: 0s, Local: 0s, Pick: R1P1
+index-SzqfBcqg.js:272 [Draft] 🚨 COMPLETE API DEBUG:
+index-SzqfBcqg.js:272 [Draft] 🚨 draftData: {state: {…}, isCurrentUser: false, currentPlayer: {…}}
+index-SzqfBcqg.js:272 [Draft] 🚨 draftData.state: {draft: {…}, currentUserId: '766992a8-44f0-4d0e-a65f-987237e67a35', timeRemaining: 0, picks: Array(0), availableTeams: Array(32), …}
+index-SzqfBcqg.js:272 [Draft] 🚨 draftData.state.draft: {id: 'bc40e0fa-d58a-4662-8395-0a7f44b71cbb', leagueId: '243d719b-92ce-4752-8689-5da93ee69213', status: 'active', currentRound: 1, currentPick: 1, …}
+index-SzqfBcqg.js:272 [Draft] 🚨 draftData.timeRemaining: undefined
+index-SzqfBcqg.js:272 [Draft] 🚨 draftData.state.timeRemaining: 0
+index-SzqfBcqg.js:272 [Draft] 🚨 ALL PATHS CHECKED - TIMER VALUE: 0
+index-SzqfBcqg.js:272 [Draft] Timer expiration useEffect called
+index-SzqfBcqg.js:228 [SubscriptionManager] 10:57:13 AM - Starting subscription refresh...
+index-SzqfBcqg.js:272 [App] Draft route matched with params: {0: 'bc40e0fa-d58a-4662-8395-0a7f44b71cbb', draftId: 'bc40e0fa-d58a-4662-8395-0a7f44b71cbb'}
+index-SzqfBcqg.js:272 [App] Current location: https://mok-sports-draft-mokfantasysport.replit.app/draft/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-SzqfBcqg.js:272 [Draft] Component render started - TIME: 1754492233255
+index-SzqfBcqg.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-SzqfBcqg.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-06T14:57:13.255Z
+index-SzqfBcqg.js:272 [Draft] RENDER TIMING - Time since component start: 1754492232378
+index-SzqfBcqg.js:272 [Draft] All useState hooks declared
+index-SzqfBcqg.js:272 [Draft] All hooks declared, starting conditional logic
+index-SzqfBcqg.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: false error: false draftData: true isAuthenticated: true Time: 1754492233255
+index-SzqfBcqg.js:272 🔍 [TIMER DEBUG] === FRONTEND DATA RECEIVED ===
+index-SzqfBcqg.js:272 🔍 [TIMER DEBUG] Server Time: 0
+index-SzqfBcqg.js:272 🔍 [TIMER DEBUG] Local Time: 0
+index-SzqfBcqg.js:272 🔍 [TIMER DEBUG] Current User ID: 766992a8-44f0-4d0e-a65f-987237e67a35
+index-SzqfBcqg.js:272 🔍 [TIMER DEBUG] Draft Round/Pick: 1 / 1
+index-SzqfBcqg.js:272 🔍 [TIMER DEBUG] Draft Order: (6) ['766992a8-44f0-4d0e-a65f-987237e67a35', '8dce55ed-86ab-4723-a7c6-9ade8cd7aaae', 'd8873675-274c-46f9-ab48-00955c81d875', 'f159aa72-dee8-4847-8ccc-22ecf9f27695', '9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a', '320ca071-16f9-41e0-b991-663da88afbc0']
+index-SzqfBcqg.js:272 🔍 [TIMER DEBUG] Current Player Name: Gamma Bot
+index-SzqfBcqg.js:272 🔍 [TIMER DEBUG] Is Current User: false
+index-SzqfBcqg.js:272 🔍 [TIMER DEBUG] Full Draft Data: {state: {…}, isCurrentUser: false, currentPlayer: {…}}
+index-SzqfBcqg.js:272 🔍 [TIMER DEBUG] ===========================
+index-SzqfBcqg.js:228 [SubscriptionManager] 10:57:13 AM - Found existing subscription - unsubscribing...
+index-SzqfBcqg.js:228 [SubscriptionManager] 10:57:13 AM - Existing subscription unsubscribed
+index-SzqfBcqg.js:228 [SubscriptionManager] 10:57:13 AM - Creating new push subscription...
+index-SzqfBcqg.js:228 [SubscriptionManager] 10:57:13 AM - Sending subscription to server: https://fcm.googleapis.com/fcm/send/cWRPM9cj-hI:AP...
+sw.js?v=1754492232666:37 [SW] Activating service worker, version: v1.4.0-ios-push-fix
+sw.js?v=1754492232666:43 [SW] Found caches: (2) ['mok-sports-static-v1.4.0-ios-push-fix', 'mok-sports-dynamic-v1.4.0-ios-push-fix']
+sw.js?v=1754492232666:56 [SW] Service worker activated and controlling all clients
+index-SzqfBcqg.js:228 [SubscriptionManager] 10:57:14 AM - Server response: 201 
+index-SzqfBcqg.js:228 [SubscriptionManager] 10:57:14 AM - Subscription registered successfully: Subscription registered successfully
+index-SzqfBcqg.js:272 [App] Draft route matched with params: {0: 'bc40e0fa-d58a-4662-8395-0a7f44b71cbb', draftId: 'bc40e0fa-d58a-4662-8395-0a7f44b71cbb'}
+index-SzqfBcqg.js:272 [App] Current location: https://mok-sports-draft-mokfantasysport.replit.app/draft/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-SzqfBcqg.js:272 [Draft] Component render started - TIME: 1754492234004
+index-SzqfBcqg.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-SzqfBcqg.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-06T14:57:14.004Z
+index-SzqfBcqg.js:272 [Draft] RENDER TIMING - Time since component start: 1754492232378.1
+index-SzqfBcqg.js:272 [Draft] All useState hooks declared
+index-SzqfBcqg.js:272 [Draft] All hooks declared, starting conditional logic
+index-SzqfBcqg.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: false error: false draftData: true isAuthenticated: true Time: 1754492234004
+index-SzqfBcqg.js:272 🔍 [TIMER DEBUG] === FRONTEND DATA RECEIVED ===
+index-SzqfBcqg.js:272 🔍 [TIMER DEBUG] Server Time: 0
+index-SzqfBcqg.js:272 🔍 [TIMER DEBUG] Local Time: 0
+index-SzqfBcqg.js:272 🔍 [TIMER DEBUG] Current User ID: 766992a8-44f0-4d0e-a65f-987237e67a35
+index-SzqfBcqg.js:272 🔍 [TIMER DEBUG] Draft Round/Pick: 1 / 1
+index-SzqfBcqg.js:272 🔍 [TIMER DEBUG] Draft Order: (6) ['766992a8-44f0-4d0e-a65f-987237e67a35', '8dce55ed-86ab-4723-a7c6-9ade8cd7aaae', 'd8873675-274c-46f9-ab48-00955c81d875', 'f159aa72-dee8-4847-8ccc-22ecf9f27695', '9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a', '320ca071-16f9-41e0-b991-663da88afbc0']
+index-SzqfBcqg.js:272 🔍 [TIMER DEBUG] Current Player Name: Gamma Bot
+index-SzqfBcqg.js:272 🔍 [TIMER DEBUG] Is Current User: false
+index-SzqfBcqg.js:272 🔍 [TIMER DEBUG] Full Draft Data: {state: {…}, isCurrentUser: false, currentPlayer: {…}}
+index-SzqfBcqg.js:272 🔍 [TIMER DEBUG] ===========================
+index-SzqfBcqg.js:272 [Timer Fallback] Poll #1 - Timer: 0 Round: 1 Pick: 1 Current User: 766992a8-44f0-4d0e-a65f-987237e67a35 Full Data: {state: {…}, isCurrentUser: false, currentPlayer: {…}}
+index-SzqfBcqg.js:272 [Draft] === STARTING DRAFT FETCH ===
+index-SzqfBcqg.js:272 [Draft] Draft ID: bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-SzqfBcqg.js:272 [Draft] Auth status - User: Mok Sports Authenticated: true Loading: false
+index-SzqfBcqg.js:272 [Draft] Token available: true
+index-SzqfBcqg.js:272 [Draft] Current URL: https://mok-sports-draft-mokfantasysport.replit.app/draft/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-SzqfBcqg.js:272 [Draft] Current pathname: /draft/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-SzqfBcqg.js:272 [Draft] Making API request to: /api/drafts/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-SzqfBcqg.js:272 [Draft] Response received: {status: 200, statusText: '', headers: {…}}
+index-SzqfBcqg.js:272 [Draft] Successfully fetched draft data: {state: {…}, isCurrentUser: false, currentPlayer: {…}}
+index-SzqfBcqg.js:272 [Draft] === DRAFT FETCH SUCCESS ===
+index-SzqfBcqg.js:272 [Timer Fallback] Poll #2 - Timer: 0 Round: 1 Pick: 1 Current User: 766992a8-44f0-4d0e-a65f-987237e67a35 Full Data: {state: {…}, isCurrentUser: false, currentPlayer: {…}}
+index-SzqfBcqg.js:272 [Draft] === STARTING DRAFT FETCH ===
+index-SzqfBcqg.js:272 [Draft] Draft ID: bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-SzqfBcqg.js:272 [Draft] Auth status - User: Mok Sports Authenticated: true Loading: false
+index-SzqfBcqg.js:272 [Draft] Token available: true
+index-SzqfBcqg.js:272 [Draft] Current URL: https://mok-sports-draft-mokfantasysport.replit.app/draft/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-SzqfBcqg.js:272 [Draft] Current pathname: /draft/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-SzqfBcqg.js:272 [Draft] Making API request to: /api/drafts/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-SzqfBcqg.js:272 [Draft] Response received: {status: 200, statusText: '', headers: {…}}
+index-SzqfBcqg.js:272 [Draft] Successfully fetched draft data: {state: {…}, isCurrentUser: false, currentPlayer: {…}}
+index-SzqfBcqg.js:272 [Draft] === DRAFT FETCH SUCCESS ===
+index-SzqfBcqg.js:272 [Timer Fallback] Poll #3 - Timer: 0 Round: 1 Pick: 1 Current User: 766992a8-44f0-4d0e-a65f-987237e67a35 Full Data: {state: {…}, isCurrentUser: false, currentPlayer: {…}}
+index-SzqfBcqg.js:272 [Draft] === STARTING DRAFT FETCH ===
+index-SzqfBcqg.js:272 [Draft] Draft ID: bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-SzqfBcqg.js:272 [Draft] Auth status - User: Mok Sports Authenticated: true Loading: false
+index-SzqfBcqg.js:272 [Draft] Token available: true
+index-SzqfBcqg.js:272 [Draft] Current URL: https://mok-sports-draft-mokfantasysport.replit.app/draft/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-SzqfBcqg.js:272 [Draft] Current pathname: /draft/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-SzqfBcqg.js:272 [Draft] Making API request to: /api/drafts/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-SzqfBcqg.js:272 [Draft] Response received: {status: 200, statusText: '', headers: {…}}
+index-SzqfBcqg.js:272 [Draft] Successfully fetched draft data: {state: {…}, isCurrentUser: false, currentPlayer: {…}}
+index-SzqfBcqg.js:272 [Draft] === DRAFT FETCH SUCCESS ===
+index-SzqfBcqg.js:272 [Timer Fallback] Poll #4 - Timer: 0 Round: 1 Pick: 1 Current User: 766992a8-44f0-4d0e-a65f-987237e67a35 Full Data: {state: {…}, isCurrentUser: false, currentPlayer: {…}}
+index-SzqfBcqg.js:272 [Draft] === STARTING DRAFT FETCH ===
+index-SzqfBcqg.js:272 [Draft] Draft ID: bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-SzqfBcqg.js:272 [Draft] Auth status - User: Mok Sports Authenticated: true Loading: false
+index-SzqfBcqg.js:272 [Draft] Token available: true
+index-SzqfBcqg.js:272 [Draft] Current URL: https://mok-sports-draft-mokfantasysport.replit.app/draft/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-SzqfBcqg.js:272 [Draft] Current pathname: /draft/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-SzqfBcqg.js:272 [Draft] Making API request to: /api/drafts/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-SzqfBcqg.js:272 [Draft] Response received: {status: 200, statusText: '', headers: {…}}
+index-SzqfBcqg.js:272 [Draft] Successfully fetched draft data: {state: {…}, isCurrentUser: false, currentPlayer: {…}}
+index-SzqfBcqg.js:272 [Draft] === DRAFT FETCH SUCCESS ===
+index-SzqfBcqg.js:272 [Timer Fallback] Poll #5 - Timer: 0 Round: 1 Pick: 1 Current User: 766992a8-44f0-4d0e-a65f-987237e67a35 Full Data: {state: {…}, isCurrentUser: false, currentPlayer: {…}}
+index-SzqfBcqg.js:272 [Draft] === STARTING DRAFT FETCH ===
+index-SzqfBcqg.js:272 [Draft] Draft ID: bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-SzqfBcqg.js:272 [Draft] Auth status - User: Mok Sports Authenticated: true Loading: false
+index-SzqfBcqg.js:272 [Draft] Token available: true
+index-SzqfBcqg.js:272 [Draft] Current URL: https://mok-sports-draft-mokfantasysport.replit.app/draft/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-SzqfBcqg.js:272 [Draft] Current pathname: /draft/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-SzqfBcqg.js:272 [Draft] Making API request to: /api/drafts/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-SzqfBcqg.js:272 [Draft] Response received: {status: 200, statusText: '', headers: {…}}
+index-SzqfBcqg.js:272 [Draft] Successfully fetched draft data: {state: {…}, isCurrentUser: false, currentPlayer: {…}}
+index-SzqfBcqg.js:272 [Draft] === DRAFT FETCH SUCCESS ===
+index-SzqfBcqg.js:272 [Timer Fallback] Poll #6 - Timer: 0 Round: 1 Pick: 1 Current User: 766992a8-44f0-4d0e-a65f-987237e67a35 Full Data: {state: {…}, isCurrentUser: false, currentPlayer: {…}}
+index-SzqfBcqg.js:272 [Draft] === STARTING DRAFT FETCH ===
+index-SzqfBcqg.js:272 [Draft] Draft ID: bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-SzqfBcqg.js:272 [Draft] Auth status - User: Mok Sports Authenticated: true Loading: false
+index-SzqfBcqg.js:272 [Draft] Token available: true
+index-SzqfBcqg.js:272 [Draft] Current URL: https://mok-sports-draft-mokfantasysport.replit.app/draft/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-SzqfBcqg.js:272 [Draft] Current pathname: /draft/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-SzqfBcqg.js:272 [Draft] Making API request to: /api/drafts/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-SzqfBcqg.js:272 [Draft] Response received: {status: 200, statusText: '', headers: {…}}
+index-SzqfBcqg.js:272 [Draft] Successfully fetched draft data: {state: {…}, isCurrentUser: false, currentPlayer: {…}}

@@ -249,15 +249,6 @@ export default function DraftPage() {
       
       console.log(`[Draft] TIMER SYNC DEBUG - Server: ${serverTime}s, Local: ${localTimeRemaining}s, Pick: R${currentRound}P${currentPick}`);
       
-      // CRITICAL: Complete API inspection with all possible paths
-      console.log(`[Draft] 🚨 COMPLETE API DEBUG:`);
-      console.log(`[Draft] 🚨 draftData:`, draftData);
-      console.log(`[Draft] 🚨 draftData.state:`, draftData?.state);
-      console.log(`[Draft] 🚨 draftData.state.draft:`, draftData?.state?.draft);
-      console.log(`[Draft] 🚨 draftData.timeRemaining:`, draftData?.timeRemaining);
-      console.log(`[Draft] 🚨 draftData.state.timeRemaining:`, draftData?.state?.timeRemaining);
-      console.log(`[Draft] 🚨 ALL PATHS CHECKED - TIMER VALUE:`, serverTime);
-      
       // FORCE: Always sync with server time - ignore local countdown when server data available
       if (serverTime !== localTimeRemaining) {
         console.log(`[Draft] 🔄 CORRECTING timer: ${localTimeRemaining}s → ${serverTime}s`);
