@@ -341,6 +341,7 @@ export default function DraftPage() {
   }, [localTimeRemaining, draftData?.state?.timeRemaining]);
 
   console.log('[Draft] All hooks declared, starting conditional logic');
+  console.log('[Draft] RENDER DEBUG - authLoading:', authLoading, 'isLoading:', isLoading, 'error:', !!error, 'draftData:', !!draftData, 'isAuthenticated:', isAuthenticated);
 
   const handleMakePick = () => {
     if (selectedTeam) {
@@ -352,6 +353,7 @@ export default function DraftPage() {
 
   // Show loading while auth is still loading
   if (authLoading || isLoading) {
+    console.log('[Draft] RENDER: Loading state - authLoading:', authLoading, 'isLoading:', isLoading, 'draftData:', !!draftData);
     return (
       <div className="min-h-screen bg-gradient-to-br from-background to-secondary/20 flex items-center justify-center">
         <div className="text-center">
@@ -359,6 +361,7 @@ export default function DraftPage() {
             <Zap className="w-8 h-8 text-fantasy-purple animate-pulse" />
           </div>
           <p className="text-muted-foreground">Loading draft room...</p>
+          <p className="text-xs text-muted-foreground mt-2">Auth: {authLoading ? 'loading' : 'ready'} | Data: {isLoading ? 'loading' : 'ready'}</p>
         </div>
       </div>
     );
