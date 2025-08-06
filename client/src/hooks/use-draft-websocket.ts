@@ -172,40 +172,21 @@ export function useDraftWebSocket(draftId: string | null) {
     };
 
     ws.onclose = (event) => {
-      console.log('[WebSocket] Connection closed:', event.code, event.reason);
+      console.log('[WebSocket] Connection closed - Code:', event.code, 'Reason:', event.reason);
+      console.log('[WebSocket] Close was clean:', event.code === 1000);
+      console.log('[WebSocket] WebSocket state before close:', ws.readyState);
       setConnectionStatus('disconnected');
       wsRef.current = null;
 
-      // PERMANENT FIX: Enhanced reconnection logic with draft validation
-      if (event.code !== 1000 && draftId && user?.id) {
-        if (window.location.hostname.includes('replit.app')) {
-          console.log('[WebSocket] Production WebSocket closed, relying on HTTP polling fallback');
-          // Don't reconnect in production - use HTTP polling instead
-        } else {
-          // In development, validate draft exists before reconnecting
-          console.log('[WebSocket] Checking draft status before reconnection...');
-          fetch(`/api/drafts/${draftId}`)
-            .then(response => {
-              if (response.ok) {
-                console.log('[WebSocket] Draft exists, attempting reconnection...');
-                reconnectTimeoutRef.current = setTimeout(() => {
-                  console.log('[WebSocket] Attempting to reconnect...');
-                  connect();
-                }, 3000);
-              } else {
-                console.log('[WebSocket] Draft no longer exists, stopping reconnection attempts');
-                setConnectionStatus('draft_not_found');
-              }
-            })
-            .catch(err => {
-              console.error('[WebSocket] Error checking draft status:', err);
-              // Fallback: still attempt one reconnection
-              reconnectTimeoutRef.current = setTimeout(() => {
-                console.log('[WebSocket] Fallback reconnection attempt...');
-                connect();
-              }, 5000);
-            });
-        }
+      // Only reconnect for unexpected disconnections, not manual closes
+      if (event.code !== 1000 && event.reason !== 'Component cleanup' && draftId && user?.id) {
+        console.log('[WebSocket] Unexpected disconnection, will attempt reconnect');
+        reconnectTimeoutRef.current = setTimeout(() => {
+          console.log('[WebSocket] Reconnecting after unexpected close...');
+          connect();
+        }, 3000);
+      } else {
+        console.log('[WebSocket] Connection closed cleanly, no reconnection needed');
       }
     };
 
@@ -338,27 +319,28 @@ export function useDraftWebSocket(draftId: string | null) {
     }
   }, []);
 
-  // Connect when draft ID changes - Enhanced for seamless reset workflow
+  // Connect when draft ID changes - SIMPLIFIED VERSION
   useEffect(() => {
+    console.log('[WebSocket] Effect triggered - draftId:', !!draftId, 'userId:', !!user?.id);
+    
     if (draftId && user?.id) {
-      console.log('[WebSocket] Dependencies ready, attempting connection...');
+      console.log('[WebSocket] Starting connection attempt...');
       connect();
     } else {
-      console.log('[WebSocket] Disconnecting due to missing dependencies:', { draftId: !!draftId, userId: !!user?.id });
-      disconnect();
+      console.log('[WebSocket] Missing dependencies, skipping connection');
     }
+  }, [draftId, user?.id]); // Simplified - no cleanup, no connect dependency
 
-    // Only disconnect when dependencies actually change
-    return () => {
-      console.log('[WebSocket] Effect cleanup triggered');
-    };
-  }, [draftId, user?.id]);
-
-  // Cleanup on unmount only
+  // Cleanup only on unmount
   useEffect(() => {
     return () => {
-      console.log('[WebSocket] Component unmounting, disconnecting WebSocket');
-      disconnect();
+      console.log('[WebSocket] Component unmounting - cleaning up');
+      if (wsRef.current) {
+        wsRef.current.close(1000, 'Component unmount');
+      }
+      if (reconnectTimeoutRef.current) {
+        clearTimeout(reconnectTimeoutRef.current);
+      }
     };
   }, []);
 
