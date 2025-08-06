@@ -106,18 +106,17 @@ export default function DraftPage() {
       try {
         console.log('[Draft] Making API request to:', `/api/drafts/${draftId}`);
         
-        // Use the apiRequest function to include authentication headers
-        const response = await apiRequest('GET', `/api/drafts/${draftId}`);
-        
-        console.log('[Draft] Response received:', {
-          status: response.status,
-          statusText: response.statusText,
-          headers: Object.fromEntries(response.headers.entries())
+        // Use the apiRequest function with cache-busting headers
+        const response = await apiRequest('GET', `/api/drafts/${draftId}?cache=${Date.now()}`, {
+          headers: {
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+            'Expires': '0'
+          }
         });
         
         const data = await response.json();
-        console.log('[Draft] Successfully fetched draft data:', data);
-        console.log('[Draft] === DRAFT FETCH SUCCESS ===');
+        console.log(`[Draft] FRESH DATA FETCHED - Timer: ${data.state?.timeRemaining}s, Round: ${data.state?.draft?.currentRound}, Pick: ${data.state?.draft?.currentPick}`);
         return data;
       } catch (error) {
         console.error('[Draft] === DRAFT FETCH ERROR ===');
@@ -182,9 +181,10 @@ export default function DraftPage() {
     },
     enabled: !!draftId && !authLoading, // Wait for auth to load before making requests
     refetchInterval: 1000, // Refetch every 1 second for real-time timer
-    refetchIntervalInBackground: true, // Continue polling in background
+    refetchIntervalInBackground: true, // Continue polling when tab not focused
     staleTime: 0, // Never trust cached data - always stale
     gcTime: 0, // React Query v5: disable caching completely for real-time data
+    networkMode: 'always', // Always try to refetch regardless of network status
     retry: (failureCount, error) => {
       // Don't retry on authentication errors
       if (error instanceof Error && error.message.includes('401')) {
@@ -201,8 +201,16 @@ export default function DraftPage() {
     console.error('Draft fetch error:', error);
   }
 
-  // Display timer directly from server data
+  // Display timer directly from server data - with debugging
   const displayTime = draftData?.state?.timeRemaining ?? 0;
+  
+  console.log(`[Draft] USING draftId: ${draftId}`);
+  console.log(`[Draft] REAL-TIME SERVER DATA - Timer: ${draftData?.state?.timeRemaining}s`);
+  
+  // Force re-render logging on data change
+  useEffect(() => {
+    console.log(`[Draft] 🔄 COMPONENT RE-RENDER - Server Timer: ${draftData?.state?.timeRemaining}s`);
+  }, [draftData?.state?.timeRemaining]);
 
   // Local countdown disabled - use server data only for now
   // This prevents conflicts between local countdown and server sync
