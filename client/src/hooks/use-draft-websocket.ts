@@ -29,8 +29,20 @@ export function useDraftWebSocket(draftId: string | null) {
   const [lastMessage, setLastMessage] = useState<DraftWebSocketMessage | null>(null);
 
   const connect = useCallback(() => {
+    console.log('[WebSocket] Connect called with:', { 
+      draftId, 
+      userId: user?.id, 
+      userLoaded: !!user,
+      wsState: wsRef.current?.readyState 
+    });
+    
     if (!draftId || !user?.id || wsRef.current?.readyState === WebSocket.OPEN) {
-      console.log('[WebSocket] Connect skipped:', { draftId: !!draftId, userId: !!user?.id, wsOpen: wsRef.current?.readyState === WebSocket.OPEN });
+      console.log('[WebSocket] Connect skipped:', { 
+        draftId: !!draftId, 
+        userId: !!user?.id, 
+        wsOpen: wsRef.current?.readyState === WebSocket.OPEN,
+        reason: !draftId ? 'no draftId' : !user?.id ? 'no userId' : 'already connected'
+      });
       return;
     }
 
