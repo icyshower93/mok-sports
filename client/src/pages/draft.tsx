@@ -101,16 +101,17 @@ export default function DraftPage() {
         if (response.ok) {
           const data = await response.json();
           
-          console.log(`[Timer Fallback] Poll #${pollCounter} - Timer:`, data.data?.state?.timeRemaining, 
-                     'Round:', data.data?.state?.draft?.currentRound, 
-                     'Pick:', data.data?.state?.draft?.currentPick,
-                     'Current User:', data.data?.state?.currentUserId);
+          console.log(`[Timer Fallback] Poll #${pollCounter} - Timer:`, data.state?.timeRemaining, 
+                     'Round:', data.state?.draft?.currentRound, 
+                     'Pick:', data.state?.draft?.currentPick,
+                     'Current User:', data.state?.currentUserId,
+                     'Full Data:', data);
           
-          if (data.success && data.data) {
+          if (data && data.state) {
             // Force complete refresh of draft data
             queryClient.removeQueries({ queryKey: ['draft', draftId] });
             queryClient.invalidateQueries({ queryKey: ['draft', draftId] });
-            queryClient.setQueryData(['draft', draftId], data.data);
+            queryClient.setQueryData(['draft', draftId], data);
             
             // Also refresh picks data
             queryClient.invalidateQueries({ queryKey: ['draft-teams', draftId] });
