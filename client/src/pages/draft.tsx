@@ -247,7 +247,7 @@ export default function DraftPage() {
   // Timer expiration monitoring (simplified)
   useEffect(() => {
     console.log('[Draft] Timer expiration useEffect called');
-  }, [displayTime, draftData?.state?.timeRemaining]);
+  }, [localTimeRemaining, draftData?.state?.timeRemaining]);
 
   console.log('[Draft] All hooks declared, starting conditional logic');
   console.log('[Draft] RENDER DEBUG - authLoading:', authLoading, 'isLoading:', isLoading, 'error:', !!error, 'draftData:', !!draftData, 'isAuthenticated:', isAuthenticated, 'Time:', Date.now());
@@ -336,14 +336,13 @@ export default function DraftPage() {
   // INTENSIVE DEBUG LOGGING FOR TIMER ISSUE
   console.log('🔍 [TIMER DEBUG] === FRONTEND DATA RECEIVED ===');
   console.log('🔍 [TIMER DEBUG] Server Time:', state.timeRemaining);
-  console.log('🔍 [TIMER DEBUG] Display Time:', displayTime);
+  console.log('🔍 [TIMER DEBUG] Local Time:', localTimeRemaining);
   console.log('🔍 [TIMER DEBUG] Current User ID:', state.currentUserId);
   console.log('🔍 [TIMER DEBUG] Draft Round/Pick:', state.draft.currentRound, '/', state.draft.currentPick);
   console.log('🔍 [TIMER DEBUG] Draft Order:', state.draft.draftOrder);
   console.log('🔍 [TIMER DEBUG] Current Player Name:', currentPlayer?.name);
   console.log('🔍 [TIMER DEBUG] Is Current User:', isCurrentUser);
   console.log('🔍 [TIMER DEBUG] Full Draft Data:', draftData);
-  console.log('🔍 [TIMER DEBUG] RAW JSON:', JSON.stringify(draftData, null, 2));
   console.log('🔍 [TIMER DEBUG] ===========================');
 
   const formatTime = (seconds: number) => {
