@@ -9,7 +9,7 @@ import {
   type DraftTimer, type InsertDraftTimer
 } from "@shared/schema";
 import { db } from "./db";
-import { eq, and, sql } from "drizzle-orm";
+import { eq, and, sql, notInArray } from "drizzle-orm";
 import webpush from "web-push";
 
 export interface IStorage {
@@ -291,7 +291,7 @@ export class DatabaseStorage implements IStorage {
     
     return await db.select()
       .from(nflTeams)
-      .where(sql`${nflTeams.id} NOT IN (${sql.join(pickedIds.map(id => sql.raw(`'${id}'`)), sql`, `)})`);
+      .where(notInArray(nflTeams.id, pickedIds));
   }
 
   // Draft methods
@@ -328,7 +328,7 @@ export class DatabaseStorage implements IStorage {
     console.log(`🔄 [Storage] Updating draft ${draftId} to Round ${round}, Pick ${pick}`);
     try {
       const result = await db.update(drafts)
-        .set({ currentRound: round, currentPick: pick, updatedAt: new Date() })
+        .set({ currentRound: round, currentPick: pick })
         .where(eq(drafts.id, draftId))
         .returning({ id: drafts.id, currentRound: drafts.currentRound, currentPick: drafts.currentPick });
       
@@ -470,7 +470,7 @@ export class DatabaseStorage implements IStorage {
 
   async deactivateAllDraftTimers(draftId: string): Promise<void> {
     await db.update(draftTimers)
-      .set({ isActive: false, updatedAt: new Date() })
+      .set({ isActive: false })
       .where(
         and(
           eq(draftTimers.draftId, draftId),
