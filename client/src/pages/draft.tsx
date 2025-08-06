@@ -13,6 +13,7 @@ import { TeamLogo } from "@/components/team-logo";
 import { apiRequest, AuthTokenManager } from "@/lib/queryClient";
 import { useDraftWebSocket } from "@/hooks/use-draft-websocket";
 import { useSimpleWebSocket } from "@/hooks/use-simple-websocket";
+import { usePersistentWebSocket } from "@/hooks/use-persistent-websocket";
 import { useAuth } from "@/hooks/use-auth";
 import { trackModuleError } from "@/debug-tracker";
 
@@ -85,6 +86,9 @@ export default function DraftPage() {
   
   // TEMPORARY: Test simple WebSocket implementation
   const { status: simpleStatus, isConnected: simpleConnected } = useSimpleWebSocket(draftId, user?.id || '');
+  
+  // TEST: Persistent WebSocket with browser-specific handling
+  const { status: persistentStatus, isConnected: persistentConnected, connectionAttempts } = usePersistentWebSocket(draftId, user?.id || '');
 
   // Redirect if no draft ID
   useEffect(() => {
@@ -471,6 +475,13 @@ export default function DraftPage() {
               <Badge variant={state.draft.status === 'active' ? 'default' : 'secondary'}>
                 {state.draft.status.toUpperCase()}
               </Badge>
+              
+              {/* TEMPORARY: WebSocket Status Comparison */}
+              <div className="text-xs text-muted-foreground space-y-1">
+                <div>Original: {connectionStatus}</div>
+                <div>Simple: {simpleStatus}</div>
+                <div>Persistent: {persistentStatus} (attempts: {connectionAttempts})</div>
+              </div>
             </div>
           </div>
 
