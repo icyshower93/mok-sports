@@ -619,6 +619,55 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: 'Failed to reset draft', error: error?.message || 'Unknown error' });
     }
   });
+
+  // Timer restart endpoint for stuck drafts
+  app.post('/api/testing/restart-timer', async (req, res) => {
+    try {
+      const { draftId } = req.body;
+      
+      if (!draftId) {
+        return res.status(400).json({ message: 'Missing draftId' });
+      }
+      
+      console.log(`🔄 Timer restart requested for draft ${draftId}`);
+      
+      // Import the global snake draft manager instance
+      const { globalDraftManager } = await import('./draft/globalDraftManager.js');
+      
+      // Get current draft state
+      const draft = await storage.getDraft(draftId);
+      if (!draft) {
+        return res.status(404).json({ message: 'Draft not found' });
+      }
+
+      if (draft.status !== 'active') {
+        return res.json({ success: false, message: 'Draft is not active' });
+      }
+
+      // Get current pick user
+      const currentUserId = globalDraftManager.getCurrentPickUser(draft);
+      if (!currentUserId) {
+        return res.json({ success: false, message: 'No current pick user found' });
+      }
+
+      console.log(`🚀 Starting fresh timer for user ${currentUserId} in draft ${draftId}`);
+      
+      // Start timer for current user
+      await globalDraftManager.startPickTimer(draftId, currentUserId, 60);
+      
+      console.log('✅ Timer restarted successfully');
+      res.json({ 
+        success: true, 
+        message: 'Timer restarted', 
+        currentRound: draft.currentRound,
+        currentPick: draft.currentPick,
+        currentUserId 
+      });
+    } catch (error: any) {
+      console.error('Error restarting timer:', error);
+      res.status(500).json({ message: 'Failed to restart timer', error: error?.message || 'Unknown error' });
+    }
+  });
   
   // Test notification endpoint for debugging (no auth required for testing)
   // Debug endpoints - commented out for production (uncomment to re-enable testing)
