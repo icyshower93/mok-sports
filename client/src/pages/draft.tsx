@@ -93,8 +93,9 @@ export default function DraftPage() {
       try {
         const response = await fetch(`/api/drafts/${draftId}?cache=${Date.now()}`, {
           headers: {
-            'Cache-Control': 'no-cache',
-            'Pragma': 'no-cache'
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+            'Expires': '0'
           }
         });
         
@@ -137,7 +138,7 @@ export default function DraftPage() {
 
   // Fetch draft state with polling for real-time updates
   const { data: draftData, isLoading, error } = useQuery({
-    queryKey: ['draft', draftId],
+    queryKey: ['draft', draftId, Date.now()], // Force fresh queries
     queryFn: async () => {
       console.log('[Draft] === STARTING DRAFT FETCH ===');
       console.log('[Draft] Draft ID:', draftId);
