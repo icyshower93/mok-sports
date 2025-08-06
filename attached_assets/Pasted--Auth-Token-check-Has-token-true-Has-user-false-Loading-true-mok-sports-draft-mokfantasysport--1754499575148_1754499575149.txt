@@ -1,0 +1,53 @@
+[Auth] Token check - Has token: true Has user: false Loading: true
+mok-sports-draft-mokfantasysport.replit.app/:1 Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner.
+sw.js?v=1754499560116:15 [SW] Service worker starting, version: v1.4.0-ios-push-fix
+sw.js?v=1754499560116:201 [SW] Service worker script loaded successfully
+sw.js?v=1754499560116:19 [SW] Installing service worker, version: v1.4.0-ios-push-fix
+sw.js?v=1754499560116:23 [SW] Caching static files
+index-DT8D0nAm.js:272 [Dashboard] User authenticated: Object
+index-DT8D0nAm.js:272 [Dashboard] User leagues loading: true
+index-DT8D0nAm.js:272 [Dashboard] User leagues data: undefined
+index-DT8D0nAm.js:228 [Auth] Token check - Has token: true Has user: true Loading: false
+5index-DT8D0nAm.js:228 [SubscriptionManager] 12:59:20 PM - Permission is granted and no active subscription - auto-creating subscription
+index-DT8D0nAm.js:228 [AutoPushRefresh] Legacy hook delegating to SubscriptionManager
+index-DT8D0nAm.js:228 [SW Hook] Service worker registered successfully
+index-DT8D0nAm.js:272 [PWA DEBUG] [12:59:20 PM] Subscription Manager Status: active=false, endpoint=none
+index-DT8D0nAm.js:272 [PWA DEBUG] [12:59:20 PM] PWA Status Check Complete
+index-DT8D0nAm.js:272 [PWA DEBUG] [12:59:20 PM] Standalone: false, iOS: false, HTTPS: true
+index-DT8D0nAm.js:272 [PWA DEBUG] [12:59:20 PM] Permission: granted, Push: true
+index-DT8D0nAm.js:272 [PWA DEBUG] [12:59:20 PM] SW Registered: true, Active Subscription: false
+index-DT8D0nAm.js:272 [PWA DEBUG] [12:59:20 PM] Subscription Manager Status: active=false, endpoint=none
+index-DT8D0nAm.js:272 [PWA DEBUG] [12:59:20 PM] PWA Status Check Complete
+index-DT8D0nAm.js:272 [PWA DEBUG] [12:59:20 PM] Standalone: false, iOS: false, HTTPS: true
+index-DT8D0nAm.js:272 [PWA DEBUG] [12:59:20 PM] Permission: granted, Push: true
+index-DT8D0nAm.js:272 [PWA DEBUG] [12:59:20 PM] SW Registered: true, Active Subscription: false
+index-DT8D0nAm.js:272 [Push Persistence] Found existing subscription: Object
+index-DT8D0nAm.js:272 [Push Persistence] Sending subscription to backend
+index-DT8D0nAm.js:272 [Push Persistence] Subscription successfully sent to backend
+index-DT8D0nAm.js:272 [Push Persistence] Using existing subscription
+sw.js?v=1754499560116:26 [SW] Static files cached successfully
+index-DT8D0nAm.js:272 [Dashboard] User authenticated: Object
+index-DT8D0nAm.js:272 [Dashboard] User leagues loading: false
+index-DT8D0nAm.js:272 [Dashboard] User leagues data: Array(1)
+index-DT8D0nAm.js:272 [Dashboard] Redirecting to league waiting room: 243d719b-92ce-4752-8689-5da93ee69213
+sw.js?v=1754499560116:87 [SW] Serving /favicon.ico from cache
+sw.js?v=1754499560116:91 [SW] Fetching /a/ACg8ocJEMs5AzNtfS8vv7POiR-CJvE5EdtZVt27CT0tdYJA64x6-BQyy_Q=s96-c from network
+sw.js?v=1754499560116:91 [SW] Fetching /a/ACg8ocIlUYRsI8z4wKwDJjb1BBPBwCuyYSlVMcLHB5QAXs50P5Fbtg=s96-c from network
+4sw.js?v=1754499560116:91 [SW] Fetching /7.x/robots/svg from network
+index-DT8D0nAm.js:228 [SubscriptionManager] 12:59:20 PM - Starting subscription refresh...
+index-DT8D0nAm.js:228 [SubscriptionManager] 12:59:20 PM - Found existing subscription - unsubscribing...
+index-DT8D0nAm.js:228 [SubscriptionManager] 12:59:20 PM - Existing subscription unsubscribed
+svg:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+svg:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+index-DT8D0nAm.js:228 [SubscriptionManager] 12:59:20 PM - Creating new push subscription...
+svg:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+svg:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+index-DT8D0nAm.js:228 [SubscriptionManager] 12:59:21 PM - Sending subscription to server: https://fcm.googleapis.com/fcm/send/dePUmr3vxRA:AP...
+sw.js?v=1754499560116:37 [SW] Activating service worker, version: v1.4.0-ios-push-fix
+sw.js?v=1754499560116:43 [SW] Found caches: Array(2)
+sw.js?v=1754499560116:56 [SW] Service worker activated and controlling all clients
+index-DT8D0nAm.js:228 [SubscriptionManager] 12:59:21 PM - Server response: 201 
+index-DT8D0nAm.js:228 [SubscriptionManager] 12:59:21 PM - Subscription registered successfully: Subscription registered successfully
+sw.js?v=1754499560116:91 [SW] Fetching /league/waiting from network
+sw.js?v=1754499560116:91 [SW] Fetching /assets/index-Cn_hjswP.css from network
+sw.js?v=1754499560116:87 [SW] Serving /manifest.json from cache
