@@ -1,0 +1,100 @@
+[Auth] Token check - Has token: true Has user: false Loading: true
+mok-sports-draft-mokfantasysport.replit.app/:1 Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner.
+index-Cs9_WON4.js:272 [Dashboard] User authenticated: Object
+index-Cs9_WON4.js:272 [Dashboard] User leagues loading: true
+index-Cs9_WON4.js:272 [Dashboard] User leagues data: undefined
+index-Cs9_WON4.js:228 [Auth] Token check - Has token: true Has user: true Loading: false
+sw.js?v=1754494309431:15 [SW] Service worker starting, version: v1.4.1-timer-fix-1754494309680
+sw.js?v=1754494309431:201 [SW] Service worker script loaded successfully
+sw.js?v=1754494309431:19 [SW] Installing service worker, version: v1.4.1-timer-fix-1754494309680
+sw.js?v=1754494309431:23 [SW] Caching static files
+5index-Cs9_WON4.js:228 [SubscriptionManager] 11:31:49 AM - Permission is granted and no active subscription - auto-creating subscription
+index-Cs9_WON4.js:228 [AutoPushRefresh] Legacy hook delegating to SubscriptionManager
+index-Cs9_WON4.js:228 [SW Hook] Service worker registered successfully
+index-Cs9_WON4.js:272 [PWA DEBUG] [11:31:49 AM] Subscription Manager Status: active=false, endpoint=none
+index-Cs9_WON4.js:272 [PWA DEBUG] [11:31:49 AM] PWA Status Check Complete
+index-Cs9_WON4.js:272 [PWA DEBUG] [11:31:49 AM] Standalone: false, iOS: false, HTTPS: true
+index-Cs9_WON4.js:272 [PWA DEBUG] [11:31:49 AM] Permission: granted, Push: true
+index-Cs9_WON4.js:272 [PWA DEBUG] [11:31:49 AM] SW Registered: true, Active Subscription: false
+index-Cs9_WON4.js:272 [PWA DEBUG] [11:31:49 AM] Subscription Manager Status: active=false, endpoint=none
+index-Cs9_WON4.js:272 [PWA DEBUG] [11:31:49 AM] PWA Status Check Complete
+index-Cs9_WON4.js:272 [PWA DEBUG] [11:31:49 AM] Standalone: false, iOS: false, HTTPS: true
+index-Cs9_WON4.js:272 [PWA DEBUG] [11:31:49 AM] Permission: granted, Push: true
+index-Cs9_WON4.js:272 [PWA DEBUG] [11:31:49 AM] SW Registered: true, Active Subscription: false
+index-Cs9_WON4.js:272 [Push Persistence] Found existing subscription: Object
+index-Cs9_WON4.js:272 [Push Persistence] Sending subscription to backend
+index-Cs9_WON4.js:272 [Dashboard] User authenticated: Object
+index-Cs9_WON4.js:272 [Dashboard] User leagues loading: false
+index-Cs9_WON4.js:272 [Dashboard] User leagues data: Array(1)
+index-Cs9_WON4.js:272 [Dashboard] Redirecting to league waiting room: 243d719b-92ce-4752-8689-5da93ee69213
+sw.js?v=1754494309431:26 [SW] Static files cached successfully
+index-Cs9_WON4.js:272 [Push Persistence] Subscription successfully sent to backend
+index-Cs9_WON4.js:272 [Push Persistence] Using existing subscription
+sw.js?v=1754494309431:91 [SW] Fetching /a/ACg8ocJEMs5AzNtfS8vv7POiR-CJvE5EdtZVt27CT0tdYJA64x6-BQyy_Q=s96-c from network
+sw.js?v=1754494309431:91 [SW] Fetching /a/ACg8ocIlUYRsI8z4wKwDJjb1BBPBwCuyYSlVMcLHB5QAXs50P5Fbtg=s96-c from network
+4sw.js?v=1754494309431:91 [SW] Fetching /7.x/robots/svg from network
+svg:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+index-Cs9_WON4.js:228 [SubscriptionManager] 11:31:50 AM - Starting subscription refresh...
+index-Cs9_WON4.js:228 [SubscriptionManager] 11:31:50 AM - Found existing subscription - unsubscribing...
+index-Cs9_WON4.js:228 [SubscriptionManager] 11:31:50 AM - Existing subscription unsubscribed
+svg:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+svg:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+svg:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+index-Cs9_WON4.js:228 [SubscriptionManager] 11:31:50 AM - Creating new push subscription...
+sw.js?v=1754494309431:37 [SW] Activating service worker, version: v1.4.1-timer-fix-1754494309680
+sw.js?v=1754494309431:43 [SW] Found caches: Array(3)
+sw.js?v=1754494309431:47 [SW] Deleting old cache: mok-sports-static-v1.4.0-ios-push-fix
+sw.js?v=1754494309431:47 [SW] Deleting old cache: mok-sports-dynamic-v1.4.0-ios-push-fix
+sw.js?v=1754494309431:56 [SW] Service worker activated and controlling all clients
+index-Cs9_WON4.js:228 [SubscriptionManager] 11:31:50 AM - Sending subscription to server: https://fcm.googleapis.com/fcm/send/eEdB8Pxj-Qs:AP...
+index-Cs9_WON4.js:272 [App] Draft route matched with params: Object
+index-Cs9_WON4.js:272 [App] Current location: https://mok-sports-draft-mokfantasysport.replit.app/draft/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-Cs9_WON4.js:272 [Draft] Component render started - TIME: 1754494311013
+index-Cs9_WON4.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-Cs9_WON4.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-06T15:31:51.013Z
+index-Cs9_WON4.js:272 [Draft] RENDER TIMING - Time since component start: 1754494309364.9
+index-Cs9_WON4.js:272 [Draft] All useState hooks declared
+index-Cs9_WON4.js:272 [Draft] Component render started - TIME: 1754494311014
+index-Cs9_WON4.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-Cs9_WON4.js:272 [App] Draft route matched with params: Object
+index-Cs9_WON4.js:272 [App] Current location: https://mok-sports-draft-mokfantasysport.replit.app/draft/bc40e0fa-d58a-4662-8395-0a7f44b71cbb
+index-Cs9_WON4.js:272 [Draft] Component render started - TIME: 1754494311016
+index-Cs9_WON4.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-Cs9_WON4.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-06T15:31:51.016Z
+index-Cs9_WON4.js:272 [Draft] RENDER TIMING - Time since component start: 1754494309364.9
+index-Cs9_WON4.js:272 [Draft] All useState hooks declared
+index-Cs9_WON4.js:272 [Draft] Component render started - TIME: 1754494311016
+index-Cs9_WON4.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-Cs9_WON4.js:40 ReferenceError: localTimeRemaining is not defined
+    at Cj (index-Cs9_WON4.js:272:54431)
+    at vd (index-Cs9_WON4.js:38:16998)
+    at Xg (index-Cs9_WON4.js:40:43963)
+    at Gg (index-Cs9_WON4.js:40:39727)
+    at xS (index-Cs9_WON4.js:40:39655)
+    at Ea (index-Cs9_WON4.js:40:39508)
+    at Yc (index-Cs9_WON4.js:40:35875)
+    at Rp (index-Cs9_WON4.js:40:36678)
+    at ur (index-Cs9_WON4.js:38:3274)
+    at index-Cs9_WON4.js:40:34207
+Fc @ index-Cs9_WON4.js:40Understand this error
+index-Cs9_WON4.js:228 ErrorBoundary caught an error: localTimeRemaining is not defined
+componentDidCatch @ index-Cs9_WON4.js:228Understand this error
+index-Cs9_WON4.js:228 Component stack: 
+    at Cj (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-Cs9_WON4.js:272:50765)
+    at jn (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-Cs9_WON4.js:48:3201)
+    at lb (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-Cs9_WON4.js:48:4017)
+    at yT (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-Cs9_WON4.js:272:117708)
+    at vk (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-Cs9_WON4.js:228:57438)
+    at u (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-Cs9_WON4.js:48:45834)
+    at Uy (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-Cs9_WON4.js:228:50414)
+    at gk (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-Cs9_WON4.js:228:56910)
+    at jb (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-Cs9_WON4.js:48:40185)
+    at Ck (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-Cs9_WON4.js:228:70251)
+    at xT
+componentDidCatch @ index-Cs9_WON4.js:228Understand this error
+sw.js?v=1754494309431:91 [SW] Fetching /favicon.ico from network
+index-Cs9_WON4.js:228 [SubscriptionManager] 11:31:51 AM - Server response: 201 
+index-Cs9_WON4.js:228 [SubscriptionManager] 11:31:51 AM - Subscription registered successfully: Subscription registered successfully
+sw.js?v=1754494309431:91 [SW] Fetching /draft/bc40e0fa-d58a-4662-8395-0a7f44b71cbb from network
+sw.js?v=1754494309431:91 [SW] Fetching /assets/index-Cn_hjswP.css from network
+sw.js?v=1754494309431:87 [SW] Serving /manifest.json from cache

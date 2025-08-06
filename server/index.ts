@@ -136,11 +136,13 @@ app.use((req, res, next) => {
   // CRITICAL: Configure static asset serving BEFORE any other routes
   const hasBuiltAssets = await setupProductionAssets(app);
 
-  // Add middleware to prevent caching of development files
-  app.use('/src', (req, res, next) => {
-    console.log('[Server] BLOCKING development file request:', req.path);
-    res.status(404).json({ error: 'Development files not available in production' });
-  });
+  // Only block development files in production with built assets
+  if (hasBuiltAssets && app.get("env") === "production") {
+    app.use('/src', (req, res, next) => {
+      console.log('[Server] BLOCKING development file request in production:', req.path);
+      res.status(404).json({ error: 'Development files not available in production' });
+    });
+  }
 
   const server = await registerRoutes(app);
   
