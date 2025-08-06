@@ -1,0 +1,75 @@
+Most Likely Causes in Client:
+Here are the top client-side issues that can cause this behavior:
+
+1. Bad useEffect or cleanup logic
+A useEffect hook may:
+
+Establish the WebSocket
+
+But then immediately call .close() in the cleanup or after a re-render
+
+Example:
+
+ts
+Copy
+Edit
+useEffect(() => {
+  const socket = new WebSocket('wss://...');
+  return () => socket.close(); // ← called too early
+}, []); // or missing correct deps
+➡️ Verify the socket isn't being closed by a stale cleanup or rerender.
+
+2. readyState check or premature event handler logic
+You might be trying to send or read before the socket is OPEN
+
+Or handling onclose or onerror in a way that triggers disconnects
+
+➡️ Log the full lifecycle: onopen, onmessage, onclose, onerror
+
+3. Invalid wss:// URL formatting
+If the URL is incorrectly constructed:
+
+wss://undefined or wss://[object Object] can cause silent failures
+
+Especially if using template literals from env vars or route params
+
+➡️ Print/log the exact WebSocket URL being passed in.
+
+4. Missing auth or required query params
+If the server expects something like:
+
+ts
+Copy
+Edit
+wss://example.com/ws/draft?userId=123&draftId=abc
+and it’s missing or malformed, the server might accept but immediately close.
+
+➡️ Double-check query params from the client match what the server expects.
+
+5. Dev server Hot Reload (Vite/React) restarting
+If your frontend is hot-reloading, it can reset the WebSocket connection rapidly.
+
+➡️ Try testing the production build (vite build) to rule out hot reload interference.
+
+6. Client throws uncaught error on onmessage
+Example: your code expects JSON.parse() but receives a malformed message → throws → React unmounts or crashes → socket closes
+
+➡️ Wrap all WebSocket message handling in try/catch.
+
+✅ What to do next:
+To isolate and confirm the issue, try:
+
+ts
+Copy
+Edit
+// Minimal working example (can be tested in a separate component)
+useEffect(() => {
+  const ws = new WebSocket('wss://your-app.repl.co/ws/draft?userId=123&draftId=abc');
+
+  ws.onopen = () => console.log('[WS] Connected');
+  ws.onmessage = (msg) => console.log('[WS] Message:', msg.data);
+  ws.onclose = (e) => console.log('[WS] Disconnected:', e);
+  ws.onerror = (e) => console.error('[WS] Error:', e);
+
+  return () => ws.close();
+}, []);

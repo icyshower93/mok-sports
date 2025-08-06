@@ -89,36 +89,41 @@ export function useDraftWebSocket(draftId: string | null) {
   }, [draftId, user?.id]);
 
   const connectToWebSocket = useCallback(() => {
-    console.log('[WebSocket] Attempting WebSocket connection for draft:', draftId, 'user:', user?.id);
+    console.log('[WebSocket] === STARTING NEW CONNECTION ATTEMPT ===');
+    console.log('[WebSocket] Draft ID:', draftId, 'User ID:', user?.id);
+    console.log('[WebSocket] Current wsRef state:', !!wsRef.current);
     
-    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    // Prevent multiple concurrent connections
+    if (wsRef.current && wsRef.current.readyState === WebSocket.CONNECTING) {
+      console.log('[WebSocket] Connection already in progress, skipping');
+      return;
+    }
     
-    // Simplified WebSocket endpoint logic
-    // Always connect to same host (Vite proxies to backend in dev, same server in prod)
-    let wsHost = window.location.host;
-    let wsPath = '/draft-ws';
-    
-    console.log('[WebSocket] Environment detection:', {
-      hostname: window.location.hostname,
-      port: window.location.port,
-      protocol: window.location.protocol
-    });
-    
-    const wsUrl = `${protocol}//${wsHost}${wsPath}?userId=${user.id}&draftId=${draftId}`;
-    console.log('[WebSocket] Connecting to:', wsUrl);
-    console.log('[WebSocket] Current location:', window.location.href);
-    console.log('[WebSocket] Protocol detected:', protocol);
-    console.log('[WebSocket] Target host:', wsHost);
-    
-    // Close any existing connection first
+    // Clean close existing connection
     if (wsRef.current) {
       console.log('[WebSocket] Closing existing connection before creating new one');
-      wsRef.current.close();
+      wsRef.current.close(1000, 'Creating new connection');
       wsRef.current = null;
     }
     
-    const ws = new WebSocket(wsUrl);
-    wsRef.current = ws;
+    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const wsUrl = `${protocol}//${window.location.host}/draft-ws?userId=${user.id}&draftId=${draftId}`;
+    
+    console.log('[WebSocket] Creating WebSocket connection to:', wsUrl);
+    console.log('[WebSocket] Timestamp:', new Date().toISOString());
+    
+    try {
+      const ws = new WebSocket(wsUrl);
+      wsRef.current = ws;
+      
+      console.log('[WebSocket] WebSocket object created, readyState:', ws.readyState);
+    } catch (error) {
+      console.error('[WebSocket] Failed to create WebSocket:', error);
+      setConnectionStatus('disconnected');
+      return;
+    }
+    
+    const ws = wsRef.current;
 
     ws.onopen = () => {
       console.log('[WebSocket] Successfully connected to draft:', draftId, 'for user:', user?.id);
