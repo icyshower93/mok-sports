@@ -143,13 +143,14 @@ export function useDraftWebSocket(draftId: string | null) {
     };
 
     ws.onerror = (error) => {
-      console.error('[WebSocket] Connection error:', error);
-      console.error('[WebSocket] Error details:', {
-        type: error.type,
-        target: (error.target as WebSocket)?.readyState,
-        url: wsUrl,
-        timestamp: new Date().toISOString()
-      });
+      console.error('[WebSocket] ❌ CONNECTION ERROR DETAILS:');
+      console.error('[WebSocket] Error object:', error);
+      console.error('[WebSocket] WebSocket URL:', wsUrl);
+      console.error('[WebSocket] Current location:', window.location.href);
+      console.error('[WebSocket] User ID:', user?.id);
+      console.error('[WebSocket] Draft ID:', draftId);
+      console.error('[WebSocket] WebSocket readyState:', (error.target as WebSocket)?.readyState);
+      console.error('[WebSocket] Timestamp:', new Date().toISOString());
       setConnectionStatus('disconnected');
       
       // In production, don't keep retrying failed WebSocket connections
