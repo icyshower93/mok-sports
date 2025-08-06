@@ -249,15 +249,14 @@ export default function DraftPage() {
       
       console.log(`[Draft] TIMER SYNC DEBUG - Server: ${serverTime}s, Local: ${localTimeRemaining}s, Pick: R${currentRound}P${currentPick}`);
       
-      // CRITICAL: Direct API inspection without JSON.stringify
-      console.log(`[Draft] 🔍 DIRECT API INSPECTION:`);
-      console.log(`[Draft] 🔍 typeof draftData:`, typeof draftData);
-      console.log(`[Draft] 🔍 draftData keys:`, Object.keys(draftData || {}));
-      console.log(`[Draft] 🔍 draftData.state:`, draftData?.state);
-      console.log(`[Draft] 🔍 typeof draftData.state:`, typeof draftData?.state);
-      console.log(`[Draft] 🔍 draftData.state keys:`, Object.keys(draftData?.state || {}));
-      console.log(`[Draft] 🔍 DIRECT TIMER:`, draftData?.state?.timeRemaining);
-      console.log(`[Draft] 🔍 TIMER TYPE:`, typeof draftData?.state?.timeRemaining);
+      // CRITICAL: Complete API inspection with all possible paths
+      console.log(`[Draft] 🚨 COMPLETE API DEBUG:`);
+      console.log(`[Draft] 🚨 draftData:`, draftData);
+      console.log(`[Draft] 🚨 draftData.state:`, draftData?.state);
+      console.log(`[Draft] 🚨 draftData.state.draft:`, draftData?.state?.draft);
+      console.log(`[Draft] 🚨 draftData.timeRemaining:`, draftData?.timeRemaining);
+      console.log(`[Draft] 🚨 draftData.state.timeRemaining:`, draftData?.state?.timeRemaining);
+      console.log(`[Draft] 🚨 ALL PATHS CHECKED - TIMER VALUE:`, serverTime);
       
       // FORCE: Always sync with server time - ignore local countdown when server data available
       if (serverTime !== localTimeRemaining) {
