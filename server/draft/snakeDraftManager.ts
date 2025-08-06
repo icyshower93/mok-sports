@@ -609,7 +609,7 @@ export class SnakeDraftManager {
       round,
       pickNumber,
       timeRemaining: this.draftConfig.pickTimeLimit,
-      maxTime: this.draftConfig.pickTimeLimit // PERMANENT FIX: Include all required fields
+      isActive: true
     });
     
     console.log(`🕐 Starting Redis timer for user ${userId} in draft ${draftId} with ${this.draftConfig.pickTimeLimit} seconds`);
