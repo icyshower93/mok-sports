@@ -134,18 +134,35 @@ export function useDraftWebSocket(draftId: string | null) {
       setConnectionStatus('disconnected');
       wsRef.current = null;
 
-      // In production environments where WebSocket might be blocked,
-      // don't attempt infinite reconnects
+      // PERMANENT FIX: Enhanced reconnection logic with draft validation
       if (event.code !== 1000 && draftId && user?.id) {
         if (window.location.hostname.includes('replit.app')) {
           console.log('[WebSocket] Production WebSocket closed, relying on HTTP polling fallback');
           // Don't reconnect in production - use HTTP polling instead
         } else {
-          // In development, try to reconnect normally
-          reconnectTimeoutRef.current = setTimeout(() => {
-            console.log('[WebSocket] Attempting to reconnect...');
-            connect();
-          }, 3000);
+          // In development, validate draft exists before reconnecting
+          console.log('[WebSocket] Checking draft status before reconnection...');
+          fetch(`/api/drafts/${draftId}`)
+            .then(response => {
+              if (response.ok) {
+                console.log('[WebSocket] Draft exists, attempting reconnection...');
+                reconnectTimeoutRef.current = setTimeout(() => {
+                  console.log('[WebSocket] Attempting to reconnect...');
+                  connect();
+                }, 3000);
+              } else {
+                console.log('[WebSocket] Draft no longer exists, stopping reconnection attempts');
+                setConnectionStatus('draft_not_found');
+              }
+            })
+            .catch(err => {
+              console.error('[WebSocket] Error checking draft status:', err);
+              // Fallback: still attempt one reconnection
+              reconnectTimeoutRef.current = setTimeout(() => {
+                console.log('[WebSocket] Fallback reconnection attempt...');
+                connect();
+              }, 5000);
+            });
         }
       }
     };
