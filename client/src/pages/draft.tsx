@@ -228,10 +228,10 @@ export default function DraftPage() {
       }
     },
     enabled: !!draftId && !authLoading, // Wait for auth to load before making requests
-    refetchInterval: 1000, // Fast polling to sync timer data
-    refetchIntervalInBackground: true, // Keep polling when tab not focused
-    staleTime: 0, // Always refetch - timer data is always stale
-    cacheTime: 0, // Don't cache timer data - always fresh
+    refetchInterval: 1000, // Refetch every 1 second for real-time timer
+    refetchIntervalInBackground: true, // Continue polling in background
+    staleTime: 0, // Never trust cached data - always stale
+    gcTime: 0, // React Query v5: disable caching completely for real-time data
     retry: (failureCount, error) => {
       // Don't retry on authentication errors
       if (error instanceof Error && error.message.includes('401')) {
@@ -243,16 +243,9 @@ export default function DraftPage() {
     }
   });
 
-  // CRITICAL FIX: Force immediate timer display from server data
-  useEffect(() => {
-    // Update immediately when draft data loads or changes - bypass all delays
-    if (draftData?.state && typeof draftData.state.timeRemaining === 'number') {
-      const serverTime = draftData.state.timeRemaining;
-      console.log(`[Draft] 🔥 FORCING TIMER UPDATE: ${localTimeRemaining} → ${serverTime} (from server)`);
-      setLocalTimeRemaining(serverTime);
-      setLastServerUpdate(Date.now());
-    }
-  }, [draftData]);
+  // Display timer directly from server data - no local state needed
+  const displayTime = draftData?.state?.timeRemaining ?? 0;
+  console.log(`[Draft] 🚀 DIRECT TIMER DISPLAY: ${displayTime}s (from server data)`);
 
   // Local countdown disabled - use server data only for now
   // This prevents conflicts between local countdown and server sync
@@ -563,11 +556,11 @@ export default function DraftPage() {
                       {/* Timer */}
                       <div>
                         <div className={`text-3xl font-bold mb-3 font-mono transition-colors duration-300 ${
-                          localTimeRemaining <= 0 ? 'text-red-500 animate-pulse' : 
-                          localTimeRemaining <= 10 ? 'text-red-500 animate-pulse' : 
-                          localTimeRemaining <= 30 ? 'text-orange-500' : 'text-foreground'
+                          displayTime <= 0 ? 'text-red-500 animate-pulse' : 
+                          displayTime <= 10 ? 'text-red-500 animate-pulse' : 
+                          displayTime <= 30 ? 'text-orange-500' : 'text-foreground'
                         }`}>
-                          {formatTime(localTimeRemaining)}
+                          {formatTime(displayTime)}
                         </div>
                         
                         {/* Enhanced Progress Bar */}
@@ -577,20 +570,20 @@ export default function DraftPage() {
                           >
                             <div 
                               className={`h-full rounded-full relative overflow-hidden ${
-                                localTimeRemaining <= 0 ? 'bg-red-500 animate-pulse shadow-lg' :
-                                localTimeRemaining <= 10 ? 'bg-gradient-to-r from-red-500 to-red-600 shadow-red-500/50' : 
-                                localTimeRemaining <= 30 ? 'bg-gradient-to-r from-orange-400 to-orange-500 shadow-orange-500/40' : 
-                                localTimeRemaining <= 45 ? 'bg-gradient-to-r from-yellow-400 to-orange-400 shadow-yellow-500/40' :
+                                displayTime <= 0 ? 'bg-red-500 animate-pulse shadow-lg' :
+                                displayTime <= 10 ? 'bg-gradient-to-r from-red-500 to-red-600 shadow-red-500/50' : 
+                                displayTime <= 30 ? 'bg-gradient-to-r from-orange-400 to-orange-500 shadow-orange-500/40' : 
+                                displayTime <= 45 ? 'bg-gradient-to-r from-yellow-400 to-orange-400 shadow-yellow-500/40' :
                                 'bg-gradient-to-r from-green-400 to-green-500 shadow-green-500/40'
                               } ${
-                                localTimeRemaining <= 10 ? 'shadow-lg' : 'shadow-md'
+                                displayTime <= 10 ? 'shadow-lg' : 'shadow-md'
                               }`}
                               style={{
-                                width: `${Math.max(0, (localTimeRemaining / (state.draft.pickTimeLimit || 60)) * 100)}%`,
+                                width: `${Math.max(0, (displayTime / (state.draft.pickTimeLimit || 60)) * 100)}%`,
                                 transition: 'width 1s linear, background-color 0.5s ease, box-shadow 0.3s ease',
-                                boxShadow: localTimeRemaining <= 10 ? 
-                                  `0 0 15px ${localTimeRemaining <= 5 ? 'rgba(239, 68, 68, 0.8)' : 'rgba(239, 68, 68, 0.5)'}` :
-                                  localTimeRemaining <= 30 ? '0 0 8px rgba(251, 146, 60, 0.4)' : 
+                                boxShadow: displayTime <= 10 ? 
+                                  `0 0 15px ${displayTime <= 5 ? 'rgba(239, 68, 68, 0.8)' : 'rgba(239, 68, 68, 0.5)'}` :
+                                  displayTime <= 30 ? '0 0 8px rgba(251, 146, 60, 0.4)' : 
                                   '0 0 5px rgba(34, 197, 94, 0.3)'
                               }}
                             >
@@ -598,7 +591,7 @@ export default function DraftPage() {
                               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-30 animate-pulse"></div>
                               
                               {/* Extra urgent pulsing overlay */}
-                              {localTimeRemaining <= 5 && localTimeRemaining > 0 && (
+                              {displayTime <= 5 && displayTime > 0 && (
                                 <div className="absolute inset-0 bg-red-300 opacity-40 animate-ping"></div>
                               )}
                             </div>
@@ -608,13 +601,13 @@ export default function DraftPage() {
                           <div className="flex justify-between items-center mt-2 text-xs">
                             <span className="text-muted-foreground">0:00</span>
                             <span className={`font-bold text-sm ${
-                              localTimeRemaining <= 10 ? 'text-red-500 animate-pulse' : 
-                              localTimeRemaining <= 30 ? 'text-orange-500' : 
+                              displayTime <= 10 ? 'text-red-500 animate-pulse' : 
+                              displayTime <= 30 ? 'text-orange-500' : 
                               'text-muted-foreground'
                             }`}>
-                              {localTimeRemaining <= 5 ? '⚡ CRITICAL' :
-                               localTimeRemaining <= 10 ? '🚨 URGENT' : 
-                               localTimeRemaining <= 30 ? '⏰ Hurry!' : 
+                              {displayTime <= 5 ? '⚡ CRITICAL' :
+                               displayTime <= 10 ? '🚨 URGENT' : 
+                               displayTime <= 30 ? '⏰ Hurry!' : 
                                '⏱️ Time remaining'}
                             </span>
                             <span className="text-muted-foreground">{formatTime(state.draft.pickTimeLimit || 60)}</span>
