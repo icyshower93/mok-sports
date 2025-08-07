@@ -61,7 +61,7 @@ export function LeagueWaiting() {
   const { data: league, isLoading, refetch, error } = useQuery<League>({
     queryKey: [`/api/leagues/${leagueId}`],
     enabled: !!leagueId && !!user,
-    refetchInterval: 5000, // Refresh every 5 seconds to check for new members
+    refetchInterval: 2000, // Refresh every 2 seconds for faster updates
     retry: (failureCount, error) => {
       // Don't retry if user is not authorized (removed from league)
       if (error instanceof Error && error.message.includes('403')) {
@@ -70,6 +70,19 @@ export function LeagueWaiting() {
       return failureCount < 2;
     },
   });
+
+  // Debug logging for league data
+  useEffect(() => {
+    if (league) {
+      console.log('[LeagueWaiting] League data updated:', {
+        id: league.id,
+        name: league.name,
+        draftId: league.draftId,
+        draftStatus: league.draftStatus,
+        draftStarted: league.draftStarted
+      });
+    }
+  }, [league]);
 
   // Remove member mutation (creator only)
   const removeMemberMutation = useMutation({

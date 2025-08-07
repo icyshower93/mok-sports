@@ -118,10 +118,11 @@ export function DraftTestingPanel({
       console.log('[Reset] Successfully reset draft, new draft ID:', data?.draftId);
       onReset?.();
       
-      // Force a page refresh after a small delay to ensure fresh state
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
+      // Force immediate data refresh instead of page reload
+      setTimeout(async () => {
+        await queryClient.refetchQueries({ queryKey: [`/api/leagues/${leagueId}`] });
+        console.log('[Reset] Forced refetch complete');
+      }, 500);
     },
     onError: (error: Error) => {
       toast({
