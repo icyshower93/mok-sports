@@ -25,7 +25,7 @@ export interface IStorage {
   getLeague(id: string): Promise<(League & { memberCount: number; members: Array<{ id: string; name: string; avatar: string | null; joinedAt: string }>; draftId?: string; draftStatus?: string }) | undefined>;
   getLeagueByName(name: string): Promise<League | undefined>;
   getLeagueByJoinCode(joinCode: string): Promise<League | undefined>;
-  getUserLeagues(userId: string): Promise<Array<League & { memberCount: number; isCreator: boolean }>>;
+  getUserLeagues(userId: string): Promise<Array<League & { memberCount: number; isCreator: boolean; draftId?: string; draftStatus?: string }>>;
   joinLeague(member: InsertLeagueMember): Promise<LeagueMember>;
   leaveLeague(userId: string, leagueId: string): Promise<void>;
   isUserInLeague(userId: string, leagueId: string): Promise<boolean>;
@@ -162,7 +162,7 @@ export class DatabaseStorage implements IStorage {
     return league || undefined;
   }
 
-  async getUserLeagues(userId: string): Promise<Array<League & { memberCount: number; isCreator: boolean }>> {
+  async getUserLeagues(userId: string): Promise<Array<League & { memberCount: number; isCreator: boolean; draftId?: string; draftStatus?: string }>> {
     try {
       const userLeagues = await db
         .select({
@@ -175,16 +175,25 @@ export class DatabaseStorage implements IStorage {
           draftScheduledAt: leagues.draftScheduledAt,
           draftStarted: leagues.draftStarted,
           createdAt: leagues.createdAt,
-          memberCount: sql<number>`COUNT(${leagueMembers.userId})::int`,
+          memberCount: sql<number>`COUNT(DISTINCT ${leagueMembers.userId})::int`,
           isCreator: sql<boolean>`${leagues.creatorId} = ${userId}`,
+          draftId: drafts.id,
+          draftStatus: drafts.status,
         })
         .from(leagues)
         .innerJoin(leagueMembers, eq(leagues.id, leagueMembers.leagueId))
+        .leftJoin(drafts, eq(leagues.id, drafts.leagueId))
         .where(eq(leagueMembers.userId, userId))
-        .groupBy(leagues.id);
+        .groupBy(leagues.id, drafts.id, drafts.status);
 
-      return userLeagues;
+      // Convert null values to undefined for TypeScript compatibility
+      return userLeagues.map(league => ({
+        ...league,
+        draftId: league.draftId || undefined,
+        draftStatus: league.draftStatus || undefined,
+      }));
     } catch (error) {
+      console.error('[Storage] Error fetching user leagues:', error);
       // Return empty array if there's an error instead of throwing
       return [];
     }

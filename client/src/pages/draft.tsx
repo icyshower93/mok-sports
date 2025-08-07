@@ -79,11 +79,11 @@ export default function DraftPage() {
   const [actualDraftId, setActualDraftId] = useState<string | null>(urlDraftId);
   const [selectedTeam, setSelectedTeam] = useState<string | null>(null);
   
-  // Fetch league data to get the current draft ID
+  // Fetch user's leagues to get the current draft ID
   const { data: leagueData } = useQuery({
-    queryKey: ['/api/leagues'],
+    queryKey: ['/api/leagues/user'],
     queryFn: async () => {
-      const response = await apiRequest('GET', '/api/leagues');
+      const response = await apiRequest('GET', '/api/leagues/user');
       return response.json();
     },
     enabled: !!user && !authLoading,
@@ -95,20 +95,38 @@ export default function DraftPage() {
 
   console.log('[Draft] All useState hooks declared');
 
-  // Ensure we're using the correct current draft ID
+  // Auto-redirect to correct draft if URL has wrong draft ID
   useEffect(() => {
-    if (leagueData && leagueData.length > 0) {
-      const league = leagueData[0]; // Assume first league for now
-      if (league.draftId && league.draftId !== urlDraftId) {
-        console.log('[Draft] URL draft mismatch - redirecting from', urlDraftId, 'to current draft:', league.draftId);
-        // Navigate to the correct draft URL
-        navigate(`/draft/${league.draftId}`, { replace: true });
-        setActualDraftId(league.draftId);
-      } else if (league.draftId) {
-        setActualDraftId(league.draftId);
-      }
+    if (!leagueData || !urlDraftId || authLoading) return;
+    
+    console.log('[Draft] 🔍 VALIDATING DRAFT URL...');
+    console.log('[Draft] User leagues:', leagueData);
+    console.log('[Draft] URL Draft ID:', urlDraftId);
+    
+    // Find the league that contains this user and has an active draft
+    const activeLeague = leagueData.find((league: any) => 
+      league.draftId && league.draftStarted
+    );
+    
+    if (activeLeague?.draftId && activeLeague.draftId !== urlDraftId) {
+      console.log('[Draft] 🚨 DRAFT ID MISMATCH DETECTED!');
+      console.log('[Draft] URL Draft ID:', urlDraftId);
+      console.log('[Draft] Current Active Draft ID:', activeLeague.draftId);
+      console.log('[Draft] League:', activeLeague.name);
+      console.log('[Draft] 🔄 Auto-redirecting to current active draft...');
+      
+      // Clear cache and redirect to the correct draft
+      queryClient.clear();
+      navigate(`/draft/${activeLeague.draftId}`, { replace: true });
+      return;
+    } else if (activeLeague?.draftId) {
+      console.log('[Draft] ✅ Draft ID is current:', activeLeague.draftId);
+      setActualDraftId(activeLeague.draftId);
+    } else {
+      console.log('[Draft] ❌ No active draft found for user');
+      console.log('[Draft] Available leagues:', leagueData.map((l: any) => `${l.name} (draft: ${l.draftId}, started: ${l.draftStarted})`));
     }
-  }, [leagueData, urlDraftId, navigate]);
+  }, [leagueData, urlDraftId, user?.id, navigate, queryClient, authLoading]);
 
   // Use the actual draft ID for all operations
   const draftId = actualDraftId;
