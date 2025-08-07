@@ -411,24 +411,35 @@ export function LeagueWaiting() {
 
               {/* Draft Controls - for creating and starting drafts */}
               {user?.id === league.creatorId && isLeagueFull && !league.draftStarted && (
-                <DraftControls
-                  leagueId={league.id}
-                  canCreateDraft={!league.draftId}
-                  canStartDraft={!!league.draftId && !league.draftStarted}
-                  draftId={league.draftId}
-                  onDraftCreated={(draftId: string) => {
-                    queryClient.invalidateQueries({ queryKey: [`/api/leagues/${leagueId}`] });
-                    toast({
-                      title: "Draft created!",
-                      description: "Your snake draft is ready to begin.",
-                    });
-                  }}
-                  onDraftStarted={() => {
-                    // Use the existing draft ID or the league's draft ID
-                    const targetDraftId = league.draftId || '46160cd7-595b-4f70-9956-795ea53993ff';
-                    setLocation(`/draft/${targetDraftId}`);
-                  }}
-                />
+                <div className="space-y-4">
+                  <div className="text-center p-4 bg-orange-500/10 rounded-lg">
+                    <div className="flex items-center justify-center gap-2 mb-2">
+                      <Play className="w-5 h-5 text-orange-500" />
+                      <span className="font-semibold text-orange-500">Ready to Start!</span>
+                    </div>
+                    <p className="text-sm text-muted-foreground mb-3">
+                      Debug: Draft ID: {league.draftId || 'None'} | Started: {league.draftStarted ? 'Yes' : 'No'}
+                    </p>
+                  </div>
+                  <DraftControls
+                    leagueId={league.id}
+                    canCreateDraft={!league.draftId}
+                    canStartDraft={!!league.draftId && !league.draftStarted}
+                    draftId={league.draftId}
+                    onDraftCreated={(draftId: string) => {
+                      queryClient.invalidateQueries({ queryKey: [`/api/leagues/${leagueId}`] });
+                      toast({
+                        title: "Draft created!",
+                        description: "Your snake draft is ready to begin.",
+                      });
+                    }}
+                    onDraftStarted={() => {
+                      // Use the existing draft ID or the league's draft ID
+                      const targetDraftId = league.draftId || '46160cd7-595b-4f70-9956-795ea53993ff';
+                      setLocation(`/draft/${targetDraftId}`);
+                    }}
+                  />
+                </div>
               )}
 
               {/* Show draft room button only if draft is active */}
