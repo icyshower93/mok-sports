@@ -19,7 +19,7 @@ export interface DraftWebSocketMessage {
   timestamp: number;
 }
 
-export function useDraftWebSocket(draftId: string | null) {
+export function useDraftWebSocket(draftId: string | null, leagueId?: string | null) {
   const { user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -73,28 +73,12 @@ export function useDraftWebSocket(draftId: string | null) {
     
     previousDraftIdRef.current = draftId;
 
-    // PERMANENT FIX: Validate draft exists before attempting WebSocket connection
-    console.log('[WebSocket] Validating draft exists before connection...');
+    // PERMANENT FIX: Always connect immediately after draft reset/changes
+    console.log('[WebSocket] Connecting to draft immediately after reset/change...');
     setConnectionStatus('connecting');
     
-    fetch(`/api/drafts/${draftId}`)
-      .then(response => {
-        if (!response.ok) {
-          console.log('[WebSocket] Draft not found, aborting connection');
-          setConnectionStatus('draft_not_found');
-          return Promise.reject(new Error('Draft not found'));
-        }
-        console.log('[WebSocket] Draft exists, proceeding with WebSocket connection');
-        return response.json();
-      })
-      .then(() => {
-        // Proceed with actual WebSocket connection
-        connectToWebSocket();
-      })
-      .catch(err => {
-        console.error('[WebSocket] Draft validation failed:', err);
-        setConnectionStatus('draft_not_found');
-      });
+    // Connect immediately - don't wait for validation
+    connectToWebSocket();
   }, [draftId, user?.id]);
 
   const connectToWebSocket = useCallback(() => {
@@ -126,8 +110,14 @@ export function useDraftWebSocket(draftId: string | null) {
     
     const wsUrl = `${protocol}//${wsHost}/draft-ws?userId=${encodeURIComponent(user!.id)}&draftId=${encodeURIComponent(draftId || '')}`;
     
-    console.log('[WebSocket] Creating WebSocket connection to:', wsUrl);
+    console.log('[WebSocket] ========== CREATING NEW CONNECTION ==========');
+    console.log('[WebSocket] URL:', wsUrl);
+    console.log('[WebSocket] Draft ID:', draftId);
+    console.log('[WebSocket] User ID:', user!.id);
+    console.log('[WebSocket] Protocol:', protocol);
+    console.log('[WebSocket] Host:', wsHost);
     console.log('[WebSocket] Timestamp:', new Date().toISOString());
+    console.log('[WebSocket] ==============================================');
     
     try {
       const ws = new WebSocket(wsUrl);
@@ -415,7 +405,7 @@ export function useDraftWebSocket(draftId: string | null) {
     }
   }, []);
 
-  // ROBUST CONNECTION MANAGEMENT - Enhanced for draft resets on Reserved VM
+  // ROBUST CONNECTION MANAGEMENT - Enhanced for draft resets on Reserved VM  
   useEffect(() => {
     console.log('[WebSocket] ==== EFFECT TRIGGERED ====');
     console.log('[WebSocket] Dependencies - draftId:', !!draftId, 'userId:', !!user?.id);
@@ -427,15 +417,22 @@ export function useDraftWebSocket(draftId: string | null) {
     if (draftId && user?.id) {
       console.log('[WebSocket] ✅ Dependencies ready - initiating connection');
       
-      // PERMANENT FIX: Force new connection for draft resets
-      if (previousDraftIdRef.current && previousDraftIdRef.current !== draftId) {
+      // PERMANENT FIX: Always force new connection for any draft change
+      const draftChanged = previousDraftIdRef.current && previousDraftIdRef.current !== draftId;
+      if (draftChanged) {
         console.log('[WebSocket] 🔄 Draft ID changed - forcing fresh connection');
         setConnectionStatus('connecting');
         
-        // Small delay to ensure clean state transition
+        // Clear any existing connection immediately  
+        if (wsRef.current) {
+          wsRef.current.close(1000, 'Draft changed');
+          wsRef.current = null;
+        }
+        
+        // Force new connection after brief delay
         setTimeout(() => {
-          connect();
-        }, 500);
+          connectToWebSocket();
+        }, 100);
       } else {
         connect();
       }

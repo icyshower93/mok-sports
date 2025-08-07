@@ -87,7 +87,7 @@ export default function DraftPage() {
   const { connectionStatus, isConnected, lastMessage } = useDraftWebSocket(draftId);
   
   // Keep diagnostic implementations for comparison (can be removed later)
-  const { status: originalStatus } = useDraftWebSocket(draftId);
+  // const { status: originalStatus } = useDraftWebSocket(draftId);
   const { status: simpleStatus } = useSimpleWebSocket(draftId, user?.id || '');
   const { status: persistentStatus, connectionAttempts } = usePersistentWebSocket(draftId, user?.id || '');
   const { status: stableStatus, connectionId } = useStableWebSocket(draftId, user?.id || '');
@@ -365,7 +365,7 @@ export default function DraftPage() {
   // CRITICAL FIX: Force timer sync with server data when different
   if (state.timeRemaining !== displayTime && state.timeRemaining > 0) {
     console.log('🔄 [TIMER SYNC] Forcing timer sync from API:', state.timeRemaining);
-    setDisplayTime(state.timeRemaining);
+    setServerTime(state.timeRemaining);
   }
 
   const formatTime = (seconds: number) => {
