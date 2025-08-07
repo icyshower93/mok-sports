@@ -11,10 +11,12 @@ const SERVER_BUILD_INFO = {
   version: Date.now(),
   date: new Date().toISOString(),
   env: process.env.NODE_ENV || 'development',
-  hash: Date.now().toString(36)
+  hash: Date.now().toString(36),
+  note: 'Running in development mode but serving production assets'
 };
 
 console.log('🚀 [Server] Build Info:', SERVER_BUILD_INFO);
+console.log('📝 [Server] Environment Note: NODE_ENV=development means we have dev debugging enabled while serving production builds');
 
 async function setupProductionAssets(app: express.Application) {
   const distPath = path.resolve(import.meta.dirname, "..", "dist", "public");
@@ -159,6 +161,13 @@ app.use((req, res, next) => {
     console.log('[Emergency] Cache fix page requested');
     const emergencyPath = path.resolve(import.meta.dirname, "..", "emergency-cache-fix.html");
     res.sendFile(emergencyPath);
+  });
+
+  // Add force refresh route for cache bypass
+  app.get('/force-refresh', (req, res) => {
+    console.log('[Force Refresh] Cache bypass page requested');
+    const refreshPath = path.resolve(import.meta.dirname, "..", "force-refresh.html");
+    res.sendFile(refreshPath);
   });
 
   // Add legacy emergency route BEFORE other routes  

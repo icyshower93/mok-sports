@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Force Refresh - Mok Sports</title>
+    <style>
+        body {
+            background: #0f172a;
+            color: white;
+            font-family: system-ui;
+            text-align: center;
+            padding: 50px 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        h1 { color: #10b981; margin-bottom: 30px; }
+        .button {
+            background: #10b981;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            margin: 15px;
+            display: inline-block;
+            text-decoration: none;
+        }
+        .button:hover { background: #059669; }
+        .info {
+            background: #1e293b;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: left;
+        }
+        .code {
+            background: #0f172a;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            color: #10b981;
+        }
+        .version { color: #64748b; font-size: 14px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔄 Force Cache Refresh</h1>
+        
+        <div class="info">
+            <h3>Enhanced WebSocket Hook Ready</h3>
+            <p>The latest build includes:</p>
+            <ul>
+                <li>✅ Enhanced WebSocket debugging with EMERGENCY DEBUG logs</li>
+                <li>✅ Build version system for cache verification</li>
+                <li>✅ Comprehensive connection monitoring</li>
+                <li>✅ TypeScript compilation fixes</li>
+            </ul>
+        </div>
+
+        <a href="/" class="button" onclick="forceCacheRefresh()">
+            🚀 Launch App with Fresh Cache
+        </a>
+
+        <div class="info">
+            <h3>Manual Steps (if button doesn't work):</h3>
+            <div class="code">
+                1. Hard Refresh: Ctrl+Shift+R (or Cmd+Shift+R on Mac)<br>
+                2. Clear Cache: F12 → Application → Storage → Clear Storage<br>
+                3. Disable Cache: F12 → Network → Disable cache checkbox
+            </div>
+        </div>
+
+        <div class="version">
+            Build Version: index-BSykNjMG.js | Generated: 2025-08-07T19:17:32.215Z
+        </div>
+    </div>
+
+    <script>
+        function forceCacheRefresh() {
+            // Clear all possible caches
+            if ('caches' in window) {
+                caches.keys().then(names => {
+                    names.forEach(name => caches.delete(name));
+                });
+            }
+            
+            // Clear storage
+            localStorage.clear();
+            sessionStorage.clear();
+            
+            // Force reload with cache bypass
+            window.location.href = "/?v=" + Date.now() + "&refresh=true";
+        }
+
+        // Auto-redirect with cache busting after 3 seconds
+        setTimeout(() => {
+            console.log('Auto-redirecting with cache bypass...');
+            forceCacheRefresh();
+        }, 3000);
+    </script>
+</body>
+</html>
