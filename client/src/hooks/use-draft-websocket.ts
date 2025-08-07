@@ -70,8 +70,12 @@ export function useDraftWebSocket(draftId: string | null, leagueId?: string | nu
       
       if (wsRef.current) {
         console.log('[WebSocket] 🔄 TRANSITION: Closing old connection cleanly for new draft');
-        if (wsRef.current.readyState === WebSocket.OPEN) {
-          wsRef.current.close(1000, 'Draft changed - clean transition');
+        try {
+          if (wsRef.current.readyState === WebSocket.OPEN) {
+            wsRef.current.close(1000, 'Draft changed - clean transition');
+          }
+        } catch (e) {
+          console.log('[WebSocket] Error closing connection:', e);
         }
         wsRef.current = null;
       }
