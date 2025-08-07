@@ -135,7 +135,7 @@ export default function DraftPage() {
   const draftId = actualDraftId;
 
   // FIX #1: WEBSOCKET LIFECYCLE - Single instance per draft with clean unmount
-  const { connectionStatus, isConnected, lastMessage } = useDraftWebSocket(draftId);
+  const { connectionStatus, isConnected, lastMessage } = useDraftWebSocket(draftId || '');
   
   // FIX #1: Ensure clean WebSocket closure on page unmount
   useEffect(() => {
@@ -146,9 +146,9 @@ export default function DraftPage() {
   }, []);
   
   // Keep diagnostic implementations for comparison (can be removed later)  
-  const { status: simpleStatus } = useSimpleWebSocket(draftId, user?.id || '');
-  const { status: persistentStatus, connectionAttempts } = usePersistentWebSocket(draftId, user?.id || '');
-  const { status: stableStatus, connectionId } = useStableWebSocket(draftId, user?.id || '');
+  const { status: simpleStatus } = useSimpleWebSocket(draftId || '', user?.id || '');
+  const { status: persistentStatus, connectionAttempts } = usePersistentWebSocket(draftId || '', user?.id || '');
+  const { status: stableStatus, connectionId } = useStableWebSocket(draftId || '', user?.id || '');
 
   // Redirect if no draft ID
   useEffect(() => {
@@ -620,7 +620,7 @@ export default function DraftPage() {
                       </div>
                       
                       {/* Show start button if current user is creator */}
-                      {user?.id === state.draft.creatorId && (
+                      {user?.id === state.draft?.creatorId && (
                         <Button
                           onClick={async () => {
                             try {
