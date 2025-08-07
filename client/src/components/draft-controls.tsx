@@ -94,8 +94,15 @@ export default function DraftControls({
       queryClient.clear();
       queryClient.invalidateQueries({ queryKey: ['league', leagueId] });
       queryClient.invalidateQueries({ queryKey: ['draft', data.draftId] });
+      queryClient.invalidateQueries({ queryKey: ['/api/leagues'] });
       
       console.log('[StartDraft] ✅ All systems ready for WebSocket connection to:', data.draftId);
+      console.log('[StartDraft] 🚀 NAVIGATING to new draft immediately:', data.draftId);
+      
+      // Navigate to the new draft immediately
+      setTimeout(() => {
+        window.location.href = `/draft/${data.draftId}`;
+      }, 100);
       
       if (onDraftStarted) {
         onDraftStarted();

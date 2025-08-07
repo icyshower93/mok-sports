@@ -75,13 +75,43 @@ export default function DraftPage() {
   
   // Extract draft ID from URL params using wouter
   const params = useParams();
-  const draftId = (params as any).draftId;
+  const urlDraftId = (params as any).draftId;
+  const [actualDraftId, setActualDraftId] = useState<string | null>(urlDraftId);
   const [selectedTeam, setSelectedTeam] = useState<string | null>(null);
+  
+  // Fetch league data to get the current draft ID
+  const { data: leagueData } = useQuery({
+    queryKey: ['/api/leagues'],
+    queryFn: async () => {
+      const response = await apiRequest('GET', '/api/leagues');
+      return response.json();
+    },
+    enabled: !!user && !authLoading,
+    staleTime: 1000 * 10, // Cache for 10 seconds
+  });
   
   // Server timer state - single source of truth
   const [serverTime, setServerTime] = useState<number>(0);
 
   console.log('[Draft] All useState hooks declared');
+
+  // Ensure we're using the correct current draft ID
+  useEffect(() => {
+    if (leagueData && leagueData.length > 0) {
+      const league = leagueData[0]; // Assume first league for now
+      if (league.draftId && league.draftId !== urlDraftId) {
+        console.log('[Draft] URL draft mismatch - redirecting from', urlDraftId, 'to current draft:', league.draftId);
+        // Navigate to the correct draft URL
+        navigate(`/draft/${league.draftId}`, { replace: true });
+        setActualDraftId(league.draftId);
+      } else if (league.draftId) {
+        setActualDraftId(league.draftId);
+      }
+    }
+  }, [leagueData, urlDraftId, navigate]);
+
+  // Use the actual draft ID for all operations
+  const draftId = actualDraftId;
 
   // FIX #1: WEBSOCKET LIFECYCLE - Single instance per draft with clean unmount
   const { connectionStatus, isConnected, lastMessage } = useDraftWebSocket(draftId);
