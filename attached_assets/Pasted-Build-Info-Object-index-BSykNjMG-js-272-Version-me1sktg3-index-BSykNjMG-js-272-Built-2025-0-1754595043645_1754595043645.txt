@@ -1,0 +1,173 @@
+Build Info: Object
+index-BSykNjMG.js:272 📦 Version: me1sktg3
+index-BSykNjMG.js:272 📅 Built: 2025-08-07T19:30:29.523Z
+index-BSykNjMG.js:272 🔧 Environment: production
+index-BSykNjMG.js:228 [Auth] Token check - Has token: true Has user: false Loading: true
+index-BSykNjMG.js:228 [SW Hook] EMERGENCY: Unregistering all existing service workers
+index-BSykNjMG.js:228 [SW Hook] Found 1 existing registrations
+index-BSykNjMG.js:228 [SW Hook] Unregistering existing service worker
+index-BSykNjMG.js:228 [SW Hook] Found 1 caches to delete
+index-BSykNjMG.js:228 [SW Hook] Deleting cache: mok-sports-dynamic-v1.7.0-nuclear-unregister-1754595025643
+index-BSykNjMG.js:272 [Dashboard] User authenticated: Object
+index-BSykNjMG.js:272 [Dashboard] User leagues loading: true
+index-BSykNjMG.js:272 [Dashboard] User leagues data: undefined
+index-BSykNjMG.js:228 [Auth] Token check - Has token: true Has user: true Loading: false
+index-BSykNjMG.js:228 [AutoPushRefresh] Legacy hook delegating to SubscriptionManager
+index-BSykNjMG.js:272 [PWA DEBUG] [3:30:29 PM] Subscription Manager Status: active=false, endpoint=none
+index-BSykNjMG.js:272 [PWA DEBUG] [3:30:29 PM] PWA Status Check Complete
+index-BSykNjMG.js:272 [PWA DEBUG] [3:30:29 PM] Standalone: false, iOS: false, HTTPS: true
+index-BSykNjMG.js:272 [PWA DEBUG] [3:30:29 PM] Permission: denied, Push: true
+index-BSykNjMG.js:272 [PWA DEBUG] [3:30:29 PM] SW Registered: false, Active Subscription: false
+index-BSykNjMG.js:272 [PWA DEBUG] [3:30:29 PM] Subscription Manager Status: active=false, endpoint=none
+index-BSykNjMG.js:272 [PWA DEBUG] [3:30:29 PM] PWA Status Check Complete
+index-BSykNjMG.js:272 [PWA DEBUG] [3:30:29 PM] Standalone: false, iOS: false, HTTPS: true
+index-BSykNjMG.js:272 [PWA DEBUG] [3:30:29 PM] Permission: denied, Push: true
+index-BSykNjMG.js:272 [PWA DEBUG] [3:30:29 PM] SW Registered: false, Active Subscription: false
+contentScript.js:2 Content script initialized successfully.
+/api/leagues/user:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+index-BSykNjMG.js:228 [SW Hook] Registering fresh service worker: /sw.js?v=1754595029668&r=0.9332018462934727
+mok-sports-draft-mokfantasysport.replit.app/:1 Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner.
+sw.js?v=1754595029668&r=0.9332018462934727:2 [SW] NUCLEAR OPTION - Emergency service worker loading
+sw.js?v=1754595029668&r=0.9332018462934727:88 [SW] Service worker starting, version: v1.7.0-nuclear-unregister-1754595029727
+sw.js?v=1754595029668&r=0.9332018462934727:305 [SW] Service worker script loaded successfully
+sw.js?v=1754595029668&r=0.9332018462934727:19 [SW] EMERGENCY INSTALL - Clearing all caches and forcing activation
+sw.js?v=1754595029668&r=0.9332018462934727:92 [SW] Installing service worker, version: v1.7.0-nuclear-unregister-1754595029727
+sw.js?v=1754595029668&r=0.9332018462934727:22 [SW] Found caches to delete: Array(0)
+index-BSykNjMG.js:228 [SW Hook] Service worker registered successfully
+sw.js?v=1754595029668&r=0.9332018462934727:30 [SW] All caches deleted - skipping waiting
+sw.js?v=1754595029668&r=0.9332018462934727:96 [SW] Caching static files
+sw.js?v=1754595029668&r=0.9332018462934727:103 [SW] Installation failed: TypeError: Failed to execute 'addAll' on 'Cache': Request failed
+(anonymous) @ sw.js?v=1754595029668&r=0.9332018462934727:103Understand this error
+index-BSykNjMG.js:272 [Push Persistence] No existing subscription found
+index-BSykNjMG.js:272 [Push Persistence] No permission or denied, not creating subscription
+index-BSykNjMG.js:272 [Dashboard] User authenticated: Object
+index-BSykNjMG.js:272 [Dashboard] User leagues loading: false
+index-BSykNjMG.js:272 [Dashboard] User leagues data: Array(4)
+index-BSykNjMG.js:272 [Dashboard] Redirecting to league waiting room: 243d719b-92ce-4752-8689-5da93ee69213
+index-BSykNjMG.js:272 [LeagueWaiting] EMERGENCY DEBUG - ABOUT TO CALL useDraftWebSocket with: Object
+index-BSykNjMG.js:272 [WebSocket] Hook called with: Object
+index-BSykNjMG.js:272 [LeagueWaiting] EMERGENCY DEBUG - WebSocket hook returned: Object
+index-BSykNjMG.js:272 [WebSocket] MAIN useEffect trigger - draftId: null userId: true
+index-BSykNjMG.js:272 [WebSocket] ❌ Connection requirements not met: Object
+index-BSykNjMG.js:272 [LeagueWaiting] EMERGENCY DEBUG - ABOUT TO CALL useDraftWebSocket with: Object
+index-BSykNjMG.js:272 [WebSocket] Hook called with: Object
+index-BSykNjMG.js:272 [LeagueWaiting] EMERGENCY DEBUG - WebSocket hook returned: Object
+sw.js?v=1754595029668&r=0.9332018462934727:41 [SW] EMERGENCY ACTIVATE - Taking control of all clients
+sw.js?v=1754595029668&r=0.9332018462934727:110 [SW] Activating service worker, version: v1.7.0-nuclear-unregister-1754595029727
+sw.js?v=1754595029668&r=0.9332018462934727:46 [SW] Deleting remaining cache: mok-sports-static-v1.7.0-nuclear-unregister-1754595029727
+sw.js?v=1754595029668&r=0.9332018462934727:116 [SW] Found caches: Array(1)
+sw.js?v=1754595029668&r=0.9332018462934727:129 [SW] Service worker activated and controlling all clients
+sw.js?v=1754595029668&r=0.9332018462934727:51 [SW] Claiming all clients immediately
+index-BSykNjMG.js:272 [LeagueWaiting] EMERGENCY DEBUG - ABOUT TO CALL useDraftWebSocket with: Object
+index-BSykNjMG.js:272 [WebSocket] Hook called with: Object
+index-BSykNjMG.js:272 [LeagueWaiting] EMERGENCY DEBUG - WebSocket hook returned: Object
+index-BSykNjMG.js:272 [WebSocket] MAIN useEffect trigger - draftId: 79a2a91e-8b8d-4aef-b0a7-df05922a4473 userId: true
+index-BSykNjMG.js:272 [WebSocket] ✅ Conditions met, validating draft exists before connection...
+index-BSykNjMG.js:272 [LeagueWaiting] League data updated: Object
+index-BSykNjMG.js:272 [League] Draft ID changed, WebSocket should reconnect to: 79a2a91e-8b8d-4aef-b0a7-df05922a4473
+index-BSykNjMG.js:272 [LeagueWaiting] EMERGENCY DEBUG - ABOUT TO CALL useDraftWebSocket with: Object
+index-BSykNjMG.js:272 [WebSocket] Hook called with: Object
+index-BSykNjMG.js:272 [LeagueWaiting] EMERGENCY DEBUG - WebSocket hook returned: Object
+sw.js?v=1754595029668&r=0.9332018462934727:164 [SW] Fetching /a/ACg8ocJEMs5AzNtfS8vv7POiR-CJvE5EdtZVt27CT0tdYJA64x6-BQyy_Q=s96-c from network
+sw.js?v=1754595029668&r=0.9332018462934727:164 [SW] Fetching /a/ACg8ocIlUYRsI8z4wKwDJjb1BBPBwCuyYSlVMcLHB5QAXs50P5Fbtg=s96-c from network
+4sw.js?v=1754595029668&r=0.9332018462934727:164 [SW] Fetching /7.x/robots/svg from network
+svg:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+svg:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+svg:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+svg:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+index-BSykNjMG.js:272 [WebSocket] ✅ Draft exists, proceeding with connection
+index-BSykNjMG.js:272 [WebSocket] === STARTING NEW CONNECTION ATTEMPT ===
+index-BSykNjMG.js:272 [WebSocket] Draft ID: 79a2a91e-8b8d-4aef-b0a7-df05922a4473 User ID: 9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a
+index-BSykNjMG.js:272 [WebSocket] Creating connection to: wss://mok-sports-draft-mokfantasysport.replit.app/draft-ws?userId=9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a&draftId=79a2a91e-8b8d-4aef-b0a7-df05922a4473
+index-BSykNjMG.js:272 [LeagueWaiting] EMERGENCY DEBUG - ABOUT TO CALL useDraftWebSocket with: Object
+index-BSykNjMG.js:272 [WebSocket] Hook called with: Object
+index-BSykNjMG.js:272 [LeagueWaiting] EMERGENCY DEBUG - WebSocket hook returned: Object
+index-BSykNjMG.js:272 [WebSocket] ✅ CONNECTION ESTABLISHED
+index-BSykNjMG.js:272 [LeagueWaiting] EMERGENCY DEBUG - ABOUT TO CALL useDraftWebSocket with: Object
+index-BSykNjMG.js:272 [WebSocket] Hook called with: Object
+index-BSykNjMG.js:272 [LeagueWaiting] EMERGENCY DEBUG - WebSocket hook returned: Object
+index-BSykNjMG.js:272 [WebSocket] Message received: connected
+index-BSykNjMG.js:272 [WebSocket] Connected confirmation received
+index-BSykNjMG.js:272 [LeagueWaiting] EMERGENCY DEBUG - ABOUT TO CALL useDraftWebSocket with: Object
+index-BSykNjMG.js:272 [WebSocket] Hook called with: Object
+index-BSykNjMG.js:272 [LeagueWaiting] EMERGENCY DEBUG - WebSocket hook returned: Object
+index-BSykNjMG.js:272 [WebSocket] Message received: connected
+index-BSykNjMG.js:272 [WebSocket] Connected confirmation received
+index-BSykNjMG.js:272 [LeagueWaiting] EMERGENCY DEBUG - ABOUT TO CALL useDraftWebSocket with: Object
+index-BSykNjMG.js:272 [WebSocket] Hook called with: Object
+index-BSykNjMG.js:272 [LeagueWaiting] EMERGENCY DEBUG - WebSocket hook returned: Object
+sw.js?v=1754595029668&r=0.9332018462934727:64 [SW] BYPASSING CACHE for JS file: https://mok-sports-draft-mokfantasysport.replit.app/manifest.json
+sw.js?v=1754595029668&r=0.9332018462934727:164 [SW] Fetching /league/waiting from network
+sw.js?v=1754595029668&r=0.9332018462934727:164 [SW] Fetching /assets/index-wcfXxhQ9.css from network
+index-BSykNjMG.js:48  GET https://mok-sports-draft-mokfantasysport.replit.app/api/leagues/243d719b-92ce-4752-8689-5da93ee69213 404 (Not Found)
+(anonymous) @ index-BSykNjMG.js:48
+s @ index-BSykNjMG.js:48
+S @ index-BSykNjMG.js:48
+start @ index-BSykNjMG.js:48
+fetch @ index-BSykNjMG.js:48
+Ns @ index-BSykNjMG.js:48
+(anonymous) @ index-BSykNjMG.js:48
+setInterval
+wu @ index-BSykNjMG.js:48
+Su @ index-BSykNjMG.js:48
+onQueryUpdate @ index-BSykNjMG.js:48
+(anonymous) @ index-BSykNjMG.js:48
+(anonymous) @ index-BSykNjMG.js:48
+batch @ index-BSykNjMG.js:48
+vn @ index-BSykNjMG.js:48
+setData @ index-BSykNjMG.js:48
+onSuccess @ index-BSykNjMG.js:48
+p @ index-BSykNjMG.js:48
+Promise.then
+S @ index-BSykNjMG.js:48
+start @ index-BSykNjMG.js:48
+fetch @ index-BSykNjMG.js:48
+Ns @ index-BSykNjMG.js:48
+(anonymous) @ index-BSykNjMG.js:48Understand this error
+index-BSykNjMG.js:48  GET https://mok-sports-draft-mokfantasysport.replit.app/api/leagues/243d719b-92ce-4752-8689-5da93ee69213 404 (Not Found)
+(anonymous) @ index-BSykNjMG.js:48
+s @ index-BSykNjMG.js:48
+S @ index-BSykNjMG.js:48
+start @ index-BSykNjMG.js:48
+fetch @ index-BSykNjMG.js:48
+Ns @ index-BSykNjMG.js:48
+(anonymous) @ index-BSykNjMG.js:48
+setInterval
+wu @ index-BSykNjMG.js:48
+Su @ index-BSykNjMG.js:48
+onQueryUpdate @ index-BSykNjMG.js:48
+(anonymous) @ index-BSykNjMG.js:48
+(anonymous) @ index-BSykNjMG.js:48
+batch @ index-BSykNjMG.js:48
+vn @ index-BSykNjMG.js:48
+setData @ index-BSykNjMG.js:48
+onSuccess @ index-BSykNjMG.js:48
+p @ index-BSykNjMG.js:48
+Promise.then
+S @ index-BSykNjMG.js:48
+(anonymous) @ index-BSykNjMG.js:48
+Promise.then
+(anonymous) @ index-BSykNjMG.js:48
+Promise.catch
+S @ index-BSykNjMG.js:48
+start @ index-BSykNjMG.js:48
+fetch @ index-BSykNjMG.js:48
+Ns @ index-BSykNjMG.js:48
+(anonymous) @ index-BSykNjMG.js:48
+setInterval
+wu @ index-BSykNjMG.js:48
+Su @ index-BSykNjMG.js:48
+onQueryUpdate @ index-BSykNjMG.js:48
+(anonymous) @ index-BSykNjMG.js:48
+(anonymous) @ index-BSykNjMG.js:48
+batch @ index-BSykNjMG.js:48
+vn @ index-BSykNjMG.js:48
+setData @ index-BSykNjMG.js:48
+onSuccess @ index-BSykNjMG.js:48
+p @ index-BSykNjMG.js:48
+Promise.then
+S @ index-BSykNjMG.js:48
+start @ index-BSykNjMG.js:48
+fetch @ index-BSykNjMG.js:48
+Ns @ index-BSykNjMG.js:48
+(anonymous) @ index-BSykNjMG.js:48Understand this error
