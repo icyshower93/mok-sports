@@ -222,6 +222,7 @@ export function DraftTestingPanel({
             <div><strong>Current Draft ID:</strong> {draftId || 'None'}</div>
             <div><strong>Socket Connected To:</strong> {draftId && connectionStatus === 'connected' ? draftId : 'Not connected'}</div>
             <div><strong>League ID:</strong> {leagueId}</div>
+            <div><strong>Connection Status:</strong> {connectionStatus}</div>
             <div className="text-yellow-600"><strong>Debug:</strong> Prop received: {draftId ? `"${draftId}"` : 'null/undefined'}</div>
           </div>
         </div>

@@ -13,6 +13,7 @@ import { queryClient } from "@/lib/queryClient";
 import { DraftNotificationReminder } from "@/components/draft-notification-reminder";
 import DraftControls from "@/components/draft-controls";
 import { DraftTestingPanel } from "@/components/draft-testing-panel";
+import { useDraftWebSocket } from "@/hooks/use-draft-websocket";
 
 interface League {
   id: string;
@@ -72,6 +73,9 @@ export function LeagueWaiting() {
     },
   });
 
+  // WebSocket connection for real-time draft updates
+  const { connectionStatus } = useDraftWebSocket(league?.draftId || null, leagueId);
+
   // Debug logging for league data
   useEffect(() => {
     if (league) {
@@ -84,6 +88,13 @@ export function LeagueWaiting() {
       });
     }
   }, [league]);
+
+  // Force WebSocket reconnection when draft ID changes
+  useEffect(() => {
+    if (league?.draftId) {
+      console.log('[League] Draft ID changed, WebSocket should reconnect to:', league.draftId);
+    }
+  }, [league?.draftId]);
 
   // Remove member mutation (creator only)
   const removeMemberMutation = useMutation({
@@ -434,7 +445,7 @@ export function LeagueWaiting() {
                 leagueId={league.id}
                 draftId={league.draftId}
                 isCreator={user?.id === league.creatorId}
-                connectionStatus="disconnected"
+                connectionStatus={connectionStatus}
                 onReset={() => {
                   // Force immediate refetch after reset to get new draft ID
                   queryClient.invalidateQueries({ queryKey: [`/api/leagues/${leagueId}`] });
