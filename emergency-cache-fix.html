@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emergency Cache Fix - Mok Sports</title>
+    <style>
+        body {
+            background: #0f172a;
+            color: white;
+            font-family: system-ui;
+            text-align: center;
+            padding: 50px 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            margin: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            min-width: 200px;
+        }
+        button:hover {
+            background: #2563eb;
+        }
+        .danger {
+            background: #dc2626;
+        }
+        .danger:hover {
+            background: #b91c1c;
+        }
+        #status {
+            margin: 20px 0;
+            padding: 20px;
+            background: #1e293b;
+            border-radius: 8px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚑 Emergency Cache Fix</h1>
+        <p>If you're seeing a blank white page, this will fix browser caching issues.</p>
+        
+        <div>
+            <button onclick="emergencyReset()">🔥 NUCLEAR CACHE CLEAR</button>
+            <button onclick="checkStatus()">🔍 Check Status</button>
+            <button onclick="window.location.href='/?cb=' + Date.now()">🔄 Try Main App</button>
+        </div>
+        
+        <div id="status">
+            <p>Ready to clear cache. Click "NUCLEAR CACHE CLEAR" to force-clear all browser caches.</p>
+        </div>
+    </div>
+
+    <script>
+        async function emergencyReset() {
+            const status = document.getElementById('status');
+            status.innerHTML = 'Starting emergency cache clear...';
+            
+            try {
+                // Unregister ALL service workers
+                if ('serviceWorker' in navigator) {
+                    const registrations = await navigator.serviceWorker.getRegistrations();
+                    console.log('[Emergency] Found', registrations.length, 'service workers');
+                    for (let registration of registrations) {
+                        await registration.unregister();
+                    }
+                    status.innerHTML += '<br>✅ Service workers cleared';
+                }
+                
+                // Clear all caches
+                if ('caches' in window) {
+                    const cacheNames = await caches.keys();
+                    console.log('[Emergency] Found', cacheNames.length, 'caches');
+                    for (let cacheName of cacheNames) {
+                        await caches.delete(cacheName);
+                    }
+                    status.innerHTML += '<br>✅ Browser caches cleared';
+                }
+                
+                // Clear all storage
+                localStorage.clear();
+                sessionStorage.clear();
+                status.innerHTML += '<br>✅ Local storage cleared';
+                
+                status.innerHTML += '<br><br>🎯 <strong>Cache clear complete! Now navigating to main app...</strong>';
+                
+                // Navigate with extreme cache busting
+                setTimeout(() => {
+                    const url = new URL(window.location.origin);
+                    url.searchParams.set('emergency-reset', Date.now());
+                    url.searchParams.set('cache-break', Math.random().toString(36));
+                    window.location.href = url.toString();
+                }, 2000);
+                
+            } catch (error) {
+                status.innerHTML = '❌ Error: ' + error.message;
+            }
+        }
+        
+        async function checkStatus() {
+            const status = document.getElementById('status');
+            let report = ['=== CACHE STATUS ==='];
+            
+            // Check service workers
+            if ('serviceWorker' in navigator) {
+                const registrations = await navigator.serviceWorker.getRegistrations();
+                report.push(`Service Workers: ${registrations.length}`);
+            }
+            
+            // Check caches
+            if ('caches' in window) {
+                const cacheNames = await caches.keys();
+                report.push(`Browser Caches: ${cacheNames.length}`);
+            }
+            
+            // Check storage
+            report.push(`LocalStorage entries: ${Object.keys(localStorage).length}`);
+            
+            status.innerHTML = '<pre>' + report.join('\n') + '</pre>';
+        }
+    </script>
+</body>
+</html>

@@ -144,8 +144,15 @@ app.use((req, res, next) => {
     res.status(404).json({ error: 'Development files not available in production' });
   });
 
-  // Add emergency cache break route BEFORE other routes
+  // Add emergency cache fix route BEFORE other routes
   app.get('/emergency', (req, res) => {
+    console.log('[Emergency] Cache fix page requested');
+    const emergencyPath = path.resolve(import.meta.dirname, "..", "emergency-cache-fix.html");
+    res.sendFile(emergencyPath);
+  });
+
+  // Add legacy emergency route BEFORE other routes  
+  app.get('/emergency-old', (req, res) => {
     console.log('[Emergency] Cache break page requested');
     const emergencyHTML = `<!DOCTYPE html>
 <html lang="en">
@@ -345,9 +352,21 @@ app.use((req, res, next) => {
           return next();
         }
         
-        // Serve the built index.html for all SPA routes
+        // Serve the built index.html for all SPA routes (force fresh reads to bypass caching)
         const indexPath = path.resolve(import.meta.dirname, "..", "dist", "public", "index.html");
-        res.sendFile(indexPath);
+        console.log('[SPA] Force reading fresh index.html for:', req.path);
+        fs.readFile(indexPath, 'utf8', (err, data) => {
+          if (err) {
+            console.error('[SPA] Error reading index.html:', err);
+            return res.status(500).send('Error loading application');
+          }
+          // Force no-cache headers for development
+          res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+          res.setHeader('Pragma', 'no-cache');
+          res.setHeader('Expires', '0');
+          res.setHeader('Content-Type', 'text/html; charset=utf-8');
+          res.send(data);
+        });
       });
     }
   } else {

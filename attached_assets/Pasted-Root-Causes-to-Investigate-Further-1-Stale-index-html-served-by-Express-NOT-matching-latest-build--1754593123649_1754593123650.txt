@@ -1,0 +1,99 @@
+Root Causes to Investigate Further
+1. Stale index.html served by Express (NOT matching latest build)
+If you're doing something like this in your server:
+
+ts
+Copy
+Edit
+app.use(express.static('dist/public'))
+app.get('*', (req, res) => {
+  res.sendFile(path.resolve(__dirname, 'dist', 'public', 'index.html'))
+})
+The index.html may still point to the old hash (index-DXM0lNw6.js) unless it’s overwritten or loaded fresh every time.
+
+🔍 Confirm: Does the contents of dist/public/index.html include the correct <script src="/assets/index-CC1wKwhx.js">?
+
+If yes, the problem is in filesystem persistence.
+If no, your build isn’t fully updating the HTML or the server isn’t pointing to the right one.
+
+2. Replit Filesystem Bug or Reversion on Restart
+Sometimes Replit containers don’t persist file system changes fully, or they restore from a cached snapshot when restarted.
+
+🔍 Check: After rebuild and restart, run this:
+
+bash
+Copy
+Edit
+grep index- dist/public/index.html
+ls dist/public/assets/index-*.js
+Do these match? If not, Replit is reverting to stale assets or there’s a startup build mismatch.
+
+3. Service Worker Interference
+Even after a hard refresh, a rogue service worker could:
+
+Serve old JS bundles from cache
+
+Prevent index.html updates
+
+Cause random white screen issues
+
+✅ In dev, you might want to unregister SWs aggressively:
+
+ts
+Copy
+Edit
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.getRegistrations().then(regs => {
+    for (let reg of regs) reg.unregister();
+  });
+}
+4. Browser Requests Old Hashed JS Due to HTML Cache
+Check whether:
+
+index.html is being cached and re-served (e.g., with Cache-Control: max-age=3600)
+
+Your browser loads a previously fetched index that references an old chunk
+
+🛠 Fix Plan (Quick + Thorough)
+✅ 1. Force index.html and JS sync
+bash
+Copy
+Edit
+# Fully clean up
+rm -rf dist/public/assets
+rm -f dist/public/index.html
+
+# Rebuild frontend
+npm run build
+
+# Confirm correct linkage
+grep index- dist/public/index.html
+ls dist/public/assets/index-*.js
+If the script tag in index.html doesn’t match the actual JS file, you have a build problem. If it does, you're clean — just move to the next step.
+
+✅ 2. Serve from fresh memory (bypass Replit FS caching)
+Modify your server to dynamically read index.html at runtime, not from memory:
+
+ts
+Copy
+Edit
+app.get('*', (req, res) => {
+  const indexPath = path.join(__dirname, 'dist/public/index.html')
+  fs.readFile(indexPath, 'utf8', (err, data) => {
+    if (err) return res.status(500).send('Error loading index')
+    res.send(data)
+  })
+})
+🧠 This forces it to always read the freshest version on disk.
+
+✅ 3. Add "no-cache" headers for dev
+Set headers on your static asset routes:
+
+ts
+Copy
+Edit
+app.use('/assets', express.static('dist/public/assets', {
+  setHeaders: (res) => {
+    res.setHeader('Cache-Control', 'no-store')
+  }
+}))
