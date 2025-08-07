@@ -68,7 +68,7 @@ export function useDraftWebSocket(draftId: string | null, leagueId?: string | nu
       console.log('[WebSocket] 🔍 TRANSITION: Old draft ID:', previousDraftIdRef.current);
       console.log('[WebSocket] 🔍 TRANSITION: New draft ID:', draftId);
       
-      if (wsRef.current && wsRef.current.readyState !== undefined) {
+      if (wsRef.current) {
         console.log('[WebSocket] 🔄 TRANSITION: Closing old connection cleanly for new draft');
         if (wsRef.current.readyState === WebSocket.OPEN) {
           wsRef.current.close(1000, 'Draft changed - clean transition');
