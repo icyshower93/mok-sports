@@ -128,7 +128,13 @@ export function DraftTestingPanel({
       
       console.log('[Reset] Fresh data fetched, new draft ID:', freshData?.draftId);
       
-      onReset?.();
+      // Force immediate cache invalidation and refetch
+      queryClient.invalidateQueries({ queryKey: [`/api/leagues/${leagueId}`] });
+      
+      // Small delay to ensure cache propagation before triggering onReset
+      setTimeout(() => {
+        onReset?.();
+      }, 200);
     },
     onError: (error: Error) => {
       toast({

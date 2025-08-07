@@ -436,8 +436,13 @@ export function LeagueWaiting() {
                 isCreator={user?.id === league.creatorId}
                 connectionStatus="disconnected"
                 onReset={() => {
-                  // The DraftTestingPanel will handle navigation to new draft
+                  // Force immediate refetch after reset to get new draft ID
                   queryClient.invalidateQueries({ queryKey: [`/api/leagues/${leagueId}`] });
+                  
+                  // Force refetch with delay to ensure fresh data
+                  setTimeout(() => {
+                    queryClient.refetchQueries({ queryKey: [`/api/leagues/${leagueId}`] });
+                  }, 300);
                 }}
               />
 
