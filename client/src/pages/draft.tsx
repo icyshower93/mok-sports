@@ -90,8 +90,11 @@ export default function DraftPage() {
     staleTime: 1000 * 10, // Cache for 10 seconds
   });
   
-  // Server timer state - single source of truth
+  // Enhanced timer state for smooth countdown
   const [serverTime, setServerTime] = useState<number>(0);
+  const [localTime, setLocalTime] = useState<number>(0);
+  const [lastServerUpdate, setLastServerUpdate] = useState<number>(0);
+  const [isCountingDown, setIsCountingDown] = useState<boolean>(false);
 
   console.log('[Draft] All useState hooks declared');
 
@@ -262,29 +265,48 @@ export default function DraftPage() {
     console.error('Draft fetch error:', error);
   }
 
-  // WebSocket timer updates - single source of truth
+  // SMOOTH TIMER SYSTEM: Combines server updates with local countdown
+  
+  // Handle server timer updates (WebSocket or API)
   useEffect(() => {
-    if (lastMessage?.type === 'timer_update') {
-      console.log('[Draft] Received timer update via WebSocket:', lastMessage.data?.timeRemaining);
-      setServerTime(lastMessage.data?.timeRemaining || 0);
-    }
-  }, [lastMessage]);
+    const newServerTime = lastMessage?.type === 'timer_update' ? 
+      lastMessage.data?.timeRemaining : 
+      draftData?.state?.timeRemaining;
 
-  // CRITICAL FIX: Force timer sync on EVERY API refresh, not just when timeRemaining changes
+    if (newServerTime !== undefined && newServerTime !== serverTime) {
+      console.log('[SMOOTH TIMER] Server update received:', newServerTime);
+      setServerTime(newServerTime);
+      setLocalTime(newServerTime);
+      setLastServerUpdate(Date.now());
+      setIsCountingDown(newServerTime > 0 && draftData?.state?.draft?.status === 'active');
+    }
+  }, [lastMessage, draftData, serverTime]);
+
+  // Smooth local countdown between server updates
   useEffect(() => {
-    if (draftData?.state?.timeRemaining !== undefined) {
-      console.log('[TIMER SYNC] API data refresh - Current serverTime:', serverTime, 'API timeRemaining:', draftData.state.timeRemaining);
-      setServerTime(draftData.state.timeRemaining);
-      console.log('[TIMER SYNC] Updated serverTime to:', draftData.state.timeRemaining);
-    }
-  }, [draftData]); // Watch entire draftData object, not just timeRemaining
+    if (!isCountingDown || localTime <= 0) return;
 
-  // Display timer from WebSocket updates or fallback to server data
-  const displayTime = serverTime || draftData?.state?.timeRemaining || 0;
-  console.log('[TIMER DISPLAY] serverTime:', serverTime, 'apiTime:', draftData?.state?.timeRemaining, 'displayTime:', displayTime);
+    const interval = setInterval(() => {
+      const timeSinceLastUpdate = (Date.now() - lastServerUpdate) / 1000;
+      const estimatedTime = Math.max(0, serverTime - timeSinceLastUpdate);
+      
+      if (estimatedTime !== localTime) {
+        setLocalTime(estimatedTime);
+        console.log('[SMOOTH TIMER] Local countdown:', estimatedTime.toFixed(1));
+      }
+      
+      // Stop counting when we reach 0
+      if (estimatedTime <= 0) {
+        setIsCountingDown(false);
+      }
+    }, 100); // Update every 100ms for smooth display
 
-  // Local countdown disabled - use server data only for now
-  // This prevents conflicts between local countdown and server sync
+    return () => clearInterval(interval);
+  }, [isCountingDown, serverTime, lastServerUpdate, localTime]);
+
+  // Display the smooth local countdown or fallback to server time
+  const displayTime = isCountingDown ? localTime : (serverTime || draftData?.state?.timeRemaining || 0);
+  console.log('[SMOOTH TIMER] Display time:', displayTime.toFixed(1), 'isCountingDown:', isCountingDown);
 
   // Fetch available teams
   const { data: teamsData } = useQuery({
@@ -417,15 +439,20 @@ export default function DraftPage() {
   console.log('🔍 [TIMER DEBUG] Display Time:', displayTime);
   console.log('🔍 [TIMER DEBUG] Current Player:', currentPlayer?.name);
   
-  // CRITICAL FIX: Force timer sync with server data when different
-  if (state.timeRemaining !== displayTime && state.timeRemaining > 0) {
-    console.log('🔄 [TIMER SYNC] Forcing timer sync from API:', state.timeRemaining);
-    setServerTime(state.timeRemaining);
-  }
+  // CRITICAL FIX: Force timer sync with server data when different (avoid constant updates)
+  useEffect(() => {
+    if (state.timeRemaining !== undefined && Math.abs(state.timeRemaining - displayTime) > 2) {
+      console.log('🔄 [TIMER SYNC] Large difference detected, syncing:', state.timeRemaining);
+      setServerTime(state.timeRemaining);
+      setLocalTime(state.timeRemaining);
+      setLastServerUpdate(Date.now());
+    }
+  }, [state.timeRemaining]);
 
   const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
+    const totalSeconds = Math.max(0, seconds);
+    const mins = Math.floor(totalSeconds / 60);
+    const secs = Math.floor(totalSeconds % 60);
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
