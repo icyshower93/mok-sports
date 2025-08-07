@@ -1,4 +1,5 @@
 import { Switch, Route } from "wouter";
+import React from "react";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
@@ -20,11 +21,17 @@ import ProfilePage from "@/pages/profile";
 import TeamsPage from "@/pages/teams";
 import { LeagueWaiting } from "@/pages/league-waiting";
 import NotFound from "@/pages/not-found";
+import { logBuildInfo } from "@/lib/buildInfo";
 
 function AppContent() {
   const { user, isLoading } = useAuth();
   const isAuthenticated = !!user;
   const { isPWA } = usePWADetection();
+  
+  // Log build info for debugging and cache verification
+  React.useEffect(() => {
+    logBuildInfo();
+  }, []);
   
   // Initialize service worker for PWA functionality
   useServiceWorker(false); // Enable service worker for both PWA and web browsers for testing

@@ -6,6 +6,16 @@ import fs from "fs";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 
+// Backend build info for debugging
+const SERVER_BUILD_INFO = {
+  version: Date.now(),
+  date: new Date().toISOString(),
+  env: process.env.NODE_ENV || 'development',
+  hash: Date.now().toString(36)
+};
+
+console.log('🚀 [Server] Build Info:', SERVER_BUILD_INFO);
+
 async function setupProductionAssets(app: express.Application) {
   const distPath = path.resolve(import.meta.dirname, "..", "dist", "public");
   
