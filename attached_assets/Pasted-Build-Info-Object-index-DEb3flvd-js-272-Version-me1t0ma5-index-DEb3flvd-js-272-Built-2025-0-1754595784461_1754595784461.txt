@@ -1,0 +1,93 @@
+Build Info: Object
+index-DEb3flvd.js:272 📦 Version: me1t0ma5
+index-DEb3flvd.js:272 📅 Built: 2025-08-07T19:42:46.733Z
+index-DEb3flvd.js:272 🔧 Environment: production
+index-DEb3flvd.js:228 [Auth] Token check - Has token: true Has user: false Loading: true
+index-DEb3flvd.js:228 [SW Hook] EMERGENCY: Unregistering all existing service workers
+index-DEb3flvd.js:228 [SW Hook] Found 1 existing registrations
+index-DEb3flvd.js:228 [SW Hook] Unregistering existing service worker
+index-DEb3flvd.js:228 [SW Hook] Found 1 caches to delete
+index-DEb3flvd.js:228 [SW Hook] Deleting cache: mok-sports-dynamic-v1.7.0-nuclear-unregister-1754595759503
+index-DEb3flvd.js:272 [Dashboard] User authenticated: Object
+index-DEb3flvd.js:272 [Dashboard] User leagues loading: true
+index-DEb3flvd.js:272 [Dashboard] User leagues data: undefined
+index-DEb3flvd.js:228 [Auth] Token check - Has token: true Has user: true Loading: false
+index-DEb3flvd.js:228 [AutoPushRefresh] Legacy hook delegating to SubscriptionManager
+contentScript.js:2 Content script initialized successfully.
+mok-sports-draft-mokfantasysport.replit.app/:1 Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner.
+index-DEb3flvd.js:228 [SW Hook] Registering fresh service worker: /sw.js?v=1754595766875&r=0.010627413124680185
+index-DEb3flvd.js:272 [Dashboard] User authenticated: Object
+index-DEb3flvd.js:272 [Dashboard] User leagues loading: false
+index-DEb3flvd.js:272 [Dashboard] User leagues data: Array(4)
+index-DEb3flvd.js:272 [Dashboard] Redirecting to league waiting room: 243d719b-92ce-4752-8689-5da93ee69213
+index-DEb3flvd.js:272 [LeagueWaiting] EMERGENCY DEBUG - ABOUT TO CALL useDraftWebSocket with: Object
+index-DEb3flvd.js:272 [WebSocket] Hook called with: Object
+index-DEb3flvd.js:272 [LeagueWaiting] EMERGENCY DEBUG - WebSocket hook returned: Object
+index-DEb3flvd.js:272 [WebSocket] MAIN useEffect trigger - draftId: null userId: true
+index-DEb3flvd.js:272 [WebSocket] ❌ Connection requirements not met: Object
+index-DEb3flvd.js:272 [LeagueWaiting] EMERGENCY DEBUG - ABOUT TO CALL useDraftWebSocket with: Object
+index-DEb3flvd.js:272 [WebSocket] Hook called with: Object
+index-DEb3flvd.js:272 [LeagueWaiting] EMERGENCY DEBUG - WebSocket hook returned: Object
+sw.js?v=1754595766875&r=0.010627413124680185:2 [SW] NUCLEAR OPTION - Emergency service worker loading
+sw.js?v=1754595766875&r=0.010627413124680185:88 [SW] Service worker starting, version: v1.7.0-nuclear-unregister-1754595766934
+sw.js?v=1754595766875&r=0.010627413124680185:305 [SW] Service worker script loaded successfully
+sw.js?v=1754595766875&r=0.010627413124680185:19 [SW] EMERGENCY INSTALL - Clearing all caches and forcing activation
+index-DEb3flvd.js:228 [SW Hook] Service worker registered successfully
+sw.js?v=1754595766875&r=0.010627413124680185:92 [SW] Installing service worker, version: v1.7.0-nuclear-unregister-1754595766934
+sw.js?v=1754595766875&r=0.010627413124680185:22 [SW] Found caches to delete: Array(0)
+sw.js?v=1754595766875&r=0.010627413124680185:30 [SW] All caches deleted - skipping waiting
+index-DEb3flvd.js:272 [LeagueWaiting] EMERGENCY DEBUG - ABOUT TO CALL useDraftWebSocket with: Object
+index-DEb3flvd.js:272 [WebSocket] Hook called with: Object
+index-DEb3flvd.js:272 [LeagueWaiting] EMERGENCY DEBUG - WebSocket hook returned: Object
+sw.js?v=1754595766875&r=0.010627413124680185:96 [SW] Caching static files
+sw.js?v=1754595766875&r=0.010627413124680185:103 [SW] Installation failed: TypeError: Failed to execute 'addAll' on 'Cache': Request failed
+(anonymous) @ sw.js?v=1754595766875&r=0.010627413124680185:103Understand this error
+index-DEb3flvd.js:272 [LeagueWaiting] EMERGENCY DEBUG - ABOUT TO CALL useDraftWebSocket with: Object
+index-DEb3flvd.js:272 [WebSocket] Hook called with: Object
+index-DEb3flvd.js:272 [LeagueWaiting] EMERGENCY DEBUG - WebSocket hook returned: Object
+index-DEb3flvd.js:272 [Push Persistence] No existing subscription found
+index-DEb3flvd.js:272 [Push Persistence] No permission or denied, not creating subscription
+index-DEb3flvd.js:272 [LeagueWaiting] EMERGENCY DEBUG - ABOUT TO CALL useDraftWebSocket with: Object
+index-DEb3flvd.js:272 [WebSocket] Hook called with: Object
+index-DEb3flvd.js:272 [LeagueWaiting] EMERGENCY DEBUG - WebSocket hook returned: Object
+index-DEb3flvd.js:272 [LeagueWaiting] EMERGENCY DEBUG - ABOUT TO CALL useDraftWebSocket with: Object
+index-DEb3flvd.js:272 [WebSocket] Hook called with: Object
+index-DEb3flvd.js:272 [LeagueWaiting] EMERGENCY DEBUG - WebSocket hook returned: Object
+index-DEb3flvd.js:40 ReferenceError: Settings is not defined
+    at WP (index-DEb3flvd.js:272:144975)
+    at Od (index-DEb3flvd.js:38:16998)
+    at nu (index-DEb3flvd.js:40:3139)
+    at mv (index-DEb3flvd.js:40:44737)
+    at fv (index-DEb3flvd.js:40:39727)
+    at F1 (index-DEb3flvd.js:40:39655)
+    at Fa (index-DEb3flvd.js:40:39508)
+    at pu (index-DEb3flvd.js:40:35875)
+    at Qp (index-DEb3flvd.js:40:36678)
+    at wr (index-DEb3flvd.js:38:3274)
+tu @ index-DEb3flvd.js:40Understand this error
+index-DEb3flvd.js:228 ErrorBoundary caught an error: Settings is not defined
+componentDidCatch @ index-DEb3flvd.js:228Understand this error
+index-DEb3flvd.js:228 Component stack: 
+    at WP (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-DEb3flvd.js:272:137058)
+    at _n (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-DEb3flvd.js:48:3201)
+    at jb (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-DEb3flvd.js:48:4017)
+    at UP (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-DEb3flvd.js:272:147981)
+    at IN (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-DEb3flvd.js:228:57448)
+    at u (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-DEb3flvd.js:48:45795)
+    at ix (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-DEb3flvd.js:228:50424)
+    at DN (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-DEb3flvd.js:228:56920)
+    at Qb (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-DEb3flvd.js:48:40146)
+    at WN (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-DEb3flvd.js:228:70900)
+    at HP
+componentDidCatch @ index-DEb3flvd.js:228Understand this error
+sw.js?v=1754595766875&r=0.010627413124680185:41 [SW] EMERGENCY ACTIVATE - Taking control of all clients
+sw.js?v=1754595766875&r=0.010627413124680185:110 [SW] Activating service worker, version: v1.7.0-nuclear-unregister-1754595766934
+sw.js?v=1754595766875&r=0.010627413124680185:46 [SW] Deleting remaining cache: mok-sports-static-v1.7.0-nuclear-unregister-1754595766934
+sw.js?v=1754595766875&r=0.010627413124680185:46 [SW] Deleting remaining cache: mok-sports-dynamic-v1.7.0-nuclear-unregister-1754595759503
+sw.js?v=1754595766875&r=0.010627413124680185:116 [SW] Found caches: Array(2)
+sw.js?v=1754595766875&r=0.010627413124680185:120 [SW] Deleting old cache: mok-sports-dynamic-v1.7.0-nuclear-unregister-1754595759503
+sw.js?v=1754595766875&r=0.010627413124680185:51 [SW] Claiming all clients immediately
+sw.js?v=1754595766875&r=0.010627413124680185:129 [SW] Service worker activated and controlling all clients
+sw.js?v=1754595766875&r=0.010627413124680185:64 [SW] BYPASSING CACHE for JS file: https://mok-sports-draft-mokfantasysport.replit.app/manifest.json
+sw.js?v=1754595766875&r=0.010627413124680185:164 [SW] Fetching /league/waiting from network
+sw.js?v=1754595766875&r=0.010627413124680185:164 [SW] Fetching /assets/index-CwVZ6PR5.css from network
