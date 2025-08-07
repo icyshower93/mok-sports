@@ -1,0 +1,87 @@
+Content script initialized successfully.
+index-DyzPW8UT.js:228 [Auth] Token check - Has token: false Has user: false Loading: true
+index-DyzPW8UT.js:228 [AutoPushRefresh] Legacy hook delegating to SubscriptionManager
+index-DyzPW8UT.js:228 [SW Hook] EMERGENCY: Unregistering all existing service workers
+index-DyzPW8UT.js:228 [SW Hook] Found 1 existing registrations
+index-DyzPW8UT.js:228 [SW Hook] Unregistering existing service worker
+index-DyzPW8UT.js:228 [SW Hook] Found 1 caches to delete
+index-DyzPW8UT.js:228 [SW Hook] Deleting cache: mok-sports-dynamic-v1.7.0-nuclear-unregister-1754593498325
+index-DyzPW8UT.js:272 [Dashboard] User authenticated: Object
+index-DyzPW8UT.js:272 [Dashboard] User leagues loading: true
+index-DyzPW8UT.js:272 [Dashboard] User leagues data: undefined
+index-DyzPW8UT.js:228 [Auth] Token check - Has token: true Has user: true Loading: false
+index-DyzPW8UT.js:272 [PWA DEBUG] [3:05:12 PM] Subscription Manager Status: active=false, endpoint=none
+index-DyzPW8UT.js:272 [PWA DEBUG] [3:05:12 PM] PWA Status Check Complete
+index-DyzPW8UT.js:272 [PWA DEBUG] [3:05:12 PM] Standalone: false, iOS: false, HTTPS: true
+index-DyzPW8UT.js:272 [PWA DEBUG] [3:05:12 PM] Permission: default, Push: true
+index-DyzPW8UT.js:272 [PWA DEBUG] [3:05:12 PM] SW Registered: false, Active Subscription: false
+index-DyzPW8UT.js:272 [PWA DEBUG] [3:05:12 PM] Subscription Manager Status: active=false, endpoint=none
+index-DyzPW8UT.js:272 [PWA DEBUG] [3:05:12 PM] PWA Status Check Complete
+index-DyzPW8UT.js:272 [PWA DEBUG] [3:05:12 PM] Standalone: false, iOS: false, HTTPS: true
+index-DyzPW8UT.js:272 [PWA DEBUG] [3:05:12 PM] Permission: default, Push: true
+index-DyzPW8UT.js:272 [PWA DEBUG] [3:05:12 PM] SW Registered: false, Active Subscription: false
+mok-sports-draft-mokfantasysport.replit.app/:1 Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner.
+index-DyzPW8UT.js:228 [SW Hook] Registering fresh service worker: /sw.js?v=1754593512443&r=0.7646159600437267
+sw.js?v=1754593512443&r=0.7646159600437267:2 [SW] NUCLEAR OPTION - Emergency service worker loading
+sw.js?v=1754593512443&r=0.7646159600437267:88 [SW] Service worker starting, version: v1.7.0-nuclear-unregister-1754593512509
+sw.js?v=1754593512443&r=0.7646159600437267:305 [SW] Service worker script loaded successfully
+sw.js?v=1754593512443&r=0.7646159600437267:19 [SW] EMERGENCY INSTALL - Clearing all caches and forcing activation
+index-DyzPW8UT.js:228 [SW Hook] Service worker registered successfully
+sw.js?v=1754593512443&r=0.7646159600437267:92 [SW] Installing service worker, version: v1.7.0-nuclear-unregister-1754593512509
+sw.js?v=1754593512443&r=0.7646159600437267:22 [SW] Found caches to delete: Array(0)
+sw.js?v=1754593512443&r=0.7646159600437267:30 [SW] All caches deleted - skipping waiting
+sw.js?v=1754593512443&r=0.7646159600437267:96 [SW] Caching static files
+index-DyzPW8UT.js:272 [Dashboard] User authenticated: Object
+index-DyzPW8UT.js:272 [Dashboard] User leagues loading: false
+index-DyzPW8UT.js:272 [Dashboard] User leagues data: Array(4)
+index-DyzPW8UT.js:272 [Dashboard] Redirecting to league waiting room: 243d719b-92ce-4752-8689-5da93ee69213
+sw.js?v=1754593512443&r=0.7646159600437267:99 [SW] Static files cached successfully
+index-DyzPW8UT.js:272 [Push Persistence] No existing subscription found
+index-DyzPW8UT.js:272 [Push Persistence] No permission or denied, not creating subscription
+index-DyzPW8UT.js:272 [LeagueWaiting] League data updated: Object
+sw.js?v=1754593512443&r=0.7646159600437267:164 [SW] Fetching /a/ACg8ocJEMs5AzNtfS8vv7POiR-CJvE5EdtZVt27CT0tdYJA64x6-BQyy_Q=s96-c from network
+sw.js?v=1754593512443&r=0.7646159600437267:164 [SW] Fetching /a/ACg8ocIlUYRsI8z4wKwDJjb1BBPBwCuyYSlVMcLHB5QAXs50P5Fbtg=s96-c from network
+4sw.js?v=1754593512443&r=0.7646159600437267:164 [SW] Fetching /7.x/robots/svg from network
+svg:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+svg:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+svg:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+svg:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+sw.js?v=1754593512443&r=0.7646159600437267:41 [SW] EMERGENCY ACTIVATE - Taking control of all clients
+sw.js?v=1754593512443&r=0.7646159600437267:110 [SW] Activating service worker, version: v1.7.0-nuclear-unregister-1754593512509
+sw.js?v=1754593512443&r=0.7646159600437267:46 [SW] Deleting remaining cache: mok-sports-static-v1.7.0-nuclear-unregister-1754593512509
+sw.js?v=1754593512443&r=0.7646159600437267:46 [SW] Deleting remaining cache: mok-sports-dynamic-v1.7.0-nuclear-unregister-1754593498325
+sw.js?v=1754593512443&r=0.7646159600437267:116 [SW] Found caches: Array(2)
+sw.js?v=1754593512443&r=0.7646159600437267:120 [SW] Deleting old cache: mok-sports-dynamic-v1.7.0-nuclear-unregister-1754593498325
+sw.js?v=1754593512443&r=0.7646159600437267:51 [SW] Claiming all clients immediately
+sw.js?v=1754593512443&r=0.7646159600437267:129 [SW] Service worker activated and controlling all clients
+sw.js?v=1754593512443&r=0.7646159600437267:64 [SW] BYPASSING CACHE for JS file: https://mok-sports-draft-mokfantasysport.replit.app/manifest.json
+sw.js?v=1754593512443&r=0.7646159600437267:164 [SW] Fetching /league/waiting from network
+sw.js?v=1754593512443&r=0.7646159600437267:164 [SW] Fetching /assets/index-wcfXxhQ9.css from network
+index-DyzPW8UT.js:272 [Reset] Success response: {message: 'New draft created successfully', draftId: '6c8bbcdb-304e-492c-9255-8f3508a6b34e', currentState: {…}}
+index-DyzPW8UT.js:272 [Reset] Successfully reset draft, new draft ID: 6c8bbcdb-304e-492c-9255-8f3508a6b34e
+index-DyzPW8UT.js:272  GET https://mok-sports-draft-mokfantasysport.replit.app/api/leagues/243d719b-92ce-4752-8689-5da93ee69213 404 (Not Found)
+queryFn @ index-DyzPW8UT.js:272
+s @ index-DyzPW8UT.js:48
+S @ index-DyzPW8UT.js:48
+start @ index-DyzPW8UT.js:48
+fetch @ index-DyzPW8UT.js:48
+fetchQuery @ index-DyzPW8UT.js:48
+onSuccess @ index-DyzPW8UT.js:272
+execute @ index-DyzPW8UT.js:48
+await in execute
+mutate @ index-DyzPW8UT.js:48
+(anonymous) @ index-DyzPW8UT.js:48
+onClick @ index-DyzPW8UT.js:272
+rS @ index-DyzPW8UT.js:37
+sS @ index-DyzPW8UT.js:37
+iS @ index-DyzPW8UT.js:37
+mp @ index-DyzPW8UT.js:37
+pg @ index-DyzPW8UT.js:37
+(anonymous) @ index-DyzPW8UT.js:37
+$d @ index-DyzPW8UT.js:40
+_m @ index-DyzPW8UT.js:37
+ql @ index-DyzPW8UT.js:37
+hd @ index-DyzPW8UT.js:37
+bS @ index-DyzPW8UT.js:37Understand this error
+index-DyzPW8UT.js:272 [Reset] Fresh data fetched, new draft ID: 6c8bbcdb-304e-492c-9255-8f3508a6b34e
+index-DyzPW8UT.js:272 [LeagueWaiting] League data updated: {id: '243d719b-92ce-4752-8689-5da93ee69213', name: 'Test League 1', draftId: '6c8bbcdb-304e-492c-9255-8f3508a6b34e', draftStatus: 'not_started', draftStarted: false}
