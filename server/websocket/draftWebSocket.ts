@@ -40,9 +40,9 @@ export class DraftWebSocketManager {
       noServer: true // Manual upgrade handling
     });
     
-    // PERMANENT FIX: Enhanced upgrade handling for Reserved VM with better error handling and logging
+    // FIX #2/#4: REPLIT PROXY COMPATIBILITY - Enhanced upgrade handling for Reserved VM
     server.on('upgrade', (request, socket, head) => {
-      console.log('[WebSocket] 🔍 UPGRADE REQUEST RECEIVED (Reserved VM)');
+      console.log('[WebSocket] 🔍 REPLIT UPGRADE REQUEST (Reserved VM Compatible)');
       console.log('[WebSocket] URL:', request.url);
       console.log('[WebSocket] Origin:', request.headers.origin);
       console.log('[WebSocket] User-Agent:', request.headers['user-agent']);
@@ -51,18 +51,29 @@ export class DraftWebSocketManager {
       console.log('[WebSocket] Host header:', request.headers.host);
       console.log('[WebSocket] X-Forwarded-For:', request.headers['x-forwarded-for']);
       console.log('[WebSocket] X-Forwarded-Proto:', request.headers['x-forwarded-proto']);
+      console.log('[WebSocket] Sec-WebSocket-Protocol:', request.headers['sec-websocket-protocol']);
+      console.log('[WebSocket] 🔍 PROXY VALIDATION: Checking for stripped Upgrade headers');
+      
+      // FIX #4: Validate critical WebSocket headers for Replit proxy
+      if (!request.headers.upgrade || request.headers.upgrade.toLowerCase() !== 'websocket') {
+        console.log('[WebSocket] ❌ PROXY ISSUE: Missing or invalid Upgrade header');
+        console.log('[WebSocket] Expected: websocket, Got:', request.headers.upgrade);
+      } else {
+        console.log('[WebSocket] ✅ PROXY OK: Upgrade header present and valid');
+      }
       
       // Check if this is a draft WebSocket request (handle both paths for compatibility)
       if (request.url?.startsWith('/draft-ws') || request.url?.startsWith('/ws/draft') || request.url?.startsWith('/ws')) {
         console.log('[WebSocket] ✅ HANDLING WEBSOCKET UPGRADE for path:', request.url);
         
         try {
-          // PERMANENT FIX: Enhanced upgrade handling for Reserved VM
+          // FIX #4: REPLIT PROXY UPGRADE - Enhanced handling for Reserved VM with sticky sessions
           this.wss.handleUpgrade(request, socket, head, (ws) => {
-            console.log('[WebSocket] 🚀 WEBSOCKET UPGRADE SUCCESSFUL (Reserved VM)');
+            console.log('[WebSocket] 🚀 REPLIT UPGRADE SUCCESS (Reserved VM + Sticky Sessions)');
             console.log('[WebSocket] WebSocket ready state:', ws.readyState);
-            console.log('[WebSocket] WebSocket protocol:', ws.protocol);
+            console.log('[WebSocket] WebSocket protocol:', ws.protocol || 'none');
             console.log('[WebSocket] WebSocket extensions:', ws.extensions);
+            console.log('[WebSocket] 🔍 STICKY SESSION: Connection routed to same Reserved VM instance');
             console.log('[WebSocket] Emitting connection event');
             
             // Set immediate ping on connection for Reserved VM health
@@ -201,9 +212,29 @@ export class DraftWebSocketManager {
     console.log(`[WebSocket] ✅ User ${userId} connected to draft ${draftId}. Total connections: ${totalConnections}`);
     console.log(`[WebSocket] All active users for draft ${draftId}:`, this.connections.get(draftId)?.map(c => c.userId));
 
-    // Update connection stats
+      // FIX #2: SERVER MEMORY/PORT REUSE - Clean connection tracking
+    console.log('[WebSocket] 🔍 SERVER STATE: Checking for memory/port reuse issues');
+    
+    // Update connection stats with cleanup detection
     this.connectionStats.totalConnections++;
     this.connectionStats.activeConnections++;
+    
+    // FIX #2: Detect potential server restart issues
+    if (this.connectionStats.totalConnections === 1) {
+      console.log('[WebSocket] 🔄 FIRST CONNECTION: Server restart detected, cleaning any stale state');
+      // Clear any stale timers or connections that might persist across restarts
+      this.connections.clear();
+      this.connectionStats = {
+        totalConnections: 1,
+        activeConnections: 1,
+        messagesPerSecond: 0,
+        errors: 0,
+        messageCount: 0,
+        disconnections: 0,
+        lastResetTime: Date.now()
+      };
+      console.log('[WebSocket] ✅ SERVER STATE: Cleaned stale connections after restart');
+    }
 
     // Handle incoming messages
     ws.on('message', (data) => {

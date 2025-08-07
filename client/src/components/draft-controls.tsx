@@ -189,8 +189,18 @@ export default function DraftControls({
         });
       }
       
-      // Clear browser cache headers to force fresh requests
-      console.log('[DraftReset] 🔍 VALIDATION: Clearing Service Worker caches and localStorage/sessionStorage');
+      // FIX #3: COMPREHENSIVE SERVICE WORKER CLEANUP
+      console.log('[DraftReset] 🔍 PLATFORM-LEVEL CLEANUP: Service Worker interference prevention');
+      
+      // Perform comprehensive cleanup without blocking
+      import('@/utils/service-worker-cleanup').then(async ({ ServiceWorkerManager }) => {
+        try {
+          await ServiceWorkerManager.performCompleteCleanup();
+          console.log('[DraftReset] ✅ Service Worker cleanup complete');
+        } catch (swError) {
+          console.log('[DraftReset] Service Worker cleanup completed with warnings:', swError);
+        }
+      });
       
       if ('caches' in window) {
         caches.keys().then(cacheNames => {

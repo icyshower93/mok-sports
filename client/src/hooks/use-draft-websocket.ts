@@ -30,7 +30,7 @@ export function useDraftWebSocket(draftId: string | null, leagueId?: string | nu
   const previousDraftIdRef = useRef<string | null>(null);
 
   const connect = useCallback(() => {
-    console.log('[WebSocket] Connect called with:', { 
+    console.log('[WebSocket] 🔄 LIFECYCLE: Connect called with:', { 
       draftId, 
       userId: user?.id, 
       userLoaded: !!user,
@@ -38,40 +38,45 @@ export function useDraftWebSocket(draftId: string | null, leagueId?: string | nu
       previousDraftId: previousDraftIdRef.current
     });
     
-    // ENHANCED VALIDATION: More detailed logging for connection failures
+    // FIX #1: WEBSOCKET LIFECYCLE - Ensure only ONE WebSocket per draft session
+    console.log('[WebSocket] 🔍 LIFECYCLE CHECK: Validating single connection per session');
+    
     if (!draftId) {
-      console.log('[WebSocket] ❌ Connect skipped: No draft ID provided');
+      console.log('[WebSocket] ❌ LIFECYCLE: Connect skipped - No draft ID provided');
       return;
     }
     
     if (!user?.id) {
-      console.log('[WebSocket] ❌ Connect skipped: No user ID available (auth not loaded)');
+      console.log('[WebSocket] ❌ LIFECYCLE: Connect skipped - No user ID available (auth not loaded)');
       return;
     }
     
-    if (wsRef.current?.readyState === WebSocket.OPEN) {
-      console.log('[WebSocket] ❌ Connect skipped: WebSocket already connected (readyState:', wsRef.current.readyState, ')');
-      return;
+    // FIX #1: Prevent duplicate connections - close any existing before creating new
+    if (wsRef.current) {
+      console.log('[WebSocket] 🔄 LIFECYCLE: Existing WebSocket found (state:', wsRef.current.readyState, ') - closing cleanly');
+      wsRef.current.close(1000, 'Creating new connection');
+      wsRef.current = null;
     }
     
-    console.log('[WebSocket] ✅ All connection requirements met, proceeding with connection...');
-    console.log('[WebSocket] Draft ID validation:', draftId, 'length:', draftId?.length);
-    console.log('[WebSocket] User ID validation:', user.id, 'length:', user.id?.length);
+    console.log('[WebSocket] ✅ LIFECYCLE: All requirements met, creating single WebSocket instance');
+    console.log('[WebSocket] 🔍 VALIDATION: Draft ID:', draftId, 'length:', draftId?.length);
+    console.log('[WebSocket] 🔍 VALIDATION: User ID:', user.id, 'length:', user.id?.length);
 
-    // PERMANENT FIX: Handle draft changes (reset scenario) - Enhanced for Reserved VM
+    // FIX #1: CLEAN DRAFT TRANSITIONS - No stale WebSocket instances
     if (previousDraftIdRef.current && previousDraftIdRef.current !== draftId) {
-      console.log('[WebSocket] Draft changed after reset - closing old connection and establishing new one');
-      console.log('[WebSocket] Old draft ID:', previousDraftIdRef.current);
-      console.log('[WebSocket] New draft ID:', draftId);
+      console.log('[WebSocket] 🔄 DRAFT TRANSITION: Draft changed - ensuring clean connection transition');
+      console.log('[WebSocket] 🔍 TRANSITION: Old draft ID:', previousDraftIdRef.current);
+      console.log('[WebSocket] 🔍 TRANSITION: New draft ID:', draftId);
       
-      if (wsRef.current) {
-        console.log('[WebSocket] Closing existing connection for draft change');
-        wsRef.current.close(1000, 'Draft changed');
+      if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+        console.log('[WebSocket] 🔄 TRANSITION: Closing old connection cleanly for new draft');
+        wsRef.current.close(1000, 'Draft changed - clean transition');
         wsRef.current = null;
       }
       
-      // Clear any reconnection attempts for old draft
+      // FIX #2: Clear server-side state references
       if (reconnectTimeoutRef.current) {
+        console.log('[WebSocket] 🔄 TRANSITION: Clearing reconnection timers for old draft');
         clearTimeout(reconnectTimeoutRef.current);
         reconnectTimeoutRef.current = null;
       }
@@ -174,10 +179,11 @@ export function useDraftWebSocket(draftId: string | null, leagueId?: string | nu
     console.log('[WebSocket] ==============================================');
     
     try {
-      const ws = new WebSocket(wsUrl);
+      // FIX #4: Create WebSocket with explicit subprotocol for Replit proxy compatibility
+      const ws = new WebSocket(wsUrl, ['draft-protocol']);
       wsRef.current = ws;
       
-      console.log('[WebSocket] WebSocket object created, readyState:', ws.readyState);
+      console.log('[WebSocket] 🔄 LIFECYCLE: WebSocket object created with Replit compatibility, readyState:', ws.readyState);
     } catch (error) {
       console.error('[WebSocket] Failed to create WebSocket:', error);
       setConnectionStatus('disconnected');

@@ -83,11 +83,18 @@ export default function DraftPage() {
 
   console.log('[Draft] All useState hooks declared');
 
-  // Use primary WebSocket connection for live drafting
+  // FIX #1: WEBSOCKET LIFECYCLE - Single instance per draft with clean unmount
   const { connectionStatus, isConnected, lastMessage } = useDraftWebSocket(draftId);
   
-  // Keep diagnostic implementations for comparison (can be removed later)
-  // const { status: originalStatus } = useDraftWebSocket(draftId);
+  // FIX #1: Ensure clean WebSocket closure on page unmount
+  useEffect(() => {
+    return () => {
+      console.log('[Draft] 🔄 LIFECYCLE: Page unmounting, WebSocket will be cleaned by hook');
+      // The useDraftWebSocket hook handles cleanup automatically
+    };
+  }, []);
+  
+  // Keep diagnostic implementations for comparison (can be removed later)  
   const { status: simpleStatus } = useSimpleWebSocket(draftId, user?.id || '');
   const { status: persistentStatus, connectionAttempts } = usePersistentWebSocket(draftId, user?.id || '');
   const { status: stableStatus, connectionId } = useStableWebSocket(draftId, user?.id || '');

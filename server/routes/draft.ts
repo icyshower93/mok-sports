@@ -259,9 +259,18 @@ export default async function setupDraftRoutes(app: any, storage: IStorage, webS
       console.log(`[VALIDATION] 🔍 WEBSOCKET READY: Old connections to deleted draft will be dropped`);
       console.log(`[VALIDATION] 🔍 NEW CONNECTION TARGET: WebSocket should connect to ${newDraft.id}`);
       
-      // Start the draft immediately
+      // FIX #2: SERVER MEMORY CLEANUP - Clear any stale timer/draft state
+      console.log(`[VALIDATION] 🔍 SERVER CLEANUP: Clearing any stale server-side draft state`);
+      
+      // Ensure clean server state before starting new draft
+      if (draftManager.activeDraftStates.has(leagueId)) {
+        console.log(`[VALIDATION] 🔄 SERVER CLEANUP: Removing stale draft state for league ${leagueId}`);
+        draftManager.activeDraftStates.delete(leagueId);
+      }
+      
+      // Start the draft immediately with clean state
       const draftState = await draftManager.startDraft(newDraft.id);
-      console.log(`[Draft Reset] ✅ NEW DRAFT STARTED with timer`);
+      console.log(`[Draft Reset] ✅ NEW DRAFT STARTED with fresh timer and clean server state`);
 
       // Update league to reflect draft started
       await storage.updateLeague(leagueId, { 
