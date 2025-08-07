@@ -68,9 +68,11 @@ export function useDraftWebSocket(draftId: string | null, leagueId?: string | nu
       console.log('[WebSocket] 🔍 TRANSITION: Old draft ID:', previousDraftIdRef.current);
       console.log('[WebSocket] 🔍 TRANSITION: New draft ID:', draftId);
       
-      if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+      if (wsRef.current && wsRef.current.readyState !== undefined) {
         console.log('[WebSocket] 🔄 TRANSITION: Closing old connection cleanly for new draft');
-        wsRef.current.close(1000, 'Draft changed - clean transition');
+        if (wsRef.current.readyState === WebSocket.OPEN) {
+          wsRef.current.close(1000, 'Draft changed - clean transition');
+        }
         wsRef.current = null;
       }
       
@@ -196,13 +198,15 @@ export function useDraftWebSocket(draftId: string | null, leagueId?: string | nu
     let heartbeatTimer: NodeJS.Timeout | null = null;
 
     ws.onopen = () => {
-      console.log('[WebSocket] ✅ CONNECTION OPENED SUCCESSFULLY');
-      console.log('[WebSocket] Ready state:', ws.readyState);
-      console.log('[WebSocket] URL:', ws.url);
-      console.log('[WebSocket] Connected for draft:', draftId, 'user:', user?.id);
-      console.log('[WebSocket] Connection timestamp:', new Date().toISOString());
-      console.log('[WebSocket] Browser WebSocket supported:', 'WebSocket' in window);
-      console.log('[WebSocket] Connection protocol:', ws.protocol || 'none');
+      console.log('🚀 [WebSocket] CONNECTION OPENED SUCCESSFULLY');
+      console.log('🔍 [WebSocket] LIFECYCLE EVENT: Connection Open');
+      console.log('🔍 [WebSocket] Draft ID:', draftId);
+      console.log('🔍 [WebSocket] User ID:', user?.id);
+      console.log('🔍 [WebSocket] Ready state:', ws.readyState);
+      console.log('🔍 [WebSocket] URL:', ws.url);
+      console.log('🔍 [WebSocket] Connection timestamp:', new Date().toISOString());
+      console.log('🔍 [WebSocket] Browser WebSocket supported:', 'WebSocket' in window);
+      console.log('🔍 [WebSocket] Connection protocol:', ws.protocol || 'none');
       
       setConnectionStatus('connected');
       
@@ -216,7 +220,8 @@ export function useDraftWebSocket(draftId: string | null, leagueId?: string | nu
             timestamp: Date.now()
           });
           ws.send(pingMessage);
-          console.log('[WebSocket] ✅ Initial ping sent successfully');
+          console.log('🏓 [WebSocket] PING SENT (Initial)');
+          console.log('🔍 [WebSocket] PING/PONG: Initial heartbeat sent for draft:', draftId);
         } else {
           console.log('[WebSocket] ❌ Cannot send ping, socket not open:', ws.readyState);
         }
@@ -234,7 +239,8 @@ export function useDraftWebSocket(draftId: string | null, leagueId?: string | nu
               userId: user!.id,
               timestamp: Date.now()
             }));
-            console.log('[WebSocket] 💓 Heartbeat sent');
+            console.log('🏓 [WebSocket] PING SENT (Heartbeat)');
+            console.log('🔍 [WebSocket] PING/PONG: Regular heartbeat for draft:', draftId);
           } else {
             console.log('[WebSocket] 💔 Heartbeat stopped - socket not open:', ws.readyState);
             if (heartbeatTimer) {
@@ -259,13 +265,34 @@ export function useDraftWebSocket(draftId: string | null, leagueId?: string | nu
     };
 
     ws.onmessage = (event) => {
-      console.log('[WebSocket] 📨 MESSAGE RECEIVED');
-      console.log('[WebSocket] 📨 Raw data:', event.data);
-      console.log('[WebSocket] 📨 Socket state:', ws.readyState);
+      console.log('📨 [WebSocket] MESSAGE RECEIVED');
+      console.log('🔍 [WebSocket] LIFECYCLE EVENT: Message Received');
+      console.log('🔍 [WebSocket] Raw data:', event.data);
+      console.log('🔍 [WebSocket] Socket state:', ws.readyState);
+      console.log('🔍 [WebSocket] Timestamp:', new Date().toISOString());
       
       try {
         const message: DraftWebSocketMessage = JSON.parse(event.data);
-        console.log('[WebSocket] ✅ Parsed message type:', message.type);
+        console.log('🔍 [WebSocket] Draft ID in message:', message.draftId);
+        console.log('🔍 [WebSocket] Expected Draft ID:', draftId);
+        console.log('🔍 [WebSocket] Message type:', message.type);
+        console.log('🔍 [WebSocket] Message timestamp:', message.timestamp);
+        console.log('🔍 [WebSocket] Draft ID match:', message.draftId === draftId ? '✅ MATCH' : '❌ MISMATCH');
+        
+        // Validate draft ID to ensure client/server are talking about same session
+        if (message.draftId !== draftId) {
+          console.log('⚠️ [WebSocket] DRAFT ID MISMATCH - Server/client talking about different sessions');
+          console.log('🔍 [WebSocket] Server draft:', message.draftId);
+          console.log('🔍 [WebSocket] Client draft:', draftId);
+          return;
+        }
+        
+        // Handle ping/pong explicitly
+        if (message.type === 'pong') {
+          console.log('🏓 [WebSocket] PONG RECEIVED - Heartbeat acknowledged');
+          console.log('🔍 [WebSocket] PING/PONG: Connection healthy');
+          return;
+        }
         
         // Update last message state
         setLastMessage(message);
@@ -273,18 +300,31 @@ export function useDraftWebSocket(draftId: string | null, leagueId?: string | nu
         // Handle the message
         handleWebSocketMessage(message);
         
-        console.log('[WebSocket] ✅ Message processed successfully');
+        console.log('✅ [WebSocket] Message processed successfully');
       } catch (error) {
-        console.error('[WebSocket] 🚨 JSON Parse failed:', error);
-        console.error('[WebSocket] 🚨 Failed data:', event.data);
-        console.error('[WebSocket] 🚨 Data type:', typeof event.data);
+        console.error('🚨 [WebSocket] JSON Parse failed:', error);
+        console.error('🚨 [WebSocket] Failed data:', event.data);
+        console.error('🚨 [WebSocket] Data type:', typeof event.data);
       }
     };
 
     ws.onclose = (event) => {
-      console.log('[WebSocket] Connection closed - Code:', event.code, 'Reason:', event.reason);
-      console.log('[WebSocket] Close was clean:', event.code === 1000);
-      console.log('[WebSocket] WebSocket state before close:', ws.readyState);
+      console.log('🔌 [WebSocket] CONNECTION CLOSED');
+      console.log('🔍 [WebSocket] LIFECYCLE EVENT: Connection Close');
+      console.log('🔍 [WebSocket] Close code:', event.code);
+      console.log('🔍 [WebSocket] Close reason:', event.reason);
+      console.log('🔍 [WebSocket] Draft ID:', draftId);
+      console.log('🔍 [WebSocket] Close was clean:', event.code === 1000);
+      console.log('🔍 [WebSocket] WebSocket state before close:', ws.readyState);
+      console.log('🔍 [WebSocket] Close timestamp:', new Date().toISOString());
+      
+      // EXPLICIT CLEANUP: Destroy timers and WebSocket on cleanup
+      if (heartbeatTimer) {
+        console.log('🧹 [WebSocket] CLEANUP: Clearing heartbeat timer');
+        clearInterval(heartbeatTimer);
+        heartbeatTimer = null;
+      }
+      
       setConnectionStatus('disconnected');
       wsRef.current = null;
 

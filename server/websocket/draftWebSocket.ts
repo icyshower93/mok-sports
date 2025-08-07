@@ -242,14 +242,17 @@ export class DraftWebSocketManager {
         this.connectionStats.messageCount++;
         const message = JSON.parse(data.toString());
         
-        // Handle ping/pong for heartbeat
+        // Handle ping/pong for heartbeat with draft ID validation
         if (message.type === 'ping') {
-          console.log(`[WebSocket] Ping received from user ${userId}`);
+          console.log('🏓 [WebSocket] PING RECEIVED');
+          console.log('🔍 [WebSocket] PING/PONG: User:', userId, 'Draft:', draftId);
           connection.isAlive = true;
           ws.send(JSON.stringify({
             type: 'pong',
+            draftId: draftId, // Include draft ID in all messages
             timestamp: Date.now()
           }));
+          console.log('🏓 [WebSocket] PONG SENT with draft ID:', draftId);
           return;
         }
 
