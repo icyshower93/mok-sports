@@ -25,7 +25,7 @@ async function testWebSocketConnection() {
     console.log('✅ Created draft:', draftId);
     
     // Test WebSocket connection
-    const wsUrl = `ws://localhost:5000/draft-ws?draftId=${draftId}&userId=test-user-123`;
+    const wsUrl = `ws://localhost:5000/draft-ws?draftId=d10ba634-dd4e-404f-921c-5eb35f1114c6&userId=test-user-123`;
     console.log('🔗 Connecting to:', wsUrl);
     
     const ws = new WebSocket(wsUrl, ['draft-protocol']);

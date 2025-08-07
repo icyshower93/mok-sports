@@ -131,8 +131,24 @@ export function useDraftWebSocket(draftId: string | null, leagueId?: string | nu
     console.log('[WebSocket] useEffect trigger - draftId:', !!draftId, 'userId:', !!user?.id, 'authLoading:', !user);
     
     if (draftId && user?.id) {
-      console.log('[WebSocket] ✅ Conditions met, attempting connection...');
-      connect();
+      console.log('[WebSocket] ✅ Conditions met, validating draft exists before connection...');
+      
+      // Validate draft exists before attempting WebSocket connection
+      fetch(`/api/drafts/${draftId}`)
+        .then(response => {
+          if (response.ok) {
+            console.log('[WebSocket] ✅ Draft exists, proceeding with connection');
+            connect();
+          } else {
+            console.log('[WebSocket] ❌ Draft not found, skipping connection');
+            console.log('[WebSocket] Response status:', response.status);
+            setConnectionStatus('draft_not_found');
+          }
+        })
+        .catch(error => {
+          console.log('[WebSocket] ❌ Draft validation failed:', error);
+          setConnectionStatus('disconnected');
+        });
     } else {
       console.log('[WebSocket] ❌ Connection requirements not met:', {
         hasDraftId: !!draftId,

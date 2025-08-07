@@ -241,18 +241,15 @@ export default function DraftControls({
         });
       }
       
+      // Clear all cached data first to prevent stale state
+      queryClient.clear();
+      
       // Automatically navigate to the new draft room with cache busting
       const navigationUrl = `/draft/${data.draftId}?reset=${Date.now()}`;
-      console.log('[DraftReset] Navigating to new draft room:', navigationUrl);
-      
-      // IMMEDIATE navigation without delay
       console.log('[DraftReset] 🚀 IMMEDIATE NAVIGATION to new draft:', data.draftId);
-      setLocation(navigationUrl);
       
-      // Force page reload to ensure clean state
-      setTimeout(() => {
-        window.location.href = navigationUrl;
-      }, 100);
+      // Force page reload to ensure completely clean state for WebSocket connection
+      window.location.href = navigationUrl;
     },
     onError: (error: Error) => {
       toast({
