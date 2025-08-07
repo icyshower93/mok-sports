@@ -197,9 +197,14 @@ export default function DraftControls({
       const navigationUrl = `/draft/${data.draftId}?reset=${Date.now()}`;
       console.log('[DraftReset] Navigating to new draft room:', navigationUrl);
       
+      // IMMEDIATE navigation without delay
+      console.log('[DraftReset] 🚀 IMMEDIATE NAVIGATION to new draft:', data.draftId);
+      setLocation(navigationUrl);
+      
+      // Force page reload to ensure clean state
       setTimeout(() => {
-        setLocation(navigationUrl);
-      }, 1000);
+        window.location.href = navigationUrl;
+      }, 100);
     },
     onError: (error: Error) => {
       toast({

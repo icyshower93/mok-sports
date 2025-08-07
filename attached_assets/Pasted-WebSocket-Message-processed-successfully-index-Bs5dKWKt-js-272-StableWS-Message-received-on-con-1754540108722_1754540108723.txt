@@ -1,0 +1,250 @@
+WebSocket] ✅ Message processed successfully
+index-Bs5dKWKt.js:272 [StableWS] Message received on connection #1: {"type":"keep_alive_ack","connectionId":1,"timestamp":1754540089641}
+index-Bs5dKWKt.js:272 [Draft] Component render started - TIME: 1754540089346
+index-Bs5dKWKt.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-Bs5dKWKt.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T04:14:49.346Z
+index-Bs5dKWKt.js:272 [Draft] RENDER TIMING - Time since component start: 1754539936143
+index-Bs5dKWKt.js:272 [Draft] All useState hooks declared
+index-Bs5dKWKt.js:272 Draft fetch error: Error: 404: {"message":"Draft not found"}
+    at Mv (index-Bs5dKWKt.js:48:43053)
+    at async Ji (index-Bs5dKWKt.js:48:43286)
+    at async queryFn (index-Bs5dKWKt.js:272:65362)
+Rj @ index-Bs5dKWKt.js:272Understand this error
+index-Bs5dKWKt.js:272 [TIMER DISPLAY] serverTime: 47 apiTime: 47 displayTime: 47
+index-Bs5dKWKt.js:272 [Draft] All hooks declared, starting conditional logic
+index-Bs5dKWKt.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: false error: true draftData: true isAuthenticated: true Time: 1754540089346
+index-Bs5dKWKt.js:272 Draft error: Error: 404: {"message":"Draft not found"}
+    at Mv (index-Bs5dKWKt.js:48:43053)
+    at async Ji (index-Bs5dKWKt.js:48:43286)
+    at async queryFn (index-Bs5dKWKt.js:272:65362)
+Rj @ index-Bs5dKWKt.js:272Understand this error
+index-Bs5dKWKt.js:272 [Draft Debug] Full error details: Object
+index-Bs5dKWKt.js:272 [StableWS] Page visible, checking connection
+index-Bs5dKWKt.js:272 [Draft] === STARTING DRAFT FETCH ===
+index-Bs5dKWKt.js:272 [Draft] Draft ID: 8928c577-4ade-4bfa-9b9f-bb27411e4fee
+index-Bs5dKWKt.js:272 [Draft] Auth status - User: Sky Evans Authenticated: true Loading: false
+index-Bs5dKWKt.js:272 [Draft] Token available: false
+index-Bs5dKWKt.js:272 [Draft] Current URL: https://mok-sports-draft-mokfantasysport.replit.app/draft/8928c577-4ade-4bfa-9b9f-bb27411e4fee
+index-Bs5dKWKt.js:272 [Draft] Current pathname: /draft/8928c577-4ade-4bfa-9b9f-bb27411e4fee
+index-Bs5dKWKt.js:272 [Draft] Making API request to: /api/drafts/8928c577-4ade-4bfa-9b9f-bb27411e4fee
+/api/drafts/8928c577-4ade-4bfa-9b9f-bb27411e4fee:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+index-Bs5dKWKt.js:272 [Draft] === DRAFT FETCH ERROR ===
+queryFn @ index-Bs5dKWKt.js:272Understand this error
+index-Bs5dKWKt.js:272 [Draft] Error fetching draft data: Error: 404: {"message":"Draft not found"}
+    at Mv (index-Bs5dKWKt.js:48:43053)
+    at async Ji (index-Bs5dKWKt.js:48:43286)
+    at async queryFn (index-Bs5dKWKt.js:272:65362)
+queryFn @ index-Bs5dKWKt.js:272Understand this error
+index-Bs5dKWKt.js:272 [Draft] Error type: object
+queryFn @ index-Bs5dKWKt.js:272Understand this error
+index-Bs5dKWKt.js:272 [Draft] Error constructor: Error
+queryFn @ index-Bs5dKWKt.js:272Understand this error
+index-Bs5dKWKt.js:272 [DEBUG] Module Error in draft-fetch: Object
+Ih @ index-Bs5dKWKt.js:272Understand this error
+index-Bs5dKWKt.js:272 [Draft] Full error details: Object
+queryFn @ index-Bs5dKWKt.js:272Understand this error
+index-Bs5dKWKt.js:272 [Draft] Attempting direct fetch for debugging...
+/api/drafts/8928c577-4ade-4bfa-9b9f-bb27411e4fee:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+index-Bs5dKWKt.js:272 [Draft] Direct fetch response: Object
+index-Bs5dKWKt.js:272 [Draft] Direct fetch response body: {"message":"Draft not found"}
+index-Bs5dKWKt.js:272 [Draft] Retrying fetch, attempt 2
+/api/drafts/8928c577-4ade-4bfa-9b9f-bb27411e4fee/available-teams:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+/api/drafts/8928c577-4ade-4bfa-9b9f-bb27411e4fee/available-teams:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+index-Bs5dKWKt.js:272 [Draft] === STARTING DRAFT FETCH ===
+index-Bs5dKWKt.js:272 [Draft] Draft ID: 8928c577-4ade-4bfa-9b9f-bb27411e4fee
+index-Bs5dKWKt.js:272 [Draft] Auth status - User: Sky Evans Authenticated: true Loading: false
+index-Bs5dKWKt.js:272 [Draft] Token available: false
+index-Bs5dKWKt.js:272 [Draft] Current URL: https://mok-sports-draft-mokfantasysport.replit.app/draft/8928c577-4ade-4bfa-9b9f-bb27411e4fee
+index-Bs5dKWKt.js:272 [Draft] Current pathname: /draft/8928c577-4ade-4bfa-9b9f-bb27411e4fee
+index-Bs5dKWKt.js:272 [Draft] Making API request to: /api/drafts/8928c577-4ade-4bfa-9b9f-bb27411e4fee
+/api/drafts/8928c577-4ade-4bfa-9b9f-bb27411e4fee:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+index-Bs5dKWKt.js:272 [Draft] === DRAFT FETCH ERROR ===
+queryFn @ index-Bs5dKWKt.js:272Understand this error
+index-Bs5dKWKt.js:272 [Draft] Error fetching draft data: Error: 404: {"message":"Draft not found"}
+    at Mv (index-Bs5dKWKt.js:48:43053)
+    at async Ji (index-Bs5dKWKt.js:48:43286)
+    at async queryFn (index-Bs5dKWKt.js:272:65362)
+queryFn @ index-Bs5dKWKt.js:272Understand this error
+index-Bs5dKWKt.js:272 [Draft] Error type: object
+queryFn @ index-Bs5dKWKt.js:272Understand this error
+index-Bs5dKWKt.js:272 [Draft] Error constructor: Error
+queryFn @ index-Bs5dKWKt.js:272Understand this error
+index-Bs5dKWKt.js:272 [DEBUG] Module Error in draft-fetch: Object
+Ih @ index-Bs5dKWKt.js:272Understand this error
+index-Bs5dKWKt.js:272 [Draft] Full error details: Object
+queryFn @ index-Bs5dKWKt.js:272Understand this error
+index-Bs5dKWKt.js:272 [Draft] Attempting direct fetch for debugging...
+/api/drafts/8928c577-4ade-4bfa-9b9f-bb27411e4fee:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+index-Bs5dKWKt.js:272 [Draft] Direct fetch response: Object
+index-Bs5dKWKt.js:272 [Draft] Direct fetch response body: {"message":"Draft not found"}
+index-Bs5dKWKt.js:272 [Draft] Retrying fetch, attempt 3
+index-Bs5dKWKt.js:48  GET https://mok-sports-draft-mokfantasysport.replit.app/api/drafts/8928c577-4ade-4bfa-9b9f-bb27411e4fee/available-teams 404 (Not Found)
+Ji @ index-Bs5dKWKt.js:48
+queryFn @ index-Bs5dKWKt.js:272
+s @ index-Bs5dKWKt.js:48
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48Understand this error
+index-Bs5dKWKt.js:272 [Draft] === STARTING DRAFT FETCH ===
+index-Bs5dKWKt.js:272 [Draft] Draft ID: 8928c577-4ade-4bfa-9b9f-bb27411e4fee
+index-Bs5dKWKt.js:272 [Draft] Auth status - User: Sky Evans Authenticated: true Loading: false
+index-Bs5dKWKt.js:272 [Draft] Token available: false
+index-Bs5dKWKt.js:272 [Draft] Current URL: https://mok-sports-draft-mokfantasysport.replit.app/draft/8928c577-4ade-4bfa-9b9f-bb27411e4fee
+index-Bs5dKWKt.js:272 [Draft] Current pathname: /draft/8928c577-4ade-4bfa-9b9f-bb27411e4fee
+index-Bs5dKWKt.js:272 [Draft] Making API request to: /api/drafts/8928c577-4ade-4bfa-9b9f-bb27411e4fee
+index-Bs5dKWKt.js:48  GET https://mok-sports-draft-mokfantasysport.replit.app/api/drafts/8928c577-4ade-4bfa-9b9f-bb27411e4fee 404 (Not Found)
+Ji @ index-Bs5dKWKt.js:48
+queryFn @ index-Bs5dKWKt.js:272
+s @ index-Bs5dKWKt.js:48
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48Understand this error
+index-Bs5dKWKt.js:272 [Draft] === DRAFT FETCH ERROR ===
+queryFn @ index-Bs5dKWKt.js:272
+await in queryFn
+s @ index-Bs5dKWKt.js:48
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48Understand this error
+index-Bs5dKWKt.js:272 [Draft] Error fetching draft data: Error: 404: {"message":"Draft not found"}
+    at Mv (index-Bs5dKWKt.js:48:43053)
+    at async Ji (index-Bs5dKWKt.js:48:43286)
+    at async queryFn (index-Bs5dKWKt.js:272:65362)
+queryFn @ index-Bs5dKWKt.js:272
+await in queryFn
+s @ index-Bs5dKWKt.js:48
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48Understand this error
+index-Bs5dKWKt.js:272 [Draft] Error type: object
+queryFn @ index-Bs5dKWKt.js:272
+await in queryFn
+s @ index-Bs5dKWKt.js:48
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48Understand this error
+index-Bs5dKWKt.js:272 [Draft] Error constructor: Error
+queryFn @ index-Bs5dKWKt.js:272
+await in queryFn
+s @ index-Bs5dKWKt.js:48
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48Understand this error
+index-Bs5dKWKt.js:272 [DEBUG] Module Error in draft-fetch: {error: Error: 404: {"message":"Draft not found"}
+    at Mv (https://mok-sports-draft-mokfantasysport.repli…, message: '404: {"message":"Draft not found"}', stack: 'Error: 404: {"message":"Draft not found"}\n    at M…rt.replit.app/assets/index-Bs5dKWKt.js:272:65362)', type: 'object', timestamp: '2025-08-07T04:15:02.754Z', …}
+Ih @ index-Bs5dKWKt.js:272
+queryFn @ index-Bs5dKWKt.js:272
+await in queryFn
+s @ index-Bs5dKWKt.js:48
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48Understand this error
+index-Bs5dKWKt.js:272 [Draft] Full error details: {message: '404: {"message":"Draft not found"}', stack: 'Error: 404: {"message":"Draft not found"}\n    at M…rt.replit.app/assets/index-Bs5dKWKt.js:272:65362)', user: 'Sky Evans', hasToken: false, isAuthenticated: true, …}
+queryFn @ index-Bs5dKWKt.js:272
+await in queryFn
+s @ index-Bs5dKWKt.js:48
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48Understand this error
+index-Bs5dKWKt.js:272 [Draft] Attempting direct fetch for debugging...
+index-Bs5dKWKt.js:272  GET https://mok-sports-draft-mokfantasysport.replit.app/api/drafts/8928c577-4ade-4bfa-9b9f-bb27411e4fee 404 (Not Found)
+queryFn @ index-Bs5dKWKt.js:272
+await in queryFn
+s @ index-Bs5dKWKt.js:48
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48Understand this error
+index-Bs5dKWKt.js:272 [Draft] Direct fetch response: {status: 404, statusText: '', headers: {…}}
+index-Bs5dKWKt.js:272 [Draft] Direct fetch response body: {"message":"Draft not found"}
+index-Bs5dKWKt.js:272 [Draft] Retrying fetch, attempt 4
+index-Bs5dKWKt.js:272 [Draft] Component render started - TIME: 1754540102836
+index-Bs5dKWKt.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-Bs5dKWKt.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T04:15:02.836Z
+index-Bs5dKWKt.js:272 [Draft] RENDER TIMING - Time since component start: 1754539936142.1
+index-Bs5dKWKt.js:272 [Draft] All useState hooks declared
+index-Bs5dKWKt.js:272 Draft fetch error: Error: 404: {"message":"Draft not found"}
+    at Mv (index-Bs5dKWKt.js:48:43053)
+    at async Ji (index-Bs5dKWKt.js:48:43286)
+    at async queryFn (index-Bs5dKWKt.js:272:65362)
+Rj @ index-Bs5dKWKt.js:272
+Cd @ index-Bs5dKWKt.js:38
+Hc @ index-Bs5dKWKt.js:40
+nv @ index-Bs5dKWKt.js:40
+Zg @ index-Bs5dKWKt.js:40
+k1 @ index-Bs5dKWKt.js:40
+Pa @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40
+setTimeout
+o @ index-Bs5dKWKt.js:48
+i @ index-Bs5dKWKt.js:48
+batch @ index-Bs5dKWKt.js:48
+fn @ index-Bs5dKWKt.js:48
+a @ index-Bs5dKWKt.js:48
+h @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48Understand this error
+index-Bs5dKWKt.js:272 [TIMER DISPLAY] serverTime: 47 apiTime: 47 displayTime: 47
+index-Bs5dKWKt.js:272 [Draft] All hooks declared, starting conditional logic
+index-Bs5dKWKt.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: false error: true draftData: true isAuthenticated: true Time: 1754540102837
+index-Bs5dKWKt.js:272 Draft error: Error: 404: {"message":"Draft not found"}
+    at Mv (index-Bs5dKWKt.js:48:43053)
+    at async Ji (index-Bs5dKWKt.js:48:43286)
+    at async queryFn (index-Bs5dKWKt.js:272:65362)
+Rj @ index-Bs5dKWKt.js:272
+Cd @ index-Bs5dKWKt.js:38
+Hc @ index-Bs5dKWKt.js:40
+nv @ index-Bs5dKWKt.js:40
+Zg @ index-Bs5dKWKt.js:40
+k1 @ index-Bs5dKWKt.js:40
+Pa @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40
+setTimeout
+o @ index-Bs5dKWKt.js:48
+i @ index-Bs5dKWKt.js:48
+batch @ index-Bs5dKWKt.js:48
+fn @ index-Bs5dKWKt.js:48
+a @ index-Bs5dKWKt.js:48
+h @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48Understand this error
+index-Bs5dKWKt.js:272 [Draft Debug] Full error details: {error: Error: 404: {"message":"Draft not found"}
+    at Mv (https://mok-sports-draft-mokfantasysport.repli…, errorMessage: '404: {"message":"Draft not found"}', draftId: '8928c577-4ade-4bfa-9b9f-bb27411e4fee', connectionStatus: 'connected', hasToken: false, …}
+index-Bs5dKWKt.js:272 [StableWS] Keep-alive ping sent
+index-Bs5dKWKt.js:272 [StableWS] Message received on connection #1: {"type":"keep_alive_ack","connectionId":1,"timestamp":1754540104284}
+index-Bs5dKWKt.js:272 [Draft] Component render started - TIME: 1754540103986
+index-Bs5dKWKt.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-Bs5dKWKt.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T04:15:03.987Z
+index-Bs5dKWKt.js:272 [Draft] RENDER TIMING - Time since component start: 1754539936142.7
+index-Bs5dKWKt.js:272 [Draft] All useState hooks declared
+index-Bs5dKWKt.js:272 Draft fetch error: Error: 404: {"message":"Draft not found"}
+    at Mv (index-Bs5dKWKt.js:48:43053)
+    at async Ji (index-Bs5dKWKt.js:48:43286)
+    at async queryFn (index-Bs5dKWKt.js:272:65362)
+Rj @ index-Bs5dKWKt.js:272
+Cd @ index-Bs5dKWKt.js:38
+Hc @ index-Bs5dKWKt.js:40
+nv @ index-Bs5dKWKt.js:40
+Zg @ index-Bs5dKWKt.js:40
+k1 @ index-Bs5dKWKt.js:40
+Pa @ index-Bs5dKWKt.js:40
+Yg @ index-Bs5dKWKt.js:40
+E @ index-Bs5dKWKt.js:25
+O @ index-Bs5dKWKt.js:25Understand this error
+index-Bs5dKWKt.js:272 [TIMER DISPLAY] serverTime: 47 apiTime: 47 displayTime: 47
+index-Bs5dKWKt.js:272 [Draft] All hooks declared, starting conditional logic
+index-Bs5dKWKt.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: false error: true draftData: true isAuthenticated: true Time: 1754540103987
+index-Bs5dKWKt.js:272 Draft error: Error: 404: {"message":"Draft not found"}
+    at Mv (index-Bs5dKWKt.js:48:43053)
+    at async Ji (index-Bs5dKWKt.js:48:43286)
+    at async queryFn (index-Bs5dKWKt.js:272:65362)
+Rj @ index-Bs5dKWKt.js:272
+Cd @ index-Bs5dKWKt.js:38
+Hc @ index-Bs5dKWKt.js:40
+nv @ index-Bs5dKWKt.js:40
+Zg @ index-Bs5dKWKt.js:40
+k1 @ index-Bs5dKWKt.js:40
+Pa @ index-Bs5dKWKt.js:40
+Yg @ index-Bs5dKWKt.js:40
+E @ index-Bs5dKWKt.js:25
+O @ index-Bs5dKWKt.js:25Understand this error
+index-Bs5dKWKt.js:272 [Draft Debug] Full error details: {error: Error: 404: {"message":"Draft not found"}
+    at Mv (https://mok-sports-draft-mokfantasysport.repli…, errorMessage: '404: {"message":"Draft not found"}', draftId: '8928c577-4ade-4bfa-9b9f-bb27411e4fee', connectionStatus: 'connected', hasToken: false, …}
