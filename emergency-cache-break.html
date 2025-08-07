@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emergency Cache Break - Mok Sports</title>
+    <style>
+        body {
+            background: #0f172a;
+            color: white;
+            font-family: system-ui;
+            text-align: center;
+            padding: 50px 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        h1 { color: #10b981; }
+        .button {
+            background: #10b981;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px;
+        }
+        .button:hover {
+            background: #059669;
+        }
+        .status {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 8px;
+            background: #1e293b;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚨 Emergency Cache Recovery</h1>
+        <p>Your browser has extreme cache corruption. We need to manually break the cache cycle.</p>
+        
+        <div class="status" id="status">
+            Ready to clear all caches and force fresh load
+        </div>
+        
+        <button class="button" onclick="emergencyReset()">
+            🗑️ Emergency Cache Clear + Reload
+        </button>
+        
+        <button class="button" onclick="manualReset()">
+            🔄 Manual Hard Refresh
+        </button>
+        
+        <button class="button" onclick="checkStatus()">
+            📊 Check Cache Status
+        </button>
+    </div>
+
+    <script>
+        console.log('[Emergency] Cache break page loaded');
+        
+        async function emergencyReset() {
+            const status = document.getElementById('status');
+            
+            try {
+                status.innerHTML = 'Step 1: Unregistering all service workers...';
+                
+                // Unregister ALL service workers
+                if ('serviceWorker' in navigator) {
+                    const registrations = await navigator.serviceWorker.getRegistrations();
+                    console.log('[Emergency] Found', registrations.length, 'service workers');
+                    for (let registration of registrations) {
+                        await registration.unregister();
+                        console.log('[Emergency] Unregistered service worker');
+                    }
+                }
+                
+                status.innerHTML = 'Step 2: Clearing all browser caches...';
+                
+                // Clear all caches
+                if ('caches' in window) {
+                    const cacheNames = await caches.keys();
+                    console.log('[Emergency] Found', cacheNames.length, 'caches');
+                    for (let cacheName of cacheNames) {
+                        await caches.delete(cacheName);
+                        console.log('[Emergency] Deleted cache:', cacheName);
+                    }
+                }
+                
+                status.innerHTML = 'Step 3: Clearing local storage...';
+                
+                // Clear all storage
+                localStorage.clear();
+                sessionStorage.clear();
+                
+                status.innerHTML = 'Step 4: Force refreshing to main app...';
+                
+                // Navigate to main app with extreme cache busting
+                const url = new URL(window.location.origin);
+                url.searchParams.set('emergency-reset', Date.now());
+                url.searchParams.set('cache-break', Math.random().toString(36));
+                url.searchParams.set('force-refresh', 'true');
+                
+                setTimeout(() => {
+                    window.location.href = url.toString();
+                }, 1000);
+                
+            } catch (error) {
+                status.innerHTML = '❌ Error: ' + error.message;
+                console.error('[Emergency] Reset failed:', error);
+            }
+        }
+        
+        function manualReset() {
+            alert('Please manually:\n1. Press Ctrl+Shift+R (or Cmd+Shift+R on Mac)\n2. If that fails, open DevTools > Application > Storage > Clear site data');
+        }
+        
+        async function checkStatus() {
+            const status = document.getElementById('status');
+            let report = [];
+            
+            // Check service workers
+            if ('serviceWorker' in navigator) {
+                const registrations = await navigator.serviceWorker.getRegistrations();
+                report.push(`Service Workers: ${registrations.length}`);
+                registrations.forEach(reg => {
+                    report.push(`- ${reg.scope}: ${reg.active?.scriptURL || 'inactive'}`);
+                });
+            }
+            
+            // Check caches
+            if ('caches' in window) {
+                const cacheNames = await caches.keys();
+                report.push(`Browser Caches: ${cacheNames.length}`);
+                cacheNames.forEach(name => {
+                    report.push(`- ${name}`);
+                });
+            }
+            
+            status.innerHTML = '<pre>' + report.join('\\n') + '</pre>';
+        }
+    </script>
+</body>
+</html>
