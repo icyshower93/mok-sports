@@ -24,8 +24,10 @@ async function setupProductionAssets(app: express.Application) {
         console.log('[Assets] Setting headers for:', filePath);
         if (filePath.endsWith('.js')) {
           res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
-          res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
-          console.log('[Assets] JS file served with correct MIME type');
+          res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+          res.setHeader('Pragma', 'no-cache');
+          res.setHeader('Expires', '0');
+          console.log('[Assets] JS file served with no-cache headers to force browser refresh');
         } else if (filePath.endsWith('.css')) {
           res.setHeader('Content-Type', 'text/css; charset=utf-8');
           res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');

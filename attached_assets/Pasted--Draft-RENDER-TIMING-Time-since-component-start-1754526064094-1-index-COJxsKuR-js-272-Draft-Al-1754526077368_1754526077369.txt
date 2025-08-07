@@ -1,0 +1,78 @@
+[Draft] RENDER TIMING - Time since component start: 1754526064094.1
+index-COJxsKuR.js:272 [Draft] All useState hooks declared
+index-COJxsKuR.js:272 [TIMER DISPLAY] serverTime: 49 apiTime: 48 displayTime: 49
+index-COJxsKuR.js:272 [Draft] All hooks declared, starting conditional logic
+index-COJxsKuR.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: false error: false draftData: true isAuthenticated: true Time: 1754526067754
+index-COJxsKuR.js:272 🔍 [TIMER DEBUG] Server Time: 48
+index-COJxsKuR.js:272 🔍 [TIMER DEBUG] Display Time: 49
+index-COJxsKuR.js:272 🔍 [TIMER DEBUG] Current Player: Sky Evans
+index-COJxsKuR.js:272 🔄 [TIMER SYNC] Forcing timer sync from API: 48
+index-COJxsKuR.js:272 [Draft] Component render started - TIME: 1754526067755
+index-COJxsKuR.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-COJxsKuR.js:40 ReferenceError: setDisplayTime is not defined
+    at Rj (index-COJxsKuR.js:272:68131)
+    at Cd (index-COJxsKuR.js:38:16998)
+    at Bc (index-COJxsKuR.js:40:3139)
+    at rv (index-COJxsKuR.js:40:44737)
+    at ev (index-COJxsKuR.js:40:39727)
+    at k1 (index-COJxsKuR.js:40:39655)
+    at Pa (index-COJxsKuR.js:40:39508)
+    at eu (index-COJxsKuR.js:40:35875)
+    at Xg (index-COJxsKuR.js:40:34826)
+    at C (index-COJxsKuR.js:25:1562)
+Uc @ index-COJxsKuR.js:40
+Lg.s.componentDidCatch.n.callback @ index-COJxsKuR.js:40
+vp @ index-COJxsKuR.js:38
+Dp @ index-COJxsKuR.js:40
+Yg @ index-COJxsKuR.js:40
+C1 @ index-COJxsKuR.js:40
+j1 @ index-COJxsKuR.js:40
+xr @ index-COJxsKuR.js:40
+Xg @ index-COJxsKuR.js:40
+C @ index-COJxsKuR.js:25
+D @ index-COJxsKuR.js:25Understand this error
+index-COJxsKuR.js:228 ErrorBoundary caught an error: setDisplayTime is not defined
+componentDidCatch @ index-COJxsKuR.js:228
+Lg.s.componentDidCatch.n.callback @ index-COJxsKuR.js:40
+vp @ index-COJxsKuR.js:38
+Dp @ index-COJxsKuR.js:40
+Yg @ index-COJxsKuR.js:40
+C1 @ index-COJxsKuR.js:40
+j1 @ index-COJxsKuR.js:40
+xr @ index-COJxsKuR.js:40
+Xg @ index-COJxsKuR.js:40
+C @ index-COJxsKuR.js:25
+D @ index-COJxsKuR.js:25Understand this error
+index-COJxsKuR.js:228 Component stack: 
+    at Rj (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-COJxsKuR.js:272:60679)
+    at Tn (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-COJxsKuR.js:48:3201)
+    at mb (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-COJxsKuR.js:48:4017)
+    at NT (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-COJxsKuR.js:272:130014)
+    at bk (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-COJxsKuR.js:228:57444)
+    at u (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-COJxsKuR.js:48:45795)
+    at Gy (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-COJxsKuR.js:228:50420)
+    at Sk (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-COJxsKuR.js:228:56916)
+    at Ib (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-COJxsKuR.js:48:40146)
+    at jk (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-COJxsKuR.js:228:70254)
+    at kT
+componentDidCatch @ index-COJxsKuR.js:228
+Lg.s.componentDidCatch.n.callback @ index-COJxsKuR.js:40
+vp @ index-COJxsKuR.js:38
+Dp @ index-COJxsKuR.js:40
+Yg @ index-COJxsKuR.js:40
+C1 @ index-COJxsKuR.js:40
+j1 @ index-COJxsKuR.js:40
+xr @ index-COJxsKuR.js:40
+Xg @ index-COJxsKuR.js:40
+C @ index-COJxsKuR.js:25
+D @ index-COJxsKuR.js:25Understand this error
+index-COJxsKuR.js:272 [PersistentWS] Manual disconnect requested
+index-COJxsKuR.js:272 [StableWS] Component unmounting, cleaning up
+index-COJxsKuR.js:272 [StableWS] Connection #1 closed
+index-COJxsKuR.js:272 [StableWS] Close code: 1006, reason: ""
+index-COJxsKuR.js:272 [StableWS] Was clean: false
+index-COJxsKuR.js:272 [PersistentWS] Connection closed
+index-COJxsKuR.js:272 [PersistentWS] Close code: 1006
+index-COJxsKuR.js:272 [PersistentWS] Close reason: 
+index-COJxsKuR.js:272 [PersistentWS] Was clean: false
+index-COJxsKuR.js:272 [PersistentWS] Manual close: true
