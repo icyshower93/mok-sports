@@ -97,10 +97,12 @@ export function useDraftWebSocket(draftId: string | null, leagueId: string | nul
       queryClient.removeQueries({ queryKey: [`/api/drafts/${previousDraftIdRef.current}/status`] });
       
       // Clear new draft cache to force fresh data
-      queryClient.removeQueries({ queryKey: [`/api/drafts/${draftId}`] });
-      queryClient.removeQueries({ queryKey: [`/api/drafts/${draftId}/picks`] });
-      queryClient.removeQueries({ queryKey: [`/api/drafts/${draftId}/timer`] });
-      queryClient.removeQueries({ queryKey: [`/api/drafts/${draftId}/status`] });
+      if (draftId) {
+        queryClient.removeQueries({ queryKey: [`/api/drafts/${draftId}`] });
+        queryClient.removeQueries({ queryKey: [`/api/drafts/${draftId}/picks`] });
+        queryClient.removeQueries({ queryKey: [`/api/drafts/${draftId}/timer`] });
+        queryClient.removeQueries({ queryKey: [`/api/drafts/${draftId}/status`] });
+      }
       
       // Invalidate league cache to get updated draft ID
       queryClient.invalidateQueries({ queryKey: ['/api/leagues'] });

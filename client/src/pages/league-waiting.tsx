@@ -13,7 +13,7 @@ import { queryClient } from "@/lib/queryClient";
 import { DraftNotificationReminder } from "@/components/draft-notification-reminder";
 import DraftControls from "@/components/draft-controls";
 import { DraftTestingPanel } from "@/components/draft-testing-panel";
-import { useDraftWebSocket } from "@/hooks/use-draft-websocket";
+import { useDraftWebSocket } from "@/hooks/use-draft-websocket-fixed";
 
 interface League {
   id: string;
