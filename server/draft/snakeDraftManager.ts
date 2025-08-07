@@ -75,7 +75,10 @@ export class SnakeDraftManager {
       const activeDrafts = await this.redisStateManager.getActiveDrafts();
       let recoveredCount = 0;
       
-      for (const draftId of activeDrafts) {
+      // Use only Redis active drafts for now (storage method doesn't exist)
+      const allDraftIds = new Set([...activeDrafts]);
+      
+      for (const draftId of allDraftIds) {
         const draft = await this.storage.getDraft(draftId);
         if (!draft || draft.status !== 'active') {
           // Clean up stale draft
@@ -97,6 +100,27 @@ export class SnakeDraftManager {
             // Timer expired during downtime, handle auto-pick
             console.log(`⏰ Timer expired during downtime for draft ${draftId}, user ${redisTimer.userId}`);
             await this.handleTimerExpired(draftId, redisTimer.userId);
+          }
+        } else {
+          // PERMANENT FIX: No timer found but draft is active - check if we need to start one
+          console.log(`🔍 No timer found for active draft ${draftId}, checking if timer needed...`);
+          
+          // Check if draft is completed (simple check: all picks made)
+          const totalPicks = draft.totalRounds * draft.totalPlayers;
+          const existingPicks = await this.storage.getDraftPicks(draftId);
+          const isDraftComplete = existingPicks.length >= totalPicks;
+          
+          if (!isDraftComplete) {
+            const currentUser = this.getCurrentPickUser(draft);
+            if (currentUser) {
+              console.log(`🚀 Starting missing timer for draft ${draftId}, user ${currentUser}`);
+              await this.startPickTimer(draftId, currentUser, draft.currentRound, draft.currentPick);
+              recoveredCount++;
+            } else {
+              console.log(`❌ Could not determine current pick user for draft ${draftId}`);
+            }
+          } else {
+            console.log(`✅ Draft ${draftId} is completed, no timer needed`);
           }
         }
       }
@@ -608,8 +632,7 @@ export class SnakeDraftManager {
       userId,
       round,
       pickNumber,
-      timeRemaining: this.draftConfig.pickTimeLimit,
-      isActive: true
+      timeRemaining: this.draftConfig.pickTimeLimit
     });
     
     console.log(`🕐 Starting Redis timer for user ${userId} in draft ${draftId} with ${this.draftConfig.pickTimeLimit} seconds`);

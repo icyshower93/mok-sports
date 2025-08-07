@@ -1118,6 +1118,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const { default: setupDraftRoutes } = await import("./routes/draft.js");
   await setupDraftRoutes(app, storage, webSocketManager, robotManager);
   
+  // PERMANENT FIX: Schedule periodic timer recovery for stuck drafts
+  console.log('[Server] ✅ Setting up periodic timer recovery for Reserved VM');
+  setInterval(async () => {
+    try {
+      console.log('[Server] 🔄 Running periodic timer recovery check...');
+      await globalDraftManager.recoverActiveTimers();
+    } catch (error) {
+      console.error('[Server] ❌ Periodic timer recovery failed:', error);
+    }
+  }, 60000); // Check every minute for stuck drafts
+  
   // Add WebSocket status endpoint for debugging
   app.get('/api/websocket/status/:draftId', async (req, res) => {
     const { draftId } = req.params;
@@ -1130,6 +1141,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
       connectedUsers,
       timestamp: new Date().toISOString()
     });
+  });
+
+  // PERMANENT FIX: Add draft timer recovery endpoint for stuck timers
+  app.post('/api/drafts/:draftId/recover-timer', async (req, res) => {
+    try {
+      const { draftId } = req.params;
+      const draft = await storage.getDraft(draftId);
+      
+      if (!draft || draft.status !== 'active') {
+        return res.status(404).json({ error: 'Active draft not found' });
+      }
+      
+      // Check if timer already exists
+      const existingTimer = await globalDraftManager.redisStateManager.getTimer(draftId);
+      if (existingTimer) {
+        return res.json({ message: 'Timer already exists', timeRemaining: await globalDraftManager.redisStateManager.getTimeRemaining(draftId) });
+      }
+      
+      // Start new timer for current pick
+      const currentUser = globalDraftManager.getCurrentPickUser(draft);
+      if (currentUser) {
+        await globalDraftManager.startPickTimer(draftId, currentUser, draft.currentRound, draft.currentPick);
+        console.log(`🚀 Started recovery timer for draft ${draftId}, user ${currentUser}`);
+        res.json({ success: true, message: `Timer started for ${currentUser}` });
+      } else {
+        res.status(400).json({ error: 'Could not determine current pick user' });
+      }
+    } catch (error) {
+      console.error('Timer recovery failed:', error);
+      res.status(500).json({ error: 'Timer recovery failed' });
+    }
   });
 
   // Add comprehensive WebSocket metrics endpoint
