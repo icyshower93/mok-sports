@@ -1,0 +1,221 @@
+[Draft] Component render started - TIME: 1754526145179
+index-COJxsKuR.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-COJxsKuR.js:40 ReferenceError: setDisplayTime is not defined
+    at Rj (index-COJxsKuR.js:272:68131)
+    at Cd (index-COJxsKuR.js:38:16998)
+    at Bc (index-COJxsKuR.js:40:3139)
+    at rv (index-COJxsKuR.js:40:44737)
+    at ev (index-COJxsKuR.js:40:39727)
+    at k1 (index-COJxsKuR.js:40:39655)
+    at Pa (index-COJxsKuR.js:40:39508)
+    at eu (index-COJxsKuR.js:40:35875)
+    at Lp (index-COJxsKuR.js:40:36678)
+    at dr (index-COJxsKuR.js:38:3274)
+Uc @ index-COJxsKuR.js:40
+Lg.s.componentDidCatch.n.callback @ index-COJxsKuR.js:40
+vp @ index-COJxsKuR.js:38
+Dp @ index-COJxsKuR.js:40
+Yg @ index-COJxsKuR.js:40
+C1 @ index-COJxsKuR.js:40
+j1 @ index-COJxsKuR.js:40
+xr @ index-COJxsKuR.js:40
+Lp @ index-COJxsKuR.js:40
+dr @ index-COJxsKuR.js:38
+(anonymous) @ index-COJxsKuR.js:40
+setTimeout
+o @ index-COJxsKuR.js:48
+i @ index-COJxsKuR.js:48
+batch @ index-COJxsKuR.js:48
+fn @ index-COJxsKuR.js:48
+setData @ index-COJxsKuR.js:48
+onSuccess @ index-COJxsKuR.js:48
+p @ index-COJxsKuR.js:48
+Promise.then
+S @ index-COJxsKuR.js:48
+start @ index-COJxsKuR.js:48
+fetch @ index-COJxsKuR.js:48
+ys @ index-COJxsKuR.js:48
+onSubscribe @ index-COJxsKuR.js:48
+subscribe @ index-COJxsKuR.js:48
+(anonymous) @ index-COJxsKuR.js:48
+xg @ index-COJxsKuR.js:38
+Ga @ index-COJxsKuR.js:40
+vo @ index-COJxsKuR.js:40
+j1 @ index-COJxsKuR.js:40
+xr @ index-COJxsKuR.js:40
+Lp @ index-COJxsKuR.js:40
+dr @ index-COJxsKuR.js:38
+(anonymous) @ index-COJxsKuR.js:40
+setTimeout
+o @ index-COJxsKuR.js:48
+i @ index-COJxsKuR.js:48
+batch @ index-COJxsKuR.js:48
+fn @ index-COJxsKuR.js:48
+setData @ index-COJxsKuR.js:48
+onSuccess @ index-COJxsKuR.js:48
+p @ index-COJxsKuR.js:48
+Promise.then
+S @ index-COJxsKuR.js:48
+start @ index-COJxsKuR.js:48
+fetch @ index-COJxsKuR.js:48
+ys @ index-COJxsKuR.js:48
+onSubscribe @ index-COJxsKuR.js:48
+subscribe @ index-COJxsKuR.js:48
+(anonymous) @ index-COJxsKuR.js:48
+xg @ index-COJxsKuR.js:38
+Ga @ index-COJxsKuR.js:40
+vo @ index-COJxsKuR.js:40
+Lp @ index-COJxsKuR.js:40
+dr @ index-COJxsKuR.js:38
+j1 @ index-COJxsKuR.js:40
+xr @ index-COJxsKuR.js:40
+Xg @ index-COJxsKuR.js:40
+C @ index-COJxsKuR.js:25
+D @ index-COJxsKuR.js:25Understand this error
+index-COJxsKuR.js:228 ErrorBoundary caught an error: setDisplayTime is not defined
+componentDidCatch @ index-COJxsKuR.js:228
+Lg.s.componentDidCatch.n.callback @ index-COJxsKuR.js:40
+vp @ index-COJxsKuR.js:38
+Dp @ index-COJxsKuR.js:40
+Yg @ index-COJxsKuR.js:40
+C1 @ index-COJxsKuR.js:40
+j1 @ index-COJxsKuR.js:40
+xr @ index-COJxsKuR.js:40
+Lp @ index-COJxsKuR.js:40
+dr @ index-COJxsKuR.js:38
+(anonymous) @ index-COJxsKuR.js:40
+setTimeout
+o @ index-COJxsKuR.js:48
+i @ index-COJxsKuR.js:48
+batch @ index-COJxsKuR.js:48
+fn @ index-COJxsKuR.js:48
+setData @ index-COJxsKuR.js:48
+onSuccess @ index-COJxsKuR.js:48
+p @ index-COJxsKuR.js:48
+Promise.then
+S @ index-COJxsKuR.js:48
+start @ index-COJxsKuR.js:48
+fetch @ index-COJxsKuR.js:48
+ys @ index-COJxsKuR.js:48
+onSubscribe @ index-COJxsKuR.js:48
+subscribe @ index-COJxsKuR.js:48
+(anonymous) @ index-COJxsKuR.js:48
+xg @ index-COJxsKuR.js:38
+Ga @ index-COJxsKuR.js:40
+vo @ index-COJxsKuR.js:40
+j1 @ index-COJxsKuR.js:40
+xr @ index-COJxsKuR.js:40
+Lp @ index-COJxsKuR.js:40
+dr @ index-COJxsKuR.js:38
+(anonymous) @ index-COJxsKuR.js:40
+setTimeout
+o @ index-COJxsKuR.js:48
+i @ index-COJxsKuR.js:48
+batch @ index-COJxsKuR.js:48
+fn @ index-COJxsKuR.js:48
+setData @ index-COJxsKuR.js:48
+onSuccess @ index-COJxsKuR.js:48
+p @ index-COJxsKuR.js:48
+Promise.then
+S @ index-COJxsKuR.js:48
+start @ index-COJxsKuR.js:48
+fetch @ index-COJxsKuR.js:48
+ys @ index-COJxsKuR.js:48
+onSubscribe @ index-COJxsKuR.js:48
+subscribe @ index-COJxsKuR.js:48
+(anonymous) @ index-COJxsKuR.js:48
+xg @ index-COJxsKuR.js:38
+Ga @ index-COJxsKuR.js:40
+vo @ index-COJxsKuR.js:40
+Lp @ index-COJxsKuR.js:40
+dr @ index-COJxsKuR.js:38
+j1 @ index-COJxsKuR.js:40
+xr @ index-COJxsKuR.js:40
+Xg @ index-COJxsKuR.js:40
+C @ index-COJxsKuR.js:25
+D @ index-COJxsKuR.js:25Understand this error
+index-COJxsKuR.js:228 Component stack: 
+    at Rj (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-COJxsKuR.js:272:60679)
+    at Tn (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-COJxsKuR.js:48:3201)
+    at mb (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-COJxsKuR.js:48:4017)
+    at NT (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-COJxsKuR.js:272:130014)
+    at bk (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-COJxsKuR.js:228:57444)
+    at u (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-COJxsKuR.js:48:45795)
+    at Gy (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-COJxsKuR.js:228:50420)
+    at Sk (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-COJxsKuR.js:228:56916)
+    at Ib (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-COJxsKuR.js:48:40146)
+    at jk (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-COJxsKuR.js:228:70254)
+    at kT
+componentDidCatch @ index-COJxsKuR.js:228
+Lg.s.componentDidCatch.n.callback @ index-COJxsKuR.js:40
+vp @ index-COJxsKuR.js:38
+Dp @ index-COJxsKuR.js:40
+Yg @ index-COJxsKuR.js:40
+C1 @ index-COJxsKuR.js:40
+j1 @ index-COJxsKuR.js:40
+xr @ index-COJxsKuR.js:40
+Lp @ index-COJxsKuR.js:40
+dr @ index-COJxsKuR.js:38
+(anonymous) @ index-COJxsKuR.js:40
+setTimeout
+o @ index-COJxsKuR.js:48
+i @ index-COJxsKuR.js:48
+batch @ index-COJxsKuR.js:48
+fn @ index-COJxsKuR.js:48
+setData @ index-COJxsKuR.js:48
+onSuccess @ index-COJxsKuR.js:48
+p @ index-COJxsKuR.js:48
+Promise.then
+S @ index-COJxsKuR.js:48
+start @ index-COJxsKuR.js:48
+fetch @ index-COJxsKuR.js:48
+ys @ index-COJxsKuR.js:48
+onSubscribe @ index-COJxsKuR.js:48
+subscribe @ index-COJxsKuR.js:48
+(anonymous) @ index-COJxsKuR.js:48
+xg @ index-COJxsKuR.js:38
+Ga @ index-COJxsKuR.js:40
+vo @ index-COJxsKuR.js:40
+j1 @ index-COJxsKuR.js:40
+xr @ index-COJxsKuR.js:40
+Lp @ index-COJxsKuR.js:40
+dr @ index-COJxsKuR.js:38
+(anonymous) @ index-COJxsKuR.js:40
+setTimeout
+o @ index-COJxsKuR.js:48
+i @ index-COJxsKuR.js:48
+batch @ index-COJxsKuR.js:48
+fn @ index-COJxsKuR.js:48
+setData @ index-COJxsKuR.js:48
+onSuccess @ index-COJxsKuR.js:48
+p @ index-COJxsKuR.js:48
+Promise.then
+S @ index-COJxsKuR.js:48
+start @ index-COJxsKuR.js:48
+fetch @ index-COJxsKuR.js:48
+ys @ index-COJxsKuR.js:48
+onSubscribe @ index-COJxsKuR.js:48
+subscribe @ index-COJxsKuR.js:48
+(anonymous) @ index-COJxsKuR.js:48
+xg @ index-COJxsKuR.js:38
+Ga @ index-COJxsKuR.js:40
+vo @ index-COJxsKuR.js:40
+Lp @ index-COJxsKuR.js:40
+dr @ index-COJxsKuR.js:38
+j1 @ index-COJxsKuR.js:40
+xr @ index-COJxsKuR.js:40
+Xg @ index-COJxsKuR.js:40
+C @ index-COJxsKuR.js:25
+D @ index-COJxsKuR.js:25Understand this error
+index-COJxsKuR.js:272 [PersistentWS] Manual disconnect requested
+index-COJxsKuR.js:272 [StableWS] Component unmounting, cleaning up
+index-COJxsKuR.js:272 [PersistentWS] Connection closed
+index-COJxsKuR.js:272 [PersistentWS] Close code: 1000
+index-COJxsKuR.js:272 [PersistentWS] Close reason: Manual disconnect
+index-COJxsKuR.js:272 [PersistentWS] Was clean: true
+index-COJxsKuR.js:272 [PersistentWS] Manual close: true
+index-COJxsKuR.js:272 [StableWS] Connection #1 closed
+index-COJxsKuR.js:272 [StableWS] Close code: 1000, reason: "Component unmount"
+index-COJxsKuR.js:272 [StableWS] Was clean: true
+index-COJxsKuR.js:228 [SubscriptionManager] 8:22:25 PM - Server response: 201 
+index-COJxsKuR.js:228 [SubscriptionManager] 8:22:25 PM - Subscription registered successfully: Subscription registered successfully
