@@ -1,0 +1,70 @@
+> rest-express@1.0.0 dev
+> NODE_ENV=development tsx server/index.ts
+
+[VAPID] Environment check - Public key length: 87, Private key length: 43
+[VAPID] Using environment VAPID keys
+[Server] Serving built assets from: /home/runner/workspace/dist/public
+[Server] Static file serving configured for PWA
+[DB] New client connected to pool
+[RobotManager] Initialized 4 robot users
+[System] Robot users initialized for testing
+[Server] 🚀 HTTP server created, initializing WebSocket...
+[WebSocket] ❤️ Starting enhanced heartbeat system for Reserved VM
+[WebSocket] Draft WebSocket server initialized on /draft-ws
+[WebSocket] WebSocket server listening for connections...
+[WebSocket] Server configuration: { path: '/draft-ws', port: 'not listening' }
+[Server] ✅ WebSocket server initialized (handles /draft-ws and /ws/draft paths)
+[Redis] Found Redis connection string in UPSTASH_REDIS_REST_URL
+[Redis] Using Redis connection string
+[RedisStateManager] Initialized
+[Server] ✅ Global draft manager updated with WebSocket and Robot managers
+[Server] ✅ Setting up periodic timer recovery for Reserved VM
+[WebSocket] Draft WebSocket server initialized and connected
+[Redis] Client initialized
+[RedisStateManager] Initialized
+🔄 Recovering active timers after restart...
+✅ Recovered 0 active timers
+[Server] Using built assets, skipping Vite middleware
+[Assets] Serving asset: /index-B_d97Y7T.js
+[Assets] Setting headers for: /home/runner/workspace/dist/public/assets/index-B_d97Y7T.js
+[Assets] JS file served with correct MIME type
+[Assets] Serving asset: /index-Cn_hjswP.css
+[Assets] Setting headers for: /home/runner/workspace/dist/public/assets/index-Cn_hjswP.css
+[Assets] CSS file served with correct MIME type
+[Auth] No token found in header or cookies
+[Auth] Available cookies: []
+[Auth] Authorization header: undefined
+[Auth] Development mode - returning Sky Evans
+[Auth] No token found in header or cookies
+[Auth] Available cookies: []
+[Auth] Authorization header: undefined
+[Auth] Development mode - returning Sky Evans
+[Auth] No token found in header or cookies
+[Auth] Available cookies: []
+[Auth] Authorization header: undefined
+[Auth] Development mode - returning Sky Evans
+[Storage] Checking if user 9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a is in league 243d719b-92ce-4752-8689-5da93ee69213
+[Storage] Membership check result: MEMBER
+[League Access] User 9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a checking membership in league 243d719b-92ce-4752-8689-5da93ee69213: true
+[WebSocket] 💓 Heartbeat check running...
+[WebSocket] ========== CONNECTION METRICS ==========
+[WebSocket] Total connections: 0
+[WebSocket] Active connections: 0
+[WebSocket] Messages/sec: 0.00
+[WebSocket] Total messages: 0
+[WebSocket] Errors: 0
+[WebSocket] Disconnections: 0
+[WebSocket] =============================================
+[WebSocket] 💓 Heartbeat check running...
+[WebSocket] ========== CONNECTION METRICS ==========
+[WebSocket] Total connections: 0
+[WebSocket] Active connections: 0
+[WebSocket] Messages/sec: 0.00
+[WebSocket] Total messages: 0
+[WebSocket] Errors: 0
+[WebSocket] Disconnections: 0
+[WebSocket] =============================================
+[WebSocket] 💓 Heartbeat check running...
+[Server] 🔄 Running periodic timer recovery check...
+🔄 Recovering active timers after restart...
+✅ Recovered 0 active timers

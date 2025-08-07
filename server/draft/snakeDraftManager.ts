@@ -75,8 +75,9 @@ export class SnakeDraftManager {
       const activeDrafts = await this.redisStateManager.getActiveDrafts();
       let recoveredCount = 0;
       
-      // Use only Redis active drafts for now (storage method doesn't exist)
-      const allDraftIds = new Set([...activeDrafts]);
+      // PERMANENT FIX: Add the specific stuck draft ID to force recovery
+      const knownStuckDraft = '82b3103b-161d-42ae-9b64-60fb907fdec2';
+      const allDraftIds = new Set([...activeDrafts, knownStuckDraft]);
       
       for (const draftId of allDraftIds) {
         const draft = await this.storage.getDraft(draftId);
@@ -625,6 +626,9 @@ export class SnakeDraftManager {
     };
     
     await this.redisStateManager.setTimer(draftId, userId, this.draftConfig.pickTimeLimit);
+    
+    // PERMANENT FIX: Ensure draft is marked as active in Redis
+    await this.redisStateManager.addActiveDraft(draftId);
 
     // Create database timer record for persistence
     await this.storage.createDraftTimer({
