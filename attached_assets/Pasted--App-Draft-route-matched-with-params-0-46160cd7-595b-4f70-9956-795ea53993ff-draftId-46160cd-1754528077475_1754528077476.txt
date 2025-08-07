@@ -1,0 +1,822 @@
+[App] Draft route matched with params: {0: '46160cd7-595b-4f70-9956-795ea53993ff', draftId: '46160cd7-595b-4f70-9956-795ea53993ff'}
+index-Bs5dKWKt.js:272 [App] Current location: https://mok-sports-draft-mokfantasysport.replit.app/draft/46160cd7-595b-4f70-9956-795ea53993ff
+index-Bs5dKWKt.js:272 [Draft] Component render started - TIME: 1754528057121
+index-Bs5dKWKt.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-Bs5dKWKt.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T00:54:17.121Z
+index-Bs5dKWKt.js:272 [Draft] RENDER TIMING - Time since component start: 1754528013883.6
+index-Bs5dKWKt.js:272 [Draft] All useState hooks declared
+index-Bs5dKWKt.js:272 [TIMER DISPLAY] serverTime: 0 apiTime: undefined displayTime: 0
+index-Bs5dKWKt.js:272 [Draft] All hooks declared, starting conditional logic
+index-Bs5dKWKt.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754528057123
+index-Bs5dKWKt.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-Bs5dKWKt.js:272 [WebSocket] useEffect trigger - draftId: true userId: true authLoading: false
+index-Bs5dKWKt.js:272 [WebSocket] ✅ Conditions met, attempting connection...
+index-Bs5dKWKt.js:272 [WebSocket] Connect called with: {draftId: '46160cd7-595b-4f70-9956-795ea53993ff', userId: '9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a', userLoaded: true, wsState: undefined, previousDraftId: null}
+index-Bs5dKWKt.js:272 [WebSocket] ✅ All connection requirements met, proceeding with connection...
+index-Bs5dKWKt.js:272 [WebSocket] Draft ID validation: 46160cd7-595b-4f70-9956-795ea53993ff length: 36
+index-Bs5dKWKt.js:272 [WebSocket] User ID validation: 9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a length: 36
+index-Bs5dKWKt.js:272 [WebSocket] Connecting to draft immediately after reset/change...
+index-Bs5dKWKt.js:272 [WebSocket] === STARTING NEW CONNECTION ATTEMPT ===
+index-Bs5dKWKt.js:272 [WebSocket] Draft ID: 46160cd7-595b-4f70-9956-795ea53993ff User ID: 9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a
+index-Bs5dKWKt.js:272 [WebSocket] Current wsRef state: false
+index-Bs5dKWKt.js:272 [WebSocket] Detected Replit deployment domain: mok-sports-draft-mokfantasysport.replit.app
+index-Bs5dKWKt.js:272 [WebSocket] ========== CREATING NEW CONNECTION ==========
+index-Bs5dKWKt.js:272 [WebSocket] URL: wss://mok-sports-draft-mokfantasysport.replit.app/draft-ws?userId=9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a&draftId=46160cd7-595b-4f70-9956-795ea53993ff
+index-Bs5dKWKt.js:272 [WebSocket] Draft ID: 46160cd7-595b-4f70-9956-795ea53993ff
+index-Bs5dKWKt.js:272 [WebSocket] User ID: 9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a
+index-Bs5dKWKt.js:272 [WebSocket] Protocol: wss:
+index-Bs5dKWKt.js:272 [WebSocket] Host: mok-sports-draft-mokfantasysport.replit.app
+index-Bs5dKWKt.js:272 [WebSocket] Timestamp: 2025-08-07T00:54:17.126Z
+index-Bs5dKWKt.js:272 [WebSocket] ==============================================
+index-Bs5dKWKt.js:272 [WebSocket] WebSocket object created, readyState: 0
+index-Bs5dKWKt.js:272 [WebSocket] ==== EFFECT TRIGGERED ====
+index-Bs5dKWKt.js:272 [WebSocket] Dependencies - draftId: true userId: true
+index-Bs5dKWKt.js:272 [WebSocket] Current connection state: disconnected
+index-Bs5dKWKt.js:272 [WebSocket] wsRef exists: true
+index-Bs5dKWKt.js:272 [WebSocket] Previous draft ID: 46160cd7-595b-4f70-9956-795ea53993ff
+index-Bs5dKWKt.js:272 [WebSocket] Current draft ID: 46160cd7-595b-4f70-9956-795ea53993ff
+index-Bs5dKWKt.js:272 [WebSocket] ✅ Dependencies ready - initiating connection
+index-Bs5dKWKt.js:272 [WebSocket] Connect called with: {draftId: '46160cd7-595b-4f70-9956-795ea53993ff', userId: '9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a', userLoaded: true, wsState: 0, previousDraftId: '46160cd7-595b-4f70-9956-795ea53993ff'}
+index-Bs5dKWKt.js:272 [WebSocket] ✅ All connection requirements met, proceeding with connection...
+index-Bs5dKWKt.js:272 [WebSocket] Draft ID validation: 46160cd7-595b-4f70-9956-795ea53993ff length: 36
+index-Bs5dKWKt.js:272 [WebSocket] User ID validation: 9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a length: 36
+index-Bs5dKWKt.js:272 [WebSocket] Connecting to draft immediately after reset/change...
+index-Bs5dKWKt.js:272 [WebSocket] === STARTING NEW CONNECTION ATTEMPT ===
+index-Bs5dKWKt.js:272 [WebSocket] Draft ID: 46160cd7-595b-4f70-9956-795ea53993ff User ID: 9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a
+index-Bs5dKWKt.js:272 [WebSocket] Current wsRef state: true
+index-Bs5dKWKt.js:272 [WebSocket] Connection already in progress, skipping
+index-Bs5dKWKt.js:272 [SimpleWS] Starting connection attempt
+index-Bs5dKWKt.js:272 [SimpleWS] draftId: 46160cd7-595b-4f70-9956-795ea53993ff
+index-Bs5dKWKt.js:272 [SimpleWS] userId: 9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a
+index-Bs5dKWKt.js:272 [SimpleWS] Connecting to: wss://mok-sports-draft-mokfantasysport.replit.app/draft-ws?userId=9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a&draftId=46160cd7-595b-4f70-9956-795ea53993ff
+index-Bs5dKWKt.js:272 [PersistentWS] Attempting connection # 1
+index-Bs5dKWKt.js:272 [StableWS] Component mounted, initializing connection
+index-Bs5dKWKt.js:272 [StableWS] Starting connection attempt #1
+index-Bs5dKWKt.js:272 [Draft] === STARTING DRAFT FETCH ===
+index-Bs5dKWKt.js:272 [Draft] Draft ID: 46160cd7-595b-4f70-9956-795ea53993ff
+index-Bs5dKWKt.js:272 [Draft] Auth status - User: Sky Evans Authenticated: true Loading: false
+index-Bs5dKWKt.js:272 [Draft] Token available: false
+index-Bs5dKWKt.js:272 [Draft] Current URL: https://mok-sports-draft-mokfantasysport.replit.app/draft/46160cd7-595b-4f70-9956-795ea53993ff
+index-Bs5dKWKt.js:272 [Draft] Current pathname: /draft/46160cd7-595b-4f70-9956-795ea53993ff
+index-Bs5dKWKt.js:272 [Draft] Making API request to: /api/drafts/46160cd7-595b-4f70-9956-795ea53993ff
+index-Bs5dKWKt.js:272 [Draft] Timer expiration useEffect called
+index-Bs5dKWKt.js:272 [Draft] Component render started - TIME: 1754528057132
+index-Bs5dKWKt.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-Bs5dKWKt.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T00:54:17.133Z
+index-Bs5dKWKt.js:272 [Draft] RENDER TIMING - Time since component start: 1754528013883.9
+index-Bs5dKWKt.js:272 [Draft] All useState hooks declared
+index-Bs5dKWKt.js:272 [TIMER DISPLAY] serverTime: 0 apiTime: undefined displayTime: 0
+index-Bs5dKWKt.js:272 [Draft] All hooks declared, starting conditional logic
+index-Bs5dKWKt.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754528057133
+index-Bs5dKWKt.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+sw.js?v=1754528014270&r=0.17695602955422174:164 [SW] Fetching /favicon.ico from network
+index-Bs5dKWKt.js:48  GET https://mok-sports-draft-mokfantasysport.replit.app/api/drafts/46160cd7-595b-4f70-9956-795ea53993ff 404 (Not Found)
+Ji @ index-Bs5dKWKt.js:48
+queryFn @ index-Bs5dKWKt.js:272
+s @ index-Bs5dKWKt.js:48
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+onSubscribe @ index-Bs5dKWKt.js:48
+subscribe @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+yg @ index-Bs5dKWKt.js:38
+qa @ index-Bs5dKWKt.js:40
+vo @ index-Bs5dKWKt.js:40
+P1 @ index-Bs5dKWKt.js:40
+xr @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40Understand this error
+index-Bs5dKWKt.js:272 [Draft] === DRAFT FETCH ERROR ===
+queryFn @ index-Bs5dKWKt.js:272
+await in queryFn
+s @ index-Bs5dKWKt.js:48
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+onSubscribe @ index-Bs5dKWKt.js:48
+subscribe @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+yg @ index-Bs5dKWKt.js:38
+qa @ index-Bs5dKWKt.js:40
+vo @ index-Bs5dKWKt.js:40
+P1 @ index-Bs5dKWKt.js:40
+xr @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40Understand this error
+index-Bs5dKWKt.js:272 [Draft] Error fetching draft data: Error: 404: {"message":"Draft not found"}
+    at Mv (index-Bs5dKWKt.js:48:43053)
+    at async Ji (index-Bs5dKWKt.js:48:43286)
+    at async queryFn (index-Bs5dKWKt.js:272:65362)
+queryFn @ index-Bs5dKWKt.js:272
+await in queryFn
+s @ index-Bs5dKWKt.js:48
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+onSubscribe @ index-Bs5dKWKt.js:48
+subscribe @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+yg @ index-Bs5dKWKt.js:38
+qa @ index-Bs5dKWKt.js:40
+vo @ index-Bs5dKWKt.js:40
+P1 @ index-Bs5dKWKt.js:40
+xr @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40Understand this error
+index-Bs5dKWKt.js:272 [Draft] Error type: object
+queryFn @ index-Bs5dKWKt.js:272
+await in queryFn
+s @ index-Bs5dKWKt.js:48
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+onSubscribe @ index-Bs5dKWKt.js:48
+subscribe @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+yg @ index-Bs5dKWKt.js:38
+qa @ index-Bs5dKWKt.js:40
+vo @ index-Bs5dKWKt.js:40
+P1 @ index-Bs5dKWKt.js:40
+xr @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40Understand this error
+index-Bs5dKWKt.js:272 [Draft] Error constructor: Error
+queryFn @ index-Bs5dKWKt.js:272
+await in queryFn
+s @ index-Bs5dKWKt.js:48
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+onSubscribe @ index-Bs5dKWKt.js:48
+subscribe @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+yg @ index-Bs5dKWKt.js:38
+qa @ index-Bs5dKWKt.js:40
+vo @ index-Bs5dKWKt.js:40
+P1 @ index-Bs5dKWKt.js:40
+xr @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40Understand this error
+index-Bs5dKWKt.js:272 [DEBUG] Module Error in draft-fetch: {error: Error: 404: {"message":"Draft not found"}
+    at Mv (https://mok-sports-draft-mokfantasysport.repli…, message: '404: {"message":"Draft not found"}', stack: 'Error: 404: {"message":"Draft not found"}\n    at M…rt.replit.app/assets/index-Bs5dKWKt.js:272:65362)', type: 'object', timestamp: '2025-08-07T00:54:17.218Z', …}
+Ih @ index-Bs5dKWKt.js:272
+queryFn @ index-Bs5dKWKt.js:272
+await in queryFn
+s @ index-Bs5dKWKt.js:48
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+onSubscribe @ index-Bs5dKWKt.js:48
+subscribe @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+yg @ index-Bs5dKWKt.js:38
+qa @ index-Bs5dKWKt.js:40
+vo @ index-Bs5dKWKt.js:40
+P1 @ index-Bs5dKWKt.js:40
+xr @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40Understand this error
+index-Bs5dKWKt.js:272 [Draft] Full error details: {message: '404: {"message":"Draft not found"}', stack: 'Error: 404: {"message":"Draft not found"}\n    at M…rt.replit.app/assets/index-Bs5dKWKt.js:272:65362)', user: 'Sky Evans', hasToken: false, isAuthenticated: true, …}
+queryFn @ index-Bs5dKWKt.js:272
+await in queryFn
+s @ index-Bs5dKWKt.js:48
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+onSubscribe @ index-Bs5dKWKt.js:48
+subscribe @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+yg @ index-Bs5dKWKt.js:38
+qa @ index-Bs5dKWKt.js:40
+vo @ index-Bs5dKWKt.js:40
+P1 @ index-Bs5dKWKt.js:40
+xr @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40Understand this error
+index-Bs5dKWKt.js:272 [Draft] Attempting direct fetch for debugging...
+index-Bs5dKWKt.js:272 [WebSocket] ✅ CONNECTION OPENED SUCCESSFULLY
+index-Bs5dKWKt.js:272 [WebSocket] Ready state: 1
+index-Bs5dKWKt.js:272 [WebSocket] URL: wss://mok-sports-draft-mokfantasysport.replit.app/draft-ws?userId=9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a&draftId=46160cd7-595b-4f70-9956-795ea53993ff
+index-Bs5dKWKt.js:272 [WebSocket] Connected for draft: 46160cd7-595b-4f70-9956-795ea53993ff user: 9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a
+index-Bs5dKWKt.js:272 [WebSocket] Connection timestamp: 2025-08-07T00:54:17.298Z
+index-Bs5dKWKt.js:272 [WebSocket] Browser WebSocket supported: true
+index-Bs5dKWKt.js:272 [WebSocket] Connection protocol: none
+index-Bs5dKWKt.js:272 [WebSocket] ✅ Initial ping sent successfully
+index-Bs5dKWKt.js:272 [Draft] Component render started - TIME: 1754528057299
+index-Bs5dKWKt.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-Bs5dKWKt.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T00:54:17.299Z
+index-Bs5dKWKt.js:272 [Draft] RENDER TIMING - Time since component start: 1754528013883.8
+index-Bs5dKWKt.js:272 [Draft] All useState hooks declared
+index-Bs5dKWKt.js:272 [TIMER DISPLAY] serverTime: 0 apiTime: undefined displayTime: 0
+index-Bs5dKWKt.js:272 [Draft] All hooks declared, starting conditional logic
+index-Bs5dKWKt.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754528057299
+index-Bs5dKWKt.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-Bs5dKWKt.js:272 [WebSocket] 📨 MESSAGE RECEIVED
+index-Bs5dKWKt.js:272 [WebSocket] 📨 Raw data: {"type":"connected","draftId":"46160cd7-595b-4f70-9956-795ea53993ff","userId":"9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a","timestamp":1754528057317,"message":"WebSocket connection established successfully on Reserved VM"}
+index-Bs5dKWKt.js:272 [WebSocket] 📨 Socket state: 1
+index-Bs5dKWKt.js:272 [WebSocket] ✅ Parsed message type: connected
+index-Bs5dKWKt.js:272 [WebSocket] 🔍 COMPREHENSIVE DEBUG - Received message: connected {type: 'connected', draftId: '46160cd7-595b-4f70-9956-795ea53993ff', userId: '9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a', timestamp: 1754528057317, message: 'WebSocket connection established successfully on Reserved VM'}
+index-Bs5dKWKt.js:272 [WebSocket] 🔍 Raw message data: {
+  "type": "connected",
+  "draftId": "46160cd7-595b-4f70-9956-795ea53993ff",
+  "userId": "9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a",
+  "timestamp": 1754528057317,
+  "message": "WebSocket connection established successfully on Reserved VM"
+}
+index-Bs5dKWKt.js:272 [WebSocket] 🔍 Message timestamp: 2025-08-07T00:54:17.300Z
+index-Bs5dKWKt.js:272 [WebSocket] 🔍 Current draft ID: 46160cd7-595b-4f70-9956-795ea53993ff
+index-Bs5dKWKt.js:272 [WebSocket] 🔍 Current user ID: 9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a
+index-Bs5dKWKt.js:272 [WebSocket] Connected to draft successfully on Reserved VM
+index-Bs5dKWKt.js:272 [WebSocket] ✅ Draft queries invalidated on connection for immediate sync
+index-Bs5dKWKt.js:272 [WebSocket] ✅ Message processed successfully
+index-Bs5dKWKt.js:272 [Draft] Component render started - TIME: 1754528057300
+index-Bs5dKWKt.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-Bs5dKWKt.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T00:54:17.300Z
+index-Bs5dKWKt.js:272 [Draft] RENDER TIMING - Time since component start: 1754528013883.1
+index-Bs5dKWKt.js:272 [Draft] All useState hooks declared
+index-Bs5dKWKt.js:272 [TIMER DISPLAY] serverTime: 0 apiTime: undefined displayTime: 0
+index-Bs5dKWKt.js:272 [Draft] All hooks declared, starting conditional logic
+index-Bs5dKWKt.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754528057301
+index-Bs5dKWKt.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-Bs5dKWKt.js:272 [WebSocket] 📨 MESSAGE RECEIVED
+index-Bs5dKWKt.js:272 [WebSocket] 📨 Raw data: {"type":"connected","draftId":"46160cd7-595b-4f70-9956-795ea53993ff","timestamp":1754528057318}
+index-Bs5dKWKt.js:272 [WebSocket] 📨 Socket state: 1
+index-Bs5dKWKt.js:272 [WebSocket] ✅ Parsed message type: connected
+index-Bs5dKWKt.js:272 [WebSocket] 🔍 COMPREHENSIVE DEBUG - Received message: connected {type: 'connected', draftId: '46160cd7-595b-4f70-9956-795ea53993ff', timestamp: 1754528057318}
+index-Bs5dKWKt.js:272 [WebSocket] 🔍 Raw message data: {
+  "type": "connected",
+  "draftId": "46160cd7-595b-4f70-9956-795ea53993ff",
+  "timestamp": 1754528057318
+}
+index-Bs5dKWKt.js:272 [WebSocket] 🔍 Message timestamp: 2025-08-07T00:54:17.302Z
+index-Bs5dKWKt.js:272 [WebSocket] 🔍 Current draft ID: 46160cd7-595b-4f70-9956-795ea53993ff
+index-Bs5dKWKt.js:272 [WebSocket] 🔍 Current user ID: 9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a
+index-Bs5dKWKt.js:272 [WebSocket] Connected to draft successfully on Reserved VM
+index-Bs5dKWKt.js:272 [WebSocket] ✅ Draft queries invalidated on connection for immediate sync
+index-Bs5dKWKt.js:272 [WebSocket] ✅ Message processed successfully
+index-Bs5dKWKt.js:272 [Draft] Component render started - TIME: 1754528057302
+index-Bs5dKWKt.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-Bs5dKWKt.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T00:54:17.302Z
+index-Bs5dKWKt.js:272 [Draft] RENDER TIMING - Time since component start: 1754528013884.1
+index-Bs5dKWKt.js:272 [Draft] All useState hooks declared
+index-Bs5dKWKt.js:272 [TIMER DISPLAY] serverTime: 0 apiTime: undefined displayTime: 0
+index-Bs5dKWKt.js:272 [Draft] All hooks declared, starting conditional logic
+index-Bs5dKWKt.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754528057303
+index-Bs5dKWKt.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-Bs5dKWKt.js:48  GET https://mok-sports-draft-mokfantasysport.replit.app/api/drafts/46160cd7-595b-4f70-9956-795ea53993ff/available-teams 404 (Not Found)
+Ji @ index-Bs5dKWKt.js:48
+queryFn @ index-Bs5dKWKt.js:272
+s @ index-Bs5dKWKt.js:48
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+onSubscribe @ index-Bs5dKWKt.js:48
+subscribe @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+yg @ index-Bs5dKWKt.js:38
+qa @ index-Bs5dKWKt.js:40
+vo @ index-Bs5dKWKt.js:40
+P1 @ index-Bs5dKWKt.js:40
+xr @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40Understand this error
+index-Bs5dKWKt.js:272  GET https://mok-sports-draft-mokfantasysport.replit.app/api/drafts/46160cd7-595b-4f70-9956-795ea53993ff 404 (Not Found)
+queryFn @ index-Bs5dKWKt.js:272
+await in queryFn
+s @ index-Bs5dKWKt.js:48
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+onSubscribe @ index-Bs5dKWKt.js:48
+subscribe @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+yg @ index-Bs5dKWKt.js:38
+qa @ index-Bs5dKWKt.js:40
+vo @ index-Bs5dKWKt.js:40
+P1 @ index-Bs5dKWKt.js:40
+xr @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40Understand this error
+index-Bs5dKWKt.js:272 [Draft] Direct fetch response: {status: 404, statusText: '', headers: {…}}
+index-Bs5dKWKt.js:272 [Draft] Direct fetch response body: {"message":"Draft not found"}
+index-Bs5dKWKt.js:272 [Draft] Retrying fetch, attempt 1
+index-Bs5dKWKt.js:272 [WebSocket] 📨 MESSAGE RECEIVED
+index-Bs5dKWKt.js:272 [WebSocket] 📨 Raw data: {"type":"pong","timestamp":1754528057363}
+index-Bs5dKWKt.js:272 [WebSocket] 📨 Socket state: 1
+index-Bs5dKWKt.js:272 [WebSocket] ✅ Parsed message type: pong
+index-Bs5dKWKt.js:272 [WebSocket] 🔍 COMPREHENSIVE DEBUG - Received message: pong {type: 'pong', timestamp: 1754528057363}
+index-Bs5dKWKt.js:272 [WebSocket] 🔍 Raw message data: {
+  "type": "pong",
+  "timestamp": 1754528057363
+}
+index-Bs5dKWKt.js:272 [WebSocket] 🔍 Message timestamp: 2025-08-07T00:54:17.351Z
+index-Bs5dKWKt.js:272 [WebSocket] 🔍 Current draft ID: 46160cd7-595b-4f70-9956-795ea53993ff
+index-Bs5dKWKt.js:272 [WebSocket] 🔍 Current user ID: 9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a
+index-Bs5dKWKt.js:272 [WebSocket] Received pong from server
+index-Bs5dKWKt.js:272 [WebSocket] ✅ Message processed successfully
+index-Bs5dKWKt.js:272 [Draft] Component render started - TIME: 1754528057351
+index-Bs5dKWKt.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-Bs5dKWKt.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T00:54:17.351Z
+index-Bs5dKWKt.js:272 [Draft] RENDER TIMING - Time since component start: 1754528013883.8
+index-Bs5dKWKt.js:272 [Draft] All useState hooks declared
+index-Bs5dKWKt.js:272 [TIMER DISPLAY] serverTime: 0 apiTime: undefined displayTime: 0
+index-Bs5dKWKt.js:272 [Draft] All hooks declared, starting conditional logic
+index-Bs5dKWKt.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754528057351
+index-Bs5dKWKt.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-Bs5dKWKt.js:272 [WebSocket] 📨 MESSAGE RECEIVED
+index-Bs5dKWKt.js:272 [WebSocket] 📨 Raw data: {"type":"draft_state","draftId":"46160cd7-595b-4f70-9956-795ea53993ff","data":{},"timestamp":1754528057417}
+index-Bs5dKWKt.js:272 [WebSocket] 📨 Socket state: 1
+index-Bs5dKWKt.js:272 [WebSocket] ✅ Parsed message type: draft_state
+index-Bs5dKWKt.js:272 [WebSocket] 🔍 COMPREHENSIVE DEBUG - Received message: draft_state {type: 'draft_state', draftId: '46160cd7-595b-4f70-9956-795ea53993ff', data: {…}, timestamp: 1754528057417}
+index-Bs5dKWKt.js:272 [WebSocket] 🔍 Raw message data: {
+  "type": "draft_state",
+  "draftId": "46160cd7-595b-4f70-9956-795ea53993ff",
+  "data": {},
+  "timestamp": 1754528057417
+}
+index-Bs5dKWKt.js:272 [WebSocket] 🔍 Message timestamp: 2025-08-07T00:54:17.399Z
+index-Bs5dKWKt.js:272 [WebSocket] 🔍 Current draft ID: 46160cd7-595b-4f70-9956-795ea53993ff
+index-Bs5dKWKt.js:272 [WebSocket] 🔍 Current user ID: 9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a
+index-Bs5dKWKt.js:272 [WebSocket] Draft state update
+index-Bs5dKWKt.js:272 [WebSocket] ✅ Message processed successfully
+index-Bs5dKWKt.js:272 [Draft] Component render started - TIME: 1754528057400
+index-Bs5dKWKt.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-Bs5dKWKt.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T00:54:17.400Z
+index-Bs5dKWKt.js:272 [Draft] RENDER TIMING - Time since component start: 1754528013883.9
+index-Bs5dKWKt.js:272 [Draft] All useState hooks declared
+index-Bs5dKWKt.js:272 [TIMER DISPLAY] serverTime: 0 apiTime: undefined displayTime: 0
+index-Bs5dKWKt.js:272 [Draft] All hooks declared, starting conditional logic
+index-Bs5dKWKt.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754528057400
+index-Bs5dKWKt.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-Bs5dKWKt.js:272 [SimpleWS] ✅ Connected successfully
+index-Bs5dKWKt.js:272 [SimpleWS] Initial ping sent
+index-Bs5dKWKt.js:272 [SimpleWS] Message received: {"type":"connected","draftId":"46160cd7-595b-4f70-9956-795ea53993ff","userId":"9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a","timestamp":1754528057461,"message":"WebSocket connection established successfully on Reserved VM"}
+index-Bs5dKWKt.js:272 [Draft] Component render started - TIME: 1754528057444
+index-Bs5dKWKt.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-Bs5dKWKt.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T00:54:17.444Z
+index-Bs5dKWKt.js:272 [Draft] RENDER TIMING - Time since component start: 1754528013883.5
+index-Bs5dKWKt.js:272 [Draft] All useState hooks declared
+index-Bs5dKWKt.js:272 [TIMER DISPLAY] serverTime: 0 apiTime: undefined displayTime: 0
+index-Bs5dKWKt.js:272 [Draft] All hooks declared, starting conditional logic
+index-Bs5dKWKt.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754528057444
+index-Bs5dKWKt.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-Bs5dKWKt.js:272 [SimpleWS] Message received: {"type":"connected","draftId":"46160cd7-595b-4f70-9956-795ea53993ff","timestamp":1754528057461}
+index-Bs5dKWKt.js:272 [Draft] Component render started - TIME: 1754528057445
+index-Bs5dKWKt.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-Bs5dKWKt.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T00:54:17.445Z
+index-Bs5dKWKt.js:272 [Draft] RENDER TIMING - Time since component start: 1754528013883.8
+index-Bs5dKWKt.js:272 [Draft] All useState hooks declared
+index-Bs5dKWKt.js:272 [TIMER DISPLAY] serverTime: 0 apiTime: undefined displayTime: 0
+index-Bs5dKWKt.js:272 [Draft] All hooks declared, starting conditional logic
+index-Bs5dKWKt.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754528057445
+index-Bs5dKWKt.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-Bs5dKWKt.js:272 [SimpleWS] Message received: {"type":"pong","timestamp":1754528057506}
+index-Bs5dKWKt.js:272 [Draft] Component render started - TIME: 1754528057489
+index-Bs5dKWKt.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-Bs5dKWKt.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T00:54:17.489Z
+index-Bs5dKWKt.js:272 [Draft] RENDER TIMING - Time since component start: 1754528013883.3
+index-Bs5dKWKt.js:272 [Draft] All useState hooks declared
+index-Bs5dKWKt.js:272 [TIMER DISPLAY] serverTime: 0 apiTime: undefined displayTime: 0
+index-Bs5dKWKt.js:272 [Draft] All hooks declared, starting conditional logic
+index-Bs5dKWKt.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754528057490
+index-Bs5dKWKt.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-Bs5dKWKt.js:272 [SimpleWS] Message received: {"type":"draft_state","draftId":"46160cd7-595b-4f70-9956-795ea53993ff","data":{},"timestamp":1754528057561}
+index-Bs5dKWKt.js:272 [Draft] Component render started - TIME: 1754528057544
+index-Bs5dKWKt.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-Bs5dKWKt.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T00:54:17.544Z
+index-Bs5dKWKt.js:272 [Draft] RENDER TIMING - Time since component start: 1754528013883.6
+index-Bs5dKWKt.js:272 [Draft] All useState hooks declared
+index-Bs5dKWKt.js:272 [TIMER DISPLAY] serverTime: 0 apiTime: undefined displayTime: 0
+index-Bs5dKWKt.js:272 [Draft] All hooks declared, starting conditional logic
+index-Bs5dKWKt.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754528057544
+index-Bs5dKWKt.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-Bs5dKWKt.js:272 [PersistentWS] ✅ Connected successfully
+index-Bs5dKWKt.js:272 [PersistentWS] Message received: {"type":"connected","draftId":"46160cd7-595b-4f70-9956-795ea53993ff","userId":"9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a","timestamp":1754528057611,"message":"WebSocket connection established successfully on Reserved VM"}
+index-Bs5dKWKt.js:272 [Draft] Component render started - TIME: 1754528057596
+index-Bs5dKWKt.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-Bs5dKWKt.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T00:54:17.596Z
+index-Bs5dKWKt.js:272 [Draft] RENDER TIMING - Time since component start: 1754528013883.7
+index-Bs5dKWKt.js:272 [Draft] All useState hooks declared
+index-Bs5dKWKt.js:272 [TIMER DISPLAY] serverTime: 0 apiTime: undefined displayTime: 0
+index-Bs5dKWKt.js:272 [Draft] All hooks declared, starting conditional logic
+index-Bs5dKWKt.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754528057596
+index-Bs5dKWKt.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-Bs5dKWKt.js:272 [PersistentWS] Message received: {"type":"connected","draftId":"46160cd7-595b-4f70-9956-795ea53993ff","timestamp":1754528057611}
+index-Bs5dKWKt.js:272 [Draft] Component render started - TIME: 1754528057597
+index-Bs5dKWKt.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-Bs5dKWKt.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T00:54:17.597Z
+index-Bs5dKWKt.js:272 [Draft] RENDER TIMING - Time since component start: 1754528013883.6
+index-Bs5dKWKt.js:272 [Draft] All useState hooks declared
+index-Bs5dKWKt.js:272 [TIMER DISPLAY] serverTime: 0 apiTime: undefined displayTime: 0
+index-Bs5dKWKt.js:272 [Draft] All hooks declared, starting conditional logic
+index-Bs5dKWKt.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754528057597
+index-Bs5dKWKt.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-Bs5dKWKt.js:272 [PersistentWS] Message received: {"type":"pong","timestamp":1754528057659}
+index-Bs5dKWKt.js:272 [Draft] Component render started - TIME: 1754528057642
+index-Bs5dKWKt.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-Bs5dKWKt.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T00:54:17.642Z
+index-Bs5dKWKt.js:272 [Draft] RENDER TIMING - Time since component start: 1754528013883.3
+index-Bs5dKWKt.js:272 [Draft] All useState hooks declared
+index-Bs5dKWKt.js:272 [TIMER DISPLAY] serverTime: 0 apiTime: undefined displayTime: 0
+index-Bs5dKWKt.js:272 [Draft] All hooks declared, starting conditional logic
+index-Bs5dKWKt.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754528057643
+index-Bs5dKWKt.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-Bs5dKWKt.js:272 [PersistentWS] Message received: {"type":"draft_state","draftId":"46160cd7-595b-4f70-9956-795ea53993ff","data":{},"timestamp":1754528057710}
+index-Bs5dKWKt.js:272 [Draft] Component render started - TIME: 1754528057695
+index-Bs5dKWKt.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-Bs5dKWKt.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T00:54:17.695Z
+index-Bs5dKWKt.js:272 [Draft] RENDER TIMING - Time since component start: 1754528013883.7
+index-Bs5dKWKt.js:272 [Draft] All useState hooks declared
+index-Bs5dKWKt.js:272 [TIMER DISPLAY] serverTime: 0 apiTime: undefined displayTime: 0
+index-Bs5dKWKt.js:272 [Draft] All hooks declared, starting conditional logic
+index-Bs5dKWKt.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754528057695
+index-Bs5dKWKt.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-Bs5dKWKt.js:272 [StableWS] ✅ Connection #1 opened successfully
+index-Bs5dKWKt.js:272 [StableWS] Identity message sent
+index-Bs5dKWKt.js:272 [StableWS] Message received on connection #1: {"type":"connected","draftId":"46160cd7-595b-4f70-9956-795ea53993ff","userId":"9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a","timestamp":1754528057766,"message":"WebSocket connection established successfully on Reserved VM"}
+index-Bs5dKWKt.js:272 [Draft] Component render started - TIME: 1754528057749
+index-Bs5dKWKt.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-Bs5dKWKt.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T00:54:17.749Z
+index-Bs5dKWKt.js:272 [Draft] RENDER TIMING - Time since component start: 1754528013883.4
+index-Bs5dKWKt.js:272 [Draft] All useState hooks declared
+index-Bs5dKWKt.js:272 [TIMER DISPLAY] serverTime: 0 apiTime: undefined displayTime: 0
+index-Bs5dKWKt.js:272 [Draft] All hooks declared, starting conditional logic
+index-Bs5dKWKt.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754528057750
+index-Bs5dKWKt.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-Bs5dKWKt.js:272 [StableWS] Message received on connection #1: {"type":"connected","draftId":"46160cd7-595b-4f70-9956-795ea53993ff","timestamp":1754528057767}
+index-Bs5dKWKt.js:272 [Draft] Component render started - TIME: 1754528057750
+index-Bs5dKWKt.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-Bs5dKWKt.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T00:54:17.750Z
+index-Bs5dKWKt.js:272 [Draft] RENDER TIMING - Time since component start: 1754528013883.5
+index-Bs5dKWKt.js:272 [Draft] All useState hooks declared
+index-Bs5dKWKt.js:272 [TIMER DISPLAY] serverTime: 0 apiTime: undefined displayTime: 0
+index-Bs5dKWKt.js:272 [Draft] All hooks declared, starting conditional logic
+index-Bs5dKWKt.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754528057750
+index-Bs5dKWKt.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-Bs5dKWKt.js:272 [StableWS] Message received on connection #1: {"type":"identified","connectionId":1,"timestamp":1754528057820}
+index-Bs5dKWKt.js:272 [Draft] Component render started - TIME: 1754528057804
+index-Bs5dKWKt.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-Bs5dKWKt.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T00:54:17.804Z
+index-Bs5dKWKt.js:272 [Draft] RENDER TIMING - Time since component start: 1754528013883.7
+index-Bs5dKWKt.js:272 [Draft] All useState hooks declared
+index-Bs5dKWKt.js:272 [TIMER DISPLAY] serverTime: 0 apiTime: undefined displayTime: 0
+index-Bs5dKWKt.js:272 [Draft] All hooks declared, starting conditional logic
+index-Bs5dKWKt.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754528057804
+index-Bs5dKWKt.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-Bs5dKWKt.js:272 [StableWS] Message received on connection #1: {"type":"draft_state","draftId":"46160cd7-595b-4f70-9956-795ea53993ff","data":{},"timestamp":1754528057866}
+index-Bs5dKWKt.js:272 [Draft] Component render started - TIME: 1754528057849
+index-Bs5dKWKt.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-Bs5dKWKt.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T00:54:17.850Z
+index-Bs5dKWKt.js:272 [Draft] RENDER TIMING - Time since component start: 1754528013883.9
+index-Bs5dKWKt.js:272 [Draft] All useState hooks declared
+index-Bs5dKWKt.js:272 [TIMER DISPLAY] serverTime: 0 apiTime: undefined displayTime: 0
+index-Bs5dKWKt.js:272 [Draft] All hooks declared, starting conditional logic
+index-Bs5dKWKt.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754528057850
+index-Bs5dKWKt.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-Bs5dKWKt.js:272 [Draft] === STARTING DRAFT FETCH ===
+index-Bs5dKWKt.js:272 [Draft] Draft ID: 46160cd7-595b-4f70-9956-795ea53993ff
+index-Bs5dKWKt.js:272 [Draft] Auth status - User: Sky Evans Authenticated: true Loading: false
+index-Bs5dKWKt.js:272 [Draft] Token available: false
+index-Bs5dKWKt.js:272 [Draft] Current URL: https://mok-sports-draft-mokfantasysport.replit.app/draft/46160cd7-595b-4f70-9956-795ea53993ff
+index-Bs5dKWKt.js:272 [Draft] Current pathname: /draft/46160cd7-595b-4f70-9956-795ea53993ff
+index-Bs5dKWKt.js:272 [Draft] Making API request to: /api/drafts/46160cd7-595b-4f70-9956-795ea53993ff
+index-Bs5dKWKt.js:48  GET https://mok-sports-draft-mokfantasysport.replit.app/api/drafts/46160cd7-595b-4f70-9956-795ea53993ff/available-teams 404 (Not Found)
+Ji @ index-Bs5dKWKt.js:48
+queryFn @ index-Bs5dKWKt.js:272
+s @ index-Bs5dKWKt.js:48
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+onSubscribe @ index-Bs5dKWKt.js:48
+subscribe @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+yg @ index-Bs5dKWKt.js:38
+qa @ index-Bs5dKWKt.js:40
+vo @ index-Bs5dKWKt.js:40
+P1 @ index-Bs5dKWKt.js:40
+xr @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40Understand this error
+index-Bs5dKWKt.js:48  GET https://mok-sports-draft-mokfantasysport.replit.app/api/drafts/46160cd7-595b-4f70-9956-795ea53993ff 404 (Not Found)
+Ji @ index-Bs5dKWKt.js:48
+queryFn @ index-Bs5dKWKt.js:272
+s @ index-Bs5dKWKt.js:48
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+onSubscribe @ index-Bs5dKWKt.js:48
+subscribe @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+yg @ index-Bs5dKWKt.js:38
+qa @ index-Bs5dKWKt.js:40
+vo @ index-Bs5dKWKt.js:40
+P1 @ index-Bs5dKWKt.js:40
+xr @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40Understand this error
+index-Bs5dKWKt.js:272 [Draft] === DRAFT FETCH ERROR ===
+queryFn @ index-Bs5dKWKt.js:272
+await in queryFn
+s @ index-Bs5dKWKt.js:48
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+onSubscribe @ index-Bs5dKWKt.js:48
+subscribe @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+yg @ index-Bs5dKWKt.js:38
+qa @ index-Bs5dKWKt.js:40
+vo @ index-Bs5dKWKt.js:40
+P1 @ index-Bs5dKWKt.js:40
+xr @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40Understand this error
+index-Bs5dKWKt.js:272 [Draft] Error fetching draft data: Error: 404: {"message":"Draft not found"}
+    at Mv (index-Bs5dKWKt.js:48:43053)
+    at async Ji (index-Bs5dKWKt.js:48:43286)
+    at async queryFn (index-Bs5dKWKt.js:272:65362)
+queryFn @ index-Bs5dKWKt.js:272
+await in queryFn
+s @ index-Bs5dKWKt.js:48
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+onSubscribe @ index-Bs5dKWKt.js:48
+subscribe @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+yg @ index-Bs5dKWKt.js:38
+qa @ index-Bs5dKWKt.js:40
+vo @ index-Bs5dKWKt.js:40
+P1 @ index-Bs5dKWKt.js:40
+xr @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40Understand this error
+index-Bs5dKWKt.js:272 [Draft] Error type: object
+queryFn @ index-Bs5dKWKt.js:272
+await in queryFn
+s @ index-Bs5dKWKt.js:48
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+onSubscribe @ index-Bs5dKWKt.js:48
+subscribe @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+yg @ index-Bs5dKWKt.js:38
+qa @ index-Bs5dKWKt.js:40
+vo @ index-Bs5dKWKt.js:40
+P1 @ index-Bs5dKWKt.js:40
+xr @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40Understand this error
+index-Bs5dKWKt.js:272 [Draft] Error constructor: Error
+queryFn @ index-Bs5dKWKt.js:272
+await in queryFn
+s @ index-Bs5dKWKt.js:48
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+onSubscribe @ index-Bs5dKWKt.js:48
+subscribe @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+yg @ index-Bs5dKWKt.js:38
+qa @ index-Bs5dKWKt.js:40
+vo @ index-Bs5dKWKt.js:40
+P1 @ index-Bs5dKWKt.js:40
+xr @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40Understand this error
+index-Bs5dKWKt.js:272 [DEBUG] Module Error in draft-fetch: {error: Error: 404: {"message":"Draft not found"}
+    at Mv (https://mok-sports-draft-mokfantasysport.repli…, message: '404: {"message":"Draft not found"}', stack: 'Error: 404: {"message":"Draft not found"}\n    at M…rt.replit.app/assets/index-Bs5dKWKt.js:272:65362)', type: 'object', timestamp: '2025-08-07T00:54:18.412Z', …}
+Ih @ index-Bs5dKWKt.js:272
+queryFn @ index-Bs5dKWKt.js:272
+await in queryFn
+s @ index-Bs5dKWKt.js:48
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+onSubscribe @ index-Bs5dKWKt.js:48
+subscribe @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+yg @ index-Bs5dKWKt.js:38
+qa @ index-Bs5dKWKt.js:40
+vo @ index-Bs5dKWKt.js:40
+P1 @ index-Bs5dKWKt.js:40
+xr @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40Understand this error
+index-Bs5dKWKt.js:272 [Draft] Full error details: {message: '404: {"message":"Draft not found"}', stack: 'Error: 404: {"message":"Draft not found"}\n    at M…rt.replit.app/assets/index-Bs5dKWKt.js:272:65362)', user: 'Sky Evans', hasToken: false, isAuthenticated: true, …}
+queryFn @ index-Bs5dKWKt.js:272
+await in queryFn
+s @ index-Bs5dKWKt.js:48
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+onSubscribe @ index-Bs5dKWKt.js:48
+subscribe @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+yg @ index-Bs5dKWKt.js:38
+qa @ index-Bs5dKWKt.js:40
+vo @ index-Bs5dKWKt.js:40
+P1 @ index-Bs5dKWKt.js:40
+xr @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40Understand this error
+index-Bs5dKWKt.js:272 [Draft] Attempting direct fetch for debugging...
+index-Bs5dKWKt.js:272  GET https://mok-sports-draft-mokfantasysport.replit.app/api/drafts/46160cd7-595b-4f70-9956-795ea53993ff 404 (Not Found)
+queryFn @ index-Bs5dKWKt.js:272
+await in queryFn
+s @ index-Bs5dKWKt.js:48
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+onSubscribe @ index-Bs5dKWKt.js:48
+subscribe @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+yg @ index-Bs5dKWKt.js:38
+qa @ index-Bs5dKWKt.js:40
+vo @ index-Bs5dKWKt.js:40
+P1 @ index-Bs5dKWKt.js:40
+xr @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40Understand this error
+index-Bs5dKWKt.js:272 [Draft] Direct fetch response: {status: 404, statusText: '', headers: {…}}
+index-Bs5dKWKt.js:272 [Draft] Direct fetch response body: {"message":"Draft not found"}
+index-Bs5dKWKt.js:272 [Draft] Retrying fetch, attempt 2
+index-Bs5dKWKt.js:272 [Draft] === STARTING DRAFT FETCH ===
+index-Bs5dKWKt.js:272 [Draft] Draft ID: 46160cd7-595b-4f70-9956-795ea53993ff
+index-Bs5dKWKt.js:272 [Draft] Auth status - User: Sky Evans Authenticated: true Loading: false
+index-Bs5dKWKt.js:272 [Draft] Token available: false
+index-Bs5dKWKt.js:272 [Draft] Current URL: https://mok-sports-draft-mokfantasysport.replit.app/draft/46160cd7-595b-4f70-9956-795ea53993ff
+index-Bs5dKWKt.js:272 [Draft] Current pathname: /draft/46160cd7-595b-4f70-9956-795ea53993ff
+index-Bs5dKWKt.js:272 [Draft] Making API request to: /api/drafts/46160cd7-595b-4f70-9956-795ea53993ff
+index-Bs5dKWKt.js:48  GET https://mok-sports-draft-mokfantasysport.replit.app/api/drafts/46160cd7-595b-4f70-9956-795ea53993ff/available-teams 404 (Not Found)
+Ji @ index-Bs5dKWKt.js:48
+queryFn @ index-Bs5dKWKt.js:272
+s @ index-Bs5dKWKt.js:48
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+onSubscribe @ index-Bs5dKWKt.js:48
+subscribe @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+yg @ index-Bs5dKWKt.js:38
+qa @ index-Bs5dKWKt.js:40
+vo @ index-Bs5dKWKt.js:40
+P1 @ index-Bs5dKWKt.js:40
+xr @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40Understand this error
+index-Bs5dKWKt.js:48  GET https://mok-sports-draft-mokfantasysport.replit.app/api/drafts/46160cd7-595b-4f70-9956-795ea53993ff 404 (Not Found)
+Ji @ index-Bs5dKWKt.js:48
+queryFn @ index-Bs5dKWKt.js:272
+s @ index-Bs5dKWKt.js:48
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+onSubscribe @ index-Bs5dKWKt.js:48
+subscribe @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+yg @ index-Bs5dKWKt.js:38
+qa @ index-Bs5dKWKt.js:40
+vo @ index-Bs5dKWKt.js:40
+P1 @ index-Bs5dKWKt.js:40
+xr @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40Understand this error
+index-Bs5dKWKt.js:272 [Draft] === DRAFT FETCH ERROR ===
+queryFn @ index-Bs5dKWKt.js:272
+await in queryFn
+s @ index-Bs5dKWKt.js:48
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+onSubscribe @ index-Bs5dKWKt.js:48
+subscribe @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+yg @ index-Bs5dKWKt.js:38
+qa @ index-Bs5dKWKt.js:40
+vo @ index-Bs5dKWKt.js:40
+P1 @ index-Bs5dKWKt.js:40
+xr @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40Understand this error
+index-Bs5dKWKt.js:272 [Draft] Error fetching draft data: Error: 404: {"message":"Draft not found"}
+    at Mv (index-Bs5dKWKt.js:48:43053)

@@ -198,6 +198,84 @@ export default async function setupDraftRoutes(app: any, storage: IStorage, webS
     }
   });
 
+  // Enhanced testing reset endpoint - Creates new draft after reset
+  app.post("/api/testing/reset-draft", async (req: any, res: any) => {
+    try {
+      const user = await getAuthenticatedUser(req);
+      if (!user) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+
+      const { leagueId } = req.body;
+      if (!leagueId) {
+        return res.status(400).json({ message: "League ID is required" });
+      }
+
+      const league = await storage.getLeague(leagueId);
+      if (!league) {
+        return res.status(404).json({ message: "League not found" });
+      }
+
+      // Verify user is league creator (relaxed for development testing)
+      if (process.env.NODE_ENV !== 'development' && league.creatorId !== user.id) {
+        return res.status(403).json({ message: "Only league creator can reset draft" });
+      }
+
+      console.log(`[Draft Reset] ENHANCED RESET - Resetting and creating new draft for league ${leagueId} by user ${user.name} (${user.id})`);
+
+      // Find and delete any existing draft for this league
+      const leagueDraft = await storage.getLeagueDraft(leagueId);
+      
+      if (leagueDraft) {
+        await storage.deleteDraft(leagueDraft.id);
+        console.log(`[Draft Reset] Deleted old draft ${leagueDraft.id}`);
+      }
+
+      // Reset league draft status
+      await storage.updateLeague(leagueId, { 
+        draftStarted: false
+      });
+
+      console.log(`[Draft Reset] Reset league ${leagueId} to pre-draft state`);
+
+      // CREATE NEW DRAFT IMMEDIATELY
+      const memberIds = league.members.map(m => m.id);
+      console.log(`[Draft Reset] Creating new draft with ${memberIds.length} members`);
+
+      const draftManagerWithConfig = new SnakeDraftManager(storage, {});
+      const newDraft = await draftManagerWithConfig.createDraft(leagueId, memberIds);
+      
+      console.log(`[Draft Reset] ✅ NEW DRAFT CREATED: ${newDraft.id}`);
+      
+      // Start the draft immediately
+      const draftState = await draftManager.startDraft(newDraft.id);
+      console.log(`[Draft Reset] ✅ NEW DRAFT STARTED with timer`);
+
+      // Update league to reflect draft started
+      await storage.updateLeague(leagueId, { 
+        draftStarted: true
+      });
+
+      res.json({ 
+        message: "Draft reset successfully and new draft created",
+        draftId: newDraft.id,
+        leagueId,
+        resetAt: new Date().toISOString(),
+        deletedDraftId: leagueDraft?.id,
+        newDraftCreated: true,
+        draftStarted: true,
+        state: draftState
+      });
+
+    } catch (error) {
+      console.error('[Draft Reset] Error in enhanced reset:', error);
+      res.status(500).json({ 
+        message: "Failed to reset draft and create new one",
+        error: error instanceof Error ? error.message : "Unknown error"
+      });
+    }
+  });
+
   // Reset draft for a specific league
   app.post("/api/draft/reset/:leagueId", async (req: any, res: any) => {
     try {
