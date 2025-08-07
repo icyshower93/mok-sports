@@ -412,39 +412,20 @@ export function LeagueWaiting() {
                 />
               )}
 
-              {/* Show draft room button if draft exists (not_started or active) */}
-              {league.draftId && (
-                <div className={`text-center p-4 rounded-lg ${
-                  league.draftStarted 
-                    ? 'bg-fantasy-purple/10' 
-                    : 'bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800'
-                }`}>
+              {/* Show draft room button only if draft is active */}
+              {league.draftId && league.draftStarted && (
+                <div className="text-center p-4 bg-fantasy-purple/10 rounded-lg">
                   <div className="flex items-center justify-center gap-2 mb-3">
-                    {league.draftStarted ? (
-                      <>
-                        <Play className="w-5 h-5 text-fantasy-purple" />
-                        <span className="font-semibold text-fantasy-purple">Draft is Live!</span>
-                      </>
-                    ) : (
-                      <>
-                        <Clock className="w-5 h-5 text-blue-600" />
-                        <span className="font-semibold text-blue-600">Draft Room Ready</span>
-                      </>
-                    )}
+                    <Play className="w-5 h-5 text-fantasy-purple" />
+                    <span className="font-semibold text-fantasy-purple">Draft is Live!</span>
                   </div>
                   <Button 
                     onClick={() => setLocation(`/draft/${league.draftId}`)}
                     className="w-full"
                     size="lg"
-                    variant={league.draftStarted ? "default" : "outline"}
                   >
-                    {league.draftStarted ? 'Enter Draft Room' : 'Join Draft Room (Waiting)'}
+                    Enter Draft Room
                   </Button>
-                  {!league.draftStarted && (
-                    <p className="text-xs text-blue-600 dark:text-blue-400 mt-2">
-                      Connect early for real-time updates when draft starts
-                    </p>
-                  )}
                 </div>
               )}
 

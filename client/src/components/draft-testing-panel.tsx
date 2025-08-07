@@ -126,15 +126,7 @@ export function DraftTestingPanel({
         }
       });
       
-      console.log('[Reset] Fresh data fetched:', freshData?.draftId);
-      
-      // Force immediate page navigation to new draft
-      if (freshData?.draftId) {
-        console.log('[Reset] Navigating to new draft room:', freshData.draftId);
-        setTimeout(() => {
-          window.location.href = `/draft/${freshData.draftId}`;
-        }, 500);
-      }
+      console.log('[Reset] Fresh data fetched, new draft ID:', freshData?.draftId);
       
       onReset?.();
     },
