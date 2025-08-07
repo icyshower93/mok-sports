@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 // import { Progress } from "@/components/ui/progress"; // Using custom progress bar
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Clock, Users, Trophy, Zap, Shield, Star, Wifi, WifiOff } from "lucide-react";
+import { Clock, Users, Trophy, Zap, Shield, Star, Wifi, WifiOff, Play } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { TeamLogo } from "@/components/team-logo";
 import { apiRequest, AuthTokenManager } from "@/lib/queryClient";
@@ -614,6 +614,51 @@ export default function DraftPage() {
                           <div className="text-muted-foreground text-xs">Auto Picks</div>
                         </div>
                       </div>
+                    </div>
+                  ) : state.draft.status === 'not_started' ? (
+                    <div className="text-center space-y-3">
+                      <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                        <div className="text-blue-700 dark:text-blue-300 font-medium mb-2">
+                          ⏳ Waiting for Draft to Start
+                        </div>
+                        <div className="text-sm text-blue-600 dark:text-blue-400 mb-3">
+                          The league creator will start the draft when ready
+                        </div>
+                        <div className="flex items-center justify-center space-x-2 text-xs text-blue-500 dark:text-blue-400">
+                          <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                          <span>Connected - real-time updates enabled</span>
+                        </div>
+                      </div>
+                      
+                      {/* Show start button if current user is creator */}
+                      {user?.id === state.draft.creatorId && (
+                        <Button
+                          onClick={async () => {
+                            try {
+                              const response = await fetch(`/api/drafts/${draftId}/start`, {
+                                method: 'POST',
+                                credentials: 'include'
+                              });
+                              if (response.ok) {
+                                toast({
+                                  title: "Draft Started!",
+                                  description: "The timer is now running for the first pick."
+                                });
+                              }
+                            } catch (error) {
+                              toast({
+                                title: "Failed to start draft",
+                                description: "Please try again."
+                              });
+                            }
+                          }}
+                          className="w-full"
+                          size="lg"
+                        >
+                          <Play className="w-4 h-4 mr-2" />
+                          Start Draft
+                        </Button>
+                      )}
                     </div>
                   ) : state.currentUserId ? (
                     <div className="text-center space-y-3">
