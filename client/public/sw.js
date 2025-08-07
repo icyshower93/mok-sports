@@ -1,5 +1,5 @@
 // Enhanced Mok Sports PWA Service Worker with Auto-Refresh Push Subscriptions
-const CACHE_VERSION = 'v1.4.2-seamless-reset-websocket';
+const CACHE_VERSION = 'v1.4.3-enhanced-connection-logic';
 const STATIC_CACHE = `mok-sports-static-${CACHE_VERSION}`;
 const DYNAMIC_CACHE = `mok-sports-dynamic-${CACHE_VERSION}`;
 const API_CACHE = `mok-sports-api-${CACHE_VERSION}`;

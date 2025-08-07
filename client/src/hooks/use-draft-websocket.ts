@@ -38,15 +38,25 @@ export function useDraftWebSocket(draftId: string | null, leagueId?: string | nu
       previousDraftId: previousDraftIdRef.current
     });
     
-    if (!draftId || !user?.id || wsRef.current?.readyState === WebSocket.OPEN) {
-      console.log('[WebSocket] Connect skipped:', { 
-        draftId: !!draftId, 
-        userId: !!user?.id, 
-        wsOpen: wsRef.current?.readyState === WebSocket.OPEN,
-        reason: !draftId ? 'no draftId' : !user?.id ? 'no userId' : 'already connected'
-      });
+    // ENHANCED VALIDATION: More detailed logging for connection failures
+    if (!draftId) {
+      console.log('[WebSocket] ❌ Connect skipped: No draft ID provided');
       return;
     }
+    
+    if (!user?.id) {
+      console.log('[WebSocket] ❌ Connect skipped: No user ID available (auth not loaded)');
+      return;
+    }
+    
+    if (wsRef.current?.readyState === WebSocket.OPEN) {
+      console.log('[WebSocket] ❌ Connect skipped: WebSocket already connected (readyState:', wsRef.current.readyState, ')');
+      return;
+    }
+    
+    console.log('[WebSocket] ✅ All connection requirements met, proceeding with connection...');
+    console.log('[WebSocket] Draft ID validation:', draftId, 'length:', draftId?.length);
+    console.log('[WebSocket] User ID validation:', user.id, 'length:', user.id?.length);
 
     // PERMANENT FIX: Handle draft changes (reset scenario) - Enhanced for Reserved VM
     if (previousDraftIdRef.current && previousDraftIdRef.current !== draftId) {
@@ -107,7 +117,23 @@ export function useDraftWebSocket(draftId: string | null, leagueId?: string | nu
     
     // Connect immediately - don't wait for validation
     connectToWebSocket();
-  }, [draftId, user?.id]);
+  }, [draftId, user?.id, queryClient]);
+  
+  // CRITICAL: Trigger connection when both draft ID and user are available
+  useEffect(() => {
+    console.log('[WebSocket] useEffect trigger - draftId:', !!draftId, 'userId:', !!user?.id, 'authLoading:', !user);
+    
+    if (draftId && user?.id) {
+      console.log('[WebSocket] ✅ Conditions met, attempting connection...');
+      connect();
+    } else {
+      console.log('[WebSocket] ❌ Connection requirements not met:', {
+        hasDraftId: !!draftId,
+        hasUserId: !!user?.id,
+        userObject: !!user
+      });
+    }
+  }, [draftId, user?.id, connect]);
 
   const connectToWebSocket = useCallback(() => {
     console.log('[WebSocket] === STARTING NEW CONNECTION ATTEMPT ===');
@@ -164,10 +190,13 @@ export function useDraftWebSocket(draftId: string | null, leagueId?: string | nu
     let heartbeatTimer: NodeJS.Timeout | null = null;
 
     ws.onopen = () => {
-      console.log('[WebSocket] ✅ CONNECTION OPENED');
+      console.log('[WebSocket] ✅ CONNECTION OPENED SUCCESSFULLY');
       console.log('[WebSocket] Ready state:', ws.readyState);
       console.log('[WebSocket] URL:', ws.url);
       console.log('[WebSocket] Connected for draft:', draftId, 'user:', user?.id);
+      console.log('[WebSocket] Connection timestamp:', new Date().toISOString());
+      console.log('[WebSocket] Browser WebSocket supported:', 'WebSocket' in window);
+      console.log('[WebSocket] Connection protocol:', ws.protocol || 'none');
       
       setConnectionStatus('connected');
       
