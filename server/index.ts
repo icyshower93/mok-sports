@@ -147,7 +147,9 @@ app.use((req, res, next) => {
   // Add emergency cache break route BEFORE other routes
   app.get('/emergency', (req, res) => {
     console.log('[Emergency] Cache break page requested');
-    res.sendFile(path.join(__dirname, '../emergency-cache-break.html'));
+    const emergencyPath = path.join(__dirname, 'emergency-cache-break.html');
+    console.log('[Emergency] Serving file from:', emergencyPath);
+    res.sendFile(emergencyPath);
   });
 
   const server = await registerRoutes(app);
