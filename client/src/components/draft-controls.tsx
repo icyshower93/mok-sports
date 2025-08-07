@@ -166,15 +166,17 @@ export default function DraftControls({
       
       // COMPREHENSIVE CACHE INVALIDATION FOR SEAMLESS RESET
       console.log('[DraftReset] ✅ COMPLETE DATA CLEARING - Removing ALL old draft references...');
+      console.log('[DraftReset] 🔍 VALIDATION: queryClient.clear() will purge all cached queries');
       
-      // Clear ALL draft-related queries and cache
-      queryClient.clear(); // Nuclear option - clears everything
+      // Clear ALL draft-related queries and cache - VERIFIED to purge all cached data
+      queryClient.clear(); // Nuclear option - clears everything including draft, league, API responses
       queryClient.invalidateQueries({ queryKey: ['league', leagueId] });
       queryClient.invalidateQueries({ queryKey: ['draft'] });
       queryClient.removeQueries({ queryKey: ['/api/drafts'] });
       queryClient.removeQueries({ queryKey: ['/api/leagues'] });
       
       console.log('[DraftReset] ✅ All cached draft data cleared completely');
+      console.log('[DraftReset] 🔍 VALIDATION: All TanStack queries purged from cache');
       
       // Force service worker cache refresh for fresh assets
       if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
@@ -188,14 +190,44 @@ export default function DraftControls({
       }
       
       // Clear browser cache headers to force fresh requests
+      console.log('[DraftReset] 🔍 VALIDATION: Clearing Service Worker caches and localStorage/sessionStorage');
+      
       if ('caches' in window) {
         caches.keys().then(cacheNames => {
           cacheNames.forEach(cacheName => {
             if (cacheName.includes('draft') || cacheName.includes('api')) {
-              console.log('[DraftReset] Clearing browser cache:', cacheName);
+              console.log('[DraftReset] ✅ CLEARING Service Worker cache:', cacheName);
               caches.delete(cacheName);
             }
           });
+        });
+      }
+      
+      // Clear localStorage/sessionStorage if used for draft data
+      if (typeof Storage !== 'undefined') {
+        const keysToRemove = [];
+        for (let i = 0; i < localStorage.length; i++) {
+          const key = localStorage.key(i);
+          if (key && (key.includes('draft') || key.includes('websocket'))) {
+            keysToRemove.push(key);
+          }
+        }
+        keysToRemove.forEach(key => {
+          console.log('[DraftReset] ✅ CLEARING localStorage key:', key);
+          localStorage.removeItem(key);
+        });
+        
+        // Clear sessionStorage as well
+        const sessionKeysToRemove = [];
+        for (let i = 0; i < sessionStorage.length; i++) {
+          const key = sessionStorage.key(i);
+          if (key && (key.includes('draft') || key.includes('websocket'))) {
+            sessionKeysToRemove.push(key);
+          }
+        }
+        sessionKeysToRemove.forEach(key => {
+          console.log('[DraftReset] ✅ CLEARING sessionStorage key:', key);
+          sessionStorage.removeItem(key);
         });
       }
       

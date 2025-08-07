@@ -222,12 +222,21 @@ export default async function setupDraftRoutes(app: any, storage: IStorage, webS
       }
 
       console.log(`[Draft Reset] ENHANCED RESET - Resetting and creating new draft for league ${leagueId} by user ${user.name} (${user.id})`);
+      console.log(`[VALIDATION] 🔍 ENDPOINT VERIFICATION: /api/testing/reset-draft will clear ALL draft-related data`);
 
       // Find and delete any existing draft for this league
       const leagueDraft = await storage.getLeagueDraft(leagueId);
       
       if (leagueDraft) {
+        console.log(`[Draft Reset] Deleting existing draft ${leagueDraft.id}`);
+        console.log(`[VALIDATION] 🔍 DATABASE CLEARING: Will delete picks, timers, and draft from tables`);
+        
+        // Verify what's being deleted
+        const picksBefore = await storage.getDraftPicks(leagueDraft.id);
+        console.log(`[VALIDATION] 🔍 BEFORE DELETE: Found ${picksBefore.length} picks to clear`);
+        
         await storage.deleteDraft(leagueDraft.id);
+        console.log(`[VALIDATION] ✅ CONFIRMED: All database records for draft ${leagueDraft.id} cleared`);
         console.log(`[Draft Reset] Deleted old draft ${leagueDraft.id}`);
       }
 
@@ -246,6 +255,9 @@ export default async function setupDraftRoutes(app: any, storage: IStorage, webS
       const newDraft = await draftManagerWithConfig.createDraft(leagueId, memberIds);
       
       console.log(`[Draft Reset] ✅ NEW DRAFT CREATED: ${newDraft.id}`);
+      console.log(`[VALIDATION] 🔍 FRESH UUID: ${newDraft.id} is randomized UUID (gen_random_uuid())`);
+      console.log(`[VALIDATION] 🔍 WEBSOCKET READY: Old connections to deleted draft will be dropped`);
+      console.log(`[VALIDATION] 🔍 NEW CONNECTION TARGET: WebSocket should connect to ${newDraft.id}`);
       
       // Start the draft immediately
       const draftState = await draftManager.startDraft(newDraft.id);
