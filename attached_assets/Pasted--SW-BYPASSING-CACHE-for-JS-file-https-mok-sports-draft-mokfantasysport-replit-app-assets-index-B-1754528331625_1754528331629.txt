@@ -1,0 +1,2753 @@
+[SW] BYPASSING CACHE for JS file: https://mok-sports-draft-mokfantasysport.replit.app/assets/index-Bs5dKWKt.js
+sw.js?v=1754528302026&r=0.36352539900855196:64 [SW] BYPASSING CACHE for JS file: https://replit.com/public/js/replit-dev-banner.js
+sw.js?v=1754528302026&r=0.36352539900855196:164 [SW] Fetching /assets/index-DOw1HNQ2.css from network
+index-Bs5dKWKt.js:228 [Auth] Token check - Has token: false Has user: false Loading: true
+index-Bs5dKWKt.js:228 [SW Hook] EMERGENCY: Unregistering all existing service workers
+sw.js?v=1754528302026&r=0.36352539900855196:164 [SW] Fetching /favicon.ico from network
+index-Bs5dKWKt.js:228 [SW Hook] Found 1 existing registrations
+index-Bs5dKWKt.js:228 [SW Hook] Unregistering existing service worker
+sw.js?v=1754528302026&r=0.36352539900855196:64 [SW] BYPASSING CACHE for JS file: https://mok-sports-draft-mokfantasysport.replit.app/manifest.json
+index-Bs5dKWKt.js:228 [SW Hook] Found 1 caches to delete
+index-Bs5dKWKt.js:228 [SW Hook] Deleting cache: mok-sports-dynamic-v1.7.0-nuclear-unregister-1754528302088
+index-Bs5dKWKt.js:228 [Auth] Token check - Has token: false Has user: true Loading: false
+index-Bs5dKWKt.js:228 [AutoPushRefresh] Legacy hook delegating to SubscriptionManager
+contentScript.js:2 Content script initialized successfully.
+waiting:1 Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner.
+index-Bs5dKWKt.js:228 [SW Hook] Registering fresh service worker: /sw.js?v=1754528305847&r=0.7629619965779293
+sw.js?v=1754528305847&r=0.7629619965779293:2 [SW] NUCLEAR OPTION - Emergency service worker loading
+sw.js?v=1754528305847&r=0.7629619965779293:88 [SW] Service worker starting, version: v1.7.0-nuclear-unregister-1754528305909
+sw.js?v=1754528305847&r=0.7629619965779293:305 [SW] Service worker script loaded successfully
+sw.js?v=1754528305847&r=0.7629619965779293:19 [SW] EMERGENCY INSTALL - Clearing all caches and forcing activation
+index-Bs5dKWKt.js:228 [SW Hook] Service worker registered successfully
+sw.js?v=1754528305847&r=0.7629619965779293:92 [SW] Installing service worker, version: v1.7.0-nuclear-unregister-1754528305909
+sw.js?v=1754528305847&r=0.7629619965779293:22 [SW] Found caches to delete: ['mok-sports-dynamic-v1.7.0-nuclear-unregister-1754528302088']
+sw.js?v=1754528305847&r=0.7629619965779293:25 [SW] Force deleting cache: mok-sports-dynamic-v1.7.0-nuclear-unregister-1754528302088
+sw.js?v=1754528305847&r=0.7629619965779293:96 [SW] Caching static files
+sw.js?v=1754528305847&r=0.7629619965779293:30 [SW] All caches deleted - skipping waiting
+sw.js?v=1754528302026&r=0.36352539900855196:164 [SW] Fetching /a/ACg8ocJEMs5AzNtfS8vv7POiR-CJvE5EdtZVt27CT0tdYJA64x6-BQyy_Q=s96-c from network
+sw.js?v=1754528302026&r=0.36352539900855196:164 [SW] Fetching /a/ACg8ocIlUYRsI8z4wKwDJjb1BBPBwCuyYSlVMcLHB5QAXs50P5Fbtg=s96-c from network
+4sw.js?v=1754528302026&r=0.36352539900855196:164 [SW] Fetching /7.x/robots/svg from network
+svg:1  GET https://api.dicebear.com/7.x/robots/svg?seed=Alpha%20Bot 404 (Not Found)
+Image
+Lh @ index-Bs5dKWKt.js:272
+(anonymous) @ index-Bs5dKWKt.js:272
+qa @ index-Bs5dKWKt.js:40
+Op @ index-Bs5dKWKt.js:40
+Gg @ index-Bs5dKWKt.js:40
+b1 @ index-Bs5dKWKt.js:40
+P1 @ index-Bs5dKWKt.js:40
+xr @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40
+setTimeout
+o @ index-Bs5dKWKt.js:48
+i @ index-Bs5dKWKt.js:48
+batch @ index-Bs5dKWKt.js:48
+fn @ index-Bs5dKWKt.js:48
+setData @ index-Bs5dKWKt.js:48
+onSuccess @ index-Bs5dKWKt.js:48
+p @ index-Bs5dKWKt.js:48
+Promise.then
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+setOptions @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+qa @ index-Bs5dKWKt.js:40
+vo @ index-Bs5dKWKt.js:40
+(anonymous) @ index-Bs5dKWKt.js:40
+E @ index-Bs5dKWKt.js:25
+O @ index-Bs5dKWKt.js:25Understand this error
+svg:1  GET https://api.dicebear.com/7.x/robots/svg?seed=Beta%20Bot 404 (Not Found)
+Image
+Lh @ index-Bs5dKWKt.js:272
+(anonymous) @ index-Bs5dKWKt.js:272
+qa @ index-Bs5dKWKt.js:40
+Op @ index-Bs5dKWKt.js:40
+Gg @ index-Bs5dKWKt.js:40
+b1 @ index-Bs5dKWKt.js:40
+P1 @ index-Bs5dKWKt.js:40
+xr @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40
+setTimeout
+o @ index-Bs5dKWKt.js:48
+i @ index-Bs5dKWKt.js:48
+batch @ index-Bs5dKWKt.js:48
+fn @ index-Bs5dKWKt.js:48
+setData @ index-Bs5dKWKt.js:48
+onSuccess @ index-Bs5dKWKt.js:48
+p @ index-Bs5dKWKt.js:48
+Promise.then
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+setOptions @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+qa @ index-Bs5dKWKt.js:40
+vo @ index-Bs5dKWKt.js:40
+(anonymous) @ index-Bs5dKWKt.js:40
+E @ index-Bs5dKWKt.js:25
+O @ index-Bs5dKWKt.js:25Understand this error
+sw.js?v=1754528305847&r=0.7629619965779293:99 [SW] Static files cached successfully
+svg:1  GET https://api.dicebear.com/7.x/robots/svg?seed=Delta%20Bot 404 (Not Found)
+Image
+Lh @ index-Bs5dKWKt.js:272
+(anonymous) @ index-Bs5dKWKt.js:272
+qa @ index-Bs5dKWKt.js:40
+Op @ index-Bs5dKWKt.js:40
+Gg @ index-Bs5dKWKt.js:40
+b1 @ index-Bs5dKWKt.js:40
+P1 @ index-Bs5dKWKt.js:40
+xr @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40
+setTimeout
+o @ index-Bs5dKWKt.js:48
+i @ index-Bs5dKWKt.js:48
+batch @ index-Bs5dKWKt.js:48
+fn @ index-Bs5dKWKt.js:48
+setData @ index-Bs5dKWKt.js:48
+onSuccess @ index-Bs5dKWKt.js:48
+p @ index-Bs5dKWKt.js:48
+Promise.then
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+setOptions @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+qa @ index-Bs5dKWKt.js:40
+vo @ index-Bs5dKWKt.js:40
+(anonymous) @ index-Bs5dKWKt.js:40
+E @ index-Bs5dKWKt.js:25
+O @ index-Bs5dKWKt.js:25Understand this error
+svg:1  GET https://api.dicebear.com/7.x/robots/svg?seed=Gamma%20Bot 404 (Not Found)
+Image
+Lh @ index-Bs5dKWKt.js:272
+(anonymous) @ index-Bs5dKWKt.js:272
+qa @ index-Bs5dKWKt.js:40
+Op @ index-Bs5dKWKt.js:40
+Gg @ index-Bs5dKWKt.js:40
+b1 @ index-Bs5dKWKt.js:40
+P1 @ index-Bs5dKWKt.js:40
+xr @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40
+setTimeout
+o @ index-Bs5dKWKt.js:48
+i @ index-Bs5dKWKt.js:48
+batch @ index-Bs5dKWKt.js:48
+fn @ index-Bs5dKWKt.js:48
+setData @ index-Bs5dKWKt.js:48
+onSuccess @ index-Bs5dKWKt.js:48
+p @ index-Bs5dKWKt.js:48
+Promise.then
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+setOptions @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+qa @ index-Bs5dKWKt.js:40
+vo @ index-Bs5dKWKt.js:40
+(anonymous) @ index-Bs5dKWKt.js:40
+E @ index-Bs5dKWKt.js:25
+O @ index-Bs5dKWKt.js:25Understand this error
+sw.js?v=1754528305847&r=0.7629619965779293:41 [SW] EMERGENCY ACTIVATE - Taking control of all clients
+sw.js?v=1754528305847&r=0.7629619965779293:110 [SW] Activating service worker, version: v1.7.0-nuclear-unregister-1754528305909
+sw.js?v=1754528305847&r=0.7629619965779293:46 [SW] Deleting remaining cache: mok-sports-static-v1.7.0-nuclear-unregister-1754528305909
+sw.js?v=1754528305847&r=0.7629619965779293:116 [SW] Found caches: ['mok-sports-static-v1.7.0-nuclear-unregister-1754528305909']
+sw.js?v=1754528305847&r=0.7629619965779293:129 [SW] Service worker activated and controlling all clients
+sw.js?v=1754528305847&r=0.7629619965779293:51 [SW] Claiming all clients immediately
+index-Bs5dKWKt.js:272 [App] Draft route matched with params: {0: '46160cd7-595b-4f70-9956-795ea53993ff', draftId: '46160cd7-595b-4f70-9956-795ea53993ff'}
+index-Bs5dKWKt.js:272 [App] Current location: https://mok-sports-draft-mokfantasysport.replit.app/draft/46160cd7-595b-4f70-9956-795ea53993ff
+index-Bs5dKWKt.js:272 [Draft] Component render started - TIME: 1754528308351
+index-Bs5dKWKt.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-Bs5dKWKt.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T00:58:28.351Z
+index-Bs5dKWKt.js:272 [Draft] RENDER TIMING - Time since component start: 1754528305462.9
+index-Bs5dKWKt.js:272 [Draft] All useState hooks declared
+index-Bs5dKWKt.js:272 [TIMER DISPLAY] serverTime: 0 apiTime: undefined displayTime: 0
+index-Bs5dKWKt.js:272 [Draft] All hooks declared, starting conditional logic
+index-Bs5dKWKt.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754528308352
+index-Bs5dKWKt.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-Bs5dKWKt.js:272 [WebSocket] useEffect trigger - draftId: true userId: true authLoading: false
+index-Bs5dKWKt.js:272 [WebSocket] ✅ Conditions met, attempting connection...
+index-Bs5dKWKt.js:272 [WebSocket] Connect called with: {draftId: '46160cd7-595b-4f70-9956-795ea53993ff', userId: '9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a', userLoaded: true, wsState: undefined, previousDraftId: null}
+index-Bs5dKWKt.js:272 [WebSocket] ✅ All connection requirements met, proceeding with connection...
+index-Bs5dKWKt.js:272 [WebSocket] Draft ID validation: 46160cd7-595b-4f70-9956-795ea53993ff length: 36
+index-Bs5dKWKt.js:272 [WebSocket] User ID validation: 9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a length: 36
+index-Bs5dKWKt.js:272 [WebSocket] Connecting to draft immediately after reset/change...
+index-Bs5dKWKt.js:272 [WebSocket] === STARTING NEW CONNECTION ATTEMPT ===
+index-Bs5dKWKt.js:272 [WebSocket] Draft ID: 46160cd7-595b-4f70-9956-795ea53993ff User ID: 9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a
+index-Bs5dKWKt.js:272 [WebSocket] Current wsRef state: false
+index-Bs5dKWKt.js:272 [WebSocket] Detected Replit deployment domain: mok-sports-draft-mokfantasysport.replit.app
+index-Bs5dKWKt.js:272 [WebSocket] ========== CREATING NEW CONNECTION ==========
+index-Bs5dKWKt.js:272 [WebSocket] URL: wss://mok-sports-draft-mokfantasysport.replit.app/draft-ws?userId=9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a&draftId=46160cd7-595b-4f70-9956-795ea53993ff
+index-Bs5dKWKt.js:272 [WebSocket] Draft ID: 46160cd7-595b-4f70-9956-795ea53993ff
+index-Bs5dKWKt.js:272 [WebSocket] User ID: 9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a
+index-Bs5dKWKt.js:272 [WebSocket] Protocol: wss:
+index-Bs5dKWKt.js:272 [WebSocket] Host: mok-sports-draft-mokfantasysport.replit.app
+index-Bs5dKWKt.js:272 [WebSocket] Timestamp: 2025-08-07T00:58:28.354Z
+index-Bs5dKWKt.js:272 [WebSocket] ==============================================
+index-Bs5dKWKt.js:272 [WebSocket] WebSocket object created, readyState: 0
+index-Bs5dKWKt.js:272 [WebSocket] ==== EFFECT TRIGGERED ====
+index-Bs5dKWKt.js:272 [WebSocket] Dependencies - draftId: true userId: true
+index-Bs5dKWKt.js:272 [WebSocket] Current connection state: disconnected
+index-Bs5dKWKt.js:272 [WebSocket] wsRef exists: true
+index-Bs5dKWKt.js:272 [WebSocket] Previous draft ID: 46160cd7-595b-4f70-9956-795ea53993ff
+index-Bs5dKWKt.js:272 [WebSocket] Current draft ID: 46160cd7-595b-4f70-9956-795ea53993ff
+index-Bs5dKWKt.js:272 [WebSocket] ✅ Dependencies ready - initiating connection
+index-Bs5dKWKt.js:272 [WebSocket] Connect called with: {draftId: '46160cd7-595b-4f70-9956-795ea53993ff', userId: '9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a', userLoaded: true, wsState: 0, previousDraftId: '46160cd7-595b-4f70-9956-795ea53993ff'}
+index-Bs5dKWKt.js:272 [WebSocket] ✅ All connection requirements met, proceeding with connection...
+index-Bs5dKWKt.js:272 [WebSocket] Draft ID validation: 46160cd7-595b-4f70-9956-795ea53993ff length: 36
+index-Bs5dKWKt.js:272 [WebSocket] User ID validation: 9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a length: 36
+index-Bs5dKWKt.js:272 [WebSocket] Connecting to draft immediately after reset/change...
+index-Bs5dKWKt.js:272 [WebSocket] === STARTING NEW CONNECTION ATTEMPT ===
+index-Bs5dKWKt.js:272 [WebSocket] Draft ID: 46160cd7-595b-4f70-9956-795ea53993ff User ID: 9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a
+index-Bs5dKWKt.js:272 [WebSocket] Current wsRef state: true
+index-Bs5dKWKt.js:272 [WebSocket] Connection already in progress, skipping
+index-Bs5dKWKt.js:272 [SimpleWS] Starting connection attempt
+index-Bs5dKWKt.js:272 [SimpleWS] draftId: 46160cd7-595b-4f70-9956-795ea53993ff
+index-Bs5dKWKt.js:272 [SimpleWS] userId: 9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a
+index-Bs5dKWKt.js:272 [SimpleWS] Connecting to: wss://mok-sports-draft-mokfantasysport.replit.app/draft-ws?userId=9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a&draftId=46160cd7-595b-4f70-9956-795ea53993ff
+index-Bs5dKWKt.js:272 [PersistentWS] Attempting connection # 1
+index-Bs5dKWKt.js:272 [StableWS] Component mounted, initializing connection
+index-Bs5dKWKt.js:272 [StableWS] Starting connection attempt #1
+index-Bs5dKWKt.js:272 [Draft] === STARTING DRAFT FETCH ===
+index-Bs5dKWKt.js:272 [Draft] Draft ID: 46160cd7-595b-4f70-9956-795ea53993ff
+index-Bs5dKWKt.js:272 [Draft] Auth status - User: Sky Evans Authenticated: true Loading: false
+index-Bs5dKWKt.js:272 [Draft] Token available: false
+index-Bs5dKWKt.js:272 [Draft] Current URL: https://mok-sports-draft-mokfantasysport.replit.app/draft/46160cd7-595b-4f70-9956-795ea53993ff
+index-Bs5dKWKt.js:272 [Draft] Current pathname: /draft/46160cd7-595b-4f70-9956-795ea53993ff
+index-Bs5dKWKt.js:272 [Draft] Making API request to: /api/drafts/46160cd7-595b-4f70-9956-795ea53993ff
+index-Bs5dKWKt.js:272 [Draft] Timer expiration useEffect called
+index-Bs5dKWKt.js:272 [Draft] Component render started - TIME: 1754528308359
+index-Bs5dKWKt.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-Bs5dKWKt.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T00:58:28.359Z
+index-Bs5dKWKt.js:272 [Draft] RENDER TIMING - Time since component start: 1754528305463.1
+index-Bs5dKWKt.js:272 [Draft] All useState hooks declared
+index-Bs5dKWKt.js:272 [TIMER DISPLAY] serverTime: 0 apiTime: undefined displayTime: 0
+index-Bs5dKWKt.js:272 [Draft] All hooks declared, starting conditional logic
+index-Bs5dKWKt.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754528308359
+index-Bs5dKWKt.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+sw.js?v=1754528305847&r=0.7629619965779293:164 [SW] Fetching /favicon.ico from network
+index-Bs5dKWKt.js:48  GET https://mok-sports-draft-mokfantasysport.replit.app/api/drafts/46160cd7-595b-4f70-9956-795ea53993ff 404 (Not Found)
+Ji @ index-Bs5dKWKt.js:48
+queryFn @ index-Bs5dKWKt.js:272
+s @ index-Bs5dKWKt.js:48
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+onSubscribe @ index-Bs5dKWKt.js:48
+subscribe @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+yg @ index-Bs5dKWKt.js:38
+qa @ index-Bs5dKWKt.js:40
+vo @ index-Bs5dKWKt.js:40
+P1 @ index-Bs5dKWKt.js:40
+xr @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40Understand this error
+index-Bs5dKWKt.js:272 [Draft] === DRAFT FETCH ERROR ===
+queryFn @ index-Bs5dKWKt.js:272
+await in queryFn
+s @ index-Bs5dKWKt.js:48
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+onSubscribe @ index-Bs5dKWKt.js:48
+subscribe @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+yg @ index-Bs5dKWKt.js:38
+qa @ index-Bs5dKWKt.js:40
+vo @ index-Bs5dKWKt.js:40
+P1 @ index-Bs5dKWKt.js:40
+xr @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40Understand this error
+index-Bs5dKWKt.js:272 [Draft] Error fetching draft data: Error: 404: {"message":"Draft not found"}
+    at Mv (index-Bs5dKWKt.js:48:43053)
+    at async Ji (index-Bs5dKWKt.js:48:43286)
+    at async queryFn (index-Bs5dKWKt.js:272:65362)
+queryFn @ index-Bs5dKWKt.js:272
+await in queryFn
+s @ index-Bs5dKWKt.js:48
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+onSubscribe @ index-Bs5dKWKt.js:48
+subscribe @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+yg @ index-Bs5dKWKt.js:38
+qa @ index-Bs5dKWKt.js:40
+vo @ index-Bs5dKWKt.js:40
+P1 @ index-Bs5dKWKt.js:40
+xr @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40Understand this error
+index-Bs5dKWKt.js:272 [Draft] Error type: object
+queryFn @ index-Bs5dKWKt.js:272
+await in queryFn
+s @ index-Bs5dKWKt.js:48
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+onSubscribe @ index-Bs5dKWKt.js:48
+subscribe @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+yg @ index-Bs5dKWKt.js:38
+qa @ index-Bs5dKWKt.js:40
+vo @ index-Bs5dKWKt.js:40
+P1 @ index-Bs5dKWKt.js:40
+xr @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40Understand this error
+index-Bs5dKWKt.js:272 [Draft] Error constructor: Error
+queryFn @ index-Bs5dKWKt.js:272
+await in queryFn
+s @ index-Bs5dKWKt.js:48
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+onSubscribe @ index-Bs5dKWKt.js:48
+subscribe @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+yg @ index-Bs5dKWKt.js:38
+qa @ index-Bs5dKWKt.js:40
+vo @ index-Bs5dKWKt.js:40
+P1 @ index-Bs5dKWKt.js:40
+xr @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40Understand this error
+index-Bs5dKWKt.js:272 [DEBUG] Module Error in draft-fetch: {error: Error: 404: {"message":"Draft not found"}
+    at Mv (https://mok-sports-draft-mokfantasysport.repli…, message: '404: {"message":"Draft not found"}', stack: 'Error: 404: {"message":"Draft not found"}\n    at M…rt.replit.app/assets/index-Bs5dKWKt.js:272:65362)', type: 'object', timestamp: '2025-08-07T00:58:28.443Z', …}
+Ih @ index-Bs5dKWKt.js:272
+queryFn @ index-Bs5dKWKt.js:272
+await in queryFn
+s @ index-Bs5dKWKt.js:48
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+onSubscribe @ index-Bs5dKWKt.js:48
+subscribe @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+yg @ index-Bs5dKWKt.js:38
+qa @ index-Bs5dKWKt.js:40
+vo @ index-Bs5dKWKt.js:40
+P1 @ index-Bs5dKWKt.js:40
+xr @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40Understand this error
+index-Bs5dKWKt.js:272 [Draft] Full error details: {message: '404: {"message":"Draft not found"}', stack: 'Error: 404: {"message":"Draft not found"}\n    at M…rt.replit.app/assets/index-Bs5dKWKt.js:272:65362)', user: 'Sky Evans', hasToken: false, isAuthenticated: true, …}
+queryFn @ index-Bs5dKWKt.js:272
+await in queryFn
+s @ index-Bs5dKWKt.js:48
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+onSubscribe @ index-Bs5dKWKt.js:48
+subscribe @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+yg @ index-Bs5dKWKt.js:38
+qa @ index-Bs5dKWKt.js:40
+vo @ index-Bs5dKWKt.js:40
+P1 @ index-Bs5dKWKt.js:40
+xr @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40Understand this error
+index-Bs5dKWKt.js:272 [Draft] Attempting direct fetch for debugging...
+index-Bs5dKWKt.js:272 [WebSocket] ✅ CONNECTION OPENED SUCCESSFULLY
+index-Bs5dKWKt.js:272 [WebSocket] Ready state: 1
+index-Bs5dKWKt.js:272 [WebSocket] URL: wss://mok-sports-draft-mokfantasysport.replit.app/draft-ws?userId=9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a&draftId=46160cd7-595b-4f70-9956-795ea53993ff
+index-Bs5dKWKt.js:272 [WebSocket] Connected for draft: 46160cd7-595b-4f70-9956-795ea53993ff user: 9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a
+index-Bs5dKWKt.js:272 [WebSocket] Connection timestamp: 2025-08-07T00:58:28.522Z
+index-Bs5dKWKt.js:272 [WebSocket] Browser WebSocket supported: true
+index-Bs5dKWKt.js:272 [WebSocket] Connection protocol: none
+index-Bs5dKWKt.js:272 [WebSocket] ✅ Initial ping sent successfully
+index-Bs5dKWKt.js:272 [WebSocket] 📨 MESSAGE RECEIVED
+index-Bs5dKWKt.js:272 [WebSocket] 📨 Raw data: {"type":"connected","draftId":"46160cd7-595b-4f70-9956-795ea53993ff","userId":"9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a","timestamp":1754528307617,"message":"WebSocket connection established successfully on Reserved VM"}
+index-Bs5dKWKt.js:272 [WebSocket] 📨 Socket state: 1
+index-Bs5dKWKt.js:272 [WebSocket] ✅ Parsed message type: connected
+index-Bs5dKWKt.js:272 [WebSocket] 🔍 COMPREHENSIVE DEBUG - Received message: connected {type: 'connected', draftId: '46160cd7-595b-4f70-9956-795ea53993ff', userId: '9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a', timestamp: 1754528307617, message: 'WebSocket connection established successfully on Reserved VM'}
+index-Bs5dKWKt.js:272 [WebSocket] 🔍 Raw message data: {
+  "type": "connected",
+  "draftId": "46160cd7-595b-4f70-9956-795ea53993ff",
+  "userId": "9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a",
+  "timestamp": 1754528307617,
+  "message": "WebSocket connection established successfully on Reserved VM"
+}
+index-Bs5dKWKt.js:272 [WebSocket] 🔍 Message timestamp: 2025-08-07T00:58:28.522Z
+index-Bs5dKWKt.js:272 [WebSocket] 🔍 Current draft ID: 46160cd7-595b-4f70-9956-795ea53993ff
+index-Bs5dKWKt.js:272 [WebSocket] 🔍 Current user ID: 9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a
+index-Bs5dKWKt.js:272 [WebSocket] Connected to draft successfully on Reserved VM
+index-Bs5dKWKt.js:272 [WebSocket] ✅ Draft queries invalidated on connection for immediate sync
+index-Bs5dKWKt.js:272 [WebSocket] ✅ Message processed successfully
+index-Bs5dKWKt.js:272 [Draft] Component render started - TIME: 1754528308523
+index-Bs5dKWKt.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-Bs5dKWKt.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T00:58:28.523Z
+index-Bs5dKWKt.js:272 [Draft] RENDER TIMING - Time since component start: 1754528305462.7
+index-Bs5dKWKt.js:272 [Draft] All useState hooks declared
+index-Bs5dKWKt.js:272 [TIMER DISPLAY] serverTime: 0 apiTime: undefined displayTime: 0
+index-Bs5dKWKt.js:272 [Draft] All hooks declared, starting conditional logic
+index-Bs5dKWKt.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754528308524
+index-Bs5dKWKt.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-Bs5dKWKt.js:272 [WebSocket] 📨 MESSAGE RECEIVED
+index-Bs5dKWKt.js:272 [WebSocket] 📨 Raw data: {"type":"connected","draftId":"46160cd7-595b-4f70-9956-795ea53993ff","timestamp":1754528307618}
+index-Bs5dKWKt.js:272 [WebSocket] 📨 Socket state: 1
+index-Bs5dKWKt.js:272 [WebSocket] ✅ Parsed message type: connected
+index-Bs5dKWKt.js:272 [WebSocket] 🔍 COMPREHENSIVE DEBUG - Received message: connected {type: 'connected', draftId: '46160cd7-595b-4f70-9956-795ea53993ff', timestamp: 1754528307618}
+index-Bs5dKWKt.js:272 [WebSocket] 🔍 Raw message data: {
+  "type": "connected",
+  "draftId": "46160cd7-595b-4f70-9956-795ea53993ff",
+  "timestamp": 1754528307618
+}
+index-Bs5dKWKt.js:272 [WebSocket] 🔍 Message timestamp: 2025-08-07T00:58:28.524Z
+index-Bs5dKWKt.js:272 [WebSocket] 🔍 Current draft ID: 46160cd7-595b-4f70-9956-795ea53993ff
+index-Bs5dKWKt.js:272 [WebSocket] 🔍 Current user ID: 9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a
+index-Bs5dKWKt.js:272 [WebSocket] Connected to draft successfully on Reserved VM
+index-Bs5dKWKt.js:272 [WebSocket] ✅ Draft queries invalidated on connection for immediate sync
+index-Bs5dKWKt.js:272 [WebSocket] ✅ Message processed successfully
+index-Bs5dKWKt.js:272 [Draft] Component render started - TIME: 1754528308524
+index-Bs5dKWKt.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-Bs5dKWKt.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T00:58:28.524Z
+index-Bs5dKWKt.js:272 [Draft] RENDER TIMING - Time since component start: 1754528305462.9
+index-Bs5dKWKt.js:272 [Draft] All useState hooks declared
+index-Bs5dKWKt.js:272 [TIMER DISPLAY] serverTime: 0 apiTime: undefined displayTime: 0
+index-Bs5dKWKt.js:272 [Draft] All hooks declared, starting conditional logic
+index-Bs5dKWKt.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754528308524
+index-Bs5dKWKt.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-Bs5dKWKt.js:48  GET https://mok-sports-draft-mokfantasysport.replit.app/api/drafts/46160cd7-595b-4f70-9956-795ea53993ff/available-teams 404 (Not Found)
+Ji @ index-Bs5dKWKt.js:48
+queryFn @ index-Bs5dKWKt.js:272
+s @ index-Bs5dKWKt.js:48
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+onSubscribe @ index-Bs5dKWKt.js:48
+subscribe @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+yg @ index-Bs5dKWKt.js:38
+qa @ index-Bs5dKWKt.js:40
+vo @ index-Bs5dKWKt.js:40
+P1 @ index-Bs5dKWKt.js:40
+xr @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40Understand this error
+index-Bs5dKWKt.js:272  GET https://mok-sports-draft-mokfantasysport.replit.app/api/drafts/46160cd7-595b-4f70-9956-795ea53993ff 404 (Not Found)
+queryFn @ index-Bs5dKWKt.js:272
+await in queryFn
+s @ index-Bs5dKWKt.js:48
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+onSubscribe @ index-Bs5dKWKt.js:48
+subscribe @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+yg @ index-Bs5dKWKt.js:38
+qa @ index-Bs5dKWKt.js:40
+vo @ index-Bs5dKWKt.js:40
+P1 @ index-Bs5dKWKt.js:40
+xr @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40Understand this error
+index-Bs5dKWKt.js:272 [Draft] Direct fetch response: {status: 404, statusText: '', headers: {…}}
+index-Bs5dKWKt.js:272 [Draft] Direct fetch response body: {"message":"Draft not found"}
+index-Bs5dKWKt.js:272 [Draft] Retrying fetch, attempt 1
+index-Bs5dKWKt.js:272 [WebSocket] 📨 MESSAGE RECEIVED
+index-Bs5dKWKt.js:272 [WebSocket] 📨 Raw data: {"type":"pong","timestamp":1754528307661}
+index-Bs5dKWKt.js:272 [WebSocket] 📨 Socket state: 1
+index-Bs5dKWKt.js:272 [WebSocket] ✅ Parsed message type: pong
+index-Bs5dKWKt.js:272 [WebSocket] 🔍 COMPREHENSIVE DEBUG - Received message: pong {type: 'pong', timestamp: 1754528307661}
+index-Bs5dKWKt.js:272 [WebSocket] 🔍 Raw message data: {
+  "type": "pong",
+  "timestamp": 1754528307661
+}
+index-Bs5dKWKt.js:272 [WebSocket] 🔍 Message timestamp: 2025-08-07T00:58:28.565Z
+index-Bs5dKWKt.js:272 [WebSocket] 🔍 Current draft ID: 46160cd7-595b-4f70-9956-795ea53993ff
+index-Bs5dKWKt.js:272 [WebSocket] 🔍 Current user ID: 9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a
+index-Bs5dKWKt.js:272 [WebSocket] Received pong from server
+index-Bs5dKWKt.js:272 [WebSocket] ✅ Message processed successfully
+index-Bs5dKWKt.js:272 [Draft] Component render started - TIME: 1754528308565
+index-Bs5dKWKt.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-Bs5dKWKt.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T00:58:28.565Z
+index-Bs5dKWKt.js:272 [Draft] RENDER TIMING - Time since component start: 1754528305463.2
+index-Bs5dKWKt.js:272 [Draft] All useState hooks declared
+index-Bs5dKWKt.js:272 [TIMER DISPLAY] serverTime: 0 apiTime: undefined displayTime: 0
+index-Bs5dKWKt.js:272 [Draft] All hooks declared, starting conditional logic
+index-Bs5dKWKt.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754528308565
+index-Bs5dKWKt.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-Bs5dKWKt.js:272 [WebSocket] 📨 MESSAGE RECEIVED
+index-Bs5dKWKt.js:272 [WebSocket] 📨 Raw data: {"type":"draft_state","draftId":"46160cd7-595b-4f70-9956-795ea53993ff","data":{},"timestamp":1754528307718}
+index-Bs5dKWKt.js:272 [WebSocket] 📨 Socket state: 1
+index-Bs5dKWKt.js:272 [WebSocket] ✅ Parsed message type: draft_state
+index-Bs5dKWKt.js:272 [WebSocket] 🔍 COMPREHENSIVE DEBUG - Received message: draft_state {type: 'draft_state', draftId: '46160cd7-595b-4f70-9956-795ea53993ff', data: {…}, timestamp: 1754528307718}
+index-Bs5dKWKt.js:272 [WebSocket] 🔍 Raw message data: {
+  "type": "draft_state",
+  "draftId": "46160cd7-595b-4f70-9956-795ea53993ff",
+  "data": {},
+  "timestamp": 1754528307718
+}
+index-Bs5dKWKt.js:272 [WebSocket] 🔍 Message timestamp: 2025-08-07T00:58:28.622Z
+index-Bs5dKWKt.js:272 [WebSocket] 🔍 Current draft ID: 46160cd7-595b-4f70-9956-795ea53993ff
+index-Bs5dKWKt.js:272 [WebSocket] 🔍 Current user ID: 9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a
+index-Bs5dKWKt.js:272 [WebSocket] Draft state update
+index-Bs5dKWKt.js:272 [WebSocket] ✅ Message processed successfully
+index-Bs5dKWKt.js:272 [Draft] Component render started - TIME: 1754528308623
+index-Bs5dKWKt.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-Bs5dKWKt.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T00:58:28.623Z
+index-Bs5dKWKt.js:272 [Draft] RENDER TIMING - Time since component start: 1754528305463.3
+index-Bs5dKWKt.js:272 [Draft] All useState hooks declared
+index-Bs5dKWKt.js:272 [TIMER DISPLAY] serverTime: 0 apiTime: undefined displayTime: 0
+index-Bs5dKWKt.js:272 [Draft] All hooks declared, starting conditional logic
+index-Bs5dKWKt.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754528308623
+index-Bs5dKWKt.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-Bs5dKWKt.js:272 [SimpleWS] ✅ Connected successfully
+index-Bs5dKWKt.js:272 [SimpleWS] Initial ping sent
+index-Bs5dKWKt.js:272 [SimpleWS] Message received: {"type":"connected","draftId":"46160cd7-595b-4f70-9956-795ea53993ff","userId":"9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a","timestamp":1754528307780,"message":"WebSocket connection established successfully on Reserved VM"}
+index-Bs5dKWKt.js:272 [Draft] Component render started - TIME: 1754528308685
+index-Bs5dKWKt.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-Bs5dKWKt.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T00:58:28.685Z
+index-Bs5dKWKt.js:272 [Draft] RENDER TIMING - Time since component start: 1754528305463
+index-Bs5dKWKt.js:272 [Draft] All useState hooks declared
+index-Bs5dKWKt.js:272 [TIMER DISPLAY] serverTime: 0 apiTime: undefined displayTime: 0
+index-Bs5dKWKt.js:272 [Draft] All hooks declared, starting conditional logic
+index-Bs5dKWKt.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754528308685
+index-Bs5dKWKt.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-Bs5dKWKt.js:272 [SimpleWS] Message received: {"type":"connected","draftId":"46160cd7-595b-4f70-9956-795ea53993ff","timestamp":1754528307781}
+index-Bs5dKWKt.js:272 [Draft] Component render started - TIME: 1754528308686
+index-Bs5dKWKt.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-Bs5dKWKt.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T00:58:28.686Z
+index-Bs5dKWKt.js:272 [Draft] RENDER TIMING - Time since component start: 1754528305463.4
+index-Bs5dKWKt.js:272 [Draft] All useState hooks declared
+index-Bs5dKWKt.js:272 [TIMER DISPLAY] serverTime: 0 apiTime: undefined displayTime: 0
+index-Bs5dKWKt.js:272 [Draft] All hooks declared, starting conditional logic
+index-Bs5dKWKt.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754528308686
+index-Bs5dKWKt.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-Bs5dKWKt.js:272 [SimpleWS] Message received: {"type":"pong","timestamp":1754528307826}
+index-Bs5dKWKt.js:272 [Draft] Component render started - TIME: 1754528308730
+index-Bs5dKWKt.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-Bs5dKWKt.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T00:58:28.730Z
+index-Bs5dKWKt.js:272 [Draft] RENDER TIMING - Time since component start: 1754528305462.6
+index-Bs5dKWKt.js:272 [Draft] All useState hooks declared
+index-Bs5dKWKt.js:272 [TIMER DISPLAY] serverTime: 0 apiTime: undefined displayTime: 0
+index-Bs5dKWKt.js:272 [Draft] All hooks declared, starting conditional logic
+index-Bs5dKWKt.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754528308731
+index-Bs5dKWKt.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-Bs5dKWKt.js:272 [SimpleWS] Message received: {"type":"draft_state","draftId":"46160cd7-595b-4f70-9956-795ea53993ff","data":{},"timestamp":1754528307881}
+index-Bs5dKWKt.js:272 [Draft] Component render started - TIME: 1754528308785
+index-Bs5dKWKt.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-Bs5dKWKt.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T00:58:28.785Z
+index-Bs5dKWKt.js:272 [Draft] RENDER TIMING - Time since component start: 1754528305462.7
+index-Bs5dKWKt.js:272 [Draft] All useState hooks declared
+index-Bs5dKWKt.js:272 [TIMER DISPLAY] serverTime: 0 apiTime: undefined displayTime: 0
+index-Bs5dKWKt.js:272 [Draft] All hooks declared, starting conditional logic
+index-Bs5dKWKt.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754528308786
+index-Bs5dKWKt.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-Bs5dKWKt.js:272 [PersistentWS] ✅ Connected successfully
+index-Bs5dKWKt.js:272 [PersistentWS] Message received: {"type":"connected","draftId":"46160cd7-595b-4f70-9956-795ea53993ff","userId":"9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a","timestamp":1754528307922,"message":"WebSocket connection established successfully on Reserved VM"}
+index-Bs5dKWKt.js:272 [Draft] Component render started - TIME: 1754528308828
+index-Bs5dKWKt.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-Bs5dKWKt.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T00:58:28.828Z
+index-Bs5dKWKt.js:272 [Draft] RENDER TIMING - Time since component start: 1754528305463.1
+index-Bs5dKWKt.js:272 [Draft] All useState hooks declared
+index-Bs5dKWKt.js:272 [TIMER DISPLAY] serverTime: 0 apiTime: undefined displayTime: 0
+index-Bs5dKWKt.js:272 [Draft] All hooks declared, starting conditional logic
+index-Bs5dKWKt.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754528308828
+index-Bs5dKWKt.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-Bs5dKWKt.js:272 [PersistentWS] Message received: {"type":"connected","draftId":"46160cd7-595b-4f70-9956-795ea53993ff","timestamp":1754528307923}
+index-Bs5dKWKt.js:272 [Draft] Component render started - TIME: 1754528308828
+index-Bs5dKWKt.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-Bs5dKWKt.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T00:58:28.829Z
+index-Bs5dKWKt.js:272 [Draft] RENDER TIMING - Time since component start: 1754528305463.4
+index-Bs5dKWKt.js:272 [Draft] All useState hooks declared
+index-Bs5dKWKt.js:272 [TIMER DISPLAY] serverTime: 0 apiTime: undefined displayTime: 0
+index-Bs5dKWKt.js:272 [Draft] All hooks declared, starting conditional logic
+index-Bs5dKWKt.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754528308829
+index-Bs5dKWKt.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-Bs5dKWKt.js:272 [PersistentWS] Message received: {"type":"pong","timestamp":1754528307970}
+index-Bs5dKWKt.js:272 [Draft] Component render started - TIME: 1754528308875
+index-Bs5dKWKt.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-Bs5dKWKt.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T00:58:28.875Z
+index-Bs5dKWKt.js:272 [Draft] RENDER TIMING - Time since component start: 1754528305463.1
+index-Bs5dKWKt.js:272 [Draft] All useState hooks declared
+index-Bs5dKWKt.js:272 [TIMER DISPLAY] serverTime: 0 apiTime: undefined displayTime: 0
+index-Bs5dKWKt.js:272 [Draft] All hooks declared, starting conditional logic
+index-Bs5dKWKt.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754528308875
+index-Bs5dKWKt.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-Bs5dKWKt.js:272 [PersistentWS] Message received: {"type":"draft_state","draftId":"46160cd7-595b-4f70-9956-795ea53993ff","data":{},"timestamp":1754528308022}
+index-Bs5dKWKt.js:272 [Draft] Component render started - TIME: 1754528308927
+index-Bs5dKWKt.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-Bs5dKWKt.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T00:58:28.927Z
+index-Bs5dKWKt.js:272 [Draft] RENDER TIMING - Time since component start: 1754528305462.7
+index-Bs5dKWKt.js:272 [Draft] All useState hooks declared
+index-Bs5dKWKt.js:272 [TIMER DISPLAY] serverTime: 0 apiTime: undefined displayTime: 0
+index-Bs5dKWKt.js:272 [Draft] All hooks declared, starting conditional logic
+index-Bs5dKWKt.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754528308927
+index-Bs5dKWKt.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-Bs5dKWKt.js:272 [StableWS] ✅ Connection #1 opened successfully
+index-Bs5dKWKt.js:272 [StableWS] Identity message sent
+index-Bs5dKWKt.js:272 [StableWS] Message received on connection #1: {"type":"connected","draftId":"46160cd7-595b-4f70-9956-795ea53993ff","userId":"9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a","timestamp":1754528308083,"message":"WebSocket connection established successfully on Reserved VM"}
+index-Bs5dKWKt.js:272 [Draft] Component render started - TIME: 1754528308989
+index-Bs5dKWKt.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-Bs5dKWKt.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T00:58:28.989Z
+index-Bs5dKWKt.js:272 [Draft] RENDER TIMING - Time since component start: 1754528305463
+index-Bs5dKWKt.js:272 [Draft] All useState hooks declared
+index-Bs5dKWKt.js:272 [TIMER DISPLAY] serverTime: 0 apiTime: undefined displayTime: 0
+index-Bs5dKWKt.js:272 [Draft] All hooks declared, starting conditional logic
+index-Bs5dKWKt.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754528308989
+index-Bs5dKWKt.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-Bs5dKWKt.js:272 [StableWS] Message received on connection #1: {"type":"connected","draftId":"46160cd7-595b-4f70-9956-795ea53993ff","timestamp":1754528308084}
+index-Bs5dKWKt.js:272 [Draft] Component render started - TIME: 1754528308990
+index-Bs5dKWKt.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-Bs5dKWKt.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T00:58:28.990Z
+index-Bs5dKWKt.js:272 [Draft] RENDER TIMING - Time since component start: 1754528305463.4
+index-Bs5dKWKt.js:272 [Draft] All useState hooks declared
+index-Bs5dKWKt.js:272 [TIMER DISPLAY] serverTime: 0 apiTime: undefined displayTime: 0
+index-Bs5dKWKt.js:272 [Draft] All hooks declared, starting conditional logic
+index-Bs5dKWKt.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754528308990
+index-Bs5dKWKt.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-Bs5dKWKt.js:272 [StableWS] Message received on connection #1: {"type":"identified","connectionId":1,"timestamp":1754528308132}
+index-Bs5dKWKt.js:272 [Draft] Component render started - TIME: 1754528309037
+index-Bs5dKWKt.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-Bs5dKWKt.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T00:58:29.037Z
+index-Bs5dKWKt.js:272 [Draft] RENDER TIMING - Time since component start: 1754528305463.1
+index-Bs5dKWKt.js:272 [Draft] All useState hooks declared
+index-Bs5dKWKt.js:272 [TIMER DISPLAY] serverTime: 0 apiTime: undefined displayTime: 0
+index-Bs5dKWKt.js:272 [Draft] All hooks declared, starting conditional logic
+index-Bs5dKWKt.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754528309037
+index-Bs5dKWKt.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-Bs5dKWKt.js:272 [StableWS] Message received on connection #1: {"type":"draft_state","draftId":"46160cd7-595b-4f70-9956-795ea53993ff","data":{},"timestamp":1754528308183}
+index-Bs5dKWKt.js:272 [Draft] Component render started - TIME: 1754528309088
+index-Bs5dKWKt.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-Bs5dKWKt.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T00:58:29.088Z
+index-Bs5dKWKt.js:272 [Draft] RENDER TIMING - Time since component start: 1754528305462.7
+index-Bs5dKWKt.js:272 [Draft] All useState hooks declared
+index-Bs5dKWKt.js:272 [TIMER DISPLAY] serverTime: 0 apiTime: undefined displayTime: 0
+index-Bs5dKWKt.js:272 [Draft] All hooks declared, starting conditional logic
+index-Bs5dKWKt.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754528309089
+index-Bs5dKWKt.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-Bs5dKWKt.js:272 [Draft] === STARTING DRAFT FETCH ===
+index-Bs5dKWKt.js:272 [Draft] Draft ID: 46160cd7-595b-4f70-9956-795ea53993ff
+index-Bs5dKWKt.js:272 [Draft] Auth status - User: Sky Evans Authenticated: true Loading: false
+index-Bs5dKWKt.js:272 [Draft] Token available: false
+index-Bs5dKWKt.js:272 [Draft] Current URL: https://mok-sports-draft-mokfantasysport.replit.app/draft/46160cd7-595b-4f70-9956-795ea53993ff
+index-Bs5dKWKt.js:272 [Draft] Current pathname: /draft/46160cd7-595b-4f70-9956-795ea53993ff
+index-Bs5dKWKt.js:272 [Draft] Making API request to: /api/drafts/46160cd7-595b-4f70-9956-795ea53993ff
+index-Bs5dKWKt.js:48  GET https://mok-sports-draft-mokfantasysport.replit.app/api/drafts/46160cd7-595b-4f70-9956-795ea53993ff/available-teams 404 (Not Found)
+Ji @ index-Bs5dKWKt.js:48
+queryFn @ index-Bs5dKWKt.js:272
+s @ index-Bs5dKWKt.js:48
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+onSubscribe @ index-Bs5dKWKt.js:48
+subscribe @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+yg @ index-Bs5dKWKt.js:38
+qa @ index-Bs5dKWKt.js:40
+vo @ index-Bs5dKWKt.js:40
+P1 @ index-Bs5dKWKt.js:40
+xr @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40Understand this error
+index-Bs5dKWKt.js:48  GET https://mok-sports-draft-mokfantasysport.replit.app/api/drafts/46160cd7-595b-4f70-9956-795ea53993ff 404 (Not Found)
+Ji @ index-Bs5dKWKt.js:48
+queryFn @ index-Bs5dKWKt.js:272
+s @ index-Bs5dKWKt.js:48
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+onSubscribe @ index-Bs5dKWKt.js:48
+subscribe @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+yg @ index-Bs5dKWKt.js:38
+qa @ index-Bs5dKWKt.js:40
+vo @ index-Bs5dKWKt.js:40
+P1 @ index-Bs5dKWKt.js:40
+xr @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40Understand this error
+index-Bs5dKWKt.js:272 [Draft] === DRAFT FETCH ERROR ===
+queryFn @ index-Bs5dKWKt.js:272
+await in queryFn
+s @ index-Bs5dKWKt.js:48
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+onSubscribe @ index-Bs5dKWKt.js:48
+subscribe @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+yg @ index-Bs5dKWKt.js:38
+qa @ index-Bs5dKWKt.js:40
+vo @ index-Bs5dKWKt.js:40
+P1 @ index-Bs5dKWKt.js:40
+xr @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40Understand this error
+index-Bs5dKWKt.js:272 [Draft] Error fetching draft data: Error: 404: {"message":"Draft not found"}
+    at Mv (index-Bs5dKWKt.js:48:43053)
+    at async Ji (index-Bs5dKWKt.js:48:43286)
+    at async queryFn (index-Bs5dKWKt.js:272:65362)
+queryFn @ index-Bs5dKWKt.js:272
+await in queryFn
+s @ index-Bs5dKWKt.js:48
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+onSubscribe @ index-Bs5dKWKt.js:48
+subscribe @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+yg @ index-Bs5dKWKt.js:38
+qa @ index-Bs5dKWKt.js:40
+vo @ index-Bs5dKWKt.js:40
+P1 @ index-Bs5dKWKt.js:40
+xr @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40Understand this error
+index-Bs5dKWKt.js:272 [Draft] Error type: object
+queryFn @ index-Bs5dKWKt.js:272
+await in queryFn
+s @ index-Bs5dKWKt.js:48
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+onSubscribe @ index-Bs5dKWKt.js:48
+subscribe @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+yg @ index-Bs5dKWKt.js:38
+qa @ index-Bs5dKWKt.js:40
+vo @ index-Bs5dKWKt.js:40
+P1 @ index-Bs5dKWKt.js:40
+xr @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40Understand this error
+index-Bs5dKWKt.js:272 [Draft] Error constructor: Error
+queryFn @ index-Bs5dKWKt.js:272
+await in queryFn
+s @ index-Bs5dKWKt.js:48
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+onSubscribe @ index-Bs5dKWKt.js:48
+subscribe @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+yg @ index-Bs5dKWKt.js:38
+qa @ index-Bs5dKWKt.js:40
+vo @ index-Bs5dKWKt.js:40
+P1 @ index-Bs5dKWKt.js:40
+xr @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40Understand this error
+index-Bs5dKWKt.js:272 [DEBUG] Module Error in draft-fetch: {error: Error: 404: {"message":"Draft not found"}
+    at Mv (https://mok-sports-draft-mokfantasysport.repli…, message: '404: {"message":"Draft not found"}', stack: 'Error: 404: {"message":"Draft not found"}\n    at M…rt.replit.app/assets/index-Bs5dKWKt.js:272:65362)', type: 'object', timestamp: '2025-08-07T00:58:29.605Z', …}
+Ih @ index-Bs5dKWKt.js:272
+queryFn @ index-Bs5dKWKt.js:272
+await in queryFn
+s @ index-Bs5dKWKt.js:48
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+onSubscribe @ index-Bs5dKWKt.js:48
+subscribe @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+yg @ index-Bs5dKWKt.js:38
+qa @ index-Bs5dKWKt.js:40
+vo @ index-Bs5dKWKt.js:40
+P1 @ index-Bs5dKWKt.js:40
+xr @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40Understand this error
+index-Bs5dKWKt.js:272 [Draft] Full error details: {message: '404: {"message":"Draft not found"}', stack: 'Error: 404: {"message":"Draft not found"}\n    at M…rt.replit.app/assets/index-Bs5dKWKt.js:272:65362)', user: 'Sky Evans', hasToken: false, isAuthenticated: true, …}
+queryFn @ index-Bs5dKWKt.js:272
+await in queryFn
+s @ index-Bs5dKWKt.js:48
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+onSubscribe @ index-Bs5dKWKt.js:48
+subscribe @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+yg @ index-Bs5dKWKt.js:38
+qa @ index-Bs5dKWKt.js:40
+vo @ index-Bs5dKWKt.js:40
+P1 @ index-Bs5dKWKt.js:40
+xr @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40Understand this error
+index-Bs5dKWKt.js:272 [Draft] Attempting direct fetch for debugging...
+index-Bs5dKWKt.js:272  GET https://mok-sports-draft-mokfantasysport.replit.app/api/drafts/46160cd7-595b-4f70-9956-795ea53993ff 404 (Not Found)
+queryFn @ index-Bs5dKWKt.js:272
+await in queryFn
+s @ index-Bs5dKWKt.js:48
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+onSubscribe @ index-Bs5dKWKt.js:48
+subscribe @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+yg @ index-Bs5dKWKt.js:38
+qa @ index-Bs5dKWKt.js:40
+vo @ index-Bs5dKWKt.js:40
+P1 @ index-Bs5dKWKt.js:40
+xr @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40Understand this error
+index-Bs5dKWKt.js:272 [Draft] Direct fetch response: {status: 404, statusText: '', headers: {…}}
+index-Bs5dKWKt.js:272 [Draft] Direct fetch response body: {"message":"Draft not found"}
+index-Bs5dKWKt.js:272 [Draft] Retrying fetch, attempt 2
+index-Bs5dKWKt.js:272 [Draft] === STARTING DRAFT FETCH ===
+index-Bs5dKWKt.js:272 [Draft] Draft ID: 46160cd7-595b-4f70-9956-795ea53993ff
+index-Bs5dKWKt.js:272 [Draft] Auth status - User: Sky Evans Authenticated: true Loading: false
+index-Bs5dKWKt.js:272 [Draft] Token available: false
+index-Bs5dKWKt.js:272 [Draft] Current URL: https://mok-sports-draft-mokfantasysport.replit.app/draft/46160cd7-595b-4f70-9956-795ea53993ff
+index-Bs5dKWKt.js:272 [Draft] Current pathname: /draft/46160cd7-595b-4f70-9956-795ea53993ff
+index-Bs5dKWKt.js:272 [Draft] Making API request to: /api/drafts/46160cd7-595b-4f70-9956-795ea53993ff
+index-Bs5dKWKt.js:48  GET https://mok-sports-draft-mokfantasysport.replit.app/api/drafts/46160cd7-595b-4f70-9956-795ea53993ff/available-teams 404 (Not Found)
+Ji @ index-Bs5dKWKt.js:48
+queryFn @ index-Bs5dKWKt.js:272
+s @ index-Bs5dKWKt.js:48
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+onSubscribe @ index-Bs5dKWKt.js:48
+subscribe @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+yg @ index-Bs5dKWKt.js:38
+qa @ index-Bs5dKWKt.js:40
+vo @ index-Bs5dKWKt.js:40
+P1 @ index-Bs5dKWKt.js:40
+xr @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40Understand this error
+index-Bs5dKWKt.js:48  GET https://mok-sports-draft-mokfantasysport.replit.app/api/drafts/46160cd7-595b-4f70-9956-795ea53993ff 404 (Not Found)
+Ji @ index-Bs5dKWKt.js:48
+queryFn @ index-Bs5dKWKt.js:272
+s @ index-Bs5dKWKt.js:48
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+onSubscribe @ index-Bs5dKWKt.js:48
+subscribe @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+yg @ index-Bs5dKWKt.js:38
+qa @ index-Bs5dKWKt.js:40
+vo @ index-Bs5dKWKt.js:40
+P1 @ index-Bs5dKWKt.js:40
+xr @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40Understand this error
+index-Bs5dKWKt.js:272 [Draft] === DRAFT FETCH ERROR ===
+queryFn @ index-Bs5dKWKt.js:272
+await in queryFn
+s @ index-Bs5dKWKt.js:48
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+onSubscribe @ index-Bs5dKWKt.js:48
+subscribe @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+yg @ index-Bs5dKWKt.js:38
+qa @ index-Bs5dKWKt.js:40
+vo @ index-Bs5dKWKt.js:40
+P1 @ index-Bs5dKWKt.js:40
+xr @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40Understand this error
+index-Bs5dKWKt.js:272 [Draft] Error fetching draft data: Error: 404: {"message":"Draft not found"}
+    at Mv (index-Bs5dKWKt.js:48:43053)
+    at async Ji (index-Bs5dKWKt.js:48:43286)
+    at async queryFn (index-Bs5dKWKt.js:272:65362)
+queryFn @ index-Bs5dKWKt.js:272
+await in queryFn
+s @ index-Bs5dKWKt.js:48
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+onSubscribe @ index-Bs5dKWKt.js:48
+subscribe @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+yg @ index-Bs5dKWKt.js:38
+qa @ index-Bs5dKWKt.js:40
+vo @ index-Bs5dKWKt.js:40
+P1 @ index-Bs5dKWKt.js:40
+xr @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40Understand this error
+index-Bs5dKWKt.js:272 [Draft] Error type: object
+queryFn @ index-Bs5dKWKt.js:272
+await in queryFn
+s @ index-Bs5dKWKt.js:48
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+onSubscribe @ index-Bs5dKWKt.js:48
+subscribe @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+yg @ index-Bs5dKWKt.js:38
+qa @ index-Bs5dKWKt.js:40
+vo @ index-Bs5dKWKt.js:40
+P1 @ index-Bs5dKWKt.js:40
+xr @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40Understand this error
+index-Bs5dKWKt.js:272 [Draft] Error constructor: Error
+queryFn @ index-Bs5dKWKt.js:272
+await in queryFn
+s @ index-Bs5dKWKt.js:48
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+onSubscribe @ index-Bs5dKWKt.js:48
+subscribe @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+yg @ index-Bs5dKWKt.js:38
+qa @ index-Bs5dKWKt.js:40
+vo @ index-Bs5dKWKt.js:40
+P1 @ index-Bs5dKWKt.js:40
+xr @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40Understand this error
+index-Bs5dKWKt.js:272 [DEBUG] Module Error in draft-fetch: {error: Error: 404: {"message":"Draft not found"}
+    at Mv (https://mok-sports-draft-mokfantasysport.repli…, message: '404: {"message":"Draft not found"}', stack: 'Error: 404: {"message":"Draft not found"}\n    at M…rt.replit.app/assets/index-Bs5dKWKt.js:272:65362)', type: 'object', timestamp: '2025-08-07T00:58:31.768Z', …}
+Ih @ index-Bs5dKWKt.js:272
+queryFn @ index-Bs5dKWKt.js:272
+await in queryFn
+s @ index-Bs5dKWKt.js:48
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+onSubscribe @ index-Bs5dKWKt.js:48
+subscribe @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+yg @ index-Bs5dKWKt.js:38
+qa @ index-Bs5dKWKt.js:40
+vo @ index-Bs5dKWKt.js:40
+P1 @ index-Bs5dKWKt.js:40
+xr @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40Understand this error
+index-Bs5dKWKt.js:272 [Draft] Full error details: {message: '404: {"message":"Draft not found"}', stack: 'Error: 404: {"message":"Draft not found"}\n    at M…rt.replit.app/assets/index-Bs5dKWKt.js:272:65362)', user: 'Sky Evans', hasToken: false, isAuthenticated: true, …}
+queryFn @ index-Bs5dKWKt.js:272
+await in queryFn
+s @ index-Bs5dKWKt.js:48
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+onSubscribe @ index-Bs5dKWKt.js:48
+subscribe @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+yg @ index-Bs5dKWKt.js:38
+qa @ index-Bs5dKWKt.js:40
+vo @ index-Bs5dKWKt.js:40
+P1 @ index-Bs5dKWKt.js:40
+xr @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40Understand this error
+index-Bs5dKWKt.js:272 [Draft] Attempting direct fetch for debugging...
+index-Bs5dKWKt.js:272  GET https://mok-sports-draft-mokfantasysport.replit.app/api/drafts/46160cd7-595b-4f70-9956-795ea53993ff 404 (Not Found)
+queryFn @ index-Bs5dKWKt.js:272
+await in queryFn
+s @ index-Bs5dKWKt.js:48
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+onSubscribe @ index-Bs5dKWKt.js:48
+subscribe @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+yg @ index-Bs5dKWKt.js:38
+qa @ index-Bs5dKWKt.js:40
+vo @ index-Bs5dKWKt.js:40
+P1 @ index-Bs5dKWKt.js:40
+xr @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40Understand this error
+index-Bs5dKWKt.js:272 [Draft] Direct fetch response: {status: 404, statusText: '', headers: {…}}
+index-Bs5dKWKt.js:272 [Draft] Direct fetch response body: {"message":"Draft not found"}
+index-Bs5dKWKt.js:272 [Draft] Retrying fetch, attempt 3
+index-Bs5dKWKt.js:272 [Draft] Component render started - TIME: 1754528313362
+index-Bs5dKWKt.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-Bs5dKWKt.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T00:58:33.362Z
+index-Bs5dKWKt.js:272 [Draft] RENDER TIMING - Time since component start: 1754528305463.2
+index-Bs5dKWKt.js:272 [Draft] All useState hooks declared
+index-Bs5dKWKt.js:272 [TIMER DISPLAY] serverTime: 0 apiTime: undefined displayTime: 0
+index-Bs5dKWKt.js:272 [Draft] All hooks declared, starting conditional logic
+index-Bs5dKWKt.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754528313362
+index-Bs5dKWKt.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-Bs5dKWKt.js:48  GET https://mok-sports-draft-mokfantasysport.replit.app/api/drafts/46160cd7-595b-4f70-9956-795ea53993ff/available-teams 404 (Not Found)
+Ji @ index-Bs5dKWKt.js:48
+queryFn @ index-Bs5dKWKt.js:272
+s @ index-Bs5dKWKt.js:48
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+onSubscribe @ index-Bs5dKWKt.js:48
+subscribe @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+yg @ index-Bs5dKWKt.js:38
+qa @ index-Bs5dKWKt.js:40
+vo @ index-Bs5dKWKt.js:40
+P1 @ index-Bs5dKWKt.js:40
+xr @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40Understand this error
+index-Bs5dKWKt.js:272 [Draft] === STARTING DRAFT FETCH ===
+index-Bs5dKWKt.js:272 [Draft] Draft ID: 46160cd7-595b-4f70-9956-795ea53993ff
+index-Bs5dKWKt.js:272 [Draft] Auth status - User: Sky Evans Authenticated: true Loading: false
+index-Bs5dKWKt.js:272 [Draft] Token available: false
+index-Bs5dKWKt.js:272 [Draft] Current URL: https://mok-sports-draft-mokfantasysport.replit.app/draft/46160cd7-595b-4f70-9956-795ea53993ff
+index-Bs5dKWKt.js:272 [Draft] Current pathname: /draft/46160cd7-595b-4f70-9956-795ea53993ff
+index-Bs5dKWKt.js:272 [Draft] Making API request to: /api/drafts/46160cd7-595b-4f70-9956-795ea53993ff
+index-Bs5dKWKt.js:48  GET https://mok-sports-draft-mokfantasysport.replit.app/api/drafts/46160cd7-595b-4f70-9956-795ea53993ff 404 (Not Found)
+Ji @ index-Bs5dKWKt.js:48
+queryFn @ index-Bs5dKWKt.js:272
+s @ index-Bs5dKWKt.js:48
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+onSubscribe @ index-Bs5dKWKt.js:48
+subscribe @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+yg @ index-Bs5dKWKt.js:38
+qa @ index-Bs5dKWKt.js:40
+vo @ index-Bs5dKWKt.js:40
+P1 @ index-Bs5dKWKt.js:40
+xr @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40Understand this error
+index-Bs5dKWKt.js:272 [Draft] === DRAFT FETCH ERROR ===
+queryFn @ index-Bs5dKWKt.js:272
+await in queryFn
+s @ index-Bs5dKWKt.js:48
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+onSubscribe @ index-Bs5dKWKt.js:48
+subscribe @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+yg @ index-Bs5dKWKt.js:38
+qa @ index-Bs5dKWKt.js:40
+vo @ index-Bs5dKWKt.js:40
+P1 @ index-Bs5dKWKt.js:40
+xr @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40Understand this error
+index-Bs5dKWKt.js:272 [Draft] Error fetching draft data: Error: 404: {"message":"Draft not found"}
+    at Mv (index-Bs5dKWKt.js:48:43053)
+    at async Ji (index-Bs5dKWKt.js:48:43286)
+    at async queryFn (index-Bs5dKWKt.js:272:65362)
+queryFn @ index-Bs5dKWKt.js:272
+await in queryFn
+s @ index-Bs5dKWKt.js:48
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+onSubscribe @ index-Bs5dKWKt.js:48
+subscribe @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+yg @ index-Bs5dKWKt.js:38
+qa @ index-Bs5dKWKt.js:40
+vo @ index-Bs5dKWKt.js:40
+P1 @ index-Bs5dKWKt.js:40
+xr @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40Understand this error
+index-Bs5dKWKt.js:272 [Draft] Error type: object
+queryFn @ index-Bs5dKWKt.js:272
+await in queryFn
+s @ index-Bs5dKWKt.js:48
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+onSubscribe @ index-Bs5dKWKt.js:48
+subscribe @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+yg @ index-Bs5dKWKt.js:38
+qa @ index-Bs5dKWKt.js:40
+vo @ index-Bs5dKWKt.js:40
+P1 @ index-Bs5dKWKt.js:40
+xr @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40Understand this error
+index-Bs5dKWKt.js:272 [Draft] Error constructor: Error
+queryFn @ index-Bs5dKWKt.js:272
+await in queryFn
+s @ index-Bs5dKWKt.js:48
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+onSubscribe @ index-Bs5dKWKt.js:48
+subscribe @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+yg @ index-Bs5dKWKt.js:38
+qa @ index-Bs5dKWKt.js:40
+vo @ index-Bs5dKWKt.js:40
+P1 @ index-Bs5dKWKt.js:40
+xr @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40Understand this error
+index-Bs5dKWKt.js:272 [DEBUG] Module Error in draft-fetch: {error: Error: 404: {"message":"Draft not found"}
+    at Mv (https://mok-sports-draft-mokfantasysport.repli…, message: '404: {"message":"Draft not found"}', stack: 'Error: 404: {"message":"Draft not found"}\n    at M…rt.replit.app/assets/index-Bs5dKWKt.js:272:65362)', type: 'object', timestamp: '2025-08-07T00:58:35.929Z', …}
+Ih @ index-Bs5dKWKt.js:272
+queryFn @ index-Bs5dKWKt.js:272
+await in queryFn
+s @ index-Bs5dKWKt.js:48
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+onSubscribe @ index-Bs5dKWKt.js:48
+subscribe @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+yg @ index-Bs5dKWKt.js:38
+qa @ index-Bs5dKWKt.js:40
+vo @ index-Bs5dKWKt.js:40
+P1 @ index-Bs5dKWKt.js:40
+xr @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40Understand this error
+index-Bs5dKWKt.js:272 [Draft] Full error details: {message: '404: {"message":"Draft not found"}', stack: 'Error: 404: {"message":"Draft not found"}\n    at M…rt.replit.app/assets/index-Bs5dKWKt.js:272:65362)', user: 'Sky Evans', hasToken: false, isAuthenticated: true, …}
+queryFn @ index-Bs5dKWKt.js:272
+await in queryFn
+s @ index-Bs5dKWKt.js:48
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+onSubscribe @ index-Bs5dKWKt.js:48
+subscribe @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+yg @ index-Bs5dKWKt.js:38
+qa @ index-Bs5dKWKt.js:40
+vo @ index-Bs5dKWKt.js:40
+P1 @ index-Bs5dKWKt.js:40
+xr @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40Understand this error
+index-Bs5dKWKt.js:272 [Draft] Attempting direct fetch for debugging...
+index-Bs5dKWKt.js:272  GET https://mok-sports-draft-mokfantasysport.replit.app/api/drafts/46160cd7-595b-4f70-9956-795ea53993ff 404 (Not Found)
+queryFn @ index-Bs5dKWKt.js:272
+await in queryFn
+s @ index-Bs5dKWKt.js:48
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+onSubscribe @ index-Bs5dKWKt.js:48
+subscribe @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+yg @ index-Bs5dKWKt.js:38
+qa @ index-Bs5dKWKt.js:40
+vo @ index-Bs5dKWKt.js:40
+P1 @ index-Bs5dKWKt.js:40
+xr @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40Understand this error
+index-Bs5dKWKt.js:272 [Draft] Direct fetch response: {status: 404, statusText: '', headers: {…}}
+index-Bs5dKWKt.js:272 [Draft] Direct fetch response body: {"message":"Draft not found"}
+index-Bs5dKWKt.js:272 [Draft] Retrying fetch, attempt 4
+index-Bs5dKWKt.js:272 [Draft] Component render started - TIME: 1754528316022
+index-Bs5dKWKt.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-Bs5dKWKt.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T00:58:36.022Z
+index-Bs5dKWKt.js:272 [Draft] RENDER TIMING - Time since component start: 1754528305463.1
+index-Bs5dKWKt.js:272 [Draft] All useState hooks declared
+index-Bs5dKWKt.js:272 Draft fetch error: Error: 404: {"message":"Draft not found"}
+    at Mv (index-Bs5dKWKt.js:48:43053)
+    at async Ji (index-Bs5dKWKt.js:48:43286)
+    at async queryFn (index-Bs5dKWKt.js:272:65362)
+Rj @ index-Bs5dKWKt.js:272
+Cd @ index-Bs5dKWKt.js:38
+Hc @ index-Bs5dKWKt.js:40
+nv @ index-Bs5dKWKt.js:40
+Zg @ index-Bs5dKWKt.js:40
+k1 @ index-Bs5dKWKt.js:40
+Pa @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40
+setTimeout
+o @ index-Bs5dKWKt.js:48
+i @ index-Bs5dKWKt.js:48
+batch @ index-Bs5dKWKt.js:48
+fn @ index-Bs5dKWKt.js:48
+a @ index-Bs5dKWKt.js:48
+h @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+onSubscribe @ index-Bs5dKWKt.js:48
+subscribe @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+yg @ index-Bs5dKWKt.js:38
+qa @ index-Bs5dKWKt.js:40
+vo @ index-Bs5dKWKt.js:40
+P1 @ index-Bs5dKWKt.js:40
+xr @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40Understand this error
+index-Bs5dKWKt.js:272 [TIMER DISPLAY] serverTime: 0 apiTime: undefined displayTime: 0
+index-Bs5dKWKt.js:272 [Draft] All hooks declared, starting conditional logic
+index-Bs5dKWKt.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: false error: true draftData: false isAuthenticated: true Time: 1754528316022
+index-Bs5dKWKt.js:272 Draft error: Error: 404: {"message":"Draft not found"}
+    at Mv (index-Bs5dKWKt.js:48:43053)
+    at async Ji (index-Bs5dKWKt.js:48:43286)
+    at async queryFn (index-Bs5dKWKt.js:272:65362)
+Rj @ index-Bs5dKWKt.js:272
+Cd @ index-Bs5dKWKt.js:38
+Hc @ index-Bs5dKWKt.js:40
+nv @ index-Bs5dKWKt.js:40
+Zg @ index-Bs5dKWKt.js:40
+k1 @ index-Bs5dKWKt.js:40
+Pa @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40
+setTimeout
+o @ index-Bs5dKWKt.js:48
+i @ index-Bs5dKWKt.js:48
+batch @ index-Bs5dKWKt.js:48
+fn @ index-Bs5dKWKt.js:48
+a @ index-Bs5dKWKt.js:48
+h @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+onSubscribe @ index-Bs5dKWKt.js:48
+subscribe @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+yg @ index-Bs5dKWKt.js:38
+qa @ index-Bs5dKWKt.js:40
+vo @ index-Bs5dKWKt.js:40
+P1 @ index-Bs5dKWKt.js:40
+xr @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40Understand this error
+index-Bs5dKWKt.js:272 [Draft Debug] Full error details: {error: Error: 404: {"message":"Draft not found"}
+    at Mv (https://mok-sports-draft-mokfantasysport.repli…, errorMessage: '404: {"message":"Draft not found"}', draftId: '46160cd7-595b-4f70-9956-795ea53993ff', connectionStatus: 'connected', hasToken: false, …}
+index-Bs5dKWKt.js:48  GET https://mok-sports-draft-mokfantasysport.replit.app/api/drafts/46160cd7-595b-4f70-9956-795ea53993ff/available-teams 404 (Not Found)
+Ji @ index-Bs5dKWKt.js:48
+queryFn @ index-Bs5dKWKt.js:272
+s @ index-Bs5dKWKt.js:48
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+setInterval
+lu @ index-Bs5dKWKt.js:48
+cu @ index-Bs5dKWKt.js:48
+onQueryUpdate @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+batch @ index-Bs5dKWKt.js:48
+fn @ index-Bs5dKWKt.js:48
+a @ index-Bs5dKWKt.js:48
+h @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+onSubscribe @ index-Bs5dKWKt.js:48
+subscribe @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+yg @ index-Bs5dKWKt.js:38
+qa @ index-Bs5dKWKt.js:40
+vo @ index-Bs5dKWKt.js:40
+P1 @ index-Bs5dKWKt.js:40
+xr @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40Understand this error
+index-Bs5dKWKt.js:272 [Draft] === STARTING DRAFT FETCH ===
+index-Bs5dKWKt.js:272 [Draft] Draft ID: 46160cd7-595b-4f70-9956-795ea53993ff
+index-Bs5dKWKt.js:272 [Draft] Auth status - User: Sky Evans Authenticated: true Loading: false
+index-Bs5dKWKt.js:272 [Draft] Token available: false
+index-Bs5dKWKt.js:272 [Draft] Current URL: https://mok-sports-draft-mokfantasysport.replit.app/draft/46160cd7-595b-4f70-9956-795ea53993ff
+index-Bs5dKWKt.js:272 [Draft] Current pathname: /draft/46160cd7-595b-4f70-9956-795ea53993ff
+index-Bs5dKWKt.js:272 [Draft] Making API request to: /api/drafts/46160cd7-595b-4f70-9956-795ea53993ff
+index-Bs5dKWKt.js:272 [Draft] Component render started - TIME: 1754528321024
+index-Bs5dKWKt.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-Bs5dKWKt.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T00:58:41.025Z
+index-Bs5dKWKt.js:272 [Draft] RENDER TIMING - Time since component start: 1754528305463.4
+index-Bs5dKWKt.js:272 [Draft] All useState hooks declared
+index-Bs5dKWKt.js:272 [TIMER DISPLAY] serverTime: 0 apiTime: undefined displayTime: 0
+index-Bs5dKWKt.js:272 [Draft] All hooks declared, starting conditional logic
+index-Bs5dKWKt.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754528321025
+index-Bs5dKWKt.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-Bs5dKWKt.js:48  GET https://mok-sports-draft-mokfantasysport.replit.app/api/drafts/46160cd7-595b-4f70-9956-795ea53993ff 404 (Not Found)
+Ji @ index-Bs5dKWKt.js:48
+queryFn @ index-Bs5dKWKt.js:272
+s @ index-Bs5dKWKt.js:48
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+setInterval
+lu @ index-Bs5dKWKt.js:48
+cu @ index-Bs5dKWKt.js:48
+onQueryUpdate @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+batch @ index-Bs5dKWKt.js:48
+fn @ index-Bs5dKWKt.js:48
+a @ index-Bs5dKWKt.js:48
+h @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+onSubscribe @ index-Bs5dKWKt.js:48
+subscribe @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+yg @ index-Bs5dKWKt.js:38
+qa @ index-Bs5dKWKt.js:40
+vo @ index-Bs5dKWKt.js:40
+P1 @ index-Bs5dKWKt.js:40
+xr @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40Understand this error
+index-Bs5dKWKt.js:272 [Draft] === DRAFT FETCH ERROR ===
+queryFn @ index-Bs5dKWKt.js:272
+await in queryFn
+s @ index-Bs5dKWKt.js:48
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+setInterval
+lu @ index-Bs5dKWKt.js:48
+cu @ index-Bs5dKWKt.js:48
+onQueryUpdate @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+batch @ index-Bs5dKWKt.js:48
+fn @ index-Bs5dKWKt.js:48
+a @ index-Bs5dKWKt.js:48
+h @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+onSubscribe @ index-Bs5dKWKt.js:48
+subscribe @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+yg @ index-Bs5dKWKt.js:38
+qa @ index-Bs5dKWKt.js:40
+vo @ index-Bs5dKWKt.js:40
+P1 @ index-Bs5dKWKt.js:40
+xr @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40Understand this error
+index-Bs5dKWKt.js:272 [Draft] Error fetching draft data: Error: 404: {"message":"Draft not found"}
+    at Mv (index-Bs5dKWKt.js:48:43053)
+    at async Ji (index-Bs5dKWKt.js:48:43286)
+    at async queryFn (index-Bs5dKWKt.js:272:65362)
+queryFn @ index-Bs5dKWKt.js:272
+await in queryFn
+s @ index-Bs5dKWKt.js:48
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+setInterval
+lu @ index-Bs5dKWKt.js:48
+cu @ index-Bs5dKWKt.js:48
+onQueryUpdate @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+batch @ index-Bs5dKWKt.js:48
+fn @ index-Bs5dKWKt.js:48
+a @ index-Bs5dKWKt.js:48
+h @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+onSubscribe @ index-Bs5dKWKt.js:48
+subscribe @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+yg @ index-Bs5dKWKt.js:38
+qa @ index-Bs5dKWKt.js:40
+vo @ index-Bs5dKWKt.js:40
+P1 @ index-Bs5dKWKt.js:40
+xr @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40Understand this error
+index-Bs5dKWKt.js:272 [Draft] Error type: object
+queryFn @ index-Bs5dKWKt.js:272
+await in queryFn
+s @ index-Bs5dKWKt.js:48
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+setInterval
+lu @ index-Bs5dKWKt.js:48
+cu @ index-Bs5dKWKt.js:48
+onQueryUpdate @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+batch @ index-Bs5dKWKt.js:48
+fn @ index-Bs5dKWKt.js:48
+a @ index-Bs5dKWKt.js:48
+h @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+onSubscribe @ index-Bs5dKWKt.js:48
+subscribe @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+yg @ index-Bs5dKWKt.js:38
+qa @ index-Bs5dKWKt.js:40
+vo @ index-Bs5dKWKt.js:40
+P1 @ index-Bs5dKWKt.js:40
+xr @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40Understand this error
+index-Bs5dKWKt.js:272 [Draft] Error constructor: Error
+queryFn @ index-Bs5dKWKt.js:272
+await in queryFn
+s @ index-Bs5dKWKt.js:48
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+setInterval
+lu @ index-Bs5dKWKt.js:48
+cu @ index-Bs5dKWKt.js:48
+onQueryUpdate @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+batch @ index-Bs5dKWKt.js:48
+fn @ index-Bs5dKWKt.js:48
+a @ index-Bs5dKWKt.js:48
+h @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+onSubscribe @ index-Bs5dKWKt.js:48
+subscribe @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+yg @ index-Bs5dKWKt.js:38
+qa @ index-Bs5dKWKt.js:40
+vo @ index-Bs5dKWKt.js:40
+P1 @ index-Bs5dKWKt.js:40
+xr @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40Understand this error
+index-Bs5dKWKt.js:272 [DEBUG] Module Error in draft-fetch: {error: Error: 404: {"message":"Draft not found"}
+    at Mv (https://mok-sports-draft-mokfantasysport.repli…, message: '404: {"message":"Draft not found"}', stack: 'Error: 404: {"message":"Draft not found"}\n    at M…rt.replit.app/assets/index-Bs5dKWKt.js:272:65362)', type: 'object', timestamp: '2025-08-07T00:58:41.171Z', …}
+Ih @ index-Bs5dKWKt.js:272
+queryFn @ index-Bs5dKWKt.js:272
+await in queryFn
+s @ index-Bs5dKWKt.js:48
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+setInterval
+lu @ index-Bs5dKWKt.js:48
+cu @ index-Bs5dKWKt.js:48
+onQueryUpdate @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+batch @ index-Bs5dKWKt.js:48
+fn @ index-Bs5dKWKt.js:48
+a @ index-Bs5dKWKt.js:48
+h @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+onSubscribe @ index-Bs5dKWKt.js:48
+subscribe @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+yg @ index-Bs5dKWKt.js:38
+qa @ index-Bs5dKWKt.js:40
+vo @ index-Bs5dKWKt.js:40
+P1 @ index-Bs5dKWKt.js:40
+xr @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40Understand this error
+index-Bs5dKWKt.js:272 [Draft] Full error details: {message: '404: {"message":"Draft not found"}', stack: 'Error: 404: {"message":"Draft not found"}\n    at M…rt.replit.app/assets/index-Bs5dKWKt.js:272:65362)', user: 'Sky Evans', hasToken: false, isAuthenticated: true, …}
+queryFn @ index-Bs5dKWKt.js:272
+await in queryFn
+s @ index-Bs5dKWKt.js:48
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+setInterval
+lu @ index-Bs5dKWKt.js:48
+cu @ index-Bs5dKWKt.js:48
+onQueryUpdate @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+batch @ index-Bs5dKWKt.js:48
+fn @ index-Bs5dKWKt.js:48
+a @ index-Bs5dKWKt.js:48
+h @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+onSubscribe @ index-Bs5dKWKt.js:48
+subscribe @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+yg @ index-Bs5dKWKt.js:38
+qa @ index-Bs5dKWKt.js:40
+vo @ index-Bs5dKWKt.js:40
+P1 @ index-Bs5dKWKt.js:40
+xr @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40Understand this error
+index-Bs5dKWKt.js:272 [Draft] Attempting direct fetch for debugging...
+index-Bs5dKWKt.js:272  GET https://mok-sports-draft-mokfantasysport.replit.app/api/drafts/46160cd7-595b-4f70-9956-795ea53993ff 404 (Not Found)
+queryFn @ index-Bs5dKWKt.js:272
+await in queryFn
+s @ index-Bs5dKWKt.js:48
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+setInterval
+lu @ index-Bs5dKWKt.js:48
+cu @ index-Bs5dKWKt.js:48
+onQueryUpdate @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+batch @ index-Bs5dKWKt.js:48
+fn @ index-Bs5dKWKt.js:48
+a @ index-Bs5dKWKt.js:48
+h @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+onSubscribe @ index-Bs5dKWKt.js:48
+subscribe @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+yg @ index-Bs5dKWKt.js:38
+qa @ index-Bs5dKWKt.js:40
+vo @ index-Bs5dKWKt.js:40
+P1 @ index-Bs5dKWKt.js:40
+xr @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40Understand this error
+index-Bs5dKWKt.js:272 [Draft] Direct fetch response: {status: 404, statusText: '', headers: {…}}
+index-Bs5dKWKt.js:272 [Draft] Direct fetch response body: {"message":"Draft not found"}
+index-Bs5dKWKt.js:272 [Draft] Retrying fetch, attempt 1
+index-Bs5dKWKt.js:48  GET https://mok-sports-draft-mokfantasysport.replit.app/api/drafts/46160cd7-595b-4f70-9956-795ea53993ff/available-teams 404 (Not Found)
+Ji @ index-Bs5dKWKt.js:48
+queryFn @ index-Bs5dKWKt.js:272
+s @ index-Bs5dKWKt.js:48
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+setInterval
+lu @ index-Bs5dKWKt.js:48
+cu @ index-Bs5dKWKt.js:48
+onQueryUpdate @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+batch @ index-Bs5dKWKt.js:48
+fn @ index-Bs5dKWKt.js:48
+a @ index-Bs5dKWKt.js:48
+h @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+onSubscribe @ index-Bs5dKWKt.js:48
+subscribe @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+yg @ index-Bs5dKWKt.js:38
+qa @ index-Bs5dKWKt.js:40
+vo @ index-Bs5dKWKt.js:40
+P1 @ index-Bs5dKWKt.js:40
+xr @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40Understand this error
+index-Bs5dKWKt.js:272 [Draft] === STARTING DRAFT FETCH ===
+index-Bs5dKWKt.js:272 [Draft] Draft ID: 46160cd7-595b-4f70-9956-795ea53993ff
+index-Bs5dKWKt.js:272 [Draft] Auth status - User: Sky Evans Authenticated: true Loading: false
+index-Bs5dKWKt.js:272 [Draft] Token available: false
+index-Bs5dKWKt.js:272 [Draft] Current URL: https://mok-sports-draft-mokfantasysport.replit.app/draft/46160cd7-595b-4f70-9956-795ea53993ff
+index-Bs5dKWKt.js:272 [Draft] Current pathname: /draft/46160cd7-595b-4f70-9956-795ea53993ff
+index-Bs5dKWKt.js:272 [Draft] Making API request to: /api/drafts/46160cd7-595b-4f70-9956-795ea53993ff
+index-Bs5dKWKt.js:48  GET https://mok-sports-draft-mokfantasysport.replit.app/api/drafts/46160cd7-595b-4f70-9956-795ea53993ff 404 (Not Found)
+Ji @ index-Bs5dKWKt.js:48
+queryFn @ index-Bs5dKWKt.js:272
+s @ index-Bs5dKWKt.js:48
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+setInterval
+lu @ index-Bs5dKWKt.js:48
+cu @ index-Bs5dKWKt.js:48
+onQueryUpdate @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+batch @ index-Bs5dKWKt.js:48
+fn @ index-Bs5dKWKt.js:48
+a @ index-Bs5dKWKt.js:48
+h @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+onSubscribe @ index-Bs5dKWKt.js:48
+subscribe @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+yg @ index-Bs5dKWKt.js:38
+qa @ index-Bs5dKWKt.js:40
+vo @ index-Bs5dKWKt.js:40
+P1 @ index-Bs5dKWKt.js:40
+xr @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40Understand this error
+index-Bs5dKWKt.js:272 [Draft] === DRAFT FETCH ERROR ===
+queryFn @ index-Bs5dKWKt.js:272
+await in queryFn
+s @ index-Bs5dKWKt.js:48
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+setInterval
+lu @ index-Bs5dKWKt.js:48
+cu @ index-Bs5dKWKt.js:48
+onQueryUpdate @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+batch @ index-Bs5dKWKt.js:48
+fn @ index-Bs5dKWKt.js:48
+a @ index-Bs5dKWKt.js:48
+h @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+onSubscribe @ index-Bs5dKWKt.js:48
+subscribe @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+yg @ index-Bs5dKWKt.js:38
+qa @ index-Bs5dKWKt.js:40
+vo @ index-Bs5dKWKt.js:40
+P1 @ index-Bs5dKWKt.js:40
+xr @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40Understand this error
+index-Bs5dKWKt.js:272 [Draft] Error fetching draft data: Error: 404: {"message":"Draft not found"}
+    at Mv (index-Bs5dKWKt.js:48:43053)
+    at async Ji (index-Bs5dKWKt.js:48:43286)
+    at async queryFn (index-Bs5dKWKt.js:272:65362)
+queryFn @ index-Bs5dKWKt.js:272
+await in queryFn
+s @ index-Bs5dKWKt.js:48
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+setInterval
+lu @ index-Bs5dKWKt.js:48
+cu @ index-Bs5dKWKt.js:48
+onQueryUpdate @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+batch @ index-Bs5dKWKt.js:48
+fn @ index-Bs5dKWKt.js:48
+a @ index-Bs5dKWKt.js:48
+h @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+onSubscribe @ index-Bs5dKWKt.js:48
+subscribe @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+yg @ index-Bs5dKWKt.js:38
+qa @ index-Bs5dKWKt.js:40
+vo @ index-Bs5dKWKt.js:40
+P1 @ index-Bs5dKWKt.js:40
+xr @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40Understand this error
+index-Bs5dKWKt.js:272 [Draft] Error type: object
+queryFn @ index-Bs5dKWKt.js:272
+await in queryFn
+s @ index-Bs5dKWKt.js:48
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+setInterval
+lu @ index-Bs5dKWKt.js:48
+cu @ index-Bs5dKWKt.js:48
+onQueryUpdate @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+batch @ index-Bs5dKWKt.js:48
+fn @ index-Bs5dKWKt.js:48
+a @ index-Bs5dKWKt.js:48
+h @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+onSubscribe @ index-Bs5dKWKt.js:48
+subscribe @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+yg @ index-Bs5dKWKt.js:38
+qa @ index-Bs5dKWKt.js:40
+vo @ index-Bs5dKWKt.js:40
+P1 @ index-Bs5dKWKt.js:40
+xr @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40Understand this error
+index-Bs5dKWKt.js:272 [Draft] Error constructor: Error
+queryFn @ index-Bs5dKWKt.js:272
+await in queryFn
+s @ index-Bs5dKWKt.js:48
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+setInterval
+lu @ index-Bs5dKWKt.js:48
+cu @ index-Bs5dKWKt.js:48
+onQueryUpdate @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+batch @ index-Bs5dKWKt.js:48
+fn @ index-Bs5dKWKt.js:48
+a @ index-Bs5dKWKt.js:48
+h @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+onSubscribe @ index-Bs5dKWKt.js:48
+subscribe @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+yg @ index-Bs5dKWKt.js:38
+qa @ index-Bs5dKWKt.js:40
+vo @ index-Bs5dKWKt.js:40
+P1 @ index-Bs5dKWKt.js:40
+xr @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40Understand this error
+index-Bs5dKWKt.js:272 [DEBUG] Module Error in draft-fetch: {error: Error: 404: {"message":"Draft not found"}
+    at Mv (https://mok-sports-draft-mokfantasysport.repli…, message: '404: {"message":"Draft not found"}', stack: 'Error: 404: {"message":"Draft not found"}\n    at M…rt.replit.app/assets/index-Bs5dKWKt.js:272:65362)', type: 'object', timestamp: '2025-08-07T00:58:42.352Z', …}
+Ih @ index-Bs5dKWKt.js:272
+queryFn @ index-Bs5dKWKt.js:272
+await in queryFn
+s @ index-Bs5dKWKt.js:48
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+setInterval
+lu @ index-Bs5dKWKt.js:48
+cu @ index-Bs5dKWKt.js:48
+onQueryUpdate @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+batch @ index-Bs5dKWKt.js:48
+fn @ index-Bs5dKWKt.js:48
+a @ index-Bs5dKWKt.js:48
+h @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+onSubscribe @ index-Bs5dKWKt.js:48
+subscribe @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+yg @ index-Bs5dKWKt.js:38
+qa @ index-Bs5dKWKt.js:40
+vo @ index-Bs5dKWKt.js:40
+P1 @ index-Bs5dKWKt.js:40
+xr @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40Understand this error
+index-Bs5dKWKt.js:272 [Draft] Full error details: {message: '404: {"message":"Draft not found"}', stack: 'Error: 404: {"message":"Draft not found"}\n    at M…rt.replit.app/assets/index-Bs5dKWKt.js:272:65362)', user: 'Sky Evans', hasToken: false, isAuthenticated: true, …}
+queryFn @ index-Bs5dKWKt.js:272
+await in queryFn
+s @ index-Bs5dKWKt.js:48
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+setInterval
+lu @ index-Bs5dKWKt.js:48
+cu @ index-Bs5dKWKt.js:48
+onQueryUpdate @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+batch @ index-Bs5dKWKt.js:48
+fn @ index-Bs5dKWKt.js:48
+a @ index-Bs5dKWKt.js:48
+h @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+onSubscribe @ index-Bs5dKWKt.js:48
+subscribe @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+yg @ index-Bs5dKWKt.js:38
+qa @ index-Bs5dKWKt.js:40
+vo @ index-Bs5dKWKt.js:40
+P1 @ index-Bs5dKWKt.js:40
+xr @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40Understand this error
+index-Bs5dKWKt.js:272 [Draft] Attempting direct fetch for debugging...
+index-Bs5dKWKt.js:272  GET https://mok-sports-draft-mokfantasysport.replit.app/api/drafts/46160cd7-595b-4f70-9956-795ea53993ff 404 (Not Found)
+queryFn @ index-Bs5dKWKt.js:272
+await in queryFn
+s @ index-Bs5dKWKt.js:48
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+setInterval
+lu @ index-Bs5dKWKt.js:48
+cu @ index-Bs5dKWKt.js:48
+onQueryUpdate @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+batch @ index-Bs5dKWKt.js:48
+fn @ index-Bs5dKWKt.js:48
+a @ index-Bs5dKWKt.js:48
+h @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+onSubscribe @ index-Bs5dKWKt.js:48
+subscribe @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+yg @ index-Bs5dKWKt.js:38
+qa @ index-Bs5dKWKt.js:40
+vo @ index-Bs5dKWKt.js:40
+P1 @ index-Bs5dKWKt.js:40
+xr @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40Understand this error
+index-Bs5dKWKt.js:272 [Draft] Direct fetch response: {status: 404, statusText: '', headers: {…}}
+index-Bs5dKWKt.js:272 [Draft] Direct fetch response body: {"message":"Draft not found"}
+index-Bs5dKWKt.js:272 [Draft] Retrying fetch, attempt 2
+index-Bs5dKWKt.js:272 [StableWS] Keep-alive ping sent
+index-Bs5dKWKt.js:272 [StableWS] Message received on connection #1: {"type":"keep_alive_ack","connectionId":1,"timestamp":1754528323130}
+index-Bs5dKWKt.js:48  GET https://mok-sports-draft-mokfantasysport.replit.app/api/drafts/46160cd7-595b-4f70-9956-795ea53993ff/available-teams 404 (Not Found)
+Ji @ index-Bs5dKWKt.js:48
+queryFn @ index-Bs5dKWKt.js:272
+s @ index-Bs5dKWKt.js:48
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+setInterval
+lu @ index-Bs5dKWKt.js:48
+cu @ index-Bs5dKWKt.js:48
+onQueryUpdate @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+batch @ index-Bs5dKWKt.js:48
+fn @ index-Bs5dKWKt.js:48
+a @ index-Bs5dKWKt.js:48
+h @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+onSubscribe @ index-Bs5dKWKt.js:48
+subscribe @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+yg @ index-Bs5dKWKt.js:38
+qa @ index-Bs5dKWKt.js:40
+vo @ index-Bs5dKWKt.js:40
+P1 @ index-Bs5dKWKt.js:40
+xr @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40Understand this error
+index-Bs5dKWKt.js:272 [Draft] Component render started - TIME: 1754528324041
+index-Bs5dKWKt.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-Bs5dKWKt.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T00:58:44.042Z
+index-Bs5dKWKt.js:272 [Draft] RENDER TIMING - Time since component start: 1754528305463.1
+index-Bs5dKWKt.js:272 [Draft] All useState hooks declared
+index-Bs5dKWKt.js:272 [TIMER DISPLAY] serverTime: 0 apiTime: undefined displayTime: 0
+index-Bs5dKWKt.js:272 [Draft] All hooks declared, starting conditional logic
+index-Bs5dKWKt.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754528324043
+index-Bs5dKWKt.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-Bs5dKWKt.js:272 [Draft] === STARTING DRAFT FETCH ===
+index-Bs5dKWKt.js:272 [Draft] Draft ID: 46160cd7-595b-4f70-9956-795ea53993ff
+index-Bs5dKWKt.js:272 [Draft] Auth status - User: Sky Evans Authenticated: true Loading: false
+index-Bs5dKWKt.js:272 [Draft] Token available: false
+index-Bs5dKWKt.js:272 [Draft] Current URL: https://mok-sports-draft-mokfantasysport.replit.app/draft/46160cd7-595b-4f70-9956-795ea53993ff
+index-Bs5dKWKt.js:272 [Draft] Current pathname: /draft/46160cd7-595b-4f70-9956-795ea53993ff
+index-Bs5dKWKt.js:272 [Draft] Making API request to: /api/drafts/46160cd7-595b-4f70-9956-795ea53993ff
+index-Bs5dKWKt.js:48  GET https://mok-sports-draft-mokfantasysport.replit.app/api/drafts/46160cd7-595b-4f70-9956-795ea53993ff 404 (Not Found)
+Ji @ index-Bs5dKWKt.js:48
+queryFn @ index-Bs5dKWKt.js:272
+s @ index-Bs5dKWKt.js:48
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+setInterval
+lu @ index-Bs5dKWKt.js:48
+cu @ index-Bs5dKWKt.js:48
+onQueryUpdate @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+batch @ index-Bs5dKWKt.js:48
+fn @ index-Bs5dKWKt.js:48
+a @ index-Bs5dKWKt.js:48
+h @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.then
+(anonymous) @ index-Bs5dKWKt.js:48
+Promise.catch
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+onSubscribe @ index-Bs5dKWKt.js:48
+subscribe @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+yg @ index-Bs5dKWKt.js:38
+qa @ index-Bs5dKWKt.js:40
+vo @ index-Bs5dKWKt.js:40
+P1 @ index-Bs5dKWKt.js:40
+xr @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40Understand this error
