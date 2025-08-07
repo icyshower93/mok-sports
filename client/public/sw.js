@@ -1,5 +1,23 @@
 // Enhanced Mok Sports PWA Service Worker with Auto-Refresh Push Subscriptions
-const CACHE_VERSION = 'v1.4.3-enhanced-connection-logic';
+const CACHE_VERSION = 'v1.6.0-emergency-cache-break-' + Date.now();
+
+// EMERGENCY: Delete ALL old caches on install
+self.addEventListener('install', (event) => {
+  console.log('[SW] Emergency cache clearing - deleting ALL caches');
+  event.waitUntil(
+    caches.keys().then(cacheNames => {
+      return Promise.all(
+        cacheNames.map(cacheName => {
+          console.log('[SW] Deleting cache:', cacheName);
+          return caches.delete(cacheName);
+        })
+      );
+    }).then(() => {
+      console.log('[SW] All caches cleared - forcing immediate activation');
+      return self.skipWaiting();
+    })
+  );
+});
 const STATIC_CACHE = `mok-sports-static-${CACHE_VERSION}`;
 const DYNAMIC_CACHE = `mok-sports-dynamic-${CACHE_VERSION}`;
 const API_CACHE = `mok-sports-api-${CACHE_VERSION}`;

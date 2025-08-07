@@ -1,0 +1,127 @@
+[SW] Fetching /images/nfl/team_logos/JAX.png from network
+sw.js?v=1754526267148:91 [SW] Fetching /images/nfl/team_logos/TEN.png from network
+sw.js?v=1754526267148:91 [SW] Fetching /images/nfl/team_logos/KC.png from network
+JAX.png:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+index-COJxsKuR.js:272 [WebSocket] 📨 MESSAGE RECEIVED
+index-COJxsKuR.js:272 [WebSocket] 📨 Raw data: {"type":"timer_update","draftId":"1b8339ca-0e84-4f1e-b884-3d9bc01352ad","data":{"timeRemaining":54},"timestamp":1754526269830}
+index-COJxsKuR.js:272 [WebSocket] 📨 Socket state: 1
+index-COJxsKuR.js:272 [WebSocket] ✅ Parsed message type: timer_update
+index-COJxsKuR.js:272 [WebSocket] 🔍 COMPREHENSIVE DEBUG - Received message: timer_update Object
+index-COJxsKuR.js:272 [WebSocket] 🔍 Raw message data: {
+  "type": "timer_update",
+  "draftId": "1b8339ca-0e84-4f1e-b884-3d9bc01352ad",
+  "data": {
+    "timeRemaining": 54
+  },
+  "timestamp": 1754526269830
+}
+index-COJxsKuR.js:272 [WebSocket] 🔍 Message timestamp: 2025-08-07T00:24:29.816Z
+index-COJxsKuR.js:272 [WebSocket] 🔍 Current draft ID: 1b8339ca-0e84-4f1e-b884-3d9bc01352ad
+index-COJxsKuR.js:272 [WebSocket] 🔍 Current user ID: d8873675-274c-46f9-ab48-00955c81d875
+index-COJxsKuR.js:272 [WebSocket] ⏰ TIMER UPDATE - Received: 54 seconds
+index-COJxsKuR.js:272 [WebSocket] ⏰ TIMER UPDATE - Full message: Object
+index-COJxsKuR.js:272 [WebSocket] ⏰ TIMER UPDATE - Message timestamp: 2025-08-07T00:24:29.816Z
+index-COJxsKuR.js:272 [WebSocket] ⏰ TIMER UPDATE - Draft ID match: false
+index-COJxsKuR.js:272 [WebSocket] ⏰ TIMER UPDATE - Updating cache with oldData: true
+index-COJxsKuR.js:272 [WebSocket] ✅ Message processed successfully
+index-COJxsKuR.js:272 [Draft] Component render started - TIME: 1754526269817
+index-COJxsKuR.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-COJxsKuR.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T00:24:29.817Z
+index-COJxsKuR.js:272 [Draft] RENDER TIMING - Time since component start: 1754526267097.7
+index-COJxsKuR.js:272 [Draft] All useState hooks declared
+index-COJxsKuR.js:272 [TIMER DISPLAY] serverTime: 54 apiTime: 54 displayTime: 54
+index-COJxsKuR.js:272 [Draft] All hooks declared, starting conditional logic
+index-COJxsKuR.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: false error: false draftData: true isAuthenticated: true Time: 1754526269817
+index-COJxsKuR.js:272 🔍 [TIMER DEBUG] Server Time: 54
+index-COJxsKuR.js:272 🔍 [TIMER DEBUG] Display Time: 54
+index-COJxsKuR.js:272 🔍 [TIMER DEBUG] Current Player: Sky Evans
+index-COJxsKuR.js:272 [WebSocket] 📨 MESSAGE RECEIVED
+index-COJxsKuR.js:272 [WebSocket] 📨 Raw data: {"type":"timer_update","draftId":"1b8339ca-0e84-4f1e-b884-3d9bc01352ad","data":{"timeRemaining":53},"timestamp":1754526270831}
+index-COJxsKuR.js:272 [WebSocket] 📨 Socket state: 1
+index-COJxsKuR.js:272 [WebSocket] ✅ Parsed message type: timer_update
+index-COJxsKuR.js:272 [WebSocket] 🔍 COMPREHENSIVE DEBUG - Received message: timer_update Object
+index-COJxsKuR.js:272 [WebSocket] 🔍 Raw message data: {
+  "type": "timer_update",
+  "draftId": "1b8339ca-0e84-4f1e-b884-3d9bc01352ad",
+  "data": {
+    "timeRemaining": 53
+  },
+  "timestamp": 1754526270831
+}
+index-COJxsKuR.js:272 [WebSocket] 🔍 Message timestamp: 2025-08-07T00:24:30.915Z
+index-COJxsKuR.js:272 [WebSocket] 🔍 Current draft ID: 1b8339ca-0e84-4f1e-b884-3d9bc01352ad
+index-COJxsKuR.js:272 [WebSocket] 🔍 Current user ID: d8873675-274c-46f9-ab48-00955c81d875
+index-COJxsKuR.js:272 [WebSocket] ⏰ TIMER UPDATE - Received: 53 seconds
+index-COJxsKuR.js:272 [WebSocket] ⏰ TIMER UPDATE - Full message: Object
+index-COJxsKuR.js:272 [WebSocket] ⏰ TIMER UPDATE - Message timestamp: 2025-08-07T00:24:30.915Z
+index-COJxsKuR.js:272 [WebSocket] ⏰ TIMER UPDATE - Draft ID match: false
+index-COJxsKuR.js:272 [WebSocket] ⏰ TIMER UPDATE - Updating cache with oldData: true
+index-COJxsKuR.js:272 [WebSocket] ✅ Message processed successfully
+index-COJxsKuR.js:272 [Draft] Component render started - TIME: 1754526270915
+index-COJxsKuR.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-COJxsKuR.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T00:24:30.915Z
+index-COJxsKuR.js:272 [Draft] RENDER TIMING - Time since component start: 1754526267097
+index-COJxsKuR.js:272 [Draft] All useState hooks declared
+index-COJxsKuR.js:272 [TIMER DISPLAY] serverTime: 54 apiTime: 53 displayTime: 54
+index-COJxsKuR.js:272 [Draft] All hooks declared, starting conditional logic
+index-COJxsKuR.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: false error: false draftData: true isAuthenticated: true Time: 1754526270915
+index-COJxsKuR.js:272 🔍 [TIMER DEBUG] Server Time: 53
+index-COJxsKuR.js:272 🔍 [TIMER DEBUG] Display Time: 54
+index-COJxsKuR.js:272 🔍 [TIMER DEBUG] Current Player: Sky Evans
+index-COJxsKuR.js:272 🔄 [TIMER SYNC] Forcing timer sync from API: 53
+index-COJxsKuR.js:272 [Draft] Component render started - TIME: 1754526270916
+index-COJxsKuR.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-COJxsKuR.js:272 [Draft] Component render started - TIME: 1754526270918
+index-COJxsKuR.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-COJxsKuR.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T00:24:30.918Z
+index-COJxsKuR.js:272 [Draft] RENDER TIMING - Time since component start: 1754526267097.1
+index-COJxsKuR.js:272 [Draft] All useState hooks declared
+index-COJxsKuR.js:272 [TIMER DISPLAY] serverTime: 54 apiTime: 53 displayTime: 54
+index-COJxsKuR.js:272 [Draft] All hooks declared, starting conditional logic
+index-COJxsKuR.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: false error: false draftData: true isAuthenticated: true Time: 1754526270918
+index-COJxsKuR.js:272 🔍 [TIMER DEBUG] Server Time: 53
+index-COJxsKuR.js:272 🔍 [TIMER DEBUG] Display Time: 54
+index-COJxsKuR.js:272 🔍 [TIMER DEBUG] Current Player: Sky Evans
+index-COJxsKuR.js:272 🔄 [TIMER SYNC] Forcing timer sync from API: 53
+index-COJxsKuR.js:272 [Draft] Component render started - TIME: 1754526270918
+index-COJxsKuR.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-COJxsKuR.js:40 ReferenceError: setDisplayTime is not defined
+    at Rj (index-COJxsKuR.js:272:68131)
+    at Cd (index-COJxsKuR.js:38:16998)
+    at Bc (index-COJxsKuR.js:40:3139)
+    at rv (index-COJxsKuR.js:40:44737)
+    at ev (index-COJxsKuR.js:40:39727)
+    at k1 (index-COJxsKuR.js:40:39655)
+    at Pa (index-COJxsKuR.js:40:39508)
+    at eu (index-COJxsKuR.js:40:35875)
+    at Xg (index-COJxsKuR.js:40:34826)
+    at C (index-COJxsKuR.js:25:1562)
+Uc @ index-COJxsKuR.js:40Understand this error
+index-COJxsKuR.js:228 ErrorBoundary caught an error: setDisplayTime is not defined
+componentDidCatch @ index-COJxsKuR.js:228Understand this error
+index-COJxsKuR.js:228 Component stack: 
+    at Rj (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-COJxsKuR.js:272:60679)
+    at Tn (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-COJxsKuR.js:48:3201)
+    at mb (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-COJxsKuR.js:48:4017)
+    at NT (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-COJxsKuR.js:272:130014)
+    at bk (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-COJxsKuR.js:228:57444)
+    at u (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-COJxsKuR.js:48:45795)
+    at Gy (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-COJxsKuR.js:228:50420)
+    at Sk (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-COJxsKuR.js:228:56916)
+    at Ib (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-COJxsKuR.js:48:40146)
+    at jk (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-COJxsKuR.js:228:70254)
+    at kT
+componentDidCatch @ index-COJxsKuR.js:228Understand this error
+index-COJxsKuR.js:272 [PersistentWS] Manual disconnect requested
+index-COJxsKuR.js:272 [StableWS] Component unmounting, cleaning up
+index-COJxsKuR.js:272 [PersistentWS] Connection closed
+index-COJxsKuR.js:272 [PersistentWS] Close code: 1000
+index-COJxsKuR.js:272 [PersistentWS] Close reason: Manual disconnect
+index-COJxsKuR.js:272 [PersistentWS] Was clean: true
+index-COJxsKuR.js:272 [PersistentWS] Manual close: true
+index-COJxsKuR.js:272 [StableWS] Connection #1 closed
+index-COJxsKuR.js:272 [StableWS] Close code: 1000, reason: "Component unmount"
+index-COJxsKuR.js:272 [StableWS] Was clean: true
+sw.js?v=1754526267148:87 [SW] Serving /manifest.json from cache
+sw.js?v=1754526267148:87 [SW] Serving /draft/1b8339ca-0e84-4f1e-b884-3d9bc01352ad from cache
+sw.js?v=1754526267148:91 [SW] Fetching /assets/index-DOw1HNQ2.css from network
