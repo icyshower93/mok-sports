@@ -127,33 +127,36 @@ export function useDraftWebSocket(draftId: string | null, leagueId?: string | nu
     setConnectionStatus('connecting');
     
     // Connect immediately - don't wait for validation
-    connectToWebSocket();
+    // REMOVED: connectToWebSocket() - Let the main useEffect handle it to avoid conflicts
   }, [draftId, user?.id, queryClient]);
   
   // CRITICAL: Trigger connection when both draft ID and user are available
   useEffect(() => {
-    console.log('[WebSocket] useEffect trigger - draftId:', draftId, 'userId:', !!user?.id, 'authLoading:', !user);
+    console.log('[WebSocket] MAIN useEffect trigger - draftId:', draftId, 'userId:', !!user?.id, 'authLoading:', !user);
     
     if (draftId && user?.id) {
       console.log('[WebSocket] ✅ Conditions met, validating draft exists before connection...');
       console.log('[WebSocket] Draft ID to connect to:', draftId);
       
-      // Validate draft exists before attempting WebSocket connection
-      fetch(`/api/drafts/${draftId}`)
-        .then(response => {
-          if (response.ok) {
-            console.log('[WebSocket] ✅ Draft exists, proceeding with connection');
-            connect();
-          } else {
-            console.log('[WebSocket] ❌ Draft not found, skipping connection');
-            console.log('[WebSocket] Response status:', response.status);
-            setConnectionStatus('draft_not_found');
-          }
-        })
-        .catch(error => {
-          console.log('[WebSocket] ❌ Draft validation failed:', error);
-          setConnectionStatus('disconnected');
-        });
+      // Small delay to prevent race conditions with the connect useEffect
+      setTimeout(() => {
+        // Validate draft exists before attempting WebSocket connection
+        fetch(`/api/drafts/${draftId}`)
+          .then(response => {
+            if (response.ok) {
+              console.log('[WebSocket] ✅ Draft exists, proceeding with connection');
+              connect();
+            } else {
+              console.log('[WebSocket] ❌ Draft not found, skipping connection');
+              console.log('[WebSocket] Response status:', response.status);
+              setConnectionStatus('draft_not_found');
+            }
+          })
+          .catch(error => {
+            console.log('[WebSocket] ❌ Draft validation failed:', error);
+            setConnectionStatus('disconnected');
+          });
+      }, 100);
     } else {
       console.log('[WebSocket] ❌ Connection requirements not met:', {
         hasDraftId: !!draftId,
