@@ -105,7 +105,7 @@ export default function DraftPage() {
     
     // Find the league that contains this user and has an active draft
     const activeLeague = leagueData.find((league: any) => 
-      league.draftId && league.draftStarted
+      league.draftId && league.draftStatus === 'active'
     );
     
     if (activeLeague?.draftId && activeLeague.draftId !== urlDraftId) {
