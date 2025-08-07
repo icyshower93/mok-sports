@@ -171,14 +171,28 @@ export default function DraftPage() {
       try {
         console.log('[Draft] Making API request to:', `/api/drafts/${draftId}`);
         
-        // Use the apiRequest function to include authentication headers
-        const response = await apiRequest('GET', `/api/drafts/${draftId}`);
+        // Use direct fetch with credentials instead of apiRequest to avoid token issues
+        const response = await fetch(`/api/drafts/${draftId}`, {
+          method: 'GET',
+          credentials: 'include', // Use cookies for auth instead of Bearer token
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          }
+        });
         
         console.log('[Draft] Response received:', {
           status: response.status,
           statusText: response.statusText,
+          ok: response.ok,
           headers: Object.fromEntries(response.headers.entries())
         });
+        
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error('[Draft] API Error Response:', errorText);
+          throw new Error(`HTTP ${response.status}: ${errorText}`);
+        }
         
         const data = await response.json();
         console.log('[Draft] Successfully fetched draft data:', data);

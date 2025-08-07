@@ -1,0 +1,762 @@
+ Build Info: Object
+index-Buk-2SqR.js:272 📦 Version: me1v8onu
+index-Buk-2SqR.js:272 📅 Built: 2025-08-07T20:45:02.298Z
+index-Buk-2SqR.js:272 🔧 Environment: production
+index-Buk-2SqR.js:228 [Auth] Token check - Has token: true Has user: false Loading: true
+index-Buk-2SqR.js:228 [SW Hook] EMERGENCY: Unregistering all existing service workers
+index-Buk-2SqR.js:228 [SW Hook] Found 1 existing registrations
+index-Buk-2SqR.js:228 [SW Hook] Unregistering existing service worker
+index-Buk-2SqR.js:228 [SW Hook] Found 1 caches to delete
+index-Buk-2SqR.js:228 [SW Hook] Deleting cache: mok-sports-dynamic-v1.7.0-nuclear-unregister-1754599500499
+contentScript.js:2 Content script initialized successfully.
+index-Buk-2SqR.js:272 [App] Draft route matched with params: Object
+index-Buk-2SqR.js:272 [App] Current location: https://mok-sports-draft-mokfantasysport.replit.app/draft/395a23eb-80c7-44b5-a862-3d00d67e1e87
+index-Buk-2SqR.js:272 [Draft] Component render started - TIME: 1754599502390
+index-Buk-2SqR.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-Buk-2SqR.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: false rendered at: 2025-08-07T20:45:02.391Z
+index-Buk-2SqR.js:272 [Draft] RENDER TIMING - Time since component start: 1754599502018.5
+index-Buk-2SqR.js:272 [Draft] All useState hooks declared
+index-Buk-2SqR.js:272 [SMOOTH TIMER] Display time: 0.0 isCountingDown: false
+index-Buk-2SqR.js:272 [Draft] All hooks declared, starting conditional logic
+index-Buk-2SqR.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: false Time: 1754599502392
+index-Buk-2SqR.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-Buk-2SqR.js:272 [WebSocket] MAIN useEffect trigger - draftId: 395a23eb-80c7-44b5-a862-3d00d67e1e87 userId: true authLoading: false
+index-Buk-2SqR.js:272 [WebSocket] ✅ Conditions met, validating draft exists before connection...
+index-Buk-2SqR.js:272 [WebSocket] Draft ID to connect to: 395a23eb-80c7-44b5-a862-3d00d67e1e87
+index-Buk-2SqR.js:272 [WebSocket] ==== EFFECT TRIGGERED ====
+index-Buk-2SqR.js:272 [WebSocket] Dependencies - draftId: true userId: true
+index-Buk-2SqR.js:272 [WebSocket] Current connection state: disconnected
+index-Buk-2SqR.js:272 [WebSocket] wsRef exists: false
+index-Buk-2SqR.js:272 [WebSocket] Previous draft ID: null
+index-Buk-2SqR.js:272 [WebSocket] Current draft ID: 395a23eb-80c7-44b5-a862-3d00d67e1e87
+index-Buk-2SqR.js:272 [WebSocket] ✅ Dependencies ready - initiating connection
+index-Buk-2SqR.js:272 [WebSocket] 🔄 LIFECYCLE: Connect called with: Object
+index-Buk-2SqR.js:272 [WebSocket] 🔍 LIFECYCLE CHECK: Validating single connection per session
+index-Buk-2SqR.js:272 [WebSocket] ✅ LIFECYCLE: All requirements met, creating single WebSocket instance
+index-Buk-2SqR.js:272 [WebSocket] 🔍 VALIDATION: Draft ID: 395a23eb-80c7-44b5-a862-3d00d67e1e87 length: 36
+index-Buk-2SqR.js:272 [WebSocket] 🔍 VALIDATION: User ID: 9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a length: 36
+index-Buk-2SqR.js:272 [WebSocket] Connecting to draft immediately after reset/change...
+index-Buk-2SqR.js:272 [SimpleWS] Starting connection attempt
+index-Buk-2SqR.js:272 [SimpleWS] draftId: 395a23eb-80c7-44b5-a862-3d00d67e1e87
+index-Buk-2SqR.js:272 [SimpleWS] userId: 9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a
+index-Buk-2SqR.js:272 [SimpleWS] Connecting to: wss://mok-sports-draft-mokfantasysport.replit.app/draft-ws?userId=9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a&draftId=395a23eb-80c7-44b5-a862-3d00d67e1e87
+index-Buk-2SqR.js:272 [PersistentWS] Attempting connection # 1
+index-Buk-2SqR.js:272 [StableWS] Component mounted, initializing connection
+index-Buk-2SqR.js:272 [StableWS] Starting connection attempt #1
+index-Buk-2SqR.js:272 [Draft] === STARTING DRAFT FETCH ===
+index-Buk-2SqR.js:272 [Draft] Draft ID: 395a23eb-80c7-44b5-a862-3d00d67e1e87
+index-Buk-2SqR.js:272 [Draft] Auth status - User: Sky Evans Authenticated: false Loading: false
+index-Buk-2SqR.js:272 [Draft] Token available: true
+index-Buk-2SqR.js:272 [Draft] Current URL: https://mok-sports-draft-mokfantasysport.replit.app/draft/395a23eb-80c7-44b5-a862-3d00d67e1e87
+index-Buk-2SqR.js:272 [Draft] Current pathname: /draft/395a23eb-80c7-44b5-a862-3d00d67e1e87
+index-Buk-2SqR.js:272 [Draft] Making API request to: /api/drafts/395a23eb-80c7-44b5-a862-3d00d67e1e87
+index-Buk-2SqR.js:228 [Auth] Token check - Has token: true Has user: true Loading: false
+index-Buk-2SqR.js:272 [App] Draft route matched with params: Object
+index-Buk-2SqR.js:272 [App] Current location: https://mok-sports-draft-mokfantasysport.replit.app/draft/395a23eb-80c7-44b5-a862-3d00d67e1e87
+index-Buk-2SqR.js:272 [Draft] Component render started - TIME: 1754599502398
+index-Buk-2SqR.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-Buk-2SqR.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T20:45:02.398Z
+index-Buk-2SqR.js:272 [Draft] RENDER TIMING - Time since component start: 1754599502017.9
+index-Buk-2SqR.js:272 [Draft] All useState hooks declared
+index-Buk-2SqR.js:272 [SMOOTH TIMER] Display time: 0.0 isCountingDown: false
+index-Buk-2SqR.js:272 [Draft] All hooks declared, starting conditional logic
+index-Buk-2SqR.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754599502398
+index-Buk-2SqR.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-Buk-2SqR.js:228 [AutoPushRefresh] Legacy hook delegating to SubscriptionManager
+index-Buk-2SqR.js:228 [SW Hook] Registering fresh service worker: /sw.js?v=1754599502454&r=0.43812966313270396
+index-Buk-2SqR.js:272 [App] Draft route matched with params: Object
+index-Buk-2SqR.js:272 [App] Current location: https://mok-sports-draft-mokfantasysport.replit.app/draft/395a23eb-80c7-44b5-a862-3d00d67e1e87
+index-Buk-2SqR.js:272 [Draft] Component render started - TIME: 1754599502482
+index-Buk-2SqR.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-Buk-2SqR.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T20:45:02.482Z
+index-Buk-2SqR.js:272 [Draft] RENDER TIMING - Time since component start: 1754599502018
+index-Buk-2SqR.js:272 [Draft] All useState hooks declared
+index-Buk-2SqR.js:272 [SMOOTH TIMER] Display time: 0.0 isCountingDown: false
+index-Buk-2SqR.js:272 [Draft] All hooks declared, starting conditional logic
+index-Buk-2SqR.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754599502482
+index-Buk-2SqR.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+395a23eb-80c7-44b5-a862-3d00d67e1e87:1 Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner.
+index-Buk-2SqR.js:272 [Draft] Component render started - TIME: 1754599502483
+index-Buk-2SqR.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-Buk-2SqR.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T20:45:02.483Z
+index-Buk-2SqR.js:272 [Draft] RENDER TIMING - Time since component start: 1754599502017.7
+index-Buk-2SqR.js:272 [Draft] All useState hooks declared
+index-Buk-2SqR.js:272 [SMOOTH TIMER] Display time: 0.0 isCountingDown: false
+index-Buk-2SqR.js:272 [Draft] All hooks declared, starting conditional logic
+index-Buk-2SqR.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754599502484
+index-Buk-2SqR.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-Buk-2SqR.js:272 [Draft] 🔍 VALIDATING DRAFT URL...
+index-Buk-2SqR.js:272 [Draft] User leagues: Array(4)
+index-Buk-2SqR.js:272 [Draft] URL Draft ID: 395a23eb-80c7-44b5-a862-3d00d67e1e87
+index-Buk-2SqR.js:272 [Draft] ✅ Draft ID is current: 395a23eb-80c7-44b5-a862-3d00d67e1e87
+index-Buk-2SqR.js:272 [Draft] Component render started - TIME: 1754599502484
+index-Buk-2SqR.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-Buk-2SqR.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T20:45:02.484Z
+index-Buk-2SqR.js:272 [Draft] RENDER TIMING - Time since component start: 1754599502018.3
+index-Buk-2SqR.js:272 [Draft] All useState hooks declared
+index-Buk-2SqR.js:272 [SMOOTH TIMER] Display time: 0.0 isCountingDown: false
+index-Buk-2SqR.js:272 [Draft] All hooks declared, starting conditional logic
+index-Buk-2SqR.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754599502484
+index-Buk-2SqR.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+sw.js?v=1754599502454&r=0.43812966313270396:2 [SW] NUCLEAR OPTION - Emergency service worker loading
+sw.js?v=1754599502454&r=0.43812966313270396:88 [SW] Service worker starting, version: v1.7.0-nuclear-unregister-1754599502511
+sw.js?v=1754599502454&r=0.43812966313270396:305 [SW] Service worker script loaded successfully
+sw.js?v=1754599502454&r=0.43812966313270396:19 [SW] EMERGENCY INSTALL - Clearing all caches and forcing activation
+sw.js?v=1754599502454&r=0.43812966313270396:92 [SW] Installing service worker, version: v1.7.0-nuclear-unregister-1754599502511
+index-Buk-2SqR.js:228 [SW Hook] Service worker registered successfully
+sw.js?v=1754599502454&r=0.43812966313270396:22 [SW] Found caches to delete: Array(1)
+sw.js?v=1754599502454&r=0.43812966313270396:25 [SW] Force deleting cache: mok-sports-dynamic-v1.7.0-nuclear-unregister-1754599500499
+index-Buk-2SqR.js:272 [App] Draft route matched with params: Object
+index-Buk-2SqR.js:272 [App] Current location: https://mok-sports-draft-mokfantasysport.replit.app/draft/395a23eb-80c7-44b5-a862-3d00d67e1e87
+index-Buk-2SqR.js:272 [Draft] Component render started - TIME: 1754599502512
+index-Buk-2SqR.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-Buk-2SqR.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T20:45:02.512Z
+index-Buk-2SqR.js:272 [Draft] RENDER TIMING - Time since component start: 1754599502018
+index-Buk-2SqR.js:272 [Draft] All useState hooks declared
+index-Buk-2SqR.js:272 [SMOOTH TIMER] Display time: 0.0 isCountingDown: false
+index-Buk-2SqR.js:272 [Draft] All hooks declared, starting conditional logic
+index-Buk-2SqR.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754599502512
+index-Buk-2SqR.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+sw.js?v=1754599502454&r=0.43812966313270396:96 [SW] Caching static files
+sw.js?v=1754599502454&r=0.43812966313270396:30 [SW] All caches deleted - skipping waiting
+index-Buk-2SqR.js:272 [SimpleWS] ✅ Connected successfully
+index-Buk-2SqR.js:272 [SimpleWS] Initial ping sent
+index-Buk-2SqR.js:272 [SimpleWS] Message received: {"type":"connected","draftId":"395a23eb-80c7-44b5-a862-3d00d67e1e87","userId":"9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a","timestamp":1754599502518,"message":"WebSocket connection established successfully on Reserved VM"}
+index-Buk-2SqR.js:272 [Draft] Component render started - TIME: 1754599502537
+index-Buk-2SqR.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-Buk-2SqR.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T20:45:02.537Z
+index-Buk-2SqR.js:272 [Draft] RENDER TIMING - Time since component start: 1754599502017.9
+index-Buk-2SqR.js:272 [Draft] All useState hooks declared
+index-Buk-2SqR.js:272 [SMOOTH TIMER] Display time: 0.0 isCountingDown: false
+index-Buk-2SqR.js:272 [Draft] All hooks declared, starting conditional logic
+index-Buk-2SqR.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754599502537
+index-Buk-2SqR.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-Buk-2SqR.js:272 [SimpleWS] Message received: {"type":"connected","draftId":"395a23eb-80c7-44b5-a862-3d00d67e1e87","timestamp":1754599502518}
+index-Buk-2SqR.js:272 [Draft] Component render started - TIME: 1754599502538
+index-Buk-2SqR.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-Buk-2SqR.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T20:45:02.538Z
+index-Buk-2SqR.js:272 [Draft] RENDER TIMING - Time since component start: 1754599502018.6
+index-Buk-2SqR.js:272 [Draft] All useState hooks declared
+index-Buk-2SqR.js:272 [SMOOTH TIMER] Display time: 0.0 isCountingDown: false
+index-Buk-2SqR.js:272 [Draft] All hooks declared, starting conditional logic
+index-Buk-2SqR.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754599502538
+index-Buk-2SqR.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-Buk-2SqR.js:272 [Draft] Component render started - TIME: 1754599502549
+index-Buk-2SqR.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-Buk-2SqR.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T20:45:02.549Z
+index-Buk-2SqR.js:272 [Draft] RENDER TIMING - Time since component start: 1754599502017.7
+index-Buk-2SqR.js:272 [Draft] All useState hooks declared
+index-Buk-2SqR.js:272 [SMOOTH TIMER] Display time: 0.0 isCountingDown: false
+index-Buk-2SqR.js:272 [Draft] All hooks declared, starting conditional logic
+index-Buk-2SqR.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754599502550
+index-Buk-2SqR.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-Buk-2SqR.js:272 [SimpleWS] Message received: {"type":"pong","draftId":"395a23eb-80c7-44b5-a862-3d00d67e1e87","timestamp":1754599502572}
+index-Buk-2SqR.js:272 [Draft] Component render started - TIME: 1754599502590
+index-Buk-2SqR.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-Buk-2SqR.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T20:45:02.590Z
+index-Buk-2SqR.js:272 [Draft] RENDER TIMING - Time since component start: 1754599502018.2
+index-Buk-2SqR.js:272 [Draft] All useState hooks declared
+index-Buk-2SqR.js:272 [SMOOTH TIMER] Display time: 0.0 isCountingDown: false
+index-Buk-2SqR.js:272 [Draft] All hooks declared, starting conditional logic
+index-Buk-2SqR.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754599502590
+index-Buk-2SqR.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-Buk-2SqR.js:272 [SimpleWS] Message received: {"type":"draft_state","draftId":"395a23eb-80c7-44b5-a862-3d00d67e1e87","data":{},"timestamp":1754599502618}
+index-Buk-2SqR.js:272 [Draft] Component render started - TIME: 1754599502635
+index-Buk-2SqR.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-Buk-2SqR.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T20:45:02.635Z
+index-Buk-2SqR.js:272 [Draft] RENDER TIMING - Time since component start: 1754599502017.8
+index-Buk-2SqR.js:272 [Draft] All useState hooks declared
+index-Buk-2SqR.js:272 [SMOOTH TIMER] Display time: 0.0 isCountingDown: false
+index-Buk-2SqR.js:272 [Draft] All hooks declared, starting conditional logic
+index-Buk-2SqR.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754599502636
+index-Buk-2SqR.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+sw.js?v=1754599502454&r=0.43812966313270396:99 [SW] Static files cached successfully
+index-Buk-2SqR.js:272 [App] Draft route matched with params: Object
+index-Buk-2SqR.js:272 [App] Current location: https://mok-sports-draft-mokfantasysport.replit.app/draft/395a23eb-80c7-44b5-a862-3d00d67e1e87
+index-Buk-2SqR.js:272 [Draft] Component render started - TIME: 1754599502656
+index-Buk-2SqR.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-Buk-2SqR.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T20:45:02.656Z
+index-Buk-2SqR.js:272 [Draft] RENDER TIMING - Time since component start: 1754599502018.4
+index-Buk-2SqR.js:272 [Draft] All useState hooks declared
+index-Buk-2SqR.js:272 [SMOOTH TIMER] Display time: 0.0 isCountingDown: false
+index-Buk-2SqR.js:272 [Draft] All hooks declared, starting conditional logic
+index-Buk-2SqR.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754599502656
+index-Buk-2SqR.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-Buk-2SqR.js:272 [PersistentWS] ✅ Connected successfully
+index-Buk-2SqR.js:272 [PersistentWS] Message received: {"type":"connected","draftId":"395a23eb-80c7-44b5-a862-3d00d67e1e87","userId":"9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a","timestamp":1754599502697,"message":"WebSocket connection established successfully on Reserved VM"}
+index-Buk-2SqR.js:272 [Draft] Component render started - TIME: 1754599502718
+index-Buk-2SqR.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-Buk-2SqR.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T20:45:02.718Z
+index-Buk-2SqR.js:272 [Draft] RENDER TIMING - Time since component start: 1754599502018.1
+index-Buk-2SqR.js:272 [Draft] All useState hooks declared
+index-Buk-2SqR.js:272 [SMOOTH TIMER] Display time: 0.0 isCountingDown: false
+index-Buk-2SqR.js:272 [Draft] All hooks declared, starting conditional logic
+index-Buk-2SqR.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754599502718
+index-Buk-2SqR.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-Buk-2SqR.js:272 [PersistentWS] Message received: {"type":"connected","draftId":"395a23eb-80c7-44b5-a862-3d00d67e1e87","timestamp":1754599502697}
+index-Buk-2SqR.js:272 [Draft] Component render started - TIME: 1754599502718
+index-Buk-2SqR.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-Buk-2SqR.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T20:45:02.718Z
+index-Buk-2SqR.js:272 [Draft] RENDER TIMING - Time since component start: 1754599502017.6
+index-Buk-2SqR.js:272 [Draft] All useState hooks declared
+index-Buk-2SqR.js:272 [SMOOTH TIMER] Display time: 0.0 isCountingDown: false
+index-Buk-2SqR.js:272 [Draft] All hooks declared, starting conditional logic
+index-Buk-2SqR.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754599502719
+index-Buk-2SqR.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-Buk-2SqR.js:272 [Draft] Response received: Object
+index-Buk-2SqR.js:272 [Draft] Successfully fetched draft data: Object
+index-Buk-2SqR.js:272 [Draft] === DRAFT FETCH SUCCESS ===
+index-Buk-2SqR.js:272 [Draft] Component render started - TIME: 1754599502749
+index-Buk-2SqR.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-Buk-2SqR.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T20:45:02.749Z
+index-Buk-2SqR.js:272 [Draft] RENDER TIMING - Time since component start: 1754599502018.4
+index-Buk-2SqR.js:272 [Draft] All useState hooks declared
+index-Buk-2SqR.js:272 [SMOOTH TIMER] Display time: 0.0 isCountingDown: false
+index-Buk-2SqR.js:272 [Draft] All hooks declared, starting conditional logic
+index-Buk-2SqR.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: false error: false draftData: true isAuthenticated: true Time: 1754599502749
+index-Buk-2SqR.js:272 🔍 [TIMER DEBUG] Server Time: 0
+index-Buk-2SqR.js:272 🔍 [TIMER DEBUG] Display Time: 0
+index-Buk-2SqR.js:272 🔍 [TIMER DEBUG] Current Player: Gamma Bot
+sw.js?v=1754599502454&r=0.43812966313270396:164 [SW] Fetching /7.x/robots/svg from network
+sw.js?v=1754599502454&r=0.43812966313270396:164 [SW] Fetching /images/nfl/team_logos/BUF.png from network
+sw.js?v=1754599502454&r=0.43812966313270396:164 [SW] Fetching /images/nfl/team_logos/MIA.png from network
+sw.js?v=1754599502454&r=0.43812966313270396:164 [SW] Fetching /images/nfl/team_logos/NE.png from network
+sw.js?v=1754599502454&r=0.43812966313270396:164 [SW] Fetching /images/nfl/team_logos/NYJ.png from network
+sw.js?v=1754599502454&r=0.43812966313270396:164 [SW] Fetching /images/nfl/team_logos/BAL.png from network
+sw.js?v=1754599502454&r=0.43812966313270396:164 [SW] Fetching /images/nfl/team_logos/CIN.png from network
+sw.js?v=1754599502454&r=0.43812966313270396:164 [SW] Fetching /images/nfl/team_logos/CLE.png from network
+sw.js?v=1754599502454&r=0.43812966313270396:164 [SW] Fetching /images/nfl/team_logos/PIT.png from network
+sw.js?v=1754599502454&r=0.43812966313270396:164 [SW] Fetching /images/nfl/team_logos/HOU.png from network
+sw.js?v=1754599502454&r=0.43812966313270396:164 [SW] Fetching /images/nfl/team_logos/IND.png from network
+sw.js?v=1754599502454&r=0.43812966313270396:164 [SW] Fetching /images/nfl/team_logos/JAX.png from network
+sw.js?v=1754599502454&r=0.43812966313270396:164 [SW] Fetching /images/nfl/team_logos/TEN.png from network
+sw.js?v=1754599502454&r=0.43812966313270396:164 [SW] Fetching /images/nfl/team_logos/DEN.png from network
+sw.js?v=1754599502454&r=0.43812966313270396:164 [SW] Fetching /images/nfl/team_logos/KC.png from network
+sw.js?v=1754599502454&r=0.43812966313270396:164 [SW] Fetching /images/nfl/team_logos/LV.png from network
+sw.js?v=1754599502454&r=0.43812966313270396:164 [SW] Fetching /images/nfl/team_logos/LAC.png from network
+index-Buk-2SqR.js:272 [PersistentWS] Message received: {"type":"pong","draftId":"395a23eb-80c7-44b5-a862-3d00d67e1e87","timestamp":1754599502749}
+index-Buk-2SqR.js:272 [Draft] Component render started - TIME: 1754599502767
+index-Buk-2SqR.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-Buk-2SqR.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T20:45:02.767Z
+index-Buk-2SqR.js:272 [Draft] RENDER TIMING - Time since component start: 1754599502017.8
+index-Buk-2SqR.js:272 [Draft] All useState hooks declared
+index-Buk-2SqR.js:272 [SMOOTH TIMER] Display time: 0.0 isCountingDown: false
+index-Buk-2SqR.js:272 [Draft] All hooks declared, starting conditional logic
+index-Buk-2SqR.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: false error: false draftData: true isAuthenticated: true Time: 1754599502767
+index-Buk-2SqR.js:272 🔍 [TIMER DEBUG] Server Time: 0
+index-Buk-2SqR.js:272 🔍 [TIMER DEBUG] Display Time: 0
+index-Buk-2SqR.js:272 🔍 [TIMER DEBUG] Current Player: Gamma Bot
+index-Buk-2SqR.js:272 [PersistentWS] Message received: {"type":"draft_state","draftId":"395a23eb-80c7-44b5-a862-3d00d67e1e87","data":{},"timestamp":1754599502797}
+index-Buk-2SqR.js:272 [Draft] Component render started - TIME: 1754599502814
+index-Buk-2SqR.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-Buk-2SqR.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T20:45:02.814Z
+index-Buk-2SqR.js:272 [Draft] RENDER TIMING - Time since component start: 1754599502018.2
+index-Buk-2SqR.js:272 [Draft] All useState hooks declared
+index-Buk-2SqR.js:272 [SMOOTH TIMER] Display time: 0.0 isCountingDown: false
+index-Buk-2SqR.js:272 [Draft] All hooks declared, starting conditional logic
+index-Buk-2SqR.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: false error: false draftData: true isAuthenticated: true Time: 1754599502814
+index-Buk-2SqR.js:272 🔍 [TIMER DEBUG] Server Time: 0
+index-Buk-2SqR.js:272 🔍 [TIMER DEBUG] Display Time: 0
+index-Buk-2SqR.js:272 🔍 [TIMER DEBUG] Current Player: Gamma Bot
+svg:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+index-Buk-2SqR.js:272 [StableWS] ✅ Connection #1 opened successfully
+index-Buk-2SqR.js:272 [StableWS] Identity message sent
+index-Buk-2SqR.js:272 [StableWS] Message received on connection #1: {"type":"connected","draftId":"395a23eb-80c7-44b5-a862-3d00d67e1e87","userId":"9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a","timestamp":1754599502874,"message":"WebSocket connection established successfully on Reserved VM"}
+index-Buk-2SqR.js:272 [Draft] Component render started - TIME: 1754599502892
+index-Buk-2SqR.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-Buk-2SqR.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T20:45:02.892Z
+index-Buk-2SqR.js:272 [Draft] RENDER TIMING - Time since component start: 1754599502017.8
+index-Buk-2SqR.js:272 [Draft] All useState hooks declared
+index-Buk-2SqR.js:272 [SMOOTH TIMER] Display time: 0.0 isCountingDown: false
+index-Buk-2SqR.js:272 [Draft] All hooks declared, starting conditional logic
+index-Buk-2SqR.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: false error: false draftData: true isAuthenticated: true Time: 1754599502893
+index-Buk-2SqR.js:272 🔍 [TIMER DEBUG] Server Time: 0
+index-Buk-2SqR.js:272 🔍 [TIMER DEBUG] Display Time: 0
+index-Buk-2SqR.js:272 🔍 [TIMER DEBUG] Current Player: Gamma Bot
+index-Buk-2SqR.js:272 [StableWS] Message received on connection #1: {"type":"connected","draftId":"395a23eb-80c7-44b5-a862-3d00d67e1e87","timestamp":1754599502874}
+index-Buk-2SqR.js:272 [Draft] Component render started - TIME: 1754599502894
+index-Buk-2SqR.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-Buk-2SqR.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T20:45:02.894Z
+index-Buk-2SqR.js:272 [Draft] RENDER TIMING - Time since component start: 1754599502018.2
+index-Buk-2SqR.js:272 [Draft] All useState hooks declared
+index-Buk-2SqR.js:272 [SMOOTH TIMER] Display time: 0.0 isCountingDown: false
+index-Buk-2SqR.js:272 [Draft] All hooks declared, starting conditional logic
+index-Buk-2SqR.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: false error: false draftData: true isAuthenticated: true Time: 1754599502894
+index-Buk-2SqR.js:272 🔍 [TIMER DEBUG] Server Time: 0
+index-Buk-2SqR.js:272 🔍 [TIMER DEBUG] Display Time: 0
+index-Buk-2SqR.js:272 🔍 [TIMER DEBUG] Current Player: Gamma Bot
+index-Buk-2SqR.js:272 [StableWS] Message received on connection #1: {"type":"identified","connectionId":1,"timestamp":1754599502922}
+index-Buk-2SqR.js:272 [Draft] Component render started - TIME: 1754599502939
+index-Buk-2SqR.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-Buk-2SqR.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T20:45:02.939Z
+index-Buk-2SqR.js:272 [Draft] RENDER TIMING - Time since component start: 1754599502018.2
+index-Buk-2SqR.js:272 [Draft] All useState hooks declared
+index-Buk-2SqR.js:272 [SMOOTH TIMER] Display time: 0.0 isCountingDown: false
+index-Buk-2SqR.js:272 [Draft] All hooks declared, starting conditional logic
+index-Buk-2SqR.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: false error: false draftData: true isAuthenticated: true Time: 1754599502939
+index-Buk-2SqR.js:272 🔍 [TIMER DEBUG] Server Time: 0
+index-Buk-2SqR.js:272 🔍 [TIMER DEBUG] Display Time: 0
+index-Buk-2SqR.js:272 🔍 [TIMER DEBUG] Current Player: Gamma Bot
+index-Buk-2SqR.js:272 [StableWS] Message received on connection #1: {"type":"draft_state","draftId":"395a23eb-80c7-44b5-a862-3d00d67e1e87","data":{},"timestamp":1754599502974}
+index-Buk-2SqR.js:272 [Draft] Component render started - TIME: 1754599502992
+index-Buk-2SqR.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-Buk-2SqR.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T20:45:02.992Z
+index-Buk-2SqR.js:272 [Draft] RENDER TIMING - Time since component start: 1754599502018
+index-Buk-2SqR.js:272 [Draft] All useState hooks declared
+index-Buk-2SqR.js:272 [SMOOTH TIMER] Display time: 0.0 isCountingDown: false
+index-Buk-2SqR.js:272 [Draft] All hooks declared, starting conditional logic
+index-Buk-2SqR.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: false error: false draftData: true isAuthenticated: true Time: 1754599502992
+index-Buk-2SqR.js:272 🔍 [TIMER DEBUG] Server Time: 0
+index-Buk-2SqR.js:272 🔍 [TIMER DEBUG] Display Time: 0
+index-Buk-2SqR.js:272 🔍 [TIMER DEBUG] Current Player: Gamma Bot
+JAX.png:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+index-Buk-2SqR.js:272 [WebSocket] ✅ Draft exists, proceeding with connection
+index-Buk-2SqR.js:272 [WebSocket] 🔄 LIFECYCLE: Connect called with: Object
+index-Buk-2SqR.js:272 [WebSocket] 🔍 LIFECYCLE CHECK: Validating single connection per session
+index-Buk-2SqR.js:272 [WebSocket] ✅ LIFECYCLE: All requirements met, creating single WebSocket instance
+index-Buk-2SqR.js:272 [WebSocket] 🔍 VALIDATION: Draft ID: 395a23eb-80c7-44b5-a862-3d00d67e1e87 length: 36
+index-Buk-2SqR.js:272 [WebSocket] 🔍 VALIDATION: User ID: 9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a length: 36
+index-Buk-2SqR.js:272 [WebSocket] Connecting to draft immediately after reset/change...
+sw.js?v=1754599502454&r=0.43812966313270396:41 [SW] EMERGENCY ACTIVATE - Taking control of all clients
+sw.js?v=1754599502454&r=0.43812966313270396:110 [SW] Activating service worker, version: v1.7.0-nuclear-unregister-1754599502511
+sw.js?v=1754599502454&r=0.43812966313270396:46 [SW] Deleting remaining cache: mok-sports-static-v1.7.0-nuclear-unregister-1754599502511
+sw.js?v=1754599502454&r=0.43812966313270396:116 [SW] Found caches: Array(1)
+sw.js?v=1754599502454&r=0.43812966313270396:129 [SW] Service worker activated and controlling all clients
+sw.js?v=1754599502454&r=0.43812966313270396:51 [SW] Claiming all clients immediately
+index-Buk-2SqR.js:272 [Draft] === STARTING DRAFT FETCH ===
+index-Buk-2SqR.js:272 [Draft] Draft ID: 395a23eb-80c7-44b5-a862-3d00d67e1e87
+index-Buk-2SqR.js:272 [Draft] Auth status - User: Sky Evans Authenticated: true Loading: false
+index-Buk-2SqR.js:272 [Draft] Token available: true
+index-Buk-2SqR.js:272 [Draft] Current URL: https://mok-sports-draft-mokfantasysport.replit.app/draft/395a23eb-80c7-44b5-a862-3d00d67e1e87
+index-Buk-2SqR.js:272 [Draft] Current pathname: /draft/395a23eb-80c7-44b5-a862-3d00d67e1e87
+index-Buk-2SqR.js:272 [Draft] Making API request to: /api/drafts/395a23eb-80c7-44b5-a862-3d00d67e1e87
+index-Buk-2SqR.js:272 [StableWS] Page hidden
+index-Buk-2SqR.js:272 [Draft] Response received: Object
+index-Buk-2SqR.js:272 [Draft] Successfully fetched draft data: Object
+index-Buk-2SqR.js:272 [Draft] === DRAFT FETCH SUCCESS ===
+index-Buk-2SqR.js:272 [StableWS] Page visible, checking connection
+index-Buk-2SqR.js:272 [Draft] === STARTING DRAFT FETCH ===
+index-Buk-2SqR.js:272 [Draft] Draft ID: 395a23eb-80c7-44b5-a862-3d00d67e1e87
+index-Buk-2SqR.js:272 [Draft] Auth status - User: Sky Evans Authenticated: true Loading: false
+index-Buk-2SqR.js:272 [Draft] Token available: true
+index-Buk-2SqR.js:272 [Draft] Current URL: https://mok-sports-draft-mokfantasysport.replit.app/draft/395a23eb-80c7-44b5-a862-3d00d67e1e87
+index-Buk-2SqR.js:272 [Draft] Current pathname: /draft/395a23eb-80c7-44b5-a862-3d00d67e1e87
+index-Buk-2SqR.js:272 [Draft] Making API request to: /api/drafts/395a23eb-80c7-44b5-a862-3d00d67e1e87
+/api/auth/me:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+index-Buk-2SqR.js:272 [App] Draft route matched with params: Object
+index-Buk-2SqR.js:272 [App] Current location: https://mok-sports-draft-mokfantasysport.replit.app/draft/395a23eb-80c7-44b5-a862-3d00d67e1e87
+index-Buk-2SqR.js:272 [Draft] Component render started - TIME: 1754599510310
+index-Buk-2SqR.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-Buk-2SqR.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T20:45:10.310Z
+index-Buk-2SqR.js:272 [Draft] RENDER TIMING - Time since component start: 1754599502018.5
+index-Buk-2SqR.js:272 [Draft] All useState hooks declared
+index-Buk-2SqR.js:272 [SMOOTH TIMER] Display time: 0.0 isCountingDown: false
+index-Buk-2SqR.js:272 [Draft] All hooks declared, starting conditional logic
+index-Buk-2SqR.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: false error: false draftData: true isAuthenticated: true Time: 1754599510310
+index-Buk-2SqR.js:272 🔍 [TIMER DEBUG] Server Time: 0
+index-Buk-2SqR.js:272 🔍 [TIMER DEBUG] Display Time: 0
+index-Buk-2SqR.js:272 🔍 [TIMER DEBUG] Current Player: Gamma Bot
+index-Buk-2SqR.js:272 [App] Draft route matched with params: Object
+index-Buk-2SqR.js:272 [App] Current location: https://mok-sports-draft-mokfantasysport.replit.app/draft/395a23eb-80c7-44b5-a862-3d00d67e1e87
+index-Buk-2SqR.js:272 [Draft] Component render started - TIME: 1754599510311
+index-Buk-2SqR.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-Buk-2SqR.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: false rendered at: 2025-08-07T20:45:10.311Z
+index-Buk-2SqR.js:272 [Draft] RENDER TIMING - Time since component start: 1754599502018
+index-Buk-2SqR.js:272 [Draft] All useState hooks declared
+index-Buk-2SqR.js:272 [SMOOTH TIMER] Display time: 0.0 isCountingDown: false
+index-Buk-2SqR.js:272 [Draft] All hooks declared, starting conditional logic
+index-Buk-2SqR.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: false error: false draftData: true isAuthenticated: false Time: 1754599510311
+index-Buk-2SqR.js:272 🔍 [TIMER DEBUG] Server Time: 0
+index-Buk-2SqR.js:272 🔍 [TIMER DEBUG] Display Time: 0
+index-Buk-2SqR.js:272 🔍 [TIMER DEBUG] Current Player: Gamma Bot
+index-Buk-2SqR.js:272 [Draft] Response received: Object
+index-Buk-2SqR.js:272 [Draft] Successfully fetched draft data: Object
+index-Buk-2SqR.js:272 [Draft] === DRAFT FETCH SUCCESS ===
+sw.js?v=1754599502454&r=0.43812966313270396:64 [SW] BYPASSING CACHE for JS file: https://mok-sports-draft-mokfantasysport.replit.app/manifest.json
+sw.js?v=1754599502454&r=0.43812966313270396:164 [SW] Fetching /draft/395a23eb-80c7-44b5-a862-3d00d67e1e87 from network
+sw.js?v=1754599502454&r=0.43812966313270396:164 [SW] Fetching /assets/index-CwVZ6PR5.css from network
+index-Buk-2SqR.js:272 [Draft] === STARTING DRAFT FETCH ===
+index-Buk-2SqR.js:272 [Draft] Draft ID: 395a23eb-80c7-44b5-a862-3d00d67e1e87
+index-Buk-2SqR.js:272 [Draft] Auth status - User: Sky Evans Authenticated: false Loading: false
+index-Buk-2SqR.js:272 [Draft] Token available: true
+index-Buk-2SqR.js:272 [Draft] Current URL: https://mok-sports-draft-mokfantasysport.replit.app/draft/395a23eb-80c7-44b5-a862-3d00d67e1e87
+index-Buk-2SqR.js:272 [Draft] Current pathname: /draft/395a23eb-80c7-44b5-a862-3d00d67e1e87
+index-Buk-2SqR.js:272 [Draft] Making API request to: /api/drafts/395a23eb-80c7-44b5-a862-3d00d67e1e87
+index-Buk-2SqR.js:272 [Draft] Response received: {status: 200, statusText: '', headers: {…}}
+index-Buk-2SqR.js:272 [Draft] Successfully fetched draft data: {state: {…}, isCurrentUser: false, currentPlayer: {…}}
+index-Buk-2SqR.js:272 [Draft] === DRAFT FETCH SUCCESS ===
+index-Buk-2SqR.js:272 [StableWS] Keep-alive ping sent
+index-Buk-2SqR.js:272 [StableWS] Message received on connection #1: {"type":"keep_alive_ack","connectionId":1,"timestamp":1754599517924}
+index-Buk-2SqR.js:272 [Draft] Component render started - TIME: 1754599517941
+index-Buk-2SqR.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-Buk-2SqR.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: false rendered at: 2025-08-07T20:45:17.941Z
+index-Buk-2SqR.js:272 [Draft] RENDER TIMING - Time since component start: 1754599502018.1
+index-Buk-2SqR.js:272 [Draft] All useState hooks declared
+index-Buk-2SqR.js:272 [SMOOTH TIMER] Display time: 0.0 isCountingDown: false
+index-Buk-2SqR.js:272 [Draft] All hooks declared, starting conditional logic
+index-Buk-2SqR.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: false error: false draftData: true isAuthenticated: false Time: 1754599517941
+index-Buk-2SqR.js:272 🔍 [TIMER DEBUG] Server Time: 0
+index-Buk-2SqR.js:272 🔍 [TIMER DEBUG] Display Time: 0
+index-Buk-2SqR.js:272 🔍 [TIMER DEBUG] Current Player: Gamma Bot
+index-Buk-2SqR.js:48  GET https://mok-sports-draft-mokfantasysport.replit.app/api/drafts/395a23eb-80c7-44b5-a862-3d00d67e1e87/available-teams 404 (Not Found)
+js @ index-Buk-2SqR.js:48
+queryFn @ index-Buk-2SqR.js:272
+s @ index-Buk-2SqR.js:48
+S @ index-Buk-2SqR.js:48
+start @ index-Buk-2SqR.js:48
+fetch @ index-Buk-2SqR.js:48
+Ns @ index-Buk-2SqR.js:48
+(anonymous) @ index-Buk-2SqR.js:48
+setInterval
+wu @ index-Buk-2SqR.js:48
+Su @ index-Buk-2SqR.js:48
+onQueryUpdate @ index-Buk-2SqR.js:48
+(anonymous) @ index-Buk-2SqR.js:48
+(anonymous) @ index-Buk-2SqR.js:48
+batch @ index-Buk-2SqR.js:48
+vn @ index-Buk-2SqR.js:48
+setData @ index-Buk-2SqR.js:48
+onSuccess @ index-Buk-2SqR.js:48
+p @ index-Buk-2SqR.js:48
+Promise.then
+S @ index-Buk-2SqR.js:48
+start @ index-Buk-2SqR.js:48
+fetch @ index-Buk-2SqR.js:48
+Ns @ index-Buk-2SqR.js:48
+(anonymous) @ index-Buk-2SqR.js:48Understand this error
+index-Buk-2SqR.js:272 [Draft] === STARTING DRAFT FETCH ===
+index-Buk-2SqR.js:272 [Draft] Draft ID: 395a23eb-80c7-44b5-a862-3d00d67e1e87
+index-Buk-2SqR.js:272 [Draft] Auth status - User: Sky Evans Authenticated: false Loading: false
+index-Buk-2SqR.js:272 [Draft] Token available: true
+index-Buk-2SqR.js:272 [Draft] Current URL: https://mok-sports-draft-mokfantasysport.replit.app/draft/395a23eb-80c7-44b5-a862-3d00d67e1e87
+index-Buk-2SqR.js:272 [Draft] Current pathname: /draft/395a23eb-80c7-44b5-a862-3d00d67e1e87
+index-Buk-2SqR.js:272 [Draft] Making API request to: /api/drafts/395a23eb-80c7-44b5-a862-3d00d67e1e87
+index-Buk-2SqR.js:272 [Draft] Response received: {status: 200, statusText: '', headers: {…}}
+index-Buk-2SqR.js:272 [Draft] Successfully fetched draft data: {state: {…}, isCurrentUser: false, currentPlayer: {…}}
+index-Buk-2SqR.js:272 [Draft] === DRAFT FETCH SUCCESS ===
+index-Buk-2SqR.js:272 [Draft] === STARTING DRAFT FETCH ===
+index-Buk-2SqR.js:272 [Draft] Draft ID: 395a23eb-80c7-44b5-a862-3d00d67e1e87
+index-Buk-2SqR.js:272 [Draft] Auth status - User: Sky Evans Authenticated: false Loading: false
+index-Buk-2SqR.js:272 [Draft] Token available: true
+index-Buk-2SqR.js:272 [Draft] Current URL: https://mok-sports-draft-mokfantasysport.replit.app/draft/395a23eb-80c7-44b5-a862-3d00d67e1e87
+index-Buk-2SqR.js:272 [Draft] Current pathname: /draft/395a23eb-80c7-44b5-a862-3d00d67e1e87
+index-Buk-2SqR.js:272 [Draft] Making API request to: /api/drafts/395a23eb-80c7-44b5-a862-3d00d67e1e87
+index-Buk-2SqR.js:48  GET https://mok-sports-draft-mokfantasysport.replit.app/api/drafts/395a23eb-80c7-44b5-a862-3d00d67e1e87 404 (Not Found)
+js @ index-Buk-2SqR.js:48
+queryFn @ index-Buk-2SqR.js:272
+s @ index-Buk-2SqR.js:48
+S @ index-Buk-2SqR.js:48
+start @ index-Buk-2SqR.js:48
+fetch @ index-Buk-2SqR.js:48
+Ns @ index-Buk-2SqR.js:48
+(anonymous) @ index-Buk-2SqR.js:48
+setInterval
+wu @ index-Buk-2SqR.js:48
+Su @ index-Buk-2SqR.js:48
+onQueryUpdate @ index-Buk-2SqR.js:48
+(anonymous) @ index-Buk-2SqR.js:48
+(anonymous) @ index-Buk-2SqR.js:48
+batch @ index-Buk-2SqR.js:48
+vn @ index-Buk-2SqR.js:48
+setData @ index-Buk-2SqR.js:48
+onSuccess @ index-Buk-2SqR.js:48
+p @ index-Buk-2SqR.js:48
+Promise.then
+S @ index-Buk-2SqR.js:48
+start @ index-Buk-2SqR.js:48
+fetch @ index-Buk-2SqR.js:48
+Ns @ index-Buk-2SqR.js:48
+(anonymous) @ index-Buk-2SqR.js:48
+setInterval
+wu @ index-Buk-2SqR.js:48
+Su @ index-Buk-2SqR.js:48
+onQueryUpdate @ index-Buk-2SqR.js:48
+(anonymous) @ index-Buk-2SqR.js:48
+(anonymous) @ index-Buk-2SqR.js:48
+batch @ index-Buk-2SqR.js:48
+vn @ index-Buk-2SqR.js:48
+setData @ index-Buk-2SqR.js:48
+onSuccess @ index-Buk-2SqR.js:48
+p @ index-Buk-2SqR.js:48
+Promise.then
+S @ index-Buk-2SqR.js:48
+start @ index-Buk-2SqR.js:48
+fetch @ index-Buk-2SqR.js:48
+Ns @ index-Buk-2SqR.js:48
+(anonymous) @ index-Buk-2SqR.js:48Understand this error
+index-Buk-2SqR.js:272 [Draft] === DRAFT FETCH ERROR ===
+queryFn @ index-Buk-2SqR.js:272
+await in queryFn
+s @ index-Buk-2SqR.js:48
+S @ index-Buk-2SqR.js:48
+start @ index-Buk-2SqR.js:48
+fetch @ index-Buk-2SqR.js:48
+Ns @ index-Buk-2SqR.js:48
+(anonymous) @ index-Buk-2SqR.js:48
+setInterval
+wu @ index-Buk-2SqR.js:48
+Su @ index-Buk-2SqR.js:48
+onQueryUpdate @ index-Buk-2SqR.js:48
+(anonymous) @ index-Buk-2SqR.js:48
+(anonymous) @ index-Buk-2SqR.js:48
+batch @ index-Buk-2SqR.js:48
+vn @ index-Buk-2SqR.js:48
+setData @ index-Buk-2SqR.js:48
+onSuccess @ index-Buk-2SqR.js:48
+p @ index-Buk-2SqR.js:48
+Promise.then
+S @ index-Buk-2SqR.js:48
+start @ index-Buk-2SqR.js:48
+fetch @ index-Buk-2SqR.js:48
+Ns @ index-Buk-2SqR.js:48
+(anonymous) @ index-Buk-2SqR.js:48
+setInterval
+wu @ index-Buk-2SqR.js:48
+Su @ index-Buk-2SqR.js:48
+onQueryUpdate @ index-Buk-2SqR.js:48
+(anonymous) @ index-Buk-2SqR.js:48
+(anonymous) @ index-Buk-2SqR.js:48
+batch @ index-Buk-2SqR.js:48
+vn @ index-Buk-2SqR.js:48
+setData @ index-Buk-2SqR.js:48
+onSuccess @ index-Buk-2SqR.js:48
+p @ index-Buk-2SqR.js:48
+Promise.then
+S @ index-Buk-2SqR.js:48
+start @ index-Buk-2SqR.js:48
+fetch @ index-Buk-2SqR.js:48
+Ns @ index-Buk-2SqR.js:48
+(anonymous) @ index-Buk-2SqR.js:48Understand this error
+index-Buk-2SqR.js:272 [Draft] Error fetching draft data: Error: 404: 
+<html><head>
+<meta http-equiv="content-type" content="text/html;charset=utf-8">
+<title>404 Page not found</title>
+</head>
+<body text=#000000 bgcolor=#ffffff>
+<h1>Error: Page not found</h1>
+<h2>The requested URL was not found on this server.</h2>
+<h2></h2>
+</body></html>
+
+    at Kv (index-Buk-2SqR.js:48:43053)
+    at async js (index-Buk-2SqR.js:48:43286)
+    at async queryFn (index-Buk-2SqR.js:272:68779)
+queryFn @ index-Buk-2SqR.js:272
+await in queryFn
+s @ index-Buk-2SqR.js:48
+S @ index-Buk-2SqR.js:48
+start @ index-Buk-2SqR.js:48
+fetch @ index-Buk-2SqR.js:48
+Ns @ index-Buk-2SqR.js:48
+(anonymous) @ index-Buk-2SqR.js:48
+setInterval
+wu @ index-Buk-2SqR.js:48
+Su @ index-Buk-2SqR.js:48
+onQueryUpdate @ index-Buk-2SqR.js:48
+(anonymous) @ index-Buk-2SqR.js:48
+(anonymous) @ index-Buk-2SqR.js:48
+batch @ index-Buk-2SqR.js:48
+vn @ index-Buk-2SqR.js:48
+setData @ index-Buk-2SqR.js:48
+onSuccess @ index-Buk-2SqR.js:48
+p @ index-Buk-2SqR.js:48
+Promise.then
+S @ index-Buk-2SqR.js:48
+start @ index-Buk-2SqR.js:48
+fetch @ index-Buk-2SqR.js:48
+Ns @ index-Buk-2SqR.js:48
+(anonymous) @ index-Buk-2SqR.js:48
+setInterval
+wu @ index-Buk-2SqR.js:48
+Su @ index-Buk-2SqR.js:48
+onQueryUpdate @ index-Buk-2SqR.js:48
+(anonymous) @ index-Buk-2SqR.js:48
+(anonymous) @ index-Buk-2SqR.js:48
+batch @ index-Buk-2SqR.js:48
+vn @ index-Buk-2SqR.js:48
+setData @ index-Buk-2SqR.js:48
+onSuccess @ index-Buk-2SqR.js:48
+p @ index-Buk-2SqR.js:48
+Promise.then
+S @ index-Buk-2SqR.js:48
+start @ index-Buk-2SqR.js:48
+fetch @ index-Buk-2SqR.js:48
+Ns @ index-Buk-2SqR.js:48
+(anonymous) @ index-Buk-2SqR.js:48Understand this error
+index-Buk-2SqR.js:272 [Draft] Error type: object
+queryFn @ index-Buk-2SqR.js:272
+await in queryFn
+s @ index-Buk-2SqR.js:48
+S @ index-Buk-2SqR.js:48
+start @ index-Buk-2SqR.js:48
+fetch @ index-Buk-2SqR.js:48
+Ns @ index-Buk-2SqR.js:48
+(anonymous) @ index-Buk-2SqR.js:48
+setInterval
+wu @ index-Buk-2SqR.js:48
+Su @ index-Buk-2SqR.js:48
+onQueryUpdate @ index-Buk-2SqR.js:48
+(anonymous) @ index-Buk-2SqR.js:48
+(anonymous) @ index-Buk-2SqR.js:48
+batch @ index-Buk-2SqR.js:48
+vn @ index-Buk-2SqR.js:48
+setData @ index-Buk-2SqR.js:48
+onSuccess @ index-Buk-2SqR.js:48
+p @ index-Buk-2SqR.js:48
+Promise.then
+S @ index-Buk-2SqR.js:48
+start @ index-Buk-2SqR.js:48
+fetch @ index-Buk-2SqR.js:48
+Ns @ index-Buk-2SqR.js:48
+(anonymous) @ index-Buk-2SqR.js:48
+setInterval
+wu @ index-Buk-2SqR.js:48
+Su @ index-Buk-2SqR.js:48
+onQueryUpdate @ index-Buk-2SqR.js:48
+(anonymous) @ index-Buk-2SqR.js:48
+(anonymous) @ index-Buk-2SqR.js:48
+batch @ index-Buk-2SqR.js:48
+vn @ index-Buk-2SqR.js:48
+setData @ index-Buk-2SqR.js:48
+onSuccess @ index-Buk-2SqR.js:48
+p @ index-Buk-2SqR.js:48
+Promise.then
+S @ index-Buk-2SqR.js:48
+start @ index-Buk-2SqR.js:48
+fetch @ index-Buk-2SqR.js:48
+Ns @ index-Buk-2SqR.js:48
+(anonymous) @ index-Buk-2SqR.js:48Understand this error
+index-Buk-2SqR.js:272 [Draft] Error constructor: Error
+queryFn @ index-Buk-2SqR.js:272
+await in queryFn
+s @ index-Buk-2SqR.js:48
+S @ index-Buk-2SqR.js:48
+start @ index-Buk-2SqR.js:48
+fetch @ index-Buk-2SqR.js:48
+Ns @ index-Buk-2SqR.js:48
+(anonymous) @ index-Buk-2SqR.js:48
+setInterval
+wu @ index-Buk-2SqR.js:48
+Su @ index-Buk-2SqR.js:48
+onQueryUpdate @ index-Buk-2SqR.js:48
+(anonymous) @ index-Buk-2SqR.js:48
+(anonymous) @ index-Buk-2SqR.js:48
+batch @ index-Buk-2SqR.js:48
+vn @ index-Buk-2SqR.js:48
+setData @ index-Buk-2SqR.js:48
+onSuccess @ index-Buk-2SqR.js:48
+p @ index-Buk-2SqR.js:48
+Promise.then
+S @ index-Buk-2SqR.js:48
+start @ index-Buk-2SqR.js:48
+fetch @ index-Buk-2SqR.js:48
+Ns @ index-Buk-2SqR.js:48
+(anonymous) @ index-Buk-2SqR.js:48
+setInterval
+wu @ index-Buk-2SqR.js:48
+Su @ index-Buk-2SqR.js:48
+onQueryUpdate @ index-Buk-2SqR.js:48
+(anonymous) @ index-Buk-2SqR.js:48
+(anonymous) @ index-Buk-2SqR.js:48
+batch @ index-Buk-2SqR.js:48
+vn @ index-Buk-2SqR.js:48
+setData @ index-Buk-2SqR.js:48
+onSuccess @ index-Buk-2SqR.js:48
+p @ index-Buk-2SqR.js:48
+Promise.then
+S @ index-Buk-2SqR.js:48
+start @ index-Buk-2SqR.js:48
+fetch @ index-Buk-2SqR.js:48
+Ns @ index-Buk-2SqR.js:48
+(anonymous) @ index-Buk-2SqR.js:48Understand this error
+index-Buk-2SqR.js:272 [DEBUG] Module Error in draft-fetch: {error: Error: 404: 
+<html><head>
+<meta http-equiv="content-type" content="text/html;charset=utf-8">
+<title…, message: '404: \n<html><head>\n<meta http-equiv="content-type"…nd on this server.</h2>\n<h2></h2>\n</body></html>\n', stack: 'Error: 404: \n<html><head>\n<meta http-equiv="conten…rt.replit.app/assets/index-Buk-2SqR.js:272:68779)', type: 'object', timestamp: '2025-08-07T20:45:26.373Z', …}
+Qh @ index-Buk-2SqR.js:272
+queryFn @ index-Buk-2SqR.js:272
+await in queryFn
+s @ index-Buk-2SqR.js:48
+S @ index-Buk-2SqR.js:48
+start @ index-Buk-2SqR.js:48
+fetch @ index-Buk-2SqR.js:48
+Ns @ index-Buk-2SqR.js:48
+(anonymous) @ index-Buk-2SqR.js:48
+setInterval
+wu @ index-Buk-2SqR.js:48
+Su @ index-Buk-2SqR.js:48
+onQueryUpdate @ index-Buk-2SqR.js:48
+(anonymous) @ index-Buk-2SqR.js:48
+(anonymous) @ index-Buk-2SqR.js:48
+batch @ index-Buk-2SqR.js:48
+vn @ index-Buk-2SqR.js:48
+setData @ index-Buk-2SqR.js:48
+onSuccess @ index-Buk-2SqR.js:48
+p @ index-Buk-2SqR.js:48
+Promise.then
+S @ index-Buk-2SqR.js:48
+start @ index-Buk-2SqR.js:48
+fetch @ index-Buk-2SqR.js:48
+Ns @ index-Buk-2SqR.js:48
+(anonymous) @ index-Buk-2SqR.js:48
+setInterval
+wu @ index-Buk-2SqR.js:48
+Su @ index-Buk-2SqR.js:48
+onQueryUpdate @ index-Buk-2SqR.js:48
+(anonymous) @ index-Buk-2SqR.js:48
+(anonymous) @ index-Buk-2SqR.js:48
+batch @ index-Buk-2SqR.js:48
+vn @ index-Buk-2SqR.js:48
+setData @ index-Buk-2SqR.js:48
+onSuccess @ index-Buk-2SqR.js:48
+p @ index-Buk-2SqR.js:48
+Promise.then
+S @ index-Buk-2SqR.js:48
+start @ index-Buk-2SqR.js:48
+fetch @ index-Buk-2SqR.js:48
+Ns @ index-Buk-2SqR.js:48
+(anonymous) @ index-Buk-2SqR.js:48Understand this error
+index-Buk-2SqR.js:272 [Draft] Full error details: {message: '404: \n<html><head>\n<meta http-equiv="content-type"…nd on this server.</h2>\n<h2></h2>\n</body></html>\n', stack: 'Error: 404: \n<html><head>\n<meta http-equiv="conten…rt.replit.app/assets/index-Buk-2SqR.js:272:68779)', user: 'Sky Evans', hasToken: true, isAuthenticated: false, …}
+queryFn @ index-Buk-2SqR.js:272
+await in queryFn
+s @ index-Buk-2SqR.js:48
+S @ index-Buk-2SqR.js:48
+start @ index-Buk-2SqR.js:48
+fetch @ index-Buk-2SqR.js:48
+Ns @ index-Buk-2SqR.js:48
+(anonymous) @ index-Buk-2SqR.js:48
+setInterval
+wu @ index-Buk-2SqR.js:48
+Su @ index-Buk-2SqR.js:48
+onQueryUpdate @ index-Buk-2SqR.js:48
+(anonymous) @ index-Buk-2SqR.js:48
+(anonymous) @ index-Buk-2SqR.js:48
+batch @ index-Buk-2SqR.js:48
+vn @ index-Buk-2SqR.js:48
+setData @ index-Buk-2SqR.js:48
+onSuccess @ index-Buk-2SqR.js:48
+p @ index-Buk-2SqR.js:48
+Promise.then
+S @ index-Buk-2SqR.js:48
+start @ index-Buk-2SqR.js:48
+fetch @ index-Buk-2SqR.js:48
+Ns @ index-Buk-2SqR.js:48
+(anonymous) @ index-Buk-2SqR.js:48
+setInterval
+wu @ index-Buk-2SqR.js:48
+Su @ index-Buk-2SqR.js:48
+onQueryUpdate @ index-Buk-2SqR.js:48
+(anonymous) @ index-Buk-2SqR.js:48
+(anonymous) @ index-Buk-2SqR.js:48
+batch @ index-Buk-2SqR.js:48
+vn @ index-Buk-2SqR.js:48
+setData @ index-Buk-2SqR.js:48
+onSuccess @ index-Buk-2SqR.js:48
+p @ index-Buk-2SqR.js:48
+Promise.then
+S @ index-Buk-2SqR.js:48
+start @ index-Buk-2SqR.js:48
+fetch @ index-Buk-2SqR.js:48
+Ns @ index-Buk-2SqR.js:48
+(anonymous) @ index-Buk-2SqR.js:48Understand this error
+index-Buk-2SqR.js:272 [Draft] Attempting direct fetch for debugging...
