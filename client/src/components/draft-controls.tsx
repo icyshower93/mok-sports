@@ -39,22 +39,14 @@ export default function DraftControls({
   // Combined create and start draft mutation
   const createAndStartDraftMutation = useMutation({
     mutationFn: async () => {
-      // If draft already exists, just start it
-      if (draftId) {
-        const startResponse = await fetch(`/api/drafts/${draftId}/start`, {
-          method: 'POST',
-          credentials: 'include'
-        });
-        
-        if (!startResponse.ok) {
-          const error = await startResponse.json();
-          throw new Error(error.message || 'Failed to start existing draft');
-        }
-        
-        return { draftId };
-      }
+      console.log('[StartDraft] ✅ ALWAYS CREATING COMPLETELY NEW DRAFT for league:', leagueId);
+      console.log('[StartDraft] ✅ Ignoring any existing draft - creating fresh one');
       
-      // Otherwise create and start new draft
+      // Clear ALL cached data first - critical for clean state
+      queryClient.clear();
+      console.log('[StartDraft] ✅ Cleared all cached data before creating new draft');
+      
+      // ALWAYS create a brand new draft (ignore any existing draftId)
       const createResponse = await fetch('/api/drafts', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -74,6 +66,8 @@ export default function DraftControls({
       const createData = await createResponse.json();
       const newDraftId = createData.draft.id;
       
+      console.log('[StartDraft] ✅ NEW DRAFT CREATED:', newDraftId);
+      
       // Then immediately start the draft
       const startResponse = await fetch(`/api/drafts/${newDraftId}/start`, {
         method: 'POST',
@@ -85,15 +79,24 @@ export default function DraftControls({
         throw new Error(error.message || 'Failed to start draft');
       }
       
+      console.log('[StartDraft] ✅ NEW DRAFT STARTED with timer system - Ready for WebSocket');
       return { ...createData, draftId: newDraftId };
     },
     onSuccess: (data) => {
+      console.log('[StartDraft] ✅ SUCCESS - New draft ready:', data.draftId);
+      
       toast({
         title: "Draft started!",
         description: "The live draft is now beginning. Good luck!",
       });
+      
+      // Clear cache and prepare for new draft
+      queryClient.clear();
       queryClient.invalidateQueries({ queryKey: ['league', leagueId] });
       queryClient.invalidateQueries({ queryKey: ['draft', data.draftId] });
+      
+      console.log('[StartDraft] ✅ All systems ready for WebSocket connection to:', data.draftId);
+      
       if (onDraftStarted) {
         onDraftStarted();
       }
@@ -162,13 +165,16 @@ export default function DraftControls({
       });
       
       // COMPREHENSIVE CACHE INVALIDATION FOR SEAMLESS RESET
-      console.log('[DraftReset] Clearing all cached data for seamless reset...');
+      console.log('[DraftReset] ✅ COMPLETE DATA CLEARING - Removing ALL old draft references...');
       
-      // Clear all draft-related queries
+      // Clear ALL draft-related queries and cache
+      queryClient.clear(); // Nuclear option - clears everything
       queryClient.invalidateQueries({ queryKey: ['league', leagueId] });
       queryClient.invalidateQueries({ queryKey: ['draft'] });
       queryClient.removeQueries({ queryKey: ['/api/drafts'] });
       queryClient.removeQueries({ queryKey: ['/api/leagues'] });
+      
+      console.log('[DraftReset] ✅ All cached draft data cleared completely');
       
       // Force service worker cache refresh for fresh assets
       if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
