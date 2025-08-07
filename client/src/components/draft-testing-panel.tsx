@@ -81,15 +81,16 @@ export function DraftTestingPanel({
     }
   });
 
-  // Reset draft mutation
+  // Reset draft mutation  
   const resetDraftMutation = useMutation({
     mutationFn: async () => {
-      const response = await fetch(`/api/draft/reset/${leagueId}`, {
+      const response = await fetch('/api/testing/reset-draft', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         credentials: 'include',
+        body: JSON.stringify({ leagueId }),
       });
       
       if (!response.ok) {
@@ -99,13 +100,28 @@ export function DraftTestingPanel({
       
       return response.json();
     },
-    onSuccess: () => {
+    onSuccess: async (data) => {
+      console.log('[Reset] Success response:', data);
+      
+      // Force complete cache invalidation 
+      await queryClient.invalidateQueries({ queryKey: [`/api/leagues/${leagueId}`] });
+      await queryClient.invalidateQueries({ queryKey: ['/api/leagues/user'] });
+      
+      // Also remove and refetch to force fresh data
+      queryClient.removeQueries({ queryKey: [`/api/leagues/${leagueId}`] });
+      
       toast({
-        title: "Draft Reset",
-        description: "Draft has been reset to pre-draft state. You can now create a new draft.",
+        title: "Draft Reset Complete!",
+        description: `New draft created: ${data?.draftId || 'Unknown ID'}. Ready to start manually.`,
       });
-      queryClient.invalidateQueries({ queryKey: [`/api/leagues/${leagueId}`] });
+      
+      console.log('[Reset] Successfully reset draft, new draft ID:', data?.draftId);
       onReset?.();
+      
+      // Force a page refresh after a small delay to ensure fresh state
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
     },
     onError: (error: Error) => {
       toast({
@@ -193,6 +209,7 @@ export function DraftTestingPanel({
             <div><strong>Current Draft ID:</strong> {draftId || 'None'}</div>
             <div><strong>Socket Connected To:</strong> {draftId && connectionStatus === 'connected' ? draftId : 'Not connected'}</div>
             <div><strong>League ID:</strong> {leagueId}</div>
+            <div className="text-yellow-600"><strong>Debug:</strong> Prop received: {draftId ? `"${draftId}"` : 'null/undefined'}</div>
           </div>
         </div>
 
