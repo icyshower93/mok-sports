@@ -1,0 +1,168 @@
+[SW] BYPASSING CACHE for JS file: https://mok-sports-draft-mokfantasysport.replit.app/assets/index-Bs5dKWKt.js
+sw.js?v=1754528009401&r=0.020064305450248288:64 [SW] BYPASSING CACHE for JS file: https://replit.com/public/js/replit-dev-banner.js
+sw.js?v=1754528009401&r=0.020064305450248288:164 [SW] Fetching /assets/index-DOw1HNQ2.css from network
+index-Bs5dKWKt.js:228 [Auth] Token check - Has token: false Has user: false Loading: true
+index-Bs5dKWKt.js:228 [SW Hook] EMERGENCY: Unregistering all existing service workers
+sw.js?v=1754528009401&r=0.020064305450248288:164 [SW] Fetching /favicon.ico from network
+sw.js?v=1754528009401&r=0.020064305450248288:64 [SW] BYPASSING CACHE for JS file: https://mok-sports-draft-mokfantasysport.replit.app/manifest.json
+index-Bs5dKWKt.js:228 [SW Hook] Found 1 existing registrations
+index-Bs5dKWKt.js:228 [SW Hook] Unregistering existing service worker
+index-Bs5dKWKt.js:228 [SW Hook] Found 1 caches to delete
+index-Bs5dKWKt.js:228 [SW Hook] Deleting cache: mok-sports-dynamic-v1.7.0-nuclear-unregister-1754528009462
+index-Bs5dKWKt.js:228 [Auth] Token check - Has token: false Has user: true Loading: false
+index-Bs5dKWKt.js:228 [AutoPushRefresh] Legacy hook delegating to SubscriptionManager
+contentScript.js:2 Content script initialized successfully.
+index-Bs5dKWKt.js:228 [SW Hook] Registering fresh service worker: /sw.js?v=1754528014270&r=0.17695602955422174
+waiting:1 Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner.
+sw.js?v=1754528014270&r=0.17695602955422174:2 [SW] NUCLEAR OPTION - Emergency service worker loading
+sw.js?v=1754528014270&r=0.17695602955422174:88 [SW] Service worker starting, version: v1.7.0-nuclear-unregister-1754528014335
+sw.js?v=1754528014270&r=0.17695602955422174:305 [SW] Service worker script loaded successfully
+sw.js?v=1754528014270&r=0.17695602955422174:19 [SW] EMERGENCY INSTALL - Clearing all caches and forcing activation
+index-Bs5dKWKt.js:228 [SW Hook] Service worker registered successfully
+sw.js?v=1754528014270&r=0.17695602955422174:92 [SW] Installing service worker, version: v1.7.0-nuclear-unregister-1754528014335
+sw.js?v=1754528014270&r=0.17695602955422174:22 [SW] Found caches to delete: ['mok-sports-dynamic-v1.7.0-nuclear-unregister-1754528009462']
+sw.js?v=1754528014270&r=0.17695602955422174:25 [SW] Force deleting cache: mok-sports-dynamic-v1.7.0-nuclear-unregister-1754528009462
+sw.js?v=1754528014270&r=0.17695602955422174:96 [SW] Caching static files
+sw.js?v=1754528014270&r=0.17695602955422174:30 [SW] All caches deleted - skipping waiting
+sw.js?v=1754528009401&r=0.020064305450248288:164 [SW] Fetching /a/ACg8ocJEMs5AzNtfS8vv7POiR-CJvE5EdtZVt27CT0tdYJA64x6-BQyy_Q=s96-c from network
+sw.js?v=1754528009401&r=0.020064305450248288:164 [SW] Fetching /a/ACg8ocIlUYRsI8z4wKwDJjb1BBPBwCuyYSlVMcLHB5QAXs50P5Fbtg=s96-c from network
+4sw.js?v=1754528009401&r=0.020064305450248288:164 [SW] Fetching /7.x/robots/svg from network
+sw.js?v=1754528014270&r=0.17695602955422174:99 [SW] Static files cached successfully
+api.dicebear.com/7.x/robots/svg?seed=Alpha%20Bot:1  GET https://api.dicebear.com/7.x/robots/svg?seed=Alpha%20Bot 404 (Not Found)
+Image
+Lh @ index-Bs5dKWKt.js:272
+(anonymous) @ index-Bs5dKWKt.js:272
+qa @ index-Bs5dKWKt.js:40
+Op @ index-Bs5dKWKt.js:40
+Gg @ index-Bs5dKWKt.js:40
+b1 @ index-Bs5dKWKt.js:40
+P1 @ index-Bs5dKWKt.js:40
+xr @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40
+setTimeout
+o @ index-Bs5dKWKt.js:48
+i @ index-Bs5dKWKt.js:48
+batch @ index-Bs5dKWKt.js:48
+fn @ index-Bs5dKWKt.js:48
+setData @ index-Bs5dKWKt.js:48
+onSuccess @ index-Bs5dKWKt.js:48
+p @ index-Bs5dKWKt.js:48
+Promise.then
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+setOptions @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+qa @ index-Bs5dKWKt.js:40
+vo @ index-Bs5dKWKt.js:40
+(anonymous) @ index-Bs5dKWKt.js:40
+E @ index-Bs5dKWKt.js:25
+O @ index-Bs5dKWKt.js:25Understand this error
+svg:1  GET https://api.dicebear.com/7.x/robots/svg?seed=Beta%20Bot 404 (Not Found)
+Image
+Lh @ index-Bs5dKWKt.js:272
+(anonymous) @ index-Bs5dKWKt.js:272
+qa @ index-Bs5dKWKt.js:40
+Op @ index-Bs5dKWKt.js:40
+Gg @ index-Bs5dKWKt.js:40
+b1 @ index-Bs5dKWKt.js:40
+P1 @ index-Bs5dKWKt.js:40
+xr @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40
+setTimeout
+o @ index-Bs5dKWKt.js:48
+i @ index-Bs5dKWKt.js:48
+batch @ index-Bs5dKWKt.js:48
+fn @ index-Bs5dKWKt.js:48
+setData @ index-Bs5dKWKt.js:48
+onSuccess @ index-Bs5dKWKt.js:48
+p @ index-Bs5dKWKt.js:48
+Promise.then
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+setOptions @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+qa @ index-Bs5dKWKt.js:40
+vo @ index-Bs5dKWKt.js:40
+(anonymous) @ index-Bs5dKWKt.js:40
+E @ index-Bs5dKWKt.js:25
+O @ index-Bs5dKWKt.js:25Understand this error
+svg:1  GET https://api.dicebear.com/7.x/robots/svg?seed=Delta%20Bot 404 (Not Found)
+Image
+Lh @ index-Bs5dKWKt.js:272
+(anonymous) @ index-Bs5dKWKt.js:272
+qa @ index-Bs5dKWKt.js:40
+Op @ index-Bs5dKWKt.js:40
+Gg @ index-Bs5dKWKt.js:40
+b1 @ index-Bs5dKWKt.js:40
+P1 @ index-Bs5dKWKt.js:40
+xr @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40
+setTimeout
+o @ index-Bs5dKWKt.js:48
+i @ index-Bs5dKWKt.js:48
+batch @ index-Bs5dKWKt.js:48
+fn @ index-Bs5dKWKt.js:48
+setData @ index-Bs5dKWKt.js:48
+onSuccess @ index-Bs5dKWKt.js:48
+p @ index-Bs5dKWKt.js:48
+Promise.then
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+setOptions @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+qa @ index-Bs5dKWKt.js:40
+vo @ index-Bs5dKWKt.js:40
+(anonymous) @ index-Bs5dKWKt.js:40
+E @ index-Bs5dKWKt.js:25
+O @ index-Bs5dKWKt.js:25Understand this error
+svg:1  GET https://api.dicebear.com/7.x/robots/svg?seed=Gamma%20Bot 404 (Not Found)
+Image
+Lh @ index-Bs5dKWKt.js:272
+(anonymous) @ index-Bs5dKWKt.js:272
+qa @ index-Bs5dKWKt.js:40
+Op @ index-Bs5dKWKt.js:40
+Gg @ index-Bs5dKWKt.js:40
+b1 @ index-Bs5dKWKt.js:40
+P1 @ index-Bs5dKWKt.js:40
+xr @ index-Bs5dKWKt.js:40
+Lp @ index-Bs5dKWKt.js:40
+dr @ index-Bs5dKWKt.js:38
+(anonymous) @ index-Bs5dKWKt.js:40
+setTimeout
+o @ index-Bs5dKWKt.js:48
+i @ index-Bs5dKWKt.js:48
+batch @ index-Bs5dKWKt.js:48
+fn @ index-Bs5dKWKt.js:48
+setData @ index-Bs5dKWKt.js:48
+onSuccess @ index-Bs5dKWKt.js:48
+p @ index-Bs5dKWKt.js:48
+Promise.then
+S @ index-Bs5dKWKt.js:48
+start @ index-Bs5dKWKt.js:48
+fetch @ index-Bs5dKWKt.js:48
+ys @ index-Bs5dKWKt.js:48
+setOptions @ index-Bs5dKWKt.js:48
+(anonymous) @ index-Bs5dKWKt.js:48
+qa @ index-Bs5dKWKt.js:40
+vo @ index-Bs5dKWKt.js:40
+(anonymous) @ index-Bs5dKWKt.js:40
+E @ index-Bs5dKWKt.js:25
+O @ index-Bs5dKWKt.js:25Understand this error
+sw.js?v=1754528014270&r=0.17695602955422174:41 [SW] EMERGENCY ACTIVATE - Taking control of all clients
+sw.js?v=1754528014270&r=0.17695602955422174:110 [SW] Activating service worker, version: v1.7.0-nuclear-unregister-1754528014335
+sw.js?v=1754528014270&r=0.17695602955422174:46 [SW] Deleting remaining cache: mok-sports-static-v1.7.0-nuclear-unregister-1754528014335
+sw.js?v=1754528014270&r=0.17695602955422174:116 [SW] Found caches: ['mok-sports-static-v1.7.0-nuclear-unregister-1754528014335']
+sw.js?v=1754528014270&r=0.17695602955422174:129 [SW] Service worker activated and controlling all clients
+sw.js?v=1754528014270&r=0.17695602955422174:51 [SW] Claiming all clients immediately
