@@ -1,0 +1,104 @@
+What’s happening:
+The Draft component is triggering useEffect or state updates every render.
+
+This causes React to re-render the entire component tree every ~30ms.
+
+As a result, network calls and WebSocket reconnections never get a chance to stabilize.
+
+🔥 Most likely culprits:
+A useEffect with a changing dependency that updates state every run:
+
+tsx
+Copy
+Edit
+useEffect(() => {
+  setSomeState(Date.now()); // ⚠️ Called every render
+}, [someState]); // This causes infinite loop
+A useEffect that lacks a dependency array ([]), but includes state updates or logic that causes React to re-run it constantly.
+
+✅ Fix:
+Check all useEffect() in the Draft component (and children). Look for:
+
+tsx
+Copy
+Edit
+useEffect(() => {
+  ...
+}, [changingState]); // <-- likely the source
+
+// OR
+useEffect(() => {
+  setState(...); // without proper guarding
+}); // <-- missing dependency array = runs every render
+💡 You can log console.log('Render', Date.now()) inside the component and inside each useEffect() to pinpoint the loop.
+
+🚧 PRIORITY 2: API Fetch Never Completes
+This is a symptom of the re-render loop:
+
+API fetch starts
+
+But the component keeps resetting before it can complete
+
+So isLoading stays true, and the success/error states never set
+
+✅ This will likely resolve itself once the infinite render loop is fixed.
+
+⚠️ PRIORITY 3: WebSocket Failures
+Error 1006 = Abnormal Closure:
+Caused by page reloads or network stack being reset (common in rapid re-rendering)
+
+Having 4 simultaneous WebSocket hooks confirms duplicate execution due to the loop
+
+✅ WebSocket will stabilize once the re-render loop is stopped.
+
+You should still audit:
+
+Whether you're mounting more than one WebSocket client in Draft
+
+If you’re using hooks like useWebSocket() in both parent and child components, consolidate them
+
+🖼️ SVG 404s (Robots SVGs)
+plaintext
+Copy
+Edit
+/7.x/robots/svg
+These are non-blocking 404s, likely from a third-party dependency (e.g., emoji picker or fantasy assets), and can be ignored for now unless you want to clean up the logs.
+
+⏲️ Timer Not Initializing
+Timer state is tied to the WebSocket and draft state:
+
+Since draft data is never fetched and the timer logic depends on isDraftActive or similar props, it never runs.
+
+✅ This will fix automatically after fixing the re-render and draft loading issue.
+
+🧠 Summary: Root Cause Chain
+plaintext
+Copy
+Edit
+React re-render loop 🔁
+→ Breaks API loading
+→ Blocks WebSocket init
+→ Timer doesn’t get state
+→ UI stuck in spinner
+✅ Action Plan
+Fix re-rendering:
+
+Audit all useEffect hooks
+
+Look for infinite state update loops
+
+Guard state-setting logic (e.g., use if (!alreadySet))
+
+Consolidate WebSocket hooks:
+
+Ensure only one persistent WS client exists
+
+Abstract it to a context or singleton hook if needed
+
+Use React.memo() and useMemo() where needed:
+
+Prevent unnecessary re-renders of children (like timer or WS consumers)
+
+Enable React DevTools Profiler (optional):
+
+You can track what’s triggering renders

@@ -284,16 +284,14 @@ export default function DraftPage() {
 
   // Smooth local countdown between server updates
   useEffect(() => {
-    if (!isCountingDown || localTime <= 0) return;
+    if (!isCountingDown) return;
 
     const interval = setInterval(() => {
       const timeSinceLastUpdate = (Date.now() - lastServerUpdate) / 1000;
       const estimatedTime = Math.max(0, serverTime - timeSinceLastUpdate);
       
-      if (estimatedTime !== localTime) {
-        setLocalTime(estimatedTime);
-        console.log('[SMOOTH TIMER] Local countdown:', estimatedTime.toFixed(1));
-      }
+      setLocalTime(estimatedTime);
+      console.log('[SMOOTH TIMER] Local countdown:', estimatedTime.toFixed(1));
       
       // Stop counting when we reach 0
       if (estimatedTime <= 0) {
@@ -302,7 +300,7 @@ export default function DraftPage() {
     }, 100); // Update every 100ms for smooth display
 
     return () => clearInterval(interval);
-  }, [isCountingDown, serverTime, lastServerUpdate, localTime]);
+  }, [isCountingDown, serverTime, lastServerUpdate]); // REMOVED localTime from dependencies to prevent loop
 
   // Display the smooth local countdown or fallback to server time
   const displayTime = isCountingDown ? localTime : (serverTime || draftData?.state?.timeRemaining || 0);
@@ -424,22 +422,8 @@ export default function DraftPage() {
     );
   }
 
-  // REACT ERROR #310 FIX: Timer sync and expiration monitoring moved to top with other hooks
-  useEffect(() => {
-    if (!draftData?.state?.timeRemaining) return;
-    const serverTime = draftData.state.timeRemaining;
-    if (Math.abs(serverTime - displayTime) > 2) {
-      console.log('🔄 [TIMER SYNC] Large difference detected, syncing:', serverTime);
-      setServerTime(serverTime);
-      setLocalTime(serverTime);
-      setLastServerUpdate(Date.now());
-    }
-  }, [draftData?.state?.timeRemaining, displayTime]);
-
-  // Timer expiration monitoring (moved from after conditional returns)
-  useEffect(() => {
-    console.log('[Draft] Timer expiration useEffect called');
-  }, [displayTime, draftData?.state?.timeRemaining]);
+  // REMOVED: Duplicate timer sync that was causing infinite re-render loop
+  // The timer sync is already handled in the main timer useEffect hook
 
   // Handle component data after all hooks are declared
   const state: DraftState = draftData?.state || {} as DraftState;
