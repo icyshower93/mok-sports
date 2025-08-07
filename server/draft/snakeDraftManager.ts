@@ -185,7 +185,8 @@ export class SnakeDraftManager {
       leagueId,
       totalRounds: this.draftConfig.totalRounds,
       pickTimeLimit: this.draftConfig.pickTimeLimit,
-      draftOrder: shuffledOrder
+      draftOrder: shuffledOrder,
+      status: 'not_started' as const // Explicitly set initial status
     };
 
     return await this.storage.createDraft(draftData);

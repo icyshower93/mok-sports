@@ -176,15 +176,24 @@ export function DraftTestingPanel({
       </CardHeader>
       
       <CardContent className="space-y-4">
-        {/* Connection Status */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            {getConnectionIcon()}
-            <span className="text-sm text-muted-foreground">
-              WebSocket Status
-            </span>
+        {/* Enhanced Connection & Draft Status */}
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              {getConnectionIcon()}
+              <span className="text-sm text-muted-foreground">
+                WebSocket Status
+              </span>
+            </div>
+            {getConnectionStatus()}
           </div>
-          {getConnectionStatus()}
+          
+          {/* Draft ID Information */}
+          <div className="bg-muted p-2 rounded text-xs space-y-1">
+            <div><strong>Current Draft ID:</strong> {draftId || 'None'}</div>
+            <div><strong>Socket Connected To:</strong> {draftId && connectionStatus === 'connected' ? draftId : 'Not connected'}</div>
+            <div><strong>League ID:</strong> {leagueId}</div>
+          </div>
         </div>
 
         {isExpanded && (
@@ -231,12 +240,50 @@ export function DraftTestingPanel({
                 className="w-full"
               >
                 <RotateCcw className="w-4 h-4 mr-2" />
-                {resetDraftMutation.isPending ? 'Resetting...' : 'Reset Draft State'}
+                {resetDraftMutation.isPending ? 'Resetting...' : 'Reset Draft (Create New, Don\'t Start)'}
               </Button>
               
               <p className="text-xs text-muted-foreground">
-                Completely resets the league draft state. Clears all picks and allows creating a fresh draft.
+                Creates a new draft but doesn't start it. The draft will be ready for manual start via "Start Draft" button.
               </p>
+            </div>
+
+            <Separator />
+            
+            {/* Draft Status Diagnostics */}
+            <div className="space-y-3">
+              <h4 className="text-sm font-semibold flex items-center space-x-2">
+                <Settings className="w-4 h-4" />
+                <span>Draft Diagnostics</span>
+              </h4>
+              
+              <Button
+                onClick={() => {
+                  // Force refresh current draft status
+                  queryClient.invalidateQueries({ queryKey: ['/api/leagues/user'] });
+                  queryClient.invalidateQueries({ queryKey: [`/api/leagues/${leagueId}`] });
+                  if (draftId) {
+                    queryClient.invalidateQueries({ queryKey: ['draft', draftId] });
+                  }
+                  toast({
+                    title: "Refreshed",
+                    description: "Draft status and league data refreshed from server",
+                  });
+                }}
+                variant="outline"
+                size="sm"
+                className="w-full"
+              >
+                <Timer className="w-4 h-4 mr-2" />
+                Refresh Draft Status
+              </Button>
+              
+              <div className="text-xs space-y-1">
+                <div><strong>Expected Flow:</strong></div>
+                <div>1. Reset Draft → Creates new draft ID (not_started)</div>
+                <div>2. Start Draft → Changes status to "active", starts timer</div>
+                <div>3. WebSocket connects to active draft automatically</div>
+              </div>
             </div>
 
             <Separator />

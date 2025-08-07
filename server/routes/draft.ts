@@ -268,24 +268,21 @@ export default async function setupDraftRoutes(app: any, storage: IStorage, webS
         draftManager.activeDraftStates.delete(leagueId);
       }
       
-      // Start the draft immediately with clean state
-      const draftState = await draftManager.startDraft(newDraft.id);
-      console.log(`[Draft Reset] ✅ NEW DRAFT STARTED with fresh timer and clean server state`);
+      // Create draft but DON'T start it - wait for manual start button click
+      console.log(`[Draft Reset] ✅ NEW DRAFT CREATED but NOT STARTED - waiting for manual start`);
 
-      // Update league to reflect draft started
-      await storage.updateLeague(leagueId, { 
-        draftStarted: true
-      });
+      // Keep league in pre-draft state - don't update draftStarted
+      console.log(`[Draft Reset] League remains in waiting state - draft ready but not started`);
 
       res.json({ 
-        message: "Draft reset successfully and new draft created",
+        message: "Draft reset successfully and new draft created (not started)",
         draftId: newDraft.id,
         leagueId,
         resetAt: new Date().toISOString(),
         deletedDraftId: leagueDraft?.id,
         newDraftCreated: true,
-        draftStarted: true,
-        state: draftState
+        draftStarted: false,
+        status: newDraft.status // should be 'not_started'
       });
 
     } catch (error) {

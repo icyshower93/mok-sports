@@ -613,7 +613,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const newDraft = await storage.createDraft({
         id: newDraftId,
         leagueId,
-        status: 'active',
+        status: 'not_started', // Create draft in not_started state
         currentRound: 1,
         currentPick: 1,
         totalRounds: 5,
@@ -624,13 +624,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Start timer for first user
       const { globalDraftManager } = await import('./draft/globalDraftManager.js');
       const firstUserId = draftOrder[0];
-      console.log(`🚀 Starting fresh draft timer for user ${firstUserId}`);
+      console.log(`✅ Draft created but NOT started - timer will start when user clicks "Start Draft"`);
       
-      if (firstUserId) {
-        await globalDraftManager.startPickTimer(newDraftId, firstUserId, 1, 1);
-      } else {
-        console.error('❌ No first user found in draft order');
-      }
+      // DON'T START THE TIMER - Wait for manual start via /api/draft/start endpoint
+      console.log(`🔄 Draft ${newDraftId} ready for manual start by league creator`);
       
       console.log(`✅ New draft created successfully: ${newDraftId}`);
       
