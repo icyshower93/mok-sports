@@ -74,14 +74,15 @@ export function LeagueWaiting() {
   });
 
   // WebSocket connection for real-time draft updates
-  console.log('[LeagueWaiting] ABOUT TO CALL useDraftWebSocket with:', { 
+  console.log('[LeagueWaiting] EMERGENCY DEBUG - ABOUT TO CALL useDraftWebSocket with:', { 
     draftId: league?.draftId, 
     leagueId,
     leagueLoaded: !!league,
-    hasDraftId: !!league?.draftId 
+    hasDraftId: !!league?.draftId,
+    timestamp: Date.now()
   });
   const { connectionStatus, isConnected } = useDraftWebSocket(league?.draftId || null, leagueId);
-  console.log('[LeagueWaiting] WebSocket hook returned:', { connectionStatus, isConnected });
+  console.log('[LeagueWaiting] EMERGENCY DEBUG - WebSocket hook returned:', { connectionStatus, isConnected, timestamp: Date.now() });
 
   // Debug logging for league data
   useEffect(() => {

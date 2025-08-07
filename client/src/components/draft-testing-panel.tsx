@@ -32,7 +32,7 @@ interface DraftTestingPanelProps {
   leagueId: string;
   draftId?: string;
   isCreator: boolean;
-  connectionStatus: 'connecting' | 'connected' | 'disconnected';
+  connectionStatus: 'connecting' | 'connected' | 'disconnected' | 'draft_not_found';
   onReset?: () => void;
 }
 
