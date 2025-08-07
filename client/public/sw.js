@@ -1,5 +1,5 @@
 // Enhanced Mok Sports PWA Service Worker with Auto-Refresh Push Subscriptions
-const CACHE_VERSION = 'v1.4.1-websocket-timer-fix';
+const CACHE_VERSION = 'v1.4.2-seamless-reset-websocket';
 const STATIC_CACHE = `mok-sports-static-${CACHE_VERSION}`;
 const DYNAMIC_CACHE = `mok-sports-dynamic-${CACHE_VERSION}`;
 const API_CACHE = `mok-sports-api-${CACHE_VERSION}`;
@@ -194,6 +194,37 @@ self.addEventListener('message', (event) => {
     event.ports[0]?.postMessage({
       type: 'VERSION_RESPONSE',
       version: CACHE_VERSION
+    });
+  }
+  
+  if (event.data?.type === 'FORCE_CACHE_REFRESH') {
+    console.log('[SW] Force cache refresh requested for:', event.data.reason);
+    
+    // Clear all caches for fresh data
+    caches.keys().then((cacheNames) => {
+      const deletePromises = cacheNames
+        .filter(cacheName => cacheName.startsWith('mok-sports-'))
+        .map(cacheName => {
+          console.log('[SW] Clearing cache for refresh:', cacheName);
+          return caches.delete(cacheName);
+        });
+      
+      return Promise.all(deletePromises);
+    }).then(() => {
+      console.log('[SW] All caches cleared for refresh');
+      
+      // Notify clients that caches are cleared
+      self.clients.matchAll().then(clients => {
+        clients.forEach(client => {
+          client.postMessage({
+            type: 'CACHE_CLEARED',
+            reason: event.data.reason,
+            timestamp: Date.now()
+          });
+        });
+      });
+    }).catch(err => {
+      console.error('[SW] Failed to clear caches:', err);
     });
   }
 });

@@ -158,16 +158,47 @@ export default function DraftControls({
     onSuccess: (data) => {
       toast({
         title: "Draft Reset Complete!",
-        description: "New draft created with fresh timer. Joining draft room...",
+        description: "New draft created with fresh timer. Clearing caches and connecting...",
       });
       
-      // Invalidate all relevant queries
+      // COMPREHENSIVE CACHE INVALIDATION FOR SEAMLESS RESET
+      console.log('[DraftReset] Clearing all cached data for seamless reset...');
+      
+      // Clear all draft-related queries
       queryClient.invalidateQueries({ queryKey: ['league', leagueId] });
       queryClient.invalidateQueries({ queryKey: ['draft'] });
+      queryClient.removeQueries({ queryKey: ['/api/drafts'] });
+      queryClient.removeQueries({ queryKey: ['/api/leagues'] });
       
-      // Automatically navigate to the new draft room
+      // Force service worker cache refresh for fresh assets
+      if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+        console.log('[DraftReset] Triggering service worker cache refresh...');
+        navigator.serviceWorker.controller.postMessage({
+          type: 'FORCE_CACHE_REFRESH',
+          reason: 'draft_reset_button',
+          newDraftId: data.draftId,
+          timestamp: Date.now()
+        });
+      }
+      
+      // Clear browser cache headers to force fresh requests
+      if ('caches' in window) {
+        caches.keys().then(cacheNames => {
+          cacheNames.forEach(cacheName => {
+            if (cacheName.includes('draft') || cacheName.includes('api')) {
+              console.log('[DraftReset] Clearing browser cache:', cacheName);
+              caches.delete(cacheName);
+            }
+          });
+        });
+      }
+      
+      // Automatically navigate to the new draft room with cache busting
+      const navigationUrl = `/draft/${data.draftId}?reset=${Date.now()}`;
+      console.log('[DraftReset] Navigating to new draft room:', navigationUrl);
+      
       setTimeout(() => {
-        setLocation(`/draft/${data.draftId}`);
+        setLocation(navigationUrl);
       }, 1000);
     },
     onError: (error: Error) => {

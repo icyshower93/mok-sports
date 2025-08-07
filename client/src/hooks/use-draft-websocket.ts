@@ -66,9 +66,37 @@ export function useDraftWebSocket(draftId: string | null, leagueId?: string | nu
         reconnectTimeoutRef.current = null;
       }
       
+      // COMPREHENSIVE CACHE INVALIDATION FOR DRAFT RESET
+      console.log('[WebSocket] Clearing all cached draft data for reset...');
+      
+      // Clear all draft-related cache entries
+      queryClient.removeQueries({ queryKey: [`/api/drafts/${previousDraftIdRef.current}`] });
+      queryClient.removeQueries({ queryKey: [`/api/drafts/${previousDraftIdRef.current}/picks`] });
+      queryClient.removeQueries({ queryKey: [`/api/drafts/${previousDraftIdRef.current}/timer`] });
+      queryClient.removeQueries({ queryKey: [`/api/drafts/${previousDraftIdRef.current}/status`] });
+      
+      // Clear new draft cache to force fresh data
+      queryClient.removeQueries({ queryKey: [`/api/drafts/${draftId}`] });
+      queryClient.removeQueries({ queryKey: [`/api/drafts/${draftId}/picks`] });
+      queryClient.removeQueries({ queryKey: [`/api/drafts/${draftId}/timer`] });
+      queryClient.removeQueries({ queryKey: [`/api/drafts/${draftId}/status`] });
+      
+      // Invalidate league cache to get updated draft ID
+      queryClient.invalidateQueries({ queryKey: ['/api/leagues'] });
+      
+      // Force service worker to update caches
+      if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+        console.log('[WebSocket] Triggering service worker cache refresh for draft reset');
+        navigator.serviceWorker.controller.postMessage({
+          type: 'FORCE_CACHE_REFRESH',
+          reason: 'draft_reset',
+          timestamp: Date.now()
+        });
+      }
+      
       // Force connection status reset
       setConnectionStatus('disconnected');
-      console.log('[WebSocket] Connection status reset for new draft');
+      console.log('[WebSocket] Connection status reset and cache cleared for new draft');
     }
     
     previousDraftIdRef.current = draftId;
