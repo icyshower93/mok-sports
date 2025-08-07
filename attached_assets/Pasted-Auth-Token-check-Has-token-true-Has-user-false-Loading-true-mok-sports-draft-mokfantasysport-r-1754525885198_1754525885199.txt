@@ -1,0 +1,564 @@
+Auth] Token check - Has token: true Has user: false Loading: true
+mok-sports-draft-mokfantasysport.replit.app/:1 Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner.
+index-COJxsKuR.js:272 [Dashboard] User authenticated: Object
+index-COJxsKuR.js:272 [Dashboard] User leagues loading: true
+index-COJxsKuR.js:272 [Dashboard] User leagues data: undefined
+index-COJxsKuR.js:228 [Auth] Token check - Has token: true Has user: true Loading: false
+sw.js?v=1754525858415:15 [SW] Service worker starting, version: v1.4.0-ios-push-fix
+sw.js?v=1754525858415:201 [SW] Service worker script loaded successfully
+sw.js?v=1754525858415:19 [SW] Installing service worker, version: v1.4.0-ios-push-fix
+sw.js?v=1754525858415:23 [SW] Caching static files
+5index-COJxsKuR.js:228 [SubscriptionManager] 8:17:38 PM - Permission is granted and no active subscription - auto-creating subscription
+index-COJxsKuR.js:228 [AutoPushRefresh] Legacy hook delegating to SubscriptionManager
+index-COJxsKuR.js:228 [SW Hook] Service worker registered successfully
+index-COJxsKuR.js:272 [PWA DEBUG] [8:17:38 PM] Subscription Manager Status: active=false, endpoint=none
+index-COJxsKuR.js:272 [PWA DEBUG] [8:17:38 PM] PWA Status Check Complete
+index-COJxsKuR.js:272 [PWA DEBUG] [8:17:38 PM] Standalone: false, iOS: false, HTTPS: true
+index-COJxsKuR.js:272 [PWA DEBUG] [8:17:38 PM] Permission: granted, Push: true
+index-COJxsKuR.js:272 [PWA DEBUG] [8:17:38 PM] SW Registered: true, Active Subscription: false
+index-COJxsKuR.js:272 [PWA DEBUG] [8:17:38 PM] Subscription Manager Status: active=false, endpoint=none
+index-COJxsKuR.js:272 [PWA DEBUG] [8:17:38 PM] PWA Status Check Complete
+index-COJxsKuR.js:272 [PWA DEBUG] [8:17:38 PM] Standalone: false, iOS: false, HTTPS: true
+index-COJxsKuR.js:272 [PWA DEBUG] [8:17:38 PM] Permission: granted, Push: true
+index-COJxsKuR.js:272 [PWA DEBUG] [8:17:38 PM] SW Registered: true, Active Subscription: false
+index-COJxsKuR.js:272 [Push Persistence] Found existing subscription: Object
+index-COJxsKuR.js:272 [Push Persistence] Sending subscription to backend
+index-COJxsKuR.js:272 [Dashboard] User authenticated: Object
+index-COJxsKuR.js:272 [Dashboard] User leagues loading: false
+index-COJxsKuR.js:272 [Dashboard] User leagues data: Array(1)
+index-COJxsKuR.js:272 [Dashboard] Redirecting to league waiting room: 243d719b-92ce-4752-8689-5da93ee69213
+index-COJxsKuR.js:272 [Push Persistence] Subscription successfully sent to backend
+index-COJxsKuR.js:272 [Push Persistence] Using existing subscription
+sw.js?v=1754525858415:26 [SW] Static files cached successfully
+sw.js?v=1754525858415:91 [SW] Fetching /a/ACg8ocJEMs5AzNtfS8vv7POiR-CJvE5EdtZVt27CT0tdYJA64x6-BQyy_Q=s96-c from network
+sw.js?v=1754525858415:91 [SW] Fetching /a/ACg8ocIlUYRsI8z4wKwDJjb1BBPBwCuyYSlVMcLHB5QAXs50P5Fbtg=s96-c from network
+4sw.js?v=1754525858415:91 [SW] Fetching /7.x/robots/svg from network
+svg:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+svg:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+svg:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+svg:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+index-COJxsKuR.js:228 [SubscriptionManager] 8:17:38 PM - Starting subscription refresh...
+index-COJxsKuR.js:228 [SubscriptionManager] 8:17:38 PM - Found existing subscription - unsubscribing...
+index-COJxsKuR.js:228 [SubscriptionManager] 8:17:38 PM - Existing subscription unsubscribed
+index-COJxsKuR.js:228 [SubscriptionManager] 8:17:39 PM - Creating new push subscription...
+index-COJxsKuR.js:228 [SubscriptionManager] 8:17:39 PM - Sending subscription to server: https://fcm.googleapis.com/fcm/send/eymyhZsLYIc:AP...
+sw.js?v=1754525858415:37 [SW] Activating service worker, version: v1.4.0-ios-push-fix
+sw.js?v=1754525858415:43 [SW] Found caches: Array(2)
+sw.js?v=1754525858415:56 [SW] Service worker activated and controlling all clients
+index-COJxsKuR.js:228 [SubscriptionManager] 8:17:39 PM - Server response: 201 
+index-COJxsKuR.js:228 [SubscriptionManager] 8:17:39 PM - Subscription registered successfully: Subscription registered successfully
+index-COJxsKuR.js:272 [App] Draft route matched with params: Object
+index-COJxsKuR.js:272 [App] Current location: https://mok-sports-draft-mokfantasysport.replit.app/draft/1b8339ca-0e84-4f1e-b884-3d9bc01352ad
+index-COJxsKuR.js:272 [Draft] Component render started - TIME: 1754525860229
+index-COJxsKuR.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-COJxsKuR.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T00:17:40.230Z
+index-COJxsKuR.js:272 [Draft] RENDER TIMING - Time since component start: 1754525858360.6
+index-COJxsKuR.js:272 [Draft] All useState hooks declared
+index-COJxsKuR.js:272 [TIMER DISPLAY] serverTime: 0 apiTime: undefined displayTime: 0
+index-COJxsKuR.js:272 [Draft] All hooks declared, starting conditional logic
+index-COJxsKuR.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754525860231
+index-COJxsKuR.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-COJxsKuR.js:272 [WebSocket] ==== EFFECT TRIGGERED ====
+index-COJxsKuR.js:272 [WebSocket] Dependencies - draftId: true userId: true
+index-COJxsKuR.js:272 [WebSocket] Current connection state: disconnected
+index-COJxsKuR.js:272 [WebSocket] wsRef exists: false
+index-COJxsKuR.js:272 [WebSocket] ✅ Dependencies ready - initiating connection
+index-COJxsKuR.js:272 [WebSocket] Connect called with: Object
+index-COJxsKuR.js:272 [WebSocket] Validating draft exists before connection...
+index-COJxsKuR.js:272 [WebSocket] ==== EFFECT TRIGGERED ====
+index-COJxsKuR.js:272 [WebSocket] Dependencies - draftId: true userId: true
+index-COJxsKuR.js:272 [WebSocket] Current connection state: disconnected
+index-COJxsKuR.js:272 [WebSocket] wsRef exists: false
+index-COJxsKuR.js:272 [WebSocket] ✅ Dependencies ready - initiating connection
+index-COJxsKuR.js:272 [WebSocket] Connect called with: Object
+index-COJxsKuR.js:272 [WebSocket] Validating draft exists before connection...
+index-COJxsKuR.js:272 [SimpleWS] Starting connection attempt
+index-COJxsKuR.js:272 [SimpleWS] draftId: 1b8339ca-0e84-4f1e-b884-3d9bc01352ad
+index-COJxsKuR.js:272 [SimpleWS] userId: d8873675-274c-46f9-ab48-00955c81d875
+index-COJxsKuR.js:272 [SimpleWS] Connecting to: wss://mok-sports-draft-mokfantasysport.replit.app/draft-ws?userId=d8873675-274c-46f9-ab48-00955c81d875&draftId=1b8339ca-0e84-4f1e-b884-3d9bc01352ad
+index-COJxsKuR.js:272 [PersistentWS] Attempting connection # 1
+index-COJxsKuR.js:272 [StableWS] Component mounted, initializing connection
+index-COJxsKuR.js:272 [StableWS] Starting connection attempt #1
+index-COJxsKuR.js:272 [Draft] === STARTING DRAFT FETCH ===
+index-COJxsKuR.js:272 [Draft] Draft ID: 1b8339ca-0e84-4f1e-b884-3d9bc01352ad
+index-COJxsKuR.js:272 [Draft] Auth status - User: Mok Sports Authenticated: true Loading: false
+index-COJxsKuR.js:272 [Draft] Token available: true
+index-COJxsKuR.js:272 [Draft] Current URL: https://mok-sports-draft-mokfantasysport.replit.app/draft/1b8339ca-0e84-4f1e-b884-3d9bc01352ad
+index-COJxsKuR.js:272 [Draft] Current pathname: /draft/1b8339ca-0e84-4f1e-b884-3d9bc01352ad
+index-COJxsKuR.js:272 [Draft] Making API request to: /api/drafts/1b8339ca-0e84-4f1e-b884-3d9bc01352ad
+index-COJxsKuR.js:272 [Draft] Timer expiration useEffect called
+index-COJxsKuR.js:272 [Draft] Component render started - TIME: 1754525860238
+index-COJxsKuR.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-COJxsKuR.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T00:17:40.238Z
+index-COJxsKuR.js:272 [Draft] RENDER TIMING - Time since component start: 1754525858360.9
+index-COJxsKuR.js:272 [Draft] All useState hooks declared
+index-COJxsKuR.js:272 [TIMER DISPLAY] serverTime: 0 apiTime: undefined displayTime: 0
+index-COJxsKuR.js:272 [Draft] All hooks declared, starting conditional logic
+index-COJxsKuR.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754525860238
+index-COJxsKuR.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+sw.js?v=1754525858415:87 [SW] Serving /favicon.ico from cache
+index-COJxsKuR.js:272 [Draft] Component render started - TIME: 1754525860373
+index-COJxsKuR.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-COJxsKuR.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T00:17:40.373Z
+index-COJxsKuR.js:272 [Draft] RENDER TIMING - Time since component start: 1754525858360.9
+index-COJxsKuR.js:272 [Draft] All useState hooks declared
+index-COJxsKuR.js:272 [TIMER DISPLAY] serverTime: 0 apiTime: undefined displayTime: 0
+index-COJxsKuR.js:272 [Draft] All hooks declared, starting conditional logic
+index-COJxsKuR.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754525860373
+index-COJxsKuR.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-COJxsKuR.js:272 [SimpleWS] ✅ Connected successfully
+index-COJxsKuR.js:272 [SimpleWS] Initial ping sent
+index-COJxsKuR.js:272 [SimpleWS] Message received: {"type":"connected","draftId":"1b8339ca-0e84-4f1e-b884-3d9bc01352ad","userId":"d8873675-274c-46f9-ab48-00955c81d875","timestamp":1754525860392,"message":"WebSocket connection established successfully"}
+index-COJxsKuR.js:272 [Draft] Component render started - TIME: 1754525860379
+index-COJxsKuR.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-COJxsKuR.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T00:17:40.379Z
+index-COJxsKuR.js:272 [Draft] RENDER TIMING - Time since component start: 1754525858360.9
+index-COJxsKuR.js:272 [Draft] All useState hooks declared
+index-COJxsKuR.js:272 [TIMER DISPLAY] serverTime: 0 apiTime: undefined displayTime: 0
+index-COJxsKuR.js:272 [Draft] All hooks declared, starting conditional logic
+index-COJxsKuR.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754525860379
+index-COJxsKuR.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-COJxsKuR.js:272 [SimpleWS] Message received: {"type":"connected","draftId":"1b8339ca-0e84-4f1e-b884-3d9bc01352ad","timestamp":1754525860393}
+index-COJxsKuR.js:272 [Draft] Component render started - TIME: 1754525860379
+index-COJxsKuR.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-COJxsKuR.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T00:17:40.379Z
+index-COJxsKuR.js:272 [Draft] RENDER TIMING - Time since component start: 1754525858360.4
+index-COJxsKuR.js:272 [Draft] All useState hooks declared
+index-COJxsKuR.js:272 [TIMER DISPLAY] serverTime: 0 apiTime: undefined displayTime: 0
+index-COJxsKuR.js:272 [Draft] All hooks declared, starting conditional logic
+index-COJxsKuR.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754525860379
+index-COJxsKuR.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-COJxsKuR.js:272 [SimpleWS] Message received: {"type":"pong","timestamp":1754525860438}
+index-COJxsKuR.js:272 [Draft] Component render started - TIME: 1754525860424
+index-COJxsKuR.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-COJxsKuR.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T00:17:40.425Z
+index-COJxsKuR.js:272 [Draft] RENDER TIMING - Time since component start: 1754525858361.1
+index-COJxsKuR.js:272 [Draft] All useState hooks declared
+index-COJxsKuR.js:272 [TIMER DISPLAY] serverTime: 0 apiTime: undefined displayTime: 0
+index-COJxsKuR.js:272 [Draft] All hooks declared, starting conditional logic
+index-COJxsKuR.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754525860425
+index-COJxsKuR.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-COJxsKuR.js:272 [PersistentWS] ✅ Connected successfully
+index-COJxsKuR.js:272 [PersistentWS] Message received: {"type":"connected","draftId":"1b8339ca-0e84-4f1e-b884-3d9bc01352ad","userId":"d8873675-274c-46f9-ab48-00955c81d875","timestamp":1754525860536,"message":"WebSocket connection established successfully"}
+index-COJxsKuR.js:272 [Draft] Component render started - TIME: 1754525860528
+index-COJxsKuR.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-COJxsKuR.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T00:17:40.528Z
+index-COJxsKuR.js:272 [Draft] RENDER TIMING - Time since component start: 1754525858360.5
+index-COJxsKuR.js:272 [Draft] All useState hooks declared
+index-COJxsKuR.js:272 [TIMER DISPLAY] serverTime: 0 apiTime: undefined displayTime: 0
+index-COJxsKuR.js:272 [Draft] All hooks declared, starting conditional logic
+index-COJxsKuR.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754525860529
+index-COJxsKuR.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-COJxsKuR.js:272 [PersistentWS] Message received: {"type":"connected","draftId":"1b8339ca-0e84-4f1e-b884-3d9bc01352ad","timestamp":1754525860536}
+index-COJxsKuR.js:272 [Draft] Component render started - TIME: 1754525860529
+index-COJxsKuR.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-COJxsKuR.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T00:17:40.529Z
+index-COJxsKuR.js:272 [Draft] RENDER TIMING - Time since component start: 1754525858360.6
+index-COJxsKuR.js:272 [Draft] All useState hooks declared
+index-COJxsKuR.js:272 [TIMER DISPLAY] serverTime: 0 apiTime: undefined displayTime: 0
+index-COJxsKuR.js:272 [Draft] All hooks declared, starting conditional logic
+index-COJxsKuR.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754525860529
+index-COJxsKuR.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-COJxsKuR.js:272 [WebSocket] Draft exists, proceeding with WebSocket connection
+index-COJxsKuR.js:272 [WebSocket] === STARTING NEW CONNECTION ATTEMPT ===
+index-COJxsKuR.js:272 [WebSocket] Draft ID: 1b8339ca-0e84-4f1e-b884-3d9bc01352ad User ID: d8873675-274c-46f9-ab48-00955c81d875
+index-COJxsKuR.js:272 [WebSocket] Current wsRef state: false
+index-COJxsKuR.js:272 [WebSocket] Creating WebSocket connection to: wss://mok-sports-draft-mokfantasysport.replit.app/draft-ws?userId=d8873675-274c-46f9-ab48-00955c81d875&draftId=1b8339ca-0e84-4f1e-b884-3d9bc01352ad
+index-COJxsKuR.js:272 [WebSocket] Timestamp: 2025-08-07T00:17:40.535Z
+index-COJxsKuR.js:272 [WebSocket] WebSocket object created, readyState: 0
+index-COJxsKuR.js:272 [PersistentWS] Message received: {"type":"pong","timestamp":1754525860584}
+index-COJxsKuR.js:272 [Draft] Component render started - TIME: 1754525860574
+index-COJxsKuR.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-COJxsKuR.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T00:17:40.574Z
+index-COJxsKuR.js:272 [Draft] RENDER TIMING - Time since component start: 1754525858360.7
+index-COJxsKuR.js:272 [Draft] All useState hooks declared
+index-COJxsKuR.js:272 [TIMER DISPLAY] serverTime: 0 apiTime: undefined displayTime: 0
+index-COJxsKuR.js:272 [Draft] All hooks declared, starting conditional logic
+index-COJxsKuR.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754525860574
+index-COJxsKuR.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-COJxsKuR.js:272 [PersistentWS] Message received: {"type":"timer_update","draftId":"1b8339ca-0e84-4f1e-b884-3d9bc01352ad","data":{"timeRemaining":42},"timestamp":1754525860636}
+index-COJxsKuR.js:272 [Draft] Component render started - TIME: 1754525860626
+index-COJxsKuR.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-COJxsKuR.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T00:17:40.627Z
+index-COJxsKuR.js:272 [Draft] RENDER TIMING - Time since component start: 1754525858360.2
+index-COJxsKuR.js:272 [Draft] All useState hooks declared
+index-COJxsKuR.js:272 [TIMER DISPLAY] serverTime: 0 apiTime: undefined displayTime: 0
+index-COJxsKuR.js:272 [Draft] All hooks declared, starting conditional logic
+index-COJxsKuR.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754525860628
+index-COJxsKuR.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-COJxsKuR.js:272 [StableWS] ✅ Connection #1 opened successfully
+index-COJxsKuR.js:272 [StableWS] Identity message sent
+index-COJxsKuR.js:272 [Draft] Component render started - TIME: 1754525860675
+index-COJxsKuR.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-COJxsKuR.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T00:17:40.675Z
+index-COJxsKuR.js:272 [Draft] RENDER TIMING - Time since component start: 1754525858360.8
+index-COJxsKuR.js:272 [Draft] All useState hooks declared
+index-COJxsKuR.js:272 [TIMER DISPLAY] serverTime: 0 apiTime: undefined displayTime: 0
+index-COJxsKuR.js:272 [Draft] All hooks declared, starting conditional logic
+index-COJxsKuR.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754525860676
+index-COJxsKuR.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-COJxsKuR.js:272 [StableWS] Message received on connection #1: {"type":"connected","draftId":"1b8339ca-0e84-4f1e-b884-3d9bc01352ad","userId":"d8873675-274c-46f9-ab48-00955c81d875","timestamp":1754525860682,"message":"WebSocket connection established successfully"}
+index-COJxsKuR.js:272 [Draft] Component render started - TIME: 1754525860676
+index-COJxsKuR.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-COJxsKuR.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T00:17:40.676Z
+index-COJxsKuR.js:272 [Draft] RENDER TIMING - Time since component start: 1754525858360.2
+index-COJxsKuR.js:272 [Draft] All useState hooks declared
+index-COJxsKuR.js:272 [TIMER DISPLAY] serverTime: 0 apiTime: undefined displayTime: 0
+index-COJxsKuR.js:272 [Draft] All hooks declared, starting conditional logic
+index-COJxsKuR.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754525860677
+index-COJxsKuR.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-COJxsKuR.js:272 [StableWS] Message received on connection #1: {"type":"connected","draftId":"1b8339ca-0e84-4f1e-b884-3d9bc01352ad","timestamp":1754525860683}
+index-COJxsKuR.js:272 [Draft] Component render started - TIME: 1754525860677
+index-COJxsKuR.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-COJxsKuR.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T00:17:40.677Z
+index-COJxsKuR.js:272 [Draft] RENDER TIMING - Time since component start: 1754525858360.7
+index-COJxsKuR.js:272 [Draft] All useState hooks declared
+index-COJxsKuR.js:272 [TIMER DISPLAY] serverTime: 0 apiTime: undefined displayTime: 0
+index-COJxsKuR.js:272 [Draft] All hooks declared, starting conditional logic
+index-COJxsKuR.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754525860677
+index-COJxsKuR.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-COJxsKuR.js:272 [StableWS] Message received on connection #1: {"type":"identified","connectionId":1,"timestamp":1754525860732}
+index-COJxsKuR.js:272 [Draft] Component render started - TIME: 1754525860720
+index-COJxsKuR.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-COJxsKuR.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T00:17:40.720Z
+index-COJxsKuR.js:272 [Draft] RENDER TIMING - Time since component start: 1754525858360.5
+index-COJxsKuR.js:272 [Draft] All useState hooks declared
+index-COJxsKuR.js:272 [TIMER DISPLAY] serverTime: 0 apiTime: undefined displayTime: 0
+index-COJxsKuR.js:272 [Draft] All hooks declared, starting conditional logic
+index-COJxsKuR.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754525860720
+index-COJxsKuR.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-COJxsKuR.js:272 [WebSocket] ✅ CONNECTION OPENED
+index-COJxsKuR.js:272 [WebSocket] Ready state: 1
+index-COJxsKuR.js:272 [WebSocket] URL: wss://mok-sports-draft-mokfantasysport.replit.app/draft-ws?userId=d8873675-274c-46f9-ab48-00955c81d875&draftId=1b8339ca-0e84-4f1e-b884-3d9bc01352ad
+index-COJxsKuR.js:272 [WebSocket] Connected for draft: 1b8339ca-0e84-4f1e-b884-3d9bc01352ad user: d8873675-274c-46f9-ab48-00955c81d875
+index-COJxsKuR.js:272 [WebSocket] ✅ Initial ping sent successfully
+index-COJxsKuR.js:272 [Draft] Component render started - TIME: 1754525860820
+index-COJxsKuR.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-COJxsKuR.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T00:17:40.820Z
+index-COJxsKuR.js:272 [Draft] RENDER TIMING - Time since component start: 1754525858360.5
+index-COJxsKuR.js:272 [Draft] All useState hooks declared
+index-COJxsKuR.js:272 [TIMER DISPLAY] serverTime: 0 apiTime: undefined displayTime: 0
+index-COJxsKuR.js:272 [Draft] All hooks declared, starting conditional logic
+index-COJxsKuR.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754525860820
+index-COJxsKuR.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-COJxsKuR.js:272 [WebSocket] 📨 MESSAGE RECEIVED
+index-COJxsKuR.js:272 [WebSocket] 📨 Raw data: {"type":"connected","draftId":"1b8339ca-0e84-4f1e-b884-3d9bc01352ad","userId":"d8873675-274c-46f9-ab48-00955c81d875","timestamp":1754525860826,"message":"WebSocket connection established successfully"}
+index-COJxsKuR.js:272 [WebSocket] 📨 Socket state: 1
+index-COJxsKuR.js:272 [WebSocket] ✅ Parsed message type: connected
+index-COJxsKuR.js:272 [WebSocket] 🔍 COMPREHENSIVE DEBUG - Received message: connected Object
+index-COJxsKuR.js:272 [WebSocket] 🔍 Raw message data: {
+  "type": "connected",
+  "draftId": "1b8339ca-0e84-4f1e-b884-3d9bc01352ad",
+  "userId": "d8873675-274c-46f9-ab48-00955c81d875",
+  "timestamp": 1754525860826,
+  "message": "WebSocket connection established successfully"
+}
+index-COJxsKuR.js:272 [WebSocket] 🔍 Message timestamp: 2025-08-07T00:17:40.821Z
+index-COJxsKuR.js:272 [WebSocket] 🔍 Current draft ID: 1b8339ca-0e84-4f1e-b884-3d9bc01352ad
+index-COJxsKuR.js:272 [WebSocket] 🔍 Current user ID: d8873675-274c-46f9-ab48-00955c81d875
+index-COJxsKuR.js:272 [WebSocket] Connected to draft successfully
+index-COJxsKuR.js:272 [WebSocket] ✅ Message processed successfully
+index-COJxsKuR.js:272 [WebSocket] Draft exists, proceeding with WebSocket connection
+index-COJxsKuR.js:272 [Draft] Component render started - TIME: 1754525860821
+index-COJxsKuR.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-COJxsKuR.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T00:17:40.821Z
+index-COJxsKuR.js:272 [Draft] RENDER TIMING - Time since component start: 1754525858360.4
+index-COJxsKuR.js:272 [Draft] All useState hooks declared
+index-COJxsKuR.js:272 [TIMER DISPLAY] serverTime: 0 apiTime: undefined displayTime: 0
+index-COJxsKuR.js:272 [Draft] All hooks declared, starting conditional logic
+index-COJxsKuR.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754525860821
+index-COJxsKuR.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-COJxsKuR.js:272 [WebSocket] 📨 MESSAGE RECEIVED
+index-COJxsKuR.js:272 [WebSocket] 📨 Raw data: {"type":"connected","draftId":"1b8339ca-0e84-4f1e-b884-3d9bc01352ad","timestamp":1754525860826}
+index-COJxsKuR.js:272 [WebSocket] 📨 Socket state: 1
+index-COJxsKuR.js:272 [WebSocket] ✅ Parsed message type: connected
+index-COJxsKuR.js:272 [WebSocket] 🔍 COMPREHENSIVE DEBUG - Received message: connected Object
+index-COJxsKuR.js:272 [WebSocket] 🔍 Raw message data: {
+  "type": "connected",
+  "draftId": "1b8339ca-0e84-4f1e-b884-3d9bc01352ad",
+  "timestamp": 1754525860826
+}
+index-COJxsKuR.js:272 [WebSocket] 🔍 Message timestamp: 2025-08-07T00:17:40.821Z
+index-COJxsKuR.js:272 [WebSocket] 🔍 Current draft ID: 1b8339ca-0e84-4f1e-b884-3d9bc01352ad
+index-COJxsKuR.js:272 [WebSocket] 🔍 Current user ID: d8873675-274c-46f9-ab48-00955c81d875
+index-COJxsKuR.js:272 [WebSocket] Connected to draft successfully
+index-COJxsKuR.js:272 [WebSocket] ✅ Message processed successfully
+index-COJxsKuR.js:272 [Draft] Component render started - TIME: 1754525860822
+index-COJxsKuR.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-COJxsKuR.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T00:17:40.822Z
+index-COJxsKuR.js:272 [Draft] RENDER TIMING - Time since component start: 1754525858360.8
+index-COJxsKuR.js:272 [Draft] All useState hooks declared
+index-COJxsKuR.js:272 [TIMER DISPLAY] serverTime: 0 apiTime: undefined displayTime: 0
+index-COJxsKuR.js:272 [Draft] All hooks declared, starting conditional logic
+index-COJxsKuR.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754525860822
+index-COJxsKuR.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-COJxsKuR.js:272 [WebSocket] === STARTING NEW CONNECTION ATTEMPT ===
+index-COJxsKuR.js:272 [WebSocket] Draft ID: 1b8339ca-0e84-4f1e-b884-3d9bc01352ad User ID: d8873675-274c-46f9-ab48-00955c81d875
+index-COJxsKuR.js:272 [WebSocket] Current wsRef state: false
+index-COJxsKuR.js:272 [WebSocket] Creating WebSocket connection to: wss://mok-sports-draft-mokfantasysport.replit.app/draft-ws?userId=d8873675-274c-46f9-ab48-00955c81d875&draftId=1b8339ca-0e84-4f1e-b884-3d9bc01352ad
+index-COJxsKuR.js:272 [WebSocket] Timestamp: 2025-08-07T00:17:40.822Z
+index-COJxsKuR.js:272 [WebSocket] WebSocket object created, readyState: 0
+index-COJxsKuR.js:272 [WebSocket] 📨 MESSAGE RECEIVED
+index-COJxsKuR.js:272 [WebSocket] 📨 Raw data: {"type":"pong","timestamp":1754525860883}
+index-COJxsKuR.js:272 [WebSocket] 📨 Socket state: 1
+index-COJxsKuR.js:272 [WebSocket] ✅ Parsed message type: pong
+index-COJxsKuR.js:272 [WebSocket] 🔍 COMPREHENSIVE DEBUG - Received message: pong Object
+index-COJxsKuR.js:272 [WebSocket] 🔍 Raw message data: {
+  "type": "pong",
+  "timestamp": 1754525860883
+}
+index-COJxsKuR.js:272 [WebSocket] 🔍 Message timestamp: 2025-08-07T00:17:40.875Z
+index-COJxsKuR.js:272 [WebSocket] 🔍 Current draft ID: 1b8339ca-0e84-4f1e-b884-3d9bc01352ad
+index-COJxsKuR.js:272 [WebSocket] 🔍 Current user ID: d8873675-274c-46f9-ab48-00955c81d875
+index-COJxsKuR.js:272 [WebSocket] Received pong from server
+index-COJxsKuR.js:272 [WebSocket] ✅ Message processed successfully
+index-COJxsKuR.js:272 [Draft] Component render started - TIME: 1754525860875
+index-COJxsKuR.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-COJxsKuR.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T00:17:40.875Z
+index-COJxsKuR.js:272 [Draft] RENDER TIMING - Time since component start: 1754525858360.8
+index-COJxsKuR.js:272 [Draft] All useState hooks declared
+index-COJxsKuR.js:272 [TIMER DISPLAY] serverTime: 0 apiTime: undefined displayTime: 0
+index-COJxsKuR.js:272 [Draft] All hooks declared, starting conditional logic
+index-COJxsKuR.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754525860875
+index-COJxsKuR.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-COJxsKuR.js:272 [WebSocket] ✅ CONNECTION OPENED
+index-COJxsKuR.js:272 [WebSocket] Ready state: 1
+index-COJxsKuR.js:272 [WebSocket] URL: wss://mok-sports-draft-mokfantasysport.replit.app/draft-ws?userId=d8873675-274c-46f9-ab48-00955c81d875&draftId=1b8339ca-0e84-4f1e-b884-3d9bc01352ad
+index-COJxsKuR.js:272 [WebSocket] Connected for draft: 1b8339ca-0e84-4f1e-b884-3d9bc01352ad user: d8873675-274c-46f9-ab48-00955c81d875
+index-COJxsKuR.js:272 [WebSocket] ✅ Initial ping sent successfully
+index-COJxsKuR.js:272 [Draft] Component render started - TIME: 1754525860968
+index-COJxsKuR.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-COJxsKuR.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T00:17:40.968Z
+index-COJxsKuR.js:272 [Draft] RENDER TIMING - Time since component start: 1754525858360.6
+index-COJxsKuR.js:272 [Draft] All useState hooks declared
+index-COJxsKuR.js:272 [TIMER DISPLAY] serverTime: 0 apiTime: undefined displayTime: 0
+index-COJxsKuR.js:272 [Draft] All hooks declared, starting conditional logic
+index-COJxsKuR.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754525860968
+index-COJxsKuR.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-COJxsKuR.js:272 [WebSocket] 📨 MESSAGE RECEIVED
+index-COJxsKuR.js:272 [WebSocket] 📨 Raw data: {"type":"connected","draftId":"1b8339ca-0e84-4f1e-b884-3d9bc01352ad","userId":"d8873675-274c-46f9-ab48-00955c81d875","timestamp":1754525860979,"message":"WebSocket connection established successfully"}
+index-COJxsKuR.js:272 [WebSocket] 📨 Socket state: 1
+index-COJxsKuR.js:272 [WebSocket] ✅ Parsed message type: connected
+index-COJxsKuR.js:272 [WebSocket] 🔍 COMPREHENSIVE DEBUG - Received message: connected Object
+index-COJxsKuR.js:272 [WebSocket] 🔍 Raw message data: {
+  "type": "connected",
+  "draftId": "1b8339ca-0e84-4f1e-b884-3d9bc01352ad",
+  "userId": "d8873675-274c-46f9-ab48-00955c81d875",
+  "timestamp": 1754525860979,
+  "message": "WebSocket connection established successfully"
+}
+index-COJxsKuR.js:272 [WebSocket] 🔍 Message timestamp: 2025-08-07T00:17:40.968Z
+index-COJxsKuR.js:272 [WebSocket] 🔍 Current draft ID: 1b8339ca-0e84-4f1e-b884-3d9bc01352ad
+index-COJxsKuR.js:272 [WebSocket] 🔍 Current user ID: d8873675-274c-46f9-ab48-00955c81d875
+index-COJxsKuR.js:272 [WebSocket] Connected to draft successfully
+index-COJxsKuR.js:272 [WebSocket] ✅ Message processed successfully
+index-COJxsKuR.js:272 [Draft] Component render started - TIME: 1754525860968
+index-COJxsKuR.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-COJxsKuR.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T00:17:40.968Z
+index-COJxsKuR.js:272 [Draft] RENDER TIMING - Time since component start: 1754525858360.3
+index-COJxsKuR.js:272 [Draft] All useState hooks declared
+index-COJxsKuR.js:272 [TIMER DISPLAY] serverTime: 0 apiTime: undefined displayTime: 0
+index-COJxsKuR.js:272 [Draft] All hooks declared, starting conditional logic
+index-COJxsKuR.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754525860968
+index-COJxsKuR.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-COJxsKuR.js:272 [WebSocket] 📨 MESSAGE RECEIVED
+index-COJxsKuR.js:272 [WebSocket] 📨 Raw data: {"type":"connected","draftId":"1b8339ca-0e84-4f1e-b884-3d9bc01352ad","timestamp":1754525860979}
+index-COJxsKuR.js:272 [WebSocket] 📨 Socket state: 1
+index-COJxsKuR.js:272 [WebSocket] ✅ Parsed message type: connected
+index-COJxsKuR.js:272 [WebSocket] 🔍 COMPREHENSIVE DEBUG - Received message: connected Object
+index-COJxsKuR.js:272 [WebSocket] 🔍 Raw message data: {
+  "type": "connected",
+  "draftId": "1b8339ca-0e84-4f1e-b884-3d9bc01352ad",
+  "timestamp": 1754525860979
+}
+index-COJxsKuR.js:272 [WebSocket] 🔍 Message timestamp: 2025-08-07T00:17:40.969Z
+index-COJxsKuR.js:272 [WebSocket] 🔍 Current draft ID: 1b8339ca-0e84-4f1e-b884-3d9bc01352ad
+index-COJxsKuR.js:272 [WebSocket] 🔍 Current user ID: d8873675-274c-46f9-ab48-00955c81d875
+index-COJxsKuR.js:272 [WebSocket] Connected to draft successfully
+index-COJxsKuR.js:272 [WebSocket] ✅ Message processed successfully
+index-COJxsKuR.js:272 [Draft] Component render started - TIME: 1754525860969
+index-COJxsKuR.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-COJxsKuR.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T00:17:40.969Z
+index-COJxsKuR.js:272 [Draft] RENDER TIMING - Time since component start: 1754525858361.1
+index-COJxsKuR.js:272 [Draft] All useState hooks declared
+index-COJxsKuR.js:272 [TIMER DISPLAY] serverTime: 0 apiTime: undefined displayTime: 0
+index-COJxsKuR.js:272 [Draft] All hooks declared, starting conditional logic
+index-COJxsKuR.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754525860969
+index-COJxsKuR.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-COJxsKuR.js:272 [WebSocket] 📨 MESSAGE RECEIVED
+index-COJxsKuR.js:272 [WebSocket] 📨 Raw data: {"type":"pong","timestamp":1754525861036}
+index-COJxsKuR.js:272 [WebSocket] 📨 Socket state: 1
+index-COJxsKuR.js:272 [WebSocket] ✅ Parsed message type: pong
+index-COJxsKuR.js:272 [WebSocket] 🔍 COMPREHENSIVE DEBUG - Received message: pong Object
+index-COJxsKuR.js:272 [WebSocket] 🔍 Raw message data: {
+  "type": "pong",
+  "timestamp": 1754525861036
+}
+index-COJxsKuR.js:272 [WebSocket] 🔍 Message timestamp: 2025-08-07T00:17:41.023Z
+index-COJxsKuR.js:272 [WebSocket] 🔍 Current draft ID: 1b8339ca-0e84-4f1e-b884-3d9bc01352ad
+index-COJxsKuR.js:272 [WebSocket] 🔍 Current user ID: d8873675-274c-46f9-ab48-00955c81d875
+index-COJxsKuR.js:272 [WebSocket] Received pong from server
+index-COJxsKuR.js:272 [WebSocket] ✅ Message processed successfully
+index-COJxsKuR.js:272 [Draft] Component render started - TIME: 1754525861023
+index-COJxsKuR.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-COJxsKuR.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T00:17:41.023Z
+index-COJxsKuR.js:272 [Draft] RENDER TIMING - Time since component start: 1754525858360.4
+index-COJxsKuR.js:272 [Draft] All useState hooks declared
+index-COJxsKuR.js:272 [TIMER DISPLAY] serverTime: 0 apiTime: undefined displayTime: 0
+index-COJxsKuR.js:272 [Draft] All hooks declared, starting conditional logic
+index-COJxsKuR.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754525861023
+index-COJxsKuR.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-COJxsKuR.js:272 [Draft] Response received: Object
+index-COJxsKuR.js:272 [Draft] Successfully fetched draft data: Object
+index-COJxsKuR.js:272 [Draft] === DRAFT FETCH SUCCESS ===
+index-COJxsKuR.js:272 [Draft] Component render started - TIME: 1754525861107
+index-COJxsKuR.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-COJxsKuR.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T00:17:41.107Z
+index-COJxsKuR.js:272 [Draft] RENDER TIMING - Time since component start: 1754525858360.9
+index-COJxsKuR.js:272 [Draft] All useState hooks declared
+index-COJxsKuR.js:272 [TIMER DISPLAY] serverTime: 0 apiTime: 41 displayTime: 41
+index-COJxsKuR.js:272 [Draft] All hooks declared, starting conditional logic
+index-COJxsKuR.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: false error: false draftData: true isAuthenticated: true Time: 1754525861107
+index-COJxsKuR.js:272 🔍 [TIMER DEBUG] Server Time: 41
+index-COJxsKuR.js:272 🔍 [TIMER DEBUG] Display Time: 41
+index-COJxsKuR.js:272 🔍 [TIMER DEBUG] Current Player: Beta Bot
+index-COJxsKuR.js:272 [TIMER SYNC] API data refresh - Current serverTime: 0 API timeRemaining: 41
+index-COJxsKuR.js:272 [TIMER SYNC] Updated serverTime to: 41
+index-COJxsKuR.js:272 [Draft] Timer expiration useEffect called
+index-COJxsKuR.js:272 [Draft] Component render started - TIME: 1754525861113
+index-COJxsKuR.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-COJxsKuR.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T00:17:41.113Z
+index-COJxsKuR.js:272 [Draft] RENDER TIMING - Time since component start: 1754525858360.4
+index-COJxsKuR.js:272 [Draft] All useState hooks declared
+sw.js?v=1754525858415:91 [SW] Fetching /7.x/robots/svg from network
+index-COJxsKuR.js:272 [TIMER DISPLAY] serverTime: 41 apiTime: 41 displayTime: 41
+index-COJxsKuR.js:272 [Draft] All hooks declared, starting conditional logic
+index-COJxsKuR.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: false error: false draftData: true isAuthenticated: true Time: 1754525861113
+index-COJxsKuR.js:272 🔍 [TIMER DEBUG] Server Time: 41
+index-COJxsKuR.js:272 🔍 [TIMER DEBUG] Display Time: 41
+index-COJxsKuR.js:272 🔍 [TIMER DEBUG] Current Player: Beta Bot
+sw.js?v=1754525858415:91 [SW] Fetching /images/nfl/team_logos/BUF.png from network
+sw.js?v=1754525858415:91 [SW] Fetching /images/nfl/team_logos/MIA.png from network
+sw.js?v=1754525858415:91 [SW] Fetching /images/nfl/team_logos/NE.png from network
+sw.js?v=1754525858415:91 [SW] Fetching /images/nfl/team_logos/NYJ.png from network
+sw.js?v=1754525858415:91 [SW] Fetching /images/nfl/team_logos/BAL.png from network
+sw.js?v=1754525858415:91 [SW] Fetching /images/nfl/team_logos/CIN.png from network
+sw.js?v=1754525858415:91 [SW] Fetching /images/nfl/team_logos/CLE.png from network
+sw.js?v=1754525858415:91 [SW] Fetching /images/nfl/team_logos/PIT.png from network
+sw.js?v=1754525858415:91 [SW] Fetching /images/nfl/team_logos/HOU.png from network
+sw.js?v=1754525858415:91 [SW] Fetching /images/nfl/team_logos/IND.png from network
+sw.js?v=1754525858415:91 [SW] Fetching /images/nfl/team_logos/JAX.png from network
+sw.js?v=1754525858415:91 [SW] Fetching /images/nfl/team_logos/TEN.png from network
+sw.js?v=1754525858415:91 [SW] Fetching /images/nfl/team_logos/DEN.png from network
+sw.js?v=1754525858415:91 [SW] Fetching /images/nfl/team_logos/KC.png from network
+sw.js?v=1754525858415:91 [SW] Fetching /images/nfl/team_logos/LV.png from network
+sw.js?v=1754525858415:91 [SW] Fetching /images/nfl/team_logos/LAC.png from network
+svg:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+JAX.png:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+index-COJxsKuR.js:272 [WebSocket] 📨 MESSAGE RECEIVED
+index-COJxsKuR.js:272 [WebSocket] 📨 Raw data: {"type":"timer_update","draftId":"1b8339ca-0e84-4f1e-b884-3d9bc01352ad","data":{"timeRemaining":41},"timestamp":1754525861637}
+index-COJxsKuR.js:272 [WebSocket] 📨 Socket state: 1
+index-COJxsKuR.js:272 [WebSocket] ✅ Parsed message type: timer_update
+index-COJxsKuR.js:272 [WebSocket] 🔍 COMPREHENSIVE DEBUG - Received message: timer_update Object
+index-COJxsKuR.js:272 [WebSocket] 🔍 Raw message data: {
+  "type": "timer_update",
+  "draftId": "1b8339ca-0e84-4f1e-b884-3d9bc01352ad",
+  "data": {
+    "timeRemaining": 41
+  },
+  "timestamp": 1754525861637
+}
+index-COJxsKuR.js:272 [WebSocket] 🔍 Message timestamp: 2025-08-07T00:17:41.625Z
+index-COJxsKuR.js:272 [WebSocket] 🔍 Current draft ID: 1b8339ca-0e84-4f1e-b884-3d9bc01352ad
+index-COJxsKuR.js:272 [WebSocket] 🔍 Current user ID: d8873675-274c-46f9-ab48-00955c81d875
+index-COJxsKuR.js:272 [WebSocket] ⏰ TIMER UPDATE - Received: 41 seconds
+index-COJxsKuR.js:272 [WebSocket] ⏰ TIMER UPDATE - Full message: Object
+index-COJxsKuR.js:272 [WebSocket] ⏰ TIMER UPDATE - Message timestamp: 2025-08-07T00:17:41.625Z
+index-COJxsKuR.js:272 [WebSocket] ⏰ TIMER UPDATE - Draft ID match: false
+index-COJxsKuR.js:272 [WebSocket] ⏰ TIMER UPDATE - Updating cache with oldData: true
+index-COJxsKuR.js:272 [WebSocket] ✅ Message processed successfully
+index-COJxsKuR.js:272 [Draft] Component render started - TIME: 1754525861625
+index-COJxsKuR.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-COJxsKuR.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T00:17:41.625Z
+index-COJxsKuR.js:272 [Draft] RENDER TIMING - Time since component start: 1754525858360.5
+index-COJxsKuR.js:272 [Draft] All useState hooks declared
+index-COJxsKuR.js:272 [TIMER DISPLAY] serverTime: 41 apiTime: 41 displayTime: 41
+index-COJxsKuR.js:272 [Draft] All hooks declared, starting conditional logic
+index-COJxsKuR.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: false error: false draftData: true isAuthenticated: true Time: 1754525861625
+index-COJxsKuR.js:272 🔍 [TIMER DEBUG] Server Time: 41
+index-COJxsKuR.js:272 🔍 [TIMER DEBUG] Display Time: 41
+index-COJxsKuR.js:272 🔍 [TIMER DEBUG] Current Player: Beta Bot
+index-COJxsKuR.js:272 [WebSocket] 📨 MESSAGE RECEIVED
+index-COJxsKuR.js:272 [WebSocket] 📨 Raw data: {"type":"timer_update","draftId":"1b8339ca-0e84-4f1e-b884-3d9bc01352ad","data":{"timeRemaining":40},"timestamp":1754525862638}
+index-COJxsKuR.js:272 [WebSocket] 📨 Socket state: 1
+index-COJxsKuR.js:272 [WebSocket] ✅ Parsed message type: timer_update
+index-COJxsKuR.js:272 [WebSocket] 🔍 COMPREHENSIVE DEBUG - Received message: timer_update Object
+index-COJxsKuR.js:272 [WebSocket] 🔍 Raw message data: {
+  "type": "timer_update",
+  "draftId": "1b8339ca-0e84-4f1e-b884-3d9bc01352ad",
+  "data": {
+    "timeRemaining": 40
+  },
+  "timestamp": 1754525862638
+}
+index-COJxsKuR.js:272 [WebSocket] 🔍 Message timestamp: 2025-08-07T00:17:42.626Z
+index-COJxsKuR.js:272 [WebSocket] 🔍 Current draft ID: 1b8339ca-0e84-4f1e-b884-3d9bc01352ad
+index-COJxsKuR.js:272 [WebSocket] 🔍 Current user ID: d8873675-274c-46f9-ab48-00955c81d875
+index-COJxsKuR.js:272 [WebSocket] ⏰ TIMER UPDATE - Received: 40 seconds
+index-COJxsKuR.js:272 [WebSocket] ⏰ TIMER UPDATE - Full message: Object
+index-COJxsKuR.js:272 [WebSocket] ⏰ TIMER UPDATE - Message timestamp: 2025-08-07T00:17:42.626Z
+index-COJxsKuR.js:272 [WebSocket] ⏰ TIMER UPDATE - Draft ID match: false
+index-COJxsKuR.js:272 [WebSocket] ⏰ TIMER UPDATE - Updating cache with oldData: true
+index-COJxsKuR.js:272 [WebSocket] ✅ Message processed successfully
+index-COJxsKuR.js:272 [Draft] Component render started - TIME: 1754525862626
+index-COJxsKuR.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-COJxsKuR.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T00:17:42.626Z
+index-COJxsKuR.js:272 [Draft] RENDER TIMING - Time since component start: 1754525858360.5
+index-COJxsKuR.js:272 [Draft] All useState hooks declared
+index-COJxsKuR.js:272 [TIMER DISPLAY] serverTime: 41 apiTime: 40 displayTime: 41
+index-COJxsKuR.js:272 [Draft] All hooks declared, starting conditional logic
+index-COJxsKuR.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: false error: false draftData: true isAuthenticated: true Time: 1754525862626
+index-COJxsKuR.js:272 🔍 [TIMER DEBUG] Server Time: 40
+index-COJxsKuR.js:272 🔍 [TIMER DEBUG] Display Time: 41
+index-COJxsKuR.js:272 🔍 [TIMER DEBUG] Current Player: Beta Bot
+index-COJxsKuR.js:272 🔄 [TIMER SYNC] Forcing timer sync from API: 40
+index-COJxsKuR.js:272 [Draft] Component render started - TIME: 1754525862627
+index-COJxsKuR.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-COJxsKuR.js:272 [Draft] Component render started - TIME: 1754525862629
+index-COJxsKuR.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-COJxsKuR.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T00:17:42.629Z
+index-COJxsKuR.js:272 [Draft] RENDER TIMING - Time since component start: 1754525858361.1
+index-COJxsKuR.js:272 [Draft] All useState hooks declared
+index-COJxsKuR.js:272 [TIMER DISPLAY] serverTime: 41 apiTime: 40 displayTime: 41
+index-COJxsKuR.js:272 [Draft] All hooks declared, starting conditional logic
+index-COJxsKuR.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: false error: false draftData: true isAuthenticated: true Time: 1754525862630
+index-COJxsKuR.js:272 🔍 [TIMER DEBUG] Server Time: 40
+index-COJxsKuR.js:272 🔍 [TIMER DEBUG] Display Time: 41
+index-COJxsKuR.js:272 🔍 [TIMER DEBUG] Current Player: Beta Bot
+index-COJxsKuR.js:272 🔄 [TIMER SYNC] Forcing timer sync from API: 40
+index-COJxsKuR.js:272 [Draft] Component render started - TIME: 1754525862630
+index-COJxsKuR.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-COJxsKuR.js:40 ReferenceError: setDisplayTime is not defined
+    at Rj (index-COJxsKuR.js:272:68131)
+    at Cd (index-COJxsKuR.js:38:16998)
+    at Bc (index-COJxsKuR.js:40:3139)
+    at rv (index-COJxsKuR.js:40:44737)
+    at ev (index-COJxsKuR.js:40:39727)
+    at k1 (index-COJxsKuR.js:40:39655)
+    at Pa (index-COJxsKuR.js:40:39508)
+    at eu (index-COJxsKuR.js:40:35875)
+    at Xg (index-COJxsKuR.js:40:34826)
+    at C (index-COJxsKuR.js:25:1562)
+Uc @ index-COJxsKuR.js:40Understand this error
+index-COJxsKuR.js:228 ErrorBoundary caught an error: setDisplayTime is not defined
+componentDidCatch @ index-COJxsKuR.js:228Understand this error
+index-COJxsKuR.js:228 Component stack: 
+    at Rj (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-COJxsKuR.js:272:60679)
+    at Tn (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-COJxsKuR.js:48:3201)
+    at mb (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-COJxsKuR.js:48:4017)
+    at NT (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-COJxsKuR.js:272:130014)
+    at bk (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-COJxsKuR.js:228:57444)
+    at u (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-COJxsKuR.js:48:45795)
+    at Gy (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-COJxsKuR.js:228:50420)
+    at Sk (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-COJxsKuR.js:228:56916)
+    at Ib (https://mok-sports-draft-mokfantasysport.replit.app/assets/in
