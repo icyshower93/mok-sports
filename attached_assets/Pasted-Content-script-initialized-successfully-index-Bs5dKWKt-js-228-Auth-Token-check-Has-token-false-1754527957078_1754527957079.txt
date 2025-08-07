@@ -1,0 +1,47 @@
+Content script initialized successfully.
+index-Bs5dKWKt.js:228 [Auth] Token check - Has token: false Has user: false Loading: true
+index-Bs5dKWKt.js:228 [SW Hook] EMERGENCY: Unregistering all existing service workers
+index-Bs5dKWKt.js:228 [SW Hook] Found 0 existing registrations
+index-Bs5dKWKt.js:228 [SW Hook] Found 0 caches to delete
+mok-sports-draft-mokfantasysport.replit.app/:1 Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner.
+index-Bs5dKWKt.js:272 [Dashboard] User authenticated: {id: '9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a', email: 'skyevans04@gmail.com', name: 'Sky Evans', avatar: 'https://lh3.googleusercontent.com/a/ACg8ocJEMs5AzNtfS8vv7POiR-CJvE5EdtZVt27CT0tdYJA64x6-BQyy_Q=s96-c', iat: 1754526881, …}
+index-Bs5dKWKt.js:272 [Dashboard] User leagues loading: true
+index-Bs5dKWKt.js:272 [Dashboard] User leagues data: undefined
+index-Bs5dKWKt.js:228 [Auth] Token check - Has token: false Has user: true Loading: false
+index-Bs5dKWKt.js:228 [AutoPushRefresh] Legacy hook delegating to SubscriptionManager
+index-Bs5dKWKt.js:272 [PWA DEBUG] [8:52:26 PM] Subscription Manager Status: active=false, endpoint=none
+index-Bs5dKWKt.js:272 [PWA DEBUG] [8:52:26 PM] PWA Status Check Complete
+index-Bs5dKWKt.js:272 [PWA DEBUG] [8:52:26 PM] Standalone: false, iOS: false, HTTPS: true
+index-Bs5dKWKt.js:272 [PWA DEBUG] [8:52:26 PM] Permission: default, Push: true
+index-Bs5dKWKt.js:272 [PWA DEBUG] [8:52:26 PM] SW Registered: false, Active Subscription: false
+index-Bs5dKWKt.js:272 [PWA DEBUG] [8:52:26 PM] Subscription Manager Status: active=false, endpoint=none
+index-Bs5dKWKt.js:272 [PWA DEBUG] [8:52:26 PM] PWA Status Check Complete
+index-Bs5dKWKt.js:272 [PWA DEBUG] [8:52:26 PM] Standalone: false, iOS: false, HTTPS: true
+index-Bs5dKWKt.js:272 [PWA DEBUG] [8:52:26 PM] Permission: default, Push: true
+index-Bs5dKWKt.js:272 [PWA DEBUG] [8:52:26 PM] SW Registered: false, Active Subscription: false
+index-Bs5dKWKt.js:228 [SW Hook] Registering fresh service worker: /sw.js?v=1754527946318&r=0.46723265744389464
+sw.js?v=1754527946318&r=0.46723265744389464:2 [SW] NUCLEAR OPTION - Emergency service worker loading
+sw.js?v=1754527946318&r=0.46723265744389464:88 [SW] Service worker starting, version: v1.7.0-nuclear-unregister-1754527946402
+sw.js?v=1754527946318&r=0.46723265744389464:305 [SW] Service worker script loaded successfully
+sw.js?v=1754527946318&r=0.46723265744389464:19 [SW] EMERGENCY INSTALL - Clearing all caches and forcing activation
+index-Bs5dKWKt.js:228 [SW Hook] Service worker registered successfully
+sw.js?v=1754527946318&r=0.46723265744389464:92 [SW] Installing service worker, version: v1.7.0-nuclear-unregister-1754527946402
+sw.js?v=1754527946318&r=0.46723265744389464:22 [SW] Found caches to delete: []
+sw.js?v=1754527946318&r=0.46723265744389464:30 [SW] All caches deleted - skipping waiting
+sw.js?v=1754527946318&r=0.46723265744389464:96 [SW] Caching static files
+index-Bs5dKWKt.js:272 [Dashboard] User authenticated: {id: '9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a', email: 'skyevans04@gmail.com', name: 'Sky Evans', avatar: 'https://lh3.googleusercontent.com/a/ACg8ocJEMs5AzNtfS8vv7POiR-CJvE5EdtZVt27CT0tdYJA64x6-BQyy_Q=s96-c', iat: 1754526881, …}
+index-Bs5dKWKt.js:272 [Dashboard] User leagues loading: false
+index-Bs5dKWKt.js:272 [Dashboard] User leagues data: (4) [{…}, {…}, {…}, {…}]
+index-Bs5dKWKt.js:272 [Dashboard] Redirecting to league waiting room: 243d719b-92ce-4752-8689-5da93ee69213
+sw.js?v=1754527946318&r=0.46723265744389464:103 [SW] Installation failed: TypeError: Failed to execute 'addAll' on 'Cache': Request failed
+(anonymous) @ sw.js?v=1754527946318&r=0.46723265744389464:103
+Promise.catch
+(anonymous) @ sw.js?v=1754527946318&r=0.46723265744389464:102Understand this error
+index-Bs5dKWKt.js:272 [Push Persistence] No existing subscription found
+index-Bs5dKWKt.js:272 [Push Persistence] No permission or denied, not creating subscription
+sw.js?v=1754527946318&r=0.46723265744389464:41 [SW] EMERGENCY ACTIVATE - Taking control of all clients
+sw.js?v=1754527946318&r=0.46723265744389464:110 [SW] Activating service worker, version: v1.7.0-nuclear-unregister-1754527946402
+sw.js?v=1754527946318&r=0.46723265744389464:46 [SW] Deleting remaining cache: mok-sports-static-v1.7.0-nuclear-unregister-1754527946402
+sw.js?v=1754527946318&r=0.46723265744389464:116 [SW] Found caches: ['mok-sports-static-v1.7.0-nuclear-unregister-1754527946402']
+sw.js?v=1754527946318&r=0.46723265744389464:129 [SW] Service worker activated and controlling all clients
+sw.js?v=1754527946318&r=0.46723265744389464:51 [SW] Claiming all clients immediately
