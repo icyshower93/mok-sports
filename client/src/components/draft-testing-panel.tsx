@@ -103,12 +103,9 @@ export function DraftTestingPanel({
     onSuccess: async (data) => {
       console.log('[Reset] Success response:', data);
       
-      // Force complete cache invalidation 
-      await queryClient.invalidateQueries({ queryKey: [`/api/leagues/${leagueId}`] });
-      await queryClient.invalidateQueries({ queryKey: ['/api/leagues/user'] });
-      
-      // Also remove and refetch to force fresh data
+      // Nuclear cache clearing - remove everything
       queryClient.removeQueries({ queryKey: [`/api/leagues/${leagueId}`] });
+      queryClient.removeQueries({ queryKey: ['/api/leagues/user'] });
       
       toast({
         title: "Draft Reset Complete!",
@@ -116,13 +113,21 @@ export function DraftTestingPanel({
       });
       
       console.log('[Reset] Successfully reset draft, new draft ID:', data?.draftId);
-      onReset?.();
       
-      // Force immediate data refresh instead of page reload
-      setTimeout(async () => {
-        await queryClient.refetchQueries({ queryKey: [`/api/leagues/${leagueId}`] });
-        console.log('[Reset] Forced refetch complete');
-      }, 500);
+      // Immediate cache refresh with forced refetch
+      const freshData = await queryClient.fetchQuery({
+        queryKey: [`/api/leagues/${leagueId}`],
+        queryFn: async () => {
+          const response = await fetch(`/api/leagues/${leagueId}`, {
+            credentials: 'include'
+          });
+          if (!response.ok) throw new Error('Failed to fetch');
+          return response.json();
+        }
+      });
+      
+      console.log('[Reset] Fresh data fetched:', freshData?.draftId);
+      onReset?.();
     },
     onError: (error: Error) => {
       toast({

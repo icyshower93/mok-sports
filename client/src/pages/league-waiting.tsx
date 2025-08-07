@@ -26,6 +26,7 @@ interface League {
   draftScheduledAt?: string;
   draftStarted: boolean;
   draftId?: string;
+  draftStatus?: string;
   members: {
     id: string;
     name: string;
