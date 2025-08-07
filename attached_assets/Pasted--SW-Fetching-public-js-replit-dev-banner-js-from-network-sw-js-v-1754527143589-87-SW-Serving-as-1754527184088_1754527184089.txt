@@ -1,0 +1,156 @@
+[SW] Fetching /public/js/replit-dev-banner.js from network
+sw.js?v=1754527143589:87 [SW] Serving /assets/index-CYsBH8_u.js from cache
+sw.js?v=1754527143589:87 [SW] Serving /assets/index-DOw1HNQ2.css from cache
+index-CYsBH8_u.js:228 [Auth] Token check - Has token: true Has user: false Loading: true
+sw.js?v=1754527143589:87 [SW] Serving /favicon.ico from cache
+sw.js?v=1754527143589:87 [SW] Serving /manifest.json from cache
+waiting:1 Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner.
+index-CYsBH8_u.js:228 [Auth] Token check - Has token: true Has user: true Loading: false
+index-CYsBH8_u.js:228 [AutoPushRefresh] Legacy hook delegating to SubscriptionManager
+contentScript.js:2 Content script initialized successfully.
+sw.js?v=1754527147830:15 [SW] Service worker starting, version: v1.4.1-websocket-timer-fix
+sw.js?v=1754527147830:201 [SW] Service worker script loaded successfully
+sw.js?v=1754527147830:19 [SW] Installing service worker, version: v1.4.1-websocket-timer-fix
+index-CYsBH8_u.js:228 [SW Hook] Service worker registered successfully
+sw.js?v=1754527147830:23 [SW] Caching static files
+sw.js?v=1754527147830:26 [SW] Static files cached successfully
+sw.js?v=1754527147830:91 [SW] Fetching /a/ACg8ocJEMs5AzNtfS8vv7POiR-CJvE5EdtZVt27CT0tdYJA64x6-BQyy_Q=s96-c from network
+sw.js?v=1754527147830:91 [SW] Fetching /a/ACg8ocIlUYRsI8z4wKwDJjb1BBPBwCuyYSlVMcLHB5QAXs50P5Fbtg=s96-c from network
+4sw.js?v=1754527147830:91 [SW] Fetching /7.x/robots/svg from network
+sw.js?v=1754527147830:91 [SW] Fetching /a/ACg8ocJEMs5AzNtfS8vv7POiR-CJvE5EdtZVt27CT0tdYJA64x6-BQyy_Q=s96-c from network
+sw.js?v=1754527147830:91 [SW] Fetching /a/ACg8ocIlUYRsI8z4wKwDJjb1BBPBwCuyYSlVMcLHB5QAXs50P5Fbtg=s96-c from network
+svg:1  GET https://api.dicebear.com/7.x/robots/svg?seed=Alpha%20Bot 404 (Not Found)
+Image
+Lh @ index-CYsBH8_u.js:272
+(anonymous) @ index-CYsBH8_u.js:272
+qa @ index-CYsBH8_u.js:40
+Op @ index-CYsBH8_u.js:40
+Gg @ index-CYsBH8_u.js:40
+b1 @ index-CYsBH8_u.js:40
+P1 @ index-CYsBH8_u.js:40
+xr @ index-CYsBH8_u.js:40
+Lp @ index-CYsBH8_u.js:40
+dr @ index-CYsBH8_u.js:38
+(anonymous) @ index-CYsBH8_u.js:40
+setTimeout
+o @ index-CYsBH8_u.js:48
+i @ index-CYsBH8_u.js:48
+batch @ index-CYsBH8_u.js:48
+fn @ index-CYsBH8_u.js:48
+setData @ index-CYsBH8_u.js:48
+onSuccess @ index-CYsBH8_u.js:48
+p @ index-CYsBH8_u.js:48
+Promise.then
+S @ index-CYsBH8_u.js:48
+start @ index-CYsBH8_u.js:48
+fetch @ index-CYsBH8_u.js:48
+ys @ index-CYsBH8_u.js:48
+setOptions @ index-CYsBH8_u.js:48
+(anonymous) @ index-CYsBH8_u.js:48
+qa @ index-CYsBH8_u.js:40
+vo @ index-CYsBH8_u.js:40
+(anonymous) @ index-CYsBH8_u.js:40
+E @ index-CYsBH8_u.js:25
+O @ index-CYsBH8_u.js:25Understand this error
+svg:1  GET https://api.dicebear.com/7.x/robots/svg?seed=Delta%20Bot 404 (Not Found)
+Image
+Lh @ index-CYsBH8_u.js:272
+(anonymous) @ index-CYsBH8_u.js:272
+qa @ index-CYsBH8_u.js:40
+Op @ index-CYsBH8_u.js:40
+Gg @ index-CYsBH8_u.js:40
+b1 @ index-CYsBH8_u.js:40
+P1 @ index-CYsBH8_u.js:40
+xr @ index-CYsBH8_u.js:40
+Lp @ index-CYsBH8_u.js:40
+dr @ index-CYsBH8_u.js:38
+(anonymous) @ index-CYsBH8_u.js:40
+setTimeout
+o @ index-CYsBH8_u.js:48
+i @ index-CYsBH8_u.js:48
+batch @ index-CYsBH8_u.js:48
+fn @ index-CYsBH8_u.js:48
+setData @ index-CYsBH8_u.js:48
+onSuccess @ index-CYsBH8_u.js:48
+p @ index-CYsBH8_u.js:48
+Promise.then
+S @ index-CYsBH8_u.js:48
+start @ index-CYsBH8_u.js:48
+fetch @ index-CYsBH8_u.js:48
+ys @ index-CYsBH8_u.js:48
+setOptions @ index-CYsBH8_u.js:48
+(anonymous) @ index-CYsBH8_u.js:48
+qa @ index-CYsBH8_u.js:40
+vo @ index-CYsBH8_u.js:40
+(anonymous) @ index-CYsBH8_u.js:40
+E @ index-CYsBH8_u.js:25
+O @ index-CYsBH8_u.js:25Understand this error
+svg:1  GET https://api.dicebear.com/7.x/robots/svg?seed=Gamma%20Bot 404 (Not Found)
+Image
+Lh @ index-CYsBH8_u.js:272
+(anonymous) @ index-CYsBH8_u.js:272
+qa @ index-CYsBH8_u.js:40
+Op @ index-CYsBH8_u.js:40
+Gg @ index-CYsBH8_u.js:40
+b1 @ index-CYsBH8_u.js:40
+P1 @ index-CYsBH8_u.js:40
+xr @ index-CYsBH8_u.js:40
+Lp @ index-CYsBH8_u.js:40
+dr @ index-CYsBH8_u.js:38
+(anonymous) @ index-CYsBH8_u.js:40
+setTimeout
+o @ index-CYsBH8_u.js:48
+i @ index-CYsBH8_u.js:48
+batch @ index-CYsBH8_u.js:48
+fn @ index-CYsBH8_u.js:48
+setData @ index-CYsBH8_u.js:48
+onSuccess @ index-CYsBH8_u.js:48
+p @ index-CYsBH8_u.js:48
+Promise.then
+S @ index-CYsBH8_u.js:48
+start @ index-CYsBH8_u.js:48
+fetch @ index-CYsBH8_u.js:48
+ys @ index-CYsBH8_u.js:48
+setOptions @ index-CYsBH8_u.js:48
+(anonymous) @ index-CYsBH8_u.js:48
+qa @ index-CYsBH8_u.js:40
+vo @ index-CYsBH8_u.js:40
+(anonymous) @ index-CYsBH8_u.js:40
+E @ index-CYsBH8_u.js:25
+O @ index-CYsBH8_u.js:25Understand this error
+svg:1  GET https://api.dicebear.com/7.x/robots/svg?seed=Beta%20Bot 404 (Not Found)
+Image
+Lh @ index-CYsBH8_u.js:272
+(anonymous) @ index-CYsBH8_u.js:272
+qa @ index-CYsBH8_u.js:40
+Op @ index-CYsBH8_u.js:40
+Gg @ index-CYsBH8_u.js:40
+b1 @ index-CYsBH8_u.js:40
+P1 @ index-CYsBH8_u.js:40
+xr @ index-CYsBH8_u.js:40
+Lp @ index-CYsBH8_u.js:40
+dr @ index-CYsBH8_u.js:38
+(anonymous) @ index-CYsBH8_u.js:40
+setTimeout
+o @ index-CYsBH8_u.js:48
+i @ index-CYsBH8_u.js:48
+batch @ index-CYsBH8_u.js:48
+fn @ index-CYsBH8_u.js:48
+setData @ index-CYsBH8_u.js:48
+onSuccess @ index-CYsBH8_u.js:48
+p @ index-CYsBH8_u.js:48
+Promise.then
+S @ index-CYsBH8_u.js:48
+start @ index-CYsBH8_u.js:48
+fetch @ index-CYsBH8_u.js:48
+ys @ index-CYsBH8_u.js:48
+setOptions @ index-CYsBH8_u.js:48
+(anonymous) @ index-CYsBH8_u.js:48
+qa @ index-CYsBH8_u.js:40
+vo @ index-CYsBH8_u.js:40
+(anonymous) @ index-CYsBH8_u.js:40
+E @ index-CYsBH8_u.js:25
+O @ index-CYsBH8_u.js:25Understand this error
+sw.js?v=1754527147830:37 [SW] Activating service worker, version: v1.4.1-websocket-timer-fix
+sw.js?v=1754527147830:43 [SW] Found caches: (2) ['mok-sports-static-v1.4.1-websocket-timer-fix', 'mok-sports-dynamic-v1.4.1-websocket-timer-fix']
+sw.js?v=1754527147830:56 [SW] Service worker activated and controlling all clients

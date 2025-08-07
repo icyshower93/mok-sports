@@ -56,11 +56,36 @@ export function useServiceWorker(enableInPWAOnly: boolean = true) {
     }
 
     try {
-      // Add cache-busting timestamp
-      const swUrl = `/sw.js?v=${Date.now()}`;
+      // EMERGENCY: Unregister ALL existing service workers first
+      console.log('[SW Hook] EMERGENCY: Unregistering all existing service workers');
+      const existingRegistrations = await navigator.serviceWorker.getRegistrations();
+      console.log('[SW Hook] Found', existingRegistrations.length, 'existing registrations');
+      
+      for (const registration of existingRegistrations) {
+        console.log('[SW Hook] Unregistering existing service worker');
+        await registration.unregister();
+      }
+      
+      // Clear all caches manually
+      if ('caches' in window) {
+        const cacheNames = await caches.keys();
+        console.log('[SW Hook] Found', cacheNames.length, 'caches to delete');
+        for (const cacheName of cacheNames) {
+          console.log('[SW Hook] Deleting cache:', cacheName);
+          await caches.delete(cacheName);
+        }
+      }
+      
+      // Wait a moment for cleanup
+      await new Promise(resolve => setTimeout(resolve, 100));
+
+      // Add cache-busting timestamp with additional randomness
+      const swUrl = `/sw.js?v=${Date.now()}&r=${Math.random()}`;
+      console.log('[SW Hook] Registering fresh service worker:', swUrl);
 
       const registration = await navigator.serviceWorker.register(swUrl, {
         scope: '/',
+        updateViaCache: 'none' // Force no caching of service worker
       });
 
       // Handle updates

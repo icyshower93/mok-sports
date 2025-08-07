@@ -1,5 +1,18 @@
-// Enhanced Mok Sports PWA Service Worker with Auto-Refresh Push Subscriptions
-const CACHE_VERSION = 'v1.6.0-emergency-cache-break-' + Date.now();
+// ABSOLUTE NUCLEAR OPTION - Emergency Service Worker Replacement
+console.log('[SW] NUCLEAR OPTION - Emergency service worker loading');
+
+// STEP 1: Immediately unregister any existing service workers
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.getRegistrations().then(registrations => {
+    console.log('[SW] Found existing registrations:', registrations.length);
+    registrations.forEach(registration => {
+      console.log('[SW] Unregistering existing service worker');
+      registration.unregister();
+    });
+  });
+}
+
+const CACHE_VERSION = 'v1.7.0-nuclear-unregister-' + Date.now();
 
 // EMERGENCY: Delete ALL old caches and force immediate activation
 self.addEventListener('install', (event) => {
