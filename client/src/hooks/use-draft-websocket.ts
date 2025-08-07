@@ -172,6 +172,12 @@ export function useDraftWebSocket(draftId: string | null, leagueId?: string | nu
     console.log('[WebSocket] === STARTING NEW CONNECTION ATTEMPT ===');
     console.log('[WebSocket] Draft ID:', draftId, 'User ID:', user?.id);
     console.log('[WebSocket] Current wsRef state:', !!wsRef.current);
+    console.log('[WebSocket] Current connection status:', connectionStatus);
+    
+    if (!draftId || !user?.id) {
+      console.log('[WebSocket] ❌ Cannot connect - missing draftId or userId');
+      return;
+    }
     
     // Prevent multiple concurrent connections
     if (wsRef.current && wsRef.current.readyState === WebSocket.CONNECTING) {
@@ -195,7 +201,7 @@ export function useDraftWebSocket(draftId: string | null, leagueId?: string | nu
       console.log('[WebSocket] Detected Replit deployment domain:', wsHost);
     }
     
-    const wsUrl = `${protocol}//${wsHost}/draft-ws?userId=${encodeURIComponent(user!.id)}&draftId=${encodeURIComponent(draftId || '')}`;
+    const wsUrl = `${protocol}//${wsHost}/draft-ws?userId=${encodeURIComponent(user!.id)}&draftId=${encodeURIComponent(draftId)}`;
     
     console.log('[WebSocket] ========== CREATING NEW CONNECTION ==========');
     console.log('[WebSocket] URL:', wsUrl);
@@ -203,15 +209,16 @@ export function useDraftWebSocket(draftId: string | null, leagueId?: string | nu
     console.log('[WebSocket] User ID:', user!.id);
     console.log('[WebSocket] Protocol:', protocol);
     console.log('[WebSocket] Host:', wsHost);
+    console.log('[WebSocket] Previous Draft ID:', previousDraftIdRef.current);
     console.log('[WebSocket] Timestamp:', new Date().toISOString());
     console.log('[WebSocket] ==============================================');
     
     try {
-      // FIX #4: Create WebSocket with explicit subprotocol for Replit proxy compatibility
-      const ws = new WebSocket(wsUrl, ['draft-protocol']);
-      wsRef.current = ws;
+      console.log('[WebSocket] 🚀 CREATING WebSocket instance...');
+      const ws = new WebSocket(wsUrl);
+      wsRef.current = ws; // Set reference immediately
       
-      console.log('[WebSocket] 🔄 LIFECYCLE: WebSocket object created with Replit compatibility, readyState:', ws.readyState);
+      console.log('[WebSocket] 🔄 LIFECYCLE: WebSocket object created, readyState:', ws.readyState);
     } catch (error) {
       console.error('[WebSocket] Failed to create WebSocket:', error);
       setConnectionStatus('disconnected');
@@ -224,16 +231,10 @@ export function useDraftWebSocket(draftId: string | null, leagueId?: string | nu
     let heartbeatTimer: NodeJS.Timeout | null = null;
 
     ws.onopen = () => {
-      console.log('🚀 [WebSocket] CONNECTION OPENED SUCCESSFULLY');
-      console.log('🔍 [WebSocket] LIFECYCLE EVENT: Connection Open');
-      console.log('🔍 [WebSocket] Draft ID:', draftId);
-      console.log('🔍 [WebSocket] User ID:', user?.id);
-      console.log('🔍 [WebSocket] Ready state:', ws.readyState);
-      console.log('🔍 [WebSocket] URL:', ws.url);
-      console.log('🔍 [WebSocket] Connection timestamp:', new Date().toISOString());
-      console.log('🔍 [WebSocket] Browser WebSocket supported:', 'WebSocket' in window);
-      console.log('🔍 [WebSocket] Connection protocol:', ws.protocol || 'none');
-      
+      console.log('[WebSocket] ✅ CONNECTION ESTABLISHED');
+      console.log('[WebSocket] Ready state:', ws.readyState);
+      console.log('[WebSocket] URL:', ws.url);
+      console.log('[WebSocket] Draft ID connected:', draftId);
       setConnectionStatus('connected');
       
       // Send initial ping with robust error handling
