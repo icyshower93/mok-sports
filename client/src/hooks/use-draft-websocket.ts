@@ -19,7 +19,7 @@ export interface DraftWebSocketMessage {
   timestamp: number;
 }
 
-export function useDraftWebSocket(draftId: string | null, leagueId?: string | null) {
+export function useDraftWebSocket(draftId: string | null, leagueId: string | null = null) {
   const { user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -71,8 +71,8 @@ export function useDraftWebSocket(draftId: string | null, leagueId?: string | nu
       if (wsRef.current) {
         console.log('[WebSocket] 🔄 TRANSITION: Closing old connection cleanly for new draft');
         try {
-          if (wsRef.current?.readyState === WebSocket.OPEN) {
-            wsRef.current?.close(1000, 'Draft changed - clean transition');
+          if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+            wsRef.current.close(1000, 'Draft changed - clean transition');
           }
         } catch (e) {
           console.log('[WebSocket] Error closing connection:', e);
