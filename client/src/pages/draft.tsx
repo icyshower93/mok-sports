@@ -345,11 +345,6 @@ export default function DraftPage() {
     },
   });
 
-  // Timer expiration monitoring (simplified)
-  useEffect(() => {
-    console.log('[Draft] Timer expiration useEffect called');
-  }, [displayTime, draftData?.state?.timeRemaining]);
-
   console.log('[Draft] All hooks declared, starting conditional logic');
   console.log('[Draft] RENDER DEBUG - authLoading:', authLoading, 'isLoading:', isLoading, 'error:', !!error, 'draftData:', !!draftData, 'isAuthenticated:', isAuthenticated, 'Time:', Date.now());
 
@@ -429,7 +424,7 @@ export default function DraftPage() {
     );
   }
 
-  // REACT ERROR #310 FIX: Move timer sync useEffect to top with other hooks
+  // REACT ERROR #310 FIX: Timer sync and expiration monitoring moved to top with other hooks
   useEffect(() => {
     if (!draftData?.state?.timeRemaining) return;
     const serverTime = draftData.state.timeRemaining;
@@ -440,6 +435,11 @@ export default function DraftPage() {
       setLastServerUpdate(Date.now());
     }
   }, [draftData?.state?.timeRemaining, displayTime]);
+
+  // Timer expiration monitoring (moved from after conditional returns)
+  useEffect(() => {
+    console.log('[Draft] Timer expiration useEffect called');
+  }, [displayTime, draftData?.state?.timeRemaining]);
 
   // Handle component data after all hooks are declared
   const state: DraftState = draftData?.state || {} as DraftState;
