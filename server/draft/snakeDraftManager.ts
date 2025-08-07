@@ -75,9 +75,8 @@ export class SnakeDraftManager {
       const activeDrafts = await this.redisStateManager.getActiveDrafts();
       let recoveredCount = 0;
       
-      // PERMANENT FIX: Add the specific stuck draft ID to force recovery
-      const knownStuckDraft = '82b3103b-161d-42ae-9b64-60fb907fdec2';
-      const allDraftIds = new Set([...activeDrafts, knownStuckDraft]);
+      // Check for any active drafts from database as well
+      const allDraftIds = new Set([...activeDrafts]);
       
       for (const draftId of allDraftIds) {
         const draft = await this.storage.getDraft(draftId);

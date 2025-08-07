@@ -48,18 +48,27 @@ export function useDraftWebSocket(draftId: string | null) {
       return;
     }
 
-    // PERMANENT FIX: Handle draft changes (reset scenario)
+    // PERMANENT FIX: Handle draft changes (reset scenario) - Enhanced for Reserved VM
     if (previousDraftIdRef.current && previousDraftIdRef.current !== draftId) {
-      console.log('[WebSocket] Draft changed - closing old connection and establishing new one');
+      console.log('[WebSocket] Draft changed after reset - closing old connection and establishing new one');
+      console.log('[WebSocket] Old draft ID:', previousDraftIdRef.current);
+      console.log('[WebSocket] New draft ID:', draftId);
+      
       if (wsRef.current) {
-        wsRef.current.close();
+        console.log('[WebSocket] Closing existing connection for draft change');
+        wsRef.current.close(1000, 'Draft changed');
         wsRef.current = null;
       }
+      
       // Clear any reconnection attempts for old draft
       if (reconnectTimeoutRef.current) {
         clearTimeout(reconnectTimeoutRef.current);
         reconnectTimeoutRef.current = null;
       }
+      
+      // Force connection status reset
+      setConnectionStatus('disconnected');
+      console.log('[WebSocket] Connection status reset for new draft');
     }
     
     previousDraftIdRef.current = draftId;
@@ -406,16 +415,30 @@ export function useDraftWebSocket(draftId: string | null) {
     }
   }, []);
 
-  // ROBUST CONNECTION MANAGEMENT - Fixed React lifecycle issues
+  // ROBUST CONNECTION MANAGEMENT - Enhanced for draft resets on Reserved VM
   useEffect(() => {
     console.log('[WebSocket] ==== EFFECT TRIGGERED ====');
     console.log('[WebSocket] Dependencies - draftId:', !!draftId, 'userId:', !!user?.id);
     console.log('[WebSocket] Current connection state:', connectionStatus);
     console.log('[WebSocket] wsRef exists:', !!wsRef.current);
+    console.log('[WebSocket] Previous draft ID:', previousDraftIdRef.current);
+    console.log('[WebSocket] Current draft ID:', draftId);
     
     if (draftId && user?.id) {
       console.log('[WebSocket] ✅ Dependencies ready - initiating connection');
-      connect();
+      
+      // PERMANENT FIX: Force new connection for draft resets
+      if (previousDraftIdRef.current && previousDraftIdRef.current !== draftId) {
+        console.log('[WebSocket] 🔄 Draft ID changed - forcing fresh connection');
+        setConnectionStatus('connecting');
+        
+        // Small delay to ensure clean state transition
+        setTimeout(() => {
+          connect();
+        }, 500);
+      } else {
+        connect();
+      }
     } else {
       console.log('[WebSocket] ❌ Missing dependencies - disconnecting if needed');
       if (wsRef.current) {
