@@ -1,22 +1,64 @@
 // Enhanced Mok Sports PWA Service Worker with Auto-Refresh Push Subscriptions
 const CACHE_VERSION = 'v1.6.0-emergency-cache-break-' + Date.now();
 
-// EMERGENCY: Delete ALL old caches on install
+// EMERGENCY: Delete ALL old caches and force immediate activation
 self.addEventListener('install', (event) => {
-  console.log('[SW] Emergency cache clearing - deleting ALL caches');
+  console.log('[SW] EMERGENCY INSTALL - Clearing all caches and forcing activation');
   event.waitUntil(
     caches.keys().then(cacheNames => {
+      console.log('[SW] Found caches to delete:', cacheNames);
       return Promise.all(
         cacheNames.map(cacheName => {
-          console.log('[SW] Deleting cache:', cacheName);
+          console.log('[SW] Force deleting cache:', cacheName);
           return caches.delete(cacheName);
         })
       );
     }).then(() => {
-      console.log('[SW] All caches cleared - forcing immediate activation');
+      console.log('[SW] All caches deleted - skipping waiting');
+      return self.skipWaiting();
+    }).catch(error => {
+      console.log('[SW] Cache deletion error (proceeding anyway):', error);
       return self.skipWaiting();
     })
   );
+});
+
+// EMERGENCY: Take control immediately on activation
+self.addEventListener('activate', (event) => {
+  console.log('[SW] EMERGENCY ACTIVATE - Taking control of all clients');
+  event.waitUntil(
+    caches.keys().then(cacheNames => {
+      return Promise.all(
+        cacheNames.map(cacheName => {
+          console.log('[SW] Deleting remaining cache:', cacheName);
+          return caches.delete(cacheName);
+        })
+      );
+    }).then(() => {
+      console.log('[SW] Claiming all clients immediately');
+      return self.clients.claim();
+    }).catch(error => {
+      console.log('[SW] Activation cleanup error:', error);
+      return self.clients.claim();
+    })
+  );
+});
+
+// EMERGENCY: Bypass all caches - fetch everything fresh
+self.addEventListener('fetch', (event) => {
+  // For JavaScript files, ALWAYS fetch fresh from network
+  if (event.request.url.includes('.js')) {
+    console.log('[SW] BYPASSING CACHE for JS file:', event.request.url);
+    event.respondWith(
+      fetch(event.request, { cache: 'no-store' }).catch(() => {
+        console.log('[SW] Network fetch failed for:', event.request.url);
+        return new Response('Network error', { status: 500 });
+      })
+    );
+    return;
+  }
+  
+  // Let all other requests pass through normally
 });
 const STATIC_CACHE = `mok-sports-static-${CACHE_VERSION}`;
 const DYNAMIC_CACHE = `mok-sports-dynamic-${CACHE_VERSION}`;
