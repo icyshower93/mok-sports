@@ -429,25 +429,30 @@ export default function DraftPage() {
     );
   }
 
-  const state: DraftState = draftData.state;
-  const isCurrentUser = draftData.isCurrentUser;
-  const currentPlayer = draftData.currentPlayer;
+  // REACT ERROR #310 FIX: Move timer sync useEffect to top with other hooks
+  useEffect(() => {
+    if (!draftData?.state?.timeRemaining) return;
+    const serverTime = draftData.state.timeRemaining;
+    if (Math.abs(serverTime - displayTime) > 2) {
+      console.log('🔄 [TIMER SYNC] Large difference detected, syncing:', serverTime);
+      setServerTime(serverTime);
+      setLocalTime(serverTime);
+      setLastServerUpdate(Date.now());
+    }
+  }, [draftData?.state?.timeRemaining, displayTime]);
+
+  // Handle component data after all hooks are declared
+  const state: DraftState = draftData?.state || {} as DraftState;
+  const isCurrentUser = draftData?.isCurrentUser || false;
+  const currentPlayer = draftData?.currentPlayer || null;
   const teams = teamsData?.teams || {};
 
   // DEBUG LOGGING AND CRITICAL TIMER SYNC FIX
-  console.log('🔍 [TIMER DEBUG] Server Time:', state.timeRemaining);
-  console.log('🔍 [TIMER DEBUG] Display Time:', displayTime);
-  console.log('🔍 [TIMER DEBUG] Current Player:', currentPlayer?.name);
-  
-  // CRITICAL FIX: Force timer sync with server data when different (avoid constant updates)
-  useEffect(() => {
-    if (state.timeRemaining !== undefined && Math.abs(state.timeRemaining - displayTime) > 2) {
-      console.log('🔄 [TIMER SYNC] Large difference detected, syncing:', state.timeRemaining);
-      setServerTime(state.timeRemaining);
-      setLocalTime(state.timeRemaining);
-      setLastServerUpdate(Date.now());
-    }
-  }, [state.timeRemaining]);
+  if (draftData?.state) {
+    console.log('🔍 [TIMER DEBUG] Server Time:', state.timeRemaining);
+    console.log('🔍 [TIMER DEBUG] Display Time:', displayTime);
+    console.log('🔍 [TIMER DEBUG] Current Player:', currentPlayer?.name);
+  }
 
   const formatTime = (seconds: number) => {
     const totalSeconds = Math.max(0, seconds);

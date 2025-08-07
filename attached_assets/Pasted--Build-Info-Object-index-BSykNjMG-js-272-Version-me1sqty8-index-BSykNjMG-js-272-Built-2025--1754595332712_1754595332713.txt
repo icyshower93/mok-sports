@@ -1,0 +1,393 @@
+ Build Info: Object
+index-BSykNjMG.js:272 📦 Version: me1sqty8
+index-BSykNjMG.js:272 📅 Built: 2025-08-07T19:35:10.112Z
+index-BSykNjMG.js:272 🔧 Environment: production
+index-BSykNjMG.js:228 [Auth] Token check - Has token: true Has user: false Loading: true
+index-BSykNjMG.js:228 [SW Hook] EMERGENCY: Unregistering all existing service workers
+index-BSykNjMG.js:228 [SW Hook] Found 1 existing registrations
+index-BSykNjMG.js:228 [SW Hook] Unregistering existing service worker
+index-BSykNjMG.js:228 [SW Hook] Found 1 caches to delete
+index-BSykNjMG.js:228 [SW Hook] Deleting cache: mok-sports-dynamic-v1.7.0-nuclear-unregister-1754595302925
+contentScript.js:2 Content script initialized successfully.
+mok-sports-draft-mokfantasysport.replit.app/:1 Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner.
+index-BSykNjMG.js:228 [SW Hook] Registering fresh service worker: /sw.js?v=1754595310246&r=0.703804801861734
+index-BSykNjMG.js:272 [Dashboard] User authenticated: Object
+index-BSykNjMG.js:272 [Dashboard] User leagues loading: true
+index-BSykNjMG.js:272 [Dashboard] User leagues data: undefined
+index-BSykNjMG.js:228 [Auth] Token check - Has token: true Has user: true Loading: false
+index-BSykNjMG.js:228 [AutoPushRefresh] Legacy hook delegating to SubscriptionManager
+index-BSykNjMG.js:272 [Push Persistence] No existing subscription found
+index-BSykNjMG.js:272 [Push Persistence] No permission or denied, not creating subscription
+sw.js?v=1754595310246&r=0.703804801861734:2 [SW] NUCLEAR OPTION - Emergency service worker loading
+sw.js?v=1754595310246&r=0.703804801861734:88 [SW] Service worker starting, version: v1.7.0-nuclear-unregister-1754595310309
+sw.js?v=1754595310246&r=0.703804801861734:305 [SW] Service worker script loaded successfully
+sw.js?v=1754595310246&r=0.703804801861734:19 [SW] EMERGENCY INSTALL - Clearing all caches and forcing activation
+sw.js?v=1754595310246&r=0.703804801861734:92 [SW] Installing service worker, version: v1.7.0-nuclear-unregister-1754595310309
+index-BSykNjMG.js:228 [SW Hook] Service worker registered successfully
+sw.js?v=1754595310246&r=0.703804801861734:22 [SW] Found caches to delete: Array(0)
+sw.js?v=1754595310246&r=0.703804801861734:30 [SW] All caches deleted - skipping waiting
+sw.js?v=1754595310246&r=0.703804801861734:96 [SW] Caching static files
+index-BSykNjMG.js:272 [Dashboard] User authenticated: Object
+index-BSykNjMG.js:272 [Dashboard] User leagues loading: false
+index-BSykNjMG.js:272 [Dashboard] User leagues data: Array(4)
+index-BSykNjMG.js:272 [Dashboard] Redirecting to league waiting room: 243d719b-92ce-4752-8689-5da93ee69213
+index-BSykNjMG.js:272 [LeagueWaiting] EMERGENCY DEBUG - ABOUT TO CALL useDraftWebSocket with: Object
+index-BSykNjMG.js:272 [WebSocket] Hook called with: Object
+index-BSykNjMG.js:272 [LeagueWaiting] EMERGENCY DEBUG - WebSocket hook returned: Object
+index-BSykNjMG.js:272 [WebSocket] MAIN useEffect trigger - draftId: null userId: true
+index-BSykNjMG.js:272 [WebSocket] ❌ Connection requirements not met: Object
+index-BSykNjMG.js:272 [LeagueWaiting] EMERGENCY DEBUG - ABOUT TO CALL useDraftWebSocket with: Object
+index-BSykNjMG.js:272 [WebSocket] Hook called with: Object
+index-BSykNjMG.js:272 [LeagueWaiting] EMERGENCY DEBUG - WebSocket hook returned: Object
+sw.js?v=1754595310246&r=0.703804801861734:99 [SW] Static files cached successfully
+index-BSykNjMG.js:272 [LeagueWaiting] EMERGENCY DEBUG - ABOUT TO CALL useDraftWebSocket with: Object
+index-BSykNjMG.js:272 [WebSocket] Hook called with: Object
+index-BSykNjMG.js:272 [LeagueWaiting] EMERGENCY DEBUG - WebSocket hook returned: Object
+index-BSykNjMG.js:272 [LeagueWaiting] EMERGENCY DEBUG - ABOUT TO CALL useDraftWebSocket with: Object
+index-BSykNjMG.js:272 [WebSocket] Hook called with: Object
+index-BSykNjMG.js:272 [LeagueWaiting] EMERGENCY DEBUG - WebSocket hook returned: Object
+index-BSykNjMG.js:272 [WebSocket] MAIN useEffect trigger - draftId: aa510d10-13e1-4aa9-befa-05e83c2629b2 userId: true
+index-BSykNjMG.js:272 [WebSocket] ✅ Conditions met, validating draft exists before connection...
+index-BSykNjMG.js:272 [LeagueWaiting] League data updated: Object
+index-BSykNjMG.js:272 [League] Draft ID changed, WebSocket should reconnect to: aa510d10-13e1-4aa9-befa-05e83c2629b2
+sw.js?v=1754595310246&r=0.703804801861734:164 [SW] Fetching /a/ACg8ocJEMs5AzNtfS8vv7POiR-CJvE5EdtZVt27CT0tdYJA64x6-BQyy_Q=s96-c from network
+index-BSykNjMG.js:272 [LeagueWaiting] EMERGENCY DEBUG - ABOUT TO CALL useDraftWebSocket with: Object
+index-BSykNjMG.js:272 [WebSocket] Hook called with: Object
+index-BSykNjMG.js:272 [LeagueWaiting] EMERGENCY DEBUG - WebSocket hook returned: Object
+sw.js?v=1754595310246&r=0.703804801861734:164 [SW] Fetching /a/ACg8ocIlUYRsI8z4wKwDJjb1BBPBwCuyYSlVMcLHB5QAXs50P5Fbtg=s96-c from network
+4sw.js?v=1754595310246&r=0.703804801861734:164 [SW] Fetching /7.x/robots/svg from network
+svg:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+svg:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+svg:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+svg:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+index-BSykNjMG.js:272 [WebSocket] ✅ Draft exists, proceeding with connection
+index-BSykNjMG.js:272 [WebSocket] === STARTING NEW CONNECTION ATTEMPT ===
+index-BSykNjMG.js:272 [WebSocket] Draft ID: aa510d10-13e1-4aa9-befa-05e83c2629b2 User ID: 9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a
+index-BSykNjMG.js:272 [WebSocket] Creating connection to: wss://mok-sports-draft-mokfantasysport.replit.app/draft-ws?userId=9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a&draftId=aa510d10-13e1-4aa9-befa-05e83c2629b2
+index-BSykNjMG.js:272 [LeagueWaiting] EMERGENCY DEBUG - ABOUT TO CALL useDraftWebSocket with: Object
+index-BSykNjMG.js:272 [WebSocket] Hook called with: Object
+index-BSykNjMG.js:272 [LeagueWaiting] EMERGENCY DEBUG - WebSocket hook returned: Object
+index-BSykNjMG.js:272 [WebSocket] ✅ CONNECTION ESTABLISHED
+index-BSykNjMG.js:272 [WebSocket] Message received: connected
+index-BSykNjMG.js:272 [WebSocket] Connected confirmation received
+index-BSykNjMG.js:272 [LeagueWaiting] EMERGENCY DEBUG - ABOUT TO CALL useDraftWebSocket with: Object
+index-BSykNjMG.js:272 [WebSocket] Hook called with: Object
+index-BSykNjMG.js:272 [LeagueWaiting] EMERGENCY DEBUG - WebSocket hook returned: Object
+index-BSykNjMG.js:272 [WebSocket] Message received: connected
+index-BSykNjMG.js:272 [WebSocket] Connected confirmation received
+index-BSykNjMG.js:272 [LeagueWaiting] EMERGENCY DEBUG - ABOUT TO CALL useDraftWebSocket with: Object
+index-BSykNjMG.js:272 [WebSocket] Hook called with: Object
+index-BSykNjMG.js:272 [LeagueWaiting] EMERGENCY DEBUG - WebSocket hook returned: Object
+index-BSykNjMG.js:272 [WebSocket] Message received: draft_state
+index-BSykNjMG.js:272 [LeagueWaiting] EMERGENCY DEBUG - ABOUT TO CALL useDraftWebSocket with: Object
+index-BSykNjMG.js:272 [WebSocket] Hook called with: Object
+index-BSykNjMG.js:272 [LeagueWaiting] EMERGENCY DEBUG - WebSocket hook returned: Object
+sw.js?v=1754595310246&r=0.703804801861734:41 [SW] EMERGENCY ACTIVATE - Taking control of all clients
+sw.js?v=1754595310246&r=0.703804801861734:110 [SW] Activating service worker, version: v1.7.0-nuclear-unregister-1754595310309
+sw.js?v=1754595310246&r=0.703804801861734:46 [SW] Deleting remaining cache: mok-sports-static-v1.7.0-nuclear-unregister-1754595310309
+sw.js?v=1754595310246&r=0.703804801861734:46 [SW] Deleting remaining cache: mok-sports-dynamic-v1.7.0-nuclear-unregister-1754595302925
+sw.js?v=1754595310246&r=0.703804801861734:116 [SW] Found caches: Array(2)
+sw.js?v=1754595310246&r=0.703804801861734:120 [SW] Deleting old cache: mok-sports-dynamic-v1.7.0-nuclear-unregister-1754595302925
+sw.js?v=1754595310246&r=0.703804801861734:51 [SW] Claiming all clients immediately
+sw.js?v=1754595310246&r=0.703804801861734:129 [SW] Service worker activated and controlling all clients
+index-BSykNjMG.js:272 [WebSocket] Message received: timer_update
+index-BSykNjMG.js:272 [LeagueWaiting] EMERGENCY DEBUG - ABOUT TO CALL useDraftWebSocket with: Object
+index-BSykNjMG.js:272 [WebSocket] Hook called with: Object
+index-BSykNjMG.js:272 [LeagueWaiting] EMERGENCY DEBUG - WebSocket hook returned: Object
+index-BSykNjMG.js:272 [WebSocket] Message received: timer_update
+index-BSykNjMG.js:272 [LeagueWaiting] EMERGENCY DEBUG - ABOUT TO CALL useDraftWebSocket with: Object
+index-BSykNjMG.js:272 [WebSocket] Hook called with: Object
+index-BSykNjMG.js:272 [LeagueWaiting] EMERGENCY DEBUG - WebSocket hook returned: Object
+index-BSykNjMG.js:272 [WebSocket] Message received: timer_update
+index-BSykNjMG.js:272 [LeagueWaiting] EMERGENCY DEBUG - ABOUT TO CALL useDraftWebSocket with: Object
+index-BSykNjMG.js:272 [WebSocket] Hook called with: Object
+index-BSykNjMG.js:272 [LeagueWaiting] EMERGENCY DEBUG - WebSocket hook returned: Object
+index-BSykNjMG.js:272 [Reset] Success response: Object
+index-BSykNjMG.js:272 [Reset] Successfully reset draft, new draft ID: 42cbd9c3-79c3-4c74-819f-3ea814247a88
+index-BSykNjMG.js:272 [LeagueWaiting] EMERGENCY DEBUG - ABOUT TO CALL useDraftWebSocket with: Object
+index-BSykNjMG.js:272 [WebSocket] Hook called with: Object
+index-BSykNjMG.js:272 [LeagueWaiting] EMERGENCY DEBUG - WebSocket hook returned: Object
+index-BSykNjMG.js:272 [WebSocket] MAIN useEffect trigger - draftId: null userId: true
+index-BSykNjMG.js:272 [WebSocket] ❌ Connection requirements not met: Object
+index-BSykNjMG.js:272 [LeagueWaiting] EMERGENCY DEBUG - ABOUT TO CALL useDraftWebSocket with: Object
+index-BSykNjMG.js:272 [WebSocket] Hook called with: Object
+index-BSykNjMG.js:272 [LeagueWaiting] EMERGENCY DEBUG - WebSocket hook returned: Object
+index-BSykNjMG.js:272 [Reset] Fresh data fetched, new draft ID: 42cbd9c3-79c3-4c74-819f-3ea814247a88
+index-BSykNjMG.js:272 [LeagueWaiting] EMERGENCY DEBUG - ABOUT TO CALL useDraftWebSocket with: Object
+index-BSykNjMG.js:272 [WebSocket] Hook called with: Object
+index-BSykNjMG.js:272 [LeagueWaiting] EMERGENCY DEBUG - WebSocket hook returned: Object
+index-BSykNjMG.js:272 [WebSocket] MAIN useEffect trigger - draftId: 42cbd9c3-79c3-4c74-819f-3ea814247a88 userId: true
+index-BSykNjMG.js:272 [WebSocket] ✅ Conditions met, validating draft exists before connection...
+index-BSykNjMG.js:272 [LeagueWaiting] League data updated: Object
+index-BSykNjMG.js:272 [League] Draft ID changed, WebSocket should reconnect to: 42cbd9c3-79c3-4c74-819f-3ea814247a88
+4sw.js?v=1754595310246&r=0.703804801861734:164 [SW] Fetching /7.x/robots/svg from network
+svg:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+svg:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+svg:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+svg:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+index-BSykNjMG.js:272 [WebSocket] ✅ Draft exists, proceeding with connection
+index-BSykNjMG.js:272 [WebSocket] === STARTING NEW CONNECTION ATTEMPT ===
+index-BSykNjMG.js:272 [WebSocket] Draft ID: 42cbd9c3-79c3-4c74-819f-3ea814247a88 User ID: 9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a
+index-BSykNjMG.js:272 [WebSocket] Closing existing connection before creating new one
+index-BSykNjMG.js:272 [WebSocket] Creating connection to: wss://mok-sports-draft-mokfantasysport.replit.app/draft-ws?userId=9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a&draftId=42cbd9c3-79c3-4c74-819f-3ea814247a88
+index-BSykNjMG.js:272 [LeagueWaiting] EMERGENCY DEBUG - ABOUT TO CALL useDraftWebSocket with: Object
+index-BSykNjMG.js:272 [WebSocket] Hook called with: Object
+index-BSykNjMG.js:272 [LeagueWaiting] EMERGENCY DEBUG - WebSocket hook returned: Object
+index-BSykNjMG.js:272 [WebSocket] Connection closed: 1000 Creating new connection
+index-BSykNjMG.js:272 [LeagueWaiting] EMERGENCY DEBUG - ABOUT TO CALL useDraftWebSocket with: Object
+index-BSykNjMG.js:272 [WebSocket] Hook called with: Object
+index-BSykNjMG.js:272 [LeagueWaiting] EMERGENCY DEBUG - WebSocket hook returned: Object
+index-BSykNjMG.js:272 [WebSocket] ✅ CONNECTION ESTABLISHED
+index-BSykNjMG.js:272 [LeagueWaiting] EMERGENCY DEBUG - ABOUT TO CALL useDraftWebSocket with: Object
+index-BSykNjMG.js:272 [WebSocket] Hook called with: Object
+index-BSykNjMG.js:272 [LeagueWaiting] EMERGENCY DEBUG - WebSocket hook returned: Object
+index-BSykNjMG.js:272 [WebSocket] Message received: connected
+index-BSykNjMG.js:272 [WebSocket] Connected confirmation received
+index-BSykNjMG.js:272 [LeagueWaiting] EMERGENCY DEBUG - ABOUT TO CALL useDraftWebSocket with: Object
+index-BSykNjMG.js:272 [WebSocket] Hook called with: Object
+index-BSykNjMG.js:272 [LeagueWaiting] EMERGENCY DEBUG - WebSocket hook returned: Object
+index-BSykNjMG.js:272 [WebSocket] Message received: connected
+index-BSykNjMG.js:272 [WebSocket] Connected confirmation received
+index-BSykNjMG.js:272 [LeagueWaiting] EMERGENCY DEBUG - ABOUT TO CALL useDraftWebSocket with: Object
+index-BSykNjMG.js:272 [WebSocket] Hook called with: Object
+index-BSykNjMG.js:272 [LeagueWaiting] EMERGENCY DEBUG - WebSocket hook returned: Object
+index-BSykNjMG.js:272 [WebSocket] Message received: draft_state
+index-BSykNjMG.js:272 [LeagueWaiting] EMERGENCY DEBUG - ABOUT TO CALL useDraftWebSocket with: Object
+index-BSykNjMG.js:272 [WebSocket] Hook called with: Object
+index-BSykNjMG.js:272 [LeagueWaiting] EMERGENCY DEBUG - WebSocket hook returned: Object
+index-BSykNjMG.js:272 [App] Draft route matched with params: Object
+index-BSykNjMG.js:272 [App] Current location: https://mok-sports-draft-mokfantasysport.replit.app/draft/42cbd9c3-79c3-4c74-819f-3ea814247a88
+index-BSykNjMG.js:272 [Draft] Component render started - TIME: 1754595316196
+index-BSykNjMG.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-BSykNjMG.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T19:35:16.197Z
+index-BSykNjMG.js:272 [Draft] RENDER TIMING - Time since component start: 1754595309850.9
+index-BSykNjMG.js:272 [Draft] All useState hooks declared
+index-BSykNjMG.js:272 [SMOOTH TIMER] Display time: 0.0 isCountingDown: false
+index-BSykNjMG.js:272 [Draft] All hooks declared, starting conditional logic
+index-BSykNjMG.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754595316199
+index-BSykNjMG.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-BSykNjMG.js:272 [WebSocket] MAIN useEffect trigger - draftId: 42cbd9c3-79c3-4c74-819f-3ea814247a88 userId: true authLoading: false
+index-BSykNjMG.js:272 [WebSocket] ✅ Conditions met, validating draft exists before connection...
+index-BSykNjMG.js:272 [WebSocket] Draft ID to connect to: 42cbd9c3-79c3-4c74-819f-3ea814247a88
+index-BSykNjMG.js:272 [WebSocket] ==== EFFECT TRIGGERED ====
+index-BSykNjMG.js:272 [WebSocket] Dependencies - draftId: true userId: true
+index-BSykNjMG.js:272 [WebSocket] Current connection state: disconnected
+index-BSykNjMG.js:272 [WebSocket] wsRef exists: false
+index-BSykNjMG.js:272 [WebSocket] Previous draft ID: null
+index-BSykNjMG.js:272 [WebSocket] Current draft ID: 42cbd9c3-79c3-4c74-819f-3ea814247a88
+index-BSykNjMG.js:272 [WebSocket] ✅ Dependencies ready - initiating connection
+index-BSykNjMG.js:272 [WebSocket] 🔄 LIFECYCLE: Connect called with: Object
+index-BSykNjMG.js:272 [WebSocket] 🔍 LIFECYCLE CHECK: Validating single connection per session
+index-BSykNjMG.js:272 [WebSocket] ✅ LIFECYCLE: All requirements met, creating single WebSocket instance
+index-BSykNjMG.js:272 [WebSocket] 🔍 VALIDATION: Draft ID: 42cbd9c3-79c3-4c74-819f-3ea814247a88 length: 36
+index-BSykNjMG.js:272 [WebSocket] 🔍 VALIDATION: User ID: 9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a length: 36
+index-BSykNjMG.js:272 [WebSocket] Connecting to draft immediately after reset/change...
+index-BSykNjMG.js:272 [SimpleWS] Starting connection attempt
+index-BSykNjMG.js:272 [SimpleWS] draftId: 42cbd9c3-79c3-4c74-819f-3ea814247a88
+index-BSykNjMG.js:272 [SimpleWS] userId: 9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a
+index-BSykNjMG.js:272 [SimpleWS] Connecting to: wss://mok-sports-draft-mokfantasysport.replit.app/draft-ws?userId=9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a&draftId=42cbd9c3-79c3-4c74-819f-3ea814247a88
+index-BSykNjMG.js:272 [PersistentWS] Attempting connection # 1
+index-BSykNjMG.js:272 [StableWS] Component mounted, initializing connection
+index-BSykNjMG.js:272 [StableWS] Starting connection attempt #1
+index-BSykNjMG.js:272 [Draft] === STARTING DRAFT FETCH ===
+index-BSykNjMG.js:272 [Draft] Draft ID: 42cbd9c3-79c3-4c74-819f-3ea814247a88
+index-BSykNjMG.js:272 [Draft] Auth status - User: Sky Evans Authenticated: true Loading: false
+index-BSykNjMG.js:272 [Draft] Token available: true
+index-BSykNjMG.js:272 [Draft] Current URL: https://mok-sports-draft-mokfantasysport.replit.app/draft/42cbd9c3-79c3-4c74-819f-3ea814247a88
+index-BSykNjMG.js:272 [Draft] Current pathname: /draft/42cbd9c3-79c3-4c74-819f-3ea814247a88
+index-BSykNjMG.js:272 [Draft] Making API request to: /api/drafts/42cbd9c3-79c3-4c74-819f-3ea814247a88
+index-BSykNjMG.js:272 [Draft] Timer expiration useEffect called
+index-BSykNjMG.js:272 [Draft] Component render started - TIME: 1754595316207
+index-BSykNjMG.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-BSykNjMG.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T19:35:16.207Z
+index-BSykNjMG.js:272 [Draft] RENDER TIMING - Time since component start: 1754595309851.4
+index-BSykNjMG.js:272 [Draft] All useState hooks declared
+index-BSykNjMG.js:272 [SMOOTH TIMER] Display time: 0.0 isCountingDown: false
+index-BSykNjMG.js:272 [Draft] All hooks declared, starting conditional logic
+index-BSykNjMG.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754595316207
+index-BSykNjMG.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+sw.js?v=1754595310246&r=0.703804801861734:164 [SW] Fetching /favicon.ico from network
+index-BSykNjMG.js:272 [Draft] Component render started - TIME: 1754595316298
+index-BSykNjMG.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-BSykNjMG.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T19:35:16.298Z
+index-BSykNjMG.js:272 [Draft] RENDER TIMING - Time since component start: 1754595309851.1
+index-BSykNjMG.js:272 [Draft] All useState hooks declared
+index-BSykNjMG.js:272 [SMOOTH TIMER] Display time: 0.0 isCountingDown: false
+index-BSykNjMG.js:272 [Draft] All hooks declared, starting conditional logic
+index-BSykNjMG.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754595316298
+index-BSykNjMG.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-BSykNjMG.js:272 [Draft] 🔍 VALIDATING DRAFT URL...
+index-BSykNjMG.js:272 [Draft] User leagues: Array(4)
+index-BSykNjMG.js:272 [Draft] URL Draft ID: 42cbd9c3-79c3-4c74-819f-3ea814247a88
+index-BSykNjMG.js:272 [Draft] ✅ Draft ID is current: 42cbd9c3-79c3-4c74-819f-3ea814247a88
+index-BSykNjMG.js:272 [Draft] Component render started - TIME: 1754595316298
+index-BSykNjMG.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-BSykNjMG.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T19:35:16.298Z
+index-BSykNjMG.js:272 [Draft] RENDER TIMING - Time since component start: 1754595309851.6
+index-BSykNjMG.js:272 [Draft] All useState hooks declared
+index-BSykNjMG.js:272 [SMOOTH TIMER] Display time: 0.0 isCountingDown: false
+index-BSykNjMG.js:272 [Draft] All hooks declared, starting conditional logic
+index-BSykNjMG.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754595316299
+index-BSykNjMG.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-BSykNjMG.js:272 [SimpleWS] ✅ Connected successfully
+index-BSykNjMG.js:272 [SimpleWS] Initial ping sent
+index-BSykNjMG.js:272 [Draft] Component render started - TIME: 1754595316338
+index-BSykNjMG.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-BSykNjMG.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T19:35:16.338Z
+index-BSykNjMG.js:272 [Draft] RENDER TIMING - Time since component start: 1754595309851
+index-BSykNjMG.js:272 [Draft] All useState hooks declared
+index-BSykNjMG.js:272 [SMOOTH TIMER] Display time: 0.0 isCountingDown: false
+index-BSykNjMG.js:272 [Draft] All hooks declared, starting conditional logic
+index-BSykNjMG.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754595316338
+index-BSykNjMG.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-BSykNjMG.js:272 [SimpleWS] Message received: {"type":"connected","draftId":"42cbd9c3-79c3-4c74-819f-3ea814247a88","userId":"9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a","timestamp":1754595316409,"message":"WebSocket connection established successfully on Reserved VM"}
+index-BSykNjMG.js:272 [Draft] Component render started - TIME: 1754595316339
+index-BSykNjMG.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-BSykNjMG.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T19:35:16.339Z
+index-BSykNjMG.js:272 [Draft] RENDER TIMING - Time since component start: 1754595309851.4
+index-BSykNjMG.js:272 [Draft] All useState hooks declared
+index-BSykNjMG.js:272 [SMOOTH TIMER] Display time: 0.0 isCountingDown: false
+index-BSykNjMG.js:272 [Draft] All hooks declared, starting conditional logic
+index-BSykNjMG.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754595316339
+index-BSykNjMG.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-BSykNjMG.js:272 [SimpleWS] Message received: {"type":"connected","draftId":"42cbd9c3-79c3-4c74-819f-3ea814247a88","timestamp":1754595316409}
+index-BSykNjMG.js:272 [Draft] Component render started - TIME: 1754595316339
+index-BSykNjMG.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-BSykNjMG.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T19:35:16.339Z
+index-BSykNjMG.js:272 [Draft] RENDER TIMING - Time since component start: 1754595309851.2
+index-BSykNjMG.js:272 [Draft] All useState hooks declared
+index-BSykNjMG.js:272 [SMOOTH TIMER] Display time: 0.0 isCountingDown: false
+index-BSykNjMG.js:272 [Draft] All hooks declared, starting conditional logic
+index-BSykNjMG.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754595316339
+index-BSykNjMG.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-BSykNjMG.js:272 [Draft] Component render started - TIME: 1754595316345
+index-BSykNjMG.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-BSykNjMG.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T19:35:16.345Z
+index-BSykNjMG.js:272 [Draft] RENDER TIMING - Time since component start: 1754595309851.5
+index-BSykNjMG.js:272 [Draft] All useState hooks declared
+index-BSykNjMG.js:272 [SMOOTH TIMER] Display time: 0.0 isCountingDown: false
+index-BSykNjMG.js:272 [Draft] All hooks declared, starting conditional logic
+index-BSykNjMG.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754595316345
+index-BSykNjMG.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-BSykNjMG.js:272 [SimpleWS] Message received: {"type":"pong","draftId":"42cbd9c3-79c3-4c74-819f-3ea814247a88","timestamp":1754595316452}
+index-BSykNjMG.js:272 [Draft] Component render started - TIME: 1754595316382
+index-BSykNjMG.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-BSykNjMG.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T19:35:16.382Z
+index-BSykNjMG.js:272 [Draft] RENDER TIMING - Time since component start: 1754595309851.5
+index-BSykNjMG.js:272 [Draft] All useState hooks declared
+index-BSykNjMG.js:272 [SMOOTH TIMER] Display time: 0.0 isCountingDown: false
+index-BSykNjMG.js:272 [Draft] All hooks declared, starting conditional logic
+index-BSykNjMG.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754595316382
+index-BSykNjMG.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-BSykNjMG.js:272 [SimpleWS] Message received: {"type":"draft_state","draftId":"42cbd9c3-79c3-4c74-819f-3ea814247a88","data":{},"timestamp":1754595316509}
+index-BSykNjMG.js:272 [Draft] Component render started - TIME: 1754595316438
+index-BSykNjMG.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-BSykNjMG.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T19:35:16.438Z
+index-BSykNjMG.js:272 [Draft] RENDER TIMING - Time since component start: 1754595309851.3
+index-BSykNjMG.js:272 [Draft] All useState hooks declared
+index-BSykNjMG.js:272 [SMOOTH TIMER] Display time: 0.0 isCountingDown: false
+index-BSykNjMG.js:272 [Draft] All hooks declared, starting conditional logic
+index-BSykNjMG.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754595316438
+index-BSykNjMG.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-BSykNjMG.js:272 [PersistentWS] ✅ Connected successfully
+index-BSykNjMG.js:272 [PersistentWS] Message received: {"type":"connected","draftId":"42cbd9c3-79c3-4c74-819f-3ea814247a88","userId":"9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a","timestamp":1754595316558,"message":"WebSocket connection established successfully on Reserved VM"}
+index-BSykNjMG.js:272 [Draft] Component render started - TIME: 1754595316492
+index-BSykNjMG.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-BSykNjMG.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T19:35:16.492Z
+index-BSykNjMG.js:272 [Draft] RENDER TIMING - Time since component start: 1754595309851.3
+index-BSykNjMG.js:272 [Draft] All useState hooks declared
+index-BSykNjMG.js:272 [SMOOTH TIMER] Display time: 0.0 isCountingDown: false
+index-BSykNjMG.js:272 [Draft] All hooks declared, starting conditional logic
+index-BSykNjMG.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754595316492
+index-BSykNjMG.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-BSykNjMG.js:272 [PersistentWS] Message received: {"type":"connected","draftId":"42cbd9c3-79c3-4c74-819f-3ea814247a88","timestamp":1754595316558}
+index-BSykNjMG.js:272 [Draft] Component render started - TIME: 1754595316492
+index-BSykNjMG.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-BSykNjMG.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T19:35:16.492Z
+index-BSykNjMG.js:272 [Draft] RENDER TIMING - Time since component start: 1754595309851
+index-BSykNjMG.js:272 [Draft] All useState hooks declared
+index-BSykNjMG.js:272 [SMOOTH TIMER] Display time: 0.0 isCountingDown: false
+index-BSykNjMG.js:272 [Draft] All hooks declared, starting conditional logic
+index-BSykNjMG.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754595316492
+index-BSykNjMG.js:272 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-BSykNjMG.js:272 [Draft] Response received: Object
+index-BSykNjMG.js:272 [Draft] Successfully fetched draft data: Object
+index-BSykNjMG.js:272 [Draft] === DRAFT FETCH SUCCESS ===
+index-BSykNjMG.js:272 [Draft] Component render started - TIME: 1754595316534
+index-BSykNjMG.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-BSykNjMG.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T19:35:16.534Z
+index-BSykNjMG.js:272 [Draft] RENDER TIMING - Time since component start: 1754595309851.6
+index-BSykNjMG.js:272 [Draft] All useState hooks declared
+index-BSykNjMG.js:272 [SMOOTH TIMER] Display time: 59.0 isCountingDown: false
+index-BSykNjMG.js:272 [Draft] All hooks declared, starting conditional logic
+index-BSykNjMG.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: false error: false draftData: true isAuthenticated: true Time: 1754595316534
+index-BSykNjMG.js:272 🔍 [TIMER DEBUG] Server Time: 59
+index-BSykNjMG.js:272 🔍 [TIMER DEBUG] Display Time: 59
+index-BSykNjMG.js:272 🔍 [TIMER DEBUG] Current Player: Alpha Bot
+index-BSykNjMG.js:272 [Draft] Component render started - TIME: 1754595316534
+index-BSykNjMG.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-BSykNjMG.js:272 [Draft] Component render started - TIME: 1754595316535
+index-BSykNjMG.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-BSykNjMG.js:272 [Draft] EMERGENCY DEBUG: Auth loaded, authLoading: false user: true isAuthenticated: true rendered at: 2025-08-07T19:35:16.536Z
+index-BSykNjMG.js:272 [Draft] RENDER TIMING - Time since component start: 1754595309851.7
+index-BSykNjMG.js:272 [Draft] All useState hooks declared
+index-BSykNjMG.js:272 [SMOOTH TIMER] Display time: 59.0 isCountingDown: false
+index-BSykNjMG.js:272 [Draft] All hooks declared, starting conditional logic
+index-BSykNjMG.js:272 [Draft] RENDER DEBUG - authLoading: false isLoading: false error: false draftData: true isAuthenticated: true Time: 1754595316536
+index-BSykNjMG.js:272 🔍 [TIMER DEBUG] Server Time: 59
+index-BSykNjMG.js:272 🔍 [TIMER DEBUG] Display Time: 59
+index-BSykNjMG.js:272 🔍 [TIMER DEBUG] Current Player: Alpha Bot
+index-BSykNjMG.js:272 [Draft] Component render started - TIME: 1754595316536
+index-BSykNjMG.js:272 [Draft] FIRST DEBUG LINE - Component starting
+index-BSykNjMG.js:40 Error: Minified React error #310; visit https://reactjs.org/docs/error-decoder.html?invariant=310 for the full message or use the non-minified dev environment for full errors and additional helpful warnings.
+    at It (index-BSykNjMG.js:38:17593)
+    at ol (index-BSykNjMG.js:38:20535)
+    at Object.Ld [as useEffect] (index-BSykNjMG.js:38:20793)
+    at ee.useEffect (index-BSykNjMG.js:9:5880)
+    at VP (index-BSykNjMG.js:272:75019)
+    at Id (index-BSykNjMG.js:38:16998)
+    at tu (index-BSykNjMG.js:40:3139)
+    at hv (index-BSykNjMG.js:40:44737)
+    at dv (index-BSykNjMG.js:40:39727)
+    at _1 (index-BSykNjMG.js:40:39655)
+eu @ index-BSykNjMG.js:40Understand this error
+index-BSykNjMG.js:228 ErrorBoundary caught an error: Minified React error #310; visit https://reactjs.org/docs/error-decoder.html?invariant=310 for the full message or use the non-minified dev environment for full errors and additional helpful warnings.
+componentDidCatch @ index-BSykNjMG.js:228Understand this error
+index-BSykNjMG.js:228 Component stack: 
+    at VP (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BSykNjMG.js:272:66403)
+    at Mn (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BSykNjMG.js:48:3201)
+    at Nb (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BSykNjMG.js:48:4017)
+    at zj (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BSykNjMG.js:272:147004)
+    at DN (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BSykNjMG.js:228:57448)
+    at u (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BSykNjMG.js:48:45795)
+    at sx (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BSykNjMG.js:228:50424)
+    at AN (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BSykNjMG.js:228:56920)
+    at Kb (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BSykNjMG.js:48:40146)
+    at FN (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BSykNjMG.js:228:70900)
+    at Uj
+componentDidCatch @ index-BSykNjMG.js:228Understand this error
+index-BSykNjMG.js:272 [Draft] 🔄 LIFECYCLE: Page unmounting, WebSocket will be cleaned by hook
+index-BSykNjMG.js:272 [PersistentWS] Manual disconnect requested
+index-BSykNjMG.js:272 [StableWS] Component unmounting, cleaning up
+index-BSykNjMG.js:272 WebSocket connection to 'wss://mok-sports-draft-mokfantasysport.replit.app/draft-ws?userId=9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a&draftId=42cbd9c3-79c3-4c74-819f-3ea814247a88&connectionId=1' failed: WebSocket is closed before the connection is established.
+(anonymous) @ index-BSykNjMG.js:272Understand this warning
+index-BSykNjMG.js:272 [StableWS] Connection #1 error: Event
+y.onerror @ index-BSykNjMG.js:272Understand this error
+index-BSykNjMG.js:272 [StableWS] Connection #1 closed
+index-BSykNjMG.js:272 [StableWS] Close code: 1006, reason: ""
+index-BSykNjMG.js:272 [StableWS] Was clean: false
+index-BSykNjMG.js:272 [PersistentWS] Connection closed
+index-BSykNjMG.js:272 [PersistentWS] Close code: 1000
+index-BSykNjMG.js:272 [PersistentWS] Close reason: Manual disconnect
+index-BSykNjMG.js:272 [PersistentWS] Was clean: true
+index-BSykNjMG.js:272 [PersistentWS] Manual close: true
+index-BSykNjMG.js:272 [WebSocket] ✅ Draft exists, proceeding with connection
+index-BSykNjMG.js:272 [WebSocket] 🔄 LIFECYCLE: Connect called with: Object
+index-BSykNjMG.js:272 [WebSocket] 🔍 LIFECYCLE CHECK: Validating single connection per session
+index-BSykNjMG.js:272 [WebSocket] ✅ LIFECYCLE: All requirements met, creating single WebSocket instance
+index-BSykNjMG.js:272 [WebSocket] 🔍 VALIDATION: Draft ID: 42cbd9c3-79c3-4c74-819f-3ea814247a88 length: 36
+index-BSykNjMG.js:272 [WebSocket] 🔍 VALIDATION: User ID: 9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a length: 36
+index-BSykNjMG.js:272 [WebSocket] Connecting to draft immediately after reset/change...
+sw.js?v=1754595310246&r=0.703804801861734:64 [SW] BYPASSING CACHE for JS file: https://mok-sports-draft-mokfantasysport.replit.app/manifest.json
+sw.js?v=1754595310246&r=0.703804801861734:164 [SW] Fetching /draft/42cbd9c3-79c3-4c74-819f-3ea814247a88 from network
+sw.js?v=1754595310246&r=0.703804801861734:164 [SW] Fetching /assets/index-wcfXxhQ9.css from network

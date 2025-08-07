@@ -409,36 +409,46 @@ export function LeagueWaiting() {
                 </div>
               )}
 
-              {/* Draft Controls - for creating and starting drafts */}
-              {user?.id === league.creatorId && isLeagueFull && !league.draftStarted && (
+              {/* ALWAYS SHOW DEBUG INFO */}
+              {user?.id === league.creatorId && isLeagueFull && (
                 <div className="space-y-4">
-                  <div className="text-center p-4 bg-orange-500/10 rounded-lg">
+                  <div className="text-center p-4 bg-blue-500/10 rounded-lg">
                     <div className="flex items-center justify-center gap-2 mb-2">
-                      <Play className="w-5 h-5 text-orange-500" />
-                      <span className="font-semibold text-orange-500">Ready to Start!</span>
+                      <Settings className="w-5 h-5 text-blue-500" />
+                      <span className="font-semibold text-blue-500">DEBUG INFO</span>
                     </div>
-                    <p className="text-sm text-muted-foreground mb-3">
-                      Debug: Draft ID: {league.draftId || 'None'} | Started: {league.draftStarted ? 'Yes' : 'No'}
+                    <p className="text-sm text-muted-foreground mb-2">
+                      Draft ID: {league.draftId || 'None'} | Started: {league.draftStarted ? 'Yes' : 'No'}
+                    </p>
+                    <p className="text-sm text-muted-foreground mb-2">
+                      User is Creator: {user?.id === league.creatorId ? 'Yes' : 'No'} | League Full: {isLeagueFull ? 'Yes' : 'No'}
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      canCreateDraft: {!league.draftId ? 'Yes' : 'No'} | canStartDraft: {!!league.draftId && !league.draftStarted ? 'Yes' : 'No'}
                     </p>
                   </div>
-                  <DraftControls
-                    leagueId={league.id}
-                    canCreateDraft={!league.draftId}
-                    canStartDraft={!!league.draftId && !league.draftStarted}
-                    draftId={league.draftId}
-                    onDraftCreated={(draftId: string) => {
-                      queryClient.invalidateQueries({ queryKey: [`/api/leagues/${leagueId}`] });
-                      toast({
-                        title: "Draft created!",
-                        description: "Your snake draft is ready to begin.",
-                      });
-                    }}
-                    onDraftStarted={() => {
-                      // Use the existing draft ID or the league's draft ID
-                      const targetDraftId = league.draftId || '46160cd7-595b-4f70-9956-795ea53993ff';
-                      setLocation(`/draft/${targetDraftId}`);
-                    }}
-                  />
+                  
+                  {/* Draft Controls - for creating and starting drafts */}
+                  {!league.draftStarted && (
+                    <DraftControls
+                      leagueId={league.id}
+                      canCreateDraft={!league.draftId}
+                      canStartDraft={!!league.draftId && !league.draftStarted}
+                      draftId={league.draftId}
+                      onDraftCreated={(draftId: string) => {
+                        queryClient.invalidateQueries({ queryKey: [`/api/leagues/${leagueId}`] });
+                        toast({
+                          title: "Draft created!",
+                          description: "Your snake draft is ready to begin.",
+                        });
+                      }}
+                      onDraftStarted={() => {
+                        // Use the existing draft ID or the league's draft ID
+                        const targetDraftId = league.draftId || '46160cd7-595b-4f70-9956-795ea53993ff';
+                        setLocation(`/draft/${targetDraftId}`);
+                      }}
+                    />
+                  )}
                 </div>
               )}
 
