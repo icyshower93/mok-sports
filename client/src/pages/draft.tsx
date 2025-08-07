@@ -551,17 +551,17 @@ export default function DraftPage() {
               
               {/* WebSocket Connection Status */}
               <div className="flex items-center space-x-2 text-xs">
-                {isConnected ? 
+                {(isConnected || lastMessage) ? 
                   <Wifi className="w-3 h-3 text-green-500" /> : 
                   <WifiOff className="w-3 h-3 text-red-500" />
                 }
-                <span className={isConnected ? 'text-green-600' : 'text-red-600'}>
-                  {isConnected ? 'Live Draft (WebSocket)' : 'Connecting to draft...'}
+                <span className={(isConnected || lastMessage) ? 'text-green-600' : 'text-red-600'}>
+                  {(isConnected || lastMessage) ? 'Live Draft (WebSocket)' : 'Connecting to draft...'}
                 </span>
               </div>
               
               {/* Environment Notice */}
-              {!isConnected && (
+              {!(isConnected || lastMessage) && (
                 <div className="text-xs text-amber-600 mt-2 p-2 bg-amber-50 dark:bg-amber-900/20 rounded">
                   Development environment: WebSocket connections are limited by platform auto-scaling.
                   For stable WebSocket connections, deploy as Reserved VM.

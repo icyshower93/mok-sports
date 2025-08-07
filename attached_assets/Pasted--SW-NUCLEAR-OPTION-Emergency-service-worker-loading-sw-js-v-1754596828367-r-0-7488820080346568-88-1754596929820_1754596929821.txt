@@ -1,0 +1,21 @@
+[SW] NUCLEAR OPTION - Emergency service worker loading
+sw.js?v=1754596828367&r=0.7488820080346568:88 [SW] Service worker starting, version: v1.7.0-nuclear-unregister-1754596828433
+sw.js?v=1754596828367&r=0.7488820080346568:305 [SW] Service worker script loaded successfully
+sw.js?v=1754596828367&r=0.7488820080346568:19 [SW] EMERGENCY INSTALL - Clearing all caches and forcing activation
+sw.js?v=1754596828367&r=0.7488820080346568:92 [SW] Installing service worker, version: v1.7.0-nuclear-unregister-1754596828433
+sw.js?v=1754596828367&r=0.7488820080346568:22 [SW] Found caches to delete: Array(0)
+sw.js?v=1754596828367&r=0.7488820080346568:30 [SW] All caches deleted - skipping waiting
+sw.js?v=1754596828367&r=0.7488820080346568:96 [SW] Caching static files
+sw.js?v=1754596828367&r=0.7488820080346568:99 [SW] Static files cached successfully
+sw.js?v=1754596828367&r=0.7488820080346568:41 [SW] EMERGENCY ACTIVATE - Taking control of all clients
+sw.js?v=1754596828367&r=0.7488820080346568:110 [SW] Activating service worker, version: v1.7.0-nuclear-unregister-1754596828433
+sw.js?v=1754596828367&r=0.7488820080346568:46 [SW] Deleting remaining cache: mok-sports-static-v1.7.0-nuclear-unregister-1754596828433
+sw.js?v=1754596828367&r=0.7488820080346568:116 [SW] Found caches: Array(1)
+sw.js?v=1754596828367&r=0.7488820080346568:129 [SW] Service worker activated and controlling all clients
+sw.js?v=1754596828367&r=0.7488820080346568:51 [SW] Claiming all clients immediately
+2sw.js?v=1754596828367&r=0.7488820080346568:164 [SW] Fetching / from network
+sw.js?v=1754596828367&r=0.7488820080346568:164 [SW] Fetching /favicon.ico from network
+contentScript.js:2 Content script initialized successfully.
+/favicon.ico:1  Failed to load resource: the server responded with a status of 500 ()Understand this error
+sw.js?v=1754596828367&r=0.7488820080346568:164 [SW] Fetching / from network
+mok-sports-draft-mokfantasysport.replit.app/:1  Failed to load resource: the server responded with a status of 500 ()Understand this error
