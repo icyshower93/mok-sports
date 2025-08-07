@@ -360,10 +360,11 @@ app.use((req, res, next) => {
             console.error('[SPA] Error reading index.html:', err);
             return res.status(500).send('Error loading application');
           }
-          // Force no-cache headers for development
-          res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+          // Comprehensive no-cache headers to prevent index.html caching
+          res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
           res.setHeader('Pragma', 'no-cache');
           res.setHeader('Expires', '0');
+          res.setHeader('Surrogate-Control', 'no-store');
           res.setHeader('Content-Type', 'text/html; charset=utf-8');
           res.send(data);
         });
