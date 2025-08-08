@@ -214,21 +214,28 @@ export class SnakeDraftManager {
    * First checks Redis cache, falls back to database if needed
    */
   async getDraftState(draftId: string): Promise<DraftState> {
-    // Always get fresh timer data from Redis first
-    const timeRemaining = await this.redisStateManager.getTimeRemaining(draftId);
-    console.log(`[DEBUG] Fresh timer lookup for draft ${draftId}: ${timeRemaining}s remaining`);
-    
     // Always fetch fresh data from database to ensure accuracy
     const draft = await this.storage.getDraft(draftId);
     if (!draft) {
       throw new Error('Draft not found');
     }
 
-    console.log(`🔍 [DraftState] Fresh database fetch - Round ${draft.currentRound}, Pick ${draft.currentPick}`);
+    console.log(`🔍 [DraftState] Fresh database fetch - Round ${draft.currentRound}, Pick ${draft.currentPick}, Status: ${draft.status}`);
+
+    // Get timer data only for active drafts
+    let timeRemaining = 0;
+    if (draft.status === 'active') {
+      timeRemaining = await this.redisStateManager.getTimeRemaining(draftId);
+      console.log(`[DEBUG] Active draft timer lookup for draft ${draftId}: ${timeRemaining}s remaining`);
+    } else {
+      console.log(`[DEBUG] Draft ${draftId} is ${draft.status}, skipping timer lookup`);
+    }
 
     const picks = await this.storage.getDraftPicks(draftId);
     const availableTeams = await this.storage.getAvailableNflTeams(draftId);
-    const currentUserId = this.getCurrentPickUser(draft);
+    
+    // Only get current user for active drafts
+    const currentUserId = draft.status === 'active' ? this.getCurrentPickUser(draft) : null;
 
     const state: DraftState = {
       draft,
@@ -236,11 +243,11 @@ export class SnakeDraftManager {
       timeRemaining,
       picks,
       availableTeams,
-      isUserTurn: !!currentUserId,
+      isUserTurn: draft.status === 'active' && !!currentUserId,
       canMakePick: draft.status === 'active' && !!currentUserId
     };
 
-    console.log(`🔍 [DraftState] Returning state - Round ${state.draft.currentRound}, Pick ${state.draft.currentPick}, Timer: ${state.timeRemaining}s`);
+    console.log(`🔍 [DraftState] Returning state - Round ${state.draft.currentRound}, Pick ${state.draft.currentPick}, Timer: ${state.timeRemaining}s, Picks: ${state.picks.length}, Status: ${state.draft.status}`);
 
     // Cache the fresh state in Redis for future requests
     await this.redisStateManager.setDraftState(draftId, state);

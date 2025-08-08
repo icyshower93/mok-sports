@@ -819,7 +819,11 @@ export default function DraftPage() {
                           displayTime <= 10 ? 'text-red-500 animate-pulse' : 
                           displayTime <= 30 ? 'text-orange-500' : 'text-foreground'
                         }`}>
-                          {displayTime <= 0 && localTime === 0 && !isCountingDown ? (
+                          {state.draft.status === 'completed' ? (
+                            <span className="text-green-500">
+                              ✅ Complete
+                            </span>
+                          ) : displayTime <= 0 && localTime === 0 && !isCountingDown ? (
                             <span className="text-blue-500 animate-pulse">
                               🔄 Switching...
                             </span>
