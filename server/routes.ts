@@ -383,7 +383,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Leave league
   app.post("/api/leagues/:id/leave", async (req, res) => {
     try {
-      const user = getAuthenticatedUser(req);
+      const user = await getAuthenticatedUser(req);
       if (!user) {
         return res.status(401).json({ message: "Not authenticated" });
       }
@@ -392,13 +392,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Check if user is in the league
       const isMember = await storage.isUserInLeague(user.id, id);
+      console.log(`[Leave League] User ${user.id} attempting to leave league ${id}, is member: ${isMember}`);
+      
       if (!isMember) {
         return res.status(400).json({ message: "You are not a member of this league" });
       }
 
       await storage.leaveLeague(user.id, id);
+      console.log(`[Leave League] User ${user.id} successfully left league ${id}`);
       res.json({ message: "Successfully left league" });
     } catch (error) {
+      console.error('[Leave League] Error:', error);
       res.status(500).json({ message: "Failed to leave league" });
     }
   });
