@@ -289,10 +289,24 @@ export default function DraftPage() {
 
     if (newServerTime !== undefined && newServerTime !== serverTime) {
       console.log('[SMOOTH TIMER] Server update received:', newServerTime);
-      setServerTime(newServerTime);
-      setLocalTime(newServerTime);
-      setLastServerUpdate(Date.now());
-      setIsCountingDown(newServerTime > 0 && draftData?.state?.draft?.status === 'active');
+      
+      // PREDICTIVE TIMER FIX: If we receive a "fresh" timer (55+ seconds), immediately switch
+      const isFreshTimer = newServerTime >= 55 && serverTime < 10;
+      
+      if (isFreshTimer) {
+        console.log('[SMOOTH TIMER] 🎯 Fresh timer detected - immediate transition');
+        // Immediate transition to new timer
+        setServerTime(newServerTime);
+        setLocalTime(newServerTime);
+        setLastServerUpdate(Date.now());
+        setIsCountingDown(true);
+      } else {
+        // Normal server update
+        setServerTime(newServerTime);
+        setLocalTime(newServerTime);
+        setLastServerUpdate(Date.now());
+        setIsCountingDown(newServerTime > 0 && draftData?.state?.draft?.status === 'active');
+      }
     }
   }, [lastMessage, draftData, serverTime]);
 
@@ -307,18 +321,34 @@ export default function DraftPage() {
       setLocalTime(estimatedTime);
       console.log('[SMOOTH TIMER] Local countdown:', estimatedTime.toFixed(1));
       
-      // Stop counting when we reach 0
+      // PREDICTIVE SWITCHING: When we hit 0, show "Switching..." instead of stale time
       if (estimatedTime <= 0) {
+        console.log('[SMOOTH TIMER] 🔄 Timer hit 0 - preparing for transition');
         setIsCountingDown(false);
+        // Keep localTime at 0 instead of letting it show stale serverTime
+        setLocalTime(0);
       }
     }, 100); // Update every 100ms for smooth display
 
     return () => clearInterval(interval);
-  }, [isCountingDown, serverTime, lastServerUpdate]); // REMOVED localTime from dependencies to prevent loop
+  }, [isCountingDown, serverTime, lastServerUpdate]);
 
-  // Display the smooth local countdown or fallback to server time
-  const displayTime = isCountingDown ? localTime : (serverTime || draftData?.state?.timeRemaining || 0);
-  console.log('[SMOOTH TIMER] Display time:', displayTime.toFixed(1), 'isCountingDown:', isCountingDown);
+  // Display logic with smooth transitions
+  const displayTime = (() => {
+    if (isCountingDown) {
+      return localTime;
+    }
+    
+    // If not counting down and localTime is 0, we're in transition - keep showing 0
+    if (localTime === 0) {
+      return 0;
+    }
+    
+    // Fallback to server time
+    return serverTime || draftData?.state?.timeRemaining || 0;
+  })();
+  
+  console.log('[SMOOTH TIMER] Display time:', displayTime.toFixed(1), 'isCountingDown:', isCountingDown, 'localTime:', localTime.toFixed(1));
 
   // Fetch available teams
   const { data: teamsData } = useQuery({
@@ -689,7 +719,13 @@ export default function DraftPage() {
                           displayTime <= 10 ? 'text-red-500 animate-pulse' : 
                           displayTime <= 30 ? 'text-orange-500' : 'text-foreground'
                         }`}>
-                          {formatTime(displayTime)}
+                          {displayTime <= 0 && localTime === 0 && !isCountingDown ? (
+                            <span className="text-blue-500 animate-pulse">
+                              🔄 Switching...
+                            </span>
+                          ) : (
+                            formatTime(displayTime)
+                          )}
                         </div>
                         
                         {/* Enhanced Progress Bar */}

@@ -387,6 +387,7 @@ export class SnakeDraftManager {
       const randomTeam = eligibleTeams[Math.floor(Math.random() * eligibleTeams.length)];
       
       // Use makePick which already handles advancement - remove duplicate advanceDraft call
+      console.log(`🚀 Making auto-pick for ${userId}: ${randomTeam.name}`);
       const autoPickResult = await this.makePick(draftId, {
         userId,
         nflTeamId: randomTeam.id,
@@ -394,12 +395,20 @@ export class SnakeDraftManager {
       });
 
       if (autoPickResult.success) {
-        console.log(`🤖 Auto-picked ${randomTeam.name} for user ${userId}`);
+        console.log(`✅ Auto-picked ${randomTeam.name} for user ${userId} - draft advanced`);
+        
+        // SMOOTH TRANSITION: Immediately broadcast the new timer state after auto-pick
+        const updatedDraft = await this.storage.getDraft(draftId);
+        if (updatedDraft && updatedDraft.status === 'active') {
+          const currentTimer = await this.redisStateManager.getTimer(draftId);
+          const timeRemaining = currentTimer?.duration || this.draftConfig.pickTimeLimit;
+          
+          console.log(`🕐 Broadcasting immediate timer update: ${timeRemaining}s for next user`);
+          this.webSocketManager.broadcastTimerUpdate(draftId, timeRemaining);
+        }
       } else {
         console.error(`Failed to auto-pick for user ${userId}:`, autoPickResult.error);
       }
-      
-      // makePick already handles advancement and broadcasting, so no need to duplicate
       
     } catch (error) {
       console.error(`❌ Error handling timer expiration for user ${userId}:`, error);
@@ -616,7 +625,7 @@ export class SnakeDraftManager {
     await this.storage.deactivateAllDraftTimers(draftId);
 
     // Store timer in Redis
-    const redisTimer: RedisTimer = {
+    const redisTimer = {
       draftId,
       userId,
       startTime: Date.now(),
@@ -661,14 +670,14 @@ export class SnakeDraftManager {
         // Clean up Redis timer
         await this.redisStateManager.deleteTimer(draftId);
         
-        // Handle expiration
-        this.handleTimerExpired(draftId, userId)
-          .then(() => {
-            console.log(`✅ Timer expiration completed for ${userId}`);
-          })
-          .catch(error => {
-            console.error(`❌ Timer expiration handler failed for ${userId}:`, error);
-          });
+        // Handle expiration with immediate processing for smooth transitions
+        try {
+          console.log(`🚀 Processing timer expiration immediately for ${userId}`);
+          await this.handleTimerExpired(draftId, userId);
+          console.log(`✅ Timer expiration completed for ${userId}`);
+        } catch (error) {
+          console.error(`❌ Timer expiration handler failed for ${userId}:`, error);
+        }
       } else {
         // Update Redis with current time remaining
         await this.redisStateManager.updateTimeRemaining(draftId, localTimeRemaining);
