@@ -6,6 +6,16 @@ Mok Sports is a fantasy sports application that redefines traditional fantasy le
 
 Preferred communication style: Simple, everyday language.
 
+# Technical Documentation
+
+Comprehensive technical stack documentation is available in `TECH_STACK.md`, covering:
+- Complete frontend and backend architecture
+- Database design and ORM implementation  
+- Real-time WebSocket communication system
+- Progressive Web App (PWA) features
+- Deployment and scaling strategies
+- Security considerations and performance optimizations
+
 # System Architecture
 
 ## Frontend Architecture
