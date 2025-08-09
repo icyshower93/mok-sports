@@ -1,8 +1,33 @@
 import { BottomNav } from "@/components/layout/bottom-nav";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { MoreHorizontal, Settings, HelpCircle, Info, LogOut } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { MoreHorizontal, Settings, HelpCircle, Info, LogOut, Users, TestTube } from "lucide-react";
+import { useLocation } from "wouter";
+import { useQuery } from "@tanstack/react-query";
+import { useAuth } from "@/hooks/use-auth";
 
 export default function MorePage() {
+  const { user } = useAuth();
+  const [, navigate] = useLocation();
+
+  // Fetch user's leagues for testing navigation
+  const { data: leagues = [] } = useQuery({
+    queryKey: ['/api/user/leagues'],
+    enabled: !!user,
+  });
+
+  const handleBackToLeague = () => {
+    const userLeagues = leagues as any[];
+    if (userLeagues.length > 0) {
+      // Navigate to the first league's waiting room for testing
+      const firstLeague = userLeagues[0];
+      navigate(`/league/${firstLeague.id}/waiting`);
+    } else {
+      // If no leagues, go to leagues page
+      navigate('/leagues');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background pb-20">
       <div className="max-w-4xl mx-auto px-4 py-6 space-y-6">
@@ -12,6 +37,29 @@ export default function MorePage() {
         </div>
         
         <div className="space-y-4">
+          {/* Testing Section */}
+          <Card className="border-orange-200 dark:border-orange-800 bg-orange-50 dark:bg-orange-950/20">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg text-orange-800 dark:text-orange-200 flex items-center space-x-2">
+                <TestTube className="w-5 h-5" />
+                <span>Testing Tools</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <Button 
+                variant="outline" 
+                className="w-full justify-start"
+                onClick={handleBackToLeague}
+              >
+                <Users className="w-4 h-4 mr-3" />
+                Back to League Waiting Room
+              </Button>
+              <p className="text-sm text-muted-foreground">
+                Navigate back to league waiting room to start another draft and test team population.
+              </p>
+            </CardContent>
+          </Card>
+          
           <Card>
             <CardContent className="p-4">
               <div className="flex items-center space-x-3">
