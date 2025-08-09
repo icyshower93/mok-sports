@@ -1,0 +1,61 @@
+Build Info: Object
+index-ceTA8SGL.js:337 📦 Version: me3xu3mg
+index-ceTA8SGL.js:337 📅 Built: 2025-08-09T07:33:13.048Z
+index-ceTA8SGL.js:337 🔧 Environment: production
+index-ceTA8SGL.js:293 [Auth] Token check - Has token: true Has user: false Loading: true
+index-ceTA8SGL.js:293 [SW Hook] EMERGENCY: Unregistering all existing service workers
+index-ceTA8SGL.js:293 [SW Hook] Found 1 existing registrations
+index-ceTA8SGL.js:293 [SW Hook] Unregistering existing service worker
+index-ceTA8SGL.js:293 [SW Hook] Found 1 caches to delete
+index-ceTA8SGL.js:293 [SW Hook] Deleting cache: mok-sports-dynamic-v1.7.0-nuclear-unregister-1754724792220
+contentScript.js:2 Content script initialized successfully.
+index-ceTA8SGL.js:337 Main page debug: Object
+index-ceTA8SGL.js:337 Main page debug: Object
+index-ceTA8SGL.js:40 ReferenceError: Target is not defined
+    at Zh (index-ceTA8SGL.js:337:100119)
+    at Fd (index-ceTA8SGL.js:38:16998)
+    at wv (index-ceTA8SGL.js:40:43963)
+    at vv (index-ceTA8SGL.js:40:39727)
+    at q1 (index-ceTA8SGL.js:40:39655)
+    at Ya (index-ceTA8SGL.js:40:39508)
+    at ku (index-ceTA8SGL.js:40:35875)
+    at Yp (index-ceTA8SGL.js:40:36678)
+    at Sr (index-ceTA8SGL.js:38:3274)
+    at index-ceTA8SGL.js:40:34207
+fu @ index-ceTA8SGL.js:40Understand this error
+index-ceTA8SGL.js:293 ErrorBoundary caught an error: Target is not defined
+componentDidCatch @ index-ceTA8SGL.js:293Understand this error
+index-ceTA8SGL.js:293 Component stack: 
+    at Zh (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-ceTA8SGL.js:337:97889)
+    at Et (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-ceTA8SGL.js:48:3201)
+    at _b (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-ceTA8SGL.js:48:4017)
+    at oP (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-ceTA8SGL.js:337:166537)
+    at qj (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-ceTA8SGL.js:293:57447)
+    at u (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-ceTA8SGL.js:48:45834)
+    at px (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-ceTA8SGL.js:293:50423)
+    at Qj (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-ceTA8SGL.js:293:56919)
+    at rN (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-ceTA8SGL.js:48:40185)
+    at eE (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-ceTA8SGL.js:293:70899)
+    at sP
+componentDidCatch @ index-ceTA8SGL.js:293Understand this error
+index-ceTA8SGL.js:293 [SW Hook] Registering fresh service worker: /sw.js?v=1754724793184&r=0.3516989808066733
+sw.js?v=1754724793184&r=0.3516989808066733:2 [SW] NUCLEAR OPTION - Emergency service worker loading
+sw.js?v=1754724793184&r=0.3516989808066733:88 [SW] Service worker starting, version: v1.7.0-nuclear-unregister-1754724793272
+sw.js?v=1754724793184&r=0.3516989808066733:305 [SW] Service worker script loaded successfully
+index-ceTA8SGL.js:293 [SW Hook] Service worker registered successfully
+sw.js?v=1754724793184&r=0.3516989808066733:19 [SW] EMERGENCY INSTALL - Clearing all caches and forcing activation
+sw.js?v=1754724793184&r=0.3516989808066733:92 [SW] Installing service worker, version: v1.7.0-nuclear-unregister-1754724793272
+sw.js?v=1754724793184&r=0.3516989808066733:22 [SW] Found caches to delete: Array(1)
+sw.js?v=1754724793184&r=0.3516989808066733:25 [SW] Force deleting cache: mok-sports-dynamic-v1.7.0-nuclear-unregister-1754724792220
+sw.js?v=1754724793184&r=0.3516989808066733:96 [SW] Caching static files
+sw.js?v=1754724793184&r=0.3516989808066733:30 [SW] All caches deleted - skipping waiting
+sw.js?v=1754724793184&r=0.3516989808066733:99 [SW] Static files cached successfully
+sw.js?v=1754724793184&r=0.3516989808066733:41 [SW] EMERGENCY ACTIVATE - Taking control of all clients
+sw.js?v=1754724793184&r=0.3516989808066733:110 [SW] Activating service worker, version: v1.7.0-nuclear-unregister-1754724793272
+sw.js?v=1754724793184&r=0.3516989808066733:46 [SW] Deleting remaining cache: mok-sports-static-v1.7.0-nuclear-unregister-1754724793272
+sw.js?v=1754724793184&r=0.3516989808066733:116 [SW] Found caches: Array(1)
+sw.js?v=1754724793184&r=0.3516989808066733:129 [SW] Service worker activated and controlling all clients
+sw.js?v=1754724793184&r=0.3516989808066733:51 [SW] Claiming all clients immediately
+sw.js?v=1754724793184&r=0.3516989808066733:64 [SW] BYPASSING CACHE for JS file: https://mok-sports-draft-mokfantasysport.replit.app/manifest.json
+sw.js?v=1754724793184&r=0.3516989808066733:164 [SW] Fetching / from network
+sw.js?v=1754724793184&r=0.3516989808066733:164 [SW] Fetching /assets/index-7sPFwkII.css from network

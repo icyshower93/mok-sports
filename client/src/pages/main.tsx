@@ -13,6 +13,7 @@ import {
   Clock, 
   Trophy, 
   Users,
+  Target,
   DollarSign,
   Flame,
   Star,
