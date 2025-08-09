@@ -51,7 +51,7 @@ export function BottomNav() {
   
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50 bg-background/98 backdrop-blur-md supports-[backdrop-filter]:bg-background/95 border-t border-border">
-      <div className="grid grid-cols-5 h-20 max-w-lg mx-auto">
+      <div className="grid grid-cols-5 h-20 max-w-lg mx-auto px-2">
         {navItems.map((item) => {
           const isActive = item.isActive ? item.isActive(location) : location === item.path;
           const IconComponent = item.icon;
@@ -61,8 +61,8 @@ export function BottomNav() {
               key={item.path}
               onClick={() => setLocation(item.path)}
               className={cn(
-                "flex flex-col items-center justify-center space-y-1 text-xs font-medium transition-colors",
-                "min-h-[60px] px-2", // Enhanced PWA touch target
+                "flex flex-col items-center justify-center gap-1 text-xs font-medium transition-colors",
+                "min-h-[60px] px-1 py-2", // Enhanced PWA touch target with better padding
                 isActive 
                   ? "text-primary" 
                   : "text-muted-foreground hover:text-foreground"
@@ -70,12 +70,12 @@ export function BottomNav() {
             >
               <IconComponent 
                 className={cn(
-                  "w-7 h-7 transition-colors",
+                  "w-6 h-6 transition-colors flex-shrink-0",
                   isActive ? "text-primary" : "text-muted-foreground"
                 )} 
               />
               <span className={cn(
-                "text-[10px] leading-none transition-colors",
+                "text-[10px] leading-tight transition-colors text-center max-w-full",
                 isActive ? "text-primary font-semibold" : "text-muted-foreground"
               )}>
                 {item.label}
