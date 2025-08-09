@@ -19,10 +19,11 @@ import LeaguesPage from "@/pages/leagues";
 import DraftPage from "@/pages/draft";
 import MainPage from "@/pages/main";
 import ProfilePage from "@/pages/profile";
-import TeamsPage from "@/pages/teams";
+import StablePage from "@/pages/teams";
 import LeaguePage from "@/pages/league";
 import ScoresPage from "@/pages/scores";
 import AgentsPage from "@/pages/agents";
+import MorePage from "@/pages/more";
 import { LeagueWaiting } from "@/pages/league-waiting";
 import NotFound from "@/pages/not-found";
 import { logBuildInfo } from "@/lib/buildInfo";
@@ -96,10 +97,10 @@ function AppContent() {
           }}
         </Route>
         <Route path="/main" component={MainPage} />
-        <Route path="/teams" component={TeamsPage} />
+        <Route path="/stable" component={StablePage} />
         <Route path="/league" component={LeaguePage} />
         <Route path="/scores" component={ScoresPage} />
-        <Route path="/agents" component={AgentsPage} />
+        <Route path="/more" component={MorePage} />
         <Route path="/profile" component={ProfilePage} />
         <Route component={NotFound} />
       </Switch>

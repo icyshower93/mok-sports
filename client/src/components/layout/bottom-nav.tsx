@@ -25,8 +25,8 @@ const navItems: NavItem[] = [
     isActive: (pathname) => pathname === "/main" || pathname === "/"
   },
   {
-    path: "/teams",
-    label: "My Teams",
+    path: "/stable",
+    label: "Stable",
     icon: Shield
   },
   {
@@ -40,12 +40,12 @@ const navItems: NavItem[] = [
     icon: Activity
   },
   {
-    path: "/agents",
-    label: "Agents",
+    path: "/profile",
+    label: "Profile",
     icon: Star
   },
   {
-    path: "/profile",
+    path: "/more",
     label: "More",
     icon: MoreHorizontal
   }

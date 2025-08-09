@@ -2,6 +2,16 @@
 
 Mok Sports is a fantasy sports application that redefines traditional fantasy leagues by enabling users to draft entire NFL teams instead of individual players. The platform features unique mechanics including weekly "locks" for bonus points, "Lock and Load" high-risk/high-reward plays, dynamic free agent trading, and weekly "skins" prizes that can stack when tied. It features a modern web interface, a robust backend, and integrates Google OAuth for authentication. The project aims to provide a unique and engaging fantasy sports experience with a focus on real-time drafting, persistent state, and a highly available system.
 
+## Recent Updates (August 2025)
+
+### Mobile-First PWA Navigation (Aug 9, 2025)
+- Implemented bottom navigation bar with 5 core tabs following modern fantasy app patterns
+- Renamed "My Teams" to "Stable" to better represent the unique 5-team concept
+- Integrated free agent trading functionality directly into the Stable tab using a tabbed interface
+- Navigation: Home, Stable, League, Scores, Profile, More
+- All navigation follows PWA best practices with 44px minimum touch targets
+- Fixed team logo loading issues by using correct path structure (/images/nfl/team_logos/)
+
 ## Game Mechanics Summary
 - **6-player leagues** with **5 NFL teams** each (30/32 teams drafted, 2 free agents)
 - **Snake draft** with **division restrictions** (max 1 team per division unless unavoidable)
