@@ -237,6 +237,92 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Initialize stable from completed drafts (manual trigger for testing)
+  app.post("/api/stable/initialize", async (req, res) => {
+    try {
+      const user = await getAuthenticatedUser(req);
+      if (!user) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+
+      const { draftId } = req.body;
+      if (!draftId) {
+        return res.status(400).json({ message: "Draft ID is required" });
+      }
+
+      // Verify user has access to this draft
+      const draft = await storage.getDraft(draftId);
+      if (!draft) {
+        return res.status(404).json({ message: "Draft not found" });
+      }
+
+      // Check if user is in the league
+      const isInLeague = await storage.isUserInLeague(user.id, draft.leagueId);
+      if (!isInLeague) {
+        return res.status(403).json({ message: "Access denied to this draft" });
+      }
+
+      await storage.initializeStableFromDraft(draftId);
+      res.json({ message: "Stable initialized successfully", draftId });
+    } catch (error) {
+      console.error('Error initializing stable:', error);
+      res.status(500).json({ message: "Failed to initialize stable", error: error.message });
+    }
+  });
+
+  // Add routes for free agent trading
+  app.post("/api/stable/add-free-agent", async (req, res) => {
+    try {
+      const user = await getAuthenticatedUser(req);
+      if (!user) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+
+      const { leagueId, nflTeamId } = req.body;
+      if (!leagueId || !nflTeamId) {
+        return res.status(400).json({ message: "League ID and NFL Team ID are required" });
+      }
+
+      // Check if user is in the league
+      const isInLeague = await storage.isUserInLeague(user.id, leagueId);
+      if (!isInLeague) {
+        return res.status(403).json({ message: "Access denied to this league" });
+      }
+
+      await storage.addFreeAgentToStable(user.id, leagueId, nflTeamId);
+      res.json({ message: "Free agent added to stable successfully" });
+    } catch (error) {
+      console.error('Error adding free agent:', error);
+      res.status(500).json({ message: "Failed to add free agent", error: error.message });
+    }
+  });
+
+  app.delete("/api/stable/remove-team", async (req, res) => {
+    try {
+      const user = await getAuthenticatedUser(req);
+      if (!user) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+
+      const { leagueId, nflTeamId } = req.body;
+      if (!leagueId || !nflTeamId) {
+        return res.status(400).json({ message: "League ID and NFL Team ID are required" });
+      }
+
+      // Check if user is in the league
+      const isInLeague = await storage.isUserInLeague(user.id, leagueId);
+      if (!isInLeague) {
+        return res.status(403).json({ message: "Access denied to this league" });
+      }
+
+      await storage.removeStableTeam(user.id, leagueId, nflTeamId);
+      res.json({ message: "Team removed from stable successfully" });
+    } catch (error) {
+      console.error('Error removing team from stable:', error);
+      res.status(500).json({ message: "Failed to remove team from stable", error: error.message });
+    }
+  });
+
   // Logout
   app.post("/api/auth/logout", (req, res) => {
     res.clearCookie("auth_token");

@@ -80,6 +80,7 @@ export interface IStorage {
   updateStableLocks(userId: string, leagueId: string, nflTeamId: string, locksUsed: number): Promise<void>;
   updateStableLockAndLoad(userId: string, leagueId: string, nflTeamId: string, used: boolean): Promise<void>;
   initializeStableFromDraft(draftId: string): Promise<void>;
+  addFreeAgentToStable(userId: string, leagueId: string, nflTeamId: string): Promise<void>;
   
   // Additional methods for draft management
   updateLeague(leagueId: string, updates: Partial<League>): Promise<void>;
@@ -949,18 +950,66 @@ export class DatabaseStorage implements IStorage {
     // Get all picks from the completed draft
     const picks = await this.getDraftPicks(draftId);
     
-    // Create stable entries for each user's picks
-    const stableEntries: InsertStable[] = picks.map(pick => ({
-      userId: pick.userId,
-      leagueId: draft.leagueId,
-      nflTeamId: pick.nflTeamId,
-      acquiredVia: "draft" as const
-    }));
+    console.log(`🔄 Initializing stable from draft ${draftId} with ${picks.length} picks`);
+    
+    // Check which stable entries already exist for this league
+    const existingStables = await db
+      .select()
+      .from(stables)
+      .where(eq(stables.leagueId, draft.leagueId));
+    
+    console.log(`📋 Found ${existingStables.length} existing stable entries for league ${draft.leagueId}`);
+    
+    // Create a Set of existing combinations for fast lookup
+    const existingKeys = new Set(
+      existingStables.map(s => `${s.userId}-${s.nflTeamId}`)
+    );
+    
+    // Filter out picks that already have stable entries
+    const newStableEntries: InsertStable[] = picks
+      .filter(pick => !existingKeys.has(`${pick.userId}-${pick.nflTeamId}`))
+      .map(pick => ({
+        userId: pick.userId,
+        leagueId: draft.leagueId,
+        nflTeamId: pick.nflTeamId,
+        acquiredVia: "draft" as const
+      }));
 
-    // Insert all stable entries
-    if (stableEntries.length > 0) {
-      await db.insert(stables).values(stableEntries);
+    console.log(`➕ Creating ${newStableEntries.length} new stable entries`);
+
+    // Insert new stable entries only
+    if (newStableEntries.length > 0) {
+      await db.insert(stables).values(newStableEntries);
+      console.log(`✅ Successfully created ${newStableEntries.length} stable entries`);
+    } else {
+      console.log(`ℹ️ No new stable entries needed - all teams already in stable`);
     }
+  }
+
+  // Add free agent team to user's stable (for trading)
+  async addFreeAgentToStable(userId: string, leagueId: string, nflTeamId: string): Promise<void> {
+    // Check if user already has this team
+    const existing = await db
+      .select()
+      .from(stables)
+      .where(
+        and(
+          eq(stables.userId, userId),
+          eq(stables.leagueId, leagueId),
+          eq(stables.nflTeamId, nflTeamId)
+        )
+      );
+
+    if (existing.length > 0) {
+      throw new Error('User already owns this team');
+    }
+
+    await db.insert(stables).values({
+      userId,
+      leagueId,
+      nflTeamId,
+      acquiredVia: 'free_agent'
+    });
   }
 }
 
