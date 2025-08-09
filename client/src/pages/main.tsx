@@ -13,7 +13,6 @@ import {
   Clock, 
   Trophy, 
   Users,
-  Target,
   DollarSign,
   Flame,
   Star,
@@ -163,73 +162,74 @@ export default function MainPage() {
 
             {/* Lock Selection Interface */}
             <Card>
-              <CardHeader className="pb-3">
+              <CardHeader className="pb-4">
                 <div className="flex items-center justify-between">
                   <CardTitle className="text-lg">Choose Your Lock</CardTitle>
-                  <Badge variant="secondary" className="text-xs">
+                  <Badge variant="secondary" className="text-xs px-2 py-1">
                     Week {selectedWeek}
                   </Badge>
                 </div>
-                <p className="text-sm text-muted-foreground">
-                  Pick one team to lock for a bonus point if they win
-                </p>
               </CardHeader>
-              <CardContent className="space-y-3">
+              <CardContent className="space-y-4">
                 {userTeams.length === 0 ? (
-                  <div className="text-center py-8">
+                  <div className="text-center py-12">
                     <div className="w-16 h-16 mx-auto mb-4 bg-muted rounded-full flex items-center justify-center">
                       <Shield className="w-8 h-8 text-muted-foreground" />
                     </div>
                     <h3 className="text-lg font-semibold mb-2">No Teams Yet</h3>
-                    <p className="text-sm text-muted-foreground mb-4">
+                    <p className="text-sm text-muted-foreground mb-6 max-w-sm mx-auto">
                       Complete a draft to start building your stable
                     </p>
-                    <Button onClick={() => navigate('/leagues')}>
+                    <Button onClick={() => navigate('/leagues')} size="lg">
                       Join a League
                     </Button>
                   </div>
                 ) : (
                   <>
-                    {/* Lockable Teams */}
+                    {/* Lockable Teams - Clean Card Design */}
                     {userTeams.filter(team => team.locksRemaining > 0 && !team.isBye).map((team: any) => (
                       <div 
                         key={team.id}
-                        className="group relative overflow-hidden rounded-lg border bg-card hover:bg-accent/50 transition-all duration-200"
+                        className="group rounded-xl border bg-card hover:shadow-md transition-all duration-200 overflow-hidden"
                       >
-                        <div className="flex items-center p-4">
-                          <div className="flex items-center space-x-3 flex-1">
-                            <TeamLogo 
-                              logoUrl={team.nflTeam.logoUrl}
-                              teamCode={team.nflTeam.code}
-                              teamName={team.nflTeam.name}
-                              size="lg"
-                              className="w-12 h-12"
-                            />
-                            <div className="flex-1">
-                              <div className="font-semibold">
-                                {team.nflTeam.city} {team.nflTeam.name}
-                              </div>
-                              <div className="text-sm text-muted-foreground flex items-center space-x-2">
-                                <span>{team.upcomingOpponent}</span>
-                                <span>•</span>
-                                <div className="flex items-center space-x-1">
-                                  <Lock className="w-3 h-3" />
-                                  <span>{team.locksRemaining} left</span>
+                        <div className="p-4">
+                          {/* Team Header */}
+                          <div className="flex items-center justify-between mb-3">
+                            <div className="flex items-center space-x-3">
+                              <TeamLogo 
+                                logoUrl={team.nflTeam.logoUrl}
+                                teamCode={team.nflTeam.code}
+                                teamName={team.nflTeam.name}
+                                size="lg"
+                                className="w-10 h-10"
+                              />
+                              <div>
+                                <div className="font-semibold text-base">
+                                  {team.nflTeam.city} {team.nflTeam.name}
+                                </div>
+                                <div className="text-sm text-muted-foreground">
+                                  {team.upcomingOpponent}
                                 </div>
                               </div>
+                            </div>
+                            
+                            <div className="text-right">
+                              <div className="text-xs text-muted-foreground">
+                                {team.locksRemaining} locks left
+                              </div>
                               {team.lockAndLoadAvailable && (
-                                <Badge variant="outline" className="mt-1 text-xs">
+                                <Badge variant="outline" className="text-xs mt-1">
                                   <Zap className="w-3 h-3 mr-1" />
-                                  Lock & Load Ready
+                                  L&L Ready
                                 </Badge>
                               )}
                             </div>
                           </div>
                           
-                          <div className="flex flex-col space-y-2">
+                          {/* Action Buttons */}
+                          <div className="flex space-x-3">
                             <Button 
-                              size="sm"
-                              className="min-h-[36px] px-4"
+                              className="flex-1 h-11"
                               disabled={team.isLocked}
                             >
                               {team.isLocked ? (
@@ -239,8 +239,8 @@ export default function MainPage() {
                                 </>
                               ) : (
                                 <>
-                                  <Target className="w-4 h-4 mr-2" />
-                                  Lock
+                                  <Lock className="w-4 h-4 mr-2" />
+                                  Lock (+1)
                                 </>
                               )}
                             </Button>
@@ -248,76 +248,53 @@ export default function MainPage() {
                             {team.lockAndLoadAvailable && !team.isLocked && (
                               <Button 
                                 variant="outline"
-                                size="sm"
-                                className="min-h-[36px] px-4 border-yellow-200 dark:border-yellow-800 text-yellow-700 dark:text-yellow-300 hover:bg-yellow-50 dark:hover:bg-yellow-950/20"
+                                className="flex-1 h-11 border-amber-200 dark:border-amber-800 text-amber-700 dark:text-amber-300 hover:bg-amber-50 dark:hover:bg-amber-950/20"
                               >
                                 <Zap className="w-4 h-4 mr-2" />
                                 Lock & Load
                               </Button>
                             )}
                           </div>
+                          
+                          {team.lockAndLoadAvailable && !team.isLocked && (
+                            <div className="mt-2 text-xs text-muted-foreground text-center">
+                              Win: +2 points • Loss: -1 point
+                            </div>
+                          )}
                         </div>
                       </div>
                     ))}
 
-                    {/* Used Up Teams */}
-                    {userTeams.filter(team => team.locksRemaining === 0 && !team.isBye).length > 0 && (
-                      <div className="pt-4 border-t border-border/50">
-                        <p className="text-xs text-muted-foreground mb-3 font-medium">LOCKS EXHAUSTED</p>
-                        {userTeams.filter(team => team.locksRemaining === 0 && !team.isBye).map((team: any) => (
-                          <div 
-                            key={team.id}
-                            className="flex items-center p-3 rounded-lg bg-muted/30 opacity-60"
-                          >
-                            <TeamLogo 
-                              logoUrl={team.nflTeam.logoUrl}
-                              teamCode={team.nflTeam.code}
-                              teamName={team.nflTeam.name}
-                              size="sm"
-                              className="w-8 h-8 mr-3"
-                            />
-                            <div className="flex-1">
-                              <div className="font-medium text-sm">
-                                {team.nflTeam.city} {team.nflTeam.name}
-                              </div>
-                              <div className="text-xs text-muted-foreground">
-                                {team.upcomingOpponent}
-                              </div>
-                            </div>
-                            <Badge variant="secondary" className="text-xs">
-                              All Used
-                            </Badge>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-
-                    {/* Bye Week Teams */}
-                    {userTeams.filter(team => team.isBye).length > 0 && (
-                      <div className="pt-4 border-t border-border/50">
-                        <p className="text-xs text-muted-foreground mb-3 font-medium">ON BYE</p>
-                        {userTeams.filter(team => team.isBye).map((team: any) => (
-                          <div 
-                            key={team.id}
-                            className="flex items-center p-3 rounded-lg bg-muted/20"
-                          >
-                            <TeamLogo 
-                              logoUrl={team.nflTeam.logoUrl}
-                              teamCode={team.nflTeam.code}
-                              teamName={team.nflTeam.name}
-                              size="sm"
-                              className="w-8 h-8 mr-3 opacity-50"
-                            />
-                            <div className="flex-1">
-                              <div className="font-medium text-sm opacity-75">
-                                {team.nflTeam.city} {team.nflTeam.name}
-                              </div>
-                              <div className="text-xs text-muted-foreground">
-                                Bye Week
+                    {/* Unavailable Teams - Simplified */}
+                    {userTeams.filter(team => team.locksRemaining === 0 || team.isBye).length > 0 && (
+                      <div className="mt-6 pt-4 border-t border-border/50">
+                        <p className="text-xs font-medium text-muted-foreground mb-3 uppercase tracking-wide">
+                          Unavailable This Week
+                        </p>
+                        <div className="grid grid-cols-2 gap-2">
+                          {userTeams.filter(team => team.locksRemaining === 0 || team.isBye).map((team: any) => (
+                            <div 
+                              key={team.id}
+                              className="flex items-center p-3 rounded-lg bg-muted/20 opacity-60"
+                            >
+                              <TeamLogo 
+                                logoUrl={team.nflTeam.logoUrl}
+                                teamCode={team.nflTeam.code}
+                                teamName={team.nflTeam.name}
+                                size="sm"
+                                className="w-6 h-6 mr-2"
+                              />
+                              <div className="flex-1 min-w-0">
+                                <div className="font-medium text-xs truncate">
+                                  {team.nflTeam.code}
+                                </div>
+                                <div className="text-xs text-muted-foreground">
+                                  {team.isBye ? 'Bye' : 'Used'}
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        ))}
+                          ))}
+                        </div>
                       </div>
                     )}
                   </>
