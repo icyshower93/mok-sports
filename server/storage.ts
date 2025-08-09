@@ -1,12 +1,13 @@
 import { 
-  users, leagues, leagueMembers, nflTeams, pushSubscriptions, drafts, draftPicks, draftTimers,
+  users, leagues, leagueMembers, nflTeams, pushSubscriptions, drafts, draftPicks, draftTimers, stables,
   type User, type InsertUser,
   type League, type InsertLeague,
   type LeagueMember, type InsertLeagueMember,
   type NflTeam, type PushSubscription, type InsertPushSubscription,
   type Draft, type InsertDraft,
   type DraftPick, type InsertDraftPick,
-  type DraftTimer, type InsertDraftTimer
+  type DraftTimer, type InsertDraftTimer,
+  type Stable, type InsertStable
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, sql, notInArray } from "drizzle-orm";
@@ -71,6 +72,14 @@ export interface IStorage {
   deactivatePushSubscriptions(userId: string): Promise<void>;
   sendPushNotification(subscriptions: PushSubscription[], notification: any): Promise<any[]>;
   getLeagueMembers(leagueId: string): Promise<Array<{ userId: string; joinedAt: string }>>;
+  
+  // Stable methods (user's teams)
+  createStableTeam(stable: InsertStable): Promise<Stable>;
+  getUserStable(userId: string, leagueId: string): Promise<Array<Stable & { nflTeam: NflTeam }>>;
+  removeStableTeam(userId: string, leagueId: string, nflTeamId: string): Promise<void>;
+  updateStableLocks(userId: string, leagueId: string, nflTeamId: string, locksUsed: number): Promise<void>;
+  updateStableLockAndLoad(userId: string, leagueId: string, nflTeamId: string, used: boolean): Promise<void>;
+  initializeStableFromDraft(draftId: string): Promise<void>;
   
   // Additional methods for draft management
   updateLeague(leagueId: string, updates: Partial<League>): Promise<void>;
@@ -861,7 +870,98 @@ export class DatabaseStorage implements IStorage {
     return results;
   }
 
+  // Stable methods implementation
+  async createStableTeam(stable: InsertStable): Promise<Stable> {
+    const [newStable] = await db
+      .insert(stables)
+      .values(stable)
+      .returning();
+    return newStable;
+  }
 
+  async getUserStable(userId: string, leagueId: string): Promise<Array<Stable & { nflTeam: NflTeam }>> {
+    return await db.select({
+      id: stables.id,
+      userId: stables.userId,
+      leagueId: stables.leagueId,
+      nflTeamId: stables.nflTeamId,
+      acquiredVia: stables.acquiredVia,
+      acquiredAt: stables.acquiredAt,
+      locksUsed: stables.locksUsed,
+      lockAndLoadUsed: stables.lockAndLoadUsed,
+      createdAt: stables.createdAt,
+      nflTeam: {
+        id: nflTeams.id,
+        code: nflTeams.code,
+        name: nflTeams.name,
+        city: nflTeams.city,
+        conference: nflTeams.conference,
+        division: nflTeams.division,
+        logoUrl: nflTeams.logoUrl,
+        createdAt: nflTeams.createdAt
+      }
+    })
+    .from(stables)
+    .innerJoin(nflTeams, eq(stables.nflTeamId, nflTeams.id))
+    .where(and(
+      eq(stables.userId, userId),
+      eq(stables.leagueId, leagueId)
+    ))
+    .orderBy(stables.acquiredAt);
+  }
+
+  async removeStableTeam(userId: string, leagueId: string, nflTeamId: string): Promise<void> {
+    await db.delete(stables)
+      .where(and(
+        eq(stables.userId, userId),
+        eq(stables.leagueId, leagueId),
+        eq(stables.nflTeamId, nflTeamId)
+      ));
+  }
+
+  async updateStableLocks(userId: string, leagueId: string, nflTeamId: string, locksUsed: number): Promise<void> {
+    await db.update(stables)
+      .set({ locksUsed })
+      .where(and(
+        eq(stables.userId, userId),
+        eq(stables.leagueId, leagueId),
+        eq(stables.nflTeamId, nflTeamId)
+      ));
+  }
+
+  async updateStableLockAndLoad(userId: string, leagueId: string, nflTeamId: string, used: boolean): Promise<void> {
+    await db.update(stables)
+      .set({ lockAndLoadUsed: used })
+      .where(and(
+        eq(stables.userId, userId),
+        eq(stables.leagueId, leagueId),
+        eq(stables.nflTeamId, nflTeamId)
+      ));
+  }
+
+  async initializeStableFromDraft(draftId: string): Promise<void> {
+    // Get the draft and league info
+    const draft = await this.getDraft(draftId);
+    if (!draft) {
+      throw new Error(`Draft ${draftId} not found`);
+    }
+
+    // Get all picks from the completed draft
+    const picks = await this.getDraftPicks(draftId);
+    
+    // Create stable entries for each user's picks
+    const stableEntries: InsertStable[] = picks.map(pick => ({
+      userId: pick.userId,
+      leagueId: draft.leagueId,
+      nflTeamId: pick.nflTeamId,
+      acquiredVia: "draft" as const
+    }));
+
+    // Insert all stable entries
+    if (stableEntries.length > 0) {
+      await db.insert(stables).values(stableEntries);
+    }
+  }
 }
 
 export const storage = new DatabaseStorage();

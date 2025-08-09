@@ -92,6 +92,18 @@ export const pushSubscriptions = pgTable("push_subscriptions", {
   lastUsed: timestamp("last_used").defaultNow().notNull(),
 });
 
+export const stables = pgTable("stables", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => users.id),
+  leagueId: varchar("league_id").notNull().references(() => leagues.id),
+  nflTeamId: varchar("nfl_team_id").notNull().references(() => nflTeams.id),
+  acquiredVia: varchar("acquired_via").notNull().default("draft"), // draft, trade
+  acquiredAt: timestamp("acquired_at").defaultNow().notNull(),
+  locksUsed: integer("locks_used").notNull().default(0), // How many weekly locks used on this team
+  lockAndLoadUsed: boolean("lock_and_load_used").notNull().default(false),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 // Relations
 export const usersRelations = relations(users, ({ many }) => ({
   createdLeagues: many(leagues),
@@ -99,6 +111,7 @@ export const usersRelations = relations(users, ({ many }) => ({
   pushSubscriptions: many(pushSubscriptions),
   draftPicks: many(draftPicks),
   draftTimers: many(draftTimers),
+  stableTeams: many(stables),
 }));
 
 export const leaguesRelations = relations(leagues, ({ one, many }) => ({
@@ -118,6 +131,21 @@ export const leagueMembersRelations = relations(leagueMembers, ({ one }) => ({
   user: one(users, {
     fields: [leagueMembers.userId],
     references: [users.id],
+  }),
+}));
+
+export const stablesRelations = relations(stables, ({ one }) => ({
+  user: one(users, {
+    fields: [stables.userId],
+    references: [users.id],
+  }),
+  league: one(leagues, {
+    fields: [stables.leagueId],
+    references: [leagues.id],
+  }),
+  nflTeam: one(nflTeams, {
+    fields: [stables.nflTeamId],
+    references: [nflTeams.id],
   }),
 }));
 
@@ -195,6 +223,13 @@ export const insertNflTeamSchema = createInsertSchema(nflTeams).pick({
   logoUrl: true,
 });
 
+export const insertStableSchema = createInsertSchema(stables).pick({
+  userId: true,
+  leagueId: true,
+  nflTeamId: true,
+  acquiredVia: true,
+});
+
 export const insertDraftSchema = createInsertSchema(drafts).pick({
   leagueId: true,
   totalRounds: true,
@@ -245,3 +280,5 @@ export type DraftPick = typeof draftPicks.$inferSelect;
 export type InsertDraftPick = z.infer<typeof insertDraftPickSchema>;
 export type DraftTimer = typeof draftTimers.$inferSelect;
 export type InsertDraftTimer = z.infer<typeof insertDraftTimerSchema>;
+export type Stable = typeof stables.$inferSelect;
+export type InsertStable = z.infer<typeof insertStableSchema>;
