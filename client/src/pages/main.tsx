@@ -35,35 +35,35 @@ interface User {
 
 export default function MainPage() {
   const { user } = useAuth();
-  const [navigate] = useLocation();
+  const [, navigate] = useLocation();
   const [selectedLeague, setSelectedLeague] = useState<string>("");
   const [selectedWeek] = useState(1);
 
   // Fetch user's leagues
   const { data: leagues = [], isLoading: leaguesLoading } = useQuery({
-    queryKey: ['/api/users/leagues'],
+    queryKey: ['/api/user/leagues'],
     enabled: !!user,
   });
 
   // Fetch stable teams for selected league
   const { data: stableTeams = [] } = useQuery({
-    queryKey: ['/api/stable', selectedLeague],
+    queryKey: [`/api/user/stable/${selectedLeague}`],
     enabled: !!selectedLeague,
   });
 
   // Set first league as default selection
   React.useEffect(() => {
-    if (leagues.length > 0 && !selectedLeague) {
-      setSelectedLeague(leagues[0].id);
+    if ((leagues as any[]).length > 0 && !selectedLeague) {
+      setSelectedLeague((leagues as any[])[0].id);
     }
   }, [leagues, selectedLeague]);
 
-  const currentLeague = leagues.find((l: League) => l.id === selectedLeague);
+  const currentLeague = (leagues as any[]).find((l: League) => l.id === selectedLeague);
   const lockDeadline = new Date(Date.now() + 2 * 24 * 60 * 60 * 1000);
   const isLockWindowOpen = true;
 
   // Transform stable data into user teams with lock/load state
-  const userTeams = stableTeams.map((stable: any) => ({
+  const userTeams = (stableTeams as any[]).map((stable: any) => ({
     id: stable.id,
     nflTeam: stable.nflTeam,
     locksRemaining: 4 - (stable.locksUsed || 0),
@@ -79,6 +79,15 @@ export default function MainPage() {
   const userPoints = 12.5;
   const userRank = 1;
   const weeklyPrize = 250;
+
+  // Debug logging
+  console.log('Main page debug:', {
+    user: user?.name,
+    leagues: (leagues as any[])?.length || 0,
+    selectedLeague,
+    stableTeams: (stableTeams as any[])?.length || 0,
+    userTeams: userTeams?.length || 0
+  });
 
   if (!user) {
     return <div className="min-h-screen bg-background pb-20 flex items-center justify-center">
@@ -108,13 +117,13 @@ export default function MainPage() {
                 )}
               </div>
             </div>
-            {leagues.length > 1 && (
+            {(leagues as any[]).length > 1 && (
               <select 
                 value={selectedLeague || ''} 
                 onChange={(e) => setSelectedLeague(e.target.value)}
                 className="px-3 py-2 text-sm border rounded-lg bg-background"
               >
-                {leagues.map((league: League) => (
+                {(leagues as any[]).map((league: League) => (
                   <option key={league.id} value={league.id}>
                     {league.name}
                   </option>
