@@ -84,14 +84,6 @@ export default function MainPage() {
     }
   }, [leagues, selectedLeague]);
 
-  console.log('Main page debug:', {
-    user: user?.username,
-    leagues: leagues?.length || 0,
-    selectedLeague,
-    stableTeams: stableTeams?.length || 0,
-    userTeams: userTeams?.length || 0
-  });
-
   // Convert stable teams to display format with game mechanics
   const userTeams = stableTeams.map((stable: StableTeam) => ({
     nflTeam: stable.nflTeam,
@@ -103,6 +95,14 @@ export default function MainPage() {
     acquiredVia: stable.acquiredVia,
     acquiredAt: stable.acquiredAt
   }));
+
+  console.log('Main page debug:', {
+    user: user?.name,
+    leagues: leagues?.length || 0,
+    selectedLeague,
+    stableTeams: stableTeams?.length || 0,
+    userTeams: userTeams?.length || 0
+  });
 
   const currentLeague = leagues.find((l: League) => l.id === selectedLeague);
 

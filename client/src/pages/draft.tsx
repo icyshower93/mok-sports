@@ -603,7 +603,7 @@ export default function DraftPage() {
                         Back to League
                       </Button>
                       <Button 
-                        onClick={() => navigate('/main')}
+                        onClick={() => navigate('/')}
                         variant="default"
                         className="flex-1 sm:flex-none"
                         size="lg"
