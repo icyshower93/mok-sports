@@ -17,6 +17,7 @@ import LoginPage from "@/pages/login";
 import DashboardPage from "@/pages/dashboard";
 import LeaguesPage from "@/pages/leagues";
 import DraftPage from "@/pages/draft";
+import MainPage from "@/pages/main";
 import ProfilePage from "@/pages/profile";
 import TeamsPage from "@/pages/teams";
 import { LeagueWaiting } from "@/pages/league-waiting";
@@ -91,6 +92,7 @@ function AppContent() {
             return <DraftPage />;
           }}
         </Route>
+        <Route path="/main" component={MainPage} />
         <Route path="/teams" component={TeamsPage} />
         <Route path="/profile" component={ProfilePage} />
         <Route component={NotFound} />

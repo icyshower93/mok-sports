@@ -592,15 +592,26 @@ export default function DraftPage() {
                       </div>
                     </div>
                     
-                    <Button 
-                      onClick={() => navigate(`/league/${draftData?.draft?.leagueId}/waiting`)}
-                      variant="outline"
-                      className="w-full sm:w-auto"
-                      size="lg"
-                    >
-                      <ArrowLeft className="w-4 h-4 mr-2" />
-                      Back to League
-                    </Button>
+                    <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+                      <Button 
+                        onClick={() => navigate(`/league/${draftData?.draft?.leagueId}/waiting`)}
+                        variant="outline"
+                        className="flex-1 sm:flex-none"
+                        size="lg"
+                      >
+                        <ArrowLeft className="w-4 h-4 mr-2" />
+                        Back to League
+                      </Button>
+                      <Button 
+                        onClick={() => navigate('/main')}
+                        variant="default"
+                        className="flex-1 sm:flex-none"
+                        size="lg"
+                      >
+                        <Trophy className="w-4 h-4 mr-2" />
+                        Main
+                      </Button>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
