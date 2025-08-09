@@ -221,6 +221,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.json(user);
   });
 
+  // Get user's leagues
+  app.get("/api/user/leagues", async (req, res) => {
+    try {
+      const user = await getAuthenticatedUser(req);
+      if (!user) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+
+      const userLeagues = await storage.getUserLeagues(user.id);
+      res.json(userLeagues);
+    } catch (error) {
+      console.error('Error getting user leagues:', error);
+      res.status(500).json({ message: "Failed to get user leagues" });
+    }
+  });
+
   // Logout
   app.post("/api/auth/logout", (req, res) => {
     res.clearCookie("auth_token");

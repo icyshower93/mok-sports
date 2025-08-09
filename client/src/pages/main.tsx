@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useLocation } from "wouter";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -65,21 +65,32 @@ export default function MainPage() {
   const [selectedLeague, setSelectedLeague] = useState<string | null>(null);
 
   // Get user's leagues
-  const { data: leagues = [] } = useQuery({
+  const { data: leagues = [] } = useQuery<League[]>({
     queryKey: ['/api/user/leagues'],
     enabled: !!user,
   });
 
   // Get stable teams for selected league
-  const { data: stableTeams = [] } = useQuery({
+  const { data: stableTeams = [] } = useQuery<StableTeam[]>({
     queryKey: ['/api/user/stable', selectedLeague],
     enabled: !!selectedLeague,
   });
 
   // Set first league as default selection
-  if (leagues.length > 0 && !selectedLeague) {
-    setSelectedLeague(leagues[0].id);
-  }
+  React.useEffect(() => {
+    if (leagues.length > 0 && !selectedLeague) {
+      console.log('Setting selected league to:', leagues[0].id);
+      setSelectedLeague(leagues[0].id);
+    }
+  }, [leagues, selectedLeague]);
+
+  console.log('Main page debug:', {
+    user: user?.username,
+    leagues: leagues.length,
+    selectedLeague,
+    stableTeams: stableTeams.length,
+    userTeams: userTeams.length
+  });
 
   // Convert stable teams to display format with game mechanics
   const userTeams = stableTeams.map((stable: StableTeam) => ({
@@ -190,7 +201,7 @@ export default function MainPage() {
                   </div>
                 ) : (
                   <>
-                    {userTeams.filter(team => !team.isBye && team.locksRemaining > 0).map((team) => (
+                    {userTeams.filter(team => !team.isBye && team.locksRemaining > 0).map((team: any) => (
                   <div 
                     key={team.nflTeam.id}
                     className="flex items-center justify-between p-4 rounded-lg border bg-card hover:bg-accent/50 transition-colors"
@@ -227,7 +238,7 @@ export default function MainPage() {
                 {userTeams.filter(team => !team.isBye && team.locksRemaining === 0).length > 0 && (
                   <div className="pt-2">
                     <p className="text-xs text-muted-foreground mb-2">No locks remaining:</p>
-                    {userTeams.filter(team => !team.isBye && team.locksRemaining === 0).map((team) => (
+                    {userTeams.filter(team => !team.isBye && team.locksRemaining === 0).map((team: any) => (
                       <div 
                         key={team.nflTeam.id}
                         className="flex items-center justify-between p-3 rounded-lg bg-muted/50 opacity-60"
@@ -262,7 +273,7 @@ export default function MainPage() {
                 {userTeams.filter(team => team.isBye).length > 0 && (
                   <div className="pt-2">
                     <p className="text-xs text-muted-foreground mb-2">On bye week:</p>
-                    {userTeams.filter(team => team.isBye).map((team) => (
+                    {userTeams.filter(team => team.isBye).map((team: any) => (
                       <div 
                         key={team.nflTeam.id}
                         className="flex items-center space-x-3 p-3 rounded-lg bg-muted/30"
@@ -308,7 +319,7 @@ export default function MainPage() {
                   <p className="text-muted-foreground">No teams in your stable yet</p>
                 </div>
               ) : (
-                userTeams.map((team) => (
+                userTeams.map((team: any) => (
                 <div 
                   key={team.nflTeam.id}
                   className={`flex items-center justify-between p-4 rounded-lg border transition-colors ${
