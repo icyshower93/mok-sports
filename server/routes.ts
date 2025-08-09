@@ -610,7 +610,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Get comprehensive user statistics
       const userLeagues = await storage.getUserLeagues(user.id);
-      const userPicks = await storage.getUserDraftPicks(user.id);
+      const userPicks = await storage.getAllUserDraftPicks(user.id);
       const completedDrafts = await storage.getUserCompletedDrafts(user.id);
       
       // Calculate pick statistics
