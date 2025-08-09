@@ -4,7 +4,7 @@ Mok Sports is a fantasy sports application that redefines traditional fantasy le
 
 ## Game Mechanics Summary
 - **6-player leagues** with **5 NFL teams** each (30/32 teams drafted, 2 free agents)
-- **Snake draft** with division restrictions (max 1 team per division unless unavoidable)
+- **Snake draft** with **division restrictions** (max 1 team per division unless unavoidable)
 - **Weekly scoring**: Wins (+1), Ties (+0.5), Blowouts (+1), Shutouts (+1), Weekly high (+1), Weekly low (-1)
 - **Lock system**: Pick 1 team to lock weekly for +1 bonus (up to 4 times per team per season)
 - **Lock and Load**: Once per team per season, +2 for win, -1 for loss
@@ -40,7 +40,7 @@ The server is built with Express.js using TypeScript, following a modular archit
 Draft state and timers persist using Redis with an in-memory fallback for development. Enhanced JWT authentication includes Bearer header support for PWA compatibility. PostgreSQL connections are optimized with connection pooling, health monitoring, and limits. Health check endpoints (`/api/health`) monitor database, Redis, and overall system health. Static assets are served with proper MIME types and cache headers for production deployment.
 
 ### Real-Time Draft System
-Real-time draft synchronization is managed via WebSocket connections. A comprehensive snake draft manager handles draft logic, timer management, auto-pick functionality, and conference rule validation. Draft state persists across page reloads and reconnections, with automatic timer restoration. The system includes an automated bot user system for comprehensive draft testing and features enhanced timer resilience.
+Real-time draft synchronization is managed via WebSocket connections. A comprehensive snake draft manager handles draft logic, timer management, auto-pick functionality, and **division rule validation** (max 1 team per division unless unavoidable). Draft state persists across page reloads and reconnections, with automatic timer restoration. The system includes an automated bot user system for comprehensive draft testing and features enhanced timer resilience.
 
 ### Testing Infrastructure
 The system includes robust testing features such as complete draft state reset functionality for iterative testing, automated addition/removal of bot users to leagues, real-time WebSocket connection status tracking with automatic reconnection, and timer diagnostics for monitoring and manual intervention. The draft order is verified for a 6-user snake draft.

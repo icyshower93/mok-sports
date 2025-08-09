@@ -39,8 +39,8 @@ export interface PickResult {
 export interface DraftConfig {
   totalRounds: number;
   pickTimeLimit: number; // seconds
-  enableConferenceRule: boolean;
-  maxTeamsPerConference: number;
+  enableDivisionRule: boolean;
+  maxTeamsPerDivision: number;
 }
 
 export class SnakeDraftManager {
@@ -59,8 +59,8 @@ export class SnakeDraftManager {
     this.draftConfig = {
       totalRounds: 5,
       pickTimeLimit: 60,
-      enableConferenceRule: true,
-      maxTeamsPerConference: 3, // No more than 3 teams from same conference per user
+      enableDivisionRule: true,
+      maxTeamsPerDivision: 1, // No more than 1 team from same division unless unavoidable
       ...config
     };
   }
@@ -307,18 +307,18 @@ export class SnakeDraftManager {
         return { success: false, error: 'Team is not available' };
       }
 
-      // Check conference rule if enabled
-      if (this.draftConfig.enableConferenceRule) {
-        const conferenceViolation = await this.checkConferenceRule(
+      // Check division rule if enabled
+      if (this.draftConfig.enableDivisionRule) {
+        const divisionViolation = await this.checkDivisionRule(
           draftId,
           pickRequest.userId,
           selectedTeam
         );
         
-        if (conferenceViolation.isViolation && !conferenceViolation.allowOverride) {
+        if (divisionViolation.isViolation && !divisionViolation.allowOverride) {
           return { 
             success: false, 
-            error: `Conference rule violation: ${conferenceViolation.message}` 
+            error: `Division rule violation: ${divisionViolation.message}` 
           };
         }
       }
@@ -402,17 +402,17 @@ export class SnakeDraftManager {
         return;
       }
 
-      // Get user's current picks to check conference rule
+      // Get user's current picks to check division rule
       let eligibleTeams = availableTeams;
       
-      if (this.draftConfig.enableConferenceRule) {
-        eligibleTeams = await this.getConferenceEligibleTeams(draftId, userId, availableTeams);
+      if (this.draftConfig.enableDivisionRule) {
+        eligibleTeams = await this.getDivisionEligibleTeams(draftId, userId, availableTeams);
       }
 
-      // If no eligible teams due to conference rule, pick from any available
+      // If no eligible teams due to division rule, pick from any available
       if (eligibleTeams.length === 0) {
         eligibleTeams = availableTeams;
-        console.log(`⚠️ Conference rule forced override for user ${userId}`);
+        console.log(`⚠️ Division rule forced override for user ${userId}`);
       }
 
       // Random selection for auto-pick
@@ -504,14 +504,14 @@ export class SnakeDraftManager {
 
     let eligibleTeams = availableTeams;
     
-    if (this.draftConfig.enableConferenceRule) {
-      eligibleTeams = await this.getConferenceEligibleTeams(draftId, userId, availableTeams);
+    if (this.draftConfig.enableDivisionRule) {
+      eligibleTeams = await this.getDivisionEligibleTeams(draftId, userId, availableTeams);
       if (eligibleTeams.length === 0) {
         eligibleTeams = availableTeams; // Override rule if necessary
       }
     }
 
-    // Smart bot selection: prefer teams from different conferences
+    // Smart bot selection: prefer teams from different divisions
     const randomTeam = eligibleTeams[Math.floor(Math.random() * eligibleTeams.length)];
     
     await this.makePick(draftId, {
@@ -745,28 +745,28 @@ export class SnakeDraftManager {
     await this.storage.deactivateTimer(draftId, userId);
   }
 
-  private async checkConferenceRule(
+  private async checkDivisionRule(
     draftId: string,
     userId: string,
     selectedTeam: NflTeam
   ): Promise<{ isViolation: boolean; allowOverride: boolean; message: string }> {
     const userPicks = await this.storage.getUserDraftPicks(draftId, userId);
-    const conferenceCount = userPicks.filter(
-      pick => pick.nflTeam.conference === selectedTeam.conference
+    const divisionCount = userPicks.filter(
+      pick => pick.nflTeam.division === selectedTeam.division
     ).length;
 
-    if (conferenceCount >= this.draftConfig.maxTeamsPerConference) {
-      const availableOtherConference = await this.storage.getAvailableNflTeams(draftId);
-      const hasOtherOptions = availableOtherConference.some(
-        team => team.conference !== selectedTeam.conference
+    if (divisionCount >= this.draftConfig.maxTeamsPerDivision) {
+      const availableOtherDivisions = await this.storage.getAvailableNflTeams(draftId);
+      const hasOtherOptions = availableOtherDivisions.some(
+        team => team.division !== selectedTeam.division
       );
 
       return {
         isViolation: true,
         allowOverride: !hasOtherOptions,
         message: hasOtherOptions 
-          ? `Already have ${conferenceCount} ${selectedTeam.conference} teams`
-          : `Conference rule override: no other options available`
+          ? `Already have a team from ${selectedTeam.division} division`
+          : `Division rule override: no other division options available`
       };
     }
 
@@ -808,23 +808,20 @@ export class SnakeDraftManager {
     }
   }
 
-  private async getConferenceEligibleTeams(
+  private async getDivisionEligibleTeams(
     draftId: string,
     userId: string,
     availableTeams: NflTeam[]
   ): Promise<NflTeam[]> {
     const userPicks = await this.storage.getUserDraftPicks(draftId, userId);
-    const afcCount = userPicks.filter(p => p.nflTeam.conference === 'AFC').length;
-    const nfcCount = userPicks.filter(p => p.nflTeam.conference === 'NFC').length;
+    
+    // Get all divisions the user already has teams from
+    const userDivisions = new Set(userPicks.map(p => p.nflTeam.division));
 
     return availableTeams.filter(team => {
-      if (team.conference === 'AFC' && afcCount >= this.draftConfig.maxTeamsPerConference) {
-        return false;
-      }
-      if (team.conference === 'NFC' && nfcCount >= this.draftConfig.maxTeamsPerConference) {
-        return false;
-      }
-      return true;
+      // If user already has a team from this division, they can't pick another
+      // unless the rule allows overrides (when no other options are available)
+      return !userDivisions.has(team.division);
     });
   }
 
