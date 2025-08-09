@@ -54,6 +54,22 @@
         -ms-user-select: text;
         user-select: text;
       }
+      
+      /* Hide Replit development banner */
+      iframe[src*="replit"],
+      div[id*="replit-banner"],
+      div[class*="replit-banner"],
+      .replit-dev-banner,
+      [data-replit-banner] {
+        display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+        height: 0 !important;
+        max-height: 0 !important;
+        position: absolute !important;
+        top: -9999px !important;
+        z-index: -1 !important;
+      }
     </style>
     <meta name="description" content="Draft teams, not players. Fantasy sports reimagined with Mok Sports - the ultimate team-based fantasy experience." />
     <link rel="manifest" href="/manifest.json">
@@ -80,6 +96,51 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
-
+    <script>
+      // Remove Replit development banner
+      function removeReplitBanner() {
+        const selectors = [
+          'iframe[src*="replit"]',
+          'div[id*="replit-banner"]',
+          'div[class*="replit-banner"]',
+          '.replit-dev-banner',
+          '[data-replit-banner]',
+          'div[style*="position: fixed"][style*="top: 0"][style*="background"]',
+          'div[style*="z-index: 999"]'
+        ];
+        
+        selectors.forEach(selector => {
+          const elements = document.querySelectorAll(selector);
+          elements.forEach(el => {
+            el.remove();
+          });
+        });
+        
+        // Also check for any green sticky bars at the top
+        const allDivs = document.querySelectorAll('div');
+        allDivs.forEach(div => {
+          const style = window.getComputedStyle(div);
+          if (style.position === 'fixed' && 
+              style.top === '0px' && 
+              (style.backgroundColor.includes('green') || 
+               style.background.includes('green') ||
+               div.innerHTML.toLowerCase().includes('replit'))) {
+            div.remove();
+          }
+        });
+      }
+      
+      // Run immediately and on DOM changes
+      removeReplitBanner();
+      setTimeout(removeReplitBanner, 100);
+      setTimeout(removeReplitBanner, 500);
+      setTimeout(removeReplitBanner, 1000);
+      
+      // Watch for new elements
+      if (typeof MutationObserver !== 'undefined') {
+        const observer = new MutationObserver(removeReplitBanner);
+        observer.observe(document.body, { childList: true, subtree: true });
+      }
+    </script>
   </body>
 </html>

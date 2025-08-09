@@ -61,17 +61,10 @@ interface DraftState {
 }
 
 export default function DraftPage() {
-  console.log('[Draft] Component render started - TIME:', Date.now());
-  console.log('[Draft] FIRST DEBUG LINE - Component starting');
-  
   const [location, navigate] = useLocation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { user, isLoading: authLoading, isAuthenticated } = useAuth();
-  
-  // EMERGENCY DEBUG - Check if this line is reached  
-  console.log('[Draft] EMERGENCY DEBUG: Auth loaded, authLoading:', authLoading, 'user:', !!user, 'isAuthenticated:', isAuthenticated, 'rendered at:', new Date().toISOString());
-  console.log('[Draft] RENDER TIMING - Time since component start:', Date.now() - performance.now());
   
   // Extract draft ID from URL params using wouter
   const params = useParams();
@@ -96,15 +89,13 @@ export default function DraftPage() {
   const [lastServerUpdate, setLastServerUpdate] = useState<number>(0);
   const [isCountingDown, setIsCountingDown] = useState<boolean>(false);
 
-  console.log('[Draft] All useState hooks declared');
+
 
   // Auto-redirect to correct draft if URL has wrong draft ID
   useEffect(() => {
     if (!leagueData || !urlDraftId || authLoading) return;
     
-    console.log('[Draft] 🔍 VALIDATING DRAFT URL...');
-    console.log('[Draft] User leagues:', leagueData);
-    console.log('[Draft] URL Draft ID:', urlDraftId);
+
     
     // Find the league that contains this user and has an active draft
     const activeLeague = leagueData.find((league: any) => 
@@ -112,22 +103,17 @@ export default function DraftPage() {
     );
     
     if (activeLeague?.draftId && activeLeague.draftId !== urlDraftId) {
-      console.log('[Draft] 🚨 DRAFT ID MISMATCH DETECTED!');
-      console.log('[Draft] URL Draft ID:', urlDraftId);
-      console.log('[Draft] Current Active Draft ID:', activeLeague.draftId);
-      console.log('[Draft] League:', activeLeague.name);
-      console.log('[Draft] 🔄 Auto-redirecting to current active draft...');
+
       
       // Clear cache and redirect to the correct draft
       queryClient.clear();
       navigate(`/draft/${activeLeague.draftId}`, { replace: true });
       return;
     } else if (activeLeague?.draftId) {
-      console.log('[Draft] ✅ Draft ID is current:', activeLeague.draftId);
+
       setActualDraftId(activeLeague.draftId);
     } else {
-      console.log('[Draft] ❌ No active draft found for user');
-      console.log('[Draft] Available leagues:', leagueData.map((l: any) => `${l.name} (draft: ${l.draftId}, started: ${l.draftStarted})`));
+
     }
   }, [leagueData, urlDraftId, user?.id, navigate, queryClient, authLoading]);
 
@@ -140,7 +126,7 @@ export default function DraftPage() {
   // FIX #1: Ensure clean WebSocket closure on page unmount
   useEffect(() => {
     return () => {
-      console.log('[Draft] 🔄 LIFECYCLE: Page unmounting, WebSocket will be cleaned by hook');
+
       // The useDraftWebSocket hook handles cleanup automatically
     };
   }, []);
@@ -607,7 +593,7 @@ export default function DraftPage() {
                     </div>
                     
                     <Button 
-                      onClick={() => navigate(`/league/${state.draft.leagueId}/waiting`)}
+                      onClick={() => navigate(`/league/${draftData?.draft?.leagueId}/waiting`)}
                       variant="outline"
                       className="w-full sm:w-auto"
                       size="lg"
@@ -628,7 +614,7 @@ export default function DraftPage() {
                   {/* League Members and Their Teams - Mobile Layout */}
                   <div className="space-y-4">
                     {state.draft.draftOrder?.map((userId) => {
-                      const userPicks = state.picks?.filter(p => p.userId === userId) || [];
+                      const userPicks = state.picks?.filter(p => p.user.id === userId) || [];
                       const user = userPicks[0]?.user;
                       
                       if (!user) return null;
@@ -769,7 +755,7 @@ export default function DraftPage() {
                     </div>
                       
                       {/* Show start button if current user is creator */}
-                      {user?.id === state.draft?.creatorId && (
+                      {user?.id === draftData?.league?.creatorId && (
                         <Button
                           onClick={async () => {
                             try {

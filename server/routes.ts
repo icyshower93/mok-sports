@@ -427,6 +427,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get VAPID public key for push notifications
+  app.get("/api/vapid-public-key", async (req, res) => {
+    try {
+      const vapidKeys = storage.getVapidKeys();
+      res.json({ publicKey: vapidKeys.publicKey });
+    } catch (error) {
+      console.error('Error getting VAPID public key:', error);
+      res.status(500).json({ message: "Failed to get VAPID public key" });
+    }
+  });
+
   // Leave league
   app.post("/api/leagues/:id/leave", async (req, res) => {
     try {
