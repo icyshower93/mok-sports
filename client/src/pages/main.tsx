@@ -1,117 +1,85 @@
 import React, { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
 import { useLocation } from "wouter";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
 import { 
-  Clock, 
-  Users, 
-  Trophy, 
-  Zap, 
   Shield, 
-  Star, 
-  TrendingUp,
-  Calendar,
+  Lock, 
+  Zap, 
+  TrendingUp, 
+  Clock, 
+  Trophy, 
+  Users,
   Target,
-  Award,
-  ArrowRight,
-  Lock,
-  Unlock,
   DollarSign,
-  Medal,
-  Activity
+  Flame,
+  Star,
+  Calendar
 } from "lucide-react";
-import { TeamLogo } from "@/components/team-logo";
 import { BottomNav } from "@/components/layout/bottom-nav";
+import { TeamLogo } from "@/components/team-logo";
 import { useAuth } from "@/hooks/use-auth";
-
-interface NflTeam {
-  id: string;
-  code: string;
-  name: string;
-  city: string;
-  conference: 'AFC' | 'NFC';
-  division: string;
-  logoUrl: string;
-}
-
-interface StableTeam {
-  id: string;
-  userId: string;
-  leagueId: string;
-  nflTeamId: string;
-  acquiredVia: string;
-  acquiredAt: string;
-  locksUsed: number;
-  lockAndLoadUsed: boolean;
-  createdAt: string;
-  nflTeam: NflTeam;
-}
 
 interface League {
   id: string;
   name: string;
-  memberCount: number;
-  maxTeams: number;
-  draftStatus?: string;
+}
+
+interface User {
+  id: string;
+  name: string;
 }
 
 export default function MainPage() {
-  const [location, navigate] = useLocation();
   const { user } = useAuth();
-  const [selectedWeek] = useState(1); // Will be dynamic based on NFL schedule
-  const [selectedLeague, setSelectedLeague] = useState<string | null>(null);
+  const [navigate] = useLocation();
+  const [selectedLeague, setSelectedLeague] = useState<string>("");
+  const [selectedWeek] = useState(1);
 
-  // Get user's leagues
-  const { data: leagues = [] } = useQuery<League[]>({
-    queryKey: ['/api/user/leagues'],
+  // Fetch user's leagues
+  const { data: leagues = [], isLoading: leaguesLoading } = useQuery({
+    queryKey: ['/api/users/leagues'],
     enabled: !!user,
   });
 
-  // Get stable teams for selected league
-  const { data: stableTeams = [] } = useQuery<StableTeam[]>({
-    queryKey: ['/api/user/stable', selectedLeague],
+  // Fetch stable teams for selected league
+  const { data: stableTeams = [] } = useQuery({
+    queryKey: ['/api/stable', selectedLeague],
     enabled: !!selectedLeague,
   });
 
   // Set first league as default selection
   React.useEffect(() => {
     if (leagues.length > 0 && !selectedLeague) {
-      console.log('Setting selected league to:', leagues[0].id);
       setSelectedLeague(leagues[0].id);
     }
   }, [leagues, selectedLeague]);
 
-  // Convert stable teams to display format with game mechanics
-  const userTeams = stableTeams.map((stable: StableTeam) => ({
+  const currentLeague = leagues.find((l: League) => l.id === selectedLeague);
+  const lockDeadline = new Date(Date.now() + 2 * 24 * 60 * 60 * 1000);
+  const isLockWindowOpen = true;
+
+  // Transform stable data into user teams with lock/load state
+  const userTeams = stableTeams.map((stable: any) => ({
+    id: stable.id,
     nflTeam: stable.nflTeam,
-    locksRemaining: 4 - stable.locksUsed, // Max 4 locks per team per season
+    locksRemaining: 4 - (stable.locksUsed || 0),
     lockAndLoadAvailable: !stable.lockAndLoadUsed,
-    upcomingOpponent: "TBD", // Would come from NFL schedule API
-    isBye: false, // Would come from NFL schedule API
-    weeklyRecord: "0-0", // Would come from season stats
+    upcomingOpponent: "vs OPP",
+    isBye: false,
+    weeklyRecord: "0-0",
     acquiredVia: stable.acquiredVia,
-    acquiredAt: stable.acquiredAt
+    acquiredAt: stable.acquiredAt,
+    isLocked: false // Would track current week lock status
   }));
 
-  console.log('Main page debug:', {
-    user: user?.name,
-    leagues: leagues?.length || 0,
-    selectedLeague,
-    stableTeams: stableTeams?.length || 0,
-    userTeams: userTeams?.length || 0
-  });
+  const userPoints = 12.5;
+  const userRank = 1;
+  const weeklyPrize = 250;
 
-  const currentLeague = leagues.find((l: League) => l.id === selectedLeague);
-
-  const lockDeadline = new Date(Date.now() + 2 * 24 * 60 * 60 * 1000); // 2 days from now
-  const isLockWindowOpen = true;
-  const currentSkinsPrize = 250;
-  const isSkinsStacked = false;
-
-  // Show loading state while fetching data
   if (!user) {
     return <div className="min-h-screen bg-background pb-20 flex items-center justify-center">
       <div>Loading...</div>
@@ -120,23 +88,31 @@ export default function MainPage() {
 
   return (
     <div className="min-h-screen bg-background pb-20">
-      <div className="max-w-4xl mx-auto px-4 py-6 space-y-6">
+      <div className="max-w-lg mx-auto">
         
-        {/* Mobile-First Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl md:text-3xl font-bold">Mok Sports</h1>
-            <p className="text-sm text-muted-foreground">
-              {currentLeague ? `${currentLeague.name} • ` : ''}Week {selectedWeek} • {isLockWindowOpen ? 'Lock Window Open' : 'NFL Regular Season'}
-            </p>
-          </div>
-          {/* League Selector for multiple leagues */}
-          {leagues.length > 1 && (
-            <div className="flex items-center space-x-2">
+        {/* Header - Clean and Modern */}
+        <div className="p-4 border-b border-border/50">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-xl font-bold">{currentLeague?.name || 'Mok Sports'}</h1>
+              <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+                <span>Week {selectedWeek}</span>
+                {isLockWindowOpen && (
+                  <>
+                    <span>•</span>
+                    <div className="flex items-center space-x-1">
+                      <Clock className="w-3 h-3 text-green-500" />
+                      <span className="text-green-600 dark:text-green-400 font-medium">Lock Window Open</span>
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
+            {leagues.length > 1 && (
               <select 
                 value={selectedLeague || ''} 
                 onChange={(e) => setSelectedLeague(e.target.value)}
-                className="px-3 py-1 text-sm border rounded bg-background"
+                className="px-3 py-2 text-sm border rounded-lg bg-background"
               >
                 {leagues.map((league: League) => (
                   <option key={league.id} value={league.id}>
@@ -144,46 +120,50 @@ export default function MainPage() {
                   </option>
                 ))}
               </select>
-            </div>
-          )}
-          <Button 
-            variant="outline" 
-            size="sm"
-            onClick={() => navigate('/dashboard')}
-          >
-            <Users className="w-4 h-4 md:mr-2" />
-            <span className="hidden md:inline">Leagues</span>
-          </Button>
+            )}
+          </div>
         </div>
 
-        {/* Lock Window Priority Section */}
+        {/* Lock Window Active - Hero Section */}
         {isLockWindowOpen && (
-          <div className="space-y-4">
-            <Card className="bg-gradient-to-r from-green-50 to-blue-50 dark:from-green-950/20 dark:to-blue-950/20 border-green-200 dark:border-green-800">
+          <div className="p-4 space-y-4">
+            {/* Lock Deadline Alert */}
+            <Card className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950/20 dark:to-emerald-950/20 border-green-200 dark:border-green-800">
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
                     <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-full">
-                      <Clock className="w-5 h-5 text-green-600 dark:text-green-400" />
+                      <Target className="w-5 h-5 text-green-600 dark:text-green-400" />
                     </div>
                     <div>
                       <div className="font-semibold text-green-800 dark:text-green-200">
-                        Lock Deadline
+                        Make Your Lock
                       </div>
                       <div className="text-sm text-green-600 dark:text-green-400">
-                        {lockDeadline.toLocaleDateString()} at 8:20 PM ET
+                        Deadline: {lockDeadline.toLocaleDateString()} 8:20 PM ET
                       </div>
                     </div>
                   </div>
+                  <Badge variant="outline" className="bg-green-50 dark:bg-green-950/50 text-green-700 dark:text-green-300 border-green-200 dark:border-green-800">
+                    <Flame className="w-3 h-3 mr-1" />
+                    +1 Point
+                  </Badge>
                 </div>
               </CardContent>
             </Card>
 
-            {/* Your Teams - Lock Focus Mode */}
+            {/* Lock Selection Interface */}
             <Card>
               <CardHeader className="pb-3">
-                <CardTitle className="text-lg">Choose Your Lock for Week {selectedWeek}</CardTitle>
-                <p className="text-sm text-muted-foreground">Select one team to lock for bonus points</p>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-lg">Choose Your Lock</CardTitle>
+                  <Badge variant="secondary" className="text-xs">
+                    Week {selectedWeek}
+                  </Badge>
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  Pick one team to lock for a bonus point if they win
+                </p>
               </CardHeader>
               <CardContent className="space-y-3">
                 {userTeams.length === 0 ? (
@@ -193,7 +173,7 @@ export default function MainPage() {
                     </div>
                     <h3 className="text-lg font-semibold mb-2">No Teams Yet</h3>
                     <p className="text-sm text-muted-foreground mb-4">
-                      Complete a draft to add teams to your stable
+                      Complete a draft to start building your stable
                     </p>
                     <Button onClick={() => navigate('/leagues')}>
                       Join a League
@@ -201,102 +181,136 @@ export default function MainPage() {
                   </div>
                 ) : (
                   <>
-                    {userTeams.filter(team => !team.isBye && team.locksRemaining > 0).map((team: any) => (
-                  <div 
-                    key={team.nflTeam.id}
-                    className="flex items-center justify-between p-4 rounded-lg border bg-card hover:bg-accent/50 transition-colors"
-                  >
-                    <div className="flex items-center space-x-3">
-                      <TeamLogo 
-                        logoUrl={team.nflTeam.logoUrl}
-                        teamCode={team.nflTeam.code}
-                        teamName={team.nflTeam.name}
-                        size="lg"
-                        className="w-10 h-10 md:w-12 md:h-12"
-                      />
-                      <div>
-                        <div className="font-semibold">
-                          {team.nflTeam.city} {team.nflTeam.name}
-                        </div>
-                        <div className="text-sm text-muted-foreground">
-                          {team.upcomingOpponent} • {team.locksRemaining} locks left
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <Button 
-                      size="lg"
-                      className="min-h-[44px] px-6"
-                    >
-                      <Lock className="w-4 h-4 mr-2" />
-                      Lock
-                    </Button>
-                  </div>
-                ))}
-                
-                {/* Teams with no locks remaining */}
-                {userTeams.filter(team => !team.isBye && team.locksRemaining === 0).length > 0 && (
-                  <div className="pt-2">
-                    <p className="text-xs text-muted-foreground mb-2">No locks remaining:</p>
-                    {userTeams.filter(team => !team.isBye && team.locksRemaining === 0).map((team: any) => (
+                    {/* Lockable Teams */}
+                    {userTeams.filter(team => team.locksRemaining > 0 && !team.isBye).map((team: any) => (
                       <div 
-                        key={team.nflTeam.id}
-                        className="flex items-center justify-between p-3 rounded-lg bg-muted/50 opacity-60"
+                        key={team.id}
+                        className="group relative overflow-hidden rounded-lg border bg-card hover:bg-accent/50 transition-all duration-200"
                       >
-                        <div className="flex items-center space-x-3">
-                          <TeamLogo 
-                            logoUrl={team.nflTeam.logoUrl}
-                            teamCode={team.nflTeam.code}
-                            teamName={team.nflTeam.name}
-                            size="sm"
-                            className="w-8 h-8"
-                          />
-                          <div>
-                            <div className="font-medium text-sm">
-                              {team.nflTeam.city} {team.nflTeam.name}
-                            </div>
-                            <div className="text-xs text-muted-foreground">
-                              {team.upcomingOpponent}
+                        <div className="flex items-center p-4">
+                          <div className="flex items-center space-x-3 flex-1">
+                            <TeamLogo 
+                              logoUrl={team.nflTeam.logoUrl}
+                              teamCode={team.nflTeam.code}
+                              teamName={team.nflTeam.name}
+                              size="lg"
+                              className="w-12 h-12"
+                            />
+                            <div className="flex-1">
+                              <div className="font-semibold">
+                                {team.nflTeam.city} {team.nflTeam.name}
+                              </div>
+                              <div className="text-sm text-muted-foreground flex items-center space-x-2">
+                                <span>{team.upcomingOpponent}</span>
+                                <span>•</span>
+                                <div className="flex items-center space-x-1">
+                                  <Lock className="w-3 h-3" />
+                                  <span>{team.locksRemaining} left</span>
+                                </div>
+                              </div>
+                              {team.lockAndLoadAvailable && (
+                                <Badge variant="outline" className="mt-1 text-xs">
+                                  <Zap className="w-3 h-3 mr-1" />
+                                  Lock & Load Ready
+                                </Badge>
+                              )}
                             </div>
                           </div>
+                          
+                          <div className="flex flex-col space-y-2">
+                            <Button 
+                              size="sm"
+                              className="min-h-[36px] px-4"
+                              disabled={team.isLocked}
+                            >
+                              {team.isLocked ? (
+                                <>
+                                  <Lock className="w-4 h-4 mr-2" />
+                                  Locked
+                                </>
+                              ) : (
+                                <>
+                                  <Target className="w-4 h-4 mr-2" />
+                                  Lock
+                                </>
+                              )}
+                            </Button>
+                            
+                            {team.lockAndLoadAvailable && !team.isLocked && (
+                              <Button 
+                                variant="outline"
+                                size="sm"
+                                className="min-h-[36px] px-4 border-yellow-200 dark:border-yellow-800 text-yellow-700 dark:text-yellow-300 hover:bg-yellow-50 dark:hover:bg-yellow-950/20"
+                              >
+                                <Zap className="w-4 h-4 mr-2" />
+                                Lock & Load
+                              </Button>
+                            )}
+                          </div>
                         </div>
-                        <Badge variant="secondary" className="text-xs">
-                          <Unlock className="w-3 h-3 mr-1" />
-                          Used
-                        </Badge>
                       </div>
                     ))}
-                  </div>
-                )}
 
-                {/* Bye Week Teams */}
-                {userTeams.filter(team => team.isBye).length > 0 && (
-                  <div className="pt-2">
-                    <p className="text-xs text-muted-foreground mb-2">On bye week:</p>
-                    {userTeams.filter(team => team.isBye).map((team: any) => (
-                      <div 
-                        key={team.nflTeam.id}
-                        className="flex items-center space-x-3 p-3 rounded-lg bg-muted/30"
-                      >
-                        <TeamLogo 
-                          logoUrl={team.nflTeam.logoUrl}
-                          teamCode={team.nflTeam.code}
-                          teamName={team.nflTeam.name}
-                          size="sm"
-                          className="w-8 h-8 opacity-50"
-                        />
-                        <div>
-                          <div className="font-medium text-sm opacity-75">
-                            {team.nflTeam.city} {team.nflTeam.name}
+                    {/* Used Up Teams */}
+                    {userTeams.filter(team => team.locksRemaining === 0 && !team.isBye).length > 0 && (
+                      <div className="pt-4 border-t border-border/50">
+                        <p className="text-xs text-muted-foreground mb-3 font-medium">LOCKS EXHAUSTED</p>
+                        {userTeams.filter(team => team.locksRemaining === 0 && !team.isBye).map((team: any) => (
+                          <div 
+                            key={team.id}
+                            className="flex items-center p-3 rounded-lg bg-muted/30 opacity-60"
+                          >
+                            <TeamLogo 
+                              logoUrl={team.nflTeam.logoUrl}
+                              teamCode={team.nflTeam.code}
+                              teamName={team.nflTeam.name}
+                              size="sm"
+                              className="w-8 h-8 mr-3"
+                            />
+                            <div className="flex-1">
+                              <div className="font-medium text-sm">
+                                {team.nflTeam.city} {team.nflTeam.name}
+                              </div>
+                              <div className="text-xs text-muted-foreground">
+                                {team.upcomingOpponent}
+                              </div>
+                            </div>
+                            <Badge variant="secondary" className="text-xs">
+                              All Used
+                            </Badge>
                           </div>
-                          <div className="text-xs text-muted-foreground">
-                            BYE WEEK
-                          </div>
-                        </div>
+                        ))}
                       </div>
-                    ))}
-                  </div>
-                )}
+                    )}
+
+                    {/* Bye Week Teams */}
+                    {userTeams.filter(team => team.isBye).length > 0 && (
+                      <div className="pt-4 border-t border-border/50">
+                        <p className="text-xs text-muted-foreground mb-3 font-medium">ON BYE</p>
+                        {userTeams.filter(team => team.isBye).map((team: any) => (
+                          <div 
+                            key={team.id}
+                            className="flex items-center p-3 rounded-lg bg-muted/20"
+                          >
+                            <TeamLogo 
+                              logoUrl={team.nflTeam.logoUrl}
+                              teamCode={team.nflTeam.code}
+                              teamName={team.nflTeam.name}
+                              size="sm"
+                              className="w-8 h-8 mr-3 opacity-50"
+                            />
+                            <div className="flex-1">
+                              <div className="font-medium text-sm opacity-75">
+                                {team.nflTeam.city} {team.nflTeam.name}
+                              </div>
+                              <div className="text-xs text-muted-foreground">
+                                Bye Week
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </>
                 )}
               </CardContent>
@@ -304,159 +318,81 @@ export default function MainPage() {
           </div>
         )}
 
-        {/* Non-Lock Window: Full Team View */}
-        {!isLockWindowOpen && (
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center space-x-2">
-                <Shield className="w-5 h-5" />
-                <span>Your Stable</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              {userTeams.length === 0 ? (
-                <div className="text-center py-6">
-                  <p className="text-muted-foreground">No teams in your stable yet</p>
-                </div>
-              ) : (
-                userTeams.map((team: any) => (
-                <div 
-                  key={team.nflTeam.id}
-                  className={`flex items-center justify-between p-4 rounded-lg border transition-colors ${
-                    team.isBye ? 'bg-muted/50 opacity-75' : 'bg-card'
-                  }`}
-                >
-                  <div className="flex items-center space-x-3">
-                    <TeamLogo 
-                      logoUrl={team.nflTeam.logoUrl}
-                      teamCode={team.nflTeam.code}
-                      teamName={team.nflTeam.name}
-                      size="lg"
-                      className="w-10 h-10 md:w-12 md:h-12"
-                    />
-                    <div>
-                      <div className="font-semibold">
-                        {team.nflTeam.city} {team.nflTeam.name}
-                      </div>
-                      <div className="text-sm text-muted-foreground">
-                        {team.isBye ? 'BYE WEEK' : team.upcomingOpponent}
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="text-right">
-                    <div className="text-sm font-medium">
-                      {team.locksRemaining} locks left
-                    </div>
-                    {team.lockAndLoadAvailable && (
-                      <Badge variant="outline" className="text-xs mt-1">
-                        <Zap className="w-3 h-3 mr-1" />
-                        L&L Ready
-                      </Badge>
-                    )}
-                  </div>
-                </div>
-                ))
-              )}
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Bottom Navigation Cards - Mobile Optimized */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          
-          {/* Current Standings */}
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="flex items-center space-x-2 text-lg">
-                <Trophy className="w-5 h-5" />
-                <span>League Standings</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                {[
-                  { name: "You", points: 12.5, position: 1 },
-                  { name: "Alex", points: 11.0, position: 2 },
-                  { name: "Jordan", points: 10.5, position: 3 }
-                ].map((player) => (
-                  <div key={player.name} className="flex items-center justify-between">
-                    <div className="flex items-center space-x-2">
-                      <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
-                        player.position === 1 ? 'bg-yellow-500 text-yellow-50' :
-                        player.position === 2 ? 'bg-gray-400 text-gray-50' :
-                        'bg-amber-600 text-amber-50'
-                      }`}>
-                        {player.position}
-                      </div>
-                      <span className={player.name === "You" ? "font-semibold" : ""}>
-                        {player.name}
-                      </span>
-                    </div>
-                    <span className="font-mono text-sm">
-                      {player.points.toFixed(1)}
-                    </span>
-                  </div>
-                ))}
-                <Button variant="outline" size="sm" className="w-full mt-3">
-                  View Full Standings
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Weekly Prize */}
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="flex items-center space-x-2 text-lg">
-                <DollarSign className="w-5 h-5" />
-                <span>Weekly Skins</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-center space-y-2">
-                <div className="text-3xl font-bold text-green-600">
-                  ${currentSkinsPrize}
+        {/* Your Performance Dashboard */}
+        <div className="p-4 space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            {/* Current Rank */}
+            <Card>
+              <CardContent className="p-4 text-center">
+                <div className="flex items-center justify-center mb-2">
+                  <Trophy className="w-5 h-5 text-yellow-500 mr-2" />
+                  <span className="text-2xl font-bold">#{userRank}</span>
                 </div>
                 <div className="text-sm text-muted-foreground">
-                  {isSkinsStacked ? 'Stacked Prize' : 'This Week'}
+                  League Rank
                 </div>
-                {isSkinsStacked && (
-                  <Badge variant="outline" className="text-xs">
-                    <TrendingUp className="w-3 h-3 mr-1" />
-                    3 Weeks Stacked
-                  </Badge>
-                )}
-                <Button variant="outline" size="sm" className="w-full mt-3">
-                  Prize History
-                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Points */}
+            <Card>
+              <CardContent className="p-4 text-center">
+                <div className="text-2xl font-bold mb-2">
+                  {userPoints}
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  Total Points
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Weekly Prize */}
+          <Card className="bg-gradient-to-r from-emerald-50 to-green-50 dark:from-emerald-950/20 dark:to-green-950/20 border-emerald-200 dark:border-emerald-800">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-full">
+                    <DollarSign className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+                  </div>
+                  <div>
+                    <div className="font-semibold text-emerald-800 dark:text-emerald-200">
+                      Weekly Skins
+                    </div>
+                    <div className="text-sm text-emerald-600 dark:text-emerald-400">
+                      This week's prize
+                    </div>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="text-2xl font-bold text-emerald-700 dark:text-emerald-300">
+                    ${weeklyPrize}
+                  </div>
+                </div>
               </div>
             </CardContent>
           </Card>
-        </div>
 
-        {/* Quick Actions - Mobile Friendly */}
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-lg">Quick Actions</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 gap-3">
-              <Button variant="outline" className="justify-start min-h-[44px]">
-                <Star className="w-4 h-4 mr-3" />
-                Free Agent Market
-              </Button>
-              <Button variant="outline" className="justify-start min-h-[44px]">
-                <Award className="w-4 h-4 mr-3" />
-                Lock History
-              </Button>
-              <Button variant="outline" className="justify-start min-h-[44px]">
-                <Calendar className="w-4 h-4 mr-3" />
-                This Week's Games
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+          {/* Quick Actions */}
+          <div className="grid grid-cols-2 gap-3">
+            <Button variant="outline" className="justify-start min-h-[44px]" onClick={() => navigate('/stable')}>
+              <Shield className="w-4 h-4 mr-3" />
+              My Stable
+            </Button>
+            <Button variant="outline" className="justify-start min-h-[44px]" onClick={() => navigate('/league')}>
+              <Users className="w-4 h-4 mr-3" />
+              League
+            </Button>
+            <Button variant="outline" className="justify-start min-h-[44px]" onClick={() => navigate('/scores')}>
+              <Calendar className="w-4 h-4 mr-3" />
+              This Week
+            </Button>
+            <Button variant="outline" className="justify-start min-h-[44px]">
+              <Star className="w-4 h-4 mr-3" />
+              Free Agents
+            </Button>
+          </div>
+        </div>
 
       </div>
       <BottomNav />
