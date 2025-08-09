@@ -51,6 +51,11 @@ export interface IStorage {
   getDraftPicks(draftId: string): Promise<Array<DraftPick & { user: User; nflTeam: NflTeam }>>;
   getUserDraftPicks(draftId: string, userId: string): Promise<Array<DraftPick & { nflTeam: NflTeam }>>;
   
+  // User statistics methods
+  getAllUserDraftPicks(userId: string): Promise<Array<DraftPick & { nflTeam: NflTeam }>>;
+  getUserCompletedDrafts(userId: string): Promise<Array<Draft & { leagueName: string }>>;
+  getUserRecentDrafts(userId: string, limit: number): Promise<Array<{ id: string; leagueName: string; status: string; completedAt: string; totalPicks: number; finalRound: number }>>;
+  
   // Draft timer methods
   createDraftTimer(timer: InsertDraftTimer): Promise<DraftTimer>;
   updateDraftTimer(draftId: string, userId: string, timeRemaining: number): Promise<void>;
@@ -453,6 +458,97 @@ export class DatabaseStorage implements IStorage {
       eq(draftPicks.userId, userId)
     ))
     .orderBy(draftPicks.round);
+  }
+
+  // User statistics methods
+  async getAllUserDraftPicks(userId: string): Promise<Array<DraftPick & { nflTeam: NflTeam }>> {
+    return await db.select({
+      id: draftPicks.id,
+      draftId: draftPicks.draftId,
+      userId: draftPicks.userId,
+      nflTeamId: draftPicks.nflTeamId,
+      round: draftPicks.round,
+      pickNumber: draftPicks.pickNumber,
+      pickTime: draftPicks.pickTime,
+      isAutoPick: draftPicks.isAutoPick,
+      createdAt: draftPicks.createdAt,
+      nflTeam: {
+        id: nflTeams.id,
+        code: nflTeams.code,
+        name: nflTeams.name,
+        city: nflTeams.city,
+        conference: nflTeams.conference,
+        division: nflTeams.division,
+        logoUrl: nflTeams.logoUrl,
+        createdAt: nflTeams.createdAt
+      }
+    })
+    .from(draftPicks)
+    .innerJoin(nflTeams, eq(draftPicks.nflTeamId, nflTeams.id))
+    .where(eq(draftPicks.userId, userId))
+    .orderBy(draftPicks.createdAt);
+  }
+
+  async getUserCompletedDrafts(userId: string): Promise<Array<Draft & { leagueName: string }>> {
+    return await db.select({
+      id: drafts.id,
+      leagueId: drafts.leagueId,
+      status: drafts.status,
+      currentRound: drafts.currentRound,
+      currentPick: drafts.currentPick,
+      draftOrder: drafts.draftOrder,
+      timerDuration: drafts.timerDuration,
+      startedAt: drafts.startedAt,
+      completedAt: drafts.completedAt,
+      createdAt: drafts.createdAt,
+      leagueName: leagues.name
+    })
+    .from(drafts)
+    .innerJoin(leagues, eq(drafts.leagueId, leagues.id))
+    .innerJoin(leagueMembers, eq(leagues.id, leagueMembers.leagueId))
+    .where(and(
+      eq(leagueMembers.userId, userId),
+      eq(drafts.status, 'completed')
+    ))
+    .orderBy(drafts.completedAt);
+  }
+
+  async getUserRecentDrafts(userId: string, limit: number): Promise<Array<{ id: string; leagueName: string; status: string; completedAt: string; totalPicks: number; finalRound: number }>> {
+    const recentDrafts = await db.select({
+      id: drafts.id,
+      leagueId: drafts.leagueId,
+      status: drafts.status,
+      currentRound: drafts.currentRound,
+      completedAt: drafts.completedAt,
+      leagueName: leagues.name
+    })
+    .from(drafts)
+    .innerJoin(leagues, eq(drafts.leagueId, leagues.id))
+    .innerJoin(leagueMembers, eq(leagues.id, leagueMembers.leagueId))
+    .where(and(
+      eq(leagueMembers.userId, userId),
+      eq(drafts.status, 'completed')
+    ))
+    .orderBy(drafts.completedAt)
+    .limit(limit);
+
+    // Get pick counts for each draft
+    const draftsWithPicks = await Promise.all(recentDrafts.map(async (draft) => {
+      const pickCount = await db.select({ count: sql<number>`count(*)` })
+        .from(draftPicks)
+        .where(eq(draftPicks.draftId, draft.id));
+
+      return {
+        id: draft.id,
+        leagueName: draft.leagueName,
+        status: draft.status,
+        completedAt: draft.completedAt?.toISOString() || '',
+        totalPicks: pickCount[0]?.count || 0,
+        finalRound: draft.currentRound
+      };
+    }));
+
+    return draftsWithPicks;
   }
 
   // Draft timer methods

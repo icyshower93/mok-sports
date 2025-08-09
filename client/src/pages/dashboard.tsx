@@ -4,9 +4,11 @@ import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { MainLayout } from "@/components/layout/main-layout";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Plus, UserPlus, LogOut } from "lucide-react";
+import { Plus, UserPlus, LogOut, Trophy, Users, Clock, BarChart3, TrendingUp } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useLocation } from "wouter";
 import { usePushNotifications } from "@/hooks/use-push-notifications";
@@ -61,6 +63,13 @@ export default function DashboardPage() {
     staleTime: 0, // Always fetch fresh league data for PWA
   });
 
+  // Get league analytics for dashboard
+  const { data: leagueStats, isLoading: statsLoading } = useQuery({
+    queryKey: ['/api/leagues/stats'],
+    enabled: !!user,
+    staleTime: 30000, // Cache for 30 seconds
+  });
+
   // Debug logging for PWA troubleshooting
   useEffect(() => {
     if (user) {
@@ -92,6 +101,11 @@ export default function DashboardPage() {
         setLocation(`/league/waiting?id=${activeLeague.id}`);
         return;
       }
+    }
+    
+    // Show dashboard with leagues if user has leagues but wants to stay
+    if (shouldStay && userLeagues && Array.isArray(userLeagues) && userLeagues.length > 0) {
+      console.log('[Dashboard] User has leagues but staying on dashboard');
     }
   }, [userLeagues, setLocation]);
 
@@ -240,10 +254,13 @@ export default function DashboardPage() {
   }
 
   const firstName = user.name?.split(" ")[0] || "Player";
+  const hasLeagues = userLeagues && Array.isArray(userLeagues) && userLeagues.length > 0;
+  const urlParams = new URLSearchParams(window.location.search);
+  const shouldStayOnDashboard = urlParams.get('stay') === 'true';
 
   return (
     <MainLayout>
-      <div className="min-h-screen flex flex-col items-center justify-center px-4 py-8 relative">
+      <div className={`min-h-screen px-4 py-8 relative ${hasLeagues && shouldStayOnDashboard ? '' : 'flex flex-col items-center justify-center'}`}>
         {/* Logout Button */}
         <Button
           variant="ghost"
@@ -255,14 +272,16 @@ export default function DashboardPage() {
           Logout
         </Button>
         
-        <div className="w-full max-w-md space-y-8">
+        <div className={`w-full space-y-8 ${hasLeagues && shouldStayOnDashboard ? 'max-w-6xl' : 'max-w-md'}`}>
           {/* Welcome Header */}
-          <div className="text-center space-y-2">
+          <div className={`space-y-2 ${hasLeagues && shouldStayOnDashboard ? 'text-left' : 'text-center'}`}>
             <h1 className="text-3xl font-bold text-fantasy-green">
               Welcome, {firstName}!
             </h1>
             <p className="text-muted-foreground">
-              Ready to draft entire teams? Let's get started.
+              {hasLeagues && shouldStayOnDashboard 
+                ? "Manage your leagues and track your fantasy performance" 
+                : "Ready to draft entire teams? Let's get started."}
             </p>
           </div>
           
@@ -280,8 +299,98 @@ export default function DashboardPage() {
             </div>
           )}
 
-          {/* Main Action Buttons */}
-          <div className="space-y-4">
+          {/* League Management Dashboard - Show if user has leagues and wants to stay */}
+          {hasLeagues && shouldStayOnDashboard && (
+            <div className="space-y-6">
+              {/* League Analytics Cards */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm font-medium flex items-center">
+                      <Trophy className="w-4 h-4 mr-2 text-fantasy-green" />
+                      Active Leagues
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">{userLeagues?.length || 0}</div>
+                    <p className="text-xs text-muted-foreground">Total leagues joined</p>
+                  </CardContent>
+                </Card>
+                
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm font-medium flex items-center">
+                      <BarChart3 className="w-4 h-4 mr-2 text-blue-500" />
+                      Drafts Completed
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">
+                      {leagueStats?.draftsCompleted || 0}
+                    </div>
+                    <p className="text-xs text-muted-foreground">Successful drafts</p>
+                  </CardContent>
+                </Card>
+                
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm font-medium flex items-center">
+                      <TrendingUp className="w-4 h-4 mr-2 text-green-500" />
+                      Win Rate
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">
+                      {leagueStats?.winRate ? `${Math.round(leagueStats.winRate)}%` : 'N/A'}
+                    </div>
+                    <p className="text-xs text-muted-foreground">League performance</p>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* User's Leagues */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <Users className="w-5 h-5 mr-2" />
+                    Your Leagues
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    {userLeagues?.map((league: any) => (
+                      <div key={league.id} className="flex items-center justify-between p-3 bg-secondary/20 rounded-lg border">
+                        <div className="flex items-center space-x-3">
+                          <div>
+                            <div className="font-semibold">{league.name}</div>
+                            <div className="text-sm text-muted-foreground">
+                              {league.memberCount}/{league.maxTeams} members
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Badge variant={league.draftStatus === 'completed' ? 'default' : league.draftStarted ? 'destructive' : 'secondary'}>
+                            {league.draftStatus === 'completed' ? 'Complete' : league.draftStarted ? 'Drafting' : 'Waiting'}
+                          </Badge>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setLocation(`/league/waiting?id=${league.id}`)}
+                          >
+                            {league.draftStatus === 'completed' ? 'View Results' : 'Enter League'}
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          )}
+
+          {/* Main Action Buttons - Show only if no leagues or first time */}
+          {(!hasLeagues || !shouldStayOnDashboard) && (
+            <div className="space-y-4">
             {/* Create League Button */}
             <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
               <DialogTrigger asChild>
@@ -362,6 +471,83 @@ export default function DashboardPage() {
               </DialogContent>
             </Dialog>
           </div>
+          )}
+
+          {/* Quick Actions for existing users */}
+          {hasLeagues && shouldStayOnDashboard && (
+            <div className="flex gap-4">
+              <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button className="flex-1">
+                    <Plus className="w-4 h-4 mr-2" />
+                    Create New League
+                  </Button>
+                </DialogTrigger>
+                <DialogContent onOpenAutoFocus={(e) => e.preventDefault()}>
+                  <DialogHeader>
+                    <DialogTitle>Create New League</DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-4">
+                    <div>
+                      <Label htmlFor="league-name">League Name</Label>
+                      <Input
+                        id="league-name"
+                        value={leagueName}
+                        onChange={(e) => setLeagueName(e.target.value)}
+                        placeholder="Enter league name"
+                        className="mt-1"
+                        autoFocus={false}
+                        autoComplete="off"
+                      />
+                    </div>
+                    <Button
+                      onClick={handleCreateLeague}
+                      disabled={createLeagueMutation.isPending}
+                      className="w-full"
+                    >
+                      {createLeagueMutation.isPending ? "Creating..." : "Create League"}
+                    </Button>
+                  </div>
+                </DialogContent>
+              </Dialog>
+
+              <Dialog open={joinDialogOpen} onOpenChange={setJoinDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button variant="outline" className="flex-1">
+                    <UserPlus className="w-4 h-4 mr-2" />
+                    Join League
+                  </Button>
+                </DialogTrigger>
+                <DialogContent onOpenAutoFocus={(e) => e.preventDefault()}>
+                  <DialogHeader>
+                    <DialogTitle>Join Existing League</DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-4">
+                    <div>
+                      <Label htmlFor="join-code">League Code</Label>
+                      <Input
+                        id="join-code"
+                        value={joinCode}
+                        onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
+                        placeholder="Enter 6-letter code"
+                        maxLength={6}
+                        className="mt-1 text-center text-lg font-mono tracking-wider"
+                        autoFocus={false}
+                        autoComplete="off"
+                      />
+                    </div>
+                    <Button
+                      onClick={handleJoinLeague}
+                      disabled={joinLeagueMutation.isPending}
+                      className="w-full"
+                    >
+                      {joinLeagueMutation.isPending ? "Joining..." : "Join League"}
+                    </Button>
+                  </div>
+                </DialogContent>
+              </Dialog>
+            </div>
+          )}
 
           {showNotificationPrompt && (
             <div className="mt-8">
