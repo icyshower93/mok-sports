@@ -86,13 +86,11 @@ export function usePushNotifications() {
     try {
       const registration = await navigator.serviceWorker.ready;
       
-      // Fetch VAPID public key from server
-      const vapidResponse = await fetch('/api/vapid-public-key');
-      const { publicKey } = await vapidResponse.json();
-      
       const subscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(publicKey)
+        applicationServerKey: urlBase64ToUint8Array(
+          'BEl62iUYgUivxIkv69yViEuiBIa40HI0sVgHbc6vqvRAVy21k7ByHSgFJeTK-J4R-kJ__mNlUJjKZfFfk6tXa-w'
+        )
       });
 
       setState(prev => ({ ...prev, subscription }));
