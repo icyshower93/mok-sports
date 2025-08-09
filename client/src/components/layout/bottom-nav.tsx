@@ -1,50 +1,94 @@
-import { Home, Users, Zap, User } from "lucide-react";
-import { Link, useLocation } from "wouter";
+import { useLocation } from "wouter";
+import { 
+  Home, 
+  Shield, 
+  Trophy, 
+  Activity, 
+  Star, 
+  User,
+  MoreHorizontal 
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface NavItem {
-  icon: React.ComponentType<{ className?: string }>;
+  path: string;
   label: string;
-  href: string;
+  icon: React.ComponentType<{ className?: string }>;
+  isActive?: (pathname: string) => boolean;
 }
 
-  { icon: Home, label: "Home", href: "/" },
-  { icon: Users, label: "Leagues", href: "/leagues" },
-  { icon: Zap, label: "Draft", href: "/draft" },
-  { icon: User, label: "Profile", href: "/profile" },
+const navItems: NavItem[] = [
+  {
+    path: "/main",
+    label: "Home",
+    icon: Home,
+    isActive: (pathname) => pathname === "/main" || pathname === "/"
+  },
+  {
+    path: "/teams",
+    label: "My Teams",
+    icon: Shield
+  },
+  {
+    path: "/league",
+    label: "League",
+    icon: Trophy
+  },
+  {
+    path: "/scores",
+    label: "Scores",
+    icon: Activity
+  },
+  {
+    path: "/agents",
+    label: "Agents",
+    icon: Star
+  },
+  {
+    path: "/profile",
+    label: "More",
+    icon: MoreHorizontal
+  }
 ];
 
 export function BottomNav() {
-  const [location] = useLocation();
-
+  const [location, setLocation] = useLocation();
+  
   return (
-      <div className="flex items-center justify-around">
+    <div className="fixed bottom-0 left-0 right-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-t border-border">
+      <div className="grid grid-cols-6 h-16 max-w-lg mx-auto">
         {navItems.map((item) => {
-          const Icon = item.icon;
-          const isActive = location === item.href || (item.href !== "/" && location.startsWith(item.href));
+          const isActive = item.isActive ? item.isActive(location) : location === item.path;
+          const IconComponent = item.icon;
           
           return (
-            <Link key={item.href} href={item.href}>
-              <a className={cn(
-                "flex flex-col items-center px-3 py-2 rounded-lg transition-colors",
+            <button
+              key={item.path}
+              onClick={() => setLocation(item.path)}
+              className={cn(
+                "flex flex-col items-center justify-center space-y-1 text-xs font-medium transition-colors",
+                "min-h-[44px] px-1", // PWA touch target minimum
                 isActive 
-                  ? "text-fantasy-green" 
+                  ? "text-primary" 
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              <IconComponent 
+                className={cn(
+                  "w-5 h-5 transition-colors",
+                  isActive ? "text-primary" : "text-muted-foreground"
+                )} 
+              />
+              <span className={cn(
+                "text-[10px] leading-none transition-colors",
+                isActive ? "text-primary font-semibold" : "text-muted-foreground"
               )}>
-                <Icon className={cn(
-                  "w-6 h-6 mb-1",
-                  isActive && "text-fantasy-green"
-                )} />
-                <span className={cn(
-                  "text-xs font-medium",
-                  isActive && "text-fantasy-green"
-                )}>
-                  {item.label}
-                </span>
-              </a>
-            </Link>
+                {item.label}
+              </span>
+            </button>
           );
         })}
       </div>
-    </nav>
+    </div>
   );
 }

@@ -1,14 +1,14 @@
 import { BottomNav } from "@/components/layout/bottom-nav";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Shield } from "lucide-react";
+import { Trophy } from "lucide-react";
 
-export default function TeamsPage() {
+export default function LeaguePage() {
   return (
     <div className="min-h-screen bg-background pb-20">
       <div className="max-w-4xl mx-auto px-4 py-6 space-y-6">
         <div className="flex items-center space-x-2">
-          <Shield className="w-6 h-6 text-primary" />
-          <h1 className="text-2xl font-bold">My Teams</h1>
+          <Trophy className="w-6 h-6 text-primary" />
+          <h1 className="text-2xl font-bold">League</h1>
         </div>
         
         <Card>
@@ -17,7 +17,7 @@ export default function TeamsPage() {
           </CardHeader>
           <CardContent>
             <p className="text-muted-foreground">
-              This will show your drafted teams with detailed stats, lock history, and performance analytics.
+              League standings, activity feed, and member profiles will be available here.
             </p>
           </CardContent>
         </Card>

@@ -24,6 +24,7 @@ import {
   Activity
 } from "lucide-react";
 import { TeamLogo } from "@/components/team-logo";
+import { BottomNav } from "@/components/layout/bottom-nav";
 import { useAuth } from "@/hooks/use-auth";
 
 interface NflTeam {
@@ -140,7 +141,7 @@ export default function MainPage() {
   const isSkinsStacked = false;
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background pb-20">
       <div className="max-w-4xl mx-auto px-4 py-6 space-y-6">
         
         {/* Mobile-First Header */}
@@ -439,6 +440,7 @@ export default function MainPage() {
         </Card>
 
       </div>
+      <BottomNav />
     </div>
   );
 }
