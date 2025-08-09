@@ -86,7 +86,12 @@ export default function MainPage() {
     leagues: (leagues as any[])?.length || 0,
     selectedLeague,
     stableTeams: (stableTeams as any[])?.length || 0,
-    userTeams: userTeams?.length || 0
+    userTeams: userTeams?.length || 0,
+    stableTeamsData: (stableTeams as any[])?.map(team => ({
+      nflTeam: team.nflTeam?.code || 'UNKNOWN',
+      acquiredVia: team.acquiredVia,
+      acquiredAt: team.acquiredAt
+    }))
   });
 
   if (!user) {
@@ -214,14 +219,14 @@ export default function MainPage() {
                               </div>
                             </div>
                             
-                            <div className="text-right flex-shrink-0 ml-3">
-                              <div className="text-xs text-muted-foreground mb-1">
+                            <div className="text-right flex-shrink-0 ml-4 min-w-[100px]">
+                              <div className="text-xs text-muted-foreground mb-1 whitespace-nowrap">
                                 {team.locksRemaining} locks left
                               </div>
-                              <div className="h-5 flex items-center justify-end">
+                              <div className="h-6 flex items-center justify-end">
                                 {team.lockAndLoadAvailable && (
-                                  <Badge variant="outline" className="text-xs px-2 py-0.5 h-5">
-                                    <Zap className="w-3 h-3 mr-1" />
+                                  <Badge variant="outline" className="text-xs px-2 py-1 h-6 whitespace-nowrap">
+                                    <Zap className="w-3 h-3 mr-1 flex-shrink-0" />
                                     L&L Ready
                                   </Badge>
                                 )}
