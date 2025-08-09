@@ -408,7 +408,7 @@ export default function DraftPage() {
             <Zap className="w-8 h-8 text-fantasy-purple animate-pulse" />
           </div>
           <p className="text-muted-foreground">Loading draft room...</p>
-          <p className="text-xs text-muted-foreground mt-2">Auth: {authLoading ? 'loading' : 'ready'} | Data: {isLoading ? 'loading' : 'ready'}</p>
+
         </div>
       </div>
     );
@@ -444,14 +444,7 @@ export default function DraftPage() {
                 'Unable to load the draft room. Please try again.'
               }
             </p>
-            <div className="text-xs text-muted-foreground mb-4 p-2 bg-secondary rounded">
-              <strong>Debug info:</strong><br/>
-              Draft ID: {draftId}<br/>
-              Error: {errorMessage}<br/>
-              WebSocket: {connectionStatus}<br/>
-              Has Token: {!!AuthTokenManager.getToken() ? 'Yes' : 'No'}<br/>
-              Mode: Development (Auto-auth enabled)
-            </div>
+
             <div className="space-y-2">
               <Button onClick={() => navigate('/dashboard')} variant="outline">
                 Return to Dashboard
@@ -593,41 +586,19 @@ export default function DraftPage() {
                 {state.draft.status.toUpperCase()}
               </Badge>
               
-              {/* WebSocket Connection Status */}
-              <div className="flex items-center space-x-2 text-xs">
-                {(isConnected || lastMessage) ? 
-                  <Wifi className="w-3 h-3 text-green-500" /> : 
-                  <WifiOff className="w-3 h-3 text-red-500" />
-                }
-                <span className={(isConnected || lastMessage) ? 'text-green-600' : 'text-red-600'}>
-                  {(isConnected || lastMessage) ? 'Live Draft (WebSocket)' : 'Connecting to draft...'}
-                </span>
-              </div>
-              
-              {/* Environment Notice */}
-              {!(isConnected || lastMessage) && (
-                <div className="text-xs text-amber-600 mt-2 p-2 bg-amber-50 dark:bg-amber-900/20 rounded">
-                  Development environment: WebSocket connections are limited by platform auto-scaling.
-                  For stable WebSocket connections, deploy as Reserved VM.
-                </div>
-              )}
+
             </div>
           </div>
 
-          {/* Completed Draft - Full Width Layout */}
+          {/* Completed Draft - Mobile Optimized Layout */}
           {state.draft.status === 'completed' ? (
-            <Card className="w-full">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-lg flex items-center space-x-2">
-                  <Trophy className="w-5 h-5" />
-                  <span>Draft Complete</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="text-center">
-                    <div className="p-3 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800 mb-4">
-                      <div className="text-green-700 dark:text-green-300 font-medium mb-2">
+            <div className="space-y-4">
+              {/* Header - Mobile Optimized */}
+              <Card className="w-full">
+                <CardContent className="p-4">
+                  <div className="text-center space-y-4">
+                    <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
+                      <div className="text-green-700 dark:text-green-300 font-bold text-lg mb-1">
                         🎉 Draft Complete!
                       </div>
                       <div className="text-sm text-green-600 dark:text-green-400">
@@ -638,102 +609,115 @@ export default function DraftPage() {
                     <Button 
                       onClick={() => navigate(`/league/${state.draft.leagueId}/waiting`)}
                       variant="outline"
-                      className="mb-4"
+                      className="w-full sm:w-auto"
+                      size="lg"
                     >
                       <ArrowLeft className="w-4 h-4 mr-2" />
                       Back to League
                     </Button>
                   </div>
+                </CardContent>
+              </Card>
                   
-                  {/* Draft Results Summary */}
+              {/* Draft Results - Mobile Optimized */}
+              <Card className="w-full">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-lg text-center">Final Draft Results</CardTitle>
+                </CardHeader>
+                <CardContent className="p-4">
+                  {/* League Members and Their Teams - Mobile Layout */}
                   <div className="space-y-4">
-                    <h3 className="text-xl font-semibold text-center">Final Draft Results</h3>
-                    
-                    {/* League Members and Their Teams */}
-                    <div className="space-y-4">
-                      {state.draft.draftOrder?.map((userId) => {
-                        const userPicks = state.picks?.filter(p => p.userId === userId) || [];
-                        const user = userPicks[0]?.user;
-                        
-                        if (!user) return null;
-                        
-                        return (
-                          <div key={userId} className="p-4 bg-secondary/20 rounded-lg border">
-                            <div className="flex items-center space-x-3 mb-3">
-                              {user.avatar && (
+                    {state.draft.draftOrder?.map((userId) => {
+                      const userPicks = state.picks?.filter(p => p.userId === userId) || [];
+                      const user = userPicks[0]?.user;
+                      
+                      if (!user) return null;
+                      
+                      return (
+                        <div key={userId} className="p-3 bg-secondary/20 rounded-lg border">
+                          <div className="flex items-center space-x-3 mb-3">
+                            {user.avatar && (
+                              <img 
+                                src={user.avatar} 
+                                alt={user.name} 
+                                className="w-8 h-8 rounded-full"
+                              />
+                            )}
+                            <div className="font-semibold text-lg">{user.name}</div>
+                          </div>
+                          {/* Mobile-Friendly Team Grid */}
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                            {userPicks.map((pick) => (
+                              <div 
+                                key={pick.id} 
+                                className="flex items-center space-x-2 p-2 bg-background/60 rounded-lg border text-sm"
+                              >
                                 <img 
-                                  src={user.avatar} 
-                                  alt={user.name} 
-                                  className="w-10 h-10 rounded-full"
+                                  src={pick.nflTeam.logoUrl} 
+                                  alt={pick.nflTeam.name}
+                                  className="w-6 h-6 flex-shrink-0"
                                 />
-                              )}
-                              <div className="font-semibold text-xl">{user.name}</div>
-                            </div>
-                            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
-                              {userPicks.map((pick) => (
-                                <div 
-                                  key={pick.id} 
-                                  className="flex items-center space-x-2 p-3 bg-background/60 rounded-lg border text-sm hover:bg-background/80 transition-colors"
-                                >
-                                  <img 
-                                    src={pick.nflTeam.logoUrl} 
-                                    alt={pick.nflTeam.name}
-                                    className="w-8 h-8"
-                                  />
-                                  <div>
-                                    <div className="font-medium">{pick.nflTeam.name}</div>
-                                    <div className="text-xs text-muted-foreground">
-                                      Round {pick.round} {pick.isAutoPick ? '(Auto)' : ''}
-                                    </div>
+                                <div className="min-w-0 flex-1">
+                                  <div className="font-medium truncate">{pick.nflTeam.name}</div>
+                                  <div className="text-xs text-muted-foreground">
+                                    Round {pick.round} {pick.isAutoPick ? '(Auto)' : ''}
                                   </div>
                                 </div>
-                              ))}
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                    
-                    {/* Free Agent Teams */}
-                    <div className="mt-8">
-                      <h4 className="text-lg font-semibold mb-4 text-center">Free Agent Teams</h4>
-                      <div className="flex justify-center">
-                        <div className="grid grid-cols-2 gap-4 max-w-md">
-                          {state.availableTeams?.slice(0, 2).map((team) => (
-                            <div 
-                              key={team.id} 
-                              className="flex items-center space-x-3 p-3 bg-muted/30 rounded-lg border"
-                            >
-                              <img 
-                                src={team.logoUrl} 
-                                alt={team.name}
-                                className="w-8 h-8"
-                              />
-                              <div>
-                                <div className="font-medium">{team.name}</div>
-                                <div className="text-xs text-muted-foreground">{team.conference}</div>
                               </div>
-                            </div>
-                          ))}
+                            ))}
+                          </div>
                         </div>
-                      </div>
-                    </div>
+                      );
+                    })}
+                  </div>
+                </CardContent>
+              </Card>
                     
-                    {/* Draft Stats */}
-                    <div className="grid grid-cols-2 gap-4 max-w-md mx-auto mt-6">
-                      <div className="text-center p-4 bg-secondary/30 rounded-lg">
-                        <div className="text-2xl font-bold">{state.picks?.filter(p => !p.isAutoPick).length || 0}</div>
-                        <div className="text-muted-foreground text-sm">Manual Picks</div>
-                      </div>
-                      <div className="text-center p-4 bg-secondary/30 rounded-lg">
-                        <div className="text-2xl font-bold">{state.picks?.filter(p => p.isAutoPick).length || 0}</div>
-                        <div className="text-muted-foreground text-sm">Auto Picks</div>
-                      </div>
+              {/* Free Agent Teams - Mobile Optimized */}
+              {state.availableTeams && state.availableTeams.length > 0 && (
+                <Card className="w-full">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-lg text-center">Free Agent Teams</CardTitle>
+                  </CardHeader>
+                  <CardContent className="p-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      {state.availableTeams.slice(0, 4).map((team) => (
+                        <div 
+                          key={team.id} 
+                          className="flex items-center space-x-3 p-3 bg-muted/30 rounded-lg border"
+                        >
+                          <img 
+                            src={team.logoUrl} 
+                            alt={team.name}
+                            className="w-8 h-8 flex-shrink-0"
+                          />
+                          <div className="min-w-0 flex-1">
+                            <div className="font-medium truncate">{team.name}</div>
+                            <div className="text-xs text-muted-foreground">{team.conference}</div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+              
+              {/* Draft Stats - Mobile Optimized */}
+              <Card className="w-full">
+                <CardContent className="p-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="text-center p-4 bg-secondary/30 rounded-lg">
+                      <div className="text-2xl font-bold">{state.picks?.filter(p => !p.isAutoPick).length || 0}</div>
+                      <div className="text-xs text-muted-foreground">Manual Picks</div>
+                    </div>
+                    <div className="text-center p-4 bg-secondary/30 rounded-lg">
+                      <div className="text-2xl font-bold">{state.picks?.filter(p => p.isAutoPick).length || 0}</div>
+                      <div className="text-xs text-muted-foreground">Auto Picks</div>
                     </div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            </div>
           ) : (
             /* Normal Draft Layout */
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
