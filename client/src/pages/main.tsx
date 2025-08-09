@@ -37,108 +37,75 @@ interface NflTeam {
   logoUrl: string;
 }
 
-interface UserTeam {
+interface StableTeam {
+  id: string;
+  userId: string;
+  leagueId: string;
+  nflTeamId: string;
+  acquiredVia: string;
+  acquiredAt: string;
+  locksUsed: number;
+  lockAndLoadUsed: boolean;
+  createdAt: string;
   nflTeam: NflTeam;
-  locksRemaining: number;
-  lockAndLoadAvailable: boolean;
-  upcomingOpponent?: string;
-  isBye: boolean;
-  weeklyRecord?: string;
+}
+
+interface League {
+  id: string;
+  name: string;
+  memberCount: number;
+  maxTeams: number;
+  draftStatus?: string;
 }
 
 export default function MainPage() {
   const [location, navigate] = useLocation();
   const { user } = useAuth();
   const [selectedWeek] = useState(1); // Will be dynamic based on NFL schedule
+  const [selectedLeague, setSelectedLeague] = useState<string | null>(null);
 
-  // Mock data for now - will be replaced with real API calls
-  const mockUserTeams: UserTeam[] = [
-    {
-      nflTeam: {
-        id: "1",
-        code: "KC",
-        name: "Chiefs",
-        city: "Kansas City",
-        conference: "AFC",
-        division: "West",
-        logoUrl: "/images/nfl/team_logos/KC.png"
-      },
-      locksRemaining: 4,
-      lockAndLoadAvailable: true,
-      upcomingOpponent: "vs LAC",
-      isBye: false,
-      weeklyRecord: "2-1"
-    },
-    {
-      nflTeam: {
-        id: "2", 
-        code: "SF",
-        name: "49ers",
-        city: "San Francisco",
-        conference: "NFC",
-        division: "West",
-        logoUrl: "/images/nfl/team_logos/SF.png"
-      },
-      locksRemaining: 3,
-      lockAndLoadAvailable: true,
-      upcomingOpponent: "@ DAL",
-      isBye: false,
-      weeklyRecord: "3-0"
-    },
-    {
-      nflTeam: {
-        id: "3",
-        code: "BUF", 
-        name: "Bills",
-        city: "Buffalo",
-        conference: "AFC",
-        division: "East",
-        logoUrl: "/images/nfl/team_logos/BUF.png"
-      },
-      locksRemaining: 4,
-      lockAndLoadAvailable: false,
-      upcomingOpponent: "vs MIA",
-      isBye: false,
-      weeklyRecord: "2-1"
-    },
-    {
-      nflTeam: {
-        id: "4",
-        code: "PHI",
-        name: "Eagles", 
-        city: "Philadelphia",
-        conference: "NFC",
-        division: "East",
-        logoUrl: "/images/nfl/team_logos/PHI.png"
-      },
-      locksRemaining: 2,
-      lockAndLoadAvailable: true,
-      upcomingOpponent: "BYE",
-      isBye: true,
-      weeklyRecord: "1-2"
-    },
-    {
-      nflTeam: {
-        id: "5",
-        code: "LAR",
-        name: "Rams",
-        city: "Los Angeles", 
-        conference: "NFC",
-        division: "West",
-        logoUrl: "/images/nfl/team_logos/LAR.png"
-      },
-      locksRemaining: 4,
-      lockAndLoadAvailable: true,
-      upcomingOpponent: "@ ARI",
-      isBye: false,
-      weeklyRecord: "1-2"
-    }
-  ];
+  // Get user's leagues
+  const { data: leagues = [] } = useQuery({
+    queryKey: ['/api/user/leagues'],
+    enabled: !!user,
+  });
+
+  // Get stable teams for selected league
+  const { data: stableTeams = [] } = useQuery({
+    queryKey: ['/api/user/stable', selectedLeague],
+    enabled: !!selectedLeague,
+  });
+
+  // Set first league as default selection
+  if (leagues.length > 0 && !selectedLeague) {
+    setSelectedLeague(leagues[0].id);
+  }
+
+  // Convert stable teams to display format with game mechanics
+  const userTeams = stableTeams.map((stable: StableTeam) => ({
+    nflTeam: stable.nflTeam,
+    locksRemaining: 4 - stable.locksUsed, // Max 4 locks per team per season
+    lockAndLoadAvailable: !stable.lockAndLoadUsed,
+    upcomingOpponent: "TBD", // Would come from NFL schedule API
+    isBye: false, // Would come from NFL schedule API
+    weeklyRecord: "0-0", // Would come from season stats
+    acquiredVia: stable.acquiredVia,
+    acquiredAt: stable.acquiredAt
+  }));
+
+  const currentLeague = leagues.find((l: League) => l.id === selectedLeague);
 
   const lockDeadline = new Date(Date.now() + 2 * 24 * 60 * 60 * 1000); // 2 days from now
   const isLockWindowOpen = true;
   const currentSkinsPrize = 250;
   const isSkinsStacked = false;
+
+  // Show loading state while fetching data
+  if (!user) {
+    return <div className="min-h-screen bg-background pb-20 flex items-center justify-center">
+      <div>Loading...</div>
+    </div>;
+  }
 
   return (
     <div className="min-h-screen bg-background pb-20">
@@ -148,8 +115,26 @@ export default function MainPage() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl md:text-3xl font-bold">Mok Sports</h1>
-            <p className="text-sm text-muted-foreground">Week {selectedWeek} • {isLockWindowOpen ? 'Lock Window Open' : 'NFL Regular Season'}</p>
+            <p className="text-sm text-muted-foreground">
+              {currentLeague ? `${currentLeague.name} • ` : ''}Week {selectedWeek} • {isLockWindowOpen ? 'Lock Window Open' : 'NFL Regular Season'}
+            </p>
           </div>
+          {/* League Selector for multiple leagues */}
+          {leagues.length > 1 && (
+            <div className="flex items-center space-x-2">
+              <select 
+                value={selectedLeague || ''} 
+                onChange={(e) => setSelectedLeague(e.target.value)}
+                className="px-3 py-1 text-sm border rounded bg-background"
+              >
+                {leagues.map((league: League) => (
+                  <option key={league.id} value={league.id}>
+                    {league.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
           <Button 
             variant="outline" 
             size="sm"
@@ -190,7 +175,22 @@ export default function MainPage() {
                 <p className="text-sm text-muted-foreground">Select one team to lock for bonus points</p>
               </CardHeader>
               <CardContent className="space-y-3">
-                {mockUserTeams.filter(team => !team.isBye && team.locksRemaining > 0).map((team) => (
+                {userTeams.length === 0 ? (
+                  <div className="text-center py-8">
+                    <div className="w-16 h-16 mx-auto mb-4 bg-muted rounded-full flex items-center justify-center">
+                      <Shield className="w-8 h-8 text-muted-foreground" />
+                    </div>
+                    <h3 className="text-lg font-semibold mb-2">No Teams Yet</h3>
+                    <p className="text-sm text-muted-foreground mb-4">
+                      Complete a draft to add teams to your stable
+                    </p>
+                    <Button onClick={() => navigate('/leagues')}>
+                      Join a League
+                    </Button>
+                  </div>
+                ) : (
+                  <>
+                    {userTeams.filter(team => !team.isBye && team.locksRemaining > 0).map((team) => (
                   <div 
                     key={team.nflTeam.id}
                     className="flex items-center justify-between p-4 rounded-lg border bg-card hover:bg-accent/50 transition-colors"
@@ -224,10 +224,10 @@ export default function MainPage() {
                 ))}
                 
                 {/* Teams with no locks remaining */}
-                {mockUserTeams.filter(team => !team.isBye && team.locksRemaining === 0).length > 0 && (
+                {userTeams.filter(team => !team.isBye && team.locksRemaining === 0).length > 0 && (
                   <div className="pt-2">
                     <p className="text-xs text-muted-foreground mb-2">No locks remaining:</p>
-                    {mockUserTeams.filter(team => !team.isBye && team.locksRemaining === 0).map((team) => (
+                    {userTeams.filter(team => !team.isBye && team.locksRemaining === 0).map((team) => (
                       <div 
                         key={team.nflTeam.id}
                         className="flex items-center justify-between p-3 rounded-lg bg-muted/50 opacity-60"
@@ -259,10 +259,10 @@ export default function MainPage() {
                 )}
 
                 {/* Bye Week Teams */}
-                {mockUserTeams.filter(team => team.isBye).length > 0 && (
+                {userTeams.filter(team => team.isBye).length > 0 && (
                   <div className="pt-2">
                     <p className="text-xs text-muted-foreground mb-2">On bye week:</p>
-                    {mockUserTeams.filter(team => team.isBye).map((team) => (
+                    {userTeams.filter(team => team.isBye).map((team) => (
                       <div 
                         key={team.nflTeam.id}
                         className="flex items-center space-x-3 p-3 rounded-lg bg-muted/30"
@@ -286,6 +286,8 @@ export default function MainPage() {
                     ))}
                   </div>
                 )}
+                  </>
+                )}
               </CardContent>
             </Card>
           </div>
@@ -301,7 +303,12 @@ export default function MainPage() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              {mockUserTeams.map((team) => (
+              {userTeams.length === 0 ? (
+                <div className="text-center py-6">
+                  <p className="text-muted-foreground">No teams in your stable yet</p>
+                </div>
+              ) : (
+                userTeams.map((team) => (
                 <div 
                   key={team.nflTeam.id}
                   className={`flex items-center justify-between p-4 rounded-lg border transition-colors ${
@@ -338,7 +345,8 @@ export default function MainPage() {
                     )}
                   </div>
                 </div>
-              ))}
+                ))
+              )}
             </CardContent>
           </Card>
         )}

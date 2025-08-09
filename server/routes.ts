@@ -672,6 +672,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Stable (user teams) routes
+  app.get("/api/user/stable/:leagueId", async (req, res) => {
+    try {
+      const user = await getAuthenticatedUser(req);
+      if (!user) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+
+      const { leagueId } = req.params;
+      
+      // Check if user is member of this league
+      const isMember = await storage.isUserInLeague(user.id, leagueId);
+      if (!isMember) {
+        return res.status(403).json({ message: "Not authorized to view this league" });
+      }
+
+      const stable = await storage.getUserStable(user.id, leagueId);
+      res.json(stable);
+    } catch (error) {
+      console.error('Error getting user stable:', error);
+      res.status(500).json({ message: "Failed to get user stable" });
+    }
+  });
+
   // NFL Teams routes
   app.get("/api/nfl-teams", async (req, res) => {
     try {

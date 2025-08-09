@@ -579,6 +579,15 @@ export class SnakeDraftManager {
     if (nextRound > draft.totalRounds) {
       console.log(`🎉 Draft complete! All ${draft.totalRounds} rounds finished with ${totalPicks} total picks`);
       await this.storage.completeDraft(draftId);
+      
+      // Initialize stable teams from draft picks
+      try {
+        await this.storage.initializeStableFromDraft(draftId);
+        console.log(`✅ Initialized stable teams from completed draft ${draftId}`);
+      } catch (error) {
+        console.error(`❌ Failed to initialize stable teams:`, error);
+      }
+      
       return await this.getDraftState(draftId);
     }
     
