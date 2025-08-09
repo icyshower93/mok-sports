@@ -1,0 +1,293 @@
+Content script initialized successfully.
+index-CZ-phCCc.js:337 🏗️ Build Info: Object
+index-CZ-phCCc.js:337 📦 Version: me3vw234
+index-CZ-phCCc.js:337 📅 Built: 2025-08-09T06:38:45.136Z
+index-CZ-phCCc.js:337 🔧 Environment: production
+index-CZ-phCCc.js:293 [Auth] Token check - Has token: true Has user: false Loading: true
+index-CZ-phCCc.js:293 [SW Hook] EMERGENCY: Unregistering all existing service workers
+index-CZ-phCCc.js:293 [SW Hook] Found 1 existing registrations
+index-CZ-phCCc.js:293 [SW Hook] Unregistering existing service worker
+index-CZ-phCCc.js:293 [SW Hook] Found 1 caches to delete
+index-CZ-phCCc.js:293 [SW Hook] Deleting cache: mok-sports-dynamic-v1.7.0-nuclear-unregister-1754721524403
+index-CZ-phCCc.js:337 [App] Draft route matched with params: Object
+index-CZ-phCCc.js:337 [App] Current location: https://mok-sports-draft-mokfantasysport.replit.app/draft/c8a846c7-4328-4c47-ba42-476802ed4be5
+index-CZ-phCCc.js:337 [SMOOTH TIMER] Display time: 0.0 isCountingDown: false localTime: 0.0
+index-CZ-phCCc.js:337 [Draft] All hooks declared, starting conditional logic
+index-CZ-phCCc.js:337 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: false Time: 1754721525225
+index-CZ-phCCc.js:337 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-CZ-phCCc.js:337 [WebSocket] MAIN useEffect trigger - draftId: c8a846c7-4328-4c47-ba42-476802ed4be5 userId: true authLoading: false
+index-CZ-phCCc.js:337 [WebSocket] ✅ Conditions met, validating draft exists before connection...
+index-CZ-phCCc.js:337 [WebSocket] Draft ID to connect to: c8a846c7-4328-4c47-ba42-476802ed4be5
+index-CZ-phCCc.js:337 [WebSocket] ==== EFFECT TRIGGERED ====
+index-CZ-phCCc.js:337 [WebSocket] Dependencies - draftId: true userId: true
+index-CZ-phCCc.js:337 [WebSocket] Current connection state: disconnected
+index-CZ-phCCc.js:337 [WebSocket] wsRef exists: false
+index-CZ-phCCc.js:337 [WebSocket] Previous draft ID: null
+index-CZ-phCCc.js:337 [WebSocket] Current draft ID: c8a846c7-4328-4c47-ba42-476802ed4be5
+index-CZ-phCCc.js:337 [WebSocket] ✅ Dependencies ready - initiating connection
+index-CZ-phCCc.js:337 [WebSocket] 🔄 LIFECYCLE: Connect called with: Object
+index-CZ-phCCc.js:337 [WebSocket] 🔍 LIFECYCLE CHECK: Validating single connection per session
+index-CZ-phCCc.js:337 [WebSocket] ✅ LIFECYCLE: All requirements met, creating single WebSocket instance
+index-CZ-phCCc.js:337 [WebSocket] 🔍 VALIDATION: Draft ID: c8a846c7-4328-4c47-ba42-476802ed4be5 length: 36
+index-CZ-phCCc.js:337 [WebSocket] 🔍 VALIDATION: User ID: 9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a length: 36
+index-CZ-phCCc.js:337 [WebSocket] Connecting to draft immediately after reset/change...
+index-CZ-phCCc.js:337 [SimpleWS] Starting connection attempt
+index-CZ-phCCc.js:337 [SimpleWS] draftId: c8a846c7-4328-4c47-ba42-476802ed4be5
+index-CZ-phCCc.js:337 [SimpleWS] userId: 9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a
+index-CZ-phCCc.js:337 [SimpleWS] Connecting to: wss://mok-sports-draft-mokfantasysport.replit.app/draft-ws?userId=9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a&draftId=c8a846c7-4328-4c47-ba42-476802ed4be5
+index-CZ-phCCc.js:337 [PersistentWS] Attempting connection # 1
+index-CZ-phCCc.js:337 [StableWS] Component mounted, initializing connection
+index-CZ-phCCc.js:337 [StableWS] Starting connection attempt #1
+index-CZ-phCCc.js:337 [Draft] === STARTING DRAFT FETCH ===
+index-CZ-phCCc.js:337 [Draft] Draft ID: c8a846c7-4328-4c47-ba42-476802ed4be5
+index-CZ-phCCc.js:337 [Draft] Auth status - User: Sky Evans Authenticated: false Loading: false
+index-CZ-phCCc.js:337 [Draft] Token available: true
+index-CZ-phCCc.js:337 [Draft] Current URL: https://mok-sports-draft-mokfantasysport.replit.app/draft/c8a846c7-4328-4c47-ba42-476802ed4be5
+index-CZ-phCCc.js:337 [Draft] Current pathname: /draft/c8a846c7-4328-4c47-ba42-476802ed4be5
+index-CZ-phCCc.js:337 [Draft] Making API request to: /api/drafts/c8a846c7-4328-4c47-ba42-476802ed4be5
+index-CZ-phCCc.js:293 [Auth] Token check - Has token: true Has user: true Loading: false
+index-CZ-phCCc.js:337 [App] Draft route matched with params: Object
+index-CZ-phCCc.js:337 [App] Current location: https://mok-sports-draft-mokfantasysport.replit.app/draft/c8a846c7-4328-4c47-ba42-476802ed4be5
+index-CZ-phCCc.js:337 [SMOOTH TIMER] Display time: 0.0 isCountingDown: false localTime: 0.0
+index-CZ-phCCc.js:337 [Draft] All hooks declared, starting conditional logic
+index-CZ-phCCc.js:337 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754721525230
+index-CZ-phCCc.js:337 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-CZ-phCCc.js:293 [AutoPushRefresh] Legacy hook delegating to SubscriptionManager
+index-CZ-phCCc.js:337 [App] Draft route matched with params: Object
+index-CZ-phCCc.js:337 [App] Current location: https://mok-sports-draft-mokfantasysport.replit.app/draft/c8a846c7-4328-4c47-ba42-476802ed4be5
+index-CZ-phCCc.js:337 [SMOOTH TIMER] Display time: 0.0 isCountingDown: false localTime: 0.0
+index-CZ-phCCc.js:337 [Draft] All hooks declared, starting conditional logic
+index-CZ-phCCc.js:337 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754721525250
+index-CZ-phCCc.js:337 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-CZ-phCCc.js:337 [App] Draft route matched with params: Object
+index-CZ-phCCc.js:337 [App] Current location: https://mok-sports-draft-mokfantasysport.replit.app/draft/c8a846c7-4328-4c47-ba42-476802ed4be5
+index-CZ-phCCc.js:337 [SMOOTH TIMER] Display time: 0.0 isCountingDown: false localTime: 0.0
+index-CZ-phCCc.js:337 [Draft] All hooks declared, starting conditional logic
+index-CZ-phCCc.js:337 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754721525270
+index-CZ-phCCc.js:337 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+draft/c8a846c7-4328-4c47-ba42-476802ed4be5:1 Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner.
+index-CZ-phCCc.js:293 [SW Hook] Registering fresh service worker: /sw.js?v=1754721525270&r=0.5392373781685531
+index-CZ-phCCc.js:337 [SMOOTH TIMER] Display time: 0.0 isCountingDown: false localTime: 0.0
+index-CZ-phCCc.js:337 [Draft] All hooks declared, starting conditional logic
+index-CZ-phCCc.js:337 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754721525314
+index-CZ-phCCc.js:337 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+sw.js?v=1754721525270&r=0.5392373781685531:2 [SW] NUCLEAR OPTION - Emergency service worker loading
+sw.js?v=1754721525270&r=0.5392373781685531:88 [SW] Service worker starting, version: v1.7.0-nuclear-unregister-1754721525353
+sw.js?v=1754721525270&r=0.5392373781685531:305 [SW] Service worker script loaded successfully
+index-CZ-phCCc.js:337 [SimpleWS] ✅ Connected successfully
+index-CZ-phCCc.js:337 [SimpleWS] Initial ping sent
+sw.js?v=1754721525270&r=0.5392373781685531:19 [SW] EMERGENCY INSTALL - Clearing all caches and forcing activation
+sw.js?v=1754721525270&r=0.5392373781685531:92 [SW] Installing service worker, version: v1.7.0-nuclear-unregister-1754721525353
+index-CZ-phCCc.js:337 [SMOOTH TIMER] Display time: 0.0 isCountingDown: false localTime: 0.0
+index-CZ-phCCc.js:337 [Draft] All hooks declared, starting conditional logic
+index-CZ-phCCc.js:337 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754721525353
+sw.js?v=1754721525270&r=0.5392373781685531:22 [SW] Found caches to delete: Array(1)
+index-CZ-phCCc.js:337 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+sw.js?v=1754721525270&r=0.5392373781685531:25 [SW] Force deleting cache: mok-sports-dynamic-v1.7.0-nuclear-unregister-1754721524403
+index-CZ-phCCc.js:293 [SW Hook] Service worker registered successfully
+index-CZ-phCCc.js:337 [App] Draft route matched with params: Object
+index-CZ-phCCc.js:337 [App] Current location: https://mok-sports-draft-mokfantasysport.replit.app/draft/c8a846c7-4328-4c47-ba42-476802ed4be5
+index-CZ-phCCc.js:337 [SMOOTH TIMER] Display time: 0.0 isCountingDown: false localTime: 0.0
+index-CZ-phCCc.js:337 [Draft] All hooks declared, starting conditional logic
+index-CZ-phCCc.js:337 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754721525354
+index-CZ-phCCc.js:337 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+sw.js?v=1754721525270&r=0.5392373781685531:96 [SW] Caching static files
+index-CZ-phCCc.js:337 [SimpleWS] Message received: {"type":"connected","draftId":"c8a846c7-4328-4c47-ba42-476802ed4be5","userId":"9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a","timestamp":1754721524594,"message":"WebSocket connection established successfully on Reserved VM"}
+index-CZ-phCCc.js:337 [SMOOTH TIMER] Display time: 0.0 isCountingDown: false localTime: 0.0
+index-CZ-phCCc.js:337 [Draft] All hooks declared, starting conditional logic
+index-CZ-phCCc.js:337 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754721525354
+index-CZ-phCCc.js:337 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-CZ-phCCc.js:337 [SimpleWS] Message received: {"type":"connected","draftId":"c8a846c7-4328-4c47-ba42-476802ed4be5","timestamp":1754721524594}
+index-CZ-phCCc.js:337 [SMOOTH TIMER] Display time: 0.0 isCountingDown: false localTime: 0.0
+index-CZ-phCCc.js:337 [Draft] All hooks declared, starting conditional logic
+index-CZ-phCCc.js:337 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754721525354
+index-CZ-phCCc.js:337 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+sw.js?v=1754721525270&r=0.5392373781685531:30 [SW] All caches deleted - skipping waiting
+index-CZ-phCCc.js:337 [SMOOTH TIMER] Display time: 0.0 isCountingDown: false localTime: 0.0
+index-CZ-phCCc.js:337 [Draft] All hooks declared, starting conditional logic
+index-CZ-phCCc.js:337 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754721525372
+index-CZ-phCCc.js:337 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-CZ-phCCc.js:337 [SimpleWS] Message received: {"type":"pong","draftId":"c8a846c7-4328-4c47-ba42-476802ed4be5","timestamp":1754721524641}
+index-CZ-phCCc.js:337 [SMOOTH TIMER] Display time: 0.0 isCountingDown: false localTime: 0.0
+index-CZ-phCCc.js:337 [Draft] All hooks declared, starting conditional logic
+index-CZ-phCCc.js:337 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754721525402
+index-CZ-phCCc.js:337 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-CZ-phCCc.js:337 [SimpleWS] Message received: {"type":"draft_state","draftId":"c8a846c7-4328-4c47-ba42-476802ed4be5","data":{},"timestamp":1754721524694}
+index-CZ-phCCc.js:337 [SMOOTH TIMER] Display time: 0.0 isCountingDown: false localTime: 0.0
+index-CZ-phCCc.js:337 [Draft] All hooks declared, starting conditional logic
+index-CZ-phCCc.js:337 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754721525454
+index-CZ-phCCc.js:337 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-CZ-phCCc.js:337 [PersistentWS] ✅ Connected successfully
+index-CZ-phCCc.js:337 [PersistentWS] Message received: {"type":"connected","draftId":"c8a846c7-4328-4c47-ba42-476802ed4be5","userId":"9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a","timestamp":1754721524729,"message":"WebSocket connection established successfully on Reserved VM"}
+index-CZ-phCCc.js:337 [SMOOTH TIMER] Display time: 0.0 isCountingDown: false localTime: 0.0
+index-CZ-phCCc.js:337 [Draft] All hooks declared, starting conditional logic
+index-CZ-phCCc.js:337 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754721525490
+index-CZ-phCCc.js:337 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-CZ-phCCc.js:337 [PersistentWS] Message received: {"type":"connected","draftId":"c8a846c7-4328-4c47-ba42-476802ed4be5","timestamp":1754721524730}
+index-CZ-phCCc.js:337 [SMOOTH TIMER] Display time: 0.0 isCountingDown: false localTime: 0.0
+index-CZ-phCCc.js:337 [Draft] All hooks declared, starting conditional logic
+index-CZ-phCCc.js:337 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754721525490
+index-CZ-phCCc.js:337 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+sw.js?v=1754721525270&r=0.5392373781685531:99 [SW] Static files cached successfully
+index-CZ-phCCc.js:337 [App] Draft route matched with params: Object
+index-CZ-phCCc.js:337 [App] Current location: https://mok-sports-draft-mokfantasysport.replit.app/draft/c8a846c7-4328-4c47-ba42-476802ed4be5
+index-CZ-phCCc.js:337 [SMOOTH TIMER] Display time: 0.0 isCountingDown: false localTime: 0.0
+index-CZ-phCCc.js:337 [Draft] All hooks declared, starting conditional logic
+index-CZ-phCCc.js:337 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1754721525520
+index-CZ-phCCc.js:337 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-CZ-phCCc.js:337 [Draft] Response received: Object
+index-CZ-phCCc.js:337 [Draft] Successfully fetched draft data: Object
+index-CZ-phCCc.js:337 [Draft] === DRAFT FETCH SUCCESS ===
+index-CZ-phCCc.js:337 [SMOOTH TIMER] Display time: 0.0 isCountingDown: false localTime: 0.0
+index-CZ-phCCc.js:337 [Draft] All hooks declared, starting conditional logic
+index-CZ-phCCc.js:337 [Draft] RENDER DEBUG - authLoading: false isLoading: false error: false draftData: true isAuthenticated: true Time: 1754721525522
+index-CZ-phCCc.js:337 🔍 [TIMER DEBUG] Server Time: 0
+index-CZ-phCCc.js:337 🔍 [TIMER DEBUG] Display Time: 0
+index-CZ-phCCc.js:337 🔍 [TIMER DEBUG] Current Player: undefined
+sw.js?v=1754721525270&r=0.5392373781685531:164 [SW] Fetching /a/ACg8ocIlUYRsI8z4wKwDJjb1BBPBwCuyYSlVMcLHB5QAXs50P5Fbtg=s96-c from network
+sw.js?v=1754721525270&r=0.5392373781685531:164 [SW] Fetching /images/nfl/team_logos/NYJ.png from network
+sw.js?v=1754721525270&r=0.5392373781685531:164 [SW] Fetching /images/nfl/team_logos/MIN.png from network
+sw.js?v=1754721525270&r=0.5392373781685531:164 [SW] Fetching /images/nfl/team_logos/NYG.png from network
+sw.js?v=1754721525270&r=0.5392373781685531:164 [SW] Fetching /images/nfl/team_logos/ARI.png from network
+sw.js?v=1754721525270&r=0.5392373781685531:164 [SW] Fetching /images/nfl/team_logos/LV.png from network
+sw.js?v=1754721525270&r=0.5392373781685531:164 [SW] Fetching /a/ACg8ocJEMs5AzNtfS8vv7POiR-CJvE5EdtZVt27CT0tdYJA64x6-BQyy_Q=s96-c from network
+sw.js?v=1754721525270&r=0.5392373781685531:164 [SW] Fetching /images/nfl/team_logos/BUF.png from network
+sw.js?v=1754721525270&r=0.5392373781685531:164 [SW] Fetching /images/nfl/team_logos/NE.png from network
+sw.js?v=1754721525270&r=0.5392373781685531:164 [SW] Fetching /images/nfl/team_logos/WAS.png from network
+sw.js?v=1754721525270&r=0.5392373781685531:164 [SW] Fetching /images/nfl/team_logos/DAL.png from network
+sw.js?v=1754721525270&r=0.5392373781685531:164 [SW] Fetching /images/nfl/team_logos/LAC.png from network
+sw.js?v=1754721525270&r=0.5392373781685531:164 [SW] Fetching /7.x/robots/svg from network
+sw.js?v=1754721525270&r=0.5392373781685531:164 [SW] Fetching /images/nfl/team_logos/GB.png from network
+sw.js?v=1754721525270&r=0.5392373781685531:164 [SW] Fetching /images/nfl/team_logos/LAR.png from network
+sw.js?v=1754721525270&r=0.5392373781685531:164 [SW] Fetching /images/nfl/team_logos/KC.png from network
+sw.js?v=1754721525270&r=0.5392373781685531:164 [SW] Fetching /images/nfl/team_logos/CHI.png from network
+sw.js?v=1754721525270&r=0.5392373781685531:164 [SW] Fetching /images/nfl/team_logos/IND.png from network
+sw.js?v=1754721525270&r=0.5392373781685531:164 [SW] Fetching /7.x/robots/svg from network
+sw.js?v=1754721525270&r=0.5392373781685531:164 [SW] Fetching /images/nfl/team_logos/CIN.png from network
+sw.js?v=1754721525270&r=0.5392373781685531:164 [SW] Fetching /images/nfl/team_logos/BAL.png from network
+sw.js?v=1754721525270&r=0.5392373781685531:164 [SW] Fetching /images/nfl/team_logos/HOU.png from network
+sw.js?v=1754721525270&r=0.5392373781685531:164 [SW] Fetching /images/nfl/team_logos/PHI.png from network
+sw.js?v=1754721525270&r=0.5392373781685531:164 [SW] Fetching /images/nfl/team_logos/DET.png from network
+sw.js?v=1754721525270&r=0.5392373781685531:164 [SW] Fetching /7.x/robots/svg from network
+sw.js?v=1754721525270&r=0.5392373781685531:164 [SW] Fetching /images/nfl/team_logos/NO.png from network
+sw.js?v=1754721525270&r=0.5392373781685531:164 [SW] Fetching /images/nfl/team_logos/SEA.png from network
+sw.js?v=1754721525270&r=0.5392373781685531:164 [SW] Fetching /images/nfl/team_logos/ATL.png from network
+sw.js?v=1754721525270&r=0.5392373781685531:164 [SW] Fetching /images/nfl/team_logos/MIA.png from network
+sw.js?v=1754721525270&r=0.5392373781685531:164 [SW] Fetching /images/nfl/team_logos/CLE.png from network
+sw.js?v=1754721525270&r=0.5392373781685531:164 [SW] Fetching /7.x/robots/svg from network
+sw.js?v=1754721525270&r=0.5392373781685531:164 [SW] Fetching /images/nfl/team_logos/DEN.png from network
+sw.js?v=1754721525270&r=0.5392373781685531:164 [SW] Fetching /images/nfl/team_logos/JAX.png from network
+sw.js?v=1754721525270&r=0.5392373781685531:164 [SW] Fetching /images/nfl/team_logos/TEN.png from network
+sw.js?v=1754721525270&r=0.5392373781685531:164 [SW] Fetching /images/nfl/team_logos/SF.png from network
+sw.js?v=1754721525270&r=0.5392373781685531:164 [SW] Fetching /images/nfl/team_logos/CAR.png from network
+sw.js?v=1754721525270&r=0.5392373781685531:164 [SW] Fetching /images/nfl/team_logos/PIT.png from network
+sw.js?v=1754721525270&r=0.5392373781685531:164 [SW] Fetching /images/nfl/team_logos/TB.png from network
+index-CZ-phCCc.js:337 [PersistentWS] Message received: {"type":"pong","draftId":"c8a846c7-4328-4c47-ba42-476802ed4be5","timestamp":1754721524784}
+index-CZ-phCCc.js:337 [SMOOTH TIMER] Display time: 0.0 isCountingDown: false localTime: 0.0
+index-CZ-phCCc.js:337 [Draft] All hooks declared, starting conditional logic
+index-CZ-phCCc.js:337 [Draft] RENDER DEBUG - authLoading: false isLoading: false error: false draftData: true isAuthenticated: true Time: 1754721525547
+index-CZ-phCCc.js:337 🔍 [TIMER DEBUG] Server Time: 0
+index-CZ-phCCc.js:337 🔍 [TIMER DEBUG] Display Time: 0
+index-CZ-phCCc.js:337 🔍 [TIMER DEBUG] Current Player: undefined
+index-CZ-phCCc.js:337 [PersistentWS] Message received: {"type":"draft_state","draftId":"c8a846c7-4328-4c47-ba42-476802ed4be5","data":{},"timestamp":1754721524830}
+index-CZ-phCCc.js:337 [SMOOTH TIMER] Display time: 0.0 isCountingDown: false localTime: 0.0
+index-CZ-phCCc.js:337 [Draft] All hooks declared, starting conditional logic
+index-CZ-phCCc.js:337 [Draft] RENDER DEBUG - authLoading: false isLoading: false error: false draftData: true isAuthenticated: true Time: 1754721525595
+index-CZ-phCCc.js:337 🔍 [TIMER DEBUG] Server Time: 0
+index-CZ-phCCc.js:337 🔍 [TIMER DEBUG] Display Time: 0
+index-CZ-phCCc.js:337 🔍 [TIMER DEBUG] Current Player: undefined
+index-CZ-phCCc.js:337 [StableWS] ✅ Connection #1 opened successfully
+index-CZ-phCCc.js:337 [StableWS] Identity message sent
+index-CZ-phCCc.js:337 [StableWS] Message received on connection #1: {"type":"connected","draftId":"c8a846c7-4328-4c47-ba42-476802ed4be5","userId":"9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a","timestamp":1754721524880,"message":"WebSocket connection established successfully on Reserved VM"}
+index-CZ-phCCc.js:337 [SMOOTH TIMER] Display time: 0.0 isCountingDown: false localTime: 0.0
+index-CZ-phCCc.js:337 [Draft] All hooks declared, starting conditional logic
+index-CZ-phCCc.js:337 [Draft] RENDER DEBUG - authLoading: false isLoading: false error: false draftData: true isAuthenticated: true Time: 1754721525640
+index-CZ-phCCc.js:337 🔍 [TIMER DEBUG] Server Time: 0
+index-CZ-phCCc.js:337 🔍 [TIMER DEBUG] Display Time: 0
+index-CZ-phCCc.js:337 🔍 [TIMER DEBUG] Current Player: undefined
+index-CZ-phCCc.js:337 [StableWS] Message received on connection #1: {"type":"connected","draftId":"c8a846c7-4328-4c47-ba42-476802ed4be5","timestamp":1754721524880}
+index-CZ-phCCc.js:337 [SMOOTH TIMER] Display time: 0.0 isCountingDown: false localTime: 0.0
+index-CZ-phCCc.js:337 [Draft] All hooks declared, starting conditional logic
+index-CZ-phCCc.js:337 [Draft] RENDER DEBUG - authLoading: false isLoading: false error: false draftData: true isAuthenticated: true Time: 1754721525640
+index-CZ-phCCc.js:337 🔍 [TIMER DEBUG] Server Time: 0
+index-CZ-phCCc.js:337 🔍 [TIMER DEBUG] Display Time: 0
+index-CZ-phCCc.js:337 🔍 [TIMER DEBUG] Current Player: undefined
+svg:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+svg:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+svg:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+index-CZ-phCCc.js:337 [StableWS] Message received on connection #1: {"type":"identified","connectionId":1,"timestamp":1754721524934}
+index-CZ-phCCc.js:337 [SMOOTH TIMER] Display time: 0.0 isCountingDown: false localTime: 0.0
+index-CZ-phCCc.js:337 [Draft] All hooks declared, starting conditional logic
+index-CZ-phCCc.js:337 [Draft] RENDER DEBUG - authLoading: false isLoading: false error: false draftData: true isAuthenticated: true Time: 1754721525694
+index-CZ-phCCc.js:337 🔍 [TIMER DEBUG] Server Time: 0
+index-CZ-phCCc.js:337 🔍 [TIMER DEBUG] Display Time: 0
+index-CZ-phCCc.js:337 🔍 [TIMER DEBUG] Current Player: undefined
+svg:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+JAX.png:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+index-CZ-phCCc.js:337 [StableWS] Message received on connection #1: {"type":"draft_state","draftId":"c8a846c7-4328-4c47-ba42-476802ed4be5","data":{},"timestamp":1754721524980}
+index-CZ-phCCc.js:337 [SMOOTH TIMER] Display time: 0.0 isCountingDown: false localTime: 0.0
+index-CZ-phCCc.js:337 [Draft] All hooks declared, starting conditional logic
+index-CZ-phCCc.js:337 [Draft] RENDER DEBUG - authLoading: false isLoading: false error: false draftData: true isAuthenticated: true Time: 1754721525741
+index-CZ-phCCc.js:337 🔍 [TIMER DEBUG] Server Time: 0
+index-CZ-phCCc.js:337 🔍 [TIMER DEBUG] Display Time: 0
+index-CZ-phCCc.js:337 🔍 [TIMER DEBUG] Current Player: undefined
+index-CZ-phCCc.js:337 [WebSocket] ✅ Draft exists, proceeding with connection
+index-CZ-phCCc.js:337 [WebSocket] 🔄 LIFECYCLE: Connect called with: Object
+index-CZ-phCCc.js:337 [WebSocket] 🔍 LIFECYCLE CHECK: Validating single connection per session
+index-CZ-phCCc.js:337 [WebSocket] ✅ LIFECYCLE: All requirements met, creating single WebSocket instance
+index-CZ-phCCc.js:337 [WebSocket] 🔍 VALIDATION: Draft ID: c8a846c7-4328-4c47-ba42-476802ed4be5 length: 36
+index-CZ-phCCc.js:337 [WebSocket] 🔍 VALIDATION: User ID: 9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a length: 36
+index-CZ-phCCc.js:337 [WebSocket] Connecting to draft immediately after reset/change...
+index-CZ-phCCc.js:337 [SMOOTH TIMER] Display time: 0.0 isCountingDown: false localTime: 0.0
+index-CZ-phCCc.js:337 [Draft] All hooks declared, starting conditional logic
+index-CZ-phCCc.js:337 [Draft] RENDER DEBUG - authLoading: false isLoading: false error: false draftData: true isAuthenticated: true Time: 1754721525784
+index-CZ-phCCc.js:337 🔍 [TIMER DEBUG] Server Time: 0
+index-CZ-phCCc.js:337 🔍 [TIMER DEBUG] Display Time: 0
+index-CZ-phCCc.js:337 🔍 [TIMER DEBUG] Current Player: undefined
+sw.js?v=1754721525270&r=0.5392373781685531:41 [SW] EMERGENCY ACTIVATE - Taking control of all clients
+sw.js?v=1754721525270&r=0.5392373781685531:110 [SW] Activating service worker, version: v1.7.0-nuclear-unregister-1754721525353
+sw.js?v=1754721525270&r=0.5392373781685531:46 [SW] Deleting remaining cache: mok-sports-static-v1.7.0-nuclear-unregister-1754721525353
+sw.js?v=1754721525270&r=0.5392373781685531:116 [SW] Found caches: Array(1)
+sw.js?v=1754721525270&r=0.5392373781685531:129 [SW] Service worker activated and controlling all clients
+sw.js?v=1754721525270&r=0.5392373781685531:51 [SW] Claiming all clients immediately
+index-CZ-phCCc.js:40 ReferenceError: Cannot access 'c' before initialization
+    at iT (index-CZ-phCCc.js:337:98274)
+    at _d (index-CZ-phCCc.js:38:16998)
+    at vv (index-CZ-phCCc.js:40:43963)
+    at hv (index-CZ-phCCc.js:40:39727)
+    at B1 (index-CZ-phCCc.js:40:39655)
+    at Xa (index-CZ-phCCc.js:40:39508)
+    at Cu (index-CZ-phCCc.js:40:35875)
+    at Gp (index-CZ-phCCc.js:40:36678)
+    at wr (index-CZ-phCCc.js:38:3274)
+    at index-CZ-phCCc.js:40:34207
+fu @ index-CZ-phCCc.js:40Understand this error
+index-CZ-phCCc.js:293 ErrorBoundary caught an error: Cannot access 'c' before initialization
+componentDidCatch @ index-CZ-phCCc.js:293Understand this error
+index-CZ-phCCc.js:293 Component stack: 
+    at iT (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CZ-phCCc.js:337:97857)
+    at _t (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CZ-phCCc.js:48:3201)
+    at Ib (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CZ-phCCc.js:48:4017)
+    at oP (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CZ-phCCc.js:337:164959)
+    at QE (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CZ-phCCc.js:293:57447)
+    at u (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CZ-phCCc.js:48:45834)
+    at ux (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CZ-phCCc.js:293:50423)
+    at KE (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CZ-phCCc.js:293:56919)
+    at eN (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CZ-phCCc.js:48:40185)
+    at ZE (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CZ-phCCc.js:293:70899)
+    at sP
+componentDidCatch @ index-CZ-phCCc.js:293Understand this error
+index-CZ-phCCc.js:337 [PersistentWS] Manual disconnect requested
+index-CZ-phCCc.js:337 [StableWS] Component unmounting, cleaning up
+sw.js?v=1754721525270&r=0.5392373781685531:164 [SW] Fetching /favicon.ico from network
+index-CZ-phCCc.js:337 [StableWS] Connection #1 closed
+index-CZ-phCCc.js:337 [StableWS] Close code: 1000, reason: "Component unmount"
+index-CZ-phCCc.js:337 [StableWS] Was clean: true
+index-CZ-phCCc.js:337 [PersistentWS] Connection closed
+index-CZ-phCCc.js:337 [PersistentWS] Close code: 1000
+index-CZ-phCCc.js:337 [PersistentWS] Close reason: Manual disconnect
+index-CZ-phCCc.js:337 [PersistentWS] Was clean: true
+index-CZ-phCCc.js:337 [PersistentWS] Manual close: true
+sw.js?v=1754721525270&r=0.5392373781685531:64 [SW] BYPASSING CACHE for JS file: https://mok-sports-draft-mokfantasysport.replit.app/manifest.json
+sw.js?v=1754721525270&r=0.5392373781685531:164 [SW] Fetching /main from network
+sw.js?v=1754721525270&r=0.5392373781685531:164 [SW] Fetching /assets/index-C2a5BCaa.css from network

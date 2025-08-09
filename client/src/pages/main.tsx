@@ -86,10 +86,10 @@ export default function MainPage() {
 
   console.log('Main page debug:', {
     user: user?.username,
-    leagues: leagues.length,
+    leagues: leagues?.length || 0,
     selectedLeague,
-    stableTeams: stableTeams.length,
-    userTeams: userTeams.length
+    stableTeams: stableTeams?.length || 0,
+    userTeams: userTeams?.length || 0
   });
 
   // Convert stable teams to display format with game mechanics
