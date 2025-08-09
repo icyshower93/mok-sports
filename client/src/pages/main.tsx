@@ -141,285 +141,303 @@ export default function MainPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="max-w-7xl mx-auto p-4 space-y-6">
+      <div className="max-w-4xl mx-auto px-4 py-6 space-y-6">
         
-        {/* Header */}
+        {/* Mobile-First Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold">Mok Sports</h1>
-            <p className="text-muted-foreground">Week {selectedWeek} • NFL Regular Season</p>
+            <h1 className="text-2xl md:text-3xl font-bold">Mok Sports</h1>
+            <p className="text-sm text-muted-foreground">Week {selectedWeek} • {isLockWindowOpen ? 'Lock Window Open' : 'NFL Regular Season'}</p>
           </div>
           <Button 
             variant="outline" 
+            size="sm"
             onClick={() => navigate('/dashboard')}
           >
-            <Users className="w-4 h-4 mr-2" />
-            Leagues
+            <Users className="w-4 h-4 md:mr-2" />
+            <span className="hidden md:inline">Leagues</span>
           </Button>
         </div>
 
-        {/* Lock Status Banner */}
+        {/* Lock Window Priority Section */}
         {isLockWindowOpen && (
-          <Card className="bg-gradient-to-r from-green-50 to-blue-50 dark:from-green-950/20 dark:to-blue-950/20 border-green-200 dark:border-green-800">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-full">
-                    <Clock className="w-5 h-5 text-green-600 dark:text-green-400" />
-                  </div>
-                  <div>
-                    <div className="font-semibold text-green-800 dark:text-green-200">
-                      Lock Window Open
+          <div className="space-y-4">
+            <Card className="bg-gradient-to-r from-green-50 to-blue-50 dark:from-green-950/20 dark:to-blue-950/20 border-green-200 dark:border-green-800">
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-full">
+                      <Clock className="w-5 h-5 text-green-600 dark:text-green-400" />
                     </div>
-                    <div className="text-sm text-green-600 dark:text-green-400">
-                      Deadline: {lockDeadline.toLocaleDateString()} at 8:20 PM ET
+                    <div>
+                      <div className="font-semibold text-green-800 dark:text-green-200">
+                        Lock Deadline
+                      </div>
+                      <div className="text-sm text-green-600 dark:text-green-400">
+                        {lockDeadline.toLocaleDateString()} at 8:20 PM ET
+                      </div>
                     </div>
                   </div>
                 </div>
-                <Button className="bg-green-600 hover:bg-green-700 text-white">
-                  <Lock className="w-4 h-4 mr-2" />
-                  Lock Now
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        )}
+              </CardContent>
+            </Card>
 
-        <div className="grid lg:grid-cols-3 gap-6">
-          
-          {/* Main Content */}
-          <div className="lg:col-span-2 space-y-6">
-            
-            {/* Your Stable */}
+            {/* Your Teams - Lock Focus Mode */}
             <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Shield className="w-5 h-5" />
-                  <span>Your Stable</span>
-                </CardTitle>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg">Choose Your Lock for Week {selectedWeek}</CardTitle>
+                <p className="text-sm text-muted-foreground">Select one team to lock for bonus points</p>
               </CardHeader>
-              <CardContent>
-                <div className="grid gap-4">
-                  {mockUserTeams.map((team) => (
-                    <div 
-                      key={team.nflTeam.id}
-                      className={`flex items-center justify-between p-4 rounded-lg border transition-colors ${
-                        team.isBye ? 'bg-muted/50 opacity-75' : 'bg-card hover:bg-accent/50'
-                      }`}
+              <CardContent className="space-y-3">
+                {mockUserTeams.filter(team => !team.isBye && team.locksRemaining > 0).map((team) => (
+                  <div 
+                    key={team.nflTeam.id}
+                    className="flex items-center justify-between p-4 rounded-lg border bg-card hover:bg-accent/50 transition-colors"
+                  >
+                    <div className="flex items-center space-x-3">
+                      <TeamLogo 
+                        logoUrl={team.nflTeam.logoUrl}
+                        teamCode={team.nflTeam.code}
+                        teamName={team.nflTeam.name}
+                        size="lg"
+                        className="w-10 h-10 md:w-12 md:h-12"
+                      />
+                      <div>
+                        <div className="font-semibold">
+                          {team.nflTeam.city} {team.nflTeam.name}
+                        </div>
+                        <div className="text-sm text-muted-foreground">
+                          {team.upcomingOpponent} • {team.locksRemaining} locks left
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <Button 
+                      size="lg"
+                      className="min-h-[44px] px-6"
                     >
-                      <div className="flex items-center space-x-4">
+                      <Lock className="w-4 h-4 mr-2" />
+                      Lock
+                    </Button>
+                  </div>
+                ))}
+                
+                {/* Teams with no locks remaining */}
+                {mockUserTeams.filter(team => !team.isBye && team.locksRemaining === 0).length > 0 && (
+                  <div className="pt-2">
+                    <p className="text-xs text-muted-foreground mb-2">No locks remaining:</p>
+                    {mockUserTeams.filter(team => !team.isBye && team.locksRemaining === 0).map((team) => (
+                      <div 
+                        key={team.nflTeam.id}
+                        className="flex items-center justify-between p-3 rounded-lg bg-muted/50 opacity-60"
+                      >
+                        <div className="flex items-center space-x-3">
+                          <TeamLogo 
+                            logoUrl={team.nflTeam.logoUrl}
+                            teamCode={team.nflTeam.code}
+                            teamName={team.nflTeam.name}
+                            size="sm"
+                            className="w-8 h-8"
+                          />
+                          <div>
+                            <div className="font-medium text-sm">
+                              {team.nflTeam.city} {team.nflTeam.name}
+                            </div>
+                            <div className="text-xs text-muted-foreground">
+                              {team.upcomingOpponent}
+                            </div>
+                          </div>
+                        </div>
+                        <Badge variant="secondary" className="text-xs">
+                          <Unlock className="w-3 h-3 mr-1" />
+                          Used
+                        </Badge>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Bye Week Teams */}
+                {mockUserTeams.filter(team => team.isBye).length > 0 && (
+                  <div className="pt-2">
+                    <p className="text-xs text-muted-foreground mb-2">On bye week:</p>
+                    {mockUserTeams.filter(team => team.isBye).map((team) => (
+                      <div 
+                        key={team.nflTeam.id}
+                        className="flex items-center space-x-3 p-3 rounded-lg bg-muted/30"
+                      >
                         <TeamLogo 
                           logoUrl={team.nflTeam.logoUrl}
                           teamCode={team.nflTeam.code}
                           teamName={team.nflTeam.name}
-                          size="lg"
-                          className="w-12 h-12"
+                          size="sm"
+                          className="w-8 h-8 opacity-50"
                         />
                         <div>
-                          <div className="font-semibold text-lg">
+                          <div className="font-medium text-sm opacity-75">
                             {team.nflTeam.city} {team.nflTeam.name}
                           </div>
-                          <div className="text-sm text-muted-foreground">
-                            {team.isBye ? 'BYE WEEK' : team.upcomingOpponent}
+                          <div className="text-xs text-muted-foreground">
+                            BYE WEEK
                           </div>
-                          {team.weeklyRecord && (
-                            <div className="text-xs text-muted-foreground">
-                              Season: {team.weeklyRecord}
-                            </div>
-                          )}
                         </div>
                       </div>
-                      
-                      <div className="flex items-center space-x-3">
-                        {/* Lock Status */}
-                        <div className="text-right">
-                          <div className="text-sm font-medium">
-                            {team.locksRemaining} locks left
-                          </div>
-                          {team.lockAndLoadAvailable && (
-                            <Badge variant="outline" className="text-xs">
-                              <Zap className="w-3 h-3 mr-1" />
-                              L&L Ready
-                            </Badge>
-                          )}
-                        </div>
-                        
-                        {/* Lock Button */}
-                        {!team.isBye && isLockWindowOpen && (
-                          <Button 
-                            size="sm"
-                            variant={team.locksRemaining > 0 ? "default" : "secondary"}
-                            disabled={team.locksRemaining === 0}
-                          >
-                            {team.locksRemaining > 0 ? (
-                              <>
-                                <Lock className="w-4 h-4 mr-1" />
-                                Lock
-                              </>
-                            ) : (
-                              <>
-                                <Unlock className="w-4 h-4 mr-1" />
-                                Used
-                              </>
-                            )}
-                          </Button>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* This Week's Games */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Calendar className="w-5 h-5" />
-                  <span>This Week's Games</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-center text-muted-foreground py-8">
-                  <Activity className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                  <p>Game schedule will load here</p>
-                  <p className="text-sm">Show your teams' games with live scores</p>
-                </div>
+                    ))}
+                  </div>
+                )}
               </CardContent>
             </Card>
           </div>
+        )}
 
-          {/* Sidebar */}
-          <div className="space-y-6">
-            
-            {/* Weekly Skins */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <DollarSign className="w-5 h-5" />
-                  <span>Weekly Skins</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-center space-y-2">
-                  <div className="text-3xl font-bold text-green-600">
-                    ${currentSkinsPrize}
-                  </div>
-                  <div className="text-sm text-muted-foreground">
-                    {isSkinsStacked ? 'Stacked Prize' : 'This Week'}
-                  </div>
-                  {isSkinsStacked && (
-                    <Badge variant="outline" className="text-xs">
-                      <TrendingUp className="w-3 h-3 mr-1" />
-                      3 Weeks Stacked
-                    </Badge>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* League Standings */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Trophy className="w-5 h-5" />
-                  <span>League Standings</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {[
-                    { name: "You", points: 12.5, position: 1 },
-                    { name: "Alex", points: 11.0, position: 2 },
-                    { name: "Jordan", points: 10.5, position: 3 },
-                    { name: "Casey", points: 9.0, position: 4 },
-                    { name: "Taylor", points: 8.5, position: 5 },
-                    { name: "Morgan", points: 7.0, position: 6 }
-                  ].map((player) => (
-                    <div key={player.name} className="flex items-center justify-between">
-                      <div className="flex items-center space-x-2">
-                        <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
-                          player.position === 1 ? 'bg-yellow-500 text-yellow-50' :
-                          player.position === 2 ? 'bg-gray-400 text-gray-50' :
-                          player.position === 3 ? 'bg-amber-600 text-amber-50' :
-                          'bg-muted text-muted-foreground'
-                        }`}>
-                          {player.position}
-                        </div>
-                        <span className={player.name === "You" ? "font-semibold" : ""}>
-                          {player.name}
-                        </span>
+        {/* Non-Lock Window: Full Team View */}
+        {!isLockWindowOpen && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center space-x-2">
+                <Shield className="w-5 h-5" />
+                <span>Your Stable</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {mockUserTeams.map((team) => (
+                <div 
+                  key={team.nflTeam.id}
+                  className={`flex items-center justify-between p-4 rounded-lg border transition-colors ${
+                    team.isBye ? 'bg-muted/50 opacity-75' : 'bg-card'
+                  }`}
+                >
+                  <div className="flex items-center space-x-3">
+                    <TeamLogo 
+                      logoUrl={team.nflTeam.logoUrl}
+                      teamCode={team.nflTeam.code}
+                      teamName={team.nflTeam.name}
+                      size="lg"
+                      className="w-10 h-10 md:w-12 md:h-12"
+                    />
+                    <div>
+                      <div className="font-semibold">
+                        {team.nflTeam.city} {team.nflTeam.name}
                       </div>
-                      <span className="font-mono text-sm">
-                        {player.points.toFixed(1)}
+                      <div className="text-sm text-muted-foreground">
+                        {team.isBye ? 'BYE WEEK' : team.upcomingOpponent}
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="text-right">
+                    <div className="text-sm font-medium">
+                      {team.locksRemaining} locks left
+                    </div>
+                    {team.lockAndLoadAvailable && (
+                      <Badge variant="outline" className="text-xs mt-1">
+                        <Zap className="w-3 h-3 mr-1" />
+                        L&L Ready
+                      </Badge>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Bottom Navigation Cards - Mobile Optimized */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          
+          {/* Current Standings */}
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center space-x-2 text-lg">
+                <Trophy className="w-5 h-5" />
+                <span>League Standings</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2">
+                {[
+                  { name: "You", points: 12.5, position: 1 },
+                  { name: "Alex", points: 11.0, position: 2 },
+                  { name: "Jordan", points: 10.5, position: 3 }
+                ].map((player) => (
+                  <div key={player.name} className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
+                        player.position === 1 ? 'bg-yellow-500 text-yellow-50' :
+                        player.position === 2 ? 'bg-gray-400 text-gray-50' :
+                        'bg-amber-600 text-amber-50'
+                      }`}>
+                        {player.position}
+                      </div>
+                      <span className={player.name === "You" ? "font-semibold" : ""}>
+                        {player.name}
                       </span>
                     </div>
-                  ))}
+                    <span className="font-mono text-sm">
+                      {player.points.toFixed(1)}
+                    </span>
+                  </div>
+                ))}
+                <Button variant="outline" size="sm" className="w-full mt-3">
+                  View Full Standings
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Weekly Prize */}
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center space-x-2 text-lg">
+                <DollarSign className="w-5 h-5" />
+                <span>Weekly Skins</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-center space-y-2">
+                <div className="text-3xl font-bold text-green-600">
+                  ${currentSkinsPrize}
                 </div>
-              </CardContent>
-            </Card>
-
-            {/* Quick Actions */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Target className="w-5 h-5" />
-                  <span>Quick Actions</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2">
-                <Button variant="outline" className="w-full justify-start">
-                  <Star className="w-4 h-4 mr-2" />
-                  Free Agent Market
-                </Button>
-                <Button variant="outline" className="w-full justify-start">
-                  <Award className="w-4 h-4 mr-2" />
-                  Lock History
-                </Button>
-                <Button variant="outline" className="w-full justify-start">
-                  <Medal className="w-4 h-4 mr-2" />
-                  Season Prizes
-                </Button>
-              </CardContent>
-            </Card>
-
-            {/* Recent Activity */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Activity className="w-5 h-5" />
-                  <span>Recent Activity</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3 text-sm">
-                  <div className="flex items-start space-x-2">
-                    <div className="w-2 h-2 bg-green-500 rounded-full mt-2 flex-shrink-0"></div>
-                    <div>
-                      <span className="font-medium">Alex</span> locked <span className="font-medium">Ravens</span> for Week {selectedWeek}
-                      <div className="text-xs text-muted-foreground">2 hours ago</div>
-                    </div>
-                  </div>
-                  <div className="flex items-start space-x-2">
-                    <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
-                    <div>
-                      <span className="font-medium">Jordan</span> traded for <span className="font-medium">Dolphins</span>
-                      <div className="text-xs text-muted-foreground">5 hours ago</div>
-                    </div>
-                  </div>
-                  <div className="flex items-start space-x-2">
-                    <div className="w-2 h-2 bg-yellow-500 rounded-full mt-2 flex-shrink-0"></div>
-                    <div>
-                      <span className="font-medium">You</span> won Week {selectedWeek - 1} skins ($200)
-                      <div className="text-xs text-muted-foreground">3 days ago</div>
-                    </div>
-                  </div>
+                <div className="text-sm text-muted-foreground">
+                  {isSkinsStacked ? 'Stacked Prize' : 'This Week'}
                 </div>
-              </CardContent>
-            </Card>
-
-          </div>
+                {isSkinsStacked && (
+                  <Badge variant="outline" className="text-xs">
+                    <TrendingUp className="w-3 h-3 mr-1" />
+                    3 Weeks Stacked
+                  </Badge>
+                )}
+                <Button variant="outline" size="sm" className="w-full mt-3">
+                  Prize History
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
         </div>
+
+        {/* Quick Actions - Mobile Friendly */}
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-lg">Quick Actions</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 gap-3">
+              <Button variant="outline" className="justify-start min-h-[44px]">
+                <Star className="w-4 h-4 mr-3" />
+                Free Agent Market
+              </Button>
+              <Button variant="outline" className="justify-start min-h-[44px]">
+                <Award className="w-4 h-4 mr-3" />
+                Lock History
+              </Button>
+              <Button variant="outline" className="justify-start min-h-[44px]">
+                <Calendar className="w-4 h-4 mr-3" />
+                This Week's Games
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
       </div>
     </div>
   );
