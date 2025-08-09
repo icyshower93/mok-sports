@@ -101,7 +101,7 @@ function AppContent() {
         <Route path="/league" component={LeaguePage} />
         <Route path="/scores" component={ScoresPage} />
         <Route path="/more" component={MorePage} />
-        <Route path="/profile" component={ProfilePage} />
+
         <Route component={NotFound} />
       </Switch>
       {!isPWA && window.innerWidth >= 768 && <DesktopNotice />}

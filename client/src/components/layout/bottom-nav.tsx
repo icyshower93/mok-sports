@@ -40,11 +40,6 @@ const navItems: NavItem[] = [
     icon: Activity
   },
   {
-    path: "/profile",
-    label: "Profile",
-    icon: Star
-  },
-  {
     path: "/more",
     label: "More",
     icon: MoreHorizontal
@@ -56,7 +51,7 @@ export function BottomNav() {
   
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-t border-border">
-      <div className="grid grid-cols-6 h-16 max-w-lg mx-auto">
+      <div className="grid grid-cols-5 h-20 max-w-lg mx-auto">
         {navItems.map((item) => {
           const isActive = item.isActive ? item.isActive(location) : location === item.path;
           const IconComponent = item.icon;
@@ -67,7 +62,7 @@ export function BottomNav() {
               onClick={() => setLocation(item.path)}
               className={cn(
                 "flex flex-col items-center justify-center space-y-1 text-xs font-medium transition-colors",
-                "min-h-[44px] px-1", // PWA touch target minimum
+                "min-h-[60px] px-2", // Enhanced PWA touch target
                 isActive 
                   ? "text-primary" 
                   : "text-muted-foreground hover:text-foreground"
@@ -75,7 +70,7 @@ export function BottomNav() {
             >
               <IconComponent 
                 className={cn(
-                  "w-5 h-5 transition-colors",
+                  "w-7 h-7 transition-colors",
                   isActive ? "text-primary" : "text-muted-foreground"
                 )} 
               />

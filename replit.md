@@ -8,8 +8,8 @@ Mok Sports is a fantasy sports application that redefines traditional fantasy le
 - Implemented bottom navigation bar with 5 core tabs following modern fantasy app patterns
 - Renamed "My Teams" to "Stable" to better represent the unique 5-team concept
 - Integrated free agent trading functionality directly into the Stable tab using a tabbed interface
-- Navigation: Home, Stable, League, Scores, Profile, More
-- All navigation follows PWA best practices with 44px minimum touch targets
+- Navigation: Home, Stable, League, Scores, More
+- Enhanced PWA design with 60px touch targets, 28px icons, and 80px tall navigation bar
 - Fixed team logo loading issues by using correct path structure (/images/nfl/team_logos/)
 
 ## Game Mechanics Summary
