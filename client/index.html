@@ -55,12 +55,25 @@
         user-select: text;
       }
       
-      /* Hide Replit development banner */
+      /* iOS PWA Safe Area Support */
+      body {
+        padding-top: env(safe-area-inset-top);
+        padding-bottom: env(safe-area-inset-bottom);
+        padding-left: env(safe-area-inset-left);
+        padding-right: env(safe-area-inset-right);
+      }
+      
+      /* Hide ALL banners including Replit development banner in PWA */
       iframe[src*="replit"],
       div[id*="replit-banner"],
       div[class*="replit-banner"],
       .replit-dev-banner,
-      [data-replit-banner] {
+      [data-replit-banner],
+      /* Additional selectors for stubborn banners */
+      div[style*="position: fixed"][style*="top: 0"],
+      div[style*="position: fixed"][style*="z-index: 999"],
+      div[style*="background-color: rgb("],
+      div[style*="background: rgb("] {
         display: none !important;
         visibility: hidden !important;
         opacity: 0 !important;
@@ -68,7 +81,34 @@
         max-height: 0 !important;
         position: absolute !important;
         top: -9999px !important;
-        z-index: -1 !important;
+        left: -9999px !important;
+        z-index: -999999 !important;
+        pointer-events: none !important;
+        transform: translateY(-100vh) !important;
+      }
+      
+      /* Specific iOS PWA banner removal */
+      @supports (-webkit-appearance: none) {
+        /* Target WebKit browsers (Safari/iOS) */
+        div[style*="top: 0"][style*="width: 100%"],
+        div[style*="position: fixed"][style*="height:"],
+        .webkit-banner,
+        [class*="banner"][style*="top"] {
+          display: none !important;
+        }
+      }
+      
+      /* Force hide any green colored top bars */
+      div[style*="background-color: green"],
+      div[style*="background: green"],
+      div[style*="background-color: #0"],
+      div[style*="background-color: #1"],
+      div[style*="background-color: #2"],
+      div[style*="background-color: #3"],
+      div[style*="background-color: #4"],
+      div[style*="background-color: #5"] {
+        display: none !important;
+        visibility: hidden !important;
       }
     </style>
     <meta name="description" content="Draft teams, not players. Fantasy sports reimagined with Mok Sports - the ultimate team-based fantasy experience." />
@@ -97,16 +137,18 @@
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
     <script>
-      // Remove Replit development banner
-      function removeReplitBanner() {
+      // Enhanced banner removal for iOS PWA
+      function removeAllBanners() {
         const selectors = [
           'iframe[src*="replit"]',
           'div[id*="replit-banner"]',
           'div[class*="replit-banner"]',
           '.replit-dev-banner',
           '[data-replit-banner]',
-          'div[style*="position: fixed"][style*="top: 0"][style*="background"]',
-          'div[style*="z-index: 999"]'
+          'div[style*="position: fixed"][style*="top: 0"]',
+          'div[style*="z-index: 999"]',
+          'div[style*="z-index: 9999"]',
+          '[style*="position: fixed"][style*="top: 0"]'
         ];
         
         selectors.forEach(selector => {
@@ -116,30 +158,68 @@
           });
         });
         
-        // Also check for any green sticky bars at the top
+        // Enhanced check for any top banners, especially green ones
         const allDivs = document.querySelectorAll('div');
         allDivs.forEach(div => {
           const style = window.getComputedStyle(div);
-          if (style.position === 'fixed' && 
-              style.top === '0px' && 
-              (style.backgroundColor.includes('green') || 
-               style.background.includes('green') ||
-               div.innerHTML.toLowerCase().includes('replit'))) {
-            div.remove();
+          const rect = div.getBoundingClientRect();
+          
+          // Remove if it's a fixed positioned element at the top
+          if (style.position === 'fixed' && rect.top <= 50) {
+            // Check if it's a banner-like element
+            if (rect.width > window.innerWidth * 0.8 || // Wide element
+                style.backgroundColor.includes('green') || 
+                style.background.includes('green') ||
+                style.backgroundColor.includes('rgb(') ||
+                div.innerHTML.toLowerCase().includes('replit') ||
+                div.innerHTML.toLowerCase().includes('banner')) {
+              div.remove();
+              console.log('Removed banner element:', div);
+            }
           }
         });
+        
+        // iOS PWA specific: Remove elements in the safe area
+        if (window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches) {
+          const topElements = document.querySelectorAll('*');
+          topElements.forEach(el => {
+            const rect = el.getBoundingClientRect();
+            if (rect.top <= 44 && rect.height < 100 && rect.width > window.innerWidth * 0.5) {
+              const style = window.getComputedStyle(el);
+              if (style.position === 'fixed' || style.position === 'absolute') {
+                el.remove();
+                console.log('Removed PWA safe area banner:', el);
+              }
+            }
+          });
+        }
       }
       
-      // Run immediately and on DOM changes
-      removeReplitBanner();
-      setTimeout(removeReplitBanner, 100);
-      setTimeout(removeReplitBanner, 500);
-      setTimeout(removeReplitBanner, 1000);
+      // Run immediately and repeatedly for PWA
+      removeAllBanners();
+      setTimeout(removeAllBanners, 100);
+      setTimeout(removeAllBanners, 500);
+      setTimeout(removeAllBanners, 1000);
+      setTimeout(removeAllBanners, 2000);
+      
+      // Continuous monitoring for iOS PWA
+      setInterval(removeAllBanners, 5000);
       
       // Watch for new elements
       if (typeof MutationObserver !== 'undefined') {
-        const observer = new MutationObserver(removeReplitBanner);
+        const observer = new MutationObserver(removeAllBanners);
         observer.observe(document.body, { childList: true, subtree: true });
+      }
+      
+      // iOS PWA specific event listeners
+      if (window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches) {
+        window.addEventListener('focus', removeAllBanners);
+        window.addEventListener('pageshow', removeAllBanners);
+        document.addEventListener('visibilitychange', () => {
+          if (!document.hidden) {
+            setTimeout(removeAllBanners, 100);
+          }
+        });
       }
     </script>
   </body>

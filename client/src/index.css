@@ -249,12 +249,15 @@ input, textarea, [contenteditable="true"], p, span, h1, h2, h3, h4, h5, h6 {
   --tw-ring-color: var(--fantasy-green);
 }
 
-/* Hide Replit development banner completely */
+/* Hide Replit development banner completely - Enhanced for iOS PWA */
 iframe[src*="replit"],
 div[id*="replit-banner"],
 div[class*="replit-banner"],
 .replit-dev-banner,
-[data-replit-banner] {
+[data-replit-banner],
+div[style*="position: fixed"][style*="top: 0"],
+div[style*="position: fixed"][style*="z-index: 999"],
+[style*="position: fixed"][style*="top: 0"] {
   display: none !important;
   visibility: hidden !important;
   opacity: 0 !important;
@@ -262,5 +265,19 @@ div[class*="replit-banner"],
   max-height: 0 !important;
   position: absolute !important;
   top: -9999px !important;
-  z-index: -1 !important;
+  left: -9999px !important;
+  z-index: -999999 !important;
+  pointer-events: none !important;
+  transform: translateY(-100vh) !important;
+}
+
+/* iOS PWA specific banner hiding */
+@supports (-webkit-touch-callout: none) {
+  /* iOS Safari specific */
+  div[style*="background-color: green"],
+  div[style*="background: green"],
+  div[style*="background-color: rgb("],
+  [class*="banner"][style*="position: fixed"] {
+    display: none !important;
+  }
 }
