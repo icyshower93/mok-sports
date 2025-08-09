@@ -1,6 +1,16 @@
 # Overview
 
-Mok Sports is a fantasy sports application that redefines traditional fantasy leagues by enabling users to draft entire teams instead of individual players. It features a modern web interface, a robust backend, and integrates Google OAuth for authentication. The project aims to provide a unique and engaging fantasy sports experience with a focus on real-time drafting, persistent state, and a highly available system.
+Mok Sports is a fantasy sports application that redefines traditional fantasy leagues by enabling users to draft entire NFL teams instead of individual players. The platform features unique mechanics including weekly "locks" for bonus points, "Lock and Load" high-risk/high-reward plays, dynamic free agent trading, and weekly "skins" prizes that can stack when tied. It features a modern web interface, a robust backend, and integrates Google OAuth for authentication. The project aims to provide a unique and engaging fantasy sports experience with a focus on real-time drafting, persistent state, and a highly available system.
+
+## Game Mechanics Summary
+- **6-player leagues** with **5 NFL teams** each (30/32 teams drafted, 2 free agents)
+- **Snake draft** with division restrictions (max 1 team per division unless unavoidable)
+- **Weekly scoring**: Wins (+1), Ties (+0.5), Blowouts (+1), Shutouts (+1), Weekly high (+1), Weekly low (-1)
+- **Lock system**: Pick 1 team to lock weekly for +1 bonus (up to 4 times per team per season)
+- **Lock and Load**: Once per team per season, +2 for win, -1 for loss
+- **Trading**: 1 free agent trade per week (Monday night to Thursday morning)
+- **Skins**: Weekly cash prizes that stack when tied
+- **Season prizes**: Most points, Super Bowl winner, most correct locks
 
 # User Preferences
 

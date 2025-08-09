@@ -1,0 +1,100 @@
+Mok Sports — How to Play
+1. League Setup & Draft
+Join a 6-player league and draft 5 NFL teams each.
+
+The draft pool has all 32 NFL teams. 30 teams are drafted, 2 remain as free agents.
+
+Draft order is randomized and uses a snake format.
+
+You can’t pick more than one team from the same division unless it’s unavoidable.
+
+Trading draft picks is not allowed — trades happen only after the draft using free agent teams.
+
+2. Weekly Gameplay & Scoring
+Each week, your 5 teams play their real NFL games (not all teams play every week).
+
+Your teams earn Mok points based on game outcomes:
+
+Win: +1 point
+
+Tie: +0.5 point
+
+Blowout: +1 point (win by 20+ points)
+
+Shutout: +1 point (hold opponent to 0 points)
+
+Highest scoring team that week: +1 point
+
+Lowest scoring team that week: –1 point per team tied for lowest
+
+Points add up across all your teams each week.
+
+If a team has a bye or their game is canceled, they score 0 points (no penalty).
+
+3. Locks & Lock and Load — Boost Your Score!
+Before Thursday’s first game each week, pick one team from your stable to “Lock.”
+
+Locked teams must have a game that week.
+
+If your locked team wins, you earn +1 bonus lock point. Ties or losses get no bonus.
+
+You can lock each team up to 4 times per season.
+
+Once per team per season, you can “Lock and Load” instead of a normal lock.
+
+Lock and Load means +2 bonus points for a win, –1 point if they lose, and 0 points for a tie.
+
+Lock and Load stacks on your regular lock — you must lock to lock and load.
+
+Locks and Lock and Load usage stay with the team even if traded.
+
+Miss the lock deadline? No lock points that week. Locks open again Monday night after the last game.
+
+4. Trades & Free Agents — Switch Up Your Stable
+You can trade one team from your stable for one of the 2 free agent teams each week.
+
+Trades only happen between Monday night (after the last game) and Thursday morning (before the first game).
+
+You can only make one trade per week.
+
+When you pick up a free agent team, you must lock that team for the upcoming week.
+
+Keep your free agent team for at least one week before trading again.
+
+Locks and Lock and Load availability move with teams; if a team with no locks left goes to free agents, it resets to 1 lock for the new owner.
+
+5. Payouts & Skins — Win Real Rewards
+Each week, the player with the highest total Mok points wins a “skin” (a cash prize).
+
+If there’s a tie for the weekly win, no skins are awarded and the prize rolls over — doubling the next week’s payout. Skins can keep stacking this way!
+
+Season-long rewards go to:
+
+Player with the most Mok points over the entire regular season.
+
+Player with the Super Bowl-winning team in their stable at season’s end.
+
+Player with the most correct locks (including Lock and Load) throughout the season.
+
+Ties for season prizes split the payout evenly.
+
+6. Season & Timing
+The season follows the NFL’s regular season schedule.
+
+Mok Sports scoring and payouts end after the regular season; playoffs don’t count except for the Super Bowl prize.
+
+All deadlines and game times follow the NFL schedule.
+
+The Mok Sports system enforces rules, lock deadlines, and trade windows automatically.
+
+Quick Tips
+Always lock a team before Thursday’s first game to earn bonus points!
+
+Use Lock and Load wisely — it’s high risk, high reward.
+
+Keep an eye on free agents — trading strategically can boost your stable.
+
+Remember, low-scoring teams hurt your total Mok points! Avoid teams likely to score lowest.
+
+Stacking skins can lead to big payouts, so plan your locks carefully.
+
