@@ -61,7 +61,7 @@ export default function MainPage() {
         city: "Kansas City",
         conference: "AFC",
         division: "West",
-        logoUrl: "/images/nfl-team-logos/KC.png"
+        logoUrl: "/images/nfl/team_logos/KC.png"
       },
       locksRemaining: 4,
       lockAndLoadAvailable: true,
@@ -77,7 +77,7 @@ export default function MainPage() {
         city: "San Francisco",
         conference: "NFC",
         division: "West",
-        logoUrl: "/images/nfl-team-logos/SF.png"
+        logoUrl: "/images/nfl/team_logos/SF.png"
       },
       locksRemaining: 3,
       lockAndLoadAvailable: true,
@@ -93,7 +93,7 @@ export default function MainPage() {
         city: "Buffalo",
         conference: "AFC",
         division: "East",
-        logoUrl: "/images/nfl-team-logos/BUF.png"
+        logoUrl: "/images/nfl/team_logos/BUF.png"
       },
       locksRemaining: 4,
       lockAndLoadAvailable: false,
@@ -109,7 +109,7 @@ export default function MainPage() {
         city: "Philadelphia",
         conference: "NFC",
         division: "East",
-        logoUrl: "/images/nfl-team-logos/PHI.png"
+        logoUrl: "/images/nfl/team_logos/PHI.png"
       },
       locksRemaining: 2,
       lockAndLoadAvailable: true,
@@ -125,7 +125,7 @@ export default function MainPage() {
         city: "Los Angeles", 
         conference: "NFC",
         division: "West",
-        logoUrl: "/images/nfl-team-logos/LAR.png"
+        logoUrl: "/images/nfl/team_logos/LAR.png"
       },
       locksRemaining: 4,
       lockAndLoadAvailable: true,
