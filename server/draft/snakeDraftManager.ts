@@ -193,18 +193,43 @@ export class SnakeDraftManager {
   }
 
   /**
-   * Starts the draft and begins the first pick timer
+   * Starts the draft with a 10-second preparation countdown
    */
   async startDraft(draftId: string): Promise<DraftState> {
-    await this.storage.startDraft(draftId);
+    // First set draft to starting phase
+    await this.storage.setDraftStatus(draftId, 'starting');
     const draft = await this.storage.getDraft(draftId);
     
     if (!draft) {
       throw new Error('Draft not found');
     }
 
-    // Start timer for first pick
-    await this.startPickTimer(draftId, draft.draftOrder[0], 1, 1);
+    console.log(`🚀 [Draft Start] Starting 10-second countdown for draft ${draftId}`);
+
+    // Set 10-second preparation countdown
+    await this.redisStateManager.setTimer(draftId, 'preparation', 10);
+    
+    // Set timeout to transition to active draft after countdown
+    setTimeout(async () => {
+      try {
+        console.log(`✅ [Draft Start] Countdown complete, activating draft ${draftId}`);
+        await this.storage.startDraft(draftId); // This sets status to 'active'
+        
+        // Start timer for first pick
+        await this.startPickTimer(draftId, draft.draftOrder[0], 1, 1);
+        
+        // Broadcast the state change
+        if (this.webSocketManager) {
+          const newState = await this.getDraftState(draftId);
+          this.webSocketManager.broadcastToRoom(draftId, {
+            type: 'draft_started',
+            state: newState
+          });
+        }
+      } catch (error) {
+        console.error(`❌ [Draft Start] Error activating draft ${draftId}:`, error);
+      }
+    }, 10000);
     
     return await this.getDraftState(draftId);
   }
@@ -222,11 +247,11 @@ export class SnakeDraftManager {
 
     console.log(`🔍 [DraftState] Fresh database fetch - Round ${draft.currentRound}, Pick ${draft.currentPick}, Status: ${draft.status}`);
 
-    // Get timer data only for active drafts
+    // Get timer data for active drafts and starting countdown
     let timeRemaining = 0;
-    if (draft.status === 'active') {
+    if (draft.status === 'active' || draft.status === 'starting') {
       timeRemaining = await this.redisStateManager.getTimeRemaining(draftId);
-      console.log(`[DEBUG] Active draft timer lookup for draft ${draftId}: ${timeRemaining}s remaining`);
+      console.log(`[DEBUG] ${draft.status === 'starting' ? 'Starting countdown' : 'Active draft timer'} lookup for draft ${draftId}: ${timeRemaining}s remaining`);
     } else {
       console.log(`[DEBUG] Draft ${draftId} is ${draft.status}, skipping timer lookup`);
     }

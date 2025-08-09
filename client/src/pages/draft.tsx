@@ -762,6 +762,27 @@ export default function DraftPage() {
                           <span>Connected - real-time updates enabled</span>
                         </div>
                       </div>
+                  ) : state.draft.status === 'starting' ? (
+                    <div className="text-center space-y-3">
+                      <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
+                        <div className="text-green-700 dark:text-green-300 font-medium mb-2">
+                          🚀 Draft Starting!
+                        </div>
+                        <div className="text-sm text-green-600 dark:text-green-400 mb-3">
+                          Get ready, draft begins in...
+                        </div>
+                        
+                        {/* Countdown Display */}
+                        <div className="text-4xl font-bold text-green-600 dark:text-green-400 mb-2 font-mono">
+                          {formatTime(displayTime)}
+                        </div>
+                        
+                        <div className="flex items-center justify-center space-x-2 text-xs text-green-500 dark:text-green-400">
+                          <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                          <span>Prepare your picks!</span>
+                        </div>
+                      </div>
+                    </div>
                       
                       {/* Show start button if current user is creator */}
                       {user?.id === state.draft?.creatorId && (

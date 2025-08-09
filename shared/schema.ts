@@ -46,7 +46,7 @@ export const nflTeams = pgTable("nfl_teams", {
 export const drafts = pgTable("drafts", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   leagueId: varchar("league_id").notNull().references(() => leagues.id),
-  status: varchar("status", { length: 20 }).notNull().default("not_started"), // not_started, active, completed, paused
+  status: varchar("status", { length: 20 }).notNull().default("not_started"), // not_started, starting, active, completed, paused
   currentRound: integer("current_round").notNull().default(1),
   currentPick: integer("current_pick").notNull().default(1),
   totalRounds: integer("total_rounds").notNull().default(5),

@@ -43,6 +43,7 @@ export interface IStorage {
   updateDraftStatus(draftId: string, status: string): Promise<void>;
   updateDraftProgress(draftId: string, round: number, pick: number): Promise<void>;
   startDraft(draftId: string): Promise<void>;
+  setDraftStatus(draftId: string, status: string): Promise<void>;
   completeDraft(draftId: string): Promise<void>;
   
   // Draft picks methods
@@ -358,6 +359,12 @@ export class DatabaseStorage implements IStorage {
         status: 'active',
         startedAt: new Date()
       })
+      .where(eq(drafts.id, draftId));
+  }
+
+  async setDraftStatus(draftId: string, status: string): Promise<void> {
+    await db.update(drafts)
+      .set({ status })
       .where(eq(drafts.id, draftId));
   }
 
