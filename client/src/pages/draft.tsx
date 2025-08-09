@@ -432,8 +432,8 @@ export default function DraftPage() {
             </p>
 
             <div className="space-y-2">
-              <Button onClick={() => navigate('/dashboard')} variant="outline">
-                Return to Dashboard
+              <Button onClick={() => navigate('/')} variant="outline">
+                Return to Home
               </Button>
               <Button onClick={() => window.location.reload()}>
                 Try Again

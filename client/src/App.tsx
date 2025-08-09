@@ -86,7 +86,8 @@ function AppContent() {
     <>
       <Switch>
         <Route path="/login" component={LoginPage} />
-        <Route path="/" component={DashboardPage} />
+        <Route path="/" component={MainPage} />
+        <Route path="/dashboard" component={DashboardPage} />
         <Route path="/leagues" component={LeaguesPage} />
         <Route path="/league/waiting" component={LeagueWaiting} />
         <Route path="/draft/:draftId">
