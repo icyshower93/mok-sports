@@ -219,18 +219,16 @@ export default function MainPage() {
                               </div>
                             </div>
                             
-                            <div className="text-right flex-shrink-0 ml-4 min-w-[100px]">
-                              <div className="text-xs text-muted-foreground mb-1 whitespace-nowrap">
-                                {team.locksRemaining} locks left
+                            <div className="text-right flex-shrink-0 ml-4">
+                              <div className="text-xs text-muted-foreground mb-1">
+                                {team.locksRemaining} left
                               </div>
-                              <div className="h-6 flex items-center justify-end">
-                                {team.lockAndLoadAvailable && (
-                                  <Badge variant="outline" className="text-xs px-2 py-1 h-6 whitespace-nowrap">
-                                    <Zap className="w-3 h-3 mr-1 flex-shrink-0" />
-                                    L&L Ready
-                                  </Badge>
-                                )}
-                              </div>
+                              {team.lockAndLoadAvailable && (
+                                <Badge variant="outline" className="text-xs px-2 py-1">
+                                  <Zap className="w-3 h-3 mr-1" />
+                                  L&L
+                                </Badge>
+                              )}
                             </div>
                           </div>
                           
@@ -248,7 +246,7 @@ export default function MainPage() {
                               ) : (
                                 <>
                                   <Lock className="w-4 h-4 mr-2" />
-                                  Lock (+1)
+                                  Lock
                                 </>
                               )}
                             </Button>
@@ -264,11 +262,7 @@ export default function MainPage() {
                             )}
                           </div>
                           
-                          {team.lockAndLoadAvailable && !team.isLocked && (
-                            <div className="mt-2 text-xs text-muted-foreground text-center">
-                              Win: +2 points • Loss: -1 point
-                            </div>
-                          )}
+
                         </div>
                       </div>
                     ))}
