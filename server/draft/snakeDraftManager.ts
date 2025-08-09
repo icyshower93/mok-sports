@@ -4,14 +4,14 @@
  * Handles the core snake draft logic including:
  * - Draft order generation and snake pattern
  * - Turn management and auto-pick functionality
- * - Conference validation rules
+ * - Division validation rules (max 1 per division unless unavoidable)
  * - Real-time state management
  * - Bot user simulation
  */
 
 import { IStorage } from "../storage.js";
 import type { Draft, DraftPick, NflTeam, User } from "@shared/schema";
-import { RedisStateManager, type RedisTimer } from "./redisStateManager.js";
+import { RedisStateManager } from "./redisStateManager.js";
 
 export interface DraftState {
   draft: Draft;
@@ -78,7 +78,7 @@ export class SnakeDraftManager {
       // Check for any active drafts from database as well
       const allDraftIds = new Set([...activeDrafts]);
       
-      for (const draftId of allDraftIds) {
+      for (const draftId of Array.from(allDraftIds)) {
         const draft = await this.storage.getDraft(draftId);
         if (!draft || draft.status !== 'active') {
           // Clean up stale draft
@@ -106,7 +106,7 @@ export class SnakeDraftManager {
           console.log(`🔍 No timer found for active draft ${draftId}, checking if timer needed...`);
           
           // Check if draft is completed (simple check: all picks made)
-          const totalPicks = draft.totalRounds * draft.totalPlayers;
+          const totalPicks = draft.totalRounds * draft.draftOrder.length;
           const existingPicks = await this.storage.getDraftPicks(draftId);
           const isDraftComplete = existingPicks.length >= totalPicks;
           
