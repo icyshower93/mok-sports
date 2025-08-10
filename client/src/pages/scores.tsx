@@ -276,7 +276,9 @@ export default function ScoresPage() {
                           alt={game.awayTeam}
                           className="w-8 h-8"
                           onError={(e) => {
-                            (e.target as HTMLImageElement).src = `https://www.fantasynerds.com/images/nfl/team_logos/${game.awayTeam}.png`;
+                            console.log(`[Image Error] Failed to load ${game.awayTeam} logo, trying fallback`);
+                            // Use ESPN's reliable team logo API
+                            (e.target as HTMLImageElement).src = `https://a.espncdn.com/i/teamlogos/nfl/500/${game.awayTeam.toLowerCase()}.png`;
                           }}
                         />
                         <div className="flex items-center gap-2">
@@ -319,7 +321,9 @@ export default function ScoresPage() {
                           alt={game.homeTeam}
                           className="w-8 h-8"
                           onError={(e) => {
-                            (e.target as HTMLImageElement).src = `https://www.fantasynerds.com/images/nfl/team_logos/${game.homeTeam}.png`;
+                            console.log(`[Image Error] Failed to load ${game.homeTeam} logo, trying fallback`);
+                            // Use ESPN's reliable team logo API
+                            (e.target as HTMLImageElement).src = `https://a.espncdn.com/i/teamlogos/nfl/500/${game.homeTeam.toLowerCase()}.png`;
                           }}
                         />
                         <div className="flex items-center gap-2">
