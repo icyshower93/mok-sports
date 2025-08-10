@@ -414,27 +414,7 @@ export default function MainPage() {
           </Card>
         </div>
 
-        {/* Quick Actions */}
-        <div className="p-4 space-y-4">
-          <div className="grid grid-cols-2 gap-3">
-            <Button variant="outline" className="justify-start min-h-[44px]" onClick={() => navigate('/stable')}>
-              <Shield className="w-4 h-4 mr-3" />
-              My Stable
-            </Button>
-            <Button variant="outline" className="justify-start min-h-[44px]" onClick={() => navigate('/league')}>
-              <Users className="w-4 h-4 mr-3" />
-              League
-            </Button>
-            <Button variant="outline" className="justify-start min-h-[44px]" onClick={() => navigate('/scores')}>
-              <Calendar className="w-4 h-4 mr-3" />
-              This Week
-            </Button>
-            <Button variant="outline" className="justify-start min-h-[44px]">
-              <Star className="w-4 h-4 mr-3" />
-              Free Agents
-            </Button>
-          </div>
-        </div>
+
 
       </div>
       <BottomNav />
