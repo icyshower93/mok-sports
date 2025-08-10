@@ -1,0 +1,231 @@
+Content script initialized successfully.
+index-BxZ0r122.js:362 🏗️ Build Info: {version: 1754800804575, date: '2025-08-10T04:40:04.575Z', env: 'production', hash: 'me573ahr'}
+index-BxZ0r122.js:362 📦 Version: me573ahr
+index-BxZ0r122.js:362 📅 Built: 2025-08-10T04:40:04.575Z
+index-BxZ0r122.js:362 🔧 Environment: production
+index-BxZ0r122.js:313 [Auth] Token check - Has token: true Has user: false Loading: true
+index-BxZ0r122.js:313 [SW Hook] EMERGENCY: Unregistering all existing service workers
+index-BxZ0r122.js:313 [SW Hook] Found 1 existing registrations
+index-BxZ0r122.js:313 [SW Hook] Unregistering existing service worker
+index-BxZ0r122.js:313 [SW Hook] Found 0 caches to delete
+(index):1 Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner.
+index-BxZ0r122.js:313 [Auth] Token check - Has token: true Has user: true Loading: false
+index-BxZ0r122.js:313 [AutoPushRefresh] Legacy hook delegating to SubscriptionManager
+index-BxZ0r122.js:313 [SW Hook] Registering fresh service worker: /sw.js?v=1754800804713&r=0.4387357924439713
+index-BxZ0r122.js:40 ReferenceError: userTeams is not defined
+    at ip (index-BxZ0r122.js:357:102713)
+    at Kd (index-BxZ0r122.js:38:16998)
+    at Tv (index-BxZ0r122.js:40:43963)
+    at kv (index-BxZ0r122.js:40:39727)
+    at lb (index-BxZ0r122.js:40:39655)
+    at nl (index-BxZ0r122.js:40:39508)
+    at Du (index-BxZ0r122.js:40:35875)
+    at sh (index-BxZ0r122.js:40:36678)
+    at Er (index-BxZ0r122.js:38:3274)
+    at index-BxZ0r122.js:40:34207
+wu @ index-BxZ0r122.js:40
+o.componentDidCatch.n.callback @ index-BxZ0r122.js:40
+Wm @ index-BxZ0r122.js:38
+th @ index-BxZ0r122.js:40
+Sv @ index-BxZ0r122.js:40
+ob @ index-BxZ0r122.js:40
+ub @ index-BxZ0r122.js:40
+Lr @ index-BxZ0r122.js:40
+sh @ index-BxZ0r122.js:40
+Er @ index-BxZ0r122.js:38
+(anonymous) @ index-BxZ0r122.js:40
+setTimeout
+s @ index-BxZ0r122.js:48
+a @ index-BxZ0r122.js:48
+batch @ index-BxZ0r122.js:48
+jn @ index-BxZ0r122.js:48
+setData @ index-BxZ0r122.js:48
+onSuccess @ index-BxZ0r122.js:48
+m @ index-BxZ0r122.js:48
+Promise.then
+S @ index-BxZ0r122.js:48
+start @ index-BxZ0r122.js:48
+fetch @ index-BxZ0r122.js:48
+_o @ index-BxZ0r122.js:48
+setOptions @ index-BxZ0r122.js:48
+(anonymous) @ index-BxZ0r122.js:48
+El @ index-BxZ0r122.js:40
+Is @ index-BxZ0r122.js:40
+ub @ index-BxZ0r122.js:40
+Lr @ index-BxZ0r122.js:40
+sh @ index-BxZ0r122.js:40
+Er @ index-BxZ0r122.js:38
+(anonymous) @ index-BxZ0r122.js:40
+setTimeout
+s @ index-BxZ0r122.js:48
+a @ index-BxZ0r122.js:48
+batch @ index-BxZ0r122.js:48
+jn @ index-BxZ0r122.js:48
+setData @ index-BxZ0r122.js:48
+onSuccess @ index-BxZ0r122.js:48
+m @ index-BxZ0r122.js:48
+Promise.then
+S @ index-BxZ0r122.js:48
+start @ index-BxZ0r122.js:48
+fetch @ index-BxZ0r122.js:48
+_o @ index-BxZ0r122.js:48
+onSubscribe @ index-BxZ0r122.js:48
+subscribe @ index-BxZ0r122.js:48
+(anonymous) @ index-BxZ0r122.js:48
+Hg @ index-BxZ0r122.js:38
+El @ index-BxZ0r122.js:40
+Is @ index-BxZ0r122.js:40
+sh @ index-BxZ0r122.js:40
+Er @ index-BxZ0r122.js:38
+ub @ index-BxZ0r122.js:40
+Lr @ index-BxZ0r122.js:40
+bv @ index-BxZ0r122.js:40
+N @ index-BxZ0r122.js:25
+_ @ index-BxZ0r122.js:25Understand this error
+index-BxZ0r122.js:313 ErrorBoundary caught an error: userTeams is not defined
+componentDidCatch @ index-BxZ0r122.js:313
+o.componentDidCatch.n.callback @ index-BxZ0r122.js:40
+Wm @ index-BxZ0r122.js:38
+th @ index-BxZ0r122.js:40
+Sv @ index-BxZ0r122.js:40
+ob @ index-BxZ0r122.js:40
+ub @ index-BxZ0r122.js:40
+Lr @ index-BxZ0r122.js:40
+sh @ index-BxZ0r122.js:40
+Er @ index-BxZ0r122.js:38
+(anonymous) @ index-BxZ0r122.js:40
+setTimeout
+s @ index-BxZ0r122.js:48
+a @ index-BxZ0r122.js:48
+batch @ index-BxZ0r122.js:48
+jn @ index-BxZ0r122.js:48
+setData @ index-BxZ0r122.js:48
+onSuccess @ index-BxZ0r122.js:48
+m @ index-BxZ0r122.js:48
+Promise.then
+S @ index-BxZ0r122.js:48
+start @ index-BxZ0r122.js:48
+fetch @ index-BxZ0r122.js:48
+_o @ index-BxZ0r122.js:48
+setOptions @ index-BxZ0r122.js:48
+(anonymous) @ index-BxZ0r122.js:48
+El @ index-BxZ0r122.js:40
+Is @ index-BxZ0r122.js:40
+ub @ index-BxZ0r122.js:40
+Lr @ index-BxZ0r122.js:40
+sh @ index-BxZ0r122.js:40
+Er @ index-BxZ0r122.js:38
+(anonymous) @ index-BxZ0r122.js:40
+setTimeout
+s @ index-BxZ0r122.js:48
+a @ index-BxZ0r122.js:48
+batch @ index-BxZ0r122.js:48
+jn @ index-BxZ0r122.js:48
+setData @ index-BxZ0r122.js:48
+onSuccess @ index-BxZ0r122.js:48
+m @ index-BxZ0r122.js:48
+Promise.then
+S @ index-BxZ0r122.js:48
+start @ index-BxZ0r122.js:48
+fetch @ index-BxZ0r122.js:48
+_o @ index-BxZ0r122.js:48
+onSubscribe @ index-BxZ0r122.js:48
+subscribe @ index-BxZ0r122.js:48
+(anonymous) @ index-BxZ0r122.js:48
+Hg @ index-BxZ0r122.js:38
+El @ index-BxZ0r122.js:40
+Is @ index-BxZ0r122.js:40
+sh @ index-BxZ0r122.js:40
+Er @ index-BxZ0r122.js:38
+ub @ index-BxZ0r122.js:40
+Lr @ index-BxZ0r122.js:40
+bv @ index-BxZ0r122.js:40
+N @ index-BxZ0r122.js:25
+_ @ index-BxZ0r122.js:25Understand this error
+index-BxZ0r122.js:313 Component stack: 
+    at ip (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BxZ0r122.js:357:102273)
+    at yt (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BxZ0r122.js:48:3201)
+    at Xb (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BxZ0r122.js:48:4017)
+    at EP (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BxZ0r122.js:362:80013)
+    at uE (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BxZ0r122.js:313:57503)
+    at c (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BxZ0r122.js:48:45834)
+    at jy (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BxZ0r122.js:313:50479)
+    at cE (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BxZ0r122.js:313:56975)
+    at vN (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BxZ0r122.js:48:40185)
+    at gE (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BxZ0r122.js:313:70949)
+    at TP
+componentDidCatch @ index-BxZ0r122.js:313
+o.componentDidCatch.n.callback @ index-BxZ0r122.js:40
+Wm @ index-BxZ0r122.js:38
+th @ index-BxZ0r122.js:40
+Sv @ index-BxZ0r122.js:40
+ob @ index-BxZ0r122.js:40
+ub @ index-BxZ0r122.js:40
+Lr @ index-BxZ0r122.js:40
+sh @ index-BxZ0r122.js:40
+Er @ index-BxZ0r122.js:38
+(anonymous) @ index-BxZ0r122.js:40
+setTimeout
+s @ index-BxZ0r122.js:48
+a @ index-BxZ0r122.js:48
+batch @ index-BxZ0r122.js:48
+jn @ index-BxZ0r122.js:48
+setData @ index-BxZ0r122.js:48
+onSuccess @ index-BxZ0r122.js:48
+m @ index-BxZ0r122.js:48
+Promise.then
+S @ index-BxZ0r122.js:48
+start @ index-BxZ0r122.js:48
+fetch @ index-BxZ0r122.js:48
+_o @ index-BxZ0r122.js:48
+setOptions @ index-BxZ0r122.js:48
+(anonymous) @ index-BxZ0r122.js:48
+El @ index-BxZ0r122.js:40
+Is @ index-BxZ0r122.js:40
+ub @ index-BxZ0r122.js:40
+Lr @ index-BxZ0r122.js:40
+sh @ index-BxZ0r122.js:40
+Er @ index-BxZ0r122.js:38
+(anonymous) @ index-BxZ0r122.js:40
+setTimeout
+s @ index-BxZ0r122.js:48
+a @ index-BxZ0r122.js:48
+batch @ index-BxZ0r122.js:48
+jn @ index-BxZ0r122.js:48
+setData @ index-BxZ0r122.js:48
+onSuccess @ index-BxZ0r122.js:48
+m @ index-BxZ0r122.js:48
+Promise.then
+S @ index-BxZ0r122.js:48
+start @ index-BxZ0r122.js:48
+fetch @ index-BxZ0r122.js:48
+_o @ index-BxZ0r122.js:48
+onSubscribe @ index-BxZ0r122.js:48
+subscribe @ index-BxZ0r122.js:48
+(anonymous) @ index-BxZ0r122.js:48
+Hg @ index-BxZ0r122.js:38
+El @ index-BxZ0r122.js:40
+Is @ index-BxZ0r122.js:40
+sh @ index-BxZ0r122.js:40
+Er @ index-BxZ0r122.js:38
+ub @ index-BxZ0r122.js:40
+Lr @ index-BxZ0r122.js:40
+bv @ index-BxZ0r122.js:40
+N @ index-BxZ0r122.js:25
+_ @ index-BxZ0r122.js:25Understand this error
+sw.js?v=1754800804713&r=0.4387357924439713:2 [SW] NUCLEAR OPTION - Emergency service worker loading
+sw.js?v=1754800804713&r=0.4387357924439713:88 [SW] Service worker starting, version: v1.7.0-nuclear-unregister-1754800804771
+sw.js?v=1754800804713&r=0.4387357924439713:305 [SW] Service worker script loaded successfully
+index-BxZ0r122.js:313 [SW Hook] Service worker registered successfully
+sw.js?v=1754800804713&r=0.4387357924439713:19 [SW] EMERGENCY INSTALL - Clearing all caches and forcing activation
+sw.js?v=1754800804713&r=0.4387357924439713:92 [SW] Installing service worker, version: v1.7.0-nuclear-unregister-1754800804771
+sw.js?v=1754800804713&r=0.4387357924439713:22 [SW] Found caches to delete: []
+sw.js?v=1754800804713&r=0.4387357924439713:30 [SW] All caches deleted - skipping waiting
+sw.js?v=1754800804713&r=0.4387357924439713:96 [SW] Caching static files
+sw.js?v=1754800804713&r=0.4387357924439713:99 [SW] Static files cached successfully
+sw.js?v=1754800804713&r=0.4387357924439713:41 [SW] EMERGENCY ACTIVATE - Taking control of all clients
+sw.js?v=1754800804713&r=0.4387357924439713:110 [SW] Activating service worker, version: v1.7.0-nuclear-unregister-1754800804771
+sw.js?v=1754800804713&r=0.4387357924439713:46 [SW] Deleting remaining cache: mok-sports-static-v1.7.0-nuclear-unregister-1754800804771
+sw.js?v=1754800804713&r=0.4387357924439713:116 [SW] Found caches: ['mok-sports-static-v1.7.0-nuclear-unregister-1754800804771']
+sw.js?v=1754800804713&r=0.4387357924439713:129 [SW] Service worker activated and controlling all clients
+sw.js?v=1754800804713&r=0.4387357924439713:51 [SW] Claiming all clients immediately
