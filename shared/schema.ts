@@ -104,6 +104,84 @@ export const stables = pgTable("stables", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+// NFL Games - stores real NFL game results
+export const nflGames = pgTable("nfl_games", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  season: integer("season").notNull(),
+  week: integer("week").notNull(),
+  gameDate: timestamp("game_date").notNull(),
+  homeTeamId: varchar("home_team_id").notNull().references(() => nflTeams.id),
+  awayTeamId: varchar("away_team_id").notNull().references(() => nflTeams.id),
+  homeScore: integer("home_score"),
+  awayScore: integer("away_score"),
+  isCompleted: boolean("is_completed").notNull().default(false),
+  isTie: boolean("is_tie").notNull().default(false),
+  winnerTeamId: varchar("winner_team_id").references(() => nflTeams.id),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// Weekly Stats - aggregated data for each week (high/low scores, etc.)
+export const weeklyStats = pgTable("weekly_stats", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  season: integer("season").notNull(),
+  week: integer("week").notNull(),
+  highestScore: integer("highest_score").notNull(),
+  lowestScore: integer("lowest_score").notNull(),
+  highestScoringTeamId: varchar("highest_scoring_team_id").notNull().references(() => nflTeams.id),
+  lowestScoringTeamId: varchar("lowest_scoring_team_id").notNull().references(() => nflTeams.id),
+  totalGames: integer("total_games").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// Team Performance - calculated Mok points for each team each week
+export const teamPerformance = pgTable("team_performance", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  nflTeamId: varchar("nfl_team_id").notNull().references(() => nflTeams.id),
+  season: integer("season").notNull(),
+  week: integer("week").notNull(),
+  gameId: varchar("game_id").notNull().references(() => nflGames.id),
+  teamScore: integer("team_score").notNull(),
+  opponentScore: integer("opponent_score").notNull(),
+  isWin: boolean("is_win").notNull(),
+  isTie: boolean("is_tie").notNull(),
+  isBlowout: boolean("is_blowout").notNull().default(false), // Won by 14+ points
+  isShutout: boolean("is_shutout").notNull().default(false), // Held opponent to 0
+  isWeeklyHigh: boolean("is_weekly_high").notNull().default(false),
+  isWeeklyLow: boolean("is_weekly_low").notNull().default(false),
+  baseMokPoints: integer("base_mok_points").notNull(), // Points without lock bonuses
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// Weekly User Locks - tracks user's lock selections each week
+export const weeklyLocks = pgTable("weekly_locks", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => users.id),
+  leagueId: varchar("league_id").notNull().references(() => leagues.id),
+  season: integer("season").notNull(),
+  week: integer("week").notNull(),
+  lockedTeamId: varchar("locked_team_id").references(() => nflTeams.id), // Regular lock selection
+  lockAndLoadTeamId: varchar("lock_and_load_team_id").references(() => nflTeams.id), // Lock & Load selection
+  lockPoints: integer("lock_points").notNull().default(0), // Points earned from locks
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// User Weekly Scores - calculated total scores for each user each week
+export const userWeeklyScores = pgTable("user_weekly_scores", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => users.id),
+  leagueId: varchar("league_id").notNull().references(() => leagues.id),
+  season: integer("season").notNull(),
+  week: integer("week").notNull(),
+  basePoints: integer("base_points").notNull().default(0), // Points without lock bonuses
+  lockBonusPoints: integer("lock_bonus_points").notNull().default(0),
+  lockAndLoadBonusPoints: integer("lock_and_load_bonus_points").notNull().default(0),
+  totalPoints: integer("total_points").notNull().default(0), // Sum of all points
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
 // Relations
 export const usersRelations = relations(users, ({ many }) => ({
   createdLeagues: many(leagues),
@@ -223,6 +301,29 @@ export const insertNflTeamSchema = createInsertSchema(nflTeams).pick({
   logoUrl: true,
 });
 
+export const insertNflGameSchema = createInsertSchema(nflGames).pick({
+  season: true,
+  week: true,
+  gameDate: true,
+  homeTeamId: true,
+  awayTeamId: true,
+  homeScore: true,
+  awayScore: true,
+  isCompleted: true,
+  isTie: true,
+  winnerTeamId: true,
+});
+
+export const insertWeeklyLockSchema = createInsertSchema(weeklyLocks).pick({
+  userId: true,
+  leagueId: true,
+  season: true,
+  week: true,
+  lockedTeamId: true,
+  lockAndLoadTeamId: true,
+  lockPoints: true,
+});
+
 export const insertStableSchema = createInsertSchema(stables).pick({
   userId: true,
   leagueId: true,
@@ -282,3 +383,11 @@ export type DraftTimer = typeof draftTimers.$inferSelect;
 export type InsertDraftTimer = z.infer<typeof insertDraftTimerSchema>;
 export type Stable = typeof stables.$inferSelect;
 export type InsertStable = z.infer<typeof insertStableSchema>;
+
+export type NflGame = typeof nflGames.$inferSelect;
+export type InsertNflGame = z.infer<typeof insertNflGameSchema>;
+export type WeeklyStats = typeof weeklyStats.$inferSelect;
+export type TeamPerformance = typeof teamPerformance.$inferSelect;
+export type WeeklyLocks = typeof weeklyLocks.$inferSelect;
+export type InsertWeeklyLocks = z.infer<typeof insertWeeklyLockSchema>;
+export type UserWeeklyScores = typeof userWeeklyScores.$inferSelect;

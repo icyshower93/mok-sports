@@ -942,6 +942,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Register admin routes
   registerAdminRoutes(app);
   
+  // Register scoring routes
+  const { setupScoringRoutes } = await import("./routes/scoring.js");
+  setupScoringRoutes(app);
+  
   // Draft reset endpoint - Creates new draft for seamless WebSocket connection
   app.post('/api/testing/reset-draft', async (req, res) => {
     try {

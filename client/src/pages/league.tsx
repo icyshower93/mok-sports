@@ -67,7 +67,7 @@ export default function LeaguePage() {
     );
   }
 
-  const { league: leagueInfo, standings, seasonPrizes } = leagueData;
+  const { league: leagueInfo, standings, seasonPrizes } = leagueData || { league: null, standings: [], seasonPrizes: [] };
 
   return (
     <div className="min-h-screen bg-background pb-20">
@@ -142,7 +142,7 @@ export default function LeaguePage() {
               <CardTitle className="text-lg">Season Standings</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              {standings.map((member) => (
+              {standings.map((member: any) => (
                 <div key={member.name} className="flex items-center justify-between py-2">
                   <div className="flex items-center space-x-3">
                     {/* Rank Badge */}
@@ -193,7 +193,7 @@ export default function LeaguePage() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              {seasonPrizes.map((prize, index) => (
+              {seasonPrizes.map((prize: any, index: number) => (
                 <div key={index} className="flex items-center justify-between py-2">
                   <div>
                     <div className="font-medium text-sm">{prize.name}</div>

@@ -1,390 +1,365 @@
-import { BottomNav } from "@/components/layout/bottom-nav";
+import { useQuery } from "@tanstack/react-query";
+import { useAuth } from "@/hooks/use-auth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { TeamLogo } from "@/components/team-logo";
-import { 
-  Trophy, 
-  Clock, 
-  Play,
-  Star,
-  Lock,
-  Zap,
-  Calendar,
-  TrendingUp,
-  Target,
-  CheckCircle
-} from "lucide-react";
+import { Trophy, Target, Zap, Info, Users } from "lucide-react";
 import { useState } from "react";
+import { Badge } from "@/components/ui/badge";
+
+interface MokScoringRules {
+  winPoints: number;
+  tiePoints: number;
+  lossPoints: number;
+  blowoutPoints: number;
+  shutoutPoints: number;
+  weeklyHighPoints: number;
+  weeklyLowPenalty: number;
+  lockBonusPoints: number;
+  lockAndLoadWinPoints: number;
+  lockAndLoadLossPenalty: number;
+  maxLocksPerTeamPerSeason: number;
+  maxLockAndLoadPerTeamPerSeason: number;
+}
+
+interface UserWeeklyScore {
+  userId: string;
+  leagueId: string;
+  week: number;
+  season: number;
+  teamResults: any[];
+  totalBaseMokPoints: number;
+  lockedTeam?: string;
+  lockAndLoadTeam?: string;
+  lockBonusPoints: number;
+  lockAndLoadBonusPoints: number;
+  totalMokPoints: number;
+}
+
+interface WeeklyScoresResponse {
+  scores: UserWeeklyScore[];
+  week: number;
+  season: number;
+}
 
 export default function ScoresPage() {
-  const [selectedWeek, setSelectedWeek] = useState(4);
-  const [selectedTab, setSelectedTab] = useState("live");
+  const { user } = useAuth();
+  const [selectedWeek, setSelectedWeek] = useState(1);
+  const [selectedSeason] = useState(2025);
+  const [viewMode, setViewMode] = useState<'weekly' | 'season' | 'rules'>('weekly');
 
-  // User's teams (would come from API in real app)
-  const userTeams = ["KC", "SF", "BUF", "PHI", "LAR"];
-
-  // Mock game data for Week 4
-  const games = [
-    // Thursday Night Football
-    {
-      id: 1,
-      status: "final",
-      week: 4,
-      gameTime: "Thursday 8:20 PM ET",
-      homeTeam: { code: "KC", name: "Kansas City Chiefs", score: 31, logoUrl: "/images/nfl/team_logos/KC.png" },
-      awayTeam: { code: "DEN", name: "Denver Broncos", score: 17, logoUrl: "/images/nfl/team_logos/DEN.png" },
-      quarter: "F",
-      timeRemaining: "",
-      isBlowout: true,
-      hasUserTeam: true,
-      userTeamCodes: ["KC"],
-      lockInfo: { locked: true, lockedBy: "You", lockAndLoad: false }
-    },
-    // Sunday Early Games
-    {
-      id: 2,
-      status: "live",
-      week: 4,
-      gameTime: "Sunday 1:00 PM ET",
-      homeTeam: { code: "BUF", name: "Buffalo Bills", score: 21, logoUrl: "/images/nfl/team_logos/BUF.png" },
-      awayTeam: { code: "MIA", name: "Miami Dolphins", score: 14, logoUrl: "/images/nfl/team_logos/MIA.png" },
-      quarter: "3rd",
-      timeRemaining: "8:42",
-      isBlowout: false,
-      hasUserTeam: true,
-      userTeamCodes: ["BUF"],
-      lockInfo: null
-    },
-    {
-      id: 3,
-      status: "live",
-      week: 4,
-      gameTime: "Sunday 1:00 PM ET",
-      homeTeam: { code: "PHI", name: "Philadelphia Eagles", score: 24, logoUrl: "/images/nfl/team_logos/PHI.png" },
-      awayTeam: { code: "WSH", name: "Washington Commanders", score: 20, logoUrl: "/images/nfl/team_logos/WAS.png" },
-      quarter: "4th",
-      timeRemaining: "3:15",
-      isBlowout: false,
-      hasUserTeam: true,
-      userTeamCodes: ["PHI"],
-      lockInfo: { locked: true, lockedBy: "Mike Chen", lockAndLoad: false }
-    },
-    {
-      id: 4,
-      status: "live",
-      week: 4,
-      gameTime: "Sunday 1:00 PM ET",
-      homeTeam: { code: "CLE", name: "Cleveland Browns", score: 10, logoUrl: "/images/nfl/team_logos/CLE.png" },
-      awayTeam: { code: "BAL", name: "Baltimore Ravens", score: 28, logoUrl: "/images/nfl/team_logos/BAL.png" },
-      quarter: "4th",
-      timeRemaining: "12:05",
-      isBlowout: true,
-      hasUserTeam: false,
-      userTeamCodes: [],
-      lockInfo: { locked: true, lockedBy: "Sarah Wilson", lockAndLoad: true }
-    },
-    // Sunday Late Games
-    {
-      id: 5,
-      status: "upcoming",
-      week: 4,
-      gameTime: "Sunday 4:25 PM ET",
-      homeTeam: { code: "LAR", name: "Los Angeles Rams", score: null, logoUrl: "/images/nfl/team_logos/LAR.png" },
-      awayTeam: { code: "SF", name: "San Francisco 49ers", score: null, logoUrl: "/images/nfl/team_logos/SF.png" },
-      quarter: "",
-      timeRemaining: "",
-      isBlowout: false,
-      hasUserTeam: true,
-      userTeamCodes: ["LAR", "SF"],
-      lockInfo: { locked: true, lockedBy: "You", lockAndLoad: true }
-    },
-    {
-      id: 6,
-      status: "upcoming",
-      week: 4,
-      gameTime: "Sunday 4:25 PM ET",
-      homeTeam: { code: "SEA", name: "Seattle Seahawks", score: null, logoUrl: "/images/nfl/team_logos/SEA.png" },
-      awayTeam: { code: "NYG", name: "New York Giants", score: null, logoUrl: "/images/nfl/team_logos/NYG.png" },
-      quarter: "",
-      timeRemaining: "",
-      isBlowout: false,
-      hasUserTeam: false,
-      userTeamCodes: [],
-      lockInfo: null
-    },
-    // Sunday Night Football
-    {
-      id: 7,
-      status: "upcoming",
-      week: 4,
-      gameTime: "Sunday 8:20 PM ET",
-      homeTeam: { code: "DAL", name: "Dallas Cowboys", score: null, logoUrl: "/images/nfl/team_logos/DAL.png" },
-      awayTeam: { code: "NYJ", name: "New York Jets", score: null, logoUrl: "/images/nfl/team_logos/NYJ.png" },
-      quarter: "",
-      timeRemaining: "",
-      isBlowout: false,
-      hasUserTeam: false,
-      userTeamCodes: [],
-      lockInfo: null
-    },
-    // Monday Night Football
-    {
-      id: 8,
-      status: "upcoming",
-      week: 4,
-      gameTime: "Monday 8:15 PM ET",
-      homeTeam: { code: "TB", name: "Tampa Bay Buccaneers", score: null, logoUrl: "/images/nfl/team_logos/TB.png" },
-      awayTeam: { code: "NO", name: "New Orleans Saints", score: null, logoUrl: "/images/nfl/team_logos/NO.png" },
-      quarter: "",
-      timeRemaining: "",
-      isBlowout: false,
-      hasUserTeam: false,
-      userTeamCodes: [],
-      lockInfo: null
-    }
-  ];
-
-  const weeklyStats = {
-    totalGames: 16,
-    completedGames: 1,
-    liveGames: 3,
-    upcomingGames: 4,
-    yourTeamsPlaying: 5,
-    locksActive: 3
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "live": return "text-green-600 dark:text-green-400";
-      case "final": return "text-gray-600 dark:text-gray-400";
-      case "upcoming": return "text-blue-600 dark:text-blue-400";
-      default: return "text-muted-foreground";
-    }
-  };
-
-  const getStatusBadge = (status: string, quarter: string, timeRemaining: string) => {
-    if (status === "final") {
-      return <Badge variant="secondary" className="text-xs">FINAL</Badge>;
-    } else if (status === "live") {
-      return (
-        <Badge className="bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300 text-xs">
-          {quarter} {timeRemaining}
-        </Badge>
-      );
-    } else {
-      return <Badge variant="outline" className="text-xs">UPCOMING</Badge>;
-    }
-  };
-
-  const filteredGames = games.filter(game => {
-    if (selectedTab === "my-teams") {
-      return game.hasUserTeam;
-    }
-    if (selectedTab === "live") {
-      return game.status === "live" || game.status === "final";
-    }
-    if (selectedTab === "upcoming") {
-      return game.status === "upcoming";
-    }
-    return true;
+  // Get user's leagues to show scores for
+  const { data: userLeagues } = useQuery({
+    queryKey: ['/api/user/leagues'],
+    enabled: !!user
   });
 
+  // Get scoring rules
+  const { data: scoringRules } = useQuery<MokScoringRules>({
+    queryKey: ['/api/scoring/rules']
+  });
+
+  // Get current league (first league for now)
+  const currentLeague = userLeagues?.[0];
+
+  // Get weekly scores for current league
+  const { data: weeklyScores, isLoading: loadingWeekly } = useQuery<WeeklyScoresResponse>({
+    queryKey: [`/api/leagues/${currentLeague?.id}/scores/${selectedSeason}/${selectedWeek}`],
+    enabled: !!currentLeague
+  });
+
+  // Get season standings
+  const { data: seasonStandings, isLoading: loadingStandings } = useQuery({
+    queryKey: [`/api/leagues/${currentLeague?.id}/standings/${selectedSeason}`, { currentWeek: selectedWeek }],
+    enabled: !!currentLeague
+  });
+
+  if (!user) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <p>Please sign in to view scores</p>
+      </div>
+    );
+  }
+
+  if (!currentLeague) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <p>Join a league to view scores</p>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-background pb-20">
-      <div className="max-w-4xl mx-auto">
+    <div className="container mx-auto px-4 py-6 max-w-6xl">
+      <div className="flex flex-col space-y-6">
         {/* Header */}
-        <div className="p-4 border-b border-border/50 bg-card sticky top-0 z-10">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-full">
-                <Trophy className="w-5 h-5 text-green-600 dark:text-green-400" />
-              </div>
-              <div>
-                <h1 className="text-xl font-bold">Scores</h1>
-                <p className="text-sm text-muted-foreground">Week {selectedWeek} Games</p>
-              </div>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={() => setSelectedWeek(Math.max(1, selectedWeek - 1))}
-                disabled={selectedWeek <= 1}
-              >
-                ←
-              </Button>
-              <span className="text-sm font-medium min-w-[60px] text-center">Week {selectedWeek}</span>
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={() => setSelectedWeek(Math.min(18, selectedWeek + 1))}
-                disabled={selectedWeek >= 18}
-              >
-                →
-              </Button>
-            </div>
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div>
+            <h1 className="text-2xl font-bold">Scores</h1>
+            <p className="text-muted-foreground">{currentLeague.name} • {selectedSeason} Season</p>
           </div>
-        </div>
-
-        {/* Quick Stats */}
-        <div className="p-4 bg-muted/30">
-          <div className="grid grid-cols-3 gap-4">
-            <div className="text-center">
-              <div className="text-lg font-bold text-green-600 dark:text-green-400">{weeklyStats.yourTeamsPlaying}</div>
-              <div className="text-xs text-muted-foreground">Your Teams Playing</div>
-            </div>
-            <div className="text-center">
-              <div className="text-lg font-bold text-blue-600 dark:text-blue-400">{weeklyStats.locksActive}</div>
-              <div className="text-xs text-muted-foreground">Active Locks</div>
-            </div>
-            <div className="text-center">
-              <div className="text-lg font-bold">{weeklyStats.liveGames}</div>
-              <div className="text-xs text-muted-foreground">Live Games</div>
-            </div>
-          </div>
-        </div>
-
-        <Tabs value={selectedTab} onValueChange={setSelectedTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-4 m-4 mb-0">
-            <TabsTrigger value="live" className="text-xs">Live</TabsTrigger>
-            <TabsTrigger value="my-teams" className="text-xs">My Teams</TabsTrigger>
-            <TabsTrigger value="upcoming" className="text-xs">Upcoming</TabsTrigger>
-            <TabsTrigger value="all" className="text-xs">All Games</TabsTrigger>
-          </TabsList>
           
-          <TabsContent value={selectedTab} className="p-4 space-y-3">
-            {filteredGames.map((game) => (
-              <Card 
-                key={game.id} 
-                className={`${game.hasUserTeam ? 'ring-2 ring-primary/20 bg-primary/5' : ''} transition-all hover:shadow-sm`}
-              >
-                <CardContent className="p-4">
-                  {/* Game Header */}
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center space-x-2">
-                      <span className="text-xs text-muted-foreground">{game.gameTime}</span>
-                      {game.hasUserTeam && (
-                        <Star className="w-3 h-3 text-yellow-500" />
-                      )}
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      {game.lockInfo && (
-                        <div className="flex items-center space-x-1">
-                          {game.lockInfo.lockAndLoad ? (
-                            <Zap className="w-3 h-3 text-orange-500" />
-                          ) : (
-                            <Lock className="w-3 h-3 text-blue-500" />
-                          )}
-                          <span className="text-xs text-muted-foreground">{game.lockInfo.lockedBy}</span>
+          {/* View Mode Selector */}
+          <div className="flex gap-2">
+            <Button
+              variant={viewMode === 'weekly' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setViewMode('weekly')}
+            >
+              <Target className="w-4 h-4 mr-2" />
+              Weekly
+            </Button>
+            <Button
+              variant={viewMode === 'season' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setViewMode('season')}
+            >
+              <Trophy className="w-4 h-4 mr-2" />
+              Season
+            </Button>
+            <Button
+              variant={viewMode === 'rules' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setViewMode('rules')}
+            >
+              <Info className="w-4 h-4 mr-2" />
+              Rules
+            </Button>
+          </div>
+        </div>
+
+        {viewMode === 'rules' && scoringRules && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Base Scoring */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Target className="w-5 h-5" />
+                  Base Scoring
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="flex justify-between">
+                  <span>Win</span>
+                  <Badge variant="secondary">+{scoringRules.winPoints}</Badge>
+                </div>
+                <div className="flex justify-between">
+                  <span>Tie</span>
+                  <Badge variant="secondary">+{scoringRules.tiePoints}</Badge>
+                </div>
+                <div className="flex justify-between">
+                  <span>Loss</span>
+                  <Badge variant="outline">{scoringRules.lossPoints}</Badge>
+                </div>
+                <hr className="my-3" />
+                <div className="flex justify-between">
+                  <span>Blowout (14+ pts)</span>
+                  <Badge variant="secondary">+{scoringRules.blowoutPoints}</Badge>
+                </div>
+                <div className="flex justify-between">
+                  <span>Shutout</span>
+                  <Badge variant="secondary">+{scoringRules.shutoutPoints}</Badge>
+                </div>
+                <div className="flex justify-between">
+                  <span>Weekly High</span>
+                  <Badge variant="secondary">+{scoringRules.weeklyHighPoints}</Badge>
+                </div>
+                <div className="flex justify-between">
+                  <span>Weekly Low</span>
+                  <Badge variant="destructive">{scoringRules.weeklyLowPenalty}</Badge>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Lock System */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Zap className="w-5 h-5" />
+                  Lock System
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="flex justify-between">
+                  <span>Regular Lock</span>
+                  <Badge variant="secondary">+{scoringRules.lockBonusPoints}</Badge>
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  Max {scoringRules.maxLocksPerTeamPerSeason} times per team
+                </div>
+                <hr className="my-3" />
+                <div className="flex justify-between">
+                  <span>Lock & Load Win</span>
+                  <Badge variant="secondary">+{scoringRules.lockAndLoadWinPoints}</Badge>
+                </div>
+                <div className="flex justify-between">
+                  <span>Lock & Load Loss</span>
+                  <Badge variant="destructive">{scoringRules.lockAndLoadLossPenalty}</Badge>
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  Once per team per season
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
+
+        {viewMode === 'weekly' && (
+          <>
+            {/* Week Selector */}
+            <div className="flex gap-2 flex-wrap">
+              {Array.from({length: 18}, (_, i) => i + 1).map(week => (
+                <Button
+                  key={week}
+                  variant={selectedWeek === week ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setSelectedWeek(week)}
+                >
+                  Week {week}
+                </Button>
+              ))}
+            </div>
+
+            {/* Weekly Scores */}
+            {loadingWeekly ? (
+              <Card>
+                <CardContent className="p-6">
+                  <p>Loading weekly scores...</p>
+                </CardContent>
+              </Card>
+            ) : weeklyScores ? (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Users className="w-5 h-5" />
+                    Week {selectedWeek} Scores
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {weeklyScores.scores
+                      .sort((a, b) => b.totalMokPoints - a.totalMokPoints)
+                      .map((score, index) => (
+                      <div key={score.userId} className="flex items-center justify-between p-4 border rounded-lg">
+                        <div className="flex items-center gap-3">
+                          <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-sm font-medium">
+                            {index + 1}
+                          </div>
+                          <div>
+                            <p className="font-medium">User {score.userId.slice(0, 8)}</p>
+                            <p className="text-sm text-muted-foreground">
+                              {score.teamResults.length} teams played
+                            </p>
+                          </div>
                         </div>
-                      )}
-                      {getStatusBadge(game.status, game.quarter, game.timeRemaining)}
-                    </div>
+                        
+                        <div className="text-right">
+                          <p className="text-lg font-bold">{score.totalMokPoints} pts</p>
+                          <div className="text-sm text-muted-foreground">
+                            Base: {score.totalBaseMokPoints}
+                            {score.lockBonusPoints > 0 && (
+                              <span className="ml-1">Lock: +{score.lockBonusPoints}</span>
+                            )}
+                            {score.lockAndLoadBonusPoints !== 0 && (
+                              <span className="ml-1">L&L: {score.lockAndLoadBonusPoints > 0 ? '+' : ''}{score.lockAndLoadBonusPoints}</span>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                    
+                    {weeklyScores.scores.length === 0 && (
+                      <p className="text-center text-muted-foreground py-8">
+                        No scores available for Week {selectedWeek}
+                      </p>
+                    )}
                   </div>
+                </CardContent>
+              </Card>
+            ) : null}
+          </>
+        )}
 
-                  {/* Teams and Scores */}
-                  <div className="space-y-3">
-                    {/* Away Team */}
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-3">
-                        <TeamLogo 
-                          logoUrl={game.awayTeam.logoUrl}
-                          teamCode={game.awayTeam.code}
-                          teamName={game.awayTeam.name}
-                          size="md"
-                          className="w-8 h-8"
-                        />
-                        <div>
-                          <div className={`font-medium text-sm ${userTeams.includes(game.awayTeam.code) ? 'text-primary' : ''}`}>
-                            {game.awayTeam.name}
+        {viewMode === 'season' && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Trophy className="w-5 h-5" />
+                Season Standings
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {loadingStandings ? (
+                <p>Loading season standings...</p>
+              ) : seasonStandings ? (
+                <div className="space-y-4">
+                  {seasonStandings.standings.length === 0 ? (
+                    <p className="text-center text-muted-foreground py-8">
+                      Season standings will appear here once games begin
+                    </p>
+                  ) : (
+                    seasonStandings.standings.map((standing: any, index: number) => (
+                      <div key={standing.userId} className="flex items-center justify-between p-4 border rounded-lg">
+                        <div className="flex items-center gap-3">
+                          <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-sm font-medium">
+                            {index + 1}
                           </div>
-                          <div className="text-xs text-muted-foreground">
-                            {game.awayTeam.code}
-                            {userTeams.includes(game.awayTeam.code) && " • Your Team"}
+                          <div>
+                            <p className="font-medium">{standing.userName}</p>
+                            <p className="text-sm text-muted-foreground">
+                              {standing.gamesPlayed} games played
+                            </p>
                           </div>
                         </div>
-                      </div>
-                      <div className="text-right">
-                        {game.awayTeam.score !== null ? (
-                          <div className="text-2xl font-bold">{game.awayTeam.score}</div>
-                        ) : (
-                          <div className="text-sm text-muted-foreground">-</div>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Home Team */}
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-3">
-                        <TeamLogo 
-                          logoUrl={game.homeTeam.logoUrl}
-                          teamCode={game.homeTeam.code}
-                          teamName={game.homeTeam.name}
-                          size="md"
-                          className="w-8 h-8"
-                        />
-                        <div>
-                          <div className={`font-medium text-sm ${userTeams.includes(game.homeTeam.code) ? 'text-primary' : ''}`}>
-                            {game.homeTeam.name}
-                          </div>
-                          <div className="text-xs text-muted-foreground">
-                            {game.homeTeam.code}
-                            {userTeams.includes(game.homeTeam.code) && " • Your Team"}
-                          </div>
+                        
+                        <div className="text-right">
+                          <p className="text-lg font-bold">{standing.totalPoints} pts</p>
+                          <p className="text-sm text-muted-foreground">
+                            Avg: {standing.averagePerWeek.toFixed(1)}
+                          </p>
                         </div>
                       </div>
-                      <div className="text-right">
-                        {game.homeTeam.score !== null ? (
-                          <div className="text-2xl font-bold">{game.homeTeam.score}</div>
-                        ) : (
-                          <div className="text-sm text-muted-foreground">-</div>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Game Status Indicators */}
-                  {game.status === "final" && (
-                    <div className="mt-3 pt-3 border-t border-border/50">
-                      <div className="flex items-center justify-between text-xs">
-                        <div className="flex items-center space-x-4">
-                          {game.isBlowout && (
-                            <Badge variant="outline" className="text-xs">
-                              <Target className="w-3 h-3 mr-1" />
-                              Blowout
-                            </Badge>
-                          )}
-                          <span className="text-muted-foreground">Final Score</span>
-                        </div>
-                        {game.hasUserTeam && (
-                          <CheckCircle className="w-4 h-4 text-green-500" />
-                        )}
-                      </div>
+                    ))
+                  )}
+                  
+                  {/* Prize Leaders */}
+                  {seasonStandings.prizes && (
+                    <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <Card>
+                        <CardContent className="p-4 text-center">
+                          <Trophy className="w-6 h-6 mx-auto mb-2 text-yellow-600" />
+                          <p className="text-sm font-medium">Most Points</p>
+                          <p className="text-xs text-muted-foreground">
+                            {seasonStandings.prizes.mostPoints.points || 0} pts
+                          </p>
+                        </CardContent>
+                      </Card>
+                      
+                      <Card>
+                        <CardContent className="p-4 text-center">
+                          <Target className="w-6 h-6 mx-auto mb-2 text-blue-600" />
+                          <p className="text-sm font-medium">Most Locks</p>
+                          <p className="text-xs text-muted-foreground">
+                            {seasonStandings.prizes.mostCorrectLocks.locks || 0} correct
+                          </p>
+                        </CardContent>
+                      </Card>
+                      
+                      <Card>
+                        <CardContent className="p-4 text-center">
+                          <Trophy className="w-6 h-6 mx-auto mb-2 text-green-600" />
+                          <p className="text-sm font-medium">Super Bowl</p>
+                          <p className="text-xs text-muted-foreground">TBD</p>
+                        </CardContent>
+                      </Card>
                     </div>
                   )}
-                </CardContent>
-              </Card>
-            ))}
-
-            {filteredGames.length === 0 && (
-              <Card>
-                <CardContent className="p-8 text-center">
-                  <Calendar className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
-                  <h3 className="text-lg font-semibold mb-2">No Games Found</h3>
-                  <p className="text-sm text-muted-foreground">
-                    {selectedTab === "my-teams" 
-                      ? "None of your teams are playing in the selected time period."
-                      : "No games match the selected filter."}
-                  </p>
-                </CardContent>
-              </Card>
-            )}
-          </TabsContent>
-        </Tabs>
+                </div>
+              ) : null}
+            </CardContent>
+          </Card>
+        )}
       </div>
-      <BottomNav />
     </div>
   );
 }

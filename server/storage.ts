@@ -86,6 +86,10 @@ export interface IStorage {
   updateLeague(leagueId: string, updates: Partial<League>): Promise<void>;
   deleteDraft(draftId: string): Promise<void>;
   getUserByEmail(email: string): Promise<User | undefined>;
+  
+  // Scoring methods
+  getUserLockHistory(userId: string, leagueId: string, season: number): Promise<any[]>;
+  setWeeklyLocks(userId: string, leagueId: string, season: number, week: number, locks: { lockedTeamId?: string; lockAndLoadTeamId?: string }): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -1010,6 +1014,17 @@ export class DatabaseStorage implements IStorage {
       nflTeamId,
       acquiredVia: 'free_agent'
     });
+  }
+
+  // Scoring methods - stub implementations
+  async getUserLockHistory(userId: string, leagueId: string, season: number): Promise<any[]> {
+    // TODO: Implement with weeklyLocks table
+    return [];
+  }
+
+  async setWeeklyLocks(userId: string, leagueId: string, season: number, week: number, locks: { lockedTeamId?: string; lockAndLoadTeamId?: string }): Promise<void> {
+    // TODO: Implement with weeklyLocks table
+    console.log(`Setting locks for user ${userId} in league ${leagueId}, season ${season}, week ${week}:`, locks);
   }
 }
 
