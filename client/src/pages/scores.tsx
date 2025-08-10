@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Trophy, Target, Lock, Zap, Flame } from "lucide-react";
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { BottomNav } from "@/components/layout/bottom-nav";
 
 interface MokScoringRules {
@@ -266,6 +266,9 @@ export default function ScoresPage() {
                           {game.awayOwner && (
                             <div className="absolute -bottom-1 -right-1">
                               <Avatar className="w-4 h-4 border border-background">
+                                {isUserTeam(game.awayTeam) && user?.avatar ? (
+                                  <AvatarImage src={user.avatar} alt={user.name} />
+                                ) : null}
                                 <AvatarFallback className={`text-xs ${isUserTeam(game.awayTeam) ? 'text-green-600 bg-green-100 dark:bg-green-900/20' : 'bg-muted'}`}>
                                   {game.awayOwner}
                                 </AvatarFallback>
@@ -305,6 +308,9 @@ export default function ScoresPage() {
                           {game.homeOwner && (
                             <div className="absolute -bottom-1 -right-1">
                               <Avatar className="w-4 h-4 border border-background">
+                                {isUserTeam(game.homeTeam) && user?.avatar ? (
+                                  <AvatarImage src={user.avatar} alt={user.name} />
+                                ) : null}
                                 <AvatarFallback className={`text-xs ${isUserTeam(game.homeTeam) ? 'text-green-600 bg-green-100 dark:bg-green-900/20' : 'bg-muted'}`}>
                                   {game.homeOwner}
                                 </AvatarFallback>
