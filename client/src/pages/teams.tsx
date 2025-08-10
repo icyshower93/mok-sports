@@ -118,10 +118,23 @@ export default function StablePage() {
                               </div>
                               <div className="flex items-center space-x-2 text-xs">
                                 <span className="text-muted-foreground">
-                                  {team.upcomingOpponent}
-                                </span>
-                                <span className="text-xs px-1.5 py-0.5 rounded bg-muted/50 font-mono">
-                                  {team.pointSpread > 0 ? '+' : ''}{team.pointSpread}
+                                  {(() => {
+                                    // Extract the opponent and point spread from upcomingOpponent
+                                    const match = team.upcomingOpponent?.match(/^(.*?)\s([+-]\d+(?:\.\d+)?)$/) || [];
+                                    const opponent = match[1] || team.upcomingOpponent;
+                                    const spread = match[2];
+                                    
+                                    return (
+                                      <>
+                                        <span>{opponent}</span>
+                                        {spread && (
+                                          <span className="text-white text-sm font-semibold ml-2 font-mono tracking-wider">
+                                            {spread}
+                                          </span>
+                                        )}
+                                      </>
+                                    );
+                                  })()}
                                 </span>
                               </div>
                             </div>
