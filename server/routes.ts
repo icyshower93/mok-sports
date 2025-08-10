@@ -12,7 +12,7 @@ import { registerSubscriptionValidationRoutes } from "./routes/subscription-vali
 import { registerAdminRoutes } from "./routes/admin";
 import { scoringRouter } from "./routes/scoring";
 import { db } from "./db";
-import { eq, and } from "drizzle-orm";
+import { eq, and, sql } from "drizzle-orm";
 import crypto from "crypto";
 import "./auth"; // Initialize passport strategies
 
@@ -966,13 +966,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
           console.error(`Error getting opponent for team ${team.nflTeam.code}:`, error);
         }
         
-        // Check if this team is locked for the current week
-        const weeklyLock = await db.query.weeklyLocks.findFirst({
+        // Check if this team is locked for the current week (either as lock or lock & load)
+        const weeklyLockForTeam = await db.query.weeklyLocks.findFirst({
           where: and(
             eq(weeklyLocks.userId, user.id),
             eq(weeklyLocks.leagueId, leagueId),
-            eq(weeklyLocks.teamId, team.nflTeam.id),
-            eq(weeklyLocks.week, targetWeek)
+            eq(weeklyLocks.week, targetWeek),
+            eq(weeklyLocks.lockedTeamId, team.nflTeam.id)
+          )
+        });
+        
+        const weeklyLockAndLoadForTeam = await db.query.weeklyLocks.findFirst({
+          where: and(
+            eq(weeklyLocks.userId, user.id),
+            eq(weeklyLocks.leagueId, leagueId),
+            eq(weeklyLocks.week, targetWeek),
+            eq(weeklyLocks.lockAndLoadTeamId, team.nflTeam.id)
           )
         });
         
@@ -981,8 +990,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           ...team, // Override with real database data (preserves locksUsed, lockAndLoadUsed)
           ...opponentInfo, // Real opponent data
           // Weekly lock status
-          isLocked: !!weeklyLock,
-          isLockAndLoad: weeklyLock?.isLockAndLoad || false,
+          isLocked: !!weeklyLockForTeam,
+          isLockAndLoad: !!weeklyLockAndLoadForTeam,
           // Recalculate derived fields using actual database values
           locksRemaining: 4 - (team.locksUsed || 0), // Max 4 locks per team per season
           lockAndLoadAvailable: !team.lockAndLoadUsed, // True if not yet used
@@ -1025,7 +1034,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const userTeamOwnership = await db.query.draftPicks.findFirst({
         where: and(
           eq(draftPicks.userId, userId),
-          eq(draftPicks.teamId, teamId)
+          eq(draftPicks.nflTeamId, teamId)
         ),
         with: {
           draft: {
@@ -1053,11 +1062,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // For Lock & Load, check if team is already locked this week
       if (lockType === 'lockAndLoad') {
-        if (!existingWeeklyLock || existingWeeklyLock.teamId !== teamId) {
+        if (!existingWeeklyLock || existingWeeklyLock.lockedTeamId !== teamId) {
           return res.status(400).json({ message: 'Team must be locked first before using Lock & Load' });
         }
         
-        if (existingWeeklyLock.isLockAndLoad) {
+        if (existingWeeklyLock.lockAndLoadTeamId) {
           return res.status(400).json({ message: 'Lock & Load already activated for this team this week' });
         }
       }
@@ -1074,15 +1083,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (lockType === 'lock') {
         // Create new weekly lock
         await db.insert(weeklyLocks).values({
-          id: crypto.randomUUID(),
           userId,
           leagueId,
-          teamId,
+          lockedTeamId: teamId,
           week,
-          season: 2024,
-          isLockAndLoad: false,
-          createdAt: new Date(),
-          updatedAt: new Date()
+          season: 2024
         });
 
         console.log(`[Lock] ✅ Team ${team.code} locked for user ${userId} in week ${week}`);
@@ -1093,11 +1098,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
           lockType: 'lock'
         });
       } else {
-        // Update existing lock to Lock & Load
+        // Update existing lock to add Lock & Load
         await db.update(weeklyLocks)
           .set({ 
-            isLockAndLoad: true,
-            updatedAt: new Date()
+            lockAndLoadTeamId: teamId
           })
           .where(eq(weeklyLocks.id, existingWeeklyLock.id));
 

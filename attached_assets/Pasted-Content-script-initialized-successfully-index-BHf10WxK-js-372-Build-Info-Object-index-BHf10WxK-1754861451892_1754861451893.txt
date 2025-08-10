@@ -1,0 +1,48 @@
+Content script initialized successfully.
+index-BHf10WxK.js:372 🏗️ Build Info: Object
+index-BHf10WxK.js:372 📦 Version: me676syy
+index-BHf10WxK.js:372 📅 Built: 2025-08-10T21:30:34.666Z
+index-BHf10WxK.js:372 🔧 Environment: production
+index-BHf10WxK.js:323 [Auth] Token check - Has token: true Has user: false Loading: true
+index-BHf10WxK.js:323 [SW Hook] EMERGENCY: Unregistering all existing service workers
+index-BHf10WxK.js:323 [SW Hook] Found 1 existing registrations
+index-BHf10WxK.js:323 [SW Hook] Unregistering existing service worker
+index-BHf10WxK.js:323 [SW Hook] Found 1 caches to delete
+index-BHf10WxK.js:323 [SW Hook] Deleting cache: mok-sports-dynamic-v1.7.0-nuclear-unregister-1754861431665
+index-BHf10WxK.js:323 [Auth] Token check - Has token: true Has user: true Loading: false
+index-BHf10WxK.js:323 [AutoPushRefresh] Legacy hook delegating to SubscriptionManager
+index-BHf10WxK.js:323 [SW Hook] Registering fresh service worker: /sw.js?v=1754861434803&r=0.19992912208701452
+mok-sports-draft-mokfantasysport.replit.app/:1 Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner.
+index-BHf10WxK.js:367 Main page debug: Object
+index-BHf10WxK.js:367 Main page debug: Object
+sw.js?v=1754861434803&r=0.19992912208701452:2 [SW] NUCLEAR OPTION - Emergency service worker loading
+sw.js?v=1754861434803&r=0.19992912208701452:88 [SW] Service worker starting, version: v1.7.0-nuclear-unregister-1754861434860
+sw.js?v=1754861434803&r=0.19992912208701452:305 [SW] Service worker script loaded successfully
+sw.js?v=1754861434803&r=0.19992912208701452:19 [SW] EMERGENCY INSTALL - Clearing all caches and forcing activation
+index-BHf10WxK.js:323 [SW Hook] Service worker registered successfully
+sw.js?v=1754861434803&r=0.19992912208701452:92 [SW] Installing service worker, version: v1.7.0-nuclear-unregister-1754861434860
+sw.js?v=1754861434803&r=0.19992912208701452:22 [SW] Found caches to delete: Array(1)
+sw.js?v=1754861434803&r=0.19992912208701452:25 [SW] Force deleting cache: mok-sports-dynamic-v1.7.0-nuclear-unregister-1754861431665
+sw.js?v=1754861434803&r=0.19992912208701452:96 [SW] Caching static files
+index-BHf10WxK.js:367 Main page debug: Object
+sw.js?v=1754861434803&r=0.19992912208701452:30 [SW] All caches deleted - skipping waiting
+sw.js?v=1754861434803&r=0.19992912208701452:99 [SW] Static files cached successfully
+index-BHf10WxK.js:367 Main page debug: Object
+api/user/stable/243d719b-92ce-4752-8689-5da93ee69213:1  Failed to load resource: the server responded with a status of 500 ()Understand this error
+sw.js?v=1754861434803&r=0.19992912208701452:41 [SW] EMERGENCY ACTIVATE - Taking control of all clients
+sw.js?v=1754861434803&r=0.19992912208701452:110 [SW] Activating service worker, version: v1.7.0-nuclear-unregister-1754861434860
+sw.js?v=1754861434803&r=0.19992912208701452:46 [SW] Deleting remaining cache: mok-sports-static-v1.7.0-nuclear-unregister-1754861434860
+sw.js?v=1754861434803&r=0.19992912208701452:116 [SW] Found caches: Array(1)
+sw.js?v=1754861434803&r=0.19992912208701452:129 [SW] Service worker activated and controlling all clients
+sw.js?v=1754861434803&r=0.19992912208701452:51 [SW] Claiming all clients immediately
+sw.js?v=1754861434803&r=0.19992912208701452:164 [SW] Fetching /favicon.ico from network
+api/user/stable/243d719b-92ce-4752-8689-5da93ee69213:1  Failed to load resource: the server responded with a status of 500 ()Understand this error
+api/user/stable/243d719b-92ce-4752-8689-5da93ee69213:1  Failed to load resource: the server responded with a status of 500 ()Understand this error
+sw.js?v=1754861434803&r=0.19992912208701452:64 [SW] BYPASSING CACHE for JS file: https://mok-sports-draft-mokfantasysport.replit.app/manifest.json
+sw.js?v=1754861434803&r=0.19992912208701452:164 [SW] Fetching /stable from network
+sw.js?v=1754861434803&r=0.19992912208701452:164 [SW] Fetching /assets/index-DyCG9Wb2.css from network
+index-BHf10WxK.js:48  GET https://mok-sports-draft-mokfantasysport.replit.app/api/user/stable/243d719b-92ce-4752-8689-5da93ee69213 500 (Internal Server Error)
+(anonymous) @ index-BHf10WxK.js:48
+i @ index-BHf10WxK.js:48
+b @ index-BHf10WxK.js:48
+(anonymous) @ index-BHf10WxK.js:48Understand this error
