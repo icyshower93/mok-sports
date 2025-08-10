@@ -119,6 +119,52 @@ export default function MainPage() {
           </div>
         </div>
 
+        {/* Lock Alert - Top Priority */}
+        {isLockWindowOpen && (
+          <div className="p-4">
+            <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 border-blue-200 dark:border-blue-800">
+              <CardContent className="p-4">
+                <div className="flex items-start justify-between">
+                  <div className="flex items-start space-x-4 flex-1">
+                    <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-full mt-1">
+                      <Lock className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                    </div>
+                    <div className="flex-1 space-y-2">
+                      <div>
+                        <h3 className="font-semibold text-blue-900 dark:text-blue-100 text-base">
+                          Weekly Lock Available
+                        </h3>
+                        <p className="text-sm text-blue-700 dark:text-blue-300 mt-1">
+                          Pick one team to lock for a guaranteed +1 point this week
+                        </p>
+                      </div>
+                      <div className="flex items-center space-x-4 text-sm">
+                        <div className="flex items-center space-x-2">
+                          <Clock className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                          <span className="text-blue-700 dark:text-blue-300">
+                            Deadline: {lockDeadline.toLocaleDateString()} 8:20 PM ET
+                          </span>
+                        </div>
+                        <Badge variant="outline" className="bg-blue-50 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-700">
+                          <Flame className="w-3 h-3 mr-1" />
+                          +1 Point
+                        </Badge>
+                      </div>
+                    </div>
+                  </div>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="text-blue-600 hover:text-blue-700 hover:bg-blue-100 dark:text-blue-400 dark:hover:text-blue-300 dark:hover:bg-blue-900/30 p-1"
+                  >
+                    <X className="w-4 h-4" />
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
+
         {/* Performance Stats - Above Lock Container */}
         <div className="p-4 space-y-4">
           <div className="grid grid-cols-2 gap-4">
