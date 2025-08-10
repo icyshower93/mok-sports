@@ -34,48 +34,99 @@ router.get("/current-week", async (req, res) => {
   }
 });
 
-// Get week scores with Tank01 integration
+// Get week scores with team ownership and lock data
 router.get("/week/:week", async (req, res) => {
   try {
     const week = parseInt(req.params.week);
     const season = 2024; // Using real 2024 NFL season
+    const leagueId = req.query.leagueId || '243d719b-92ce-4752-8689-5da93ee69213'; // Default to EEW2YU league
     
     if (week < 1 || week > 18) {
       return res.status(400).json({ error: 'Invalid week number. Must be between 1-18.' });
     }
     
-    console.log(`[Scoring] Getting scores for Week ${week} of ${season}...`);
+    console.log(`[Scoring] Getting scores for Week ${week} of ${season} with ownership data...`);
     
     // Update scores from Tank01 if needed
     await updateGameScoresFromTank01(week, season);
     
-    // Get game results using raw SQL for now - Drizzle join syntax issue
+    // Get games with team ownership and lock information
     const gamesResult = await db.execute(sql`
-      SELECT 
+      SELECT DISTINCT
+        g.id as game_id,
         ht.code as home_team,
         at.code as away_team,
         g.home_score,
         g.away_score, 
         g.is_completed,
-        g.game_date
+        g.game_date,
+        -- Home team ownership
+        home_user.name as home_owner_name,
+        home_user.id as home_owner_id,
+        -- Away team ownership  
+        away_user.name as away_owner_name,
+        away_user.id as away_owner_id,
+        -- Lock information for this week (checking both regular lock and lock & load)
+        CASE WHEN home_lock.locked_team_id IS NOT NULL OR home_lock.lock_and_load_team_id IS NOT NULL THEN true ELSE false END as home_locked,
+        CASE WHEN home_lock.lock_and_load_team_id IS NOT NULL THEN true ELSE false END as home_lock_and_load,
+        CASE WHEN away_lock.locked_team_id IS NOT NULL OR away_lock.lock_and_load_team_id IS NOT NULL THEN true ELSE false END as away_locked,
+        CASE WHEN away_lock.lock_and_load_team_id IS NOT NULL THEN true ELSE false END as away_lock_and_load
       FROM nfl_games g
       JOIN nfl_teams ht ON g.home_team_id = ht.id
-      JOIN nfl_teams at ON g.away_team_id = at.id  
+      JOIN nfl_teams at ON g.away_team_id = at.id
+      -- Get draft data to find team owners
+      LEFT JOIN (
+        SELECT DISTINCT dp.nfl_team_id, u.name, u.id
+        FROM draft_picks dp
+        JOIN users u ON dp.user_id = u.id
+        JOIN drafts d ON dp.draft_id = d.id
+        WHERE d.league_id = ${leagueId}
+      ) home_user ON home_user.nfl_team_id = ht.id
+      LEFT JOIN (
+        SELECT DISTINCT dp.nfl_team_id, u.name, u.id  
+        FROM draft_picks dp
+        JOIN users u ON dp.user_id = u.id
+        JOIN drafts d ON dp.draft_id = d.id
+        WHERE d.league_id = ${leagueId}
+      ) away_user ON away_user.nfl_team_id = at.id
+      -- Get lock information for this specific week
+      LEFT JOIN weekly_locks home_lock ON (home_lock.locked_team_id = ht.id OR home_lock.lock_and_load_team_id = ht.id)
+        AND home_lock.week = ${week} 
+        AND home_lock.season = ${season}
+      LEFT JOIN weekly_locks away_lock ON (away_lock.locked_team_id = at.id OR away_lock.lock_and_load_team_id = at.id)
+        AND away_lock.week = ${week} 
+        AND away_lock.season = ${season}
       WHERE g.week = ${week} AND g.season = ${season}
+      ORDER BY g.game_date
     `);
     
     const games = gamesResult.rows.map((row: any) => ({
+      id: row.game_id,
       homeTeam: row.home_team,
       awayTeam: row.away_team,
       homeScore: row.home_score,
       awayScore: row.away_score,
       isCompleted: row.is_completed,
-      gameDate: row.game_date
+      gameDate: row.game_date,
+      // Team ownership information
+      homeOwner: row.home_owner_id,
+      awayOwner: row.away_owner_id,
+      homeOwnerName: row.home_owner_name,
+      awayOwnerName: row.away_owner_name,
+      // Lock status
+      homeLocked: row.home_locked,
+      awayLocked: row.away_locked,
+      homeLockAndLoad: row.home_lock_and_load,
+      awayLockAndLoad: row.away_lock_and_load,
+      // Points would be calculated based on scoring rules
+      homeMokPoints: 0, // TODO: Calculate based on game results and locks
+      awayMokPoints: 0   // TODO: Calculate based on game results and locks
     }));
     
     res.json({
       week,
       season,
+      leagueId,
       games: games.length,
       completedGames: games.filter(g => g.isCompleted).length,
       results: games

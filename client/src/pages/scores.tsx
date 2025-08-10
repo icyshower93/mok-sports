@@ -108,10 +108,11 @@ export default function ScoresPage() {
     enabled: !!currentLeague
   });
 
-  // Get real NFL games for selected week
+  // Get real NFL games for selected week with ownership data
   const { data: nflGamesData, isLoading: loadingGames } = useQuery({
-    queryKey: [`/api/scoring/week/${selectedWeek}`],
-    enabled: selectedWeek > 0
+    queryKey: [`/api/scoring/week/${selectedWeek}`, currentLeague?.id],
+    queryFn: () => fetch(`/api/scoring/week/${selectedWeek}?leagueId=${currentLeague?.id}`).then(res => res.json()),
+    enabled: selectedWeek > 0 && !!currentLeague
   });
 
   if (!user) {
