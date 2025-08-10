@@ -9,6 +9,7 @@ import { z } from "zod";
 import { registerPushNotificationRoutes } from "./routes/push-notifications";
 import { registerPushDiagnosticsRoutes } from "./routes/push-diagnostics";
 import { registerSubscriptionValidationRoutes } from "./routes/subscription-validation";
+import { registerAdminRoutes } from "./routes/admin";
 import { db } from "./db";
 import { eq } from "drizzle-orm";
 import "./auth"; // Initialize passport strategies
@@ -791,7 +792,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const stable = await storage.getUserStable(user.id, leagueId);
-      res.json(stable);
+      
+      // Enhance with mock performance data
+      const { generateTeamPerformanceData } = await import('./utils/mockScoring.js');
+      const enhancedStable = stable.map((team: any) => {
+        const performanceData = generateTeamPerformanceData(team.nflTeam.code, 1); // Week 1 for now
+        return {
+          ...team,
+          ...performanceData
+        };
+      });
+      
+      res.json(enhancedStable);
     } catch (error) {
       console.error('Error getting user stable:', error);
       res.status(500).json({ message: "Failed to get user stable" });
@@ -825,6 +837,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Register subscription validation routes
   registerSubscriptionValidationRoutes(app);
+  
+  // Register admin routes
+  registerAdminRoutes(app);
   
   // Draft reset endpoint - Creates new draft for seamless WebSocket connection
   app.post('/api/testing/reset-draft', async (req, res) => {

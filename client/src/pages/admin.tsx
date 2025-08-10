@@ -1,0 +1,340 @@
+import { useState } from "react";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { queryClient } from "@/lib/queryClient";
+import { Calendar, Clock, Play, Pause, SkipForward, Settings, Trophy, Target } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+
+export default function AdminPanel() {
+  const { toast } = useToast();
+  const [selectedWeek, setSelectedWeek] = useState("1");
+  const [selectedDay, setSelectedDay] = useState("sunday");
+  const [gameTime, setGameTime] = useState("13:00");
+
+  // Get current admin state
+  const { data: adminState, isLoading } = useQuery({
+    queryKey: ['/api/admin/state'],
+  });
+
+  // Type guard for admin state
+  const state = adminState as {
+    currentWeek?: number;
+    currentDay?: string;
+    currentTime?: string;
+    lockDeadlinePassed?: boolean;
+    activeLocks?: number;
+    totalPlayers?: number;
+    gamesPlayed?: number;
+    lastSimulation?: { week: number; gamesSimulated: number };
+  } | undefined;
+
+  // Time control mutations
+  const advanceWeekMutation = useMutation({
+    mutationFn: async () => {
+      const response = await fetch('/api/admin/advance-week', { 
+        method: 'POST',
+        credentials: 'include' 
+      });
+      if (!response.ok) throw new Error('Failed to advance week');
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/state'] });
+      toast({ description: "Advanced to next week successfully" });
+    },
+  });
+
+  const setTimeMutation = useMutation({
+    mutationFn: async (timeData: { week: string; day: string; time: string }) => {
+      const response = await fetch('/api/admin/set-time', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(timeData),
+      });
+      if (!response.ok) throw new Error('Failed to set time');
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/state'] });
+      toast({ description: "Time updated successfully" });
+    },
+  });
+
+  const generateGamesMutation = useMutation({
+    mutationFn: async (week: string) => {
+      const response = await fetch('/api/admin/generate-games', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ week }),
+      });
+      if (!response.ok) throw new Error('Failed to generate games');
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/state'] });
+      toast({ description: "Games generated successfully" });
+    },
+  });
+
+  const simulateGamesMutation = useMutation({
+    mutationFn: async (week: string) => {
+      const response = await fetch('/api/admin/simulate-games', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ week }),
+      });
+      if (!response.ok) throw new Error('Failed to simulate games');
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/state'] });
+      toast({ description: "Games simulated successfully" });
+    },
+  });
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background p-6">
+        <div className="max-w-6xl mx-auto">
+          <div className="animate-pulse space-y-6">
+            <div className="h-8 bg-muted rounded w-48"></div>
+            <div className="grid gap-6 md:grid-cols-2">
+              <div className="h-64 bg-muted rounded"></div>
+              <div className="h-64 bg-muted rounded"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-background p-6">
+      <div className="max-w-6xl mx-auto space-y-6">
+        {/* Header */}
+        <div className="flex items-center space-x-3">
+          <Settings className="w-8 h-8 text-primary" />
+          <div>
+            <h1 className="text-3xl font-bold">Admin Panel</h1>
+            <p className="text-muted-foreground">Control time progression and game simulation</p>
+          </div>
+        </div>
+
+        <div className="grid gap-6 md:grid-cols-2">
+          {/* Current State */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center space-x-2">
+                <Clock className="w-5 h-5" />
+                <span>Current State</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label className="text-sm text-muted-foreground">Current Week</Label>
+                  <div className="text-2xl font-bold">{state?.currentWeek || 1}</div>
+                </div>
+                <div>
+                  <Label className="text-sm text-muted-foreground">Current Day</Label>
+                  <div className="text-lg font-semibold capitalize">{state?.currentDay || 'Monday'}</div>
+                </div>
+              </div>
+              
+              <div>
+                <Label className="text-sm text-muted-foreground">Current Time</Label>
+                <div className="text-lg font-semibold">{state?.currentTime || '12:00 PM ET'}</div>
+              </div>
+
+              <Separator />
+
+              <div>
+                <Label className="text-sm text-muted-foreground mb-2 block">Season Progress</Label>
+                <div className="flex items-center space-x-2">
+                  <div className="flex-1 bg-muted rounded-full h-2">
+                    <div 
+                      className="bg-primary h-2 rounded-full transition-all duration-300"
+                      style={{ width: `${((state?.currentWeek || 1) / 18) * 100}%` }}
+                    />
+                  </div>
+                  <span className="text-sm text-muted-foreground">
+                    Week {state?.currentWeek || 1} of 18
+                  </span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Time Controls */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center space-x-2">
+                <Calendar className="w-5 h-5" />
+                <span>Time Controls</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-3">
+                <div>
+                  <Label htmlFor="week-select">Set Week</Label>
+                  <Select value={selectedWeek} onValueChange={setSelectedWeek}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {Array.from({ length: 18 }, (_, i) => (
+                        <SelectItem key={i + 1} value={String(i + 1)}>
+                          Week {i + 1}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
+                  <Label htmlFor="day-select">Set Day</Label>
+                  <Select value={selectedDay} onValueChange={setSelectedDay}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="monday">Monday</SelectItem>
+                      <SelectItem value="tuesday">Tuesday</SelectItem>
+                      <SelectItem value="wednesday">Wednesday</SelectItem>
+                      <SelectItem value="thursday">Thursday</SelectItem>
+                      <SelectItem value="friday">Friday</SelectItem>
+                      <SelectItem value="saturday">Saturday</SelectItem>
+                      <SelectItem value="sunday">Sunday</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
+                  <Label htmlFor="time-input">Set Time (24hr format)</Label>
+                  <Input
+                    id="time-input"
+                    type="time"
+                    value={gameTime}
+                    onChange={(e) => setGameTime(e.target.value)}
+                  />
+                </div>
+              </div>
+
+              <div className="flex space-x-2">
+                <Button 
+                  onClick={() => setTimeMutation.mutate({ week: selectedWeek, day: selectedDay, time: gameTime })}
+                  disabled={setTimeMutation.isPending}
+                  size="sm"
+                  className="flex-1"
+                >
+                  <Play className="w-4 h-4 mr-2" />
+                  Set Time
+                </Button>
+                <Button 
+                  onClick={() => advanceWeekMutation.mutate()}
+                  disabled={advanceWeekMutation.isPending}
+                  size="sm"
+                  variant="outline"
+                  className="flex-1"
+                >
+                  <SkipForward className="w-4 h-4 mr-2" />
+                  Next Week
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Game Management */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center space-x-2">
+                <Trophy className="w-5 h-5" />
+                <span>Game Management</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="text-sm text-muted-foreground mb-3">
+                Generate and simulate games for testing league mechanics
+              </div>
+              
+              <div className="space-y-2">
+                <Button 
+                  onClick={() => generateGamesMutation.mutate(selectedWeek)}
+                  disabled={generateGamesMutation.isPending}
+                  className="w-full"
+                  variant="outline"
+                >
+                  <Target className="w-4 h-4 mr-2" />
+                  Generate Week {selectedWeek} Games
+                </Button>
+                
+                <Button 
+                  onClick={() => simulateGamesMutation.mutate(selectedWeek)}
+                  disabled={simulateGamesMutation.isPending}
+                  className="w-full"
+                >
+                  <Play className="w-4 h-4 mr-2" />
+                  Simulate Week {selectedWeek} Results
+                </Button>
+              </div>
+
+              {state?.lastSimulation && (
+                <div className="mt-4 p-3 bg-muted rounded-lg">
+                  <div className="text-sm">
+                    <div className="font-medium">Last Simulation</div>
+                    <div className="text-muted-foreground">
+                      Week {state.lastSimulation.week} - {state.lastSimulation.gamesSimulated} games
+                    </div>
+                  </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* League Status */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center space-x-2">
+                <Trophy className="w-5 h-5" />
+                <span>League EEW2YU Status</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                <div>
+                  <Label className="text-muted-foreground">Total Players</Label>
+                  <div className="font-semibold">{state?.totalPlayers || 6}</div>
+                </div>
+                <div>
+                  <Label className="text-muted-foreground">Active Locks</Label>
+                  <div className="font-semibold">{state?.activeLocks || 0}</div>
+                </div>
+                <div>
+                  <Label className="text-muted-foreground">Games Played</Label>
+                  <div className="font-semibold">{state?.gamesPlayed || 0}</div>
+                </div>
+                <div>
+                  <Label className="text-muted-foreground">Lock Deadline</Label>
+                  <div className="font-semibold">
+                    <Badge variant={state?.lockDeadlinePassed ? "destructive" : "secondary"}>
+                      {state?.lockDeadlinePassed ? "Passed" : "Active"}
+                    </Badge>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </div>
+  );
+}

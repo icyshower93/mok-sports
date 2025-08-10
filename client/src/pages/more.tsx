@@ -63,8 +63,16 @@ export default function MorePage() {
                 <Users className="w-4 h-4 mr-3" />
                 Back to League Waiting Room
               </Button>
+              <Button 
+                variant="outline" 
+                className="w-full justify-start"
+                onClick={() => navigate('/admin')}
+              >
+                <Settings className="w-4 h-4 mr-3" />
+                Admin Panel
+              </Button>
               <p className="text-sm text-muted-foreground">
-                Navigate back to league waiting room to start another draft and test team population.
+                Navigate back to league waiting room to start another draft and test team population. Use the Admin Panel to control time and simulate games.
               </p>
             </CardContent>
           </Card>
