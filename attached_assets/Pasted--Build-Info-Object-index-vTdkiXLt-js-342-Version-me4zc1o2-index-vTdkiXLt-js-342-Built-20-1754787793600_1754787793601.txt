@@ -1,0 +1,45 @@
+🏗️ Build Info: Object
+index-vTdkiXLt.js:342 📦 Version: me4zc1o2
+index-vTdkiXLt.js:342 📅 Built: 2025-08-10T01:02:56.114Z
+index-vTdkiXLt.js:342 🔧 Environment: production
+index-vTdkiXLt.js:298 [Auth] Token check - Has token: true Has user: false Loading: true
+index-vTdkiXLt.js:298 [SW Hook] EMERGENCY: Unregistering all existing service workers
+index-vTdkiXLt.js:298 [SW Hook] Found 1 existing registrations
+index-vTdkiXLt.js:298 [SW Hook] Unregistering existing service worker
+index-vTdkiXLt.js:298 [SW Hook] Found 1 caches to delete
+index-vTdkiXLt.js:298 [SW Hook] Deleting cache: mok-sports-dynamic-v1.7.0-nuclear-unregister-1754787771111
+index-vTdkiXLt.js:342 Main page debug: Object
+index-vTdkiXLt.js:298 [Auth] Token check - Has token: true Has user: true Loading: false
+index-vTdkiXLt.js:342 Main page debug: Object
+index-vTdkiXLt.js:298 [AutoPushRefresh] Legacy hook delegating to SubscriptionManager
+contentScript.js:2 Content script initialized successfully.
+index-vTdkiXLt.js:342 Main page debug: Object
+mok-sports-draft-mokfantasysport.replit.app/:1 Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner.
+index-vTdkiXLt.js:298 [SW Hook] Registering fresh service worker: /sw.js?v=1754787776253&r=0.4384556318017523
+sw.js?v=1754787776253&r=0.4384556318017523:2 [SW] NUCLEAR OPTION - Emergency service worker loading
+sw.js?v=1754787776253&r=0.4384556318017523:88 [SW] Service worker starting, version: v1.7.0-nuclear-unregister-1754787776308
+sw.js?v=1754787776253&r=0.4384556318017523:305 [SW] Service worker script loaded successfully
+sw.js?v=1754787776253&r=0.4384556318017523:19 [SW] EMERGENCY INSTALL - Clearing all caches and forcing activation
+sw.js?v=1754787776253&r=0.4384556318017523:92 [SW] Installing service worker, version: v1.7.0-nuclear-unregister-1754787776308
+index-vTdkiXLt.js:298 [SW Hook] Service worker registered successfully
+sw.js?v=1754787776253&r=0.4384556318017523:22 [SW] Found caches to delete: Array(1)
+sw.js?v=1754787776253&r=0.4384556318017523:25 [SW] Force deleting cache: mok-sports-dynamic-v1.7.0-nuclear-unregister-1754787771111
+sw.js?v=1754787776253&r=0.4384556318017523:96 [SW] Caching static files
+index-vTdkiXLt.js:342 Main page debug: Object
+sw.js?v=1754787776253&r=0.4384556318017523:30 [SW] All caches deleted - skipping waiting
+index-vTdkiXLt.js:342 Main page debug: Object
+sw.js?v=1754787776253&r=0.4384556318017523:99 [SW] Static files cached successfully
+index-vTdkiXLt.js:342 Main page debug: Object
+sw.js?v=1754787776253&r=0.4384556318017523:41 [SW] EMERGENCY ACTIVATE - Taking control of all clients
+sw.js?v=1754787776253&r=0.4384556318017523:110 [SW] Activating service worker, version: v1.7.0-nuclear-unregister-1754787776308
+sw.js?v=1754787776253&r=0.4384556318017523:46 [SW] Deleting remaining cache: mok-sports-static-v1.7.0-nuclear-unregister-1754787776308
+sw.js?v=1754787776253&r=0.4384556318017523:116 [SW] Found caches: Array(1)
+sw.js?v=1754787776253&r=0.4384556318017523:129 [SW] Service worker activated and controlling all clients
+sw.js?v=1754787776253&r=0.4384556318017523:51 [SW] Claiming all clients immediately
+sw.js?v=1754787776253&r=0.4384556318017523:164 [SW] Fetching /favicon.ico from network
+index-vTdkiXLt.js:342 Back to League button clicked: Object
+index-vTdkiXLt.js:342 No leagues found, going to leagues page
+sw.js?v=1754787776253&r=0.4384556318017523:160 [SW] Serving /favicon.ico from cache
+sw.js?v=1754787776253&r=0.4384556318017523:164 [SW] Fetching /leagues from network
+sw.js?v=1754787776253&r=0.4384556318017523:64 [SW] BYPASSING CACHE for JS file: https://mok-sports-draft-mokfantasysport.replit.app/manifest.json
+sw.js?v=1754787776253&r=0.4384556318017523:164 [SW] Fetching /assets/index-BO1K4c-T.css from network
