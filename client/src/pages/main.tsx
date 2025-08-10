@@ -176,7 +176,7 @@ export default function MainPage() {
                   </Badge>
                 </div>
               </CardHeader>
-              <CardContent className="space-y-3 p-3">
+              <CardContent className="space-y-4 p-4">
                 {userTeams.length === 0 ? (
                   <div className="text-center py-8">
                     <div className="w-12 h-12 mx-auto mb-3 bg-muted rounded-full flex items-center justify-center">
@@ -198,16 +198,16 @@ export default function MainPage() {
                         key={team.id}
                         className="rounded-lg border bg-card hover:shadow-sm transition-all duration-200 overflow-hidden"
                       >
-                        <div className="p-3">
-                          {/* Team Header - More compact */}
-                          <div className="flex items-center justify-between mb-2">
-                            <div className="flex items-center space-x-2 flex-1 min-w-0">
+                        <div className="p-4">
+                          {/* Team Header - Balanced sizing */}
+                          <div className="flex items-center justify-between mb-3">
+                            <div className="flex items-center space-x-3 flex-1 min-w-0">
                               <TeamLogo 
                                 logoUrl={team.nflTeam.logoUrl}
                                 teamCode={team.nflTeam.code}
                                 teamName={team.nflTeam.name}
-                                size="sm"
-                                className="w-8 h-8 flex-shrink-0"
+                                size="md"
+                                className="w-9 h-9 flex-shrink-0"
                               />
                               <div className="flex-1 min-w-0">
                                 <div className="font-medium text-sm truncate">
@@ -236,21 +236,21 @@ export default function MainPage() {
                             </div>
                           </div>
                           
-                          {/* Action Buttons - More compact */}
-                          <div className="flex space-x-2">
+                          {/* Action Buttons - Better touch targets */}
+                          <div className="flex space-x-3">
                             <Button 
                               size="sm"
-                              className="flex-1 h-8 text-xs"
+                              className="flex-1 h-9 text-sm"
                               disabled={team.isLocked}
                             >
                               {team.isLocked ? (
                                 <>
-                                  <Lock className="w-3 h-3 mr-1" />
+                                  <Lock className="w-3 h-3 mr-2" />
                                   Locked
                                 </>
                               ) : (
                                 <>
-                                  <Lock className="w-3 h-3 mr-1" />
+                                  <Lock className="w-3 h-3 mr-2" />
                                   Lock
                                 </>
                               )}
@@ -260,9 +260,9 @@ export default function MainPage() {
                               <Button 
                                 size="sm"
                                 variant="outline"
-                                className="flex-1 h-8 text-xs border-amber-200 dark:border-amber-800 text-amber-700 dark:text-amber-300 hover:bg-amber-50 dark:hover:bg-amber-950/20"
+                                className="flex-1 h-9 text-sm border-amber-200 dark:border-amber-800 text-amber-700 dark:text-amber-300 hover:bg-amber-50 dark:hover:bg-amber-950/20"
                               >
-                                <Zap className="w-3 h-3 mr-1" />
+                                <Zap className="w-3 h-3 mr-2" />
                                 Lock & Load
                               </Button>
                             )}
@@ -273,7 +273,7 @@ export default function MainPage() {
 
                     {/* Unavailable Teams - More compact */}
                     {userTeams.filter(team => team.locksRemaining === 0 || team.isBye).length > 0 && (
-                      <div className="mt-3 pt-3 border-t border-border/50">
+                      <div className="mt-4 pt-4 border-t border-border/50">
                         <p className="text-xs font-medium text-muted-foreground mb-2 uppercase tracking-wide">
                           Unavailable This Week
                         </p>
