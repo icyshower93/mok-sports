@@ -138,7 +138,7 @@ export default function MainPage() {
                   </div>
                   <div>
                     <div className="font-semibold text-emerald-800 dark:text-emerald-200">
-                      Weekly Skins
+                      Skins Game
                     </div>
                     <div className="text-sm text-emerald-600 dark:text-emerald-400">
                       This week's prize
