@@ -23,6 +23,17 @@ export class ErrorBoundary extends Component<Props, State> {
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     console.error('ErrorBoundary caught an error:', error.message);
     console.error('Component stack:', errorInfo.componentStack);
+    
+    // Skip DOM manipulation errors that are recoverable
+    if (error.message?.includes('removeChild') || 
+        error.message?.includes('DOM') ||
+        error.name === 'NotFoundError') {
+      console.warn('[ErrorBoundary] DOM manipulation error detected - attempting recovery');
+      // Auto-recover after short delay
+      setTimeout(() => {
+        this.setState({ hasError: false, error: null });
+      }, 1000);
+    }
   }
 
   render() {
