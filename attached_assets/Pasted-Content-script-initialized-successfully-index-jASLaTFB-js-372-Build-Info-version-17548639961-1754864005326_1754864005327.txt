@@ -1,0 +1,57 @@
+Content script initialized successfully.
+index-jASLaTFB.js:372 🏗️ Build Info: {version: 1754863996106, date: '2025-08-10T22:13:16.106Z', env: 'production', hash: 'me68ppe2'}
+index-jASLaTFB.js:372 📦 Version: me68ppe2
+index-jASLaTFB.js:372 📅 Built: 2025-08-10T22:13:16.106Z
+index-jASLaTFB.js:372 🔧 Environment: production
+index-jASLaTFB.js:323 [Auth] Token check - Has token: true Has user: false Loading: true
+index-jASLaTFB.js:323 [SW Hook] EMERGENCY: Unregistering all existing service workers
+index-jASLaTFB.js:323 [SW Hook] Found 1 existing registrations
+index-jASLaTFB.js:323 [SW Hook] Unregistering existing service worker
+index-jASLaTFB.js:323 [SW Hook] Found 0 caches to delete
+stable:1 Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner.
+index-jASLaTFB.js:323 [Auth] Token check - Has token: true Has user: true Loading: false
+index-jASLaTFB.js:323 [AutoPushRefresh] Legacy hook delegating to SubscriptionManager
+index-jASLaTFB.js:323 [SW Hook] Registering fresh service worker: /sw.js?v=1754863996248&r=0.15617727027551354
+sw.js?v=1754863996248&r=0.15617727027551354:2 [SW] NUCLEAR OPTION - Emergency service worker loading
+sw.js?v=1754863996248&r=0.15617727027551354:88 [SW] Service worker starting, version: v1.7.0-nuclear-unregister-1754863996326
+sw.js?v=1754863996248&r=0.15617727027551354:305 [SW] Service worker script loaded successfully
+sw.js?v=1754863996248&r=0.15617727027551354:19 [SW] EMERGENCY INSTALL - Clearing all caches and forcing activation
+sw.js?v=1754863996248&r=0.15617727027551354:92 [SW] Installing service worker, version: v1.7.0-nuclear-unregister-1754863996326
+index-jASLaTFB.js:323 [SW Hook] Service worker registered successfully
+sw.js?v=1754863996248&r=0.15617727027551354:22 [SW] Found caches to delete: []
+sw.js?v=1754863996248&r=0.15617727027551354:30 [SW] All caches deleted - skipping waiting
+sw.js?v=1754863996248&r=0.15617727027551354:96 [SW] Caching static files
+sw.js?v=1754863996248&r=0.15617727027551354:99 [SW] Static files cached successfully
+sw.js?v=1754863996248&r=0.15617727027551354:41 [SW] EMERGENCY ACTIVATE - Taking control of all clients
+sw.js?v=1754863996248&r=0.15617727027551354:110 [SW] Activating service worker, version: v1.7.0-nuclear-unregister-1754863996326
+sw.js?v=1754863996248&r=0.15617727027551354:46 [SW] Deleting remaining cache: mok-sports-static-v1.7.0-nuclear-unregister-1754863996326
+sw.js?v=1754863996248&r=0.15617727027551354:116 [SW] Found caches: ['mok-sports-static-v1.7.0-nuclear-unregister-1754863996326']
+sw.js?v=1754863996248&r=0.15617727027551354:129 [SW] Service worker activated and controlling all clients
+sw.js?v=1754863996248&r=0.15617727027551354:51 [SW] Claiming all clients immediately
+index-jASLaTFB.js:367 [Reset] Button clicked, triggering mutation
+index-jASLaTFB.js:48  DELETE https://mok-sports-draft-mokfantasysport.replit.app/api/user/locks/reset 403 (Forbidden)
+jr @ index-jASLaTFB.js:48
+mutationFn @ index-jASLaTFB.js:367
+fn @ index-jASLaTFB.js:48
+b @ index-jASLaTFB.js:48
+start @ index-jASLaTFB.js:48
+execute @ index-jASLaTFB.js:48
+await in execute
+mutate @ index-jASLaTFB.js:48
+(anonymous) @ index-jASLaTFB.js:48
+onClick @ index-jASLaTFB.js:367
+Ob @ index-jASLaTFB.js:37
+Mb @ index-jASLaTFB.js:37
+_b @ index-jASLaTFB.js:37
+Mm @ index-jASLaTFB.js:37
+Mg @ index-jASLaTFB.js:37
+(anonymous) @ index-jASLaTFB.js:37
+af @ index-jASLaTFB.js:40
+ig @ index-jASLaTFB.js:37
+xc @ index-jASLaTFB.js:37
+Od @ index-jASLaTFB.js:37
+Zb @ index-jASLaTFB.js:37Understand this error
+index-jASLaTFB.js:367 [Reset] Failed to reset locks: Error: 403: {"message":"Reset endpoint only available in development"}
+    at hv (index-jASLaTFB.js:48:43092)
+    at async jr (index-jASLaTFB.js:48:43325)
+    at async Object.mutationFn (index-jASLaTFB.js:367:108083)

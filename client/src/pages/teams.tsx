@@ -266,7 +266,7 @@ export default function StablePage() {
             <h1 className="text-2xl font-bold">My Stable</h1>
           </div>
           
-          {/* Development Reset Button - Always show for testing */}
+          {/* Reset Button - Available in all environments for testing */}
           <Button
             variant="outline"
             size="sm"

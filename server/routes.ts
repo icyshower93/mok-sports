@@ -1133,10 +1133,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: 'Missing required fields: leagueId, week' });
       }
 
-      // Only allow in development mode
-      if (process.env.NODE_ENV !== 'development') {
-        return res.status(403).json({ message: 'Reset endpoint only available in development' });
-      }
+      // Allow in all environments for testing purposes
+      console.log(`[Reset] Reset endpoint called in ${process.env.NODE_ENV} mode`);
 
       console.log(`[Reset] User ${user.id} resetting locks for week ${week} in league ${leagueId}`);
 
