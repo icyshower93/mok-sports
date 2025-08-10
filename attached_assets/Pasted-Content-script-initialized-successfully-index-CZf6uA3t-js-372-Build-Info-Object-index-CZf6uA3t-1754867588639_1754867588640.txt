@@ -1,0 +1,61 @@
+Content script initialized successfully.
+index-CZf6uA3t.js:372 🏗️ Build Info: Object
+index-CZf6uA3t.js:372 📦 Version: me6asaht
+index-CZf6uA3t.js:372 📅 Built: 2025-08-10T23:11:16.001Z
+index-CZf6uA3t.js:372 🔧 Environment: production
+index-CZf6uA3t.js:323 [Auth] Token check - Has token: true Has user: false Loading: true
+index-CZf6uA3t.js:323 [SW Hook] EMERGENCY: Unregistering all existing service workers
+index-CZf6uA3t.js:323 [SW Hook] Found 1 existing registrations
+index-CZf6uA3t.js:323 [SW Hook] Unregistering existing service worker
+index-CZf6uA3t.js:323 [SW Hook] Found 1 caches to delete
+index-CZf6uA3t.js:323 [SW Hook] Deleting cache: mok-sports-dynamic-v1.7.0-nuclear-unregister-1754867449023
+index-CZf6uA3t.js:323 [Auth] Token check - Has token: true Has user: true Loading: false
+index-CZf6uA3t.js:323 [AutoPushRefresh] Legacy hook delegating to SubscriptionManager
+index-CZf6uA3t.js:323 [SW Hook] Registering fresh service worker: /sw.js?v=1754867476126&r=0.4643323327459906
+main:1 Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner.
+index-CZf6uA3t.js:40 ReferenceError: React is not defined
+    at pp (index-CZf6uA3t.js:367:102687)
+    at Jd (index-CZf6uA3t.js:38:16998)
+    at _x (index-CZf6uA3t.js:40:43963)
+    at Ox (index-CZf6uA3t.js:40:39727)
+    at h1 (index-CZf6uA3t.js:40:39655)
+    at ol (index-CZf6uA3t.js:40:39508)
+    at Ou (index-CZf6uA3t.js:40:35875)
+    at fh (index-CZf6uA3t.js:40:36678)
+    at Or (index-CZf6uA3t.js:38:3274)
+    at index-CZf6uA3t.js:40:34207
+Su @ index-CZf6uA3t.js:40Understand this error
+index-CZf6uA3t.js:323 ErrorBoundary caught an error: React is not defined
+componentDidCatch @ index-CZf6uA3t.js:323Understand this error
+index-CZf6uA3t.js:323 Component stack: 
+    at pp (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CZf6uA3t.js:367:102475)
+    at ht (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CZf6uA3t.js:48:3201)
+    at rN (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CZf6uA3t.js:48:4017)
+    at AP (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CZf6uA3t.js:372:90883)
+    at gE (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CZf6uA3t.js:323:57495)
+    at u (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CZf6uA3t.js:48:45834)
+    at Ay (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CZf6uA3t.js:323:50471)
+    at pE (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CZf6uA3t.js:323:56967)
+    at NN (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CZf6uA3t.js:48:40185)
+    at SE (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CZf6uA3t.js:323:70947)
+    at LP
+componentDidCatch @ index-CZf6uA3t.js:323Understand this error
+sw.js?v=1754867476126&r=0.4643323327459906:2 [SW] NUCLEAR OPTION - Emergency service worker loading
+sw.js?v=1754867476126&r=0.4643323327459906:88 [SW] Service worker starting, version: v1.7.0-nuclear-unregister-1754867476185
+sw.js?v=1754867476126&r=0.4643323327459906:305 [SW] Service worker script loaded successfully
+index-CZf6uA3t.js:323 [SW Hook] Service worker registered successfully
+sw.js?v=1754867476126&r=0.4643323327459906:19 [SW] EMERGENCY INSTALL - Clearing all caches and forcing activation
+sw.js?v=1754867476126&r=0.4643323327459906:92 [SW] Installing service worker, version: v1.7.0-nuclear-unregister-1754867476185
+sw.js?v=1754867476126&r=0.4643323327459906:22 [SW] Found caches to delete: Array(0)
+sw.js?v=1754867476126&r=0.4643323327459906:30 [SW] All caches deleted - skipping waiting
+sw.js?v=1754867476126&r=0.4643323327459906:96 [SW] Caching static files
+sw.js?v=1754867476126&r=0.4643323327459906:99 [SW] Static files cached successfully
+sw.js?v=1754867476126&r=0.4643323327459906:41 [SW] EMERGENCY ACTIVATE - Taking control of all clients
+sw.js?v=1754867476126&r=0.4643323327459906:110 [SW] Activating service worker, version: v1.7.0-nuclear-unregister-1754867476185
+sw.js?v=1754867476126&r=0.4643323327459906:46 [SW] Deleting remaining cache: mok-sports-static-v1.7.0-nuclear-unregister-1754867476185
+sw.js?v=1754867476126&r=0.4643323327459906:116 [SW] Found caches: Array(1)
+sw.js?v=1754867476126&r=0.4643323327459906:129 [SW] Service worker activated and controlling all clients
+sw.js?v=1754867476126&r=0.4643323327459906:51 [SW] Claiming all clients immediately
+sw.js?v=1754867476126&r=0.4643323327459906:64 [SW] BYPASSING CACHE for JS file: https://mok-sports-draft-mokfantasysport.replit.app/manifest.json
+sw.js?v=1754867476126&r=0.4643323327459906:164 [SW] Fetching /main from network
+sw.js?v=1754867476126&r=0.4643323327459906:164 [SW] Fetching /assets/index-BPcajPpE.css from network
