@@ -47,6 +47,39 @@ export default function StablePage() {
   });
 
   // Mutations for locking teams
+  // Development reset mutation
+  const resetLocksMutation = useMutation({
+    mutationFn: async () => {
+      const response = await apiRequest('DELETE', `/api/user/locks/reset`, {
+        leagueId: selectedLeague,
+        week: selectedWeek
+      });
+      const data = await response.json();
+      return data;
+    },
+    onSuccess: () => {
+      // Clear local state
+      setWeeklyLocks(new Set());
+      
+      // Show success toast
+      toast({
+        title: "Locks Reset!",
+        description: `All locks cleared for Week ${selectedWeek}. Ready for testing!`,
+      });
+
+      // Refresh team data
+      queryClient.invalidateQueries({ queryKey: [`/api/user/stable/${selectedLeague}`] });
+    },
+    onError: (error: any) => {
+      console.error('[Reset] Failed to reset locks:', error);
+      toast({
+        title: "Reset Failed",
+        description: error.message || "Unable to reset locks. Please try again.",
+        variant: "destructive"
+      });
+    },
+  });
+
   const lockTeamMutation = useMutation({
     mutationFn: async ({ teamId, lockType }: { teamId: string; lockType: 'lock' | 'lockAndLoad' }) => {
       console.log('[API] Making lock request with:', {
@@ -227,9 +260,33 @@ export default function StablePage() {
   return (
     <div className="min-h-screen bg-background pb-20">
       <div className="max-w-4xl mx-auto px-4 py-6 space-y-6">
-        <div className="flex items-center space-x-2">
-          <Shield className="w-6 h-6 text-primary" />
-          <h1 className="text-2xl font-bold">My Stable</h1>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-2">
+            <Shield className="w-6 h-6 text-primary" />
+            <h1 className="text-2xl font-bold">My Stable</h1>
+          </div>
+          
+          {/* Development Reset Button */}
+          {import.meta.env.DEV && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => resetLocksMutation.mutate()}
+              disabled={resetLocksMutation.isPending}
+              className="text-xs"
+            >
+              {resetLocksMutation.isPending ? (
+                <>
+                  <div className="w-3 h-3 mr-2 animate-spin rounded-full border border-gray-600 border-t-transparent" />
+                  Resetting...
+                </>
+              ) : (
+                <>
+                  Reset Locks
+                </>
+              )}
+            </Button>
+          )}
         </div>
 
         {/* Lock Selection Interface */}

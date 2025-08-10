@@ -1119,6 +1119,48 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Development-only endpoint to reset all locks for testing
+  app.delete('/api/user/locks/reset', async (req, res) => {
+    try {
+      const user = await getAuthenticatedUser(req);
+      if (!user) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+
+      const { leagueId, week } = req.body;
+
+      if (!leagueId || !week) {
+        return res.status(400).json({ message: 'Missing required fields: leagueId, week' });
+      }
+
+      // Only allow in development mode
+      if (process.env.NODE_ENV !== 'development') {
+        return res.status(403).json({ message: 'Reset endpoint only available in development' });
+      }
+
+      console.log(`[Reset] User ${user.id} resetting locks for week ${week} in league ${leagueId}`);
+
+      // Delete all locks for this user, league, and week
+      await db.delete(weeklyLocks)
+        .where(and(
+          eq(weeklyLocks.userId, user.id),
+          eq(weeklyLocks.leagueId, leagueId),
+          eq(weeklyLocks.week, week)
+        ));
+
+      console.log(`[Reset] Successfully cleared locks for user ${user.id}, week ${week}, league ${leagueId}`);
+
+      res.json({ 
+        message: 'Locks reset successfully',
+        week: week,
+        leagueId: leagueId 
+      });
+    } catch (error) {
+      console.error('Error resetting locks:', error);
+      res.status(500).json({ message: 'Failed to reset locks' });
+    }
+  });
+
   // NFL Teams routes
   app.get("/api/nfl-teams", async (req, res) => {
     try {
