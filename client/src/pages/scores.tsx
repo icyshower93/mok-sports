@@ -285,7 +285,7 @@ export default function ScoresPage() {
                           {awayLockStatus.lockAndLoad && (
                             <Zap className="w-3 h-3 text-orange-500" />
                           )}
-                          {game.isCompleted && game.awayMokPoints && game.awayMokPoints > 0 && (
+                          {game.isCompleted && game.awayMokPoints > 0 && (
                             <div className="flex items-center space-x-1">
                               <Flame className="w-3 h-3 text-purple-500" />
                               <span className="text-xs text-purple-600 font-medium">+{game.awayMokPoints}</span>
@@ -324,7 +324,7 @@ export default function ScoresPage() {
                           {homeLockStatus.lockAndLoad && (
                             <Zap className="w-3 h-3 text-orange-500" />
                           )}
-                          {game.isCompleted && game.homeMokPoints && game.homeMokPoints > 0 && (
+                          {game.isCompleted && game.homeMokPoints > 0 && (
                             <div className="flex items-center space-x-1">
                               <Flame className="w-3 h-3 text-purple-500" />
                               <span className="text-xs text-purple-600 font-medium">+{game.homeMokPoints}</span>
@@ -435,7 +435,7 @@ export default function ScoresPage() {
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
-                    {selectedGame.awayMokPoints && selectedGame.awayMokPoints > 0 && (
+                    {selectedGame.awayMokPoints > 0 && (
                       <div className="flex items-center gap-1 bg-purple-100 dark:bg-purple-900/30 px-2 py-1 rounded-full">
                         <Flame className="w-3 h-3 text-purple-600" />
                         <span className="text-xs font-medium text-purple-700 dark:text-purple-300">+{selectedGame.awayMokPoints}</span>
@@ -478,7 +478,7 @@ export default function ScoresPage() {
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
-                    {selectedGame.homeMokPoints && selectedGame.homeMokPoints > 0 && (
+                    {selectedGame.homeMokPoints > 0 && (
                       <div className="flex items-center gap-1 bg-purple-100 dark:bg-purple-900/30 px-2 py-1 rounded-full">
                         <Flame className="w-3 h-3 text-purple-600" />
                         <span className="text-xs font-medium text-purple-700 dark:text-purple-300">+{selectedGame.homeMokPoints}</span>
