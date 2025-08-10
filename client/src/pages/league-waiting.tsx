@@ -277,15 +277,24 @@ export function LeagueWaiting() {
   const isLeagueFull = league.memberCount >= league.maxTeams;
 
   const leaveLeague = async () => {
+    console.log('Leave League clicked, starting process...');
     try {
+      console.log('Making API call to leave league:', leagueId);
       const response = await fetch(`/api/leagues/${leagueId}/leave`, {
         method: 'POST',
         credentials: 'include',
       });
       
+      console.log('Leave league response status:', response.status);
+      
       if (!response.ok) {
+        const errorData = await response.text();
+        console.error('Leave league failed:', errorData);
         throw new Error('Failed to leave league');
       }
+      
+      const result = await response.json();
+      console.log('Leave league successful:', result);
       
       toast({
         title: "Left League",
@@ -293,10 +302,15 @@ export function LeagueWaiting() {
       });
       
       // Clear all league-related cache and redirect to leagues page
-      queryClient.invalidateQueries({ queryKey: ['/api/leagues/user'] });
+      console.log('Clearing cache and redirecting to /leagues');
+      queryClient.invalidateQueries({ queryKey: ['/api/user/leagues'] });
       queryClient.removeQueries({ queryKey: [`/api/leagues/${leagueId}`] });
-      setLocation('/leagues');
+      
+      // Force a hard redirect to ensure navigation works
+      console.log('Performing navigation to /leagues');
+      window.location.href = '/leagues';
     } catch (error) {
+      console.error('Leave league error:', error);
       toast({
         title: "Error",
         description: "Failed to leave league",
