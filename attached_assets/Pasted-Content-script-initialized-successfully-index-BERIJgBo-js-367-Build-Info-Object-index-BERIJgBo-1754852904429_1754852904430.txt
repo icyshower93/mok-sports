@@ -1,0 +1,201 @@
+Content script initialized successfully.
+index-BERIJgBo.js:367 🏗️ Build Info: Object
+index-BERIJgBo.js:367 📦 Version: me623fq1
+index-BERIJgBo.js:367 📅 Built: 2025-08-10T19:07:59.449Z
+index-BERIJgBo.js:367 🔧 Environment: production
+index-BERIJgBo.js:318 [Auth] Token check - Has token: true Has user: false Loading: true
+index-BERIJgBo.js:318 [SW Hook] EMERGENCY: Unregistering all existing service workers
+index-BERIJgBo.js:318 [SW Hook] Found 1 existing registrations
+index-BERIJgBo.js:318 [SW Hook] Unregistering existing service worker
+index-BERIJgBo.js:318 [SW Hook] Found 1 caches to delete
+index-BERIJgBo.js:318 [SW Hook] Deleting cache: mok-sports-dynamic-v1.7.0-nuclear-unregister-1754852621569
+index-BERIJgBo.js:318 [Auth] Token check - Has token: true Has user: true Loading: false
+index-BERIJgBo.js:318 [AutoPushRefresh] Legacy hook delegating to SubscriptionManager
+index-BERIJgBo.js:318 [SW Hook] Registering fresh service worker: /sw.js?v=1754852879573&r=0.5963117364996597
+mok-sports-draft-mokfantasysport.replit.app/:1 Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner.
+sw.js?v=1754852879573&r=0.5963117364996597:2 [SW] NUCLEAR OPTION - Emergency service worker loading
+sw.js?v=1754852879573&r=0.5963117364996597:88 [SW] Service worker starting, version: v1.7.0-nuclear-unregister-1754852879629
+sw.js?v=1754852879573&r=0.5963117364996597:305 [SW] Service worker script loaded successfully
+sw.js?v=1754852879573&r=0.5963117364996597:19 [SW] EMERGENCY INSTALL - Clearing all caches and forcing activation
+index-BERIJgBo.js:318 [SW Hook] Service worker registered successfully
+sw.js?v=1754852879573&r=0.5963117364996597:92 [SW] Installing service worker, version: v1.7.0-nuclear-unregister-1754852879629
+sw.js?v=1754852879573&r=0.5963117364996597:22 [SW] Found caches to delete: Array(1)
+sw.js?v=1754852879573&r=0.5963117364996597:25 [SW] Force deleting cache: mok-sports-dynamic-v1.7.0-nuclear-unregister-1754852621569
+sw.js?v=1754852879573&r=0.5963117364996597:96 [SW] Caching static files
+sw.js?v=1754852879573&r=0.5963117364996597:30 [SW] All caches deleted - skipping waiting
+index-BERIJgBo.js:362 Main page debug: Object
+index-BERIJgBo.js:362 Main page debug: Object
+sw.js?v=1754852879573&r=0.5963117364996597:99 [SW] Static files cached successfully
+index-BERIJgBo.js:362 Main page debug: Object
+index-BERIJgBo.js:362 Main page debug: Object
+sw.js?v=1754852879573&r=0.5963117364996597:41 [SW] EMERGENCY ACTIVATE - Taking control of all clients
+sw.js?v=1754852879573&r=0.5963117364996597:110 [SW] Activating service worker, version: v1.7.0-nuclear-unregister-1754852879629
+sw.js?v=1754852879573&r=0.5963117364996597:46 [SW] Deleting remaining cache: mok-sports-static-v1.7.0-nuclear-unregister-1754852879629
+sw.js?v=1754852879573&r=0.5963117364996597:116 [SW] Found caches: Array(1)
+sw.js?v=1754852879573&r=0.5963117364996597:129 [SW] Service worker activated and controlling all clients
+sw.js?v=1754852879573&r=0.5963117364996597:51 [SW] Claiming all clients immediately
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /favicon.ico from network
+index-BERIJgBo.js:367 DEBUG BAL-KC Game Raw API: Object
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/BAL.png from network
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/KC.png from network
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/GB.png from network
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/PHI.png from network
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/DAL.png from network
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/CLE.png from network
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/NE.png from network
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/CIN.png from network
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/LAR.png from network
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/DET.png from network
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/ARI.png from network
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/BUF.png from network
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/PIT.png from network
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/ATL.png from network
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/MIN.png from network
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/NYG.png from network
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/WAS.png from network
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/TB.png from network
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/CAR.png from network
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/NO.png from network
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/JAX.png from network
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/MIA.png from network
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/HOU.png from network
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/IND.png from network
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/DEN.png from network
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/SEA.png from network
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/LV.png from network
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/LAC.png from network
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/TEN.png from network
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/CHI.png from network
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/NYJ.png from network
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/SF.png from network
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/KC.png from network
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/BAL.png from network
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/GB.png from network
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/PHI.png from network
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/LAR.png from network
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/DAL.png from network
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/NE.png from network
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/CLE.png from network
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/CIN.png from network
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/WAS.png from network
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/PIT.png from network
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/ATL.png from network
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/MIN.png from network
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/TB.png from network
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/IND.png from network
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/HOU.png from network
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/LV.png from network
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/NYJ.png from network
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/MIA.png from network
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/SF.png from network
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/JAX.png from network
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/DET.png from network
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/LAC.png from network
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/NYG.png from network
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/NO.png from network
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/DEN.png from network
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/CHI.png from network
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/ARI.png from network
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/CAR.png from network
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/TEN.png from network
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/SEA.png from network
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/BUF.png from network
+index-BERIJgBo.js:367 DEBUG BAL-KC Game Raw API: Object
+index-BERIJgBo.js:367 DEBUG BAL-KC Game Raw API: Object
+index-BERIJgBo.js:367 DEBUG BAL-KC Game Raw API: Object
+JAX.png:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/JAX.png from network
+JAX.png:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/JAX.png from network
+JAX.png:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/JAX.png from network
+JAX.png:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/JAX.png from network
+JAX.png:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/JAX.png from network
+JAX.png:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/JAX.png from network
+JAX.png:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/JAX.png from network
+JAX.png:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/JAX.png from network
+JAX.png:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/JAX.png from network
+JAX.png:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/JAX.png from network
+JAX.png:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/JAX.png from network
+JAX.png:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/JAX.png from network
+JAX.png:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/JAX.png from network
+JAX.png:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/JAX.png from network
+JAX.png:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/JAX.png from network
+JAX.png:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/JAX.png from network
+JAX.png:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/JAX.png from network
+JAX.png:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/JAX.png from network
+JAX.png:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/JAX.png from network
+JAX.png:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/JAX.png from network
+JAX.png:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/JAX.png from network
+JAX.png:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/JAX.png from network
+JAX.png:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/JAX.png from network
+JAX.png:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/JAX.png from network
+JAX.png:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/JAX.png from network
+JAX.png:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/JAX.png from network
+JAX.png:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/JAX.png from network
+JAX.png:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/JAX.png from network
+JAX.png:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/JAX.png from network
+JAX.png:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/JAX.png from network
+JAX.png:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/JAX.png from network
+JAX.png:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/JAX.png from network
+JAX.png:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/JAX.png from network
+index-BERIJgBo.js:367 DEBUG BAL-KC Game Raw API: Object
+index-BERIJgBo.js:367 DEBUG BAL-KC Game Raw API: Object
+index-BERIJgBo.js:367 DEBUG BAL-KC Game Raw API: Object
+JAX.png:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/JAX.png from network
+JAX.png:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/JAX.png from network
+JAX.png:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/JAX.png from network
+JAX.png:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/JAX.png from network
+JAX.png:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/JAX.png from network
+JAX.png:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/JAX.png from network
+JAX.png:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/JAX.png from network
+JAX.png:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/JAX.png from network
+JAX.png:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/JAX.png from network
+JAX.png:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /images/nfl/team_logos/JAX.png from network
+sw.js?v=1754852879573&r=0.5963117364996597:64 [SW] BYPASSING CACHE for JS file: https://mok-sports-draft-mokfantasysport.replit.app/manifest.json
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /scores from network
+sw.js?v=1754852879573&r=0.5963117364996597:164 [SW] Fetching /assets/index-Da2SUM0F.css from network
+JAX.png:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+index-BERIJgBo.js:367 DEBUG BAL-KC Game Raw API: {homeTeam: 'KC', awayTeam: 'BAL', homeScore: null, awayScore: null, homeScoreType: 'object', …}
+index-BERIJgBo.js:367 DEBUG BAL-KC Game Raw API: {homeTeam: 'KC', awayTeam: 'BAL', homeScore: null, awayScore: null, homeScoreType: 'object', …}
+index-BERIJgBo.js:367 DEBUG BAL-KC Game Raw API: {homeTeam: 'KC', awayTeam: 'BAL', homeScore: null, awayScore: null, homeScoreType: 'object', …}
