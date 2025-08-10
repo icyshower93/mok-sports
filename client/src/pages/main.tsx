@@ -176,42 +176,39 @@ export default function MainPage() {
           </Card>
         </div>
 
-        {/* Lock Deadline Banner - Top Priority */}
+        {/* Lock Deadline Banner */}
         {isLockWindowOpen && (
           <div className="p-4">
             <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 border-blue-200 dark:border-blue-800">
               <CardContent className="p-4">
-                <div className="flex items-start justify-between">
-                  <div className="flex items-start space-x-4 flex-1">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-4 flex-1">
                     <div className="p-2.5 bg-blue-100 dark:bg-blue-900/30 rounded-full flex-shrink-0">
                       <Lock className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="font-semibold text-blue-900 dark:text-blue-100 text-base mb-1">
-                        Make Your Lock
+                        Lock Deadline
                       </div>
-                      <div className="text-sm text-blue-700 dark:text-blue-300 mb-2">
-                        Choose one team for +1 bonus point this week
-                      </div>
-                      <div className="flex items-center space-x-3">
-                        <div className="text-xs text-blue-600 dark:text-blue-400 font-medium">
-                          Deadline: {lockDeadline.toLocaleDateString()} 8:20 PM ET
-                        </div>
-                        <Badge variant="outline" className="bg-blue-50 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800 text-xs">
-                          <Flame className="w-3 h-3 mr-1" />
-                          +1 Point
-                        </Badge>
+                      <div className="text-sm text-blue-700 dark:text-blue-300">
+                        {lockDeadline.toLocaleDateString()} 8:20 PM ET
                       </div>
                     </div>
                   </div>
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
-                    className="h-6 w-6 p-0 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/30 flex-shrink-0"
-                    onClick={() => {/* Handle dismiss */}}
-                  >
-                    <X className="w-4 h-4" />
-                  </Button>
+                  <div className="flex items-center space-x-3 flex-shrink-0">
+                    <Badge variant="outline" className="bg-blue-50 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800">
+                      <Flame className="w-4 h-4 mr-1" />
+                      +1 Point
+                    </Badge>
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className="h-6 w-6 p-0 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/30"
+                      onClick={() => {/* Handle dismiss */}}
+                    >
+                      <X className="w-4 h-4" />
+                    </Button>
+                  </div>
                 </div>
               </CardContent>
             </Card>
