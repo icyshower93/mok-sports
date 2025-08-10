@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/use-auth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Trophy, Target, Lock, Sparkles } from "lucide-react";
+import { Trophy, Target, Lock, Zap, Flame } from "lucide-react";
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -280,7 +280,7 @@ export default function ScoresPage() {
                             <Lock className="w-3 h-3 text-blue-500" />
                           )}
                           {awayLockStatus.lockAndLoad && (
-                            <Sparkles className="w-3 h-3 text-purple-500" />
+                            <Zap className="w-3 h-3 text-purple-500" />
                           )}
                         </div>
                       </div>
@@ -319,7 +319,7 @@ export default function ScoresPage() {
                             <Lock className="w-3 h-3 text-blue-500" />
                           )}
                           {homeLockStatus.lockAndLoad && (
-                            <Sparkles className="w-3 h-3 text-purple-500" />
+                            <Zap className="w-3 h-3 text-purple-500" />
                           )}
                         </div>
                       </div>
