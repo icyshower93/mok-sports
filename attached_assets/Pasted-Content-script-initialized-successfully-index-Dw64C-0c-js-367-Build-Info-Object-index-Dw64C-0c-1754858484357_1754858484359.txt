@@ -1,0 +1,34 @@
+Content script initialized successfully.
+index-Dw64C-0c.js:367 🏗️ Build Info: Object
+index-Dw64C-0c.js:367 📦 Version: me65fef1
+index-Dw64C-0c.js:367 📅 Built: 2025-08-10T20:41:16.477Z
+index-Dw64C-0c.js:367 🔧 Environment: production
+index-Dw64C-0c.js:318 [Auth] Token check - Has token: true Has user: false Loading: true
+index-Dw64C-0c.js:318 [SW Hook] EMERGENCY: Unregistering all existing service workers
+index-Dw64C-0c.js:318 [SW Hook] Found 1 existing registrations
+index-Dw64C-0c.js:318 [SW Hook] Unregistering existing service worker
+index-Dw64C-0c.js:318 [SW Hook] Found 1 caches to delete
+index-Dw64C-0c.js:318 [SW Hook] Deleting cache: mok-sports-static-v1.7.0-nuclear-unregister-1754858475679
+admin:1 Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner.
+index-Dw64C-0c.js:318 [Auth] Token check - Has token: true Has user: true Loading: false
+index-Dw64C-0c.js:318 [AutoPushRefresh] Legacy hook delegating to SubscriptionManager
+index-Dw64C-0c.js:318 [SW Hook] Registering fresh service worker: /sw.js?v=1754858476591&r=0.7696260171302617
+sw.js?v=1754858476591&r=0.7696260171302617:2 [SW] NUCLEAR OPTION - Emergency service worker loading
+sw.js?v=1754858476591&r=0.7696260171302617:88 [SW] Service worker starting, version: v1.7.0-nuclear-unregister-1754858476646
+sw.js?v=1754858476591&r=0.7696260171302617:305 [SW] Service worker script loaded successfully
+index-Dw64C-0c.js:318 [SW Hook] Service worker registered successfully
+sw.js?v=1754858476591&r=0.7696260171302617:19 [SW] EMERGENCY INSTALL - Clearing all caches and forcing activation
+sw.js?v=1754858476591&r=0.7696260171302617:92 [SW] Installing service worker, version: v1.7.0-nuclear-unregister-1754858476646
+sw.js?v=1754858476591&r=0.7696260171302617:22 [SW] Found caches to delete: Array(0)
+sw.js?v=1754858476591&r=0.7696260171302617:30 [SW] All caches deleted - skipping waiting
+sw.js?v=1754858476591&r=0.7696260171302617:96 [SW] Caching static files
+sw.js?v=1754858476591&r=0.7696260171302617:99 [SW] Static files cached successfully
+sw.js?v=1754858476591&r=0.7696260171302617:41 [SW] EMERGENCY ACTIVATE - Taking control of all clients
+sw.js?v=1754858476591&r=0.7696260171302617:110 [SW] Activating service worker, version: v1.7.0-nuclear-unregister-1754858476646
+sw.js?v=1754858476591&r=0.7696260171302617:46 [SW] Deleting remaining cache: mok-sports-static-v1.7.0-nuclear-unregister-1754858476646
+sw.js?v=1754858476591&r=0.7696260171302617:116 [SW] Found caches: Array(1)
+sw.js?v=1754858476591&r=0.7696260171302617:129 [SW] Service worker activated and controlling all clients
+sw.js?v=1754858476591&r=0.7696260171302617:51 [SW] Claiming all clients immediately
+sw.js?v=1754858476591&r=0.7696260171302617:64 [SW] BYPASSING CACHE for JS file: https://mok-sports-draft-mokfantasysport.replit.app/manifest.json
+sw.js?v=1754858476591&r=0.7696260171302617:164 [SW] Fetching /admin from network
+sw.js?v=1754858476591&r=0.7696260171302617:164 [SW] Fetching /assets/index-DafZjt8k.css from network

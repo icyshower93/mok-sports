@@ -20,8 +20,10 @@ export default function AdminPanel() {
   const [gameTime, setGameTime] = useState("12:00");
 
   // Get current admin state
-  const { data: adminState, isLoading } = useQuery({
+  const { data: adminState, isLoading, refetch } = useQuery({
     queryKey: ['/api/admin/state'],
+    staleTime: 0, // Always fetch fresh data
+    cacheTime: 0, // Don't cache the data
   });
 
   // Type guard for admin state
@@ -66,7 +68,9 @@ export default function AdminPanel() {
       return response.json();
     },
     onSuccess: () => {
+      // Force refresh the query to get latest state
       queryClient.invalidateQueries({ queryKey: ['/api/admin/state'] });
+      queryClient.refetchQueries({ queryKey: ['/api/admin/state'] });
       toast({ description: "Time updated successfully" });
     },
   });
@@ -194,11 +198,19 @@ export default function AdminPanel() {
               <div>
                 <Label className="text-sm text-muted-foreground">Current Date</Label>
                 <div className="text-xl font-bold text-primary mb-1">
-                  {state?.currentDate || 'Sunday, September 1, 2024'}
+                  {state?.currentDate || 'Loading...'}
                 </div>
                 <div className="text-lg font-semibold text-muted-foreground">
-                  {state?.currentTime || '12:00 PM EDT'}
+                  {state?.currentTime || 'Loading...'}
                 </div>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={() => refetch()}
+                  className="mt-2 text-xs"
+                >
+                  Refresh Time
+                </Button>
               </div>
 
               <Separator />
