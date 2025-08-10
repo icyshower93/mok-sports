@@ -73,32 +73,48 @@ export default function StablePage() {
         throw error;
       }
     },
-    onSuccess: (data, { teamId, lockType }) => {
-      // Update local state
-      setWeeklyLocks(prev => new Set([...Array.from(prev), teamId]));
+    onSuccess: (data, variables) => {
+      const { teamId, lockType } = variables;
+      console.log('[Success] Lock successful:', data, variables);
       
-      // Show success toast
-      toast({
-        title: lockType === 'lock' ? "Team Locked!" : "Lock & Load Activated!",
-        description: lockType === 'lock' 
-          ? `${selectedTeam?.nflTeam?.name} is now locked for Week ${selectedWeek}`
-          : `${selectedTeam?.nflTeam?.name} is locked with 2x risk/reward for Week ${selectedWeek}`,
-      });
+      try {
+        // Update local state
+        setWeeklyLocks(prev => new Set([...Array.from(prev), teamId]));
+        
+        // Get team name safely
+        const teamName = selectedTeam?.nflTeam?.name || 'Team';
+        
+        // Show success toast
+        toast({
+          title: lockType === 'lock' ? "Team Locked!" : "Lock & Load Activated!",
+          description: lockType === 'lock' 
+            ? `${teamName} is now locked for Week ${selectedWeek}`
+            : `${teamName} is locked with 2x risk/reward for Week ${selectedWeek}`,
+        });
 
-      // Refresh team data
-      queryClient.invalidateQueries({ queryKey: [`/api/user/stable/${selectedLeague}`] });
-      
-      // Close dialogs
-      setLockDialogOpen(false);
-      setLockAndLoadDialogOpen(false);
-      setSelectedTeam(null);
+        // Refresh team data to get updated lock states
+        queryClient.invalidateQueries({ queryKey: [`/api/user/stable/${selectedLeague}`] });
+        
+        // Close dialogs
+        setLockDialogOpen(false);
+        setLockAndLoadDialogOpen(false);
+        setSelectedTeam(null);
+      } catch (error) {
+        console.error('[Success Handler] Error in success callback:', error);
+      }
     },
     onError: (error: any) => {
+      console.error('[Mutation Error] Lock failed:', error);
       toast({
         title: "Lock Failed",
         description: error.message || "Unable to lock team. Please try again.",
         variant: "destructive"
       });
+      
+      // Close dialogs on error too
+      setLockDialogOpen(false);
+      setLockAndLoadDialogOpen(false);
+      setSelectedTeam(null);
     },
   });
 
@@ -121,33 +137,51 @@ export default function StablePage() {
   };
 
   const confirmLock = () => {
-    console.log('[Dialog] Confirming lock for team:', selectedTeam?.nflTeam?.name);
-    console.log('[Dialog] selectedTeam full object:', JSON.stringify(selectedTeam, null, 2));
-    console.log('[Dialog] selectedLeague:', selectedLeague);
-    console.log('[Dialog] selectedWeek:', selectedWeek);
-    
-    if (selectedTeam) {
-      const teamId = selectedTeam.nflTeamId || selectedTeam.nflTeam?.id || selectedTeam.id;
-      console.log('[Dialog] Using teamId:', teamId);
+    try {
+      console.log('[Dialog] Confirming lock for team:', selectedTeam?.nflTeam?.name);
+      console.log('[Dialog] selectedTeam full object:', JSON.stringify(selectedTeam, null, 2));
+      console.log('[Dialog] selectedLeague:', selectedLeague);
+      console.log('[Dialog] selectedWeek:', selectedWeek);
       
-      lockTeamMutation.mutate({
-        teamId: teamId,
-        lockType: 'lock'
+      if (selectedTeam) {
+        const teamId = selectedTeam.nflTeamId || selectedTeam.nflTeam?.id || selectedTeam.id;
+        console.log('[Dialog] Using teamId:', teamId);
+        
+        lockTeamMutation.mutate({
+          teamId: teamId,
+          lockType: 'lock'
+        });
+      }
+    } catch (error) {
+      console.error('[Dialog] Error in confirmLock:', error);
+      toast({
+        title: "Lock Failed",
+        description: "An unexpected error occurred. Please try again.",
+        variant: "destructive"
       });
     }
   };
 
   const confirmLockAndLoad = () => {
-    console.log('[Dialog] Confirming Lock & Load for team:', selectedTeam?.nflTeam?.name);
-    console.log('[Dialog] selectedTeam full object:', JSON.stringify(selectedTeam, null, 2));
-    
-    if (selectedTeam) {
-      const teamId = selectedTeam.nflTeamId || selectedTeam.nflTeam?.id || selectedTeam.id;
-      console.log('[Dialog] Using teamId:', teamId);
+    try {
+      console.log('[Dialog] Confirming Lock & Load for team:', selectedTeam?.nflTeam?.name);
+      console.log('[Dialog] selectedTeam full object:', JSON.stringify(selectedTeam, null, 2));
       
-      lockTeamMutation.mutate({
-        teamId: teamId,
-        lockType: 'lockAndLoad'
+      if (selectedTeam) {
+        const teamId = selectedTeam.nflTeamId || selectedTeam.nflTeam?.id || selectedTeam.id;
+        console.log('[Dialog] Using teamId:', teamId);
+        
+        lockTeamMutation.mutate({
+          teamId: teamId,
+          lockType: 'lockAndLoad'
+        });
+      }
+    } catch (error) {
+      console.error('[Dialog] Error in confirmLockAndLoad:', error);
+      toast({
+        title: "Lock & Load Failed",
+        description: "An unexpected error occurred. Please try again.",
+        variant: "destructive"
       });
     }
   };
@@ -232,7 +266,7 @@ export default function StablePage() {
                 <>
                   {/* Lockable Teams - Compact Mobile Design */}
                   {(userTeams as any[]).filter(team => team.locksRemaining > 0 && !team.isBye).map((team: any) => {
-                    const isTeamLocked = weeklyLocks.has(team.id) || team.isLocked;
+                    const isTeamLocked = weeklyLocks.has(team.id) || team.isLocked || team.isLockAndLoad;
                     const isDisabled = hasWeeklyLock && !isTeamLocked;
                     
                     return (
