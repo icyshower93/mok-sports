@@ -1,22 +1,37 @@
 import React, { useState } from "react";
 import { useLocation } from "wouter";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { queryClient } from "@/lib/queryClient";
 import { BottomNav } from "@/components/layout/bottom-nav";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { TeamLogo } from "@/components/team-logo";
 import { useAuth } from "@/hooks/use-auth";
+import { useToast } from "@/hooks/use-toast";
+import { apiRequest } from "@/lib/queryClient";
 import { 
   Shield, 
   Lock, 
-  Zap
+  Zap,
+  AlertTriangle,
+  CheckCircle
 } from "lucide-react";
 
 export default function StablePage() {
   const { user } = useAuth();
+  const { toast } = useToast();
   const [, navigate] = useLocation();
   const [selectedWeek] = useState(1);
+  
+  // Dialog states
+  const [lockDialogOpen, setLockDialogOpen] = useState(false);
+  const [lockAndLoadDialogOpen, setLockAndLoadDialogOpen] = useState(false);
+  const [selectedTeam, setSelectedTeam] = useState<any>(null);
+  
+  // Track which teams have been locked/locked-and-loaded this week
+  const [weeklyLocks, setWeeklyLocks] = useState<Set<string>>(new Set());
 
   // Fetch user's leagues and teams (same as main page)
   const { data: leagues = [], isLoading: leaguesLoading } = useQuery({
@@ -31,10 +46,80 @@ export default function StablePage() {
     enabled: !!user && !!selectedLeague,
   });
 
+  // Mutations for locking teams
+  const lockTeamMutation = useMutation({
+    mutationFn: async ({ teamId, lockType }: { teamId: string; lockType: 'lock' | 'lockAndLoad' }) => {
+      return apiRequest(`/api/teams/${teamId}/lock`, 'POST', { 
+        week: selectedWeek,
+        lockType,
+        leagueId: selectedLeague 
+      });
+    },
+    onSuccess: (data, { teamId, lockType }) => {
+      // Update local state
+      setWeeklyLocks(prev => new Set([...Array.from(prev), teamId]));
+      
+      // Show success toast
+      toast({
+        title: lockType === 'lock' ? "Team Locked!" : "Lock & Load Activated!",
+        description: lockType === 'lock' 
+          ? `${selectedTeam?.nflTeam?.name} is now locked for Week ${selectedWeek}`
+          : `${selectedTeam?.nflTeam?.name} is locked with 2x risk/reward for Week ${selectedWeek}`,
+      });
+
+      // Refresh team data
+      queryClient.invalidateQueries({ queryKey: [`/api/user/stable/${selectedLeague}`] });
+      
+      // Close dialogs
+      setLockDialogOpen(false);
+      setLockAndLoadDialogOpen(false);
+      setSelectedTeam(null);
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Lock Failed",
+        description: error.message || "Unable to lock team. Please try again.",
+        variant: "destructive"
+      });
+    },
+  });
+
   // Lock deadline (Thursday 8:20 PM ET for current week)
   const lockDeadline = new Date();
   lockDeadline.setDate(lockDeadline.getDate() + (4 - lockDeadline.getDay() + 7) % 7); // Next Thursday
   lockDeadline.setHours(20, 20, 0, 0); // 8:20 PM
+
+  // Dialog handlers
+  const handleLockClick = (team: any) => {
+    setSelectedTeam(team);
+    setLockDialogOpen(true);
+  };
+
+  const handleLockAndLoadClick = (team: any) => {
+    setSelectedTeam(team);
+    setLockAndLoadDialogOpen(true);
+  };
+
+  const confirmLock = () => {
+    if (selectedTeam) {
+      lockTeamMutation.mutate({
+        teamId: selectedTeam.id,
+        lockType: 'lock'
+      });
+    }
+  };
+
+  const confirmLockAndLoad = () => {
+    if (selectedTeam) {
+      lockTeamMutation.mutate({
+        teamId: selectedTeam.id,
+        lockType: 'lockAndLoad'
+      });
+    }
+  };
+
+  // Check if any team is already locked this week
+  const hasWeeklyLock = weeklyLocks.size > 0 || (userTeams as any[]).some((team: any) => team.isLocked);
 
   if (leaguesLoading || teamsLoading) {
     return (
@@ -96,10 +181,16 @@ export default function StablePage() {
               ) : (
                 <>
                   {/* Lockable Teams - Compact Mobile Design */}
-                  {(userTeams as any[]).filter(team => team.locksRemaining > 0 && !team.isBye).map((team: any) => (
+                  {(userTeams as any[]).filter(team => team.locksRemaining > 0 && !team.isBye).map((team: any) => {
+                    const isTeamLocked = weeklyLocks.has(team.id) || team.isLocked;
+                    const isDisabled = hasWeeklyLock && !isTeamLocked;
+                    
+                    return (
                     <div 
                       key={team.id}
-                      className="rounded-lg border bg-card hover:shadow-sm transition-all duration-200 overflow-hidden"
+                      className={`rounded-lg border bg-card hover:shadow-sm transition-all duration-200 overflow-hidden ${
+                        isDisabled ? 'opacity-50 pointer-events-none' : ''
+                      } ${isTeamLocked ? 'ring-2 ring-green-500 bg-green-50 dark:bg-green-950/20' : ''}`}
                     >
                       <div className="p-4">
                         {/* Team Header - Balanced sizing */}
@@ -161,12 +252,18 @@ export default function StablePage() {
                         <div className="flex space-x-3">
                           <Button 
                             size="sm"
-                            className="flex-1 h-9 text-sm"
-                            disabled={team.isLocked}
+                            className={`flex-1 h-9 text-sm ${isTeamLocked ? 'bg-green-600 hover:bg-green-700' : ''}`}
+                            disabled={isTeamLocked || lockTeamMutation.isPending}
+                            onClick={() => !isTeamLocked && handleLockClick(team)}
                           >
-                            {team.isLocked ? (
+                            {lockTeamMutation.isPending && selectedTeam?.id === team.id ? (
                               <>
-                                <Lock className="w-3 h-3 mr-2" />
+                                <div className="w-3 h-3 mr-2 animate-spin rounded-full border border-white border-t-transparent" />
+                                Locking...
+                              </>
+                            ) : isTeamLocked ? (
+                              <>
+                                <CheckCircle className="w-3 h-3 mr-2" />
                                 Locked
                               </>
                             ) : (
@@ -177,20 +274,32 @@ export default function StablePage() {
                             )}
                           </Button>
                           
-                          {team.lockAndLoadAvailable && !team.isLocked && (
+                          {team.lockAndLoadAvailable && (
                             <Button 
                               size="sm"
                               variant="outline"
-                              className="flex-1 h-9 text-sm border-amber-200 dark:border-amber-800 text-amber-700 dark:text-amber-300 hover:bg-amber-50 dark:hover:bg-amber-950/20"
+                              className="flex-1 h-9 text-sm border-amber-200 dark:border-amber-800 text-amber-700 dark:text-amber-300 hover:bg-amber-50 dark:hover:bg-amber-950/20 disabled:opacity-30"
+                              disabled={!isTeamLocked || lockTeamMutation.isPending}
+                              onClick={() => isTeamLocked && handleLockAndLoadClick(team)}
                             >
-                              <Zap className="w-3 h-3 mr-2" />
-                              Lock & Load
+                              {lockTeamMutation.isPending && selectedTeam?.id === team.id ? (
+                                <>
+                                  <div className="w-3 h-3 mr-2 animate-spin rounded-full border border-amber-600 border-t-transparent" />
+                                  Loading...
+                                </>
+                              ) : (
+                                <>
+                                  <Zap className="w-3 h-3 mr-2" />
+                                  Lock & Load
+                                </>
+                              )}
                             </Button>
                           )}
                         </div>
                       </div>
                     </div>
-                  ))}
+                    );
+                  })}
 
                   {/* Unavailable Teams - More compact */}
                   {(userTeams as any[]).filter(team => team.locksRemaining === 0 || team.isBye).length > 0 && (
@@ -231,6 +340,183 @@ export default function StablePage() {
         </div>
       </div>
       <BottomNav />
+
+      {/* Lock Confirmation Dialog */}
+      <Dialog open={lockDialogOpen} onOpenChange={setLockDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <div className="flex items-center space-x-2">
+              <Lock className="w-5 h-5 text-blue-600" />
+              <DialogTitle>Lock Team for Week {selectedWeek}</DialogTitle>
+            </div>
+            <DialogDescription className="space-y-3 pt-2">
+              <div className="flex items-center space-x-3 p-3 rounded-lg bg-muted/50">
+                {selectedTeam && (
+                  <>
+                    <TeamLogo 
+                      logoUrl={selectedTeam.nflTeam?.logoUrl}
+                      teamCode={selectedTeam.nflTeam?.code}
+                      teamName={selectedTeam.nflTeam?.name}
+                      size="md"
+                      className="w-8 h-8"
+                    />
+                    <div>
+                      <div className="font-medium text-sm">
+                        {selectedTeam.nflTeam?.city} {selectedTeam.nflTeam?.name}
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        {(() => {
+                          const match = selectedTeam.upcomingOpponent?.match(/^(.*?)\s([+-]\d+(?:\.\d+)?)$/) || [];
+                          const opponent = match[1] || selectedTeam.upcomingOpponent;
+                          const spread = match[2];
+                          return (
+                            <>
+                              <span>{opponent}</span>
+                              {spread && (
+                                <span className="text-white text-sm font-semibold ml-2 font-mono tracking-wider">
+                                  {spread}
+                                </span>
+                              )}
+                            </>
+                          );
+                        })()}
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
+              <div className="text-sm">
+                <p className="mb-2">This will lock your team for <strong>+1 bonus point</strong> if they win.</p>
+                <p className="text-xs text-muted-foreground">
+                  • You can only lock 1 team per week<br/>
+                  • Maximum 4 locks per team per season<br/>
+                  • This cannot be undone
+                </p>
+              </div>
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex-row space-x-2 sm:space-x-2">
+            <Button
+              variant="outline"
+              onClick={() => setLockDialogOpen(false)}
+              className="flex-1"
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={confirmLock}
+              disabled={lockTeamMutation.isPending}
+              className="flex-1"
+            >
+              {lockTeamMutation.isPending ? (
+                <>
+                  <div className="w-3 h-3 mr-2 animate-spin rounded-full border border-white border-t-transparent" />
+                  Locking...
+                </>
+              ) : (
+                <>
+                  <Lock className="w-3 h-3 mr-2" />
+                  Confirm Lock
+                </>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Lock & Load Confirmation Dialog */}
+      <Dialog open={lockAndLoadDialogOpen} onOpenChange={setLockAndLoadDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <div className="flex items-center space-x-2">
+              <div className="p-1 rounded-full bg-amber-100 dark:bg-amber-900/30">
+                <Zap className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+              </div>
+              <DialogTitle className="text-amber-700 dark:text-amber-300">
+                Lock & Load for Week {selectedWeek}
+              </DialogTitle>
+            </div>
+            <DialogDescription className="space-y-3 pt-2">
+              <div className="flex items-center space-x-3 p-3 rounded-lg bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800">
+                {selectedTeam && (
+                  <>
+                    <TeamLogo 
+                      logoUrl={selectedTeam.nflTeam?.logoUrl}
+                      teamCode={selectedTeam.nflTeam?.code}
+                      teamName={selectedTeam.nflTeam?.name}
+                      size="md"
+                      className="w-8 h-8"
+                    />
+                    <div>
+                      <div className="font-medium text-sm">
+                        {selectedTeam.nflTeam?.city} {selectedTeam.nflTeam?.name}
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        {(() => {
+                          const match = selectedTeam.upcomingOpponent?.match(/^(.*?)\s([+-]\d+(?:\.\d+)?)$/) || [];
+                          const opponent = match[1] || selectedTeam.upcomingOpponent;
+                          const spread = match[2];
+                          return (
+                            <>
+                              <span>{opponent}</span>
+                              {spread && (
+                                <span className="text-white text-sm font-semibold ml-2 font-mono tracking-wider">
+                                  {spread}
+                                </span>
+                              )}
+                            </>
+                          );
+                        })()}
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
+              <div className="space-y-2 text-sm">
+                <div className="flex items-center space-x-2 text-amber-700 dark:text-amber-300">
+                  <AlertTriangle className="w-4 h-4" />
+                  <span className="font-medium">High Risk, High Reward</span>
+                </div>
+                <div className="pl-6 space-y-1 text-xs">
+                  <p><strong className="text-green-600">Win:</strong> +2 bonus points (instead of +1)</p>
+                  <p><strong className="text-red-600">Loss:</strong> -1 penalty point</p>
+                </div>
+                <p className="text-xs text-muted-foreground pt-2">
+                  • Only available once per team per season<br/>
+                  • Must be used on an already locked team<br/>
+                  • This cannot be undone
+                </p>
+              </div>
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex-row space-x-2 sm:space-x-2">
+            <Button
+              variant="outline"
+              onClick={() => setLockAndLoadDialogOpen(false)}
+              className="flex-1"
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={confirmLockAndLoad}
+              disabled={lockTeamMutation.isPending}
+              className="flex-1 bg-amber-600 hover:bg-amber-700 text-white"
+            >
+              {lockTeamMutation.isPending ? (
+                <>
+                  <div className="w-3 h-3 mr-2 animate-spin rounded-full border border-white border-t-transparent" />
+                  Loading...
+                </>
+              ) : (
+                <>
+                  <Zap className="w-3 h-3 mr-2" />
+                  Activate Lock & Load
+                </>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

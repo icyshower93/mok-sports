@@ -4,7 +4,7 @@ import passport from "passport";
 import { generateJWT, authenticateJWT, isOAuthConfigured } from "./auth";
 import { storage } from "./storage";
 import { generateJoinCode } from "./utils";
-import { insertLeagueSchema, draftPicks, drafts, draftTimers, userWeeklyScores, weeklyLocks } from "@shared/schema";
+import { insertLeagueSchema, draftPicks, drafts, draftTimers, userWeeklyScores, weeklyLocks, nflTeams } from "@shared/schema";
 import { z } from "zod";
 import { registerPushNotificationRoutes } from "./routes/push-notifications";
 import { registerPushDiagnosticsRoutes } from "./routes/push-diagnostics";
@@ -13,6 +13,7 @@ import { registerAdminRoutes } from "./routes/admin";
 import { scoringRouter } from "./routes/scoring";
 import { db } from "./db";
 import { eq, and } from "drizzle-orm";
+import crypto from "crypto";
 import "./auth"; // Initialize passport strategies
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -965,10 +966,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
           console.error(`Error getting opponent for team ${team.nflTeam.code}:`, error);
         }
         
+        // Check if this team is locked for the current week
+        const weeklyLock = await db.query.weeklyLocks.findFirst({
+          where: and(
+            eq(weeklyLocks.userId, user.id),
+            eq(weeklyLocks.leagueId, leagueId),
+            eq(weeklyLocks.teamId, team.nflTeam.id),
+            eq(weeklyLocks.week, targetWeek)
+          )
+        });
+        
         return {
           ...performanceData, // Mock performance stats (wins, losses, etc.)
           ...team, // Override with real database data (preserves locksUsed, lockAndLoadUsed)
           ...opponentInfo, // Real opponent data
+          // Weekly lock status
+          isLocked: !!weeklyLock,
+          isLockAndLoad: weeklyLock?.isLockAndLoad || false,
           // Recalculate derived fields using actual database values
           locksRemaining: 4 - (team.locksUsed || 0), // Max 4 locks per team per season
           lockAndLoadAvailable: !team.lockAndLoadUsed, // True if not yet used
@@ -981,6 +995,124 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error('Error getting user stable:', error);
       res.status(500).json({ message: "Failed to get user stable" });
+    }
+  });
+
+  // Team locking endpoint
+  app.post('/api/teams/:teamId/lock', async (req, res) => {
+    try {
+      const user = await getAuthenticatedUser(req);
+      if (!user) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+
+      const { teamId } = req.params;
+      const { week, lockType, leagueId } = req.body;
+      const userId = user.id;
+
+      console.log(`[Lock] User ${userId} attempting to ${lockType} team ${teamId} for week ${week} in league ${leagueId}`);
+
+      // Validate inputs
+      if (!teamId || !week || !lockType || !leagueId) {
+        return res.status(400).json({ message: 'Missing required fields' });
+      }
+
+      if (!['lock', 'lockAndLoad'].includes(lockType)) {
+        return res.status(400).json({ message: 'Invalid lock type' });
+      }
+
+      // Check if user owns this team in the league
+      const userTeamOwnership = await db.query.draftPicks.findFirst({
+        where: and(
+          eq(draftPicks.userId, userId),
+          eq(draftPicks.teamId, teamId)
+        ),
+        with: {
+          draft: {
+            where: eq(drafts.leagueId, leagueId)
+          }
+        }
+      });
+
+      if (!userTeamOwnership || !userTeamOwnership.draft) {
+        return res.status(403).json({ message: 'You do not own this team in this league' });
+      }
+
+      // Check if user already has a lock for this week
+      const existingWeeklyLock = await db.query.weeklyLocks.findFirst({
+        where: and(
+          eq(weeklyLocks.userId, userId),
+          eq(weeklyLocks.leagueId, leagueId),
+          eq(weeklyLocks.week, week)
+        )
+      });
+
+      if (existingWeeklyLock && lockType === 'lock') {
+        return res.status(400).json({ message: 'You already have a lock for this week' });
+      }
+
+      // For Lock & Load, check if team is already locked this week
+      if (lockType === 'lockAndLoad') {
+        if (!existingWeeklyLock || existingWeeklyLock.teamId !== teamId) {
+          return res.status(400).json({ message: 'Team must be locked first before using Lock & Load' });
+        }
+        
+        if (existingWeeklyLock.isLockAndLoad) {
+          return res.status(400).json({ message: 'Lock & Load already activated for this team this week' });
+        }
+      }
+
+      // Get team info for lock usage validation
+      const team = await db.query.nflTeams.findFirst({
+        where: eq(nflTeams.id, teamId)
+      });
+
+      if (!team) {
+        return res.status(404).json({ message: 'Team not found' });
+      }
+
+      if (lockType === 'lock') {
+        // Create new weekly lock
+        await db.insert(weeklyLocks).values({
+          id: crypto.randomUUID(),
+          userId,
+          leagueId,
+          teamId,
+          week,
+          season: 2024,
+          isLockAndLoad: false,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        });
+
+        console.log(`[Lock] ✅ Team ${team.code} locked for user ${userId} in week ${week}`);
+        
+        res.json({ 
+          success: true, 
+          message: `${team.name} locked for Week ${week}`,
+          lockType: 'lock'
+        });
+      } else {
+        // Update existing lock to Lock & Load
+        await db.update(weeklyLocks)
+          .set({ 
+            isLockAndLoad: true,
+            updatedAt: new Date()
+          })
+          .where(eq(weeklyLocks.id, existingWeeklyLock.id));
+
+        console.log(`[Lock] ⚡ Lock & Load activated for team ${team.code} for user ${userId} in week ${week}`);
+        
+        res.json({ 
+          success: true, 
+          message: `Lock & Load activated for ${team.name} in Week ${week}`,
+          lockType: 'lockAndLoad'
+        });
+      }
+
+    } catch (error: any) {
+      console.error('[Lock] Error locking team:', error);
+      res.status(500).json({ message: 'Failed to lock team', error: error?.message || 'Unknown error' });
     }
   });
 
