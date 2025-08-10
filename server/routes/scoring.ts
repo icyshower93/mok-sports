@@ -1,13 +1,164 @@
-// Mok Sports scoring routes - handles real scoring calculations
+// Mok Sports scoring routes - handles real scoring calculations with Tank01 API
 import express from "express";
 import { z } from "zod";
 import { storage } from "../storage.js";
+import { db } from "../db";
+import { eq, and, sql } from "drizzle-orm";
+import { nflGames, nflTeams, weeklyLocks, userWeeklyScores, draftPicks, drafts, leagues, users } from "@shared/schema";
 import {
   calculateWeeklyScores,
   calculateSeasonStandings,
   validateLockUsage,
-  MOK_SCORING_RULES
+  MOK_SCORING_RULES,
+  updateGameScoresFromTank01
 } from "../utils/mokScoring.js";
+
+const router = express.Router();
+
+// Current week endpoint
+router.get("/current-week", async (req, res) => {
+  try {
+    // Get current week from admin state
+    const adminModule = await import("./admin.js");
+    // In a real implementation, this would come from the admin state
+    // For now, return Week 0 of 2024 season
+    res.json({
+      currentWeek: 0,
+      season: 2024,
+      status: "preseason", // before Week 1 starts
+      message: "App is set to before Week 1 of 2024 NFL season"
+    });
+  } catch (error) {
+    console.error('[Scoring] Error getting current week:', error);
+    res.status(500).json({ error: 'Failed to get current week' });
+  }
+});
+
+// Get week scores with Tank01 integration
+router.get("/week/:week", async (req, res) => {
+  try {
+    const week = parseInt(req.params.week);
+    const season = 2024; // Using real 2024 NFL season
+    
+    if (week < 1 || week > 18) {
+      return res.status(400).json({ error: 'Invalid week number. Must be between 1-18.' });
+    }
+    
+    console.log(`[Scoring] Getting scores for Week ${week} of ${season}...`);
+    
+    // Update scores from Tank01 if needed
+    await updateGameScoresFromTank01(week, season);
+    
+    // Get game results using raw SQL for now - Drizzle join syntax issue
+    const gamesResult = await db.execute(sql`
+      SELECT 
+        ht.code as home_team,
+        at.code as away_team,
+        g.home_score,
+        g.away_score, 
+        g.is_completed,
+        g.game_date
+      FROM nfl_games g
+      JOIN nfl_teams ht ON g.home_team_id = ht.id
+      JOIN nfl_teams at ON g.away_team_id = at.id  
+      WHERE g.week = ${week} AND g.season = ${season}
+    `);
+    
+    const games = gamesResult.rows.map((row: any) => ({
+      homeTeam: row.home_team,
+      awayTeam: row.away_team,
+      homeScore: row.home_score,
+      awayScore: row.away_score,
+      isCompleted: row.is_completed,
+      gameDate: row.game_date
+    }));
+    
+    res.json({
+      week,
+      season,
+      games: games.length,
+      completedGames: games.filter(g => g.isCompleted).length,
+      results: games
+    });
+    
+  } catch (error) {
+    console.error('[Scoring] Error getting week scores:', error);
+    res.status(500).json({ error: 'Failed to get week scores' });
+  }
+});
+
+// Get league standings
+router.get("/standings/:leagueId", async (req, res) => {
+  try {
+    const leagueId = req.params.leagueId;
+    
+    // Get league info and draft picks for user teams
+    const league = await db.select().from(leagues).where(eq(leagues.id, leagueId)).limit(1);
+    if (!league.length) {
+      return res.status(404).json({ error: 'League not found' });
+    }
+    
+    // Get draft data to show user teams
+    const leagueDrafts = await db.select().from(drafts).where(eq(drafts.leagueId, leagueId));
+    if (!leagueDrafts.length) {
+      return res.json({ 
+        league: league[0].name,
+        message: 'No draft completed yet',
+        standings: [] 
+      });
+    }
+    
+    // Get draft picks using raw SQL for now
+    const picksResult = await db.execute(sql`
+      SELECT 
+        dp.user_id,
+        nt.code as team_code,
+        nt.name as team_name,
+        u.name as user_name
+      FROM draft_picks dp
+      JOIN nfl_teams nt ON dp.nfl_team_id = nt.id
+      JOIN users u ON dp.user_id = u.id
+      WHERE dp.draft_id = ${leagueDrafts[0].id}
+    `);
+    
+    const picks = picksResult.rows.map((row: any) => ({
+      userId: row.user_id,
+      teamCode: row.team_code,
+      teamName: row.team_name,
+      userName: row.user_name
+    }));
+    
+    // Group picks by user
+    const userTeams = picks.reduce((acc, pick) => {
+      if (!acc[pick.userId]) {
+        acc[pick.userId] = {
+          userId: pick.userId,
+          userName: pick.userName,
+          teams: [],
+          totalPoints: 0 // Will be calculated when scoring is implemented
+        };
+      }
+      acc[pick.userId].teams.push({
+        code: pick.teamCode,
+        name: pick.teamName
+      });
+      return acc;
+    }, {} as any);
+    
+    res.json({
+      league: league[0].name,
+      currentWeek: 0,
+      season: 2024,
+      standings: Object.values(userTeams)
+    });
+    
+  } catch (error) {
+    console.error('[Scoring] Error getting standings:', error);
+    res.status(500).json({ error: 'Failed to get standings' });
+  }
+});
+
+export { router as scoringRouter };
 
 // Authentication helper function (copied from routes.ts)
 async function getAuthenticatedUser(req: any) {

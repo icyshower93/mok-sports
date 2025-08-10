@@ -10,6 +10,7 @@ import { registerPushNotificationRoutes } from "./routes/push-notifications";
 import { registerPushDiagnosticsRoutes } from "./routes/push-diagnostics";
 import { registerSubscriptionValidationRoutes } from "./routes/subscription-validation";
 import { registerAdminRoutes } from "./routes/admin";
+import { scoringRouter } from "./routes/scoring";
 import { db } from "./db";
 import { eq } from "drizzle-orm";
 import "./auth"; // Initialize passport strategies
@@ -942,9 +943,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Register admin routes
   registerAdminRoutes(app);
   
-  // Register scoring routes
-  const { setupScoringRoutes } = await import("./routes/scoring.js");
-  setupScoringRoutes(app);
+  // Register scoring routes with Tank01 integration
+  app.use('/api/scoring', scoringRouter);
   
   // Schedule import routes
   const scheduleImportRoutes = (await import('./routes/schedule-import.js')).default;

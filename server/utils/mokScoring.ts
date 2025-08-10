@@ -2,8 +2,17 @@
 // Calculates points from actual NFL game results
 
 import { db } from "../db";
-import { nflGames, weeklyStats, teamPerformance, stables } from "@shared/schema";
+import { nflGames, nflTeams, weeklyLocks, userWeeklyScores, draftPicks } from "@shared/schema";
 import { eq, and, sql } from "drizzle-orm";
+
+// Tank01 API integration for real-time scoring
+const TANK01_API_OPTIONS = {
+  method: 'GET',
+  headers: {
+    'X-RapidAPI-Key': '005fffe3bemsh0ccee48c9d8de37p1274c5jsn792f60867fc1',
+    'X-RapidAPI-Host': 'tank01-nfl-live-in-game-real-time-statistics-nfl.p.rapidapi.com'
+  }
+};
 
 export interface MokScoringRules {
   // Base scoring
@@ -73,6 +82,65 @@ export interface UserWeeklyScore {
   lockBonusPoints: number;
   lockAndLoadBonusPoints: number;
   totalMokPoints: number;
+}
+
+// Function to update NFL game scores from Tank01 API
+export async function updateGameScoresFromTank01(week: number, season: number = 2024): Promise<void> {
+  try {
+    console.log(`[Tank01 Scoring] Updating scores for Week ${week} of ${season}...`);
+    
+    const response = await fetch(
+      `https://tank01-nfl-live-in-game-real-time-statistics-nfl.p.rapidapi.com/getNFLGamesForWeek?seasonType=reg&week=${week}&season=${season}`,
+      TANK01_API_OPTIONS
+    );
+    
+    if (!response.ok) {
+      throw new Error(`Tank01 API error: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    
+    if (data.statusCode === 200 && data.body && data.body.length > 0) {
+      const games = data.body;
+      console.log(`[Tank01 Scoring] Found ${games.length} games for Week ${week}`);
+      
+      // Update each game in our database
+      for (const game of games) {
+        if (game.gameStatus === 'Final') {
+          // Parse the score from Tank01 data - need to extract from game details
+          // Tank01 doesn't include scores in the basic endpoint, need to fetch individual game
+          // For now, we'll mark the game as completed and handle scoring separately
+          
+          const awayTeam = game.away === 'WSH' ? 'WAS' : game.away; // Handle Washington mapping
+          const homeTeam = game.home === 'WSH' ? 'WAS' : game.home;
+          
+          // Update game completion status
+          await db
+            .update(nflGames)
+            .set({ 
+              isCompleted: true, 
+              updatedAt: new Date() 
+            })
+            .where(
+              and(
+                eq(nflGames.week, week),
+                eq(nflGames.season, season),
+                sql`EXISTS (
+                  SELECT 1 FROM nfl_teams ht WHERE ht.id = ${nflGames.homeTeamId} AND ht.code = ${homeTeam}
+                ) AND EXISTS (
+                  SELECT 1 FROM nfl_teams at WHERE at.id = ${nflGames.awayTeamId} AND at.code = ${awayTeam}  
+                )`
+              )
+            );
+        }
+      }
+      
+      console.log(`[Tank01 Scoring] Updated completion status for Week ${week} games`);
+    }
+  } catch (error) {
+    console.error(`[Tank01 Scoring] Error updating scores:`, error);
+    throw error;
+  }
 }
 
 // Calculate base Mok points for a team's game result

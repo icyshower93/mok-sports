@@ -1,17 +1,20 @@
 import type { Express } from "express";
 import { storage } from "../storage";
+import { sql } from "drizzle-orm";
 
-// Simple in-memory admin state for testing
+// Admin state for time control and app state management
 let adminState = {
-  currentWeek: 1,
-  currentDay: 'monday',
+  currentWeek: 0, // Before Week 1 of 2024 season
+  currentDay: 'thursday', // Thursday before NFL season starts
   currentTime: '12:00',
-  season: 2025,
+  season: 2024, // Using 2024 real NFL season data
   lockDeadlinePassed: false,
   activeLocks: 0,
   totalPlayers: 6,
   gamesPlayed: 0,
-  lastSimulation: null as { week: number; gamesSimulated: number } | null
+  lastSimulation: null as { week: number; gamesSimulated: number } | null,
+  useRealData: true, // Flag to use Tank01/ESPN real NFL data instead of mock
+  testLeagueId: '243d719b-92ce-4752-8689-5da93ee69213' // EEW2YU Test League
 };
 
 // Mock game data for simulation
@@ -66,11 +69,72 @@ const mockGames: Array<{
 }> = [];
 
 export function registerAdminRoutes(app: Express) {
-  // Get current admin state
+  // Reset app state to before Week 1 with real user data
+  app.post("/api/admin/reset-app-state", async (req, res) => {
+    try {
+      const { resetToWeek = 0, season = 2024 } = req.body;
+      
+      console.log(`[Admin] Resetting app state to Week ${resetToWeek} of ${season} season...`);
+      
+      // Update admin state
+      adminState.currentWeek = resetToWeek;
+      adminState.season = season;
+      adminState.lockDeadlinePassed = false;
+      adminState.activeLocks = 0;
+      adminState.gamesPlayed = 0;
+      adminState.lastSimulation = null;
+      
+      console.log(`[Admin] App state reset complete - Week ${resetToWeek} of ${season}`);
+      
+      res.json({
+        success: true,
+        message: `App state reset to Week ${resetToWeek} of ${season} season`,
+        adminState
+      });
+    } catch (error) {
+      console.error('[Admin] Reset app state error:', error);
+      res.status(500).json({ error: 'Failed to reset app state' });
+    }
+  });
+
+  // Get current admin state  
   app.get("/api/admin/state", async (req, res) => {
     try {
-      // Calculate some dynamic stats
-      const completedGames = mockGames.filter(g => g.isCompleted).length;
+      // Get real league data from EEW2YU test league
+      const { db } = await import("../db");
+      const { eq } = await import("drizzle-orm");
+      const { leagues, users, drafts, draftPicks } = await import("../../shared/schema");
+      
+      // Get league info
+      const [league] = await db.select().from(leagues).where(eq(leagues.id, adminState.testLeagueId));
+      
+      // Get total players count
+      let totalPlayers = 0;
+      if (league) {
+        const leagueDrafts = await db.select().from(drafts).where(eq(drafts.leagueId, league.id));
+        if (leagueDrafts.length > 0) {
+          const picks = await db.select().from(draftPicks).where(eq(draftPicks.draftId, leagueDrafts[0].id));
+          const uniqueUsers = new Set(picks.map(p => p.userId));
+          totalPlayers = uniqueUsers.size;
+        }
+      }
+      
+      adminState.totalPlayers = totalPlayers;
+      
+      // Get completed games count from real NFL data
+      let completedGames = 0;
+      try {
+        const { nflGames } = await import("../../shared/schema");
+        const completedGamesResult = await db
+          .select({ count: sql`count(*)` })
+          .from(nflGames)
+          .where(eq(nflGames.isCompleted, true));
+        completedGames = Number(completedGamesResult[0].count) || 0;
+      } catch (error) {
+        console.log('[Admin] Could not get completed games count:', error);
+      }
+      
+      adminState.gamesPlayed = completedGames;
       
       // Format current time for display
       const timeDisplay = adminState.currentTime === '12:00' ? '12:00 PM ET' : 
