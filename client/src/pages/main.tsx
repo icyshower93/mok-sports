@@ -17,7 +17,8 @@ import {
   DollarSign,
   Flame,
   Star,
-  Calendar
+  Calendar,
+  X
 } from "lucide-react";
 import { BottomNav } from "@/components/layout/bottom-nav";
 import { TeamLogo } from "@/components/team-logo";
@@ -175,33 +176,107 @@ export default function MainPage() {
           </Card>
         </div>
 
-        {/* Lock Window Active - Hero Section */}
+        {/* Lock Deadline Banner - Top Priority */}
         {isLockWindowOpen && (
-          <div className="p-4 space-y-4">
-            {/* Lock Deadline Alert */}
-            <Card className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950/20 dark:to-emerald-950/20 border-green-200 dark:border-green-800">
+          <div className="p-4">
+            <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 border-blue-200 dark:border-blue-800">
               <CardContent className="p-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
-                    <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-full">
-                      <Target className="w-5 h-5 text-green-600 dark:text-green-400" />
+                <div className="flex items-start justify-between">
+                  <div className="flex items-start space-x-4 flex-1">
+                    <div className="p-2.5 bg-blue-100 dark:bg-blue-900/30 rounded-full flex-shrink-0">
+                      <Lock className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                     </div>
-                    <div>
-                      <div className="font-semibold text-green-800 dark:text-green-200">
+                    <div className="flex-1 min-w-0">
+                      <div className="font-semibold text-blue-900 dark:text-blue-100 text-base mb-1">
                         Make Your Lock
                       </div>
-                      <div className="text-sm text-green-600 dark:text-green-400">
-                        Deadline: {lockDeadline.toLocaleDateString()} 8:20 PM ET
+                      <div className="text-sm text-blue-700 dark:text-blue-300 mb-2">
+                        Choose one team for +1 bonus point this week
+                      </div>
+                      <div className="flex items-center space-x-3">
+                        <div className="text-xs text-blue-600 dark:text-blue-400 font-medium">
+                          Deadline: {lockDeadline.toLocaleDateString()} 8:20 PM ET
+                        </div>
+                        <Badge variant="outline" className="bg-blue-50 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800 text-xs">
+                          <Flame className="w-3 h-3 mr-1" />
+                          +1 Point
+                        </Badge>
                       </div>
                     </div>
                   </div>
-                  <Badge variant="outline" className="bg-green-50 dark:bg-green-950/50 text-green-700 dark:text-green-300 border-green-200 dark:border-green-800">
-                    <Flame className="w-3 h-3 mr-1" />
-                    +1 Point
-                  </Badge>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="h-6 w-6 p-0 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/30 flex-shrink-0"
+                    onClick={() => {/* Handle dismiss */}}
+                  >
+                    <X className="w-4 h-4" />
+                  </Button>
                 </div>
               </CardContent>
             </Card>
+          </div>
+        )}
+
+        {/* User Stats Section */}
+        <div className="p-4 space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            {/* Current Rank */}
+            <Card>
+              <CardContent className="p-4 text-center">
+                <div className="flex items-center justify-center mb-2">
+                  <Trophy className="w-5 h-5 text-yellow-500 mr-2" />
+                  <span className="text-2xl font-bold">#{userRank}</span>
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  League Rank
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Points */}
+            <Card>
+              <CardContent className="p-4 text-center">
+                <div className="text-2xl font-bold mb-2">
+                  {userPoints}
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  Total Points
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Weekly Prize */}
+          <Card className="bg-gradient-to-r from-emerald-50 to-green-50 dark:from-emerald-950/20 dark:to-green-950/20 border-emerald-200 dark:border-emerald-800">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-full">
+                    <DollarSign className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+                  </div>
+                  <div>
+                    <div className="font-semibold text-emerald-800 dark:text-emerald-200">
+                      Weekly Skins
+                    </div>
+                    <div className="text-sm text-emerald-600 dark:text-emerald-400">
+                      This week's prize
+                    </div>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="text-2xl font-bold text-emerald-700 dark:text-emerald-300">
+                    ${weeklyPrize}
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Lock Selection Interface */}
+        {isLockWindowOpen && (
+          <div className="p-4 space-y-4">
 
             {/* Lock Selection Interface */}
             <Card>
@@ -329,7 +404,7 @@ export default function MainPage() {
                                 logoUrl={team.nflTeam.logoUrl}
                                 teamCode={team.nflTeam.code}
                                 teamName={team.nflTeam.name}
-                                size="xs"
+                                size="sm"
                                 className="w-5 h-5 mr-1.5"
                               />
                               <div className="flex-1 min-w-0">
