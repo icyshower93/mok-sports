@@ -6,6 +6,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/hooks/use-theme";
 import { AuthProvider, useAuth } from "@/hooks/use-auth";
+import { useQuery } from "@tanstack/react-query";
 import { usePWADetection } from "@/hooks/use-pwa-detection";
 import { useServiceWorker } from "@/hooks/use-service-worker";
 import { useAutoPushRefresh } from "@/hooks/use-auto-push-refresh";
@@ -32,6 +33,12 @@ function AppContent() {
   const { user, isLoading } = useAuth();
   const isAuthenticated = !!user;
   const { isPWA } = usePWADetection();
+  
+  // Check if user has any leagues once they're authenticated
+  const { data: userLeagues = [], isLoading: leaguesLoading } = useQuery({
+    queryKey: ['/api/user/leagues'],
+    enabled: !!user,
+  });
   
   // Log build info for debugging and cache verification
   React.useEffect(() => {
@@ -81,6 +88,38 @@ function AppContent() {
     return <LoginPage />;
   }
 
+  // If user is authenticated but still loading league data, show loading
+  if (leaguesLoading) {
+    return (
+      <div style={{
+        minHeight: '100vh',
+        backgroundColor: '#0f172a',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        color: 'white'
+      }}>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{
+            width: '32px',
+            height: '32px',
+            border: '2px solid #10b981',
+            borderTop: '2px solid transparent',
+            borderRadius: '50%',
+            animation: 'spin 1s linear infinite',
+            margin: '0 auto 16px auto'
+          }}></div>
+          <p>Loading leagues...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // If user has no leagues, show leagues page (create/join)
+  const hasLeagues = Array.isArray(userLeagues) && userLeagues.length > 0;
+  if (!hasLeagues) {
+    return <LeaguesPage />;
+  }
 
   return (
     <>
