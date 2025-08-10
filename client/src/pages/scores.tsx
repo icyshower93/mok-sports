@@ -133,7 +133,7 @@ export default function ScoresPage() {
 
   // Transform real NFL games data from Tank01 API with ownership data
   const nflGames: NFLGame[] = (nflGamesData as any)?.results?.map((game: any, index: number) => {
-    console.log('DEBUG Game:', game.awayTeam, game.homeTeam, 'Scores:', game.awayScore, game.homeScore);
+
     return {
     id: game.id || `game_${selectedWeek}_${index}`,
     homeTeam: game.homeTeam,
@@ -162,16 +162,15 @@ export default function ScoresPage() {
 
 
 
-  const getUserInitials = (teamCode: string): string => {
-    const game = nflGames.find(g => g.homeTeam === teamCode || g.awayTeam === teamCode);
-    if (game?.homeTeam === teamCode && game.homeOwner) return game.homeOwner;
-    if (game?.awayTeam === teamCode && game.awayOwner) return game.awayOwner;
-    return '';
-  };
-
   const isUserTeam = (teamCode: string): boolean => {
-    const initials = getUserInitials(teamCode);
-    return initials === 'SE'; // Sky Evans initials
+    const game = nflGames.find(g => g.homeTeam === teamCode || g.awayTeam === teamCode);
+    if (game?.homeTeam === teamCode) {
+      return game.homeOwnerName === 'Sky Evans';
+    }
+    if (game?.awayTeam === teamCode) {
+      return game.awayOwnerName === 'Sky Evans';
+    }
+    return false;
   };
 
   const isTeamLocked = (teamCode: string): { locked: boolean; lockAndLoad: boolean } => {
