@@ -1,7 +1,11 @@
 import type { Express } from "express";
 import { storage } from "../storage";
-import { sql } from "drizzle-orm";
+import { db } from "../db";
+import { sql, eq, and } from "drizzle-orm";
+import { alias } from "drizzle-orm/pg-core";
 import { nflDataService, type NFLGameData } from "../services/nflDataService";
+import { nflGames, nflTeams, stables, userWeeklyScores, locks } from "@shared/schema";
+import { calculateWeeklyScores } from "../utils/mokScoring";
 
 // Admin state for time control and app state management
 let adminState = {
@@ -335,7 +339,7 @@ export function registerAdminRoutes(app: Express) {
     }
   });
 
-  // Simulate games for a week
+  // Simulate games for a week with real Mok Sports scoring
   app.post("/api/admin/simulate-games", async (req, res) => {
     try {
       const { week } = req.body;
@@ -345,24 +349,93 @@ export function registerAdminRoutes(app: Express) {
       }
 
       const weekNum = parseInt(week);
-      const weekGames = mockGames.filter(g => g.week === weekNum);
+      
+      // Create table aliases for joins
+      const homeTeam = alias(nflTeams, 'homeTeam');
+      const awayTeam = alias(nflTeams, 'awayTeam');
+      
+      // Get real NFL games from database for this week
+      const weekGames = await db
+        .select({
+          id: nflGames.id,
+          homeTeamId: nflGames.homeTeamId,
+          awayTeamId: nflGames.awayTeamId,
+          homeScore: nflGames.homeScore,
+          awayScore: nflGames.awayScore,
+          isCompleted: nflGames.isCompleted,
+          homeTeam: {
+            id: homeTeam.id,
+            code: homeTeam.code,
+            name: homeTeam.name,
+            city: homeTeam.city,
+          },
+          awayTeam: {
+            id: awayTeam.id,
+            code: awayTeam.code,
+            name: awayTeam.name,
+            city: awayTeam.city,
+          },
+        })
+        .from(nflGames)
+        .leftJoin(homeTeam, eq(nflGames.homeTeamId, homeTeam.id))
+        .leftJoin(awayTeam, eq(nflGames.awayTeamId, awayTeam.id))
+        .where(eq(nflGames.week, weekNum));
       
       if (weekGames.length === 0) {
-        return res.status(400).json({ message: `No games found for Week ${weekNum}. Generate games first.` });
+        return res.status(400).json({ 
+          message: `No games found for Week ${weekNum} in database.` 
+        });
       }
 
       let simulatedCount = 0;
+      const gameResults = [];
       
+      // Simulate games that aren't completed yet
       for (const game of weekGames) {
         if (!game.isCompleted) {
+          // Generate realistic NFL scores
           const result = simulateGameResult();
-          game.homeScore = result.homeScore;
-          game.awayScore = result.awayScore;
-          game.status = 'completed';
-          game.isCompleted = true;
+          
+          // Update game in database
+          await db
+            .update(nflGames)
+            .set({
+              homeScore: result.homeScore,
+              awayScore: result.awayScore,
+              isCompleted: true,
+              isTie: result.homeScore === result.awayScore,
+              winnerTeamId: result.homeScore > result.awayScore ? game.homeTeamId : 
+                          result.homeScore < result.awayScore ? game.awayTeamId : null,
+              updatedAt: new Date(),
+            })
+            .where(eq(nflGames.id, game.id));
+
           simulatedCount++;
+          gameResults.push({
+            homeTeam: `${game.homeTeam?.city} ${game.homeTeam?.name}`,
+            awayTeam: `${game.awayTeam?.city} ${game.awayTeam?.name}`,
+            homeScore: result.homeScore,
+            awayScore: result.awayScore,
+            winner: result.homeScore > result.awayScore ? `${game.homeTeam?.city} ${game.homeTeam?.name}` : 
+                   result.homeScore < result.awayScore ? `${game.awayTeam?.city} ${game.awayTeam?.name}` : 'TIE'
+          });
+        } else {
+          gameResults.push({
+            homeTeam: `${game.homeTeam?.city} ${game.homeTeam?.name}`,
+            awayTeam: `${game.awayTeam?.city} ${game.awayTeam?.name}`,
+            homeScore: game.homeScore,
+            awayScore: game.awayScore,
+            winner: game.homeScore! > game.awayScore! ? `${game.homeTeam?.city} ${game.homeTeam?.name}` : 
+                   game.homeScore! < game.awayScore! ? `${game.awayTeam?.city} ${game.awayTeam?.name}` : 'TIE',
+            alreadyCompleted: true
+          });
         }
       }
+
+      console.log(`[Admin] Simulated ${simulatedCount} games for Week ${weekNum}`);
+
+      // Now calculate Mok Sports scoring for all leagues that have users in them
+      await calculateAndSaveWeeklyScoring(weekNum, 2024);
 
       // Update admin state
       adminState.lastSimulation = {
@@ -370,24 +443,81 @@ export function registerAdminRoutes(app: Express) {
         gamesSimulated: simulatedCount
       };
 
-      console.log(`[Admin] Simulated ${simulatedCount} games for Week ${weekNum}`);
-
       res.json({ 
-        message: `Simulated ${simulatedCount} games for Week ${weekNum}`,
+        message: `Simulated ${simulatedCount} games and calculated Mok Sports scoring for Week ${weekNum}`,
         gamesSimulated: simulatedCount,
-        results: weekGames.map(g => ({
-          homeTeam: g.homeTeam,
-          awayTeam: g.awayTeam,
-          homeScore: g.homeScore,
-          awayScore: g.awayScore,
-          winner: g.homeScore! > g.awayScore! ? g.homeTeam : g.awayTeam
-        }))
+        totalGames: weekGames.length,
+        results: gameResults,
+        scoringCalculated: true
       });
     } catch (error) {
-      console.error('Error simulating games:', error);
-      res.status(500).json({ message: "Failed to simulate games" });
+      console.error('Error simulating games and calculating scoring:', error);
+      res.status(500).json({ 
+        message: "Failed to simulate games and calculate scoring",
+        error: error.message 
+      });
     }
   });
+
+  // Function to calculate and save weekly scoring for all leagues
+  async function calculateAndSaveWeeklyScoring(week: number, season: number) {
+    try {
+      console.log(`[MokScoring] Starting weekly scoring calculation for Week ${week}, ${season}`);
+      
+      // Get all leagues that have users with drafted teams
+      const leagues = await db
+        .selectDistinct({ leagueId: stables.leagueId })
+        .from(stables);
+
+      let totalUsersScored = 0;
+      
+      for (const { leagueId } of leagues) {
+        console.log(`[MokScoring] Calculating scores for league ${leagueId}`);
+        
+        // Calculate scores for this league using the mokScoring utility
+        const userScores = await calculateWeeklyScores(leagueId, week, season);
+        
+        // Save scores in database (delete existing and insert new for now)
+        for (const score of userScores) {
+          // Delete existing record if it exists
+          await db
+            .delete(userWeeklyScores)
+            .where(
+              and(
+                eq(userWeeklyScores.userId, score.userId),
+                eq(userWeeklyScores.leagueId, score.leagueId),
+                eq(userWeeklyScores.season, score.season),
+                eq(userWeeklyScores.week, score.week)
+              )
+            );
+          
+          // Insert new record
+          await db
+            .insert(userWeeklyScores)
+            .values({
+              userId: score.userId,
+              leagueId: score.leagueId,
+              season: score.season,
+              week: score.week,
+              basePoints: score.totalBaseMokPoints,
+              lockBonusPoints: score.lockBonusPoints || 0,
+              lockAndLoadBonusPoints: score.lockAndLoadBonusPoints || 0,
+              totalPoints: score.totalMokPoints,
+              updatedAt: new Date()
+            });
+        }
+        
+        totalUsersScored += userScores.length;
+        console.log(`[MokScoring] Saved scores for ${userScores.length} users in league ${leagueId}`);
+      }
+      
+      console.log(`[MokScoring] ✅ Completed scoring calculation for ${leagues.length} leagues, ${totalUsersScored} total users`);
+      
+    } catch (error) {
+      console.error('[MokScoring] Error calculating weekly scoring:', error);
+      throw error;
+    }
+  }
 
   // Get games for a specific week (for testing/verification)
   app.get("/api/admin/games/:week", async (req, res) => {

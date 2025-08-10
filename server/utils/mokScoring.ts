@@ -2,7 +2,7 @@
 // Calculates points from actual NFL game results
 
 import { db } from "../db";
-import { nflGames, nflTeams, weeklyLocks, userWeeklyScores, draftPicks } from "@shared/schema";
+import { nflGames, nflTeams, weeklyLocks, userWeeklyScores, draftPicks, stables } from "@shared/schema";
 import { eq, and, sql } from "drizzle-orm";
 
 // Tank01 API integration for real-time scoring
