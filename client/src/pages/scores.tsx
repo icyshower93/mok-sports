@@ -7,6 +7,7 @@ import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { BottomNav } from "@/components/layout/bottom-nav";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 interface MokScoringRules {
   winPoints: number;
@@ -55,15 +56,20 @@ interface NFLGame {
   isCompleted: boolean;
   homeOwner?: string;
   awayOwner?: string;
+  homeOwnerName?: string;
+  awayOwnerName?: string;
   homeLocked?: boolean;
   awayLocked?: boolean;
   homeLockAndLoad?: boolean;
   awayLockAndLoad?: boolean;
+  homeMokPoints?: number;
+  awayMokPoints?: number;
 }
 
 export default function ScoresPage() {
   const { user } = useAuth();
   const [selectedWeek, setSelectedWeek] = useState(1);
+  const [selectedGame, setSelectedGame] = useState<any>(null);
   const [selectedSeason] = useState(2025);
 
   // Get user's leagues to show scores for
@@ -131,6 +137,8 @@ export default function ScoresPage() {
       gameDate: new Date('2025-01-15T18:00:00Z'),
       isCompleted: true,
       homeOwner: 'SE',
+      homeOwnerName: 'Sky Evans',
+      homeMokPoints: 3,
       homeLocked: true
     },
     {
@@ -144,6 +152,8 @@ export default function ScoresPage() {
       gameDate: new Date('2025-01-15T21:30:00Z'),
       isCompleted: true,
       awayOwner: 'JD',
+      awayOwnerName: 'John Doe',
+      awayMokPoints: 1,
       awayLockAndLoad: true
     },
     {
@@ -157,7 +167,10 @@ export default function ScoresPage() {
       gameDate: new Date('2025-01-16T16:30:00Z'),
       isCompleted: true,
       homeOwner: 'MK',
+      homeOwnerName: 'Mike Kelly',
       awayOwner: 'RJ',
+      awayOwnerName: 'Rick James',
+      homeMokPoints: 2,
       homeLocked: true
     }
   ];
@@ -233,7 +246,11 @@ export default function ScoresPage() {
               const awayLockStatus = isTeamLocked(game.awayTeam);
               
               return (
-                <div key={game.id} className="bg-card rounded-lg p-4 space-y-3">
+                <div 
+                  key={game.id} 
+                  className="bg-card rounded-lg p-4 space-y-3 cursor-pointer hover:shadow-md transition-shadow"
+                  onClick={() => setSelectedGame(game)}
+                >
                   {/* Game Header */}
                   <div className="flex justify-between items-center text-sm text-muted-foreground">
                     <span>{new Date(game.gameDate).toLocaleDateString('en-US', { 
@@ -254,32 +271,23 @@ export default function ScoresPage() {
                     {/* Away Team */}
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3 flex-1">
-                        <div className="relative">
-                          <img 
-                            src={`/images/nfl/team_logos/${game.awayTeam}.png`}
-                            alt={game.awayTeam}
-                            className="w-8 h-8"
-                            onError={(e) => {
-                              (e.target as HTMLImageElement).src = `https://www.fantasynerds.com/images/nfl/team_logos/${game.awayTeam}.png`;
-                            }}
-                          />
-                          {game.awayOwner && (
-                            <div className="absolute -bottom-1 -right-1">
-                              <Avatar className="w-4 h-4 border border-background">
-                                {isUserTeam(game.awayTeam) && user?.avatar ? (
-                                  <AvatarImage src={user.avatar} alt={user.name} />
-                                ) : null}
-                                <AvatarFallback className={`text-xs ${isUserTeam(game.awayTeam) ? 'text-green-600 bg-green-100 dark:bg-green-900/20' : 'bg-muted'}`}>
-                                  {game.awayOwner}
-                                </AvatarFallback>
-                              </Avatar>
-                            </div>
-                          )}
-                        </div>
+                        <img 
+                          src={`/images/nfl/team_logos/${game.awayTeam}.png`}
+                          alt={game.awayTeam}
+                          className="w-8 h-8"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).src = `https://www.fantasynerds.com/images/nfl/team_logos/${game.awayTeam}.png`;
+                          }}
+                        />
                         <div className="flex items-center gap-2">
                           <span className={`font-medium ${isUserTeam(game.awayTeam) ? 'text-green-600' : ''} ${awayWin ? 'text-foreground' : 'text-muted-foreground'}`}>
                             {game.awayTeam}
                           </span>
+                          {game.awayOwnerName && (
+                            <span className="text-xs text-muted-foreground">
+                              {game.awayOwnerName}
+                            </span>
+                          )}
                           {awayLockStatus.locked && (
                             <Lock className="w-3 h-3 text-blue-500" />
                           )}
@@ -288,40 +296,39 @@ export default function ScoresPage() {
                           )}
                         </div>
                       </div>
-                      <div className={`text-xl font-bold ${awayWin ? 'text-foreground' : 'text-muted-foreground'}`}>
-                        {game.awayScore}
+                      <div className="flex items-center gap-2">
+                        <div className={`text-xl font-bold ${awayWin ? 'text-foreground' : 'text-muted-foreground'}`}>
+                          {game.awayScore}
+                        </div>
+                        {game.isCompleted && game.awayMokPoints && game.awayMokPoints > 0 && (
+                          <div className="flex items-center space-x-1">
+                            <Flame className="w-3 h-3 text-purple-500" />
+                            <span className="text-xs text-purple-600 font-medium">+{game.awayMokPoints}</span>
+                          </div>
+                        )}
                       </div>
                     </div>
 
                     {/* Home Team */}
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3 flex-1">
-                        <div className="relative">
-                          <img 
-                            src={`/images/nfl/team_logos/${game.homeTeam}.png`}
-                            alt={game.homeTeam}
-                            className="w-8 h-8"
-                            onError={(e) => {
-                              (e.target as HTMLImageElement).src = `https://www.fantasynerds.com/images/nfl/team_logos/${game.homeTeam}.png`;
-                            }}
-                          />
-                          {game.homeOwner && (
-                            <div className="absolute -bottom-1 -right-1">
-                              <Avatar className="w-4 h-4 border border-background">
-                                {isUserTeam(game.homeTeam) && user?.avatar ? (
-                                  <AvatarImage src={user.avatar} alt={user.name} />
-                                ) : null}
-                                <AvatarFallback className={`text-xs ${isUserTeam(game.homeTeam) ? 'text-green-600 bg-green-100 dark:bg-green-900/20' : 'bg-muted'}`}>
-                                  {game.homeOwner}
-                                </AvatarFallback>
-                              </Avatar>
-                            </div>
-                          )}
-                        </div>
+                        <img 
+                          src={`/images/nfl/team_logos/${game.homeTeam}.png`}
+                          alt={game.homeTeam}
+                          className="w-8 h-8"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).src = `https://www.fantasynerds.com/images/nfl/team_logos/${game.homeTeam}.png`;
+                          }}
+                        />
                         <div className="flex items-center gap-2">
                           <span className={`font-medium ${isUserTeam(game.homeTeam) ? 'text-green-600' : ''} ${homeWin ? 'text-foreground' : 'text-muted-foreground'}`}>
                             {game.homeTeam}
                           </span>
+                          {game.homeOwnerName && (
+                            <span className="text-xs text-muted-foreground">
+                              {game.homeOwnerName}
+                            </span>
+                          )}
                           {homeLockStatus.locked && (
                             <Lock className="w-3 h-3 text-blue-500" />
                           )}
@@ -330,8 +337,16 @@ export default function ScoresPage() {
                           )}
                         </div>
                       </div>
-                      <div className={`text-xl font-bold ${homeWin ? 'text-foreground' : 'text-muted-foreground'}`}>
-                        {game.homeScore}
+                      <div className="flex items-center gap-2">
+                        <div className={`text-xl font-bold ${homeWin ? 'text-foreground' : 'text-muted-foreground'}`}>
+                          {game.homeScore}
+                        </div>
+                        {game.isCompleted && game.homeMokPoints && game.homeMokPoints > 0 && (
+                          <div className="flex items-center space-x-1">
+                            <Flame className="w-3 h-3 text-purple-500" />
+                            <span className="text-xs text-purple-600 font-medium">+{game.homeMokPoints}</span>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -359,6 +374,112 @@ export default function ScoresPage() {
           </div>
         </div>
       </div>
+
+      {/* Game Details Modal */}
+      <Dialog open={!!selectedGame} onOpenChange={() => setSelectedGame(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Game Details</DialogTitle>
+          </DialogHeader>
+          {selectedGame && (
+            <div className="space-y-4">
+              <div className="flex justify-between items-center">
+                <div className="text-sm text-muted-foreground">
+                  {new Date(selectedGame.gameDate).toLocaleDateString('en-US', {
+                    weekday: 'long',
+                    month: 'long', 
+                    day: 'numeric',
+                    hour: 'numeric',
+                    minute: '2-digit',
+                    timeZone: 'America/New_York'
+                  })} ET
+                </div>
+                <Badge variant="outline" className="text-xs">Final</Badge>
+              </div>
+
+              <div className="space-y-3">
+                {/* Away Team Details */}
+                <div className="flex items-center justify-between p-3 bg-muted/20 rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <img 
+                      src={`/images/nfl/team_logos/${selectedGame.awayTeam}.png`}
+                      alt={selectedGame.awayTeam}
+                      className="w-10 h-10"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = `https://www.fantasynerds.com/images/nfl/team_logos/${selectedGame.awayTeam}.png`;
+                      }}
+                    />
+                    <div>
+                      <div className="font-semibold">{selectedGame.awayTeam}</div>
+                      {selectedGame.awayOwnerName && (
+                        <div className="text-xs text-muted-foreground">{selectedGame.awayOwnerName}</div>
+                      )}
+                    </div>
+                    <div className="flex gap-1 ml-2">
+                      {selectedGame.awayLocked && <Lock className="w-4 h-4 text-blue-500" />}
+                      {selectedGame.awayLockAndLoad && <Zap className="w-4 h-4 text-orange-500" />}
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="text-2xl font-bold">{selectedGame.awayScore}</div>
+                    {selectedGame.awayMokPoints && selectedGame.awayMokPoints > 0 && (
+                      <div className="flex items-center gap-1">
+                        <Flame className="w-4 h-4 text-purple-500" />
+                        <span className="text-purple-600 font-medium">+{selectedGame.awayMokPoints}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Home Team Details */}
+                <div className="flex items-center justify-between p-3 bg-muted/20 rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <img 
+                      src={`/images/nfl/team_logos/${selectedGame.homeTeam}.png`}
+                      alt={selectedGame.homeTeam}
+                      className="w-10 h-10"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = `https://www.fantasynerds.com/images/nfl/team_logos/${selectedGame.homeTeam}.png`;
+                      }}
+                    />
+                    <div>
+                      <div className="font-semibold">{selectedGame.homeTeam}</div>
+                      {selectedGame.homeOwnerName && (
+                        <div className="text-xs text-muted-foreground">{selectedGame.homeOwnerName}</div>
+                      )}
+                    </div>
+                    <div className="flex gap-1 ml-2">
+                      {selectedGame.homeLocked && <Lock className="w-4 h-4 text-blue-500" />}
+                      {selectedGame.homeLockAndLoad && <Zap className="w-4 h-4 text-orange-500" />}
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="text-2xl font-bold">{selectedGame.homeScore}</div>
+                    {selectedGame.homeMokPoints && selectedGame.homeMokPoints > 0 && (
+                      <div className="flex items-center gap-1">
+                        <Flame className="w-4 h-4 text-purple-500" />
+                        <span className="text-purple-600 font-medium">+{selectedGame.homeMokPoints}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Scoring Breakdown */}
+              <div className="space-y-2">
+                <h4 className="font-medium text-sm">Mok Points Breakdown:</h4>
+                <div className="text-xs text-muted-foreground space-y-1">
+                  <div>• Win: +1 point</div>
+                  <div>• Lock Bonus: +1 point</div>
+                  <div>• Blowout (20+ points): +1 point</div>
+                  <div>• Lock & Load Win: +2 points, Loss: -1 point</div>
+                </div>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
       <BottomNav />
     </div>
   );
