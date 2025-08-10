@@ -266,27 +266,28 @@ export default function StablePage() {
             <h1 className="text-2xl font-bold">My Stable</h1>
           </div>
           
-          {/* Development Reset Button */}
-          {import.meta.env.DEV && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => resetLocksMutation.mutate()}
-              disabled={resetLocksMutation.isPending}
-              className="text-xs"
-            >
-              {resetLocksMutation.isPending ? (
-                <>
-                  <div className="w-3 h-3 mr-2 animate-spin rounded-full border border-gray-600 border-t-transparent" />
-                  Resetting...
-                </>
-              ) : (
-                <>
-                  Reset Locks
-                </>
-              )}
-            </Button>
-          )}
+          {/* Development Reset Button - Always show for testing */}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              console.log('[Reset] Button clicked, triggering mutation');
+              resetLocksMutation.mutate();
+            }}
+            disabled={resetLocksMutation.isPending}
+            className="text-xs bg-red-50 border-red-200 text-red-700 hover:bg-red-100"
+          >
+            {resetLocksMutation.isPending ? (
+              <>
+                <div className="w-3 h-3 mr-2 animate-spin rounded-full border border-red-600 border-t-transparent" />
+                Resetting...
+              </>
+            ) : (
+              <>
+                🔄 Reset Locks
+              </>
+            )}
+          </Button>
         </div>
 
         {/* Lock Selection Interface */}
