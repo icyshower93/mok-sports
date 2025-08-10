@@ -111,27 +111,34 @@ export default function StablePage() {
       console.log('[Success] Lock successful:', data, variables);
       
       try {
-        // Update local state
-        setWeeklyLocks(prev => new Set([...Array.from(prev), teamId]));
-        
-        // Get team name safely
-        const teamName = selectedTeam?.nflTeam?.name || 'Team';
-        
-        // Show success toast
-        toast({
-          title: lockType === 'lock' ? "Team Locked!" : "Lock & Load Activated!",
-          description: lockType === 'lock' 
-            ? `${teamName} is now locked for Week ${selectedWeek}`
-            : `${teamName} is locked with 2x risk/reward for Week ${selectedWeek}`,
-        });
-
-        // Refresh team data to get updated lock states
-        queryClient.invalidateQueries({ queryKey: [`/api/user/stable/${selectedLeague}`] });
-        
-        // Close dialogs
+        // Close dialogs first to prevent DOM conflicts
         setLockDialogOpen(false);
         setLockAndLoadDialogOpen(false);
         setSelectedTeam(null);
+        
+        // Defer state updates to next tick to avoid DOM conflicts
+        setTimeout(() => {
+          try {
+            // Update local state
+            setWeeklyLocks(prev => new Set([...Array.from(prev), teamId]));
+            
+            // Get team name safely from data or fallback
+            const teamName = data?.teamName || 'Team';
+            
+            // Show success toast
+            toast({
+              title: lockType === 'lock' ? "Team Locked!" : "Lock & Load Activated!",
+              description: lockType === 'lock' 
+                ? `${teamName} is now locked for Week ${selectedWeek}`
+                : `${teamName} is locked with 2x risk/reward for Week ${selectedWeek}`,
+            });
+
+            // Refresh team data to get updated lock states
+            queryClient.invalidateQueries({ queryKey: [`/api/user/stable/${selectedLeague}`] });
+          } catch (error) {
+            console.error('[Success Handler] Deferred error:', error);
+          }
+        }, 100);
       } catch (error) {
         console.error('[Success Handler] Error in success callback:', error);
       }

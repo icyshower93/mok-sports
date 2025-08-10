@@ -1094,7 +1094,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         res.json({ 
           success: true, 
           message: `${team.name} locked for Week ${week}`,
-          lockType: 'lock'
+          lockType: 'lock',
+          teamName: team.name
         });
       } else {
         // Update existing lock to add Lock & Load
@@ -1109,7 +1110,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         res.json({ 
           success: true, 
           message: `Lock & Load activated for ${team.name} in Week ${week}`,
-          lockType: 'lockAndLoad'
+          lockType: 'lockAndLoad',
+          teamName: team.name
         });
       }
 

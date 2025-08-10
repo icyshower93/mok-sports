@@ -1,0 +1,159 @@
+🏗️ Build Info: {version: 1754864222534, date: '2025-08-10T22:17:02.534Z', env: 'production', hash: 'me68uk3q'}
+index-jASLaTFB.js:372 📦 Version: me68uk3q
+index-jASLaTFB.js:372 📅 Built: 2025-08-10T22:17:02.534Z
+index-jASLaTFB.js:372 🔧 Environment: production
+index-jASLaTFB.js:323 [Auth] Token check - Has token: true Has user: false Loading: true
+contentScript.js:2 Content script initialized successfully.
+index-jASLaTFB.js:323 [SW Hook] EMERGENCY: Unregistering all existing service workers
+index-jASLaTFB.js:323 [SW Hook] Found 1 existing registrations
+index-jASLaTFB.js:323 [SW Hook] Unregistering existing service worker
+index-jASLaTFB.js:323 [SW Hook] Found 0 caches to delete
+stable:1 Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner.
+index-jASLaTFB.js:323 [Auth] Token check - Has token: true Has user: true Loading: false
+index-jASLaTFB.js:323 [AutoPushRefresh] Legacy hook delegating to SubscriptionManager
+index-jASLaTFB.js:323 [SW Hook] Registering fresh service worker: /sw.js?v=1754864222676&r=0.7864460114261954
+sw.js?v=1754864222676&r=0.7864460114261954:2 [SW] NUCLEAR OPTION - Emergency service worker loading
+sw.js?v=1754864222676&r=0.7864460114261954:88 [SW] Service worker starting, version: v1.7.0-nuclear-unregister-1754864222732
+sw.js?v=1754864222676&r=0.7864460114261954:305 [SW] Service worker script loaded successfully
+index-jASLaTFB.js:323 [SW Hook] Service worker registered successfully
+sw.js?v=1754864222676&r=0.7864460114261954:19 [SW] EMERGENCY INSTALL - Clearing all caches and forcing activation
+sw.js?v=1754864222676&r=0.7864460114261954:92 [SW] Installing service worker, version: v1.7.0-nuclear-unregister-1754864222732
+sw.js?v=1754864222676&r=0.7864460114261954:22 [SW] Found caches to delete: []
+sw.js?v=1754864222676&r=0.7864460114261954:30 [SW] All caches deleted - skipping waiting
+sw.js?v=1754864222676&r=0.7864460114261954:96 [SW] Caching static files
+sw.js?v=1754864222676&r=0.7864460114261954:99 [SW] Static files cached successfully
+sw.js?v=1754864222676&r=0.7864460114261954:41 [SW] EMERGENCY ACTIVATE - Taking control of all clients
+sw.js?v=1754864222676&r=0.7864460114261954:110 [SW] Activating service worker, version: v1.7.0-nuclear-unregister-1754864222732
+sw.js?v=1754864222676&r=0.7864460114261954:46 [SW] Deleting remaining cache: mok-sports-static-v1.7.0-nuclear-unregister-1754864222732
+sw.js?v=1754864222676&r=0.7864460114261954:116 [SW] Found caches: ['mok-sports-static-v1.7.0-nuclear-unregister-1754864222732']
+sw.js?v=1754864222676&r=0.7864460114261954:129 [SW] Service worker activated and controlling all clients
+sw.js?v=1754864222676&r=0.7864460114261954:51 [SW] Claiming all clients immediately
+index-jASLaTFB.js:367 [Dialog] Opening lock dialog for team: Bills
+stable:183 Removed banner element: <div data-state=​"open" class=​"fixed inset-0 z-50 bg-background/​80 backdrop-blur-sm data-[state=open]​:​animate-in data-[state=closed]​:​animate-out data-[state=closed]​:​fade-out-0 data-[state=open]​:​fade-in-0" style=​"pointer-events:​ auto;​" data-aria-hidden=​"true" aria-hidden=​"true">​</div>​
+index-jASLaTFB.js:367 [Dialog] Confirming lock for team: Bills
+index-jASLaTFB.js:367 [Dialog] selectedTeam full object: {
+  "totalWins": 0,
+  "totalLosses": 1,
+  "totalTies": 0,
+  "totalMokPoints": 1,
+  "weeklyBreakdown": [
+    {
+      "teamCode": "BUF",
+      "week": 1,
+      "wins": 0,
+      "losses": 1,
+      "ties": 0,
+      "points": 15,
+      "opponentPoints": 39,
+      "isBlowout": false,
+      "isShutout": false,
+      "weeklyHigh": true,
+      "weeklyLow": false,
+      "mokPoints": 1
+    }
+  ],
+  "averagePointsFor": 15,
+  "averagePointsAgainst": 39,
+  "blowoutWins": 0,
+  "shutouts": 0,
+  "weeklyHighs": 1,
+  "weeklyLows": 0,
+  "upcomingOpponent": "vs ARI -6.5",
+  "locksUsed": 0,
+  "locksRemaining": 4,
+  "lockAndLoadUsed": false,
+  "lockAndLoadAvailable": true,
+  "record": "0-1",
+  "isBye": false,
+  "isLocked": false,
+  "id": "e04c7243-c523-42b7-9d49-a802c82691d1",
+  "userId": "9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a",
+  "leagueId": "243d719b-92ce-4752-8689-5da93ee69213",
+  "nflTeamId": "b8cce67a-69d4-49f3-acd7-da6081682076",
+  "acquiredVia": "draft",
+  "acquiredAt": "2025-08-09T06:35:36.985Z",
+  "createdAt": "2025-08-09T06:35:36.985Z",
+  "nflTeam": {
+    "id": "b8cce67a-69d4-49f3-acd7-da6081682076",
+    "code": "BUF",
+    "name": "Bills",
+    "city": "Buffalo",
+    "conference": "AFC",
+    "division": "East",
+    "logoUrl": "https://www.fantasynerds.com/images/nfl/team_logos/BUF.png",
+    "createdAt": "2025-08-04T03:16:52.620Z"
+  },
+  "gameDate": "2024-09-08",
+  "gameTime": "00:00",
+  "isHome": true,
+  "isLockAndLoad": false
+}
+index-jASLaTFB.js:367 [Dialog] selectedLeague: 243d719b-92ce-4752-8689-5da93ee69213
+index-jASLaTFB.js:367 [Dialog] selectedWeek: 1
+index-jASLaTFB.js:367 [Dialog] Using teamId: b8cce67a-69d4-49f3-acd7-da6081682076
+index-jASLaTFB.js:367 [API] Making lock request with: {url: '/api/teams/b8cce67a-69d4-49f3-acd7-da6081682076/lock', body: {…}}
+index-jASLaTFB.js:367 [API] Lock response raw: Response {type: 'basic', url: 'https://mok-sports-draft-mokfantasysport.replit.ap…i/teams/b8cce67a-69d4-49f3-acd7-da6081682076/lock', redirected: false, status: 200, ok: true, …}
+index-jASLaTFB.js:367 [API] Lock response data: {success: true, message: 'Bills locked for Week 1', lockType: 'lock'}
+index-jASLaTFB.js:367 [Success] Lock successful: {success: true, message: 'Bills locked for Week 1', lockType: 'lock'} {teamId: 'b8cce67a-69d4-49f3-acd7-da6081682076', lockType: 'lock'}
+index-jASLaTFB.js:40 NotFoundError: Failed to execute 'removeChild' on 'Node': The node to be removed is not a child of this node.
+    at Ex (index-jASLaTFB.js:40:26061)
+    at qn (index-jASLaTFB.js:40:25767)
+    at Ex (index-jASLaTFB.js:40:26516)
+    at qn (index-jASLaTFB.js:40:25767)
+    at Ex (index-jASLaTFB.js:40:26516)
+    at qn (index-jASLaTFB.js:40:25767)
+    at Ex (index-jASLaTFB.js:40:26516)
+    at qn (index-jASLaTFB.js:40:25767)
+    at Ex (index-jASLaTFB.js:40:26516)
+    at qn (index-jASLaTFB.js:40:25767)
+Su @ index-jASLaTFB.js:40
+i.componentDidCatch.n.callback @ index-jASLaTFB.js:40
+Qm @ index-jASLaTFB.js:38
+ch @ index-jASLaTFB.js:40
+Px @ index-jASLaTFB.js:40
+u1 @ index-jASLaTFB.js:40
+p1 @ index-jASLaTFB.js:40
+$r @ index-jASLaTFB.js:40
+fh @ index-jASLaTFB.js:40
+Or @ index-jASLaTFB.js:38
+p1 @ index-jASLaTFB.js:40
+$r @ index-jASLaTFB.js:40
+Rx @ index-jASLaTFB.js:40
+N @ index-jASLaTFB.js:25
+F @ index-jASLaTFB.js:25Understand this error
+index-jASLaTFB.js:323 ErrorBoundary caught an error: Failed to execute 'removeChild' on 'Node': The node to be removed is not a child of this node.
+componentDidCatch @ index-jASLaTFB.js:323
+i.componentDidCatch.n.callback @ index-jASLaTFB.js:40
+Qm @ index-jASLaTFB.js:38
+ch @ index-jASLaTFB.js:40
+Px @ index-jASLaTFB.js:40
+u1 @ index-jASLaTFB.js:40
+p1 @ index-jASLaTFB.js:40
+$r @ index-jASLaTFB.js:40
+fh @ index-jASLaTFB.js:40
+Or @ index-jASLaTFB.js:38
+p1 @ index-jASLaTFB.js:40
+$r @ index-jASLaTFB.js:40
+Rx @ index-jASLaTFB.js:40
+N @ index-jASLaTFB.js:25
+F @ index-jASLaTFB.js:25Understand this error
+index-jASLaTFB.js:323 Component stack: 
+    at https://mok-sports-draft-mokfantasysport.replit.app/assets/index-jASLaTFB.js:48:53792
+    at on (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-jASLaTFB.js:48:54086)
+    at u (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-jASLaTFB.js:48:45834)
+    at n0 (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-jASLaTFB.js:363:5222)
+    at https://mok-sports-draft-mokfantasysport.replit.app/assets/index-jASLaTFB.js:367:912
+    at u (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-jASLaTFB.js:48:45834)
+    at Jy (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-jASLaTFB.js:363:4474)
+    at div
+    at De (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-jASLaTFB.js:40:42947)
+    at ht (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-jASLaTFB.js:48:3201)
+    at nN (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-jASLaTFB.js:48:4017)
+    at De (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-jASLaTFB.js:40:42947)
+    at gE (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-jASLaTFB.js:323:57495)
+    at u (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-jASLaTFB.js:48:45834)
+    at Ry (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-jASLaTFB.js:323:50471)
+    at pE (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-jASLaTFB.js:323:56967)
+    at SN (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-jASLaTFB.js:48:40185)
+    at Ht (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-jASLaTFB.js:40:27461)
+    at LP
