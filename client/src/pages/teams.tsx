@@ -443,11 +443,11 @@ export default function StablePage() {
                               variant="outline"
                               className={`flex-1 h-9 text-sm ${
                                 team.isLockAndLoad
-                                  ? 'border-red-400 dark:border-red-500 text-red-700 dark:text-red-300 bg-red-50 dark:bg-red-950/20 cursor-not-allowed'
+                                  ? 'border-orange-400 dark:border-orange-500 text-orange-700 dark:text-orange-300 bg-orange-50 dark:bg-orange-950/20 cursor-not-allowed opacity-60'
                                   : isTeamLocked 
                                     ? 'border-orange-400 dark:border-orange-500 text-orange-700 dark:text-orange-300 bg-orange-50 dark:bg-orange-950/20 hover:bg-orange-100 dark:hover:bg-orange-950/30' 
                                     : 'border-amber-200 dark:border-amber-800 text-amber-700 dark:text-amber-300 hover:bg-amber-50 dark:hover:bg-amber-950/20'
-                              } disabled:opacity-50`}
+                              }`}
                               disabled={team.isLockAndLoad || !isTeamLocked || lockTeamMutation.isPending}
                               onClick={() => !team.isLockAndLoad && isTeamLocked && handleLockAndLoadClick(team)}
                             >
@@ -458,8 +458,8 @@ export default function StablePage() {
                                 </>
                               ) : team.isLockAndLoad ? (
                                 <>
-                                  <Zap className="w-3 h-3 mr-2" />
-                                  2x Active
+                                  <CheckCircle className="w-3 h-3 mr-2" />
+                                  Loaded
                                 </>
                               ) : (
                                 <>
