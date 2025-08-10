@@ -223,10 +223,9 @@ export function generateSeasonStats(teamCode: string, currentWeek: number): {
 export function generateTeamPerformanceData(teamCode: string, currentWeek: number) {
   const seasonStats = generateSeasonStats(teamCode, currentWeek);
   
-  // Generate upcoming opponent and spread
+  // Generate upcoming opponent (point spreads now handled by real opponent data)
   const opponents = ['vs. KC', 'vs. BUF', '@ DAL', 'vs. SF', '@ NE', 'vs. LAC', '@ MIA'];
   const upcomingOpponent = opponents[Math.floor(Math.random() * opponents.length)];
-  const pointSpread = (Math.random() * 14 - 7).toFixed(1); // -7.0 to +7.0
   
   // Calculate locks remaining (max 4 per team, subtract random usage)
   const locksUsed = Math.floor(Math.random() * Math.min(currentWeek, 4));
@@ -238,7 +237,6 @@ export function generateTeamPerformanceData(teamCode: string, currentWeek: numbe
   return {
     ...seasonStats,
     upcomingOpponent,
-    pointSpread: parseFloat(pointSpread),
     locksUsed,
     locksRemaining,
     lockAndLoadUsed,

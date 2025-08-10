@@ -921,7 +921,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Get real upcoming opponent data
         let opponentInfo = {
           upcomingOpponent: 'BYE WEEK',
-          pointSpread: 0,
           gameDate: null,
           gameTime: null,
           isHome: null,
@@ -956,7 +955,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
             opponentInfo = {
               upcomingOpponent: `${isHome ? 'vs' : '@'} ${opponentCode}${spreadDisplay}`,
-              pointSpread: upcomingGame.spread || 0,
               gameDate: upcomingGame.gameDate,
               gameTime: upcomingGame.gameTime,
               isHome,
