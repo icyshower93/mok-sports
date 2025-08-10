@@ -64,8 +64,10 @@ export default function StablePage() {
           lockType,
           leagueId: selectedLeague 
         });
-        console.log('[API] Lock response:', response);
-        return response;
+        console.log('[API] Lock response raw:', response);
+        const data = await response.json();
+        console.log('[API] Lock response data:', data);
+        return data;
       } catch (error) {
         console.error('[API] Lock request failed:', error);
         throw error;
