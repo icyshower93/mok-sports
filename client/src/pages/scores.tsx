@@ -70,7 +70,7 @@ export default function ScoresPage() {
   const { user } = useAuth();
   const [selectedWeek, setSelectedWeek] = useState(1);
   const [selectedGame, setSelectedGame] = useState<any>(null);
-  const [selectedSeason] = useState(2025);
+  const [selectedSeason] = useState(2024); // Using real 2024 NFL season data
 
   // Get user's leagues to show scores for
   const { data: userLeagues } = useQuery({
@@ -83,11 +83,11 @@ export default function ScoresPage() {
     queryKey: ['/api/scoring/rules']
   });
 
-  // Get current league (first league for now, with fallback for mock data)
-  const currentLeague = (userLeagues && userLeagues.length > 0) ? userLeagues[0] : {
-    id: 'EEW2YU',
-    name: 'Sky\'s League',
-    season: 2025
+  // Get current league (use real EEW2YU test league)  
+  const currentLeague = (userLeagues && Array.isArray(userLeagues) && userLeagues.length > 0) ? userLeagues[0] : {
+    id: '243d719b-92ce-4752-8689-5da93ee69213',
+    name: 'Test League 1',
+    season: 2024
   };
 
   // Get NFL teams to map logos and owners
@@ -108,6 +108,12 @@ export default function ScoresPage() {
     enabled: !!currentLeague
   });
 
+  // Get real NFL games for selected week
+  const { data: nflGamesData, isLoading: loadingGames } = useQuery({
+    queryKey: [`/api/scoring/week/${selectedWeek}`],
+    enabled: selectedWeek > 0
+  });
+
   if (!user) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -124,61 +130,32 @@ export default function ScoresPage() {
     );
   }
 
-  // Create mock NFL games for current week (this would come from API in real implementation)
-  const mockGames: NFLGame[] = [
-    {
-      id: '1',
-      homeTeam: 'KC',
-      awayTeam: 'BUF',
-      homeScore: 31,
-      awayScore: 17,
-      week: selectedWeek,
-      season: selectedSeason,
-      gameDate: new Date('2025-01-15T18:00:00Z'),
-      isCompleted: true,
-      homeOwner: 'SE',
-      homeOwnerName: 'Sky Evans',
-      homeMokPoints: 3,
-      homeLocked: true
-    },
-    {
-      id: '2', 
-      homeTeam: 'LAR',
-      awayTeam: 'MIN',
-      homeScore: 27,
-      awayScore: 9,
-      week: selectedWeek,
-      season: selectedSeason,
-      gameDate: new Date('2025-01-15T21:30:00Z'),
-      isCompleted: true,
-      awayOwner: 'JD',
-      awayOwnerName: 'John Doe',
-      awayMokPoints: 1,
-      awayLockAndLoad: true
-    },
-    {
-      id: '3',
-      homeTeam: 'BAL',
-      awayTeam: 'PIT',
-      homeScore: 28,
-      awayScore: 14,
-      week: selectedWeek,
-      season: selectedSeason,
-      gameDate: new Date('2025-01-16T16:30:00Z'),
-      isCompleted: true,
-      homeOwner: 'MK',
-      homeOwnerName: 'Mike Kelly',
-      awayOwner: 'RJ',
-      awayOwnerName: 'Rick James',
-      homeMokPoints: 2,
-      homeLocked: true
-    }
-  ];
+  // Transform real NFL games data from Tank01 API
+  const nflGames: NFLGame[] = (nflGamesData as any)?.results?.map((game: any, index: number) => ({
+    id: `game_${selectedWeek}_${index}`,
+    homeTeam: game.homeTeam,
+    awayTeam: game.awayTeam,
+    homeScore: game.homeScore || 0,
+    awayScore: game.awayScore || 0,
+    week: selectedWeek,
+    season: selectedSeason,
+    gameDate: new Date(game.gameDate),
+    isCompleted: game.isCompleted || false,
+    // TODO: Map team owners from draft data when available
+    homeOwner: '',
+    homeOwnerName: '',
+    awayOwner: '',
+    awayOwnerName: '',
+    homeLocked: false,
+    awayLocked: false,
+    homeMokPoints: 0,
+    awayMokPoints: 0
+  })) || [];
 
 
 
   const getUserInitials = (teamCode: string): string => {
-    const game = mockGames.find(g => g.homeTeam === teamCode || g.awayTeam === teamCode);
+    const game = nflGames.find(g => g.homeTeam === teamCode || g.awayTeam === teamCode);
     if (game?.homeTeam === teamCode && game.homeOwner) return game.homeOwner;
     if (game?.awayTeam === teamCode && game.awayOwner) return game.awayOwner;
     return '';
@@ -190,7 +167,7 @@ export default function ScoresPage() {
   };
 
   const isTeamLocked = (teamCode: string): { locked: boolean; lockAndLoad: boolean } => {
-    const game = mockGames.find(g => g.homeTeam === teamCode || g.awayTeam === teamCode);
+    const game = nflGames.find(g => g.homeTeam === teamCode || g.awayTeam === teamCode);
     if (game?.homeTeam === teamCode) {
       return { locked: !!game.homeLocked, lockAndLoad: !!game.homeLockAndLoad };
     }
@@ -233,9 +210,17 @@ export default function ScoresPage() {
 
         {/* Games List */}
         <div className="space-y-4">
-          {mockGames
-            .sort((a, b) => new Date(a.gameDate).getTime() - new Date(b.gameDate).getTime())
-            .map((game) => {
+          {loadingGames && (
+            <div className="text-center py-8">Loading Week {selectedWeek} games...</div>
+          )}
+          {!loadingGames && nflGames.length === 0 && (
+            <div className="text-center py-8 text-muted-foreground">
+              No games found for Week {selectedWeek}
+            </div>
+          )}
+          {nflGames
+            .sort((a: NFLGame, b: NFLGame) => new Date(a.gameDate).getTime() - new Date(b.gameDate).getTime())
+            .map((game: NFLGame) => {
               const homeWin = game.homeScore > game.awayScore;
               const awayWin = game.awayScore > game.homeScore;
               const scoreDiff = Math.abs(game.homeScore - game.awayScore);
