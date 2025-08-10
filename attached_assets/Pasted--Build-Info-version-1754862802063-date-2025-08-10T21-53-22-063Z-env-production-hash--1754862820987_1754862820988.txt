@@ -1,0 +1,143 @@
+🏗️ Build Info: {version: 1754862802063, date: '2025-08-10T21:53:22.063Z', env: 'production', hash: 'me680427'}
+index-I8gPEbfa.js:372 📦 Version: me680427
+index-I8gPEbfa.js:372 📅 Built: 2025-08-10T21:53:22.063Z
+index-I8gPEbfa.js:372 🔧 Environment: production
+index-I8gPEbfa.js:323 [Auth] Token check - Has token: true Has user: false Loading: true
+index-I8gPEbfa.js:323 [SW Hook] EMERGENCY: Unregistering all existing service workers
+index-I8gPEbfa.js:323 [SW Hook] Found 1 existing registrations
+index-I8gPEbfa.js:323 [SW Hook] Unregistering existing service worker
+index-I8gPEbfa.js:323 [SW Hook] Found 0 caches to delete
+contentScript.js:2 Content script initialized successfully.
+stable:1 Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner.
+index-I8gPEbfa.js:323 [Auth] Token check - Has token: true Has user: true Loading: false
+index-I8gPEbfa.js:323 [AutoPushRefresh] Legacy hook delegating to SubscriptionManager
+index-I8gPEbfa.js:323 [SW Hook] Registering fresh service worker: /sw.js?v=1754862802221&r=0.8549667218961255
+sw.js?v=1754862802221&r=0.8549667218961255:2 [SW] NUCLEAR OPTION - Emergency service worker loading
+sw.js?v=1754862802221&r=0.8549667218961255:88 [SW] Service worker starting, version: v1.7.0-nuclear-unregister-1754862802304
+sw.js?v=1754862802221&r=0.8549667218961255:305 [SW] Service worker script loaded successfully
+index-I8gPEbfa.js:323 [SW Hook] Service worker registered successfully
+sw.js?v=1754862802221&r=0.8549667218961255:19 [SW] EMERGENCY INSTALL - Clearing all caches and forcing activation
+sw.js?v=1754862802221&r=0.8549667218961255:92 [SW] Installing service worker, version: v1.7.0-nuclear-unregister-1754862802304
+sw.js?v=1754862802221&r=0.8549667218961255:22 [SW] Found caches to delete: []
+sw.js?v=1754862802221&r=0.8549667218961255:30 [SW] All caches deleted - skipping waiting
+sw.js?v=1754862802221&r=0.8549667218961255:96 [SW] Caching static files
+sw.js?v=1754862802221&r=0.8549667218961255:99 [SW] Static files cached successfully
+sw.js?v=1754862802221&r=0.8549667218961255:41 [SW] EMERGENCY ACTIVATE - Taking control of all clients
+sw.js?v=1754862802221&r=0.8549667218961255:110 [SW] Activating service worker, version: v1.7.0-nuclear-unregister-1754862802304
+sw.js?v=1754862802221&r=0.8549667218961255:46 [SW] Deleting remaining cache: mok-sports-static-v1.7.0-nuclear-unregister-1754862802304
+sw.js?v=1754862802221&r=0.8549667218961255:116 [SW] Found caches: ['mok-sports-static-v1.7.0-nuclear-unregister-1754862802304']
+sw.js?v=1754862802221&r=0.8549667218961255:129 [SW] Service worker activated and controlling all clients
+sw.js?v=1754862802221&r=0.8549667218961255:51 [SW] Claiming all clients immediately
+index-I8gPEbfa.js:367 [Dialog] Opening lock dialog for team: Bills
+stable:183 Removed banner element: <div data-state=​"open" class=​"fixed inset-0 z-50 bg-background/​80 backdrop-blur-sm data-[state=open]​:​animate-in data-[state=closed]​:​animate-out data-[state=closed]​:​fade-out-0 data-[state=open]​:​fade-in-0" style=​"pointer-events:​ auto;​" data-aria-hidden=​"true" aria-hidden=​"true">​</div>​
+index-I8gPEbfa.js:367 [Dialog] Confirming lock for team: Bills
+index-I8gPEbfa.js:367 [Dialog] selectedTeam full object: {
+  "totalWins": 1,
+  "totalLosses": 0,
+  "totalTies": 0,
+  "totalMokPoints": 2,
+  "weeklyBreakdown": [
+    {
+      "teamCode": "BUF",
+      "week": 1,
+      "wins": 1,
+      "losses": 0,
+      "ties": 0,
+      "points": 40,
+      "opponentPoints": 24,
+      "isBlowout": true,
+      "isShutout": false,
+      "weeklyHigh": false,
+      "weeklyLow": false,
+      "mokPoints": 2
+    }
+  ],
+  "averagePointsFor": 40,
+  "averagePointsAgainst": 24,
+  "blowoutWins": 1,
+  "shutouts": 0,
+  "weeklyHighs": 0,
+  "weeklyLows": 0,
+  "upcomingOpponent": "vs ARI -6.5",
+  "locksUsed": 0,
+  "locksRemaining": 4,
+  "lockAndLoadUsed": false,
+  "lockAndLoadAvailable": true,
+  "record": "1-0",
+  "isBye": false,
+  "isLocked": false,
+  "id": "e04c7243-c523-42b7-9d49-a802c82691d1",
+  "userId": "9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a",
+  "leagueId": "243d719b-92ce-4752-8689-5da93ee69213",
+  "nflTeamId": "b8cce67a-69d4-49f3-acd7-da6081682076",
+  "acquiredVia": "draft",
+  "acquiredAt": "2025-08-09T06:35:36.985Z",
+  "createdAt": "2025-08-09T06:35:36.985Z",
+  "nflTeam": {
+    "id": "b8cce67a-69d4-49f3-acd7-da6081682076",
+    "code": "BUF",
+    "name": "Bills",
+    "city": "Buffalo",
+    "conference": "AFC",
+    "division": "East",
+    "logoUrl": "https://www.fantasynerds.com/images/nfl/team_logos/BUF.png",
+    "createdAt": "2025-08-04T03:16:52.620Z"
+  },
+  "gameDate": "2024-09-08",
+  "gameTime": "00:00",
+  "isHome": true,
+  "isLockAndLoad": false
+}
+index-I8gPEbfa.js:367 [Dialog] selectedLeague: 243d719b-92ce-4752-8689-5da93ee69213
+index-I8gPEbfa.js:367 [Dialog] selectedWeek: 1
+index-I8gPEbfa.js:367 [Dialog] Using teamId: b8cce67a-69d4-49f3-acd7-da6081682076
+index-I8gPEbfa.js:367 [API] Making lock request with: {url: '/api/teams/b8cce67a-69d4-49f3-acd7-da6081682076/lock', body: {…}}
+index-I8gPEbfa.js:48  POST https://mok-sports-draft-mokfantasysport.replit.app/api/teams/b8cce67a-69d4-49f3-acd7-da6081682076/lock 403 (Forbidden)
+ns @ index-I8gPEbfa.js:48
+mutationFn @ index-I8gPEbfa.js:367
+fn @ index-I8gPEbfa.js:48
+b @ index-I8gPEbfa.js:48
+start @ index-I8gPEbfa.js:48
+execute @ index-I8gPEbfa.js:48
+await in execute
+mutate @ index-I8gPEbfa.js:48
+(anonymous) @ index-I8gPEbfa.js:48
+N @ index-I8gPEbfa.js:367
+onClick @ index-I8gPEbfa.js:367
+Ob @ index-I8gPEbfa.js:37
+Mb @ index-I8gPEbfa.js:37
+_b @ index-I8gPEbfa.js:37
+Mm @ index-I8gPEbfa.js:37
+Mg @ index-I8gPEbfa.js:37
+(anonymous) @ index-I8gPEbfa.js:37
+af @ index-I8gPEbfa.js:40
+ig @ index-I8gPEbfa.js:37
+xc @ index-I8gPEbfa.js:37
+Od @ index-I8gPEbfa.js:37
+Zb @ index-I8gPEbfa.js:37Understand this error
+index-I8gPEbfa.js:367 [API] Lock request failed: Error: 403: {"message":"You do not own this team in this league"}
+    at hv (index-I8gPEbfa.js:48:43092)
+    at async ns (index-I8gPEbfa.js:48:43325)
+    at async Object.mutationFn (index-I8gPEbfa.js:367:108224)
+mutationFn @ index-I8gPEbfa.js:367
+await in mutationFn
+fn @ index-I8gPEbfa.js:48
+b @ index-I8gPEbfa.js:48
+start @ index-I8gPEbfa.js:48
+execute @ index-I8gPEbfa.js:48
+await in execute
+mutate @ index-I8gPEbfa.js:48
+(anonymous) @ index-I8gPEbfa.js:48
+N @ index-I8gPEbfa.js:367
+onClick @ index-I8gPEbfa.js:367
+Ob @ index-I8gPEbfa.js:37
+Mb @ index-I8gPEbfa.js:37
+_b @ index-I8gPEbfa.js:37
+Mm @ index-I8gPEbfa.js:37
+Mg @ index-I8gPEbfa.js:37
+(anonymous) @ index-I8gPEbfa.js:37
+af @ index-I8gPEbfa.js:40
+ig @ index-I8gPEbfa.js:37
+xc @ index-I8gPEbfa.js:37
+Od @ index-I8gPEbfa.js:37
+Zb @ index-I8gPEbfa.js:37Understand this error

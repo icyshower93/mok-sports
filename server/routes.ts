@@ -4,7 +4,7 @@ import passport from "passport";
 import { generateJWT, authenticateJWT, isOAuthConfigured } from "./auth";
 import { storage } from "./storage";
 import { generateJoinCode } from "./utils";
-import { insertLeagueSchema, draftPicks, drafts, draftTimers, userWeeklyScores, weeklyLocks, nflTeams } from "@shared/schema";
+import { insertLeagueSchema, draftPicks, drafts, draftTimers, userWeeklyScores, weeklyLocks, nflTeams, stables } from "@shared/schema";
 import { z } from "zod";
 import { registerPushNotificationRoutes } from "./routes/push-notifications";
 import { registerPushDiagnosticsRoutes } from "./routes/push-diagnostics";
@@ -1030,22 +1030,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: 'Invalid lock type' });
       }
 
-      // Check if user owns this team in the league
-      const userTeamOwnership = await db.query.draftPicks.findFirst({
+      // Check if user owns this team in the league (via stable teams)
+      const userTeamOwnership = await db.query.stables.findFirst({
         where: and(
-          eq(draftPicks.userId, userId),
-          eq(draftPicks.nflTeamId, teamId)
-        ),
-        with: {
-          draft: {
-            where: eq(drafts.leagueId, leagueId)
-          }
-        }
+          eq(stables.userId, userId),
+          eq(stables.leagueId, leagueId),
+          eq(stables.nflTeamId, teamId)
+        )
       });
 
-      if (!userTeamOwnership || !userTeamOwnership.draft) {
+      if (!userTeamOwnership) {
+        console.log(`[Lock] Ownership check failed for user ${userId}, team ${teamId}, league ${leagueId}`);
         return res.status(403).json({ message: 'You do not own this team in this league' });
       }
+
+      console.log(`[Lock] Ownership verified for user ${userId}, team ${teamId}, league ${leagueId}`);
 
       // Check if user already has a lock for this week
       const existingWeeklyLock = await db.query.weeklyLocks.findFirst({
