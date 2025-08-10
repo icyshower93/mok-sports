@@ -39,6 +39,7 @@ export default function MainPage() {
   const [, navigate] = useLocation();
   const [selectedLeague, setSelectedLeague] = useState<string>("");
   const [selectedWeek] = useState(1);
+  const [isLockDeadlineDismissed, setIsLockDeadlineDismissed] = useState(false);
 
   // Fetch user's leagues
   const { data: leagues = [], isLoading: leaguesLoading } = useQuery({
@@ -177,8 +178,16 @@ export default function MainPage() {
         </div>
 
         {/* Lock Deadline Banner */}
-        {isLockWindowOpen && (
-          <div className="p-4">
+        {isLockWindowOpen && !isLockDeadlineDismissed && (
+          <div 
+            className="p-4 transition-all duration-300 ease-in-out"
+            style={{
+              opacity: isLockDeadlineDismissed ? 0 : 1,
+              transform: isLockDeadlineDismissed ? 'translateY(-10px)' : 'translateY(0)',
+              maxHeight: isLockDeadlineDismissed ? '0px' : '200px',
+              overflow: 'hidden'
+            }}
+          >
             <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 border-blue-200 dark:border-blue-800">
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
@@ -204,7 +213,7 @@ export default function MainPage() {
                       variant="ghost" 
                       size="sm" 
                       className="h-6 w-6 p-0 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/30"
-                      onClick={() => {/* Handle dismiss */}}
+                      onClick={() => setIsLockDeadlineDismissed(true)}
                     >
                       <X className="w-4 h-4" />
                     </Button>
