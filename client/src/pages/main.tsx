@@ -17,7 +17,8 @@ import {
   DollarSign,
   Flame,
   Star,
-  Calendar
+  Calendar,
+  X
 } from "lucide-react";
 import { BottomNav } from "@/components/layout/bottom-nav";
 import { TeamLogo } from "@/components/team-logo";
@@ -224,30 +225,6 @@ export default function MainPage() {
         {/* Lock Window Active - Hero Section */}
         {isLockWindowOpen && (
           <div className="p-4 space-y-4">
-            {/* Lock Deadline Alert */}
-            <Card className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950/20 dark:to-emerald-950/20 border-green-200 dark:border-green-800">
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
-                    <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-full">
-                      <Target className="w-5 h-5 text-green-600 dark:text-green-400" />
-                    </div>
-                    <div>
-                      <div className="font-semibold text-green-800 dark:text-green-200">
-                        Make Your Lock
-                      </div>
-                      <div className="text-sm text-green-600 dark:text-green-400">
-                        Deadline: {lockDeadline.toLocaleDateString()} 8:20 PM ET
-                      </div>
-                    </div>
-                  </div>
-                  <Badge variant="outline" className="bg-green-50 dark:bg-green-950/50 text-green-700 dark:text-green-300 border-green-200 dark:border-green-800">
-                    <Flame className="w-3 h-3 mr-1" />
-                    +1 Point
-                  </Badge>
-                </div>
-              </CardContent>
-            </Card>
 
             {/* Lock Selection Interface */}
             <Card>
@@ -375,7 +352,7 @@ export default function MainPage() {
                                 logoUrl={team.nflTeam.logoUrl}
                                 teamCode={team.nflTeam.code}
                                 teamName={team.nflTeam.name}
-                                size="xs"
+                                size="sm"
                                 className="w-5 h-5 mr-1.5"
                               />
                               <div className="flex-1 min-w-0">
