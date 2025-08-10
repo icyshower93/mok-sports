@@ -181,8 +181,8 @@ export function LeagueWaiting() {
         <div className="min-h-[70vh] flex items-center justify-center">
           <div className="text-center space-y-4">
             <p className="text-muted-foreground">No league selected</p>
-            <Button onClick={() => setLocation('/leagues')}>
-              Back to Leagues
+            <Button onClick={() => setLocation('/')}>
+              Return to Dashboard
             </Button>
           </div>
         </div>
@@ -253,9 +253,9 @@ export function LeagueWaiting() {
               <Button onClick={() => {
                 // Clear any cached league data and redirect
                 queryClient.invalidateQueries({ queryKey: ['/api/leagues/user'] });
-                setLocation('/leagues');
+                setLocation('/?stay=true');
               }}>
-                Back to Leagues
+                Return to Dashboard
               </Button>
               {!isAuthError && (
                 <Button variant="outline" onClick={() => window.location.reload()}>
@@ -277,40 +277,26 @@ export function LeagueWaiting() {
   const isLeagueFull = league.memberCount >= league.maxTeams;
 
   const leaveLeague = async () => {
-    console.log('Leave League clicked, starting process...');
     try {
-      console.log('Making API call to leave league:', leagueId);
       const response = await fetch(`/api/leagues/${leagueId}/leave`, {
         method: 'POST',
         credentials: 'include',
       });
       
-      console.log('Leave league response status:', response.status);
-      
       if (!response.ok) {
-        const errorData = await response.text();
-        console.error('Leave league failed:', errorData);
         throw new Error('Failed to leave league');
       }
-      
-      const result = await response.json();
-      console.log('Leave league successful:', result);
       
       toast({
         title: "Left League",
         description: "You have successfully left the league",
       });
       
-      // Clear all league-related cache and redirect to leagues page
-      console.log('Clearing cache and redirecting to /leagues');
-      queryClient.invalidateQueries({ queryKey: ['/api/user/leagues'] });
+      // Clear all league-related cache and redirect
+      queryClient.invalidateQueries({ queryKey: ['/api/leagues/user'] });
       queryClient.removeQueries({ queryKey: [`/api/leagues/${leagueId}`] });
-      
-      // Force a hard redirect to ensure navigation works
-      console.log('Performing navigation to /leagues');
-      window.location.href = '/leagues';
+      setLocation('/?stay=true');
     } catch (error) {
-      console.error('Leave league error:', error);
       toast({
         title: "Error",
         description: "Failed to leave league",
