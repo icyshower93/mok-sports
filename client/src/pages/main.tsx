@@ -172,127 +172,52 @@ export default function MainPage() {
               </div>
             </CardHeader>
             <CardContent className="space-y-3">
-              {/* Weekly standings with point breakdown */}
+              {/* Clean weekly standings */}
               {[
-                { 
-                  rank: 1, 
-                  name: "Sky Evans", 
-                  avatar: "SE", 
-                  weekPoints: 4.0,
-                  isCurrentUser: true,
-                  pointBreakdown: [
-                    { source: "Wins", points: 2, detail: "KC, BUF" },
-                    { source: "Lock Bonus", points: 1, detail: "KC locked" },
-                    { source: "Blowout", points: 1, detail: "KC 31-17" }
-                  ]
-                },
-                { 
-                  rank: 2, 
-                  name: "Sarah Wilson", 
-                  avatar: "SW", 
-                  weekPoints: 3.5,
-                  isCurrentUser: false,
-                  pointBreakdown: [
-                    { source: "Wins", points: 2, detail: "BAL, GB" },
-                    { source: "Lock & Load", points: 2, detail: "BAL L&L" },
-                    { source: "Loss", points: -0.5, detail: "MIN tie" }
-                  ]
-                },
-                { 
-                  rank: 3, 
-                  name: "Mike Chen", 
-                  avatar: "MC", 
-                  weekPoints: 2.0,
-                  isCurrentUser: false,
-                  pointBreakdown: [
-                    { source: "Wins", points: 1, detail: "DAL" },
-                    { source: "Lock Bonus", points: 1, detail: "DAL locked" }
-                  ]
-                },
-                { 
-                  rank: 4, 
-                  name: "Alex Rodriguez", 
-                  avatar: "AR", 
-                  weekPoints: 1.5,
-                  isCurrentUser: false,
-                  pointBreakdown: [
-                    { source: "Wins", points: 1, detail: "TB" },
-                    { source: "Tie", points: 0.5, detail: "SEA 24-24" }
-                  ]
-                },
-                { 
-                  rank: 5, 
-                  name: "Emma Davis", 
-                  avatar: "ED", 
-                  weekPoints: 1.0,
-                  isCurrentUser: false,
-                  pointBreakdown: [
-                    { source: "Wins", points: 1, detail: "PIT" }
-                  ]
-                },
-                { 
-                  rank: 6, 
-                  name: "Chris Martinez", 
-                  avatar: "CM", 
-                  weekPoints: 0.0,
-                  isCurrentUser: false,
-                  pointBreakdown: [
-                    { source: "Weekly Low", points: -1, detail: "Lowest scorer" },
-                    { source: "Wins", points: 1, detail: "DET" }
-                  ]
-                }
+                { name: "Sky Evans", avatar: "SE", weekPoints: 4.0, isCurrentUser: true },
+                { name: "Sarah Wilson", avatar: "SW", weekPoints: 3.5, isCurrentUser: false },
+                { name: "Mike Chen", avatar: "MC", weekPoints: 2.0, isCurrentUser: false },
+                { name: "Alex Rodriguez", avatar: "AR", weekPoints: 1.5, isCurrentUser: false },
+                { name: "Emma Davis", avatar: "ED", weekPoints: 1.0, isCurrentUser: false },
+                { name: "Chris Martinez", avatar: "CM", weekPoints: 0.0, isCurrentUser: false }
               ].map((member, index) => (
-                <div 
-                  key={member.name} 
-                  className={`flex items-center justify-between p-3 rounded-lg border transition-all ${
-                    member.isCurrentUser ? 'ring-2 ring-primary/20 bg-primary/5' : 'bg-card hover:bg-muted/30'
-                  } ${index === 0 ? 'border-yellow-200 dark:border-yellow-800 bg-yellow-50/50 dark:bg-yellow-950/20' : ''}`}
-                >
-                  <div className="flex items-center space-x-3 flex-1">
-                    <div className="flex items-center space-x-2">
-                      <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
-                        member.rank === 1 ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400' :
-                        member.rank === 2 ? 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400' :
-                        member.rank === 3 ? 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400' :
-                        'bg-muted text-muted-foreground'
-                      }`}>
-                        {member.rank}
-                      </div>
-                      {member.rank === 1 && <Crown className="w-4 h-4 text-yellow-500" />}
+                <div key={member.name} className="flex items-center justify-between py-2.5">
+                  <div className="flex items-center space-x-3">
+                    {/* Rank Badge */}
+                    <div className={`w-7 h-7 rounded-full flex items-center justify-center text-sm font-semibold ${
+                      index === 0 ? 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300' :
+                      index === 1 ? 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300' :
+                      index === 2 ? 'bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300' :
+                      'bg-muted text-muted-foreground'
+                    }`}>
+                      {index + 1}
                     </div>
-                    <Avatar className="w-8 h-8">
-                      <AvatarFallback className="text-xs">{member.avatar}</AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1">
+                    
+                    {/* Avatar and Name */}
+                    <div className="flex items-center space-x-2.5">
+                      <Avatar className="w-8 h-8">
+                        <AvatarFallback className="text-xs font-medium">{member.avatar}</AvatarFallback>
+                      </Avatar>
                       <div className="flex items-center space-x-2">
                         <span className="font-medium text-sm">{member.name}</span>
                         {member.isCurrentUser && <Badge variant="secondary" className="text-xs">You</Badge>}
                       </div>
-                      <div className="text-xs text-muted-foreground">
-                        {member.pointBreakdown.map((item, i) => (
-                          <span key={i}>
-                            {item.source}: {item.points > 0 ? '+' : ''}{item.points}
-                            {i < member.pointBreakdown.length - 1 && ' • '}
-                          </span>
-                        ))}
-                      </div>
                     </div>
                   </div>
+                  
+                  {/* Points */}
                   <div className="text-right">
-                    <div className="text-lg font-bold">{member.weekPoints}</div>
-                    <div className="text-xs text-muted-foreground">pts</div>
+                    <span className="text-lg font-bold">{member.weekPoints}</span>
+                    <span className="text-sm text-muted-foreground ml-1">pts</span>
                   </div>
                 </div>
               ))}
               
-              {/* Games still in progress indicator */}
-              <div className="mt-3 pt-3 border-t border-border/50">
-                <div className="flex items-center justify-between text-xs text-muted-foreground">
-                  <div className="flex items-center space-x-2">
-                    <Clock className="w-3 h-3" />
-                    <span>3 games still in progress</span>
-                  </div>
-                  <span>Updates live</span>
+              {/* Live Update Status */}
+              <div className="mt-4 pt-3 border-t border-border/50">
+                <div className="flex items-center justify-center space-x-2 text-xs text-muted-foreground">
+                  <Clock className="w-3.5 h-3.5" />
+                  <span>3 games in progress • Updates live</span>
                 </div>
               </div>
             </CardContent>
