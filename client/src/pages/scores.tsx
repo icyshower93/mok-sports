@@ -162,12 +162,13 @@ export default function ScoresPage() {
 
 
   const isUserTeam = (teamCode: string): boolean => {
+    if (!user) return false;
     const game = nflGames.find(g => g.homeTeam === teamCode || g.awayTeam === teamCode);
     if (game?.homeTeam === teamCode) {
-      return game.homeOwnerName === 'Sky Evans';
+      return game.homeOwner === user.id || game.homeOwnerName === user.name;
     }
     if (game?.awayTeam === teamCode) {
-      return game.awayOwnerName === 'Sky Evans';
+      return game.awayOwner === user.id || game.awayOwnerName === user.name;
     }
     return false;
   };
