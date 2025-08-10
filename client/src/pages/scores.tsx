@@ -84,7 +84,7 @@ export default function ScoresPage() {
   });
 
   // Get current league (first league for now, with fallback for mock data)
-  const currentLeague = (userLeagues && userLeagues.length > 0) ? userLeagues[0] : {
+  const currentLeague = (userLeagues && Array.isArray(userLeagues) && userLeagues.length > 0) ? userLeagues[0] : {
     id: 'EEW2YU',
     name: 'Sky\'s League',
     season: 2025
