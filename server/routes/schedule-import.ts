@@ -260,8 +260,8 @@ router.post('/import-schedule', async (req, res) => {
     const teamQuery = await db.execute(sql`SELECT id, code FROM nfl_teams`);
     const teams = teamQuery.rows;
     
-    const teamMapping = teams.reduce((acc, team) => {
-      acc[team.code as string] = team.id as string;
+    const teamMapping = teams.reduce((acc, team: any) => {
+      acc[team.code] = team.id;
       return acc;
     }, {} as Record<string, string>);
     
