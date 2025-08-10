@@ -153,7 +153,7 @@ export default function ScoresPage() {
                 </div>
                 <hr className="my-3" />
                 <div className="flex justify-between">
-                  <span>Blowout (14+ pts)</span>
+                  <span>Blowout (20+ pts)</span>
                   <Badge variant="secondary">+{scoringRules.blowoutPoints}</Badge>
                 </div>
                 <div className="flex justify-between">

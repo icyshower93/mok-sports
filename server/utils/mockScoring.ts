@@ -9,7 +9,7 @@ export interface TeamScore {
   ties: number;
   points: number; // Final score in game
   opponentPoints: number;
-  isBlowout: boolean; // Won by 14+ points
+  isBlowout: boolean; // Won by 20+ points
   isShutout: boolean; // Held opponent to 0 points
   weeklyHigh: boolean; // Highest score this week
   weeklyLow: boolean; // Lowest score this week
@@ -34,7 +34,7 @@ export function calculateMokPoints(score: TeamScore, weekStats: WeeklyStats): nu
   mokPoints += score.ties * 0.5; // +0.5 for ties
   
   // Bonus points
-  if (score.isBlowout) mokPoints += 1; // +1 for blowout win (14+ points)
+  if (score.isBlowout) mokPoints += 1; // +1 for blowout win (20+ points)
   if (score.isShutout) mokPoints += 1; // +1 for shutout defense
   if (score.weeklyHigh) mokPoints += 1; // +1 for weekly high score
   if (score.weeklyLow) mokPoints -= 1; // -1 for weekly low score
@@ -96,7 +96,7 @@ export function generateWeeklyScores(teams: string[], week: number): TeamScore[]
   
   // Convert game results to TeamScore format
   for (const result of gameResults) {
-    const isBlowout = result.won && (result.points - result.opponentPoints) >= 14;
+    const isBlowout = result.won && (result.points - result.opponentPoints) >= 20;
     const isShutout = result.won && result.opponentPoints === 0;
     const weeklyHigh = result.points === weekStats.highestScore;
     const weeklyLow = result.points === weekStats.lowestScore;

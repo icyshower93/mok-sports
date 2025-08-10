@@ -12,7 +12,7 @@ export interface MokScoringRules {
   lossPoints: number;    // 0 for losses
   
   // Bonus scoring  
-  blowoutPoints: number;   // +1 for winning by 14+ points
+  blowoutPoints: number;   // +1 for winning by 20+ points
   shutoutPoints: number;   // +1 for holding opponent to 0 points
   weeklyHighPoints: number; // +1 for highest scoring team of the week
   weeklyLowPenalty: number; // -1 for lowest scoring team of the week
@@ -53,7 +53,7 @@ export interface TeamGameResult {
   isWin: boolean;
   isTie: boolean;
   isLoss: boolean;
-  isBlowout: boolean;      // Won by 14+ points
+  isBlowout: boolean;      // Won by 20+ points
   isShutout: boolean;      // Held opponent to 0
   isWeeklyHigh: boolean;   // Highest score this week
   isWeeklyLow: boolean;    // Lowest score this week

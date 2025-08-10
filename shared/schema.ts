@@ -145,7 +145,7 @@ export const teamPerformance = pgTable("team_performance", {
   opponentScore: integer("opponent_score").notNull(),
   isWin: boolean("is_win").notNull(),
   isTie: boolean("is_tie").notNull(),
-  isBlowout: boolean("is_blowout").notNull().default(false), // Won by 14+ points
+  isBlowout: boolean("is_blowout").notNull().default(false), // Won by 20+ points
   isShutout: boolean("is_shutout").notNull().default(false), // Held opponent to 0
   isWeeklyHigh: boolean("is_weekly_high").notNull().default(false),
   isWeeklyLow: boolean("is_weekly_low").notNull().default(false),
