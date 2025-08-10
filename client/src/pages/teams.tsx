@@ -59,7 +59,7 @@ export default function StablePage() {
       });
       
       try {
-        const response = await apiRequest(`/api/teams/${teamId}/lock`, 'POST', { 
+        const response = await apiRequest('POST', `/api/teams/${teamId}/lock`, { 
           week: selectedWeek,
           lockType,
           leagueId: selectedLeague 

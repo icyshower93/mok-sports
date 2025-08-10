@@ -1,0 +1,131 @@
+🏗️ Build Info: {version: 1754862598227, date: '2025-08-10T21:49:58.227Z', env: 'production', hash: 'me67vqs3'}
+index-Duyg98yA.js:372 📦 Version: me67vqs3
+index-Duyg98yA.js:372 📅 Built: 2025-08-10T21:49:58.227Z
+index-Duyg98yA.js:372 🔧 Environment: production
+index-Duyg98yA.js:323 [Auth] Token check - Has token: true Has user: false Loading: true
+contentScript.js:2 Content script initialized successfully.
+index-Duyg98yA.js:323 [SW Hook] EMERGENCY: Unregistering all existing service workers
+index-Duyg98yA.js:323 [SW Hook] Found 1 existing registrations
+index-Duyg98yA.js:323 [SW Hook] Unregistering existing service worker
+index-Duyg98yA.js:323 [SW Hook] Found 0 caches to delete
+stable:1 Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner.
+index-Duyg98yA.js:323 [Auth] Token check - Has token: true Has user: true Loading: false
+index-Duyg98yA.js:323 [AutoPushRefresh] Legacy hook delegating to SubscriptionManager
+index-Duyg98yA.js:323 [SW Hook] Registering fresh service worker: /sw.js?v=1754862598366&r=0.6565928183267074
+sw.js?v=1754862598366&r=0.6565928183267074:2 [SW] NUCLEAR OPTION - Emergency service worker loading
+sw.js?v=1754862598366&r=0.6565928183267074:88 [SW] Service worker starting, version: v1.7.0-nuclear-unregister-1754862598432
+sw.js?v=1754862598366&r=0.6565928183267074:305 [SW] Service worker script loaded successfully
+sw.js?v=1754862598366&r=0.6565928183267074:19 [SW] EMERGENCY INSTALL - Clearing all caches and forcing activation
+sw.js?v=1754862598366&r=0.6565928183267074:92 [SW] Installing service worker, version: v1.7.0-nuclear-unregister-1754862598432
+sw.js?v=1754862598366&r=0.6565928183267074:22 [SW] Found caches to delete: []
+sw.js?v=1754862598366&r=0.6565928183267074:30 [SW] All caches deleted - skipping waiting
+sw.js?v=1754862598366&r=0.6565928183267074:96 [SW] Caching static files
+index-Duyg98yA.js:323 [SW Hook] Service worker registered successfully
+sw.js?v=1754862598366&r=0.6565928183267074:99 [SW] Static files cached successfully
+sw.js?v=1754862598366&r=0.6565928183267074:41 [SW] EMERGENCY ACTIVATE - Taking control of all clients
+sw.js?v=1754862598366&r=0.6565928183267074:110 [SW] Activating service worker, version: v1.7.0-nuclear-unregister-1754862598432
+sw.js?v=1754862598366&r=0.6565928183267074:46 [SW] Deleting remaining cache: mok-sports-static-v1.7.0-nuclear-unregister-1754862598432
+sw.js?v=1754862598366&r=0.6565928183267074:116 [SW] Found caches: ['mok-sports-static-v1.7.0-nuclear-unregister-1754862598432']
+sw.js?v=1754862598366&r=0.6565928183267074:129 [SW] Service worker activated and controlling all clients
+sw.js?v=1754862598366&r=0.6565928183267074:51 [SW] Claiming all clients immediately
+index-Duyg98yA.js:372 [League] Failed to load MIN logo, using fallback
+index-Duyg98yA.js:372 [League] Failed to load LV logo, using fallback
+index-Duyg98yA.js:372 [League] Failed to load NYG logo, using fallback
+index-Duyg98yA.js:372 [League] Failed to load NYJ logo, using fallback
+index-Duyg98yA.js:372 [League] Failed to load LAC logo, using fallback
+index-Duyg98yA.js:372 [League] Failed to load KC logo, using fallback
+index-Duyg98yA.js:372 [League] Failed to load WAS logo, using fallback
+index-Duyg98yA.js:372 [League] Failed to load NE logo, using fallback
+index-Duyg98yA.js:372 [League] Failed to load GB logo, using fallback
+index-Duyg98yA.js:372 [League] Failed to load JAX logo, using fallback
+index-Duyg98yA.js:372 [League] Failed to load IND logo, using fallback
+index-Duyg98yA.js:372 [League] Failed to load CIN logo, using fallback
+index-Duyg98yA.js:372 [League] Failed to load DAL logo, using fallback
+index-Duyg98yA.js:372 [League] Failed to load ARI logo, using fallback
+index-Duyg98yA.js:372 [League] Failed to load DET logo, using fallback
+index-Duyg98yA.js:372 [League] Failed to load CHI logo, using fallback
+index-Duyg98yA.js:372 [League] Failed to load DEN logo, using fallback
+index-Duyg98yA.js:372 [League] Failed to load BAL logo, using fallback
+index-Duyg98yA.js:372 [League] Failed to load ATL logo, using fallback
+index-Duyg98yA.js:372 [League] Failed to load MIA logo, using fallback
+index-Duyg98yA.js:372 [League] Failed to load CLE logo, using fallback
+index-Duyg98yA.js:372 [League] Failed to load CAR logo, using fallback
+index-Duyg98yA.js:372 [League] Failed to load HOU logo, using fallback
+index-Duyg98yA.js:372 [League] Failed to load SF logo, using fallback
+index-Duyg98yA.js:372 [League] Failed to load TEN logo, using fallback
+index-Duyg98yA.js:372 [League] Failed to load BUF logo, using fallback
+index-Duyg98yA.js:372 [League] Failed to load NO logo, using fallback
+index-Duyg98yA.js:372 [League] Failed to load LAR logo, using fallback
+index-Duyg98yA.js:372 [League] Failed to load PHI logo, using fallback
+index-Duyg98yA.js:372 [League] Failed to load SEA logo, using fallback
+index-Duyg98yA.js:367 [Dialog] Opening lock dialog for team: Bills
+stable:183 Removed banner element: <div data-state=​"open" class=​"fixed inset-0 z-50 bg-background/​80 backdrop-blur-sm data-[state=open]​:​animate-in data-[state=closed]​:​animate-out data-[state=closed]​:​fade-out-0 data-[state=open]​:​fade-in-0" style=​"pointer-events:​ auto;​" data-aria-hidden=​"true" aria-hidden=​"true">​</div>​
+index-Duyg98yA.js:367 [Dialog] Confirming lock for team: Bills
+index-Duyg98yA.js:367 [Dialog] selectedTeam full object: {
+  "totalWins": 0,
+  "totalLosses": 1,
+  "totalTies": 0,
+  "totalMokPoints": 0,
+  "weeklyBreakdown": [
+    {
+      "teamCode": "BUF",
+      "week": 1,
+      "wins": 0,
+      "losses": 1,
+      "ties": 0,
+      "points": 40,
+      "opponentPoints": 41,
+      "isBlowout": false,
+      "isShutout": false,
+      "weeklyHigh": false,
+      "weeklyLow": false,
+      "mokPoints": 0
+    }
+  ],
+  "averagePointsFor": 40,
+  "averagePointsAgainst": 41,
+  "blowoutWins": 0,
+  "shutouts": 0,
+  "weeklyHighs": 0,
+  "weeklyLows": 0,
+  "upcomingOpponent": "vs ARI -6.5",
+  "locksUsed": 0,
+  "locksRemaining": 4,
+  "lockAndLoadUsed": false,
+  "lockAndLoadAvailable": true,
+  "record": "0-1",
+  "isBye": false,
+  "isLocked": false,
+  "id": "e04c7243-c523-42b7-9d49-a802c82691d1",
+  "userId": "9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a",
+  "leagueId": "243d719b-92ce-4752-8689-5da93ee69213",
+  "nflTeamId": "b8cce67a-69d4-49f3-acd7-da6081682076",
+  "acquiredVia": "draft",
+  "acquiredAt": "2025-08-09T06:35:36.985Z",
+  "createdAt": "2025-08-09T06:35:36.985Z",
+  "nflTeam": {
+    "id": "b8cce67a-69d4-49f3-acd7-da6081682076",
+    "code": "BUF",
+    "name": "Bills",
+    "city": "Buffalo",
+    "conference": "AFC",
+    "division": "East",
+    "logoUrl": "https://www.fantasynerds.com/images/nfl/team_logos/BUF.png",
+    "createdAt": "2025-08-04T03:16:52.620Z"
+  },
+  "gameDate": "2024-09-08",
+  "gameTime": "00:00",
+  "isHome": true,
+  "isLockAndLoad": false
+}
+index-Duyg98yA.js:367 [Dialog] selectedLeague: 243d719b-92ce-4752-8689-5da93ee69213
+index-Duyg98yA.js:367 [Dialog] selectedWeek: 1
+index-Duyg98yA.js:367 [Dialog] Using teamId: b8cce67a-69d4-49f3-acd7-da6081682076
+index-Duyg98yA.js:367 [API] Making lock request with: {url: '/api/teams/b8cce67a-69d4-49f3-acd7-da6081682076/lock', body: {…}}
+index-Duyg98yA.js:367 [API] Lock request failed: TypeError: Failed to execute 'fetch' on 'Window': '/api/teams/b8cce67a-69d4-49f3-acd7-da6081682076/lock' is not a valid HTTP method.
+    at ns (index-Duyg98yA.js:48:43234)
+    at Object.mutationFn (index-Duyg98yA.js:367:108230)
+    at Object.fn (index-Duyg98yA.js:48:19519)
+    at b (index-Duyg98yA.js:48:9973)
+    at Object.start (index-Duyg98yA.js:48:10432)
+    at Np.execute (index-Duyg98yA.js:48:20324)
