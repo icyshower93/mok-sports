@@ -4,7 +4,7 @@ import passport from "passport";
 import { generateJWT, authenticateJWT, isOAuthConfigured } from "./auth";
 import { storage } from "./storage";
 import { generateJoinCode } from "./utils";
-import { insertLeagueSchema, draftPicks, drafts, draftTimers } from "@shared/schema";
+import { insertLeagueSchema, draftPicks, drafts, draftTimers, userWeeklyScores, weeklyLocks } from "@shared/schema";
 import { z } from "zod";
 import { registerPushNotificationRoutes } from "./routes/push-notifications";
 import { registerPushDiagnosticsRoutes } from "./routes/push-diagnostics";
@@ -12,7 +12,7 @@ import { registerSubscriptionValidationRoutes } from "./routes/subscription-vali
 import { registerAdminRoutes } from "./routes/admin";
 import { scoringRouter } from "./routes/scoring";
 import { db } from "./db";
-import { eq } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 import "./auth"; // Initialize passport strategies
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -426,8 +426,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Get all league members
       const members = await storage.getLeagueMembers(leagueId);
       
-      // Get each member's stable teams
-      const { generateTeamPerformanceData } = await import('./utils/mockScoring.js');
+      // Get each member's stable teams and real scoring data
       const standings = [];
       
       for (const member of members) {
@@ -438,21 +437,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Get their stable teams
         const stable = await storage.getUserStable(member.userId, leagueId);
         
-        // Calculate mock points and stats
-        let totalPoints = 0;
-        let totalWins = 0;
-        let totalLocks = 0;
-        let totalLockAndLoads = 0;
-        const teams = [];
+        // Get real scoring data from database
+        const userScores = await db.select()
+          .from(userWeeklyScores)
+          .where(and(
+            eq(userWeeklyScores.userId, member.userId),
+            eq(userWeeklyScores.season, 2024)
+          ));
         
-        for (const stableTeam of stable) {
-          const performance = generateTeamPerformanceData(stableTeam.nflTeam.code, 1);
-          totalPoints += performance.totalMokPoints;
-          totalWins += performance.totalWins;
-          totalLocks += performance.locksUsed;
-          if (performance.lockAndLoadUsed) totalLockAndLoads++;
-          teams.push(stableTeam.nflTeam.code);
-        }
+        // Get locks used count
+        const userLocks = await db.select()
+          .from(weeklyLocks)
+          .where(and(
+            eq(weeklyLocks.userId, member.userId),
+            eq(weeklyLocks.season, 2024)
+          ));
+        
+        // Calculate real totals
+        const totalPoints = userScores.reduce((sum, score) => sum + (score.totalPoints || 0), 0);
+        const totalWins = userScores.reduce((sum, score) => sum + (score.teamWins || 0), 0);
+        const totalLocks = userLocks.length;
+        const totalLockAndLoads = userLocks.filter(lock => lock.lockAndLoad).length;
+        const teams = stable.map(stableTeam => ({
+          code: stableTeam.nflTeam.code,
+          name: stableTeam.nflTeam.name
+        }));
         
         standings.push({
           userId: member.userId,
@@ -463,7 +472,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           locks: totalLocks,
           lockAndLoads: totalLockAndLoads,
           isCurrentUser: member.userId === user.id,
-          teams,
+          teams: teams,
           joinedAt: member.joinedAt
         });
       }
@@ -471,7 +480,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Sort by points (descending) and add ranks
       standings.sort((a, b) => b.points - a.points);
       standings.forEach((standing, index) => {
-        standing.rank = index + 1;
+        (standing as any).rank = index + 1;
       });
 
       // League info
