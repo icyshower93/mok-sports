@@ -136,8 +136,8 @@ export default function ScoresPage() {
     id: game.id || `game_${selectedWeek}_${index}`,
     homeTeam: game.homeTeam,
     awayTeam: game.awayTeam,
-    homeScore: game.homeScore || 0,
-    awayScore: game.awayScore || 0,
+    homeScore: game.homeScore,
+    awayScore: game.awayScore,
     week: selectedWeek,
     season: selectedSeason,
     gameDate: new Date(game.gameDate),
@@ -293,7 +293,7 @@ export default function ScoresPage() {
                         </div>
                       </div>
                       <div className={`text-xl font-bold ${awayWin ? 'text-foreground' : 'text-muted-foreground'}`}>
-                        {game.awayScore}
+                        {game.isCompleted ? game.awayScore : '-'}
                       </div>
                     </div>
 
@@ -332,7 +332,7 @@ export default function ScoresPage() {
                         </div>
                       </div>
                       <div className={`text-xl font-bold ${homeWin ? 'text-foreground' : 'text-muted-foreground'}`}>
-                        {game.homeScore}
+                        {game.isCompleted ? game.homeScore : '-'}
                       </div>
                     </div>
                   </div>
