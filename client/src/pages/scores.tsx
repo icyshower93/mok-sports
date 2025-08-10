@@ -285,7 +285,7 @@ export default function ScoresPage() {
                           {awayLockStatus.lockAndLoad && (
                             <Zap className="w-3 h-3 text-orange-500" />
                           )}
-                          {game.isCompleted && game.awayMokPoints > 0 && (
+                          {game.isCompleted && (game.awayMokPoints || 0) > 0 && (
                             <div className="flex items-center space-x-1">
                               <Flame className="w-3 h-3 text-purple-500" />
                               <span className="text-xs text-purple-600 font-medium">+{game.awayMokPoints}</span>
@@ -324,7 +324,7 @@ export default function ScoresPage() {
                           {homeLockStatus.lockAndLoad && (
                             <Zap className="w-3 h-3 text-orange-500" />
                           )}
-                          {game.isCompleted && game.homeMokPoints > 0 && (
+                          {game.isCompleted && (game.homeMokPoints || 0) > 0 && (
                             <div className="flex items-center space-x-1">
                               <Flame className="w-3 h-3 text-purple-500" />
                               <span className="text-xs text-purple-600 font-medium">+{game.homeMokPoints}</span>
@@ -363,25 +363,13 @@ export default function ScoresPage() {
       </div>
 
       {/* Game Details Modal - Sleeper/ESPN Style */}
-      <Dialog open={!!selectedGame} onOpenChange={() => setSelectedGame(null)}>
-        <DialogContent className="max-w-md p-0 gap-0 border-0">
+      <Dialog open={!!selectedGame} onOpenChange={(open) => !open && setSelectedGame(null)}>
+        <DialogContent className="max-w-md p-0 gap-0">
           {selectedGame && (
             <div className="relative">
-              {/* Custom close button */}
-              <button
-                onClick={() => setSelectedGame(null)}
-                className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-black/20 hover:bg-black/30 flex items-center justify-center text-white transition-colors"
-                aria-label="Close"
-              >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <line x1="18" y1="6" x2="6" y2="18"></line>
-                  <line x1="6" y1="6" x2="18" y2="18"></line>
-                </svg>
-              </button>
-              
               {/* Header with gradient background */}
               <div className="bg-gradient-to-br from-blue-600 to-purple-700 text-white p-4 rounded-t-lg">
-                <div className="flex justify-between items-start mb-2 pr-8">
+                <div className="flex justify-between items-start mb-2">
                   <div className="text-sm opacity-90">
                     Week {selectedGame.week} • {new Date(selectedGame.gameDate).toLocaleDateString('en-US', {
                       weekday: 'short',
@@ -435,7 +423,7 @@ export default function ScoresPage() {
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
-                    {selectedGame.awayMokPoints > 0 && (
+                    {(selectedGame.awayMokPoints || 0) > 0 && (
                       <div className="flex items-center gap-1 bg-purple-100 dark:bg-purple-900/30 px-2 py-1 rounded-full">
                         <Flame className="w-3 h-3 text-purple-600" />
                         <span className="text-xs font-medium text-purple-700 dark:text-purple-300">+{selectedGame.awayMokPoints}</span>
@@ -478,7 +466,7 @@ export default function ScoresPage() {
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
-                    {selectedGame.homeMokPoints > 0 && (
+                    {(selectedGame.homeMokPoints || 0) > 0 && (
                       <div className="flex items-center gap-1 bg-purple-100 dark:bg-purple-900/30 px-2 py-1 rounded-full">
                         <Flame className="w-3 h-3 text-purple-600" />
                         <span className="text-xs font-medium text-purple-700 dark:text-purple-300">+{selectedGame.homeMokPoints}</span>
