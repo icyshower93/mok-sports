@@ -49,11 +49,27 @@ export default function StablePage() {
   // Mutations for locking teams
   const lockTeamMutation = useMutation({
     mutationFn: async ({ teamId, lockType }: { teamId: string; lockType: 'lock' | 'lockAndLoad' }) => {
-      return apiRequest(`/api/teams/${teamId}/lock`, 'POST', { 
-        week: selectedWeek,
-        lockType,
-        leagueId: selectedLeague 
+      console.log('[API] Making lock request with:', {
+        url: `/api/teams/${teamId}/lock`,
+        body: { 
+          week: selectedWeek,
+          lockType,
+          leagueId: selectedLeague 
+        }
       });
+      
+      try {
+        const response = await apiRequest(`/api/teams/${teamId}/lock`, 'POST', { 
+          week: selectedWeek,
+          lockType,
+          leagueId: selectedLeague 
+        });
+        console.log('[API] Lock response:', response);
+        return response;
+      } catch (error) {
+        console.error('[API] Lock request failed:', error);
+        throw error;
+      }
     },
     onSuccess: (data, { teamId, lockType }) => {
       // Update local state
@@ -104,12 +120,16 @@ export default function StablePage() {
 
   const confirmLock = () => {
     console.log('[Dialog] Confirming lock for team:', selectedTeam?.nflTeam?.name);
-    console.log('[Dialog] selectedTeam object:', selectedTeam);
+    console.log('[Dialog] selectedTeam full object:', JSON.stringify(selectedTeam, null, 2));
     console.log('[Dialog] selectedLeague:', selectedLeague);
     console.log('[Dialog] selectedWeek:', selectedWeek);
+    
     if (selectedTeam) {
+      const teamId = selectedTeam.nflTeamId || selectedTeam.nflTeam?.id || selectedTeam.id;
+      console.log('[Dialog] Using teamId:', teamId);
+      
       lockTeamMutation.mutate({
-        teamId: selectedTeam.nflTeamId || selectedTeam.id,
+        teamId: teamId,
         lockType: 'lock'
       });
     }
@@ -117,10 +137,14 @@ export default function StablePage() {
 
   const confirmLockAndLoad = () => {
     console.log('[Dialog] Confirming Lock & Load for team:', selectedTeam?.nflTeam?.name);
-    console.log('[Dialog] selectedTeam object:', selectedTeam);
+    console.log('[Dialog] selectedTeam full object:', JSON.stringify(selectedTeam, null, 2));
+    
     if (selectedTeam) {
+      const teamId = selectedTeam.nflTeamId || selectedTeam.nflTeam?.id || selectedTeam.id;
+      console.log('[Dialog] Using teamId:', teamId);
+      
       lockTeamMutation.mutate({
-        teamId: selectedTeam.nflTeamId || selectedTeam.id,
+        teamId: teamId,
         lockType: 'lockAndLoad'
       });
     }

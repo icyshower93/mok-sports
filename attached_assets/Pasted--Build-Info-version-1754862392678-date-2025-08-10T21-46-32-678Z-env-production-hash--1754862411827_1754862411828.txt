@@ -1,0 +1,36 @@
+🏗️ Build Info: {version: 1754862392678, date: '2025-08-10T21:46:32.678Z', env: 'production', hash: 'me67rc6e'}
+index-COVnzXDL.js:372 📦 Version: me67rc6e
+index-COVnzXDL.js:372 📅 Built: 2025-08-10T21:46:32.678Z
+index-COVnzXDL.js:372 🔧 Environment: production
+index-COVnzXDL.js:323 [Auth] Token check - Has token: true Has user: false Loading: true
+index-COVnzXDL.js:323 [SW Hook] EMERGENCY: Unregistering all existing service workers
+index-COVnzXDL.js:323 [SW Hook] Found 1 existing registrations
+index-COVnzXDL.js:323 [SW Hook] Unregistering existing service worker
+index-COVnzXDL.js:323 [SW Hook] Found 0 caches to delete
+stable:1 Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner.
+index-COVnzXDL.js:323 [Auth] Token check - Has token: true Has user: true Loading: false
+index-COVnzXDL.js:323 [AutoPushRefresh] Legacy hook delegating to SubscriptionManager
+contentScript.js:2 Content script initialized successfully.
+index-COVnzXDL.js:323 [SW Hook] Registering fresh service worker: /sw.js?v=1754862392821&r=0.46714178152451524
+sw.js?v=1754862392821&r=0.46714178152451524:2 [SW] NUCLEAR OPTION - Emergency service worker loading
+sw.js?v=1754862392821&r=0.46714178152451524:88 [SW] Service worker starting, version: v1.7.0-nuclear-unregister-1754862392898
+sw.js?v=1754862392821&r=0.46714178152451524:305 [SW] Service worker script loaded successfully
+sw.js?v=1754862392821&r=0.46714178152451524:19 [SW] EMERGENCY INSTALL - Clearing all caches and forcing activation
+index-COVnzXDL.js:323 [SW Hook] Service worker registered successfully
+sw.js?v=1754862392821&r=0.46714178152451524:92 [SW] Installing service worker, version: v1.7.0-nuclear-unregister-1754862392898
+sw.js?v=1754862392821&r=0.46714178152451524:22 [SW] Found caches to delete: []
+sw.js?v=1754862392821&r=0.46714178152451524:30 [SW] All caches deleted - skipping waiting
+sw.js?v=1754862392821&r=0.46714178152451524:96 [SW] Caching static files
+sw.js?v=1754862392821&r=0.46714178152451524:99 [SW] Static files cached successfully
+sw.js?v=1754862392821&r=0.46714178152451524:41 [SW] EMERGENCY ACTIVATE - Taking control of all clients
+sw.js?v=1754862392821&r=0.46714178152451524:110 [SW] Activating service worker, version: v1.7.0-nuclear-unregister-1754862392898
+sw.js?v=1754862392821&r=0.46714178152451524:46 [SW] Deleting remaining cache: mok-sports-static-v1.7.0-nuclear-unregister-1754862392898
+sw.js?v=1754862392821&r=0.46714178152451524:116 [SW] Found caches: ['mok-sports-static-v1.7.0-nuclear-unregister-1754862392898']
+sw.js?v=1754862392821&r=0.46714178152451524:129 [SW] Service worker activated and controlling all clients
+sw.js?v=1754862392821&r=0.46714178152451524:51 [SW] Claiming all clients immediately
+index-COVnzXDL.js:367 [Dialog] Opening lock dialog for team: Bills
+stable:183 Removed banner element: <div data-state=​"open" class=​"fixed inset-0 z-50 bg-background/​80 backdrop-blur-sm data-[state=open]​:​animate-in data-[state=closed]​:​animate-out data-[state=closed]​:​fade-out-0 data-[state=open]​:​fade-in-0" style=​"pointer-events:​ auto;​" data-aria-hidden=​"true" aria-hidden=​"true">​</div>​
+index-COVnzXDL.js:367 [Dialog] Confirming lock for team: Bills
+index-COVnzXDL.js:367 [Dialog] selectedTeam object: {totalWins: 0, totalLosses: 1, totalTies: 0, totalMokPoints: 0, weeklyBreakdown: Array(1), …}
+index-COVnzXDL.js:367 [Dialog] selectedLeague: 243d719b-92ce-4752-8689-5da93ee69213
+index-COVnzXDL.js:367 [Dialog] selectedWeek: 1
