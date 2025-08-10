@@ -174,7 +174,9 @@ export default function ScoresPage() {
     }
     
     const isOwned = userTeams.some((team: any) => team.nflTeam?.code === teamCode);
-    console.log('[DEBUG] isUserTeam check:', { teamCode, isOwned, userTeamsCount: userTeams?.length });
+    if (isOwned) {
+      console.log('[DEBUG] ✅ YOUR TEAM FOUND:', teamCode, '- Should be GREEN');
+    }
     
     return isOwned;
   };
@@ -278,7 +280,11 @@ export default function ScoresPage() {
                           }}
                         />
                         <div className="flex items-center gap-2">
-                          <span className={`font-medium ${isUserTeam(game.awayTeam) ? 'text-green-600 font-bold' : ''} ${awayWin ? 'text-foreground' : 'text-muted-foreground'}`}>
+                          <span className={`font-medium ${
+                            isUserTeam(game.awayTeam) 
+                              ? 'text-green-600 font-bold' 
+                              : awayWin ? 'text-foreground' : 'text-muted-foreground'
+                          }`}>
                             {game.awayTeam}
                           </span>
                           {game.awayOwnerName && (
@@ -317,7 +323,11 @@ export default function ScoresPage() {
                           }}
                         />
                         <div className="flex items-center gap-2">
-                          <span className={`font-medium ${isUserTeam(game.homeTeam) ? 'text-green-600 font-bold' : ''} ${homeWin ? 'text-foreground' : 'text-muted-foreground'}`}>
+                          <span className={`font-medium ${
+                            isUserTeam(game.homeTeam) 
+                              ? 'text-green-600 font-bold' 
+                              : homeWin ? 'text-foreground' : 'text-muted-foreground'
+                          }`}>
                             {game.homeTeam}
                           </span>
                           {game.homeOwnerName && (

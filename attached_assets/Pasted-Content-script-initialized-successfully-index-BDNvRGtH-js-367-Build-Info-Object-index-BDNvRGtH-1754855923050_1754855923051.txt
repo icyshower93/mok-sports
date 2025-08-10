@@ -1,0 +1,162 @@
+Content script initialized successfully.
+index-BDNvRGtH.js:367 🏗️ Build Info: Object
+index-BDNvRGtH.js:367 📦 Version: me63wctm
+index-BDNvRGtH.js:367 📅 Built: 2025-08-10T19:58:28.330Z
+index-BDNvRGtH.js:367 🔧 Environment: production
+index-BDNvRGtH.js:318 [Auth] Token check - Has token: true Has user: false Loading: true
+index-BDNvRGtH.js:318 [SW Hook] EMERGENCY: Unregistering all existing service workers
+index-BDNvRGtH.js:318 [SW Hook] Found 1 existing registrations
+index-BDNvRGtH.js:318 [SW Hook] Unregistering existing service worker
+index-BDNvRGtH.js:318 [SW Hook] Found 1 caches to delete
+index-BDNvRGtH.js:318 [SW Hook] Deleting cache: mok-sports-dynamic-v1.7.0-nuclear-unregister-1754855904114
+scores:1 Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner.
+index-BDNvRGtH.js:318 [Auth] Token check - Has token: true Has user: true Loading: false
+index-BDNvRGtH.js:318 [AutoPushRefresh] Legacy hook delegating to SubscriptionManager
+index-BDNvRGtH.js:318 [SW Hook] Registering fresh service worker: /sw.js?v=1754855908446&r=0.7115820407842282
+sw.js?v=1754855908446&r=0.7115820407842282:2 [SW] NUCLEAR OPTION - Emergency service worker loading
+sw.js?v=1754855908446&r=0.7115820407842282:88 [SW] Service worker starting, version: v1.7.0-nuclear-unregister-1754855908504
+sw.js?v=1754855908446&r=0.7115820407842282:305 [SW] Service worker script loaded successfully
+index-BDNvRGtH.js:318 [SW Hook] Service worker registered successfully
+sw.js?v=1754855908446&r=0.7115820407842282:19 [SW] EMERGENCY INSTALL - Clearing all caches and forcing activation
+sw.js?v=1754855908446&r=0.7115820407842282:92 [SW] Installing service worker, version: v1.7.0-nuclear-unregister-1754855908504
+sw.js?v=1754855908446&r=0.7115820407842282:22 [SW] Found caches to delete: Array(0)
+sw.js?v=1754855908446&r=0.7115820407842282:30 [SW] All caches deleted - skipping waiting
+sw.js?v=1754855908446&r=0.7115820407842282:96 [SW] Caching static files
+sw.js?v=1754855908446&r=0.7115820407842282:99 [SW] Static files cached successfully
+sw.js?v=1754855908446&r=0.7115820407842282:41 [SW] EMERGENCY ACTIVATE - Taking control of all clients
+sw.js?v=1754855908446&r=0.7115820407842282:110 [SW] Activating service worker, version: v1.7.0-nuclear-unregister-1754855908504
+sw.js?v=1754855908446&r=0.7115820407842282:46 [SW] Deleting remaining cache: mok-sports-static-v1.7.0-nuclear-unregister-1754855908504
+sw.js?v=1754855908446&r=0.7115820407842282:116 [SW] Found caches: Array(1)
+sw.js?v=1754855908446&r=0.7115820407842282:129 [SW] Service worker activated and controlling all clients
+sw.js?v=1754855908446&r=0.7115820407842282:51 [SW] Claiming all clients immediately
+sw.js?v=1754855908446&r=0.7115820407842282:64 [SW] BYPASSING CACHE for JS file: https://mok-sports-draft-mokfantasysport.replit.app/manifest.json
+sw.js?v=1754855908446&r=0.7115820407842282:164 [SW] Fetching /scores from network
+sw.js?v=1754855908446&r=0.7115820407842282:164 [SW] Fetching /assets/index-Cif4aAVs.css from network
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'BAL', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'KC', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'DAL', isOwned: true, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'CLE', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'NE', isOwned: true, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'CIN', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'LAR', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'DET', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'ARI', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'BUF', isOwned: true, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'WAS', isOwned: true, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'TB', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'CAR', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'NO', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'LV', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'LAC', isOwned: true, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'TEN', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'CHI', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'ATL', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'PIT', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'NYG', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'MIN', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'MIA', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'JAX', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'IND', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'HOU', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'SEA', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'DEN', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'PHI', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'GB', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'NYJ', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'SF', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'BAL', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'KC', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'DAL', isOwned: true, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'CLE', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'NE', isOwned: true, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'CIN', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'LAR', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'DET', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'ARI', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'BUF', isOwned: true, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'WAS', isOwned: true, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'TB', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'CAR', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'NO', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'LV', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'LAC', isOwned: true, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'TEN', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'CHI', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'ATL', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'PIT', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'NYG', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'MIN', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'MIA', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'JAX', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'IND', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'HOU', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'SEA', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'DEN', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'PHI', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'GB', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'NYJ', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'SF', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'BAL', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'KC', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'DAL', isOwned: true, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'CLE', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'NE', isOwned: true, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'CIN', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'LAR', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'DET', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'ARI', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'BUF', isOwned: true, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'WAS', isOwned: true, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'TB', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'CAR', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'NO', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'LV', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'LAC', isOwned: true, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'TEN', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'CHI', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'ATL', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'PIT', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'NYG', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'MIN', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'MIA', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'JAX', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'IND', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'HOU', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'SEA', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'DEN', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'PHI', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'GB', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'NYJ', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'SF', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'BAL', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'KC', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'DAL', isOwned: true, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'CLE', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'NE', isOwned: true, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'CIN', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'LAR', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'DET', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'ARI', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'BUF', isOwned: true, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'WAS', isOwned: true, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'TB', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'CAR', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'NO', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'LV', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'LAC', isOwned: true, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'TEN', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'CHI', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'ATL', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'PIT', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'NYG', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'MIN', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'MIA', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'JAX', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'IND', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'HOU', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'SEA', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'DEN', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'PHI', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'GB', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'NYJ', isOwned: false, userTeamsCount: 5}
+index-BDNvRGtH.js:367 [DEBUG] isUserTeam check: {teamCode: 'SF', isOwned: false, userTeamsCount: 5}
