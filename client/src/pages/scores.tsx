@@ -226,9 +226,9 @@ export default function ScoresPage() {
           {nflGames
             .sort((a: NFLGame, b: NFLGame) => new Date(a.gameDate).getTime() - new Date(b.gameDate).getTime())
             .map((game: NFLGame) => {
-              const homeWin = game.homeScore > game.awayScore;
-              const awayWin = game.awayScore > game.homeScore;
-              const scoreDiff = Math.abs(game.homeScore - game.awayScore);
+              const homeWin = game.homeScore !== null && game.awayScore !== null && game.homeScore > game.awayScore;
+              const awayWin = game.awayScore !== null && game.homeScore !== null && game.awayScore > game.homeScore;
+              const scoreDiff = (game.homeScore !== null && game.awayScore !== null) ? Math.abs(game.homeScore - game.awayScore) : 0;
               const isBlowout = scoreDiff >= 20;
               const isShutout = game.homeScore === 0 || game.awayScore === 0;
               
@@ -293,7 +293,7 @@ export default function ScoresPage() {
                         </div>
                       </div>
                       <div className={`text-xl font-bold ${awayWin ? 'text-foreground' : 'text-muted-foreground'}`}>
-                        {game.awayScore || game.awayScore === 0 ? game.awayScore : '-'}
+                        {game.awayScore !== null && game.awayScore !== undefined ? game.awayScore : '-'}
                       </div>
                     </div>
 
@@ -332,7 +332,7 @@ export default function ScoresPage() {
                         </div>
                       </div>
                       <div className={`text-xl font-bold ${homeWin ? 'text-foreground' : 'text-muted-foreground'}`}>
-                        {game.homeScore || game.homeScore === 0 ? game.homeScore : '-'}
+                        {game.homeScore !== null && game.homeScore !== undefined ? game.homeScore : '-'}
                       </div>
                     </div>
                   </div>
