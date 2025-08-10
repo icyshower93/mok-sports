@@ -223,12 +223,16 @@ export default function MainPage() {
                               <div className="text-xs text-muted-foreground">
                                 {team.locksRemaining} left
                               </div>
-                              {team.lockAndLoadAvailable && (
-                                <Badge variant="outline" className="text-xs px-1.5 py-0.5 h-5">
-                                  <Zap className="w-2.5 h-2.5 mr-0.5" />
-                                  L&L
-                                </Badge>
-                              )}
+                              <div className="relative">
+                                <div className="w-5 h-5 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center">
+                                  <span className="text-xs">⚡</span>
+                                </div>
+                                {!team.lockAndLoadAvailable && (
+                                  <div className="absolute inset-0 flex items-center justify-center">
+                                    <div className="w-6 h-0.5 bg-red-500 transform rotate-45"></div>
+                                  </div>
+                                )}
+                              </div>
                             </div>
                           </div>
                           
@@ -258,8 +262,7 @@ export default function MainPage() {
                                 variant="outline"
                                 className="flex-1 h-8 text-xs border-amber-200 dark:border-amber-800 text-amber-700 dark:text-amber-300 hover:bg-amber-50 dark:hover:bg-amber-950/20"
                               >
-                                <Zap className="w-3 h-3 mr-1" />
-                                Lock & Load
+                                ⚡ Lock & Load
                               </Button>
                             )}
                           </div>
