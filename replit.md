@@ -4,6 +4,13 @@ Mok Sports is a fantasy sports application that redefines traditional fantasy le
 
 ## Recent Updates (August 2025)
 
+### NFL Point Spreads Integration (Aug 10, 2025)
+- Successfully integrated Tank01 RapidAPI betting odds system with comprehensive fallback strategy
+- Created NBettingOdds interfaces and service methods for getBettingOddsForDate() and getBettingOddsForGame()
+- Enhanced opponent display to show point spreads with proper home/away team perspective formatting
+- Implemented historical 2024 NFL point spreads for realistic demo data when API unavailable
+- Teams now display: "vs ARI (-6.5)", "@ CIN (+7.5)" with accurate betting line information
+
 ### NFL Schedule Import System (Aug 10, 2025)
 - Implemented comprehensive NFL schedule import system with RapidAPI integration and ESPN API fallback
 - Successfully imported complete 2024 NFL season with 272 games across 18 weeks

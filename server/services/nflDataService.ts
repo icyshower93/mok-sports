@@ -18,6 +18,19 @@ interface Tank01Game {
   gameWeek: string;
 }
 
+interface Tank01BettingOdds {
+  gameID: string;
+  gameDate: string;
+  teamAbv: string;
+  pointSpreadAway: number;
+  pointSpreadHome: number;
+  totalOver: number;
+  totalUnder: number;
+  moneyLineAway: number;
+  moneyLineHome: number;
+  lastUpdated: string;
+}
+
 interface NFLGameData {
   id: string;
   week: number;
@@ -29,6 +42,7 @@ interface NFLGameData {
   awayScore: number | null;
   isCompleted: boolean;
   status: 'scheduled' | 'live' | 'completed';
+  pointSpread?: number; // Point spread (positive means home team is favored)
 }
 
 class NFLDataService {
@@ -203,6 +217,43 @@ class NFLDataService {
     } catch (error) {
       console.error('Failed to get teams data:', error);
       return [];
+    }
+  }
+
+  async getBettingOddsForDate(gameDate: string): Promise<Tank01BettingOdds[]> {
+    try {
+      console.log(`[NFLDataService] Fetching betting odds for ${gameDate}...`);
+      const data = await this.makeRapidAPIRequest(`/getNFLBettingOdds?gameDate=${gameDate}`);
+      
+      if (data && data.body) {
+        console.log(`[NFLDataService] Got betting odds for ${Object.keys(data.body).length} games on ${gameDate}`);
+        return Object.values(data.body) as Tank01BettingOdds[];
+      }
+      
+      console.log(`[NFLDataService] No betting odds found for ${gameDate}`);
+      return [];
+    } catch (error) {
+      console.warn(`[NFLDataService] Failed to get betting odds for ${gameDate}:`, error);
+      return [];
+    }
+  }
+
+  async getBettingOddsForGame(gameID: string): Promise<Tank01BettingOdds | null> {
+    try {
+      console.log(`[NFLDataService] Fetching betting odds for game ${gameID}...`);
+      const data = await this.makeRapidAPIRequest(`/getNFLBettingOdds?gameID=${gameID}`);
+      
+      if (data && data.body && Object.keys(data.body).length > 0) {
+        const odds = Object.values(data.body)[0] as Tank01BettingOdds;
+        console.log(`[NFLDataService] Got betting odds for game ${gameID}: spread ${odds.pointSpreadHome}`);
+        return odds;
+      }
+      
+      console.log(`[NFLDataService] No betting odds found for game ${gameID}`);
+      return null;
+    } catch (error) {
+      console.warn(`[NFLDataService] Failed to get betting odds for game ${gameID}:`, error);
+      return null;
     }
   }
 

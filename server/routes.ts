@@ -938,8 +938,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
             // Get opponent team details
             const opponentTeam = await storage.getTeamByCode(opponentCode);
             
+            // Format point spread for display
+            let spreadDisplay = '';
+            if (upcomingGame.spread && upcomingGame.spread !== 0) {
+              if (isHome) {
+                // Home team spread (positive means favored)
+                spreadDisplay = upcomingGame.spread > 0 ? 
+                  ` (-${upcomingGame.spread})` : 
+                  ` (+${Math.abs(upcomingGame.spread)})`;
+              } else {
+                // Away team spread (flip the sign)
+                spreadDisplay = upcomingGame.spread > 0 ? 
+                  ` (+${upcomingGame.spread})` : 
+                  ` (-${Math.abs(upcomingGame.spread)})`;
+              }
+            }
+
             opponentInfo = {
-              upcomingOpponent: `${isHome ? 'vs' : '@'} ${opponentCode}`,
+              upcomingOpponent: `${isHome ? 'vs' : '@'} ${opponentCode}${spreadDisplay}`,
               pointSpread: upcomingGame.spread || 0,
               gameDate: upcomingGame.gameDate,
               gameTime: upcomingGame.gameTime,
