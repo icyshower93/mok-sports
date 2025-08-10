@@ -18,12 +18,20 @@ export default function MorePage() {
 
   const handleBackToLeague = () => {
     const userLeagues = leagues as any[];
-    if (userLeagues.length > 0) {
+    console.log('Back to League button clicked:', {
+      leagues: userLeagues,
+      leaguesLength: userLeagues?.length || 0
+    });
+    
+    if (userLeagues && userLeagues.length > 0) {
       // Navigate to the first league's waiting room for testing
       const firstLeague = userLeagues[0];
-      navigate(`/league/${firstLeague.id}/waiting`);
+      const targetPath = `/league/waiting?id=${firstLeague.id}`;
+      console.log('Navigating to:', targetPath);
+      navigate(targetPath);
     } else {
       // If no leagues, go to leagues page
+      console.log('No leagues found, going to leagues page');
       navigate('/leagues');
     }
   };
