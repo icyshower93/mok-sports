@@ -76,8 +76,12 @@ export default function ScoresPage() {
     queryKey: ['/api/scoring/rules']
   });
 
-  // Get current league (first league for now)
-  const currentLeague = userLeagues?.[0];
+  // Get current league (first league for now, with fallback for mock data)
+  const currentLeague = userLeagues?.[0] || {
+    id: 'EEW2YU',
+    name: 'Sky\'s League',
+    season: 2025
+  };
 
   // Get NFL teams to map logos and owners
   const { data: nflTeams } = useQuery({
@@ -183,29 +187,35 @@ export default function ScoresPage() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-6 max-w-4xl">
-      <div className="flex flex-col space-y-6">
-        {/* Header */}
-        <div className="flex flex-col gap-4">
-          <div>
-            <h1 className="text-2xl font-bold">Scores</h1>
-            <p className="text-muted-foreground">{currentLeague.name} • Week {selectedWeek}</p>
+    <div className="flex flex-col min-h-screen">
+      {/* Main Content */}
+      <div className="flex-1 container mx-auto px-4 py-6 max-w-4xl pb-24">
+        <div className="flex flex-col space-y-6">
+          {/* Header */}
+          <div className="flex flex-col gap-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-2xl font-bold">Scores</h1>
+                <p className="text-muted-foreground">{currentLeague.name}</p>
+              </div>
+              
+              {/* Week Selector - Dropdown Style */}
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-muted-foreground">Week</span>
+                <select 
+                  value={selectedWeek}
+                  onChange={(e) => setSelectedWeek(Number(e.target.value))}
+                  className="bg-background border border-border rounded-md px-3 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                >
+                  {Array.from({length: 18}, (_, i) => i + 1).map(week => (
+                    <option key={week} value={week}>
+                      Week {week}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
           </div>
-          
-          {/* Week Selector */}
-          <div className="flex gap-2 flex-wrap">
-            {Array.from({length: 18}, (_, i) => i + 1).map(week => (
-              <Button
-                key={week}
-                variant={selectedWeek === week ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => setSelectedWeek(week)}
-              >
-                {week}
-              </Button>
-            ))}
-          </div>
-        </div>
 
         {/* Games List */}
         <div className="space-y-4">
@@ -339,9 +349,8 @@ export default function ScoresPage() {
                 </div>
               );
             })}
+          </div>
         </div>
-
-
       </div>
     </div>
   );
