@@ -235,7 +235,10 @@ export default function StablePage() {
     console.log('[Dialog] Lock dialog state change:', open);
     setLockDialogOpen(open);
     if (!open) {
-      setSelectedTeam(null);
+      // Defer clearing selectedTeam to prevent DOM conflicts
+      requestAnimationFrame(() => {
+        setSelectedTeam(null);
+      });
     }
   };
 
@@ -243,7 +246,10 @@ export default function StablePage() {
     console.log('[Dialog] Lock & Load dialog state change:', open);
     setLockAndLoadDialogOpen(open);
     if (!open) {
-      setSelectedTeam(null);
+      // Defer clearing selectedTeam to prevent DOM conflicts
+      requestAnimationFrame(() => {
+        setSelectedTeam(null);
+      });
     }
   };
 
