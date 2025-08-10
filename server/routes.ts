@@ -904,13 +904,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const stable = await storage.getUserStable(user.id, leagueId);
       
-      // Enhance with mock performance data
+      // Enhance with mock performance data but preserve real lock/load data
       const { generateTeamPerformanceData } = await import('./utils/mockScoring.js');
       const enhancedStable = stable.map((team: any) => {
         const performanceData = generateTeamPerformanceData(team.nflTeam.code, 1); // Week 1 for now
         return {
-          ...team,
-          ...performanceData
+          ...performanceData, // Mock performance stats (wins, losses, etc.)
+          ...team, // Override with real database data (preserves locksUsed, lockAndLoadUsed)
+          // Recalculate derived fields using actual database values
+          locksRemaining: 4 - (team.locksUsed || 0), // Max 4 locks per team per season
+          lockAndLoadAvailable: !team.lockAndLoadUsed, // True if not yet used
+          lockAndLoadUsed: team.lockAndLoadUsed, // Use actual database value
+          locksUsed: team.locksUsed || 0, // Use actual database value
         };
       });
       
