@@ -123,8 +123,8 @@ export default function MainPage() {
         </div>
 
         {/* Performance Stats - Above Lock Container */}
-        <div className="p-4 space-y-4">
-          <div className="grid grid-cols-2 gap-4">
+        <div className="p-4">
+          <div className="grid grid-cols-2 gap-4 mb-4">
             {/* Current Rank */}
             <Card>
               <CardContent className="p-4 text-center">
@@ -184,7 +184,7 @@ export default function MainPage() {
 
         {/* Lock Selection Interface */}
         {isLockWindowOpen && (
-          <div className="p-4 space-y-4">
+          <div className="p-4">
 
             {/* Lock Selection Interface */}
             <Card>
