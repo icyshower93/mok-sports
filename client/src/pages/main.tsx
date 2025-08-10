@@ -73,7 +73,6 @@ export default function MainPage() {
     leagues: (leagues as any[])?.length || 0,
     selectedLeague,
     stableTeams: (stableTeams as any[])?.length || 0,
-    userTeams: userTeams?.length || 0,
     stableTeamsData: (stableTeams as any[])?.map(team => ({
       nflTeam: team.nflTeam?.code || 'UNKNOWN',
       acquiredVia: team.acquiredVia,
