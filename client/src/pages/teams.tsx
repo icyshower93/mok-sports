@@ -91,16 +91,19 @@ export default function StablePage() {
 
   // Dialog handlers
   const handleLockClick = (team: any) => {
+    console.log('[Dialog] Opening lock dialog for team:', team?.nflTeam?.name);
     setSelectedTeam(team);
     setLockDialogOpen(true);
   };
 
   const handleLockAndLoadClick = (team: any) => {
+    console.log('[Dialog] Opening Lock & Load dialog for team:', team?.nflTeam?.name);
     setSelectedTeam(team);
     setLockAndLoadDialogOpen(true);
   };
 
   const confirmLock = () => {
+    console.log('[Dialog] Confirming lock for team:', selectedTeam?.nflTeam?.name);
     if (selectedTeam) {
       lockTeamMutation.mutate({
         teamId: selectedTeam.id,
@@ -110,11 +113,28 @@ export default function StablePage() {
   };
 
   const confirmLockAndLoad = () => {
+    console.log('[Dialog] Confirming Lock & Load for team:', selectedTeam?.nflTeam?.name);
     if (selectedTeam) {
       lockTeamMutation.mutate({
         teamId: selectedTeam.id,
         lockType: 'lockAndLoad'
       });
+    }
+  };
+
+  const handleLockDialogChange = (open: boolean) => {
+    console.log('[Dialog] Lock dialog state change:', open);
+    setLockDialogOpen(open);
+    if (!open) {
+      setSelectedTeam(null);
+    }
+  };
+
+  const handleLockAndLoadDialogChange = (open: boolean) => {
+    console.log('[Dialog] Lock & Load dialog state change:', open);
+    setLockAndLoadDialogOpen(open);
+    if (!open) {
+      setSelectedTeam(null);
     }
   };
 
@@ -342,7 +362,7 @@ export default function StablePage() {
       <BottomNav />
 
       {/* Lock Confirmation Dialog */}
-      <Dialog open={lockDialogOpen} onOpenChange={setLockDialogOpen}>
+      <Dialog open={lockDialogOpen} onOpenChange={handleLockDialogChange}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <div className="flex items-center space-x-2">
@@ -398,7 +418,10 @@ export default function StablePage() {
           <DialogFooter className="flex-row space-x-2 sm:space-x-2">
             <Button
               variant="outline"
-              onClick={() => setLockDialogOpen(false)}
+              onClick={() => {
+                console.log('[Dialog] Cancel button clicked');
+                setLockDialogOpen(false);
+              }}
               className="flex-1"
             >
               Cancel
@@ -425,7 +448,7 @@ export default function StablePage() {
       </Dialog>
 
       {/* Lock & Load Confirmation Dialog */}
-      <Dialog open={lockAndLoadDialogOpen} onOpenChange={setLockAndLoadDialogOpen}>
+      <Dialog open={lockAndLoadDialogOpen} onOpenChange={handleLockAndLoadDialogChange}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <div className="flex items-center space-x-2">
@@ -492,7 +515,10 @@ export default function StablePage() {
           <DialogFooter className="flex-row space-x-2 sm:space-x-2">
             <Button
               variant="outline"
-              onClick={() => setLockAndLoadDialogOpen(false)}
+              onClick={() => {
+                console.log('[Dialog] Lock & Load Cancel button clicked');
+                setLockAndLoadDialogOpen(false);
+              }}
               className="flex-1"
             >
               Cancel
