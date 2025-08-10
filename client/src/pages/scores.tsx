@@ -115,6 +115,12 @@ export default function ScoresPage() {
     enabled: selectedWeek > 0 && !!currentLeague
   });
 
+  // Get user's teams for highlighting
+  const { data: userTeams } = useQuery({
+    queryKey: [`/api/user/stable/${currentLeague?.id}`],
+    enabled: !!user && !!currentLeague
+  });
+
   if (!user) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -162,15 +168,9 @@ export default function ScoresPage() {
 
 
   const isUserTeam = (teamCode: string): boolean => {
-    if (!user) return false;
-    const game = nflGames.find(g => g.homeTeam === teamCode || g.awayTeam === teamCode);
-    if (game?.homeTeam === teamCode) {
-      return game.homeOwner === user.id || game.homeOwnerName === user.name;
-    }
-    if (game?.awayTeam === teamCode) {
-      return game.awayOwner === user.id || game.awayOwnerName === user.name;
-    }
-    return false;
+    if (!user || !userTeams) return false;
+    // Check if this team code is in the user's stable
+    return userTeams.some((team: any) => team.nflTeam?.code === teamCode);
   };
 
   const isTeamLocked = (teamCode: string): { locked: boolean; lockAndLoad: boolean } => {
