@@ -104,37 +104,11 @@ export default function MainPage() {
     <div className="min-h-screen bg-background pb-20">
       <div className="max-w-lg mx-auto">
         
-        {/* Header - Clean and Modern */}
-        <div className="p-4 border-b border-border/50">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-xl font-bold">{currentLeague?.name || 'Mok Sports'}</h1>
-              <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-                <span>Week {selectedWeek}</span>
-                {isLockWindowOpen && (
-                  <>
-                    <span>•</span>
-                    <div className="flex items-center space-x-1">
-                      <Clock className="w-3 h-3 text-green-500" />
-                      <span className="text-green-600 dark:text-green-400 font-medium">Lock Window Open</span>
-                    </div>
-                  </>
-                )}
-              </div>
-            </div>
-            {(leagues as any[]).length > 1 && (
-              <select 
-                value={selectedLeague || ''} 
-                onChange={(e) => setSelectedLeague(e.target.value)}
-                className="px-3 py-2 text-sm border rounded-lg bg-background"
-              >
-                {(leagues as any[]).map((league: League) => (
-                  <option key={league.id} value={league.id}>
-                    {league.name}
-                  </option>
-                ))}
-              </select>
-            )}
+        {/* Header - Clean and Simple */}
+        <div className="p-4 border-b border-border/50 bg-card">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold">Mok Sports</h1>
+            <p className="text-sm text-muted-foreground mt-1">Week {selectedWeek}</p>
           </div>
         </div>
 
