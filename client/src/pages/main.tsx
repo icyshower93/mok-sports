@@ -193,7 +193,7 @@ export default function MainPage() {
                   <div className="flex-1">
                     <CardTitle className="text-lg mb-1">Choose Your Lock</CardTitle>
                     <div className="text-sm text-muted-foreground">
-                      Deadline: Thursday 8:20 PM ET
+                      Deadline: {lockDeadline.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })} 8:20 PM ET
                     </div>
                   </div>
                   <Badge variant="secondary" className="text-xs px-2 py-1 mt-1">
