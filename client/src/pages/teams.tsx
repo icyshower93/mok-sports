@@ -27,7 +27,7 @@ export default function StablePage() {
   const selectedLeague = (leagues as any[])[0]?.id || "";
 
   const { data: userTeams = [], isLoading: teamsLoading } = useQuery({
-    queryKey: ['/api/leagues', selectedLeague, 'stable'],
+    queryKey: [`/api/user/stable/${selectedLeague}`],
     enabled: !!user && !!selectedLeague,
   });
 
