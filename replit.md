@@ -32,7 +32,11 @@ Mok Sports is a fantasy sports application that redefines traditional fantasy le
 - **Weekly scoring**: Wins (+1), Ties (+0.5), Blowouts (+1), Shutouts (+1), Weekly high (+1), Weekly low (-1)
 - **Lock system**: Pick 1 team to lock weekly for +1 bonus (up to 4 times per team per season)
 - **Lock and Load**: Once per team per season, +2 for win, -1 for loss
-- **Trading**: 1 free agent trade per week (Monday night to Thursday morning)
+- **Trading**: Team-to-team trading allowed during trade window (Monday night to Thursday 8:20 PM ET)
+  - No lock restrictions on newly acquired teams
+  - Cannot trade teams once their week has started 
+  - Maximum 1 trade transaction per week
+  - Free agent pickups available (drop a team to claim free agent)
 - **Skins**: Weekly cash prizes that stack when tied
 - **Season prizes**: Most points, Super Bowl winner, most correct locks
 
