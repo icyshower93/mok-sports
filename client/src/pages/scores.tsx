@@ -2,9 +2,10 @@ import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/use-auth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Trophy, Target, Zap, Info, Users } from "lucide-react";
+import { Trophy, Target, Zap, Info, Users, Lock, Sparkles } from "lucide-react";
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 interface MokScoringRules {
   winPoints: number;
@@ -41,11 +42,28 @@ interface WeeklyScoresResponse {
   season: number;
 }
 
+interface NFLGame {
+  id: string;
+  homeTeam: string;
+  awayTeam: string;
+  homeScore: number;
+  awayScore: number;
+  week: number;
+  season: number;
+  gameDate: Date;
+  isCompleted: boolean;
+  homeOwner?: string;
+  awayOwner?: string;
+  homeLocked?: boolean;
+  awayLocked?: boolean;
+  homeLockAndLoad?: boolean;
+  awayLockAndLoad?: boolean;
+}
+
 export default function ScoresPage() {
   const { user } = useAuth();
   const [selectedWeek, setSelectedWeek] = useState(1);
   const [selectedSeason] = useState(2025);
-  const [viewMode, setViewMode] = useState<'weekly' | 'season' | 'rules'>('weekly');
 
   // Get user's leagues to show scores for
   const { data: userLeagues } = useQuery({
@@ -61,15 +79,21 @@ export default function ScoresPage() {
   // Get current league (first league for now)
   const currentLeague = userLeagues?.[0];
 
-  // Get weekly scores for current league
-  const { data: weeklyScores, isLoading: loadingWeekly } = useQuery<WeeklyScoresResponse>({
-    queryKey: [`/api/leagues/${currentLeague?.id}/scores/${selectedSeason}/${selectedWeek}`],
+  // Get NFL teams to map logos and owners
+  const { data: nflTeams } = useQuery({
+    queryKey: ['/api/nfl-teams'],
     enabled: !!currentLeague
   });
 
-  // Get season standings
-  const { data: seasonStandings, isLoading: loadingStandings } = useQuery({
-    queryKey: [`/api/leagues/${currentLeague?.id}/standings/${selectedSeason}`, { currentWeek: selectedWeek }],
+  // Get league members to show ownership
+  const { data: leagueMembers } = useQuery({
+    queryKey: [`/api/leagues/${currentLeague?.id}/members`],
+    enabled: !!currentLeague
+  });
+
+  // Get weekly scores for current league
+  const { data: weeklyScores, isLoading: loadingWeekly } = useQuery<WeeklyScoresResponse>({
+    queryKey: [`/api/leagues/${currentLeague?.id}/scores/${selectedSeason}/${selectedWeek}`],
     enabled: !!currentLeague
   });
 
@@ -89,276 +113,232 @@ export default function ScoresPage() {
     );
   }
 
+  // Create mock NFL games for current week (this would come from API in real implementation)
+  const mockGames: NFLGame[] = [
+    {
+      id: '1',
+      homeTeam: 'KC',
+      awayTeam: 'BUF',
+      homeScore: 31,
+      awayScore: 17,
+      week: selectedWeek,
+      season: selectedSeason,
+      gameDate: new Date('2025-01-15T18:00:00Z'),
+      isCompleted: true,
+      homeOwner: 'SE',
+      homeLocked: true
+    },
+    {
+      id: '2', 
+      homeTeam: 'LAR',
+      awayTeam: 'MIN',
+      homeScore: 27,
+      awayScore: 9,
+      week: selectedWeek,
+      season: selectedSeason,
+      gameDate: new Date('2025-01-15T21:30:00Z'),
+      isCompleted: true,
+      awayOwner: 'JD',
+      awayLockAndLoad: true
+    },
+    {
+      id: '3',
+      homeTeam: 'BAL',
+      awayTeam: 'PIT',
+      homeScore: 28,
+      awayScore: 14,
+      week: selectedWeek,
+      season: selectedSeason,
+      gameDate: new Date('2025-01-16T16:30:00Z'),
+      isCompleted: true,
+      homeOwner: 'MK',
+      awayOwner: 'RJ',
+      homeLocked: true
+    }
+  ];
+
+  const getUserInitials = (teamCode: string): string => {
+    const game = mockGames.find(g => g.homeTeam === teamCode || g.awayTeam === teamCode);
+    if (game?.homeTeam === teamCode && game.homeOwner) return game.homeOwner;
+    if (game?.awayTeam === teamCode && game.awayOwner) return game.awayOwner;
+    return '';
+  };
+
+  const isUserTeam = (teamCode: string): boolean => {
+    const initials = getUserInitials(teamCode);
+    return initials === 'SE'; // Sky Evans initials
+  };
+
+  const isTeamLocked = (teamCode: string): { locked: boolean; lockAndLoad: boolean } => {
+    const game = mockGames.find(g => g.homeTeam === teamCode || g.awayTeam === teamCode);
+    if (game?.homeTeam === teamCode) {
+      return { locked: !!game.homeLocked, lockAndLoad: !!game.homeLockAndLoad };
+    }
+    if (game?.awayTeam === teamCode) {
+      return { locked: !!game.awayLocked, lockAndLoad: !!game.awayLockAndLoad };
+    }
+    return { locked: false, lockAndLoad: false };
+  };
+
   return (
-    <div className="container mx-auto px-4 py-6 max-w-6xl">
+    <div className="container mx-auto px-4 py-6 max-w-4xl">
       <div className="flex flex-col space-y-6">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div className="flex flex-col gap-4">
           <div>
             <h1 className="text-2xl font-bold">Scores</h1>
-            <p className="text-muted-foreground">{currentLeague.name} • {selectedSeason} Season</p>
+            <p className="text-muted-foreground">{currentLeague.name} • Week {selectedWeek}</p>
           </div>
           
-          {/* View Mode Selector */}
-          <div className="flex gap-2">
-            <Button
-              variant={viewMode === 'weekly' ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => setViewMode('weekly')}
-            >
-              <Target className="w-4 h-4 mr-2" />
-              Weekly
-            </Button>
-            <Button
-              variant={viewMode === 'season' ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => setViewMode('season')}
-            >
-              <Trophy className="w-4 h-4 mr-2" />
-              Season
-            </Button>
-            <Button
-              variant={viewMode === 'rules' ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => setViewMode('rules')}
-            >
-              <Info className="w-4 h-4 mr-2" />
-              Rules
-            </Button>
+          {/* Week Selector */}
+          <div className="flex gap-2 flex-wrap">
+            {Array.from({length: 18}, (_, i) => i + 1).map(week => (
+              <Button
+                key={week}
+                variant={selectedWeek === week ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setSelectedWeek(week)}
+              >
+                {week}
+              </Button>
+            ))}
           </div>
         </div>
 
-        {viewMode === 'rules' && scoringRules && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Base Scoring */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Target className="w-5 h-5" />
-                  Base Scoring
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <div className="flex justify-between">
-                  <span>Win</span>
-                  <Badge variant="secondary">+{scoringRules.winPoints}</Badge>
-                </div>
-                <div className="flex justify-between">
-                  <span>Tie</span>
-                  <Badge variant="secondary">+{scoringRules.tiePoints}</Badge>
-                </div>
-                <div className="flex justify-between">
-                  <span>Loss</span>
-                  <Badge variant="outline">{scoringRules.lossPoints}</Badge>
-                </div>
-                <hr className="my-3" />
-                <div className="flex justify-between">
-                  <span>Blowout (20+ pts)</span>
-                  <Badge variant="secondary">+{scoringRules.blowoutPoints}</Badge>
-                </div>
-                <div className="flex justify-between">
-                  <span>Shutout</span>
-                  <Badge variant="secondary">+{scoringRules.shutoutPoints}</Badge>
-                </div>
-                <div className="flex justify-between">
-                  <span>Weekly High</span>
-                  <Badge variant="secondary">+{scoringRules.weeklyHighPoints}</Badge>
-                </div>
-                <div className="flex justify-between">
-                  <span>Weekly Low</span>
-                  <Badge variant="destructive">{scoringRules.weeklyLowPenalty}</Badge>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Lock System */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Zap className="w-5 h-5" />
-                  Lock System
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <div className="flex justify-between">
-                  <span>Regular Lock</span>
-                  <Badge variant="secondary">+{scoringRules.lockBonusPoints}</Badge>
-                </div>
-                <div className="text-sm text-muted-foreground">
-                  Max {scoringRules.maxLocksPerTeamPerSeason} times per team
-                </div>
-                <hr className="my-3" />
-                <div className="flex justify-between">
-                  <span>Lock & Load Win</span>
-                  <Badge variant="secondary">+{scoringRules.lockAndLoadWinPoints}</Badge>
-                </div>
-                <div className="flex justify-between">
-                  <span>Lock & Load Loss</span>
-                  <Badge variant="destructive">{scoringRules.lockAndLoadLossPenalty}</Badge>
-                </div>
-                <div className="text-sm text-muted-foreground">
-                  Once per team per season
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        )}
-
-        {viewMode === 'weekly' && (
-          <>
-            {/* Week Selector */}
-            <div className="flex gap-2 flex-wrap">
-              {Array.from({length: 18}, (_, i) => i + 1).map(week => (
-                <Button
-                  key={week}
-                  variant={selectedWeek === week ? 'default' : 'outline'}
-                  size="sm"
-                  onClick={() => setSelectedWeek(week)}
-                >
-                  Week {week}
-                </Button>
-              ))}
-            </div>
-
-            {/* Weekly Scores */}
-            {loadingWeekly ? (
-              <Card>
-                <CardContent className="p-6">
-                  <p>Loading weekly scores...</p>
-                </CardContent>
-              </Card>
-            ) : weeklyScores ? (
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Users className="w-5 h-5" />
-                    Week {selectedWeek} Scores
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {weeklyScores.scores
-                      .sort((a, b) => b.totalMokPoints - a.totalMokPoints)
-                      .map((score, index) => (
-                      <div key={score.userId} className="flex items-center justify-between p-4 border rounded-lg">
-                        <div className="flex items-center gap-3">
-                          <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-sm font-medium">
-                            {index + 1}
-                          </div>
-                          <div>
-                            <p className="font-medium">User {score.userId.slice(0, 8)}</p>
-                            <p className="text-sm text-muted-foreground">
-                              {score.teamResults.length} teams played
-                            </p>
-                          </div>
-                        </div>
-                        
-                        <div className="text-right">
-                          <p className="text-lg font-bold">{score.totalMokPoints} pts</p>
-                          <div className="text-sm text-muted-foreground">
-                            Base: {score.totalBaseMokPoints}
-                            {score.lockBonusPoints > 0 && (
-                              <span className="ml-1">Lock: +{score.lockBonusPoints}</span>
-                            )}
-                            {score.lockAndLoadBonusPoints !== 0 && (
-                              <span className="ml-1">L&L: {score.lockAndLoadBonusPoints > 0 ? '+' : ''}{score.lockAndLoadBonusPoints}</span>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                    
-                    {weeklyScores.scores.length === 0 && (
-                      <p className="text-center text-muted-foreground py-8">
-                        No scores available for Week {selectedWeek}
-                      </p>
+        {/* Games List */}
+        <div className="space-y-4">
+          {mockGames
+            .sort((a, b) => new Date(a.gameDate).getTime() - new Date(b.gameDate).getTime())
+            .map((game) => {
+              const homeWin = game.homeScore > game.awayScore;
+              const awayWin = game.awayScore > game.homeScore;
+              const tie = game.homeScore === game.awayScore;
+              const scoreDiff = Math.abs(game.homeScore - game.awayScore);
+              const isBlowout = scoreDiff >= 20;
+              const isShutout = game.homeScore === 0 || game.awayScore === 0;
+              
+              const homeLockStatus = isTeamLocked(game.homeTeam);
+              const awayLockStatus = isTeamLocked(game.awayTeam);
+              
+              return (
+                <div key={game.id} className="bg-card rounded-lg p-4 space-y-3">
+                  {/* Game Header */}
+                  <div className="flex justify-between items-center text-sm text-muted-foreground">
+                    <span>{new Date(game.gameDate).toLocaleDateString('en-US', { 
+                      weekday: 'short', 
+                      month: 'short', 
+                      day: 'numeric',
+                      hour: 'numeric',
+                      minute: '2-digit',
+                      timeZone: 'America/New_York'
+                    })} ET</span>
+                    {game.isCompleted && (
+                      <Badge variant="outline" className="text-xs">Final</Badge>
                     )}
                   </div>
-                </CardContent>
-              </Card>
-            ) : null}
-          </>
-        )}
 
-        {viewMode === 'season' && (
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Trophy className="w-5 h-5" />
-                Season Standings
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {loadingStandings ? (
-                <p>Loading season standings...</p>
-              ) : seasonStandings ? (
-                <div className="space-y-4">
-                  {seasonStandings.standings.length === 0 ? (
-                    <p className="text-center text-muted-foreground py-8">
-                      Season standings will appear here once games begin
-                    </p>
-                  ) : (
-                    seasonStandings.standings.map((standing: any, index: number) => (
-                      <div key={standing.userId} className="flex items-center justify-between p-4 border rounded-lg">
-                        <div className="flex items-center gap-3">
-                          <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-sm font-medium">
-                            {index + 1}
-                          </div>
-                          <div>
-                            <p className="font-medium">{standing.userName}</p>
-                            <p className="text-sm text-muted-foreground">
-                              {standing.gamesPlayed} games played
-                            </p>
-                          </div>
+                  {/* Teams and Scores */}
+                  <div className="space-y-2">
+                    {/* Away Team */}
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3 flex-1">
+                        <div className="relative">
+                          <img 
+                            src={`/images/nfl/team_logos/${game.awayTeam}.png`}
+                            alt={game.awayTeam}
+                            className="w-8 h-8"
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).src = `https://www.fantasynerds.com/images/nfl/team_logos/${game.awayTeam}.png`;
+                            }}
+                          />
+                          {game.awayOwner && (
+                            <div className="absolute -bottom-1 -right-1">
+                              <Avatar className="w-4 h-4 border border-background">
+                                <AvatarFallback className={`text-xs ${isUserTeam(game.awayTeam) ? 'text-green-600 bg-green-100 dark:bg-green-900/20' : 'bg-muted'}`}>
+                                  {game.awayOwner}
+                                </AvatarFallback>
+                              </Avatar>
+                            </div>
+                          )}
                         </div>
-                        
-                        <div className="text-right">
-                          <p className="text-lg font-bold">{standing.totalPoints} pts</p>
-                          <p className="text-sm text-muted-foreground">
-                            Avg: {standing.averagePerWeek.toFixed(1)}
-                          </p>
+                        <div className="flex items-center gap-2">
+                          <span className={`font-medium ${isUserTeam(game.awayTeam) ? 'text-green-600' : ''} ${awayWin ? 'text-foreground' : 'text-muted-foreground'}`}>
+                            {game.awayTeam}
+                          </span>
+                          {awayLockStatus.locked && (
+                            <Lock className="w-3 h-3 text-blue-500" />
+                          )}
+                          {awayLockStatus.lockAndLoad && (
+                            <Sparkles className="w-3 h-3 text-purple-500" />
+                          )}
                         </div>
                       </div>
-                    ))
-                  )}
-                  
-                  {/* Prize Leaders */}
-                  {seasonStandings.prizes && (
-                    <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <Card>
-                        <CardContent className="p-4 text-center">
-                          <Trophy className="w-6 h-6 mx-auto mb-2 text-yellow-600" />
-                          <p className="text-sm font-medium">Most Points</p>
-                          <p className="text-xs text-muted-foreground">
-                            {seasonStandings.prizes.mostPoints.points || 0} pts
-                          </p>
-                        </CardContent>
-                      </Card>
-                      
-                      <Card>
-                        <CardContent className="p-4 text-center">
-                          <Target className="w-6 h-6 mx-auto mb-2 text-blue-600" />
-                          <p className="text-sm font-medium">Most Locks</p>
-                          <p className="text-xs text-muted-foreground">
-                            {seasonStandings.prizes.mostCorrectLocks.locks || 0} correct
-                          </p>
-                        </CardContent>
-                      </Card>
-                      
-                      <Card>
-                        <CardContent className="p-4 text-center">
-                          <Trophy className="w-6 h-6 mx-auto mb-2 text-green-600" />
-                          <p className="text-sm font-medium">Super Bowl</p>
-                          <p className="text-xs text-muted-foreground">TBD</p>
-                        </CardContent>
-                      </Card>
+                      <div className={`text-xl font-bold ${awayWin ? 'text-foreground' : 'text-muted-foreground'}`}>
+                        {game.awayScore}
+                      </div>
+                    </div>
+
+                    {/* Home Team */}
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3 flex-1">
+                        <div className="relative">
+                          <img 
+                            src={`/images/nfl/team_logos/${game.homeTeam}.png`}
+                            alt={game.homeTeam}
+                            className="w-8 h-8"
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).src = `https://www.fantasynerds.com/images/nfl/team_logos/${game.homeTeam}.png`;
+                            }}
+                          />
+                          {game.homeOwner && (
+                            <div className="absolute -bottom-1 -right-1">
+                              <Avatar className="w-4 h-4 border border-background">
+                                <AvatarFallback className={`text-xs ${isUserTeam(game.homeTeam) ? 'text-green-600 bg-green-100 dark:bg-green-900/20' : 'bg-muted'}`}>
+                                  {game.homeOwner}
+                                </AvatarFallback>
+                              </Avatar>
+                            </div>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className={`font-medium ${isUserTeam(game.homeTeam) ? 'text-green-600' : ''} ${homeWin ? 'text-foreground' : 'text-muted-foreground'}`}>
+                            {game.homeTeam}
+                          </span>
+                          {homeLockStatus.locked && (
+                            <Lock className="w-3 h-3 text-blue-500" />
+                          )}
+                          {homeLockStatus.lockAndLoad && (
+                            <Sparkles className="w-3 h-3 text-purple-500" />
+                          )}
+                        </div>
+                      </div>
+                      <div className={`text-xl font-bold ${homeWin ? 'text-foreground' : 'text-muted-foreground'}`}>
+                        {game.homeScore}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Game Bonuses */}
+                  {game.isCompleted && (isBlowout || isShutout) && (
+                    <div className="flex gap-2 pt-2 border-t border-border">
+                      {isBlowout && (
+                        <Badge variant="secondary" className="text-xs">
+                          <Trophy className="w-3 h-3 mr-1" />
+                          Blowout (+1)
+                        </Badge>
+                      )}
+                      {isShutout && (
+                        <Badge variant="secondary" className="text-xs">
+                          <Target className="w-3 h-3 mr-1" />
+                          Shutout (+1)
+                        </Badge>
+                      )}
                     </div>
                   )}
                 </div>
-              ) : null}
-            </CardContent>
-          </Card>
-        )}
+              );
+            })}
+        </div>
       </div>
     </div>
   );
