@@ -293,7 +293,7 @@ export default function ScoresPage() {
                         </div>
                       </div>
                       <div className={`text-xl font-bold ${awayWin ? 'text-foreground' : 'text-muted-foreground'}`}>
-                        {game.isCompleted ? game.awayScore : '-'}
+                        {game.awayScore || game.awayScore === 0 ? game.awayScore : '-'}
                       </div>
                     </div>
 
@@ -332,7 +332,7 @@ export default function ScoresPage() {
                         </div>
                       </div>
                       <div className={`text-xl font-bold ${homeWin ? 'text-foreground' : 'text-muted-foreground'}`}>
-                        {game.isCompleted ? game.homeScore : '-'}
+                        {game.homeScore || game.homeScore === 0 ? game.homeScore : '-'}
                       </div>
                     </div>
                   </div>
