@@ -456,8 +456,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Calculate real totals
         const totalPoints = userScores.reduce((sum, score) => sum + (score.totalPoints || 0), 0);
         const totalWins = userScores.reduce((sum, score) => sum + (score.teamWins || 0), 0);
-        const totalLocks = userLocks.length;
+        const totalLocks = userLocks.filter(lock => lock.correct).length; // Only correct locks
         const totalLockAndLoads = userLocks.filter(lock => lock.lockAndLoad).length;
+        const skinsWon = userScores.reduce((sum, score) => sum + (score.skinsWon || 0), 0);
         const teams = stable.map(stableTeam => ({
           code: stableTeam.nflTeam.code,
           name: stableTeam.nflTeam.name
@@ -471,6 +472,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           wins: totalWins,
           locks: totalLocks,
           lockAndLoads: totalLockAndLoads,
+          skinsWon: skinsWon,
           isCurrentUser: member.userId === user.id,
           teams: teams,
           joinedAt: member.joinedAt

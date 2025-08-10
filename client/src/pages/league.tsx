@@ -143,7 +143,7 @@ export default function LeaguePage() {
             </CardHeader>
             <CardContent className="space-y-3">
               {standings.map((member: any) => (
-                <div key={member.name} className="flex items-center justify-between py-2">
+                <div key={member.name} className="flex items-start justify-between py-3 border-b border-border/30 last:border-b-0">
                   <div className="flex items-center space-x-3">
                     {/* Rank Badge */}
                     <div className={`w-7 h-7 rounded-full flex items-center justify-center text-sm font-semibold ${
@@ -156,27 +156,28 @@ export default function LeaguePage() {
                     </div>
                     
                     {/* Avatar and Name */}
-                    <div className="flex items-center space-x-2.5">
-                      <Avatar className="w-8 h-8">
+                    <div className="flex items-start space-x-3">
+                      <Avatar className="w-8 h-8 mt-0.5">
                         <AvatarFallback className="text-xs font-medium">{member.avatar}</AvatarFallback>
                       </Avatar>
-                      <div>
-                        <div className="flex items-center space-x-2">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center space-x-2 mb-1">
                           <span className="font-medium text-sm">{member.name}</span>
                           {member.isCurrentUser && <Badge variant="secondary" className="text-xs">You</Badge>}
                         </div>
-                        <div className="text-xs text-muted-foreground">
-                          {member.wins} wins • {member.locks} locks
+                        <div className="text-xs text-muted-foreground mb-2">
+                          {member.locks} locks correct • {member.skinsWon || 0} skins won
                         </div>
                         {/* Team Logos Row */}
                         {member.teams && member.teams.length > 0 && (
-                          <div className="flex items-center space-x-1 mt-1">
+                          <div className="flex items-center space-x-1.5">
                             {member.teams.map((team: any) => (
                               <img 
                                 key={team.code}
                                 src={`/images/nfl/team_logos/${team.code}.png`}
                                 alt={team.code}
-                                className="w-5 h-5 rounded-sm object-contain"
+                                title={team.name}
+                                className="w-6 h-6 rounded-sm object-contain"
                                 onError={(e) => {
                                   console.log(`[League] Failed to load ${team.code} logo, using fallback`);
                                   (e.target as HTMLImageElement).src = `https://a.espncdn.com/i/teamlogos/nfl/500/${team.code.toLowerCase()}.png`;
