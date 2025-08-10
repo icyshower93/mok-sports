@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/use-auth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Trophy, Target, Zap, Info, Users, Lock, Sparkles } from "lucide-react";
+import { Trophy, Target, Zap, Info, Users, Lock, Sparkles, Flame } from "lucide-react";
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -157,6 +157,45 @@ export default function ScoresPage() {
     }
   ];
 
+  // Calculate Mok points for a team in a specific game
+  const calculateTeamMokPoints = (game: NFLGame, isHome: boolean): number => {
+    const teamScore = isHome ? game.homeScore : game.awayScore;
+    const opponentScore = isHome ? game.awayScore : game.homeScore;
+    const isOwned = isHome ? !!game.homeOwner : !!game.awayOwner;
+    
+    if (!isOwned || !game.isCompleted) return 0;
+    
+    let points = 0;
+    const scoreDiff = teamScore - opponentScore;
+    
+    // Base points
+    if (scoreDiff > 0) points += 1; // Win
+    else if (scoreDiff === 0) points += 0.5; // Tie
+    
+    // Bonus points
+    if (scoreDiff >= 20) points += 1; // Blowout (20+ points)
+    if (opponentScore === 0 && scoreDiff > 0) points += 1; // Shutout
+    
+    // Mock weekly high/low (would be calculated from all games)
+    const isWeeklyHigh = teamScore === 31; // KC's score is highest in mock data
+    const isWeeklyLow = teamScore === 9; // MIN's score is lowest in mock data
+    if (isWeeklyHigh) points += 1;
+    if (isWeeklyLow) points -= 1;
+    
+    // Lock bonuses
+    const isLocked = isHome ? game.homeLocked : game.awayLocked;
+    const isLockAndLoad = isHome ? game.homeLockAndLoad : game.awayLockAndLoad;
+    
+    if (isLocked && !isLockAndLoad) {
+      points += 1; // Regular lock bonus
+    } else if (isLockAndLoad) {
+      if (scoreDiff > 0) points += 2; // Lock & Load win
+      else if (scoreDiff < 0) points -= 1; // Lock & Load loss
+    }
+    
+    return points;
+  };
+
   const getUserInitials = (teamCode: string): string => {
     const game = mockGames.find(g => g.homeTeam === teamCode || g.awayTeam === teamCode);
     if (game?.homeTeam === teamCode && game.homeOwner) return game.homeOwner;
@@ -271,6 +310,14 @@ export default function ScoresPage() {
                           {awayLockStatus.lockAndLoad && (
                             <Sparkles className="w-3 h-3 text-purple-500" />
                           )}
+                          {game.isCompleted && game.awayOwner && (
+                            <div className="flex items-center gap-1 ml-1">
+                              <Flame className="w-3 h-3 text-orange-500" />
+                              <span className="text-xs font-medium text-orange-600">
+                                {calculateTeamMokPoints(game, false)}
+                              </span>
+                            </div>
+                          )}
                         </div>
                       </div>
                       <div className={`text-xl font-bold ${awayWin ? 'text-foreground' : 'text-muted-foreground'}`}>
@@ -309,6 +356,14 @@ export default function ScoresPage() {
                           )}
                           {homeLockStatus.lockAndLoad && (
                             <Sparkles className="w-3 h-3 text-purple-500" />
+                          )}
+                          {game.isCompleted && game.homeOwner && (
+                            <div className="flex items-center gap-1 ml-1">
+                              <Flame className="w-3 h-3 text-orange-500" />
+                              <span className="text-xs font-medium text-orange-600">
+                                {calculateTeamMokPoints(game, true)}
+                              </span>
+                            </div>
                           )}
                         </div>
                       </div>
