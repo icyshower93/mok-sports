@@ -84,7 +84,7 @@ export default function ScoresPage() {
   });
 
   // Get current league (first league for now, with fallback for mock data)
-  const currentLeague = userLeagues?.[0] || {
+  const currentLeague = (userLeagues && userLeagues.length > 0) ? userLeagues[0] : {
     id: 'EEW2YU',
     name: 'Sky\'s League',
     season: 2025
@@ -373,12 +373,24 @@ export default function ScoresPage() {
 
       {/* Game Details Modal - Sleeper/ESPN Style */}
       <Dialog open={!!selectedGame} onOpenChange={() => setSelectedGame(null)}>
-        <DialogContent className="max-w-md p-0 gap-0">
+        <DialogContent className="max-w-md p-0 gap-0 border-0">
           {selectedGame && (
             <div className="relative">
+              {/* Custom close button */}
+              <button
+                onClick={() => setSelectedGame(null)}
+                className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-black/20 hover:bg-black/30 flex items-center justify-center text-white transition-colors"
+                aria-label="Close"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+              
               {/* Header with gradient background */}
               <div className="bg-gradient-to-br from-blue-600 to-purple-700 text-white p-4 rounded-t-lg">
-                <div className="flex justify-between items-start mb-2">
+                <div className="flex justify-between items-start mb-2 pr-8">
                   <div className="text-sm opacity-90">
                     Week {selectedGame.week} • {new Date(selectedGame.gameDate).toLocaleDateString('en-US', {
                       weekday: 'short',
