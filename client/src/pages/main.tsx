@@ -20,11 +20,13 @@ import {
   Calendar,
   X,
   RefreshCw,
-  ChevronRight
+  ChevronRight,
+  Crown
 } from "lucide-react";
 import { BottomNav } from "@/components/layout/bottom-nav";
 import { TeamLogo } from "@/components/team-logo";
 import { useAuth } from "@/hooks/use-auth";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 interface League {
   id: string;
@@ -172,6 +174,150 @@ export default function MainPage() {
                   <div className="text-2xl font-bold text-emerald-700 dark:text-emerald-300">
                     ${weeklyPrize}
                   </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+        {/* Weekly Standings Card */}
+        <div className="p-4">
+          <Card>
+            <CardHeader className="pb-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-full">
+                    <Trophy className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-lg">Weekly Standings</CardTitle>
+                    <p className="text-sm text-muted-foreground">Who's winning this week's skin</p>
+                  </div>
+                </div>
+                <Badge variant="outline" className="text-xs">Week {selectedWeek}</Badge>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {/* Weekly standings with point breakdown */}
+              {[
+                { 
+                  rank: 1, 
+                  name: "Sky Evans", 
+                  avatar: "SE", 
+                  weekPoints: 4.0,
+                  isCurrentUser: true,
+                  pointBreakdown: [
+                    { source: "Wins", points: 2, detail: "KC, BUF" },
+                    { source: "Lock Bonus", points: 1, detail: "KC locked" },
+                    { source: "Blowout", points: 1, detail: "KC 31-17" }
+                  ]
+                },
+                { 
+                  rank: 2, 
+                  name: "Sarah Wilson", 
+                  avatar: "SW", 
+                  weekPoints: 3.5,
+                  isCurrentUser: false,
+                  pointBreakdown: [
+                    { source: "Wins", points: 2, detail: "BAL, GB" },
+                    { source: "Lock & Load", points: 2, detail: "BAL L&L" },
+                    { source: "Loss", points: -0.5, detail: "MIN tie" }
+                  ]
+                },
+                { 
+                  rank: 3, 
+                  name: "Mike Chen", 
+                  avatar: "MC", 
+                  weekPoints: 2.0,
+                  isCurrentUser: false,
+                  pointBreakdown: [
+                    { source: "Wins", points: 1, detail: "DAL" },
+                    { source: "Lock Bonus", points: 1, detail: "DAL locked" }
+                  ]
+                },
+                { 
+                  rank: 4, 
+                  name: "Alex Rodriguez", 
+                  avatar: "AR", 
+                  weekPoints: 1.5,
+                  isCurrentUser: false,
+                  pointBreakdown: [
+                    { source: "Wins", points: 1, detail: "TB" },
+                    { source: "Tie", points: 0.5, detail: "SEA 24-24" }
+                  ]
+                },
+                { 
+                  rank: 5, 
+                  name: "Emma Davis", 
+                  avatar: "ED", 
+                  weekPoints: 1.0,
+                  isCurrentUser: false,
+                  pointBreakdown: [
+                    { source: "Wins", points: 1, detail: "PIT" }
+                  ]
+                },
+                { 
+                  rank: 6, 
+                  name: "Chris Martinez", 
+                  avatar: "CM", 
+                  weekPoints: 0.0,
+                  isCurrentUser: false,
+                  pointBreakdown: [
+                    { source: "Weekly Low", points: -1, detail: "Lowest scorer" },
+                    { source: "Wins", points: 1, detail: "DET" }
+                  ]
+                }
+              ].map((member, index) => (
+                <div 
+                  key={member.name} 
+                  className={`flex items-center justify-between p-3 rounded-lg border transition-all ${
+                    member.isCurrentUser ? 'ring-2 ring-primary/20 bg-primary/5' : 'bg-card hover:bg-muted/30'
+                  } ${index === 0 ? 'border-yellow-200 dark:border-yellow-800 bg-yellow-50/50 dark:bg-yellow-950/20' : ''}`}
+                >
+                  <div className="flex items-center space-x-3 flex-1">
+                    <div className="flex items-center space-x-2">
+                      <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
+                        member.rank === 1 ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400' :
+                        member.rank === 2 ? 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400' :
+                        member.rank === 3 ? 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400' :
+                        'bg-muted text-muted-foreground'
+                      }`}>
+                        {member.rank}
+                      </div>
+                      {member.rank === 1 && <Crown className="w-4 h-4 text-yellow-500" />}
+                    </div>
+                    <Avatar className="w-8 h-8">
+                      <AvatarFallback className="text-xs">{member.avatar}</AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1">
+                      <div className="flex items-center space-x-2">
+                        <span className="font-medium text-sm">{member.name}</span>
+                        {member.isCurrentUser && <Badge variant="secondary" className="text-xs">You</Badge>}
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        {member.pointBreakdown.map((item, i) => (
+                          <span key={i}>
+                            {item.source}: {item.points > 0 ? '+' : ''}{item.points}
+                            {i < member.pointBreakdown.length - 1 && ' • '}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-lg font-bold">{member.weekPoints}</div>
+                    <div className="text-xs text-muted-foreground">pts</div>
+                  </div>
+                </div>
+              ))}
+              
+              {/* Games still in progress indicator */}
+              <div className="mt-3 pt-3 border-t border-border/50">
+                <div className="flex items-center justify-between text-xs text-muted-foreground">
+                  <div className="flex items-center space-x-2">
+                    <Clock className="w-3 h-3" />
+                    <span>3 games still in progress</span>
+                  </div>
+                  <span>Updates live</span>
                 </div>
               </div>
             </CardContent>
