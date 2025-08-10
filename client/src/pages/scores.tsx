@@ -371,105 +371,181 @@ export default function ScoresPage() {
         </div>
       </div>
 
-      {/* Game Details Modal */}
+      {/* Game Details Modal - Sleeper/ESPN Style */}
       <Dialog open={!!selectedGame} onOpenChange={() => setSelectedGame(null)}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Game Details</DialogTitle>
-          </DialogHeader>
+        <DialogContent className="max-w-md p-0 gap-0">
           {selectedGame && (
-            <div className="space-y-4">
-              <div className="flex justify-between items-center">
-                <div className="text-sm text-muted-foreground">
-                  {new Date(selectedGame.gameDate).toLocaleDateString('en-US', {
-                    weekday: 'long',
-                    month: 'long', 
-                    day: 'numeric',
+            <div className="relative">
+              {/* Header with gradient background */}
+              <div className="bg-gradient-to-br from-blue-600 to-purple-700 text-white p-4 rounded-t-lg">
+                <div className="flex justify-between items-start mb-2">
+                  <div className="text-sm opacity-90">
+                    Week {selectedGame.week} • {new Date(selectedGame.gameDate).toLocaleDateString('en-US', {
+                      weekday: 'short',
+                      month: 'short', 
+                      day: 'numeric'
+                    })}
+                  </div>
+                  <Badge variant="secondary" className="text-xs bg-white/20 text-white border-0">
+                    Final
+                  </Badge>
+                </div>
+                <div className="text-xs opacity-75">
+                  {new Date(selectedGame.gameDate).toLocaleTimeString('en-US', {
                     hour: 'numeric',
                     minute: '2-digit',
                     timeZone: 'America/New_York'
                   })} ET
                 </div>
-                <Badge variant="outline" className="text-xs">Final</Badge>
               </div>
 
-              <div className="space-y-3">
-                {/* Away Team Details */}
-                <div className="flex items-center justify-between p-3 bg-muted/20 rounded-lg">
-                  <div className="flex items-center gap-3">
-                    <img 
-                      src={`/images/nfl/team_logos/${selectedGame.awayTeam}.png`}
-                      alt={selectedGame.awayTeam}
-                      className="w-10 h-10"
-                      onError={(e) => {
-                        (e.target as HTMLImageElement).src = `https://www.fantasynerds.com/images/nfl/team_logos/${selectedGame.awayTeam}.png`;
-                      }}
-                    />
-                    <div>
-                      <div className="font-semibold">{selectedGame.awayTeam}</div>
+              {/* Main Score Display */}
+              <div className="bg-card">
+                {/* Away Team */}
+                <div className="flex items-center justify-between p-4 border-b border-border/50">
+                  <div className="flex items-center gap-4 flex-1">
+                    <div className="relative">
+                      <img 
+                        src={`/images/nfl/team_logos/${selectedGame.awayTeam}.png`}
+                        alt={selectedGame.awayTeam}
+                        className="w-12 h-12"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src = `https://www.fantasynerds.com/images/nfl/team_logos/${selectedGame.awayTeam}.png`;
+                        }}
+                      />
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-1">
+                        <div className={`font-bold text-lg ${selectedGame.awayScore > selectedGame.homeScore ? 'text-green-600' : 'text-muted-foreground'}`}>
+                          {selectedGame.awayTeam}
+                        </div>
+                        <div className="flex items-center gap-1">
+                          {selectedGame.awayLocked && <Lock className="w-4 h-4 text-blue-500" />}
+                          {selectedGame.awayLockAndLoad && <Zap className="w-4 h-4 text-orange-500" />}
+                        </div>
+                      </div>
                       {selectedGame.awayOwnerName && (
-                        <div className="text-xs text-muted-foreground">{selectedGame.awayOwnerName}</div>
+                        <div className="text-sm text-muted-foreground">
+                          {selectedGame.awayOwnerName}
+                        </div>
                       )}
-                    </div>
-                    <div className="flex gap-1 ml-2">
-                      {selectedGame.awayLocked && <Lock className="w-4 h-4 text-blue-500" />}
-                      {selectedGame.awayLockAndLoad && <Zap className="w-4 h-4 text-orange-500" />}
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
-                    <div className="text-2xl font-bold">{selectedGame.awayScore}</div>
                     {selectedGame.awayMokPoints && selectedGame.awayMokPoints > 0 && (
-                      <div className="flex items-center gap-1">
-                        <Flame className="w-4 h-4 text-purple-500" />
-                        <span className="text-purple-600 font-medium">+{selectedGame.awayMokPoints}</span>
+                      <div className="flex items-center gap-1 bg-purple-100 dark:bg-purple-900/30 px-2 py-1 rounded-full">
+                        <Flame className="w-3 h-3 text-purple-600" />
+                        <span className="text-xs font-medium text-purple-700 dark:text-purple-300">+{selectedGame.awayMokPoints}</span>
                       </div>
                     )}
+                    <div className={`text-2xl font-bold ${selectedGame.awayScore > selectedGame.homeScore ? 'text-foreground' : 'text-muted-foreground'}`}>
+                      {selectedGame.awayScore}
+                    </div>
                   </div>
                 </div>
 
-                {/* Home Team Details */}
-                <div className="flex items-center justify-between p-3 bg-muted/20 rounded-lg">
-                  <div className="flex items-center gap-3">
-                    <img 
-                      src={`/images/nfl/team_logos/${selectedGame.homeTeam}.png`}
-                      alt={selectedGame.homeTeam}
-                      className="w-10 h-10"
-                      onError={(e) => {
-                        (e.target as HTMLImageElement).src = `https://www.fantasynerds.com/images/nfl/team_logos/${selectedGame.homeTeam}.png`;
-                      }}
-                    />
-                    <div>
-                      <div className="font-semibold">{selectedGame.homeTeam}</div>
-                      {selectedGame.homeOwnerName && (
-                        <div className="text-xs text-muted-foreground">{selectedGame.homeOwnerName}</div>
-                      )}
+                {/* Home Team */}
+                <div className="flex items-center justify-between p-4">
+                  <div className="flex items-center gap-4 flex-1">
+                    <div className="relative">
+                      <img 
+                        src={`/images/nfl/team_logos/${selectedGame.homeTeam}.png`}
+                        alt={selectedGame.homeTeam}
+                        className="w-12 h-12"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src = `https://www.fantasynerds.com/images/nfl/team_logos/${selectedGame.homeTeam}.png`;
+                        }}
+                      />
                     </div>
-                    <div className="flex gap-1 ml-2">
-                      {selectedGame.homeLocked && <Lock className="w-4 h-4 text-blue-500" />}
-                      {selectedGame.homeLockAndLoad && <Zap className="w-4 h-4 text-orange-500" />}
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-1">
+                        <div className={`font-bold text-lg ${selectedGame.homeScore > selectedGame.awayScore ? 'text-green-600' : 'text-muted-foreground'}`}>
+                          {selectedGame.homeTeam}
+                        </div>
+                        <div className="flex items-center gap-1">
+                          {selectedGame.homeLocked && <Lock className="w-4 h-4 text-blue-500" />}
+                          {selectedGame.homeLockAndLoad && <Zap className="w-4 h-4 text-orange-500" />}
+                        </div>
+                      </div>
+                      {selectedGame.homeOwnerName && (
+                        <div className="text-sm text-muted-foreground">
+                          {selectedGame.homeOwnerName}
+                        </div>
+                      )}
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
-                    <div className="text-2xl font-bold">{selectedGame.homeScore}</div>
                     {selectedGame.homeMokPoints && selectedGame.homeMokPoints > 0 && (
-                      <div className="flex items-center gap-1">
-                        <Flame className="w-4 h-4 text-purple-500" />
-                        <span className="text-purple-600 font-medium">+{selectedGame.homeMokPoints}</span>
+                      <div className="flex items-center gap-1 bg-purple-100 dark:bg-purple-900/30 px-2 py-1 rounded-full">
+                        <Flame className="w-3 h-3 text-purple-600" />
+                        <span className="text-xs font-medium text-purple-700 dark:text-purple-300">+{selectedGame.homeMokPoints}</span>
                       </div>
                     )}
+                    <div className={`text-2xl font-bold ${selectedGame.homeScore > selectedGame.awayScore ? 'text-foreground' : 'text-muted-foreground'}`}>
+                      {selectedGame.homeScore}
+                    </div>
                   </div>
                 </div>
               </div>
 
-              {/* Scoring Breakdown */}
-              <div className="space-y-2">
-                <h4 className="font-medium text-sm">Mok Points Breakdown:</h4>
-                <div className="text-xs text-muted-foreground space-y-1">
-                  <div>• Win: +1 point</div>
-                  <div>• Lock Bonus: +1 point</div>
-                  <div>• Blowout (20+ points): +1 point</div>
-                  <div>• Lock & Load Win: +2 points, Loss: -1 point</div>
+              {/* Mok Points Breakdown */}
+              <div className="bg-muted/30 p-4 space-y-3">
+                <div className="flex items-center gap-2">
+                  <Flame className="w-4 h-4 text-purple-600" />
+                  <h4 className="font-semibold text-sm">Mok Points Breakdown</h4>
                 </div>
+                <div className="grid grid-cols-2 gap-3 text-xs">
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <Trophy className="w-3 h-3 text-amber-500" />
+                      <span>Win: <span className="font-medium">+1</span></span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Lock className="w-3 h-3 text-blue-500" />
+                      <span>Lock Bonus: <span className="font-medium">+1</span></span>
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <Target className="w-3 h-3 text-red-500" />
+                      <span>Blowout: <span className="font-medium">+1</span></span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Zap className="w-3 h-3 text-orange-500" />
+                      <span>L&L: <span className="font-medium">+2/-1</span></span>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Game bonuses if applicable */}
+                {(() => {
+                  const scoreDiff = Math.abs(selectedGame.homeScore - selectedGame.awayScore);
+                  const isBlowout = scoreDiff >= 20;
+                  const isShutout = selectedGame.homeScore === 0 || selectedGame.awayScore === 0;
+                  
+                  if (isBlowout || isShutout) {
+                    return (
+                      <div className="pt-2 border-t border-border/50">
+                        <div className="text-xs font-medium text-muted-foreground mb-1">Game Bonuses:</div>
+                        <div className="flex gap-2">
+                          {isBlowout && (
+                            <Badge variant="secondary" className="text-xs">
+                              <Trophy className="w-3 h-3 mr-1" />
+                              Blowout
+                            </Badge>
+                          )}
+                          {isShutout && (
+                            <Badge variant="secondary" className="text-xs">
+                              <Target className="w-3 h-3 mr-1" />
+                              Shutout
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  }
+                  return null;
+                })()}
               </div>
             </div>
           )}
