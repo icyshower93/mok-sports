@@ -69,6 +69,29 @@ export default function AdminPanel() {
     },
   });
 
+  const resetAppStateMutation = useMutation({
+    mutationFn: async (resetData: { resetToWeek?: number; season?: number }) => {
+      const response = await fetch('/api/admin/reset-app-state', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(resetData),
+      });
+      if (!response.ok) throw new Error('Failed to reset app state');
+      return response.json();
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/state'] });
+      toast({ description: data.message || "App state reset successfully" });
+    },
+    onError: (error: Error) => {
+      toast({ 
+        variant: "destructive",
+        description: `Reset failed: ${error.message}` 
+      });
+    },
+  });
+
   const generateGamesMutation = useMutation({
     mutationFn: async (week: string) => {
       const response = await fetch('/api/admin/generate-games', {
@@ -128,18 +151,27 @@ export default function AdminPanel() {
             <Settings className="w-8 h-8 text-primary" />
             <div>
               <h1 className="text-3xl font-bold">Admin Panel</h1>
-              <p className="text-muted-foreground">Control time progression and game simulation</p>
+              <p className="text-muted-foreground">Time travel through the 2024 NFL season with real game data</p>
             </div>
           </div>
-          <Button 
-            variant="outline" 
-            onClick={() => navigate('/main')}
-            className="flex items-center space-x-2"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            <Home className="w-4 h-4" />
-            <span>Back to Home</span>
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              onClick={() => resetAppStateMutation.mutate({ resetToWeek: 1, season: 2024 })}
+              disabled={resetAppStateMutation.isPending}
+              variant="default"
+              size="sm"
+            >
+              {resetAppStateMutation.isPending ? "Loading..." : "Load 2024 Season"}
+            </Button>
+            <Button 
+              variant="outline" 
+              onClick={() => navigate('/main')}
+              className="flex items-center space-x-2"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>Back to Home</span>
+            </Button>
+          </div>
         </div>
 
         <div className="grid gap-6 md:grid-cols-2">

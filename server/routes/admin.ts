@@ -1,11 +1,12 @@
 import type { Express } from "express";
 import { storage } from "../storage";
 import { sql } from "drizzle-orm";
+import { nflDataService, type NFLGameData } from "../services/nflDataService";
 
 // Admin state for time control and app state management
 let adminState = {
-  currentWeek: 0, // Before Week 1 of 2024 season
-  currentDay: 'thursday', // Thursday before NFL season starts
+  currentWeek: 1, // Start at Week 1 of 2024 season
+  currentDay: 'monday', // Monday before first week
   currentTime: '12:00',
   season: 2024, // Using 2024 real NFL season data
   lockDeadlinePassed: false,
@@ -14,7 +15,9 @@ let adminState = {
   gamesPlayed: 0,
   lastSimulation: null as { week: number; gamesSimulated: number } | null,
   useRealData: true, // Flag to use Tank01/ESPN real NFL data instead of mock
-  testLeagueId: '243d719b-92ce-4752-8689-5da93ee69213' // EEW2YU Test League
+  testLeagueId: '243d719b-92ce-4752-8689-5da93ee69213', // EEW2YU Test League
+  realNFLGames: [] as NFLGameData[], // Cache of real NFL games
+  simulatedCompletedGames: new Set<string>() // Track which games are "completed" in our simulation
 };
 
 // Mock game data for simulation
@@ -69,12 +72,16 @@ const mockGames: Array<{
 }> = [];
 
 export function registerAdminRoutes(app: Express) {
-  // Reset app state to before Week 1 with real user data
+  // Reset app state and load real NFL data
   app.post("/api/admin/reset-app-state", async (req, res) => {
     try {
-      const { resetToWeek = 0, season = 2024 } = req.body;
+      const { resetToWeek = 1, season = 2024 } = req.body;
       
       console.log(`[Admin] Resetting app state to Week ${resetToWeek} of ${season} season...`);
+      
+      // Load real NFL data
+      console.log(`[Admin] Loading real NFL schedule for ${season} season...`);
+      const nflGames = await nflDataService.getScheduleForSeason(season);
       
       // Update admin state
       adminState.currentWeek = resetToWeek;
@@ -83,17 +90,24 @@ export function registerAdminRoutes(app: Express) {
       adminState.activeLocks = 0;
       adminState.gamesPlayed = 0;
       adminState.lastSimulation = null;
+      adminState.realNFLGames = nflGames;
+      adminState.simulatedCompletedGames.clear();
       
+      console.log(`[Admin] Loaded ${nflGames.length} real NFL games for ${season} season`);
       console.log(`[Admin] App state reset complete - Week ${resetToWeek} of ${season}`);
       
       res.json({
         success: true,
-        message: `App state reset to Week ${resetToWeek} of ${season} season`,
-        adminState
+        message: `App state reset to Week ${resetToWeek} of ${season} season with ${nflGames.length} real games loaded`,
+        adminState: {
+          ...adminState,
+          realNFLGames: undefined, // Don't send large data array in response
+          totalGamesLoaded: nflGames.length
+        }
       });
     } catch (error) {
       console.error('[Admin] Reset app state error:', error);
-      res.status(500).json({ error: 'Failed to reset app state' });
+      res.status(500).json({ error: 'Failed to reset app state: ' + (error as Error).message });
     }
   });
 
@@ -156,7 +170,7 @@ export function registerAdminRoutes(app: Express) {
     }
   });
 
-  // Set specific time
+  // Set specific time and simulate game completion
   app.post("/api/admin/set-time", async (req, res) => {
     try {
       const { week, day, time } = req.body;
@@ -165,7 +179,8 @@ export function registerAdminRoutes(app: Express) {
         return res.status(400).json({ message: "Week, day, and time are required" });
       }
 
-      adminState.currentWeek = parseInt(week);
+      const weekNum = parseInt(week);
+      adminState.currentWeek = weekNum;
       adminState.currentDay = day;
       adminState.currentTime = time;
       
@@ -177,12 +192,35 @@ export function registerAdminRoutes(app: Express) {
       
       adminState.lockDeadlinePassed = isThursday && isAfterLockTime;
 
+      // Update simulated completed games based on new time
+      const completedGames = await nflDataService.getGamesForTimeSimulation(weekNum, day, time);
+      adminState.simulatedCompletedGames.clear();
+      completedGames.forEach(game => adminState.simulatedCompletedGames.add(game.id));
+      
+      // Count games that should be "played" by this time
+      let gamesPlayedCount = 0;
+      if (weekNum > 1) {
+        // All games from previous weeks are "played"
+        gamesPlayedCount = adminState.realNFLGames.filter(g => g.week < weekNum).length;
+      }
+      // Add any games from current week that should be completed
+      if (isAfterLockTime || ['friday', 'saturday', 'sunday', 'monday', 'tuesday'].includes(day)) {
+        gamesPlayedCount += adminState.realNFLGames.filter(g => g.week === weekNum).length;
+      }
+      
+      adminState.gamesPlayed = gamesPlayedCount;
+
       console.log(`[Admin] Time set to Week ${week}, ${day} ${time}`);
       console.log(`[Admin] Lock deadline status: ${adminState.lockDeadlinePassed ? 'PASSED' : 'ACTIVE'}`);
+      console.log(`[Admin] Games simulated as completed: ${adminState.simulatedCompletedGames.size}`);
 
       res.json({ 
         message: "Time updated successfully", 
-        state: adminState 
+        state: {
+          ...adminState,
+          realNFLGames: undefined // Don't send large array
+        },
+        gamesCompleted: adminState.simulatedCompletedGames.size
       });
     } catch (error) {
       console.error('Error setting time:', error);
@@ -319,32 +357,71 @@ export function registerAdminRoutes(app: Express) {
     }
   });
 
-  // Get mock scores API endpoint (for scores page)
+  // Get real NFL scores with time simulation (for scores page)
   app.get("/api/games/week/:week", async (req, res) => {
     try {
       const week = parseInt(req.params.week);
-      const weekGames = mockGames.filter(g => g.week === week);
       
-      // Format games for the scores page
-      const formattedGames = weekGames.map(game => ({
-        id: `${game.homeTeam}-${game.awayTeam}-${week}`,
-        week,
-        homeTeam: {
-          code: game.homeTeam,
-          name: getTeamName(game.homeTeam),
-          score: game.homeScore
-        },
-        awayTeam: {
-          code: game.awayTeam,
-          name: getTeamName(game.awayTeam),
-          score: game.awayScore
-        },
-        status: game.status,
-        gameTime: game.gameTime,
-        isCompleted: game.isCompleted
-      }));
+      // Use real NFL data if available, otherwise fall back to mock
+      if (adminState.useRealData && adminState.realNFLGames.length > 0) {
+        const weekGames = adminState.realNFLGames.filter(g => g.week === week);
+        
+        // Format games for the scores page with simulation logic
+        const formattedGames = weekGames.map(game => {
+          // Check if this game should be "completed" based on simulated time
+          const shouldBeCompleted = adminState.simulatedCompletedGames.has(game.id);
+          
+          return {
+            id: game.id,
+            week,
+            homeTeam: game.homeTeam,
+            awayTeam: game.awayTeam,
+            homeScore: shouldBeCompleted ? game.homeScore : null,
+            awayScore: shouldBeCompleted ? game.awayScore : null,
+            gameDate: game.gameDate.toISOString(),
+            isCompleted: shouldBeCompleted,
+            // Add ownership data (will be merged with draft data in scoring route)
+            homeOwner: '',
+            homeOwnerName: '',
+            awayOwner: '',
+            awayOwnerName: '',
+            homeLocked: false,
+            awayLocked: false,
+            homeLockAndLoad: false,
+            awayLockAndLoad: false,
+            homeMokPoints: 0,
+            awayMokPoints: 0
+          };
+        });
 
-      res.json(formattedGames);
+        res.json({ results: formattedGames });
+      } else {
+        // Fallback to mock games
+        const weekGames = mockGames.filter(g => g.week === week);
+        
+        const formattedGames = weekGames.map(game => ({
+          id: `${game.homeTeam}-${game.awayTeam}-${week}`,
+          week,
+          homeTeam: game.homeTeam,
+          awayTeam: game.awayTeam,
+          homeScore: game.homeScore,
+          awayScore: game.awayScore,
+          gameDate: new Date().toISOString(),
+          isCompleted: game.isCompleted,
+          homeOwner: '',
+          homeOwnerName: '',
+          awayOwner: '',
+          awayOwnerName: '',
+          homeLocked: false,
+          awayLocked: false,
+          homeLockAndLoad: false,
+          awayLockAndLoad: false,
+          homeMokPoints: 0,
+          awayMokPoints: 0
+        }));
+
+        res.json({ results: formattedGames });
+      }
     } catch (error) {
       console.error('Error getting weekly games:', error);
       res.status(500).json({ message: "Failed to get games" });
