@@ -131,9 +131,9 @@ export default function ScoresPage() {
     );
   }
 
-  // Transform real NFL games data from Tank01 API
+  // Transform real NFL games data from Tank01 API with ownership data
   const nflGames: NFLGame[] = (nflGamesData as any)?.results?.map((game: any, index: number) => ({
-    id: `game_${selectedWeek}_${index}`,
+    id: game.id || `game_${selectedWeek}_${index}`,
     homeTeam: game.homeTeam,
     awayTeam: game.awayTeam,
     homeScore: game.homeScore || 0,
@@ -142,15 +142,19 @@ export default function ScoresPage() {
     season: selectedSeason,
     gameDate: new Date(game.gameDate),
     isCompleted: game.isCompleted || false,
-    // TODO: Map team owners from draft data when available
-    homeOwner: '',
-    homeOwnerName: '',
-    awayOwner: '',
-    awayOwnerName: '',
-    homeLocked: false,
-    awayLocked: false,
-    homeMokPoints: 0,
-    awayMokPoints: 0
+    // Team ownership from draft data
+    homeOwner: game.homeOwner || '',
+    homeOwnerName: game.homeOwnerName || '',
+    awayOwner: game.awayOwner || '',
+    awayOwnerName: game.awayOwnerName || '',
+    // Lock status
+    homeLocked: game.homeLocked || false,
+    awayLocked: game.awayLocked || false,
+    homeLockAndLoad: game.homeLockAndLoad || false,
+    awayLockAndLoad: game.awayLockAndLoad || false,
+    // Mok points
+    homeMokPoints: game.homeMokPoints || 0,
+    awayMokPoints: game.awayMokPoints || 0
   })) || [];
 
 
@@ -271,7 +275,7 @@ export default function ScoresPage() {
                           </span>
                           {game.awayOwnerName && (
                             <span className="text-xs text-muted-foreground">
-                              {game.awayOwnerName}
+                              ({game.awayOwnerName})
                             </span>
                           )}
                           {awayLockStatus.locked && (
@@ -310,7 +314,7 @@ export default function ScoresPage() {
                           </span>
                           {game.homeOwnerName && (
                             <span className="text-xs text-muted-foreground">
-                              {game.homeOwnerName}
+                              ({game.homeOwnerName})
                             </span>
                           )}
                           {homeLockStatus.locked && (
