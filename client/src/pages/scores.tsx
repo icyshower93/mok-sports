@@ -377,7 +377,6 @@ export default function ScoresPage() {
             .map((game) => {
               const homeWin = game.homeScore > game.awayScore;
               const awayWin = game.awayScore > game.homeScore;
-              const tie = game.homeScore === game.awayScore;
               const scoreDiff = Math.abs(game.homeScore - game.awayScore);
               const isBlowout = scoreDiff >= 20;
               const isShutout = game.homeScore === 0 || game.awayScore === 0;
@@ -386,11 +385,7 @@ export default function ScoresPage() {
               const awayLockStatus = isTeamLocked(game.awayTeam);
               
               return (
-                <div 
-                  key={game.id} 
-                  className="bg-card rounded-lg p-4 space-y-3 cursor-pointer transition-all duration-200 hover:bg-accent hover:shadow-md active:scale-[0.98]"
-                  onClick={() => handleGameClick(game)}
-                >
+                <div key={game.id} className="bg-card rounded-lg p-4 space-y-3">
                   {/* Game Header */}
                   <div className="flex justify-between items-center text-sm text-muted-foreground">
                     <span>{new Date(game.gameDate).toLocaleDateString('en-US', { 
@@ -440,14 +435,6 @@ export default function ScoresPage() {
                           {awayLockStatus.lockAndLoad && (
                             <Sparkles className="w-3 h-3 text-purple-500" />
                           )}
-                          {game.isCompleted && game.awayOwner && (
-                            <div className="flex items-center gap-1 ml-1">
-                              <Flame className="w-3 h-3 text-orange-500" />
-                              <span className="text-xs font-medium text-orange-600">
-                                {calculateTeamMokPoints(game, false)}
-                              </span>
-                            </div>
-                          )}
                         </div>
                       </div>
                       <div className={`text-xl font-bold ${awayWin ? 'text-foreground' : 'text-muted-foreground'}`}>
@@ -487,14 +474,6 @@ export default function ScoresPage() {
                           {homeLockStatus.lockAndLoad && (
                             <Sparkles className="w-3 h-3 text-purple-500" />
                           )}
-                          {game.isCompleted && game.homeOwner && (
-                            <div className="flex items-center gap-1 ml-1">
-                              <Flame className="w-3 h-3 text-orange-500" />
-                              <span className="text-xs font-medium text-orange-600">
-                                {calculateTeamMokPoints(game, true)}
-                              </span>
-                            </div>
-                          )}
                         </div>
                       </div>
                       <div className={`text-xl font-bold ${homeWin ? 'text-foreground' : 'text-muted-foreground'}`}>
@@ -509,13 +488,13 @@ export default function ScoresPage() {
                       {isBlowout && (
                         <Badge variant="secondary" className="text-xs">
                           <Trophy className="w-3 h-3 mr-1" />
-                          Blowout (+1)
+                          Blowout
                         </Badge>
                       )}
                       {isShutout && (
                         <Badge variant="secondary" className="text-xs">
                           <Target className="w-3 h-3 mr-1" />
-                          Shutout (+1)
+                          Shutout
                         </Badge>
                       )}
                     </div>
