@@ -419,7 +419,11 @@ export default function StablePage() {
                             <Button 
                               size="sm"
                               variant="outline"
-                              className="flex-1 h-9 text-sm border-amber-200 dark:border-amber-800 text-amber-700 dark:text-amber-300 hover:bg-amber-50 dark:hover:bg-amber-950/20 disabled:opacity-30"
+                              className={`flex-1 h-9 text-sm ${
+                                isTeamLocked 
+                                  ? 'border-orange-400 dark:border-orange-500 text-orange-700 dark:text-orange-300 bg-orange-50 dark:bg-orange-950/20 hover:bg-orange-100 dark:hover:bg-orange-950/30' 
+                                  : 'border-amber-200 dark:border-amber-800 text-amber-700 dark:text-amber-300 hover:bg-amber-50 dark:hover:bg-amber-950/20'
+                              } disabled:opacity-30`}
                               disabled={!isTeamLocked || lockTeamMutation.isPending}
                               onClick={() => isTeamLocked && handleLockAndLoadClick(team)}
                             >
