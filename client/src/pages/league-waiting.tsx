@@ -181,8 +181,8 @@ export function LeagueWaiting() {
         <div className="min-h-[70vh] flex items-center justify-center">
           <div className="text-center space-y-4">
             <p className="text-muted-foreground">No league selected</p>
-            <Button onClick={() => setLocation('/')}>
-              Return to Dashboard
+            <Button onClick={() => setLocation('/leagues')}>
+              Back to Leagues
             </Button>
           </div>
         </div>
@@ -253,9 +253,9 @@ export function LeagueWaiting() {
               <Button onClick={() => {
                 // Clear any cached league data and redirect
                 queryClient.invalidateQueries({ queryKey: ['/api/leagues/user'] });
-                setLocation('/?stay=true');
+                setLocation('/leagues');
               }}>
-                Return to Dashboard
+                Back to Leagues
               </Button>
               {!isAuthError && (
                 <Button variant="outline" onClick={() => window.location.reload()}>
@@ -292,10 +292,10 @@ export function LeagueWaiting() {
         description: "You have successfully left the league",
       });
       
-      // Clear all league-related cache and redirect
+      // Clear all league-related cache and redirect to leagues page
       queryClient.invalidateQueries({ queryKey: ['/api/leagues/user'] });
       queryClient.removeQueries({ queryKey: [`/api/leagues/${leagueId}`] });
-      setLocation('/?stay=true');
+      setLocation('/leagues');
     } catch (error) {
       toast({
         title: "Error",
