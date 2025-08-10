@@ -1,0 +1,67 @@
+Content script initialized successfully.
+index-DASBzzxz.js:367 🏗️ Build Info: {version: 1754853066333, date: '2025-08-10T19:11:06.333Z', env: 'production', hash: 'me627fx9'}
+index-DASBzzxz.js:367 📦 Version: me627fx9
+index-DASBzzxz.js:367 📅 Built: 2025-08-10T19:11:06.333Z
+index-DASBzzxz.js:367 🔧 Environment: production
+index-DASBzzxz.js:318 [Auth] Token check - Has token: true Has user: false Loading: true
+index-DASBzzxz.js:318 [SW Hook] EMERGENCY: Unregistering all existing service workers
+index-DASBzzxz.js:318 [SW Hook] Found 1 existing registrations
+index-DASBzzxz.js:318 [SW Hook] Unregistering existing service worker
+index-DASBzzxz.js:318 [SW Hook] Found 1 caches to delete
+index-DASBzzxz.js:318 [SW Hook] Deleting cache: mok-sports-dynamic-v1.7.0-nuclear-unregister-1754852879629
+scores:1 Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner.
+index-DASBzzxz.js:318 [Auth] Token check - Has token: true Has user: true Loading: false
+index-DASBzzxz.js:318 [AutoPushRefresh] Legacy hook delegating to SubscriptionManager
+index-DASBzzxz.js:318 [SW Hook] Registering fresh service worker: /sw.js?v=1754853066472&r=0.2484111214013942
+sw.js?v=1754853066472&r=0.2484111214013942:2 [SW] NUCLEAR OPTION - Emergency service worker loading
+sw.js?v=1754853066472&r=0.2484111214013942:88 [SW] Service worker starting, version: v1.7.0-nuclear-unregister-1754853066532
+sw.js?v=1754853066472&r=0.2484111214013942:305 [SW] Service worker script loaded successfully
+index-DASBzzxz.js:318 [SW Hook] Service worker registered successfully
+sw.js?v=1754853066472&r=0.2484111214013942:19 [SW] EMERGENCY INSTALL - Clearing all caches and forcing activation
+sw.js?v=1754853066472&r=0.2484111214013942:92 [SW] Installing service worker, version: v1.7.0-nuclear-unregister-1754853066532
+sw.js?v=1754853066472&r=0.2484111214013942:22 [SW] Found caches to delete: []
+sw.js?v=1754853066472&r=0.2484111214013942:30 [SW] All caches deleted - skipping waiting
+sw.js?v=1754853066472&r=0.2484111214013942:96 [SW] Caching static files
+sw.js?v=1754853066472&r=0.2484111214013942:99 [SW] Static files cached successfully
+sw.js?v=1754853066472&r=0.2484111214013942:41 [SW] EMERGENCY ACTIVATE - Taking control of all clients
+sw.js?v=1754853066472&r=0.2484111214013942:110 [SW] Activating service worker, version: v1.7.0-nuclear-unregister-1754853066532
+sw.js?v=1754853066472&r=0.2484111214013942:46 [SW] Deleting remaining cache: mok-sports-static-v1.7.0-nuclear-unregister-1754853066532
+sw.js?v=1754853066472&r=0.2484111214013942:116 [SW] Found caches: ['mok-sports-static-v1.7.0-nuclear-unregister-1754853066532']
+sw.js?v=1754853066472&r=0.2484111214013942:129 [SW] Service worker activated and controlling all clients
+sw.js?v=1754853066472&r=0.2484111214013942:51 [SW] Claiming all clients immediately
+index-DASBzzxz.js:367 DEBUG BAL-KC Game: KC vs BAL
+index-DASBzzxz.js:367 DEBUG Scores: Home: null (type: object ) Away: null (type: object )
+index-DASBzzxz.js:367 DEBUG MokPoints: Home: 0 Away: 0
+index-DASBzzxz.js:367 DEBUG All game data keys: (17) ['awayLockAndLoad', 'awayLocked', 'awayMokPoints', 'awayOwner', 'awayOwnerName', 'awayScore', 'awayTeam', 'gameDate', 'homeLockAndLoad', 'homeLocked', 'homeMokPoints', 'homeOwner', 'homeOwnerName', 'homeScore', 'homeTeam', 'id', 'isCompleted']
+index-DASBzzxz.js:367 DEBUG BAL-KC Game: KC vs BAL
+index-DASBzzxz.js:367 DEBUG Scores: Home: null (type: object ) Away: null (type: object )
+index-DASBzzxz.js:367 DEBUG MokPoints: Home: 0 Away: 0
+index-DASBzzxz.js:367 DEBUG All game data keys: (17) ['awayLockAndLoad', 'awayLocked', 'awayMokPoints', 'awayOwner', 'awayOwnerName', 'awayScore', 'awayTeam', 'gameDate', 'homeLockAndLoad', 'homeLocked', 'homeMokPoints', 'homeOwner', 'homeOwnerName', 'homeScore', 'homeTeam', 'id', 'isCompleted']
+index-DASBzzxz.js:367 DEBUG BAL-KC Game: KC vs BAL
+index-DASBzzxz.js:367 DEBUG Scores: Home: null (type: object ) Away: null (type: object )
+index-DASBzzxz.js:367 DEBUG MokPoints: Home: 0 Away: 0
+index-DASBzzxz.js:367 DEBUG All game data keys: (17) ['awayLockAndLoad', 'awayLocked', 'awayMokPoints', 'awayOwner', 'awayOwnerName', 'awayScore', 'awayTeam', 'gameDate', 'homeLockAndLoad', 'homeLocked', 'homeMokPoints', 'homeOwner', 'homeOwnerName', 'homeScore', 'homeTeam', 'id', 'isCompleted']
+index-DASBzzxz.js:367 DEBUG BAL-KC Game: KC vs BAL
+index-DASBzzxz.js:367 DEBUG Scores: Home: null (type: object ) Away: null (type: object )
+index-DASBzzxz.js:367 DEBUG MokPoints: Home: 0 Away: 0
+index-DASBzzxz.js:367 DEBUG All game data keys: (17) ['awayLockAndLoad', 'awayLocked', 'awayMokPoints', 'awayOwner', 'awayOwnerName', 'awayScore', 'awayTeam', 'gameDate', 'homeLockAndLoad', 'homeLocked', 'homeMokPoints', 'homeOwner', 'homeOwnerName', 'homeScore', 'homeTeam', 'id', 'isCompleted']
+index-DASBzzxz.js:367 DEBUG BAL-KC Game: KC vs BAL
+index-DASBzzxz.js:367 DEBUG Scores: Home: null (type: object ) Away: null (type: object )
+index-DASBzzxz.js:367 DEBUG MokPoints: Home: 0 Away: 0
+index-DASBzzxz.js:367 DEBUG All game data keys: (17) ['awayLockAndLoad', 'awayLocked', 'awayMokPoints', 'awayOwner', 'awayOwnerName', 'awayScore', 'awayTeam', 'gameDate', 'homeLockAndLoad', 'homeLocked', 'homeMokPoints', 'homeOwner', 'homeOwnerName', 'homeScore', 'homeTeam', 'id', 'isCompleted']
+index-DASBzzxz.js:367 DEBUG BAL-KC Game: KC vs BAL
+index-DASBzzxz.js:367 DEBUG Scores: Home: null (type: object ) Away: null (type: object )
+index-DASBzzxz.js:367 DEBUG MokPoints: Home: 0 Away: 0
+index-DASBzzxz.js:367 DEBUG All game data keys: (17) ['awayLockAndLoad', 'awayLocked', 'awayMokPoints', 'awayOwner', 'awayOwnerName', 'awayScore', 'awayTeam', 'gameDate', 'homeLockAndLoad', 'homeLocked', 'homeMokPoints', 'homeOwner', 'homeOwnerName', 'homeScore', 'homeTeam', 'id', 'isCompleted']
+index-DASBzzxz.js:367 DEBUG BAL-KC Game: KC vs BAL
+index-DASBzzxz.js:367 DEBUG Scores: Home: null (type: object ) Away: null (type: object )
+index-DASBzzxz.js:367 DEBUG MokPoints: Home: 0 Away: 0
+index-DASBzzxz.js:367 DEBUG All game data keys: (17) ['awayLockAndLoad', 'awayLocked', 'awayMokPoints', 'awayOwner', 'awayOwnerName', 'awayScore', 'awayTeam', 'gameDate', 'homeLockAndLoad', 'homeLocked', 'homeMokPoints', 'homeOwner', 'homeOwnerName', 'homeScore', 'homeTeam', 'id', 'isCompleted']
+index-DASBzzxz.js:367 DEBUG BAL-KC Game: KC vs BAL
+index-DASBzzxz.js:367 DEBUG Scores: Home: null (type: object ) Away: null (type: object )
+index-DASBzzxz.js:367 DEBUG MokPoints: Home: 0 Away: 0
+index-DASBzzxz.js:367 DEBUG All game data keys: (17) ['awayLockAndLoad', 'awayLocked', 'awayMokPoints', 'awayOwner', 'awayOwnerName', 'awayScore', 'awayTeam', 'gameDate', 'homeLockAndLoad', 'homeLocked', 'homeMokPoints', 'homeOwner', 'homeOwnerName', 'homeScore', 'homeTeam', 'id', 'isCompleted']
+index-DASBzzxz.js:367 DEBUG BAL-KC Game: KC vs BAL
+index-DASBzzxz.js:367 DEBUG Scores: Home: null (type: object ) Away: null (type: object )
+index-DASBzzxz.js:367 DEBUG MokPoints: Home: 0 Away: 0
+index-DASBzzxz.js:367 DEBUG All game data keys: (17) ['awayLockAndLoad', 'awayLocked', 'awayMokPoints', 'awayOwner', 'awayOwnerName', 'awayScore', 'awayTeam', 'gameDate', 'homeLockAndLoad', 'homeLocked', 'homeMokPoints', 'homeOwner', 'homeOwnerName', 'homeScore', 'homeTeam', 'id', 'isCompleted']
