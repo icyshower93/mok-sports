@@ -158,7 +158,7 @@ async function fetchNFLSchedule(season: number = 2024): Promise<RapidAPIGame[]> 
     `https://api-american-football.p.rapidapi.com/fixtures?league=1&season=${season}`,
   ];
 
-  // Try RapidAPI endpoints first
+  // Try RapidAPI endpoints first (since you're paying $20/month for this)
   for (const endpoint of rapidAPIEndpoints) {
     try {
       console.log(`[Schedule Import] Trying RapidAPI endpoint: ${endpoint}`);
@@ -167,11 +167,16 @@ async function fetchNFLSchedule(season: number = 2024): Promise<RapidAPIGame[]> 
       if (response.ok) {
         const data = await response.json();
         if (data.response && data.response.length > 0) {
-          console.log(`[Schedule Import] Success! Fetched ${data.response.length} games from RapidAPI`);
+          console.log(`[Schedule Import] ✅ SUCCESS! Fetched ${data.response.length} games from RapidAPI (paid service)`);
           return data.response;
         }
       } else {
-        console.log(`[Schedule Import] RapidAPI endpoint failed: ${response.status} ${response.statusText}`);
+        const errorText = await response.text();
+        console.log(`[Schedule Import] ❌ RapidAPI failed: ${response.status} ${response.statusText} - ${errorText}`);
+        
+        if (response.status === 403 && errorText.includes('not subscribed')) {
+          console.log(`[Schedule Import] 🚨 BILLING ISSUE: Your $20/month RapidAPI subscription appears inactive!`);
+        }
       }
     } catch (error) {
       console.log(`[Schedule Import] RapidAPI endpoint error:`, error);
@@ -179,10 +184,11 @@ async function fetchNFLSchedule(season: number = 2024): Promise<RapidAPIGame[]> 
     }
   }
 
-  // If RapidAPI fails, fall back to ESPN API
-  console.log(`[Schedule Import] RapidAPI unavailable, falling back to ESPN API...`);
+  // If RapidAPI fails, use ESPN as backup (but notify user)
+  console.log(`[Schedule Import] ⚠️  Using FREE ESPN API as backup (since paid RapidAPI failed)`);
   try {
     const espnGames = await fetchNFLScheduleFromESPN(season);
+    console.log(`[Schedule Import] ℹ️  Consider checking your RapidAPI subscription - you're paying $20/month but using free backup`);
     return espnGames as RapidAPIGame[];
   } catch (error) {
     console.error('[Schedule Import] Both RapidAPI and ESPN failed:', error);
