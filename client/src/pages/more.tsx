@@ -24,10 +24,11 @@ export default function MorePage() {
     });
     
     if (userLeagues && userLeagues.length > 0) {
-      // Navigate to the first league's waiting room for testing
-      const firstLeague = userLeagues[0];
-      const targetPath = `/league/waiting?id=${firstLeague.id}`;
-      console.log('Navigating to:', targetPath);
+      // Find the EEW2YU league specifically, or fall back to first league
+      const eewLeague = userLeagues.find((league: any) => league.joinCode === 'EEW2YU');
+      const targetLeague = eewLeague || userLeagues[0];
+      const targetPath = `/league/waiting?id=${targetLeague.id}`;
+      console.log('Navigating to:', targetPath, 'League:', targetLeague.joinCode);
       navigate(targetPath);
     } else {
       // If no leagues, go to leagues page
