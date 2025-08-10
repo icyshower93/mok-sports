@@ -8,11 +8,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { queryClient } from "@/lib/queryClient";
-import { Calendar, Clock, Play, Pause, SkipForward, Settings, Trophy, Target } from "lucide-react";
+import { Calendar, Clock, Play, Pause, SkipForward, Settings, Trophy, Target, ArrowLeft, Home } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useLocation } from "wouter";
 
 export default function AdminPanel() {
   const { toast } = useToast();
+  const [, navigate] = useLocation();
   const [selectedWeek, setSelectedWeek] = useState("1");
   const [selectedDay, setSelectedDay] = useState("sunday");
   const [gameTime, setGameTime] = useState("13:00");
@@ -121,12 +123,23 @@ export default function AdminPanel() {
     <div className="min-h-screen bg-background p-6">
       <div className="max-w-6xl mx-auto space-y-6">
         {/* Header */}
-        <div className="flex items-center space-x-3">
-          <Settings className="w-8 h-8 text-primary" />
-          <div>
-            <h1 className="text-3xl font-bold">Admin Panel</h1>
-            <p className="text-muted-foreground">Control time progression and game simulation</p>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <Settings className="w-8 h-8 text-primary" />
+            <div>
+              <h1 className="text-3xl font-bold">Admin Panel</h1>
+              <p className="text-muted-foreground">Control time progression and game simulation</p>
+            </div>
           </div>
+          <Button 
+            variant="outline" 
+            onClick={() => navigate('/main')}
+            className="flex items-center space-x-2"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            <Home className="w-4 h-4" />
+            <span>Back to Home</span>
+          </Button>
         </div>
 
         <div className="grid gap-6 md:grid-cols-2">
