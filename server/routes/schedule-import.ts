@@ -158,7 +158,7 @@ async function fetchNFLSchedule(season: number = 2024): Promise<RapidAPIGame[]> 
     `https://api-american-football.p.rapidapi.com/fixtures?league=1&season=${season}`,
   ];
 
-  // Try RapidAPI endpoints first (since you're paying $20/month for this)
+  // Try RapidAPI endpoints first (since you're paying for this)
   for (const endpoint of rapidAPIEndpoints) {
     try {
       console.log(`[Schedule Import] Trying RapidAPI endpoint: ${endpoint}`);
@@ -167,15 +167,16 @@ async function fetchNFLSchedule(season: number = 2024): Promise<RapidAPIGame[]> 
       if (response.ok) {
         const data = await response.json();
         if (data.response && data.response.length > 0) {
-          console.log(`[Schedule Import] ✅ SUCCESS! Fetched ${data.response.length} games from RapidAPI (paid service)`);
+          console.log(`[Schedule Import] SUCCESS! Fetched ${data.response.length} games from RapidAPI (paid service)`);
           return data.response;
         }
       } else {
         const errorText = await response.text();
-        console.log(`[Schedule Import] ❌ RapidAPI failed: ${response.status} ${response.statusText} - ${errorText}`);
+        console.log(`[Schedule Import] RapidAPI failed: ${response.status} ${response.statusText} - ${errorText}`);
         
         if (response.status === 403 && errorText.includes('not subscribed')) {
-          console.log(`[Schedule Import] 🚨 BILLING ISSUE: Your $20/month RapidAPI subscription appears inactive!`);
+          console.log(`[Schedule Import] SUBSCRIPTION ISSUE: You need to subscribe to the API-American-Football API on RapidAPI first`);
+          console.log(`[Schedule Import] Visit: https://rapidapi.com/api-sports/api/api-american-football/pricing`);
         }
       }
     } catch (error) {
