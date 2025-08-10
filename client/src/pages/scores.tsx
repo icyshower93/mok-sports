@@ -280,7 +280,7 @@ export default function ScoresPage() {
                             <Lock className="w-3 h-3 text-blue-500" />
                           )}
                           {awayLockStatus.lockAndLoad && (
-                            <Zap className="w-3 h-3 text-purple-500" />
+                            <Zap className="w-3 h-3 text-orange-500" />
                           )}
                         </div>
                       </div>
@@ -319,7 +319,7 @@ export default function ScoresPage() {
                             <Lock className="w-3 h-3 text-blue-500" />
                           )}
                           {homeLockStatus.lockAndLoad && (
-                            <Zap className="w-3 h-3 text-purple-500" />
+                            <Zap className="w-3 h-3 text-orange-500" />
                           )}
                         </div>
                       </div>
