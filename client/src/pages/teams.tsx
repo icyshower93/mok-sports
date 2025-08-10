@@ -436,22 +436,30 @@ export default function StablePage() {
                             )}
                           </Button>
                           
-                          {team.lockAndLoadAvailable && (
+                          {/* Show Lock & Load button if available OR if already used */}
+                          {(team.lockAndLoadAvailable || team.isLockAndLoad) && (
                             <Button 
                               size="sm"
                               variant="outline"
                               className={`flex-1 h-9 text-sm ${
-                                isTeamLocked 
-                                  ? 'border-orange-400 dark:border-orange-500 text-orange-700 dark:text-orange-300 bg-orange-50 dark:bg-orange-950/20 hover:bg-orange-100 dark:hover:bg-orange-950/30' 
-                                  : 'border-amber-200 dark:border-amber-800 text-amber-700 dark:text-amber-300 hover:bg-amber-50 dark:hover:bg-amber-950/20'
-                              } disabled:opacity-30`}
-                              disabled={!isTeamLocked || lockTeamMutation.isPending}
-                              onClick={() => isTeamLocked && handleLockAndLoadClick(team)}
+                                team.isLockAndLoad
+                                  ? 'border-red-400 dark:border-red-500 text-red-700 dark:text-red-300 bg-red-50 dark:bg-red-950/20 cursor-not-allowed'
+                                  : isTeamLocked 
+                                    ? 'border-orange-400 dark:border-orange-500 text-orange-700 dark:text-orange-300 bg-orange-50 dark:bg-orange-950/20 hover:bg-orange-100 dark:hover:bg-orange-950/30' 
+                                    : 'border-amber-200 dark:border-amber-800 text-amber-700 dark:text-amber-300 hover:bg-amber-50 dark:hover:bg-amber-950/20'
+                              } disabled:opacity-50`}
+                              disabled={team.isLockAndLoad || !isTeamLocked || lockTeamMutation.isPending}
+                              onClick={() => !team.isLockAndLoad && isTeamLocked && handleLockAndLoadClick(team)}
                             >
                               {lockTeamMutation.isPending && selectedTeam?.id === team.id ? (
                                 <>
                                   <div className="w-3 h-3 mr-2 animate-spin rounded-full border border-amber-600 border-t-transparent" />
                                   Loading...
+                                </>
+                              ) : team.isLockAndLoad ? (
+                                <>
+                                  <Zap className="w-3 h-3 mr-2" />
+                                  2x Active
                                 </>
                               ) : (
                                 <>
