@@ -63,18 +63,25 @@ export default function MainPage() {
   const isLockWindowOpen = true;
 
   // Transform stable data into user teams with lock/load state
-  const userTeams = (stableTeams as any[]).map((stable: any) => ({
-    id: stable.id,
-    nflTeam: stable.nflTeam,
-    locksRemaining: 4 - (stable.locksUsed || 0),
-    lockAndLoadAvailable: !stable.lockAndLoadUsed,
-    upcomingOpponent: "vs OPP",
-    isBye: false,
-    weeklyRecord: "0-0",
-    acquiredVia: stable.acquiredVia,
-    acquiredAt: stable.acquiredAt,
-    isLocked: false // Would track current week lock status
-  }));
+  const userTeams = (stableTeams as any[]).map((stable: any, index: number) => {
+    // Sample spread data - would come from real odds API
+    const spreads = [-3.5, +7, -1.5, +10.5, -6];
+    const opponents = ["vs LAR", "@ MIA", "vs CHI", "@ SF", "vs NYJ"];
+    
+    return {
+      id: stable.id,
+      nflTeam: stable.nflTeam,
+      locksRemaining: 4 - (stable.locksUsed || 0),
+      lockAndLoadAvailable: !stable.lockAndLoadUsed,
+      upcomingOpponent: opponents[index] || "vs OPP",
+      pointSpread: spreads[index] || 0,
+      isBye: false,
+      weeklyRecord: "0-0",
+      acquiredVia: stable.acquiredVia,
+      acquiredAt: stable.acquiredAt,
+      isLocked: false // Would track current week lock status
+    };
+  });
 
   const userPoints = 12.5;
   const userRank = 1;
@@ -187,8 +194,13 @@ export default function MainPage() {
                                 <div className="font-medium text-sm truncate">
                                   {team.nflTeam.city} {team.nflTeam.name}
                                 </div>
-                                <div className="text-xs text-muted-foreground">
-                                  {team.upcomingOpponent}
+                                <div className="flex items-center space-x-2 text-xs">
+                                  <span className="text-muted-foreground">
+                                    {team.upcomingOpponent}
+                                  </span>
+                                  <span className="text-xs px-1.5 py-0.5 rounded bg-muted/50 font-mono">
+                                    {team.pointSpread > 0 ? '+' : ''}{team.pointSpread}
+                                  </span>
                                 </div>
                               </div>
                             </div>
