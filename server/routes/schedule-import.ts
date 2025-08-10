@@ -70,6 +70,13 @@ const NFL_TEAM_MAPPING: Record<string, string> = {
   'Washington Commanders': 'WAS'
 };
 
+// Tank01 API team code mapping - some codes differ from our database
+const TANK01_TEAM_MAPPING: Record<string, string> = {
+  'WSH': 'WAS',  // Washington uses WSH in Tank01, WAS in our DB
+  'TB': 'TB',    // Tampa Bay is consistent
+  // All other teams should match directly
+};
+
 async function fetchNFLScheduleFromESPN(season: number = 2024): Promise<any[]> {
   try {
     console.log(`[Schedule Import] Fetching 2024 NFL schedule from ESPN API...`);
@@ -144,65 +151,81 @@ async function fetchNFLScheduleFromESPN(season: number = 2024): Promise<any[]> {
 }
 
 async function fetchNFLSchedule(season: number = 2024): Promise<RapidAPIGame[]> {
-  // First, try RapidAPI with multiple endpoints
-  const rapidAPIOptions = {
+  // Tank01 NFL Live API configuration (your subscribed service)
+  const tankAPIOptions = {
     method: 'GET',
     headers: {
       'X-RapidAPI-Key': '005fffe3bemsh0ccee48c9d8de37p1274c5jsn792f60867fc1',
-      'X-RapidAPI-Host': 'api-american-football.p.rapidapi.com'
+      'X-RapidAPI-Host': 'tank01-nfl-live-in-game-real-time-statistics-nfl.p.rapidapi.com'
     }
   };
 
-  const rapidAPIEndpoints = [
-    `https://api-american-football.p.rapidapi.com/games?league=1&season=${season}`,
-    `https://api-american-football.p.rapidapi.com/fixtures?league=1&season=${season}`,
-  ];
-
-  // Try RapidAPI endpoints first (since you're paying for this)
-  for (const endpoint of rapidAPIEndpoints) {
+  // Try Tank01 API first - fetch all weeks
+  const allGames: any[] = [];
+  
+  console.log(`[Schedule Import] Using Tank01 NFL Live API (your subscribed service)`);
+  
+  for (let week = 1; week <= 18; week++) {
     try {
-      console.log(`[Schedule Import] Trying RapidAPI endpoint: ${endpoint}`);
-      const response = await fetch(endpoint, rapidAPIOptions);
+      const endpoint = `https://tank01-nfl-live-in-game-real-time-statistics-nfl.p.rapidapi.com/getNFLGamesForWeek?seasonType=reg&week=${week}&season=${season}`;
+      console.log(`[Schedule Import] Fetching Week ${week} from Tank01...`);
+      
+      const response = await fetch(endpoint, tankAPIOptions);
       
       if (response.ok) {
         const data = await response.json();
-        if (data.response && data.response.length > 0) {
-          console.log(`[Schedule Import] SUCCESS! Fetched ${data.response.length} games from RapidAPI (paid service)`);
-          return data.response;
+        if (data.statusCode === 200 && data.body && data.body.length > 0) {
+          allGames.push(...data.body);
+          console.log(`[Schedule Import] Week ${week}: Found ${data.body.length} games`);
+        } else {
+          console.log(`[Schedule Import] Week ${week}: No games found`);
         }
       } else {
         const errorText = await response.text();
-        console.log(`[Schedule Import] RapidAPI failed: ${response.status} ${response.statusText} - ${errorText}`);
+        console.log(`[Schedule Import] Tank01 Week ${week} failed: ${response.status} ${response.statusText}`);
         
-        if (response.status === 403 && errorText.includes('not subscribed')) {
-          console.log(`[Schedule Import] SUBSCRIPTION ISSUE: You need to subscribe to the API-American-Football API on RapidAPI first`);
-          console.log(`[Schedule Import] Visit: https://rapidapi.com/api-sports/api/api-american-football/pricing`);
+        if (response.status === 403) {
+          console.log(`[Schedule Import] Tank01 subscription issue - falling back to ESPN`);
+          break;
         }
       }
+      
+      // Small delay to respect rate limits
+      await new Promise(resolve => setTimeout(resolve, 50));
+      
     } catch (error) {
-      console.log(`[Schedule Import] RapidAPI endpoint error:`, error);
+      console.log(`[Schedule Import] Tank01 Week ${week} error:`, error);
       continue;
     }
   }
+  
+  if (allGames.length > 0) {
+    console.log(`[Schedule Import] SUCCESS! Fetched ${allGames.length} games from Tank01 NFL Live API`);
+    return allGames;
+  }
 
-  // If RapidAPI fails, use ESPN as backup (but notify user)
-  console.log(`[Schedule Import] ⚠️  Using FREE ESPN API as backup (since paid RapidAPI failed)`);
+  // If Tank01 fails, use ESPN as backup
+  console.log(`[Schedule Import] Tank01 failed, using ESPN API as backup...`);
   try {
     const espnGames = await fetchNFLScheduleFromESPN(season);
-    console.log(`[Schedule Import] ℹ️  Consider checking your RapidAPI subscription - you're paying $20/month but using free backup`);
+    console.log(`[Schedule Import] Successfully using ESPN backup with ${espnGames.length} games`);
     return espnGames as RapidAPIGame[];
   } catch (error) {
-    console.error('[Schedule Import] Both RapidAPI and ESPN failed:', error);
+    console.error('[Schedule Import] Both Tank01 and ESPN failed:', error);
     throw new Error('Unable to fetch NFL schedule from any source. Please check API availability.');
   }
 }
 
 async function convertToOurFormat(apiGame: any, teamMapping: Record<string, string>): Promise<any> {
-  // Handle both RapidAPI format and ESPN format
+  // Handle Tank01, ESPN format, and legacy formats
   let awayTeam, homeTeam;
   
-  if (apiGame.teams?.away?.name) {
-    // RapidAPI format
+  if (apiGame.away && apiGame.home && apiGame.gameID) {
+    // Tank01 API format - normalize team codes
+    awayTeam = TANK01_TEAM_MAPPING[apiGame.away] || apiGame.away;
+    homeTeam = TANK01_TEAM_MAPPING[apiGame.home] || apiGame.home;
+  } else if (apiGame.teams?.away?.name) {
+    // Legacy RapidAPI format
     awayTeam = NFL_TEAM_MAPPING[apiGame.teams.away.name] || apiGame.teams.away.name;
     homeTeam = NFL_TEAM_MAPPING[apiGame.teams.home.name] || apiGame.teams.home.name;
   } else if (apiGame.teams?.away?.abbreviation) {
@@ -213,9 +236,17 @@ async function convertToOurFormat(apiGame: any, teamMapping: Record<string, stri
     throw new Error('Unknown API game format');
   }
 
-  const gameDate = apiGame.timestamp 
-    ? new Date(apiGame.timestamp * 1000) 
-    : new Date(apiGame.date);
+  // Handle different date formats
+  let gameDate;
+  if (apiGame.gameDate) {
+    // Tank01 format: "20240905" -> convert to proper date
+    const dateStr = apiGame.gameDate.toString();
+    gameDate = new Date(`${dateStr.slice(0,4)}-${dateStr.slice(4,6)}-${dateStr.slice(6,8)}`);
+  } else if (apiGame.timestamp) {
+    gameDate = new Date(apiGame.timestamp * 1000);
+  } else {
+    gameDate = new Date(apiGame.date);
+  }
 
   // Get actual team IDs from the mapping
   const homeTeamId = teamMapping[homeTeam];
@@ -225,15 +256,31 @@ async function convertToOurFormat(apiGame: any, teamMapping: Record<string, stri
     throw new Error(`Team mapping not found for ${homeTeam} or ${awayTeam}`);
   }
 
+  // Extract week number from Tank01 format ("Week 1" -> 1)
+  let weekNumber;
+  if (apiGame.gameWeek) {
+    weekNumber = parseInt(apiGame.gameWeek.replace('Week ', ''));
+  } else {
+    weekNumber = apiGame.week;
+  }
+
+  // Handle Tank01 completion status
+  let isCompleted = false;
+  if (apiGame.gameStatus === 'Final' || apiGame.gameStatus === 'Completed') {
+    isCompleted = true;
+  } else if (apiGame.status?.short === 'FT') {
+    isCompleted = true;
+  }
+
   return {
-    season: apiGame.season,
-    week: apiGame.week,
+    season: parseInt(apiGame.season) || 2024,
+    week: weekNumber,
     gameDate: gameDate,
     homeTeamId: homeTeamId,
     awayTeamId: awayTeamId,
     homeScore: apiGame.scores?.home || null,
     awayScore: apiGame.scores?.away || null,
-    isCompleted: apiGame.status.short === 'FT', // FT = Full Time
+    isCompleted: isCompleted,
     isTie: apiGame.scores?.home === apiGame.scores?.away && apiGame.scores?.home !== undefined && apiGame.scores?.away !== undefined,
     winnerTeamId: apiGame.scores && apiGame.scores.home !== undefined && apiGame.scores.away !== undefined && apiGame.scores.home !== apiGame.scores.away 
       ? (apiGame.scores.home > apiGame.scores.away ? homeTeamId : awayTeamId)
@@ -262,7 +309,7 @@ router.post('/import-schedule', async (req, res) => {
     const teams = teamQuery.rows;
     
     const teamMapping = teams.reduce((acc, team: any) => {
-      acc[team.code] = team.id;
+      acc[String(team.code)] = String(team.id);
       return acc;
     }, {} as Record<string, string>);
     
