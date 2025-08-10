@@ -294,18 +294,16 @@ export default function ScoresPage() {
                           {awayLockStatus.lockAndLoad && (
                             <Zap className="w-3 h-3 text-orange-500" />
                           )}
+                          {game.isCompleted && game.awayMokPoints && game.awayMokPoints > 0 && (
+                            <div className="flex items-center space-x-1">
+                              <Flame className="w-3 h-3 text-purple-500" />
+                              <span className="text-xs text-purple-600 font-medium">+{game.awayMokPoints}</span>
+                            </div>
+                          )}
                         </div>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <div className={`text-xl font-bold ${awayWin ? 'text-foreground' : 'text-muted-foreground'}`}>
-                          {game.awayScore}
-                        </div>
-                        {game.isCompleted && game.awayMokPoints && game.awayMokPoints > 0 && (
-                          <div className="flex items-center space-x-1">
-                            <Flame className="w-3 h-3 text-purple-500" />
-                            <span className="text-xs text-purple-600 font-medium">+{game.awayMokPoints}</span>
-                          </div>
-                        )}
+                      <div className={`text-xl font-bold ${awayWin ? 'text-foreground' : 'text-muted-foreground'}`}>
+                        {game.awayScore}
                       </div>
                     </div>
 
@@ -335,18 +333,16 @@ export default function ScoresPage() {
                           {homeLockStatus.lockAndLoad && (
                             <Zap className="w-3 h-3 text-orange-500" />
                           )}
+                          {game.isCompleted && game.homeMokPoints && game.homeMokPoints > 0 && (
+                            <div className="flex items-center space-x-1">
+                              <Flame className="w-3 h-3 text-purple-500" />
+                              <span className="text-xs text-purple-600 font-medium">+{game.homeMokPoints}</span>
+                            </div>
+                          )}
                         </div>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <div className={`text-xl font-bold ${homeWin ? 'text-foreground' : 'text-muted-foreground'}`}>
-                          {game.homeScore}
-                        </div>
-                        {game.isCompleted && game.homeMokPoints && game.homeMokPoints > 0 && (
-                          <div className="flex items-center space-x-1">
-                            <Flame className="w-3 h-3 text-purple-500" />
-                            <span className="text-xs text-purple-600 font-medium">+{game.homeMokPoints}</span>
-                          </div>
-                        )}
+                      <div className={`text-xl font-bold ${homeWin ? 'text-foreground' : 'text-muted-foreground'}`}>
+                        {game.homeScore}
                       </div>
                     </div>
                   </div>
