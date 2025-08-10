@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -50,39 +50,63 @@ export default function MainPage() {
     enabled: !!user,
   });
 
-  // Fetch stable teams for selected league
-  const { data: stableTeams = [] } = useQuery({
-    queryKey: [`/api/user/stable/${selectedLeague}`],
+  // Fetch dashboard data for selected league
+  const { data: dashboardData, isLoading: dashboardLoading } = useQuery({
+    queryKey: [`/api/leagues/${selectedLeague}/dashboard/${selectedWeek}`],
     enabled: !!selectedLeague,
   });
 
   // Set first league as default selection
-  React.useEffect(() => {
+  useEffect(() => {
     if ((leagues as any[]).length > 0 && !selectedLeague) {
       setSelectedLeague((leagues as any[])[0].id);
     }
   }, [leagues, selectedLeague]);
 
-  const userPoints = 12.5;
-  const userRank = 1;
-  const weeklyPrize = 250;
+  // Extract real data from dashboard API
+  const userPoints = dashboardData?.userStats?.totalPoints || 0;
+  const userRank = dashboardData?.userStats?.rank || 0;
+  const weeklyPrize = dashboardData?.weeklyPrize || 0;
+  const weeklyStandings = dashboardData?.weeklyStandings || [];
+  const gamesInProgress = dashboardData?.gamesInProgress || 0;
 
   // Debug logging
   console.log('Main page debug:', {
     user: user?.name,
     leagues: (leagues as any[])?.length || 0,
     selectedLeague,
-    stableTeams: (stableTeams as any[])?.length || 0,
-    stableTeamsData: (stableTeams as any[])?.map(team => ({
-      nflTeam: team.nflTeam?.code || 'UNKNOWN',
-      acquiredVia: team.acquiredVia,
-      acquiredAt: team.acquiredAt
-    }))
+    dashboardData: dashboardData ? {
+      userRank: dashboardData.userStats?.rank,
+      userPoints: dashboardData.userStats?.totalPoints,
+      weeklyStandings: dashboardData.weeklyStandings?.length,
+      weeklyPrize: dashboardData.weeklyPrize
+    } : null
   });
 
   if (!user) {
     return <div className="min-h-screen bg-background pb-20 flex items-center justify-center">
       <div>Loading...</div>
+    </div>;
+  }
+
+  if (leaguesLoading) {
+    return <div className="min-h-screen bg-background pb-20 flex items-center justify-center">
+      <div className="w-6 h-6 animate-spin rounded-full border border-muted-foreground border-t-transparent" />
+    </div>;
+  }
+
+  if (!selectedLeague || (leagues as any[]).length === 0) {
+    return <div className="min-h-screen bg-background pb-20">
+      <div className="max-w-lg mx-auto p-4">
+        <div className="text-center py-8">
+          <h3 className="text-lg font-semibold mb-2">No Leagues Found</h3>
+          <p className="text-sm text-muted-foreground mb-4">Join a league to view your dashboard</p>
+          <Button onClick={() => navigate('/leagues')} size="sm">
+            Browse Leagues
+          </Button>
+        </div>
+      </div>
+      <BottomNav />
     </div>;
   }
 
@@ -171,15 +195,17 @@ export default function MainPage() {
               </div>
             </CardHeader>
             <CardContent className="space-y-3">
-              {/* Clean weekly standings */}
-              {[
-                { name: "Sky Evans", avatar: "SE", weekPoints: 4.0, isCurrentUser: true },
-                { name: "Sarah Wilson", avatar: "SW", weekPoints: 3.5, isCurrentUser: false },
-                { name: "Mike Chen", avatar: "MC", weekPoints: 2.0, isCurrentUser: false },
-                { name: "Alex Rodriguez", avatar: "AR", weekPoints: 1.5, isCurrentUser: false },
-                { name: "Emma Davis", avatar: "ED", weekPoints: 1.0, isCurrentUser: false },
-                { name: "Chris Martinez", avatar: "CM", weekPoints: 0.0, isCurrentUser: false }
-              ].map((member, index) => (
+              {/* Real weekly standings */}
+              {dashboardLoading ? (
+                <div className="flex justify-center py-4">
+                  <div className="w-6 h-6 animate-spin rounded-full border border-muted-foreground border-t-transparent" />
+                </div>
+              ) : weeklyStandings.length === 0 ? (
+                <div className="text-center py-4">
+                  <p className="text-sm text-muted-foreground">No standings data available</p>
+                </div>
+              ) : (
+                weeklyStandings.map((member: any, index: number) => (
                 <div key={member.name} className="flex items-center justify-between py-2.5">
                   <div className="flex items-center space-x-3">
                     {/* Rank Badge */}
@@ -210,13 +236,19 @@ export default function MainPage() {
                     <span className="text-sm text-muted-foreground ml-1">pts</span>
                   </div>
                 </div>
-              ))}
+                ))
+              )}
               
               {/* Live Update Status */}
               <div className="mt-4 pt-3 border-t border-border/50">
                 <div className="flex items-center justify-center space-x-2 text-xs text-muted-foreground">
                   <Clock className="w-3.5 h-3.5" />
-                  <span>3 games in progress • Updates live</span>
+                  <span>
+                    {gamesInProgress > 0 
+                      ? `${gamesInProgress} games in progress • Updates live` 
+                      : 'All games complete • Final results'
+                    }
+                  </span>
                 </div>
               </div>
             </CardContent>

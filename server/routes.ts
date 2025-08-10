@@ -828,6 +828,108 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Main page dashboard data endpoint
+  app.get("/api/leagues/:leagueId/dashboard/:week", async (req, res) => {
+    try {
+      const user = await getAuthenticatedUser(req);
+      if (!user) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+
+      const { leagueId, week } = req.params;
+      const weekNum = parseInt(week);
+      
+      // Check if user is member of this league
+      const isMember = await storage.isUserInLeague(user.id, leagueId);
+      if (!isMember) {
+        return res.status(403).json({ message: "Not authorized to view this league" });
+      }
+
+      // Get league details
+      const league = await storage.getLeague(leagueId);
+      if (!league) {
+        return res.status(404).json({ message: "League not found" });
+      }
+
+      // Get all league members for standings calculation
+      const members = await storage.getLeagueMembers(leagueId);
+      
+      // Calculate user's current rank and total points
+      let userStats = null;
+      const weeklyStandings = [];
+      
+      for (const member of members) {
+        const memberUser = await storage.getUser(member.userId);
+        if (!memberUser) continue;
+        
+        // Get member's weekly and total scores
+        const userScores = await db.select()
+          .from(userWeeklyScores)
+          .where(and(
+            eq(userWeeklyScores.userId, member.userId),
+            eq(userWeeklyScores.leagueId, leagueId),
+            eq(userWeeklyScores.season, 2024)
+          ));
+        
+        // Calculate totals
+        const totalPoints = userScores.reduce((sum, score) => sum + score.totalPoints, 0);
+        const weekPoints = userScores.find(score => score.week === weekNum)?.totalPoints || 0;
+        
+        const memberData = {
+          userId: member.userId,
+          name: memberUser.name,
+          avatar: memberUser.name.split(' ').map(n => n[0]).join('').toUpperCase(),
+          totalPoints,
+          weekPoints,
+          isCurrentUser: member.userId === user.id
+        };
+        
+        weeklyStandings.push(memberData);
+        
+        if (member.userId === user.id) {
+          userStats = memberData;
+        }
+      }
+      
+      // Sort standings by week points for weekly view
+      weeklyStandings.sort((a, b) => b.weekPoints - a.weekPoints);
+      
+      // Calculate user rank (by total points)
+      const totalStandings = [...weeklyStandings].sort((a, b) => b.totalPoints - a.totalPoints);
+      const userRank = totalStandings.findIndex(member => member.userId === user.id) + 1;
+      
+      // Get current skins game prize (placeholder - could be from league settings)
+      const weeklyPrize = 250; // TODO: Add weeklyPrize to league schema
+      
+      // Get games in progress count (placeholder - could query real game status)
+      const gamesInProgress = 0; // TODO: Calculate from NFL games API
+      
+      const dashboardData = {
+        league: {
+          id: league.id,
+          name: league.name
+        },
+        userStats: {
+          rank: userRank,
+          totalPoints: userStats?.totalPoints || 0,
+          weekPoints: userStats?.weekPoints || 0
+        },
+        weeklyPrize,
+        weeklyStandings: weeklyStandings.slice(0, 6), // Top 6 for display
+        gamesInProgress,
+        week: weekNum
+      };
+
+      res.json(dashboardData);
+    } catch (error: any) {
+      console.error('[API] Error fetching dashboard data:', error);
+      res.status(500).json({ 
+        message: "Failed to fetch dashboard data",
+        details: error.message 
+      });
+    }
+  });
+
   // User statistics and profile routes
   app.get("/api/user/stats", async (req, res) => {
     try {
