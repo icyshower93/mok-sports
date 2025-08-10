@@ -888,7 +888,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Stable (user teams) routes
+  // Stable (user teams) routes with real opponent data
   app.get("/api/user/stable/:leagueId", async (req, res) => {
     try {
       const user = await getAuthenticatedUser(req);
@@ -906,20 +906,62 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const stable = await storage.getUserStable(user.id, leagueId);
       
-      // Enhance with mock performance data but preserve real lock/load data
+      // Get current admin timer state to determine which week we're in
+      const timerState = await storage.getTimerState();
+      const currentWeek = timerState?.currentWeek || 0;
+      
+      // If we're in pre-season (Week 0), show Week 1 upcoming games
+      const targetWeek = currentWeek === 0 ? 1 : currentWeek;
+      
+      // Enhance with mock performance data and real opponent data
       const { generateTeamPerformanceData } = await import('./utils/mockScoring.js');
-      const enhancedStable = stable.map((team: any) => {
-        const performanceData = generateTeamPerformanceData(team.nflTeam.code, 1); // Week 1 for now
+      const enhancedStable = await Promise.all(stable.map(async (team: any) => {
+        const performanceData = generateTeamPerformanceData(team.nflTeam.code, targetWeek);
+        
+        // Get real upcoming opponent data
+        let opponentInfo = {
+          upcomingOpponent: 'BYE WEEK',
+          pointSpread: 0,
+          gameDate: null,
+          gameTime: null,
+          isHome: null,
+          isBye: true
+        };
+
+        try {
+          const upcomingGame = await storage.getTeamUpcomingGame(team.nflTeam.code, targetWeek);
+          
+          if (upcomingGame) {
+            const isHome = upcomingGame.homeTeam === team.nflTeam.code;
+            const opponentCode = isHome ? upcomingGame.awayTeam : upcomingGame.homeTeam;
+            
+            // Get opponent team details
+            const opponentTeam = await storage.getTeamByCode(opponentCode);
+            
+            opponentInfo = {
+              upcomingOpponent: `${isHome ? 'vs' : '@'} ${opponentTeam?.city || 'TBD'} ${opponentTeam?.name || 'TBD'}`,
+              pointSpread: upcomingGame.spread || 0,
+              gameDate: upcomingGame.gameDate,
+              gameTime: upcomingGame.gameTime,
+              isHome,
+              isBye: false
+            };
+          }
+        } catch (error) {
+          console.error(`Error getting opponent for team ${team.nflTeam.code}:`, error);
+        }
+        
         return {
           ...performanceData, // Mock performance stats (wins, losses, etc.)
           ...team, // Override with real database data (preserves locksUsed, lockAndLoadUsed)
+          ...opponentInfo, // Real opponent data
           // Recalculate derived fields using actual database values
           locksRemaining: 4 - (team.locksUsed || 0), // Max 4 locks per team per season
           lockAndLoadAvailable: !team.lockAndLoadUsed, // True if not yet used
           lockAndLoadUsed: team.lockAndLoadUsed, // Use actual database value
           locksUsed: team.locksUsed || 0, // Use actual database value
         };
-      });
+      }));
       
       res.json(enhancedStable);
     } catch (error) {

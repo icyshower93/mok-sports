@@ -21,6 +21,11 @@ let adminState = {
   simulatedCompletedGames: new Set<string>() // Track which games are "completed" in our simulation
 };
 
+// Export function to get admin state for internal use
+export function getAdminState() {
+  return adminState;
+}
+
 // Mock game data for simulation
 const NFL_TEAMS = [
   'ARI', 'ATL', 'BAL', 'BUF', 'CAR', 'CHI', 'CIN', 'CLE', 'DAL', 'DEN', 

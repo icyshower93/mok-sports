@@ -1,5 +1,5 @@
 import { 
-  users, leagues, leagueMembers, nflTeams, pushSubscriptions, drafts, draftPicks, draftTimers, stables,
+  users, leagues, leagueMembers, nflTeams, nflGames, pushSubscriptions, drafts, draftPicks, draftTimers, stables,
   type User, type InsertUser,
   type League, type InsertLeague,
   type LeagueMember, type InsertLeagueMember,
@@ -11,6 +11,7 @@ import {
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, sql, notInArray } from "drizzle-orm";
+import { alias } from "drizzle-orm/pg-core";
 import webpush from "web-push";
 
 export interface IStorage {
@@ -90,6 +91,11 @@ export interface IStorage {
   // Scoring methods
   getUserLockHistory(userId: string, leagueId: string, season: number): Promise<any[]>;
   setWeeklyLocks(userId: string, leagueId: string, season: number, week: number, locks: { lockedTeamId?: string; lockAndLoadTeamId?: string }): Promise<void>;
+  
+  // NFL Game methods for opponent data
+  getTeamUpcomingGame(teamCode: string, week: number): Promise<{ homeTeam: string; awayTeam: string; gameDate: string; gameTime: string; spread?: number } | null>;
+  getTeamByCode(teamCode: string): Promise<NflTeam | null>;
+  getTimerState(): Promise<any>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -1025,6 +1031,81 @@ export class DatabaseStorage implements IStorage {
   async setWeeklyLocks(userId: string, leagueId: string, season: number, week: number, locks: { lockedTeamId?: string; lockAndLoadTeamId?: string }): Promise<void> {
     // TODO: Implement with weeklyLocks table
     console.log(`Setting locks for user ${userId} in league ${leagueId}, season ${season}, week ${week}:`, locks);
+  }
+
+  // NFL Game methods for opponent data
+  async getTeamUpcomingGame(teamCode: string, week: number): Promise<{ homeTeam: string; awayTeam: string; gameDate: string; gameTime: string; spread?: number } | null> {
+    try {
+      // Find the team by code first
+      const team = await this.getTeamByCode(teamCode);
+      if (!team) return null;
+
+      // Create table aliases for the join
+      const homeTeam = alias(nflTeams, 'home_team');
+      const awayTeam = alias(nflTeams, 'away_team');
+
+      // Query for the game in the specified week for 2024 season
+      const game = await db
+        .select({
+          homeTeamCode: homeTeam.code,
+          awayTeamCode: awayTeam.code,
+          gameDate: nflGames.gameDate,
+        })
+        .from(nflGames)
+        .innerJoin(homeTeam, eq(nflGames.homeTeamId, homeTeam.id))
+        .innerJoin(awayTeam, eq(nflGames.awayTeamId, awayTeam.id))
+        .where(
+          and(
+            eq(nflGames.season, 2024),
+            eq(nflGames.week, week),
+            sql`(${nflGames.homeTeamId} = ${team.id} OR ${nflGames.awayTeamId} = ${team.id})`
+          )
+        )
+        .limit(1);
+
+      if (game.length === 0) return null;
+
+      const gameData = game[0];
+      const gameDate = new Date(gameData.gameDate);
+      
+      return {
+        homeTeam: gameData.homeTeamCode,
+        awayTeam: gameData.awayTeamCode,
+        gameDate: gameDate.toISOString().split('T')[0],
+        gameTime: gameDate.toTimeString().slice(0, 5),
+        spread: 0 // Placeholder for now as requested
+      };
+    } catch (error) {
+      console.error('Error getting team upcoming game:', error);
+      return null;
+    }
+  }
+
+  async getTeamByCode(teamCode: string): Promise<NflTeam | null> {
+    try {
+      const [team] = await db.select().from(nflTeams).where(eq(nflTeams.code, teamCode));
+      return team || null;
+    } catch (error) {
+      console.error('Error getting team by code:', error);
+      return null;
+    }
+  }
+
+  async getTimerState(): Promise<any> {
+    // Connect to the existing admin state management
+    try {
+      const { getAdminState } = await import('./routes/admin.js');
+      return getAdminState();
+    } catch (error) {
+      console.error('Error getting timer state:', error);
+      // Fallback to basic state - using Week 1 since games start September 5th
+      return {
+        currentWeek: 1,
+        currentDay: 'tuesday', 
+        currentTime: '15:00',
+        season: 2024
+      };
+    }
   }
 }
 
