@@ -104,9 +104,12 @@ export default function StablePage() {
 
   const confirmLock = () => {
     console.log('[Dialog] Confirming lock for team:', selectedTeam?.nflTeam?.name);
+    console.log('[Dialog] selectedTeam object:', selectedTeam);
+    console.log('[Dialog] selectedLeague:', selectedLeague);
+    console.log('[Dialog] selectedWeek:', selectedWeek);
     if (selectedTeam) {
       lockTeamMutation.mutate({
-        teamId: selectedTeam.id,
+        teamId: selectedTeam.nflTeamId || selectedTeam.id,
         lockType: 'lock'
       });
     }
@@ -114,9 +117,10 @@ export default function StablePage() {
 
   const confirmLockAndLoad = () => {
     console.log('[Dialog] Confirming Lock & Load for team:', selectedTeam?.nflTeam?.name);
+    console.log('[Dialog] selectedTeam object:', selectedTeam);
     if (selectedTeam) {
       lockTeamMutation.mutate({
-        teamId: selectedTeam.id,
+        teamId: selectedTeam.nflTeamId || selectedTeam.id,
         lockType: 'lockAndLoad'
       });
     }
@@ -418,7 +422,10 @@ export default function StablePage() {
           <DialogFooter className="flex-row space-x-2 sm:space-x-2">
             <Button
               variant="outline"
-              onClick={() => {
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
                 console.log('[Dialog] Cancel button clicked');
                 setLockDialogOpen(false);
               }}
@@ -427,7 +434,12 @@ export default function StablePage() {
               Cancel
             </Button>
             <Button
-              onClick={confirmLock}
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                confirmLock();
+              }}
               disabled={lockTeamMutation.isPending}
               className="flex-1"
             >
@@ -515,7 +527,10 @@ export default function StablePage() {
           <DialogFooter className="flex-row space-x-2 sm:space-x-2">
             <Button
               variant="outline"
-              onClick={() => {
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
                 console.log('[Dialog] Lock & Load Cancel button clicked');
                 setLockAndLoadDialogOpen(false);
               }}
@@ -524,7 +539,12 @@ export default function StablePage() {
               Cancel
             </Button>
             <Button
-              onClick={confirmLockAndLoad}
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                confirmLockAndLoad();
+              }}
               disabled={lockTeamMutation.isPending}
               className="flex-1 bg-amber-600 hover:bg-amber-700 text-white"
             >
