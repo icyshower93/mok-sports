@@ -136,12 +136,14 @@ export default function StablePage() {
         queryClient.invalidateQueries({ queryKey: [`/api/user/stable/${selectedLeague}`] });
       };
 
-      // Schedule cleanup and updates separately
+      // Schedule cleanup and updates separately with multiple animation frames
       cleanup();
       
-      // Use requestAnimationFrame to ensure DOM cleanup is complete
+      // Use double requestAnimationFrame to ensure DOM cleanup is complete
       requestAnimationFrame(() => {
-        updateUI();
+        requestAnimationFrame(() => {
+          updateUI();
+        });
       });
     },
     onError: (error: any) => {

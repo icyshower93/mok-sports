@@ -17,6 +17,13 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   static getDerivedStateFromError(error: Error): State {
+    // Prevent error boundary from showing for DOM manipulation errors
+    if (error.message?.includes('removeChild') || 
+        error.message?.includes('DOM') ||
+        error.name === 'NotFoundError') {
+      console.warn('[ErrorBoundary] Intercepting DOM error, not showing error boundary');
+      return { hasError: false, error: null };
+    }
     return { hasError: true, error };
   }
 
@@ -28,11 +35,10 @@ export class ErrorBoundary extends Component<Props, State> {
     if (error.message?.includes('removeChild') || 
         error.message?.includes('DOM') ||
         error.name === 'NotFoundError') {
-      console.warn('[ErrorBoundary] DOM manipulation error detected - attempting recovery');
-      // Auto-recover after short delay
-      setTimeout(() => {
-        this.setState({ hasError: false, error: null });
-      }, 1000);
+      console.warn('[ErrorBoundary] DOM manipulation error detected - preventing error boundary display');
+      // Immediately prevent error boundary from showing
+      this.setState({ hasError: false, error: null });
+      return;
     }
   }
 
