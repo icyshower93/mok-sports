@@ -946,6 +946,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const { setupScoringRoutes } = await import("./routes/scoring.js");
   setupScoringRoutes(app);
   
+  // Schedule import routes
+  const scheduleImportRoutes = (await import('./routes/schedule-import.js')).default;
+  app.use('/api/schedule', scheduleImportRoutes);
+  
+  // NFL teams seed routes
+  const nflTeamsSeedRoutes = (await import('./routes/nfl-teams-seed.js')).default;
+  app.use('/api/nfl-teams', nflTeamsSeedRoutes);
+  
   // Draft reset endpoint - Creates new draft for seamless WebSocket connection
   app.post('/api/testing/reset-draft', async (req, res) => {
     try {
