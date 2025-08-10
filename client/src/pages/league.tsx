@@ -4,97 +4,70 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Progress } from "@/components/ui/progress";
+import { useQuery } from "@tanstack/react-query";
+import { useAuth } from "@/hooks/use-auth";
+import { useLocation } from "wouter";
 import { 
   Trophy, 
   DollarSign, 
   Crown, 
   Settings,
   Award,
-  Target
+  Target,
+  Loader2
 } from "lucide-react";
 
 export default function LeaguePage() {
-  // Mock league data - in real app this would come from API
-  const leagueInfo = {
-    name: "The Championship",
-    joinCode: "EEW2YU",
-    season: "2024",
-    week: 4,
-    totalWeeks: 18,
-    memberCount: 6,
-    weeklyPot: 150,
-    seasonPot: 500
-  };
+  const { user } = useAuth();
+  const [location] = useLocation();
+  
+  // Get league ID from URL (assumes pattern /league?id=...)
+  const searchParams = new URLSearchParams(location.split('?')[1] || '');
+  const leagueId = searchParams.get('id');
+  
+  // If no league ID, try to get the user's first league
+  const { data: userLeagues } = useQuery({
+    queryKey: ['/api/user/leagues'],
+    enabled: !!user && !leagueId,
+  });
+  
+  // Use the provided league ID or fall back to EEW2YU league
+  const targetLeagueId = leagueId || (userLeagues as any[])?.[0]?.id || '243d719b-92ce-4752-8689-5da93ee69213';
+  
+  // Get league standings data
+  const { data: leagueData, isLoading } = useQuery({
+    queryKey: [`/api/leagues/${targetLeagueId}/standings`],
+    enabled: !!user && !!targetLeagueId,
+  });
 
-  const standings = [
-    { 
-      rank: 1, 
-      name: "Sky Evans", 
-      avatar: "SE", 
-      points: 8.5, 
-      wins: 3, 
-      locks: 2, 
-      lockAndLoads: 1, 
-      isCurrentUser: true,
-      teams: ["KC", "SF", "BUF", "PHI", "LAR"]
-    },
-    { 
-      rank: 2, 
-      name: "Mike Chen", 
-      avatar: "MC", 
-      points: 7.0, 
-      wins: 2, 
-      locks: 3, 
-      lockAndLoads: 0,
-      teams: ["DAL", "MIA", "NYJ", "DEN", "CLE"]
-    },
-    { 
-      rank: 3, 
-      name: "Sarah Wilson", 
-      avatar: "SW", 
-      points: 6.5, 
-      wins: 2, 
-      locks: 1, 
-      lockAndLoads: 1,
-      teams: ["BAL", "GB", "MIN", "ATL", "CAR"]
-    },
-    { 
-      rank: 4, 
-      name: "Alex Rodriguez", 
-      avatar: "AR", 
-      points: 5.5, 
-      wins: 2, 
-      locks: 2, 
-      lockAndLoads: 0,
-      teams: ["TB", "SEA", "LV", "TEN", "JAX"]
-    },
-    { 
-      rank: 5, 
-      name: "Emma Davis", 
-      avatar: "ED", 
-      points: 4.0, 
-      wins: 1, 
-      locks: 1, 
-      lockAndLoads: 0,
-      teams: ["PIT", "CIN", "HOU", "IND", "NO"]
-    },
-    { 
-      rank: 6, 
-      name: "Chris Martinez", 
-      avatar: "CM", 
-      points: 3.5, 
-      wins: 1, 
-      locks: 0, 
-      lockAndLoads: 1,
-      teams: ["WAS", "DET", "CHI", "LAC", "NE"]
-    }
-  ];
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background pb-20">
+        <div className="max-w-lg mx-auto">
+          <div className="flex items-center justify-center h-64">
+            <Loader2 className="w-6 h-6 animate-spin" />
+          </div>
+        </div>
+        <BottomNav />
+      </div>
+    );
+  }
 
-  const seasonPrizes = [
-    { name: "Most Points", prize: "$200", leader: "Sky Evans", points: "8.5" },
-    { name: "Super Bowl Winner", prize: "$150", leader: "TBD", points: "-" },
-    { name: "Most Correct Locks", prize: "$150", leader: "Mike Chen", points: "3" }
-  ];
+  if (!leagueData) {
+    return (
+      <div className="min-h-screen bg-background pb-20">
+        <div className="max-w-lg mx-auto p-4">
+          <div className="text-center">
+            <h2 className="text-lg font-semibold mb-2">League Not Found</h2>
+            <p className="text-muted-foreground">Unable to load league data.</p>
+          </div>
+        </div>
+        <BottomNav />
+      </div>
+    );
+  }
+
+  const { league: leagueInfo, standings, seasonPrizes } = leagueData;
 
   return (
     <div className="min-h-screen bg-background pb-20">

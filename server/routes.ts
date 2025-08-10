@@ -400,6 +400,107 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get league details with all members and their teams
+  app.get("/api/leagues/:leagueId/standings", async (req, res) => {
+    try {
+      const user = await getAuthenticatedUser(req);
+      if (!user) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+
+      const { leagueId } = req.params;
+      
+      // Check if user is member of this league
+      const isMember = await storage.isUserInLeague(user.id, leagueId);
+      if (!isMember) {
+        return res.status(403).json({ message: "Not authorized to view this league" });
+      }
+
+      // Get league details
+      const league = await storage.getLeague(leagueId);
+      if (!league) {
+        return res.status(404).json({ message: "League not found" });
+      }
+
+      // Get all league members
+      const members = await storage.getLeagueMembers(leagueId);
+      
+      // Get each member's stable teams
+      const { generateTeamPerformanceData } = await import('./utils/mockScoring.js');
+      const standings = [];
+      
+      for (const member of members) {
+        // Get user details
+        const memberUser = await storage.getUser(member.userId);
+        if (!memberUser) continue;
+        
+        // Get their stable teams
+        const stable = await storage.getUserStable(member.userId, leagueId);
+        
+        // Calculate mock points and stats
+        let totalPoints = 0;
+        let totalWins = 0;
+        let totalLocks = 0;
+        let totalLockAndLoads = 0;
+        const teams = [];
+        
+        for (const stableTeam of stable) {
+          const performance = generateTeamPerformanceData(stableTeam.nflTeam.code, 1);
+          totalPoints += performance.totalMokPoints;
+          totalWins += performance.totalWins;
+          totalLocks += performance.locksUsed;
+          if (performance.lockAndLoadUsed) totalLockAndLoads++;
+          teams.push(stableTeam.nflTeam.code);
+        }
+        
+        standings.push({
+          userId: member.userId,
+          name: memberUser.name,
+          avatar: memberUser.name.split(' ').map(n => n[0]).join('').toUpperCase(),
+          points: totalPoints,
+          wins: totalWins,
+          locks: totalLocks,
+          lockAndLoads: totalLockAndLoads,
+          isCurrentUser: member.userId === user.id,
+          teams,
+          joinedAt: member.joinedAt
+        });
+      }
+      
+      // Sort by points (descending) and add ranks
+      standings.sort((a, b) => b.points - a.points);
+      standings.forEach((standing, index) => {
+        standing.rank = index + 1;
+      });
+
+      // League info
+      const leagueInfo = {
+        id: league.id,
+        name: league.name,
+        joinCode: league.joinCode,
+        season: "2025",
+        week: 1, // This would come from admin state
+        totalWeeks: 18,
+        memberCount: standings.length,
+        weeklyPot: 150, // Mock data
+        seasonPot: 500  // Mock data
+      };
+
+      res.json({
+        league: leagueInfo,
+        standings,
+        seasonPrizes: [
+          { name: "Most Points", prize: "$200", leader: standings[0]?.name || "TBD", points: standings[0]?.points?.toString() || "-" },
+          { name: "Super Bowl Winner", prize: "$150", leader: "TBD", points: "-" },
+          { name: "Most Correct Locks", prize: "$150", leader: standings.find(s => s.locks > 0)?.name || "TBD", points: standings.find(s => s.locks > 0)?.locks?.toString() || "0" }
+        ]
+      });
+    } catch (error) {
+      console.error('Error getting league standings:', error);
+      res.status(500).json({ message: "Failed to get league standings" });
+    }
+  });
+
   // Get league statistics for dashboard
   app.get("/api/leagues/stats", async (req, res) => {
     try {
