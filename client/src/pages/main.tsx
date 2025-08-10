@@ -340,6 +340,38 @@ export default function MainPage() {
           </div>
         )}
 
+        {/* Trades Card */}
+        <div className="p-4">
+          <Card 
+            className="cursor-pointer hover:shadow-md transition-shadow duration-200 border-2 hover:border-primary/20"
+            onClick={() => navigate('/more/trades')}
+          >
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-4">
+                  <div className="p-2.5 bg-green-100 dark:bg-green-900/30 rounded-full">
+                    <RefreshCw className="w-5 h-5 text-green-600 dark:text-green-400" />
+                  </div>
+                  <div>
+                    <div className="font-semibold text-base mb-1">
+                      Trades & Free Agents
+                    </div>
+                    <div className="text-sm text-muted-foreground">
+                      Manage your team roster
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <Badge variant="outline" className="bg-green-50 dark:bg-green-950/50 text-green-700 dark:text-green-300 border-green-200 dark:border-green-800">
+                    2 Available
+                  </Badge>
+                  <ChevronRight className="w-5 h-5 text-muted-foreground" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
         {/* Recent Activity */}
         <div className="p-4">
           <Card>

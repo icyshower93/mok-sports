@@ -25,6 +25,7 @@ import LeaguePage from "@/pages/league";
 import ScoresPage from "@/pages/scores";
 import AgentsPage from "@/pages/agents";
 import MorePage from "@/pages/more";
+import TradesPage from "@/pages/trades";
 import { LeagueWaiting } from "@/pages/league-waiting";
 import NotFound from "@/pages/not-found";
 import { logBuildInfo } from "@/lib/buildInfo";
@@ -141,6 +142,7 @@ function AppContent() {
         <Route path="/league" component={LeaguePage} />
         <Route path="/scores" component={ScoresPage} />
         <Route path="/more" component={MorePage} />
+        <Route path="/more/trades" component={TradesPage} />
 
         <Route component={NotFound} />
       </Switch>
