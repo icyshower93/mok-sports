@@ -5,9 +5,10 @@ import { nflDataService, type NFLGameData } from "../services/nflDataService";
 
 // Admin state for time control and app state management
 let adminState = {
-  currentWeek: 1, // Start at Week 1 of 2024 season
-  currentDay: 'monday', // Monday before first week
+  currentWeek: 0, // Start before Week 1 
+  currentDay: 'sunday', // Sunday September 1, 2024
   currentTime: '12:00',
+  currentDate: new Date('2024-09-01T12:00:00-04:00'), // Sept 1, 2024 12:00 PM ET
   season: 2024, // Using 2024 real NFL season data
   lockDeadlinePassed: false,
   activeLocks: 0,
@@ -70,6 +71,15 @@ const mockGames: Array<{
   gameTime: string;
   isCompleted: boolean;
 }> = [];
+
+// Helper function to convert day name to offset from Sunday
+function getDayOffset(day: string): number {
+  const dayMap: { [key: string]: number } = {
+    'sunday': 0, 'monday': 1, 'tuesday': 2, 'wednesday': 3,
+    'thursday': 4, 'friday': 5, 'saturday': 6
+  };
+  return dayMap[day.toLowerCase()] || 0;
+}
 
 export function registerAdminRoutes(app: Express) {
   // Reset app state and load real NFL data
@@ -150,15 +160,27 @@ export function registerAdminRoutes(app: Express) {
       
       adminState.gamesPlayed = completedGames;
       
-      // Format current time for display
-      const timeDisplay = adminState.currentTime === '12:00' ? '12:00 PM ET' : 
-                         parseInt(adminState.currentTime.split(':')[0]) > 12 ? 
-                         `${parseInt(adminState.currentTime.split(':')[0]) - 12}:${adminState.currentTime.split(':')[1]} PM ET` :
-                         `${adminState.currentTime} AM ET`;
+      // Format current date and time for display
+      const currentDate = adminState.currentDate.toLocaleDateString('en-US', {
+        weekday: 'long',
+        year: 'numeric', 
+        month: 'long',
+        day: 'numeric',
+        timeZone: 'America/New_York'
+      });
+      
+      const currentTime = adminState.currentDate.toLocaleTimeString('en-US', {
+        hour: 'numeric',
+        minute: '2-digit',
+        timeZone: 'America/New_York',
+        timeZoneName: 'short'
+      });
 
       res.json({
         ...adminState,
-        currentTime: timeDisplay,
+        currentDate,
+        currentTime,
+        currentDateISO: adminState.currentDate.toISOString(),
         gamesPlayed: completedGames,
         // Add league stats
         totalGames: mockGames.length,
@@ -183,6 +205,17 @@ export function registerAdminRoutes(app: Express) {
       adminState.currentWeek = weekNum;
       adminState.currentDay = day;
       adminState.currentTime = time;
+      
+      // Calculate the actual date based on week, day, and time
+      const seasonStart = new Date('2024-09-01T00:00:00-04:00'); // Sept 1, 2024
+      const daysToAdd = (weekNum * 7) + getDayOffset(day);
+      const calculatedDate = new Date(seasonStart);
+      calculatedDate.setDate(seasonStart.getDate() + daysToAdd);
+      
+      // Set the time
+      const [hour, minute] = time.split(':').map(Number);
+      calculatedDate.setHours(hour, minute, 0, 0);
+      adminState.currentDate = calculatedDate;
       
       // Determine if lock deadline has passed (Thursday 8:20 PM)
       const isThursday = day === 'thursday';

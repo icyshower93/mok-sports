@@ -100,13 +100,28 @@ router.get("/week/:week", async (req, res) => {
       ORDER BY g.game_date
     `);
     
+    // Get current app time for game completion logic
+    let currentAppDate = new Date();
+    try {
+      const adminResponse = await fetch('http://localhost:5000/api/admin/state');
+      if (adminResponse.ok) {
+        const adminState = await adminResponse.json();
+        if (adminState?.currentDateISO) {
+          currentAppDate = new Date(adminState.currentDateISO);
+        }
+      }
+    } catch (error) {
+      console.log('[Scoring] Could not get admin state, using current time');
+    }
+
     const games = gamesResult.rows.map((row: any) => ({
       id: row.game_id,
       homeTeam: row.home_team,
       awayTeam: row.away_team,
       homeScore: row.home_score,
       awayScore: row.away_score,
-      isCompleted: row.is_completed,
+      // Only show as completed if current app time is after game time
+      isCompleted: row.is_completed && currentAppDate > new Date(row.game_date),
       gameDate: row.game_date,
       // Team ownership information
       homeOwner: row.home_owner_id,

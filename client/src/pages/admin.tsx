@@ -15,9 +15,9 @@ import { useLocation } from "wouter";
 export default function AdminPanel() {
   const { toast } = useToast();
   const [, navigate] = useLocation();
-  const [selectedWeek, setSelectedWeek] = useState("1");
+  const [selectedWeek, setSelectedWeek] = useState("0");
   const [selectedDay, setSelectedDay] = useState("sunday");
-  const [gameTime, setGameTime] = useState("13:00");
+  const [gameTime, setGameTime] = useState("12:00");
 
   // Get current admin state
   const { data: adminState, isLoading } = useQuery({
@@ -29,6 +29,8 @@ export default function AdminPanel() {
     currentWeek?: number;
     currentDay?: string;
     currentTime?: string;
+    currentDate?: string;
+    currentDateISO?: string;
     lockDeadlinePassed?: boolean;
     activeLocks?: number;
     totalPlayers?: number;
@@ -156,12 +158,17 @@ export default function AdminPanel() {
           </div>
           <div className="flex gap-2">
             <Button
-              onClick={() => resetAppStateMutation.mutate({ resetToWeek: 1, season: 2024 })}
+              onClick={() => {
+                resetAppStateMutation.mutate({ resetToWeek: 0, season: 2024 });
+                setSelectedWeek("0");
+                setSelectedDay("sunday");  
+                setGameTime("12:00");
+              }}
               disabled={resetAppStateMutation.isPending}
               variant="default"
               size="sm"
             >
-              {resetAppStateMutation.isPending ? "Loading..." : "Load 2024 Season"}
+              {resetAppStateMutation.isPending ? "Loading..." : "Reset to Sep 1, 2024"}
             </Button>
             <Button 
               variant="outline" 
@@ -184,20 +191,31 @@ export default function AdminPanel() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
+              <div>
+                <Label className="text-sm text-muted-foreground">Current Date</Label>
+                <div className="text-xl font-bold text-primary mb-1">
+                  {state?.currentDate || 'Sunday, September 1, 2024'}
+                </div>
+                <div className="text-lg font-semibold text-muted-foreground">
+                  {state?.currentTime || '12:00 PM EDT'}
+                </div>
+              </div>
+
+              <Separator />
+              
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label className="text-sm text-muted-foreground">Current Week</Label>
-                  <div className="text-2xl font-bold">{state?.currentWeek || 1}</div>
+                  <div className="text-2xl font-bold">
+                    {state?.currentWeek === 0 ? 'Pre-Season' : `Week ${state?.currentWeek}`}
+                  </div>
                 </div>
                 <div>
-                  <Label className="text-sm text-muted-foreground">Current Day</Label>
-                  <div className="text-lg font-semibold capitalize">{state?.currentDay || 'Monday'}</div>
+                  <Label className="text-sm text-muted-foreground">Status</Label>
+                  <div className="text-lg font-semibold capitalize">
+                    {state?.currentWeek === 0 ? 'Awaiting Season' : 'Season Active'}
+                  </div>
                 </div>
-              </div>
-              
-              <div>
-                <Label className="text-sm text-muted-foreground">Current Time</Label>
-                <div className="text-lg font-semibold">{state?.currentTime || '12:00 PM ET'}</div>
               </div>
 
               <Separator />
@@ -208,11 +226,11 @@ export default function AdminPanel() {
                   <div className="flex-1 bg-muted rounded-full h-2">
                     <div 
                       className="bg-primary h-2 rounded-full transition-all duration-300"
-                      style={{ width: `${((state?.currentWeek || 1) / 18) * 100}%` }}
+                      style={{ width: `${Math.max(((state?.currentWeek || 0) / 18) * 100, 2)}%` }}
                     />
                   </div>
                   <span className="text-sm text-muted-foreground">
-                    Week {state?.currentWeek || 1} of 18
+                    {state?.currentWeek === 0 ? 'Pre-Season' : `Week ${state?.currentWeek || 1} of 18`}
                   </span>
                 </div>
               </div>
@@ -236,6 +254,7 @@ export default function AdminPanel() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
+                      <SelectItem value="0">Pre-Season (Sep 1)</SelectItem>
                       {Array.from({ length: 18 }, (_, i) => (
                         <SelectItem key={i + 1} value={String(i + 1)}>
                           Week {i + 1}
