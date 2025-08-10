@@ -6,6 +6,7 @@ import { Trophy, Target, Lock, Zap, Flame } from "lucide-react";
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { BottomNav } from "@/components/layout/bottom-nav";
 
 interface MokScoringRules {
   winPoints: number;
@@ -352,6 +353,7 @@ export default function ScoresPage() {
           </div>
         </div>
       </div>
+      <BottomNav />
     </div>
   );
 }
