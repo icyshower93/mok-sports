@@ -939,7 +939,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             const opponentTeam = await storage.getTeamByCode(opponentCode);
             
             opponentInfo = {
-              upcomingOpponent: `${isHome ? 'vs' : '@'} ${opponentTeam?.city || 'TBD'} ${opponentTeam?.name || 'TBD'}`,
+              upcomingOpponent: `${isHome ? 'vs' : '@'} ${opponentCode}`,
               pointSpread: upcomingGame.spread || 0,
               gameDate: upcomingGame.gameDate,
               gameTime: upcomingGame.gameTime,
