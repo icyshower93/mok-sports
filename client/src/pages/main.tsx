@@ -175,13 +175,13 @@ export default function MainPage() {
                         <div className="p-4">
                           {/* Team Header - Balanced sizing */}
                           <div className="flex items-center justify-between mb-3">
-                            <div className="flex items-center space-x-3 flex-1 min-w-0">
+                            <div className="flex items-center space-x-4 flex-1 min-w-0">
                               <TeamLogo 
                                 logoUrl={team.nflTeam.logoUrl}
                                 teamCode={team.nflTeam.code}
                                 teamName={team.nflTeam.name}
-                                size="md"
-                                className="w-9 h-9 flex-shrink-0"
+                                size="lg"
+                                className="w-12 h-12 flex-shrink-0"
                               />
                               <div className="flex-1 min-w-0">
                                 <div className="font-medium text-sm truncate">
