@@ -168,6 +168,23 @@ export default function LeaguePage() {
                         <div className="text-xs text-muted-foreground">
                           {member.wins} wins • {member.locks} locks
                         </div>
+                        {/* Team Logos Row */}
+                        {member.teams && member.teams.length > 0 && (
+                          <div className="flex items-center space-x-1 mt-1">
+                            {member.teams.map((team: any) => (
+                              <img 
+                                key={team.code}
+                                src={`/images/nfl/team_logos/${team.code}.png`}
+                                alt={team.code}
+                                className="w-5 h-5 rounded-sm object-contain"
+                                onError={(e) => {
+                                  console.log(`[League] Failed to load ${team.code} logo, using fallback`);
+                                  (e.target as HTMLImageElement).src = `https://a.espncdn.com/i/teamlogos/nfl/500/${team.code.toLowerCase()}.png`;
+                                }}
+                              />
+                            ))}
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
