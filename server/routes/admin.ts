@@ -165,7 +165,7 @@ export function registerAdminRoutes(app: Express) {
       
       adminState.gamesPlayed = completedGames;
       
-      // Format current date and time for display
+      // Format current date and time for display (using dynamic date)
       const currentDate = adminState.currentDate.toLocaleDateString('en-US', {
         weekday: 'long',
         year: 'numeric', 
@@ -222,6 +222,9 @@ export function registerAdminRoutes(app: Express) {
       calculatedDate.setHours(hour, minute, 0, 0);
       adminState.currentDate = calculatedDate;
       
+      console.log(`[Admin] Time set - Week ${weekNum}, ${day} ${time}`);
+      console.log(`[Admin] Calculated date: ${calculatedDate.toISOString()}`);
+      
       // Determine if lock deadline has passed (Thursday 8:20 PM)
       const isThursday = day === 'thursday';
       const timeHour = parseInt(time.split(':')[0]);
@@ -277,8 +280,17 @@ export function registerAdminRoutes(app: Express) {
       if (adminState.currentWeek > 18) {
         adminState.currentWeek = 18; // Cap at regular season
       }
+      
+      // Recalculate the date based on new week
+      const seasonStart = new Date('2024-09-01T00:00:00-04:00'); // Sept 1, 2024
+      const daysToAdd = (adminState.currentWeek * 7) + getDayOffset(adminState.currentDay);
+      const calculatedDate = new Date(seasonStart);
+      calculatedDate.setDate(seasonStart.getDate() + daysToAdd);
+      calculatedDate.setHours(12, 0, 0, 0); // Set to 12:00 PM
+      adminState.currentDate = calculatedDate;
 
       console.log(`[Admin] Advanced to Week ${adminState.currentWeek}`);
+      console.log(`[Admin] New date: ${calculatedDate.toISOString()}`);
 
       res.json({ 
         message: `Advanced to Week ${adminState.currentWeek}`, 

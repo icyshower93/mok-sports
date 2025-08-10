@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -39,6 +39,15 @@ export default function AdminPanel() {
     gamesPlayed?: number;
     lastSimulation?: { week: number; gamesSimulated: number };
   } | undefined;
+  
+  // Initialize form controls with current admin state
+  useEffect(() => {
+    if (state) {
+      setSelectedWeek(String(state.currentWeek || 0));
+      setSelectedDay(state.currentDay || 'sunday');
+      setGameTime(state.currentTime || '12:00');
+    }
+  }, [state]);
 
   // Time control mutations
   const advanceWeekMutation = useMutation({
@@ -50,8 +59,17 @@ export default function AdminPanel() {
       if (!response.ok) throw new Error('Failed to advance week');
       return response.json();
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['/api/admin/state'] });
+      // Update local form state to match new admin state
+      if (data?.state) {
+        setSelectedWeek(String(data.state.currentWeek || 0));
+        setSelectedDay(data.state.currentDay || 'monday');
+        setGameTime(data.state.currentTime || '12:00');
+      }
+      // Refresh all other data that might be affected
+      queryClient.invalidateQueries({ queryKey: ['/api/leagues'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/games'] });
       toast({ description: "Advanced to next week successfully" });
     },
   });
@@ -71,6 +89,9 @@ export default function AdminPanel() {
       // Force refresh the query to get latest state
       queryClient.invalidateQueries({ queryKey: ['/api/admin/state'] });
       queryClient.refetchQueries({ queryKey: ['/api/admin/state'] });
+      // Refresh all other data that might be affected
+      queryClient.invalidateQueries({ queryKey: ['/api/leagues'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/games'] });
       toast({ description: "Time updated successfully" });
     },
   });
@@ -88,6 +109,13 @@ export default function AdminPanel() {
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['/api/admin/state'] });
+      // Reset form controls to match reset state
+      setSelectedWeek("0");
+      setSelectedDay("sunday");
+      setGameTime("12:00");
+      // Refresh all other data that might be affected
+      queryClient.invalidateQueries({ queryKey: ['/api/leagues'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/games'] });
       toast({ description: data.message || "App state reset successfully" });
     },
     onError: (error: Error) => {
