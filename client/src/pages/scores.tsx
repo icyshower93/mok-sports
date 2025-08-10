@@ -133,6 +133,19 @@ export default function ScoresPage() {
 
   // Transform real NFL games data from Tank01 API with ownership data
   const nflGames: NFLGame[] = (nflGamesData as any)?.results?.map((game: any, index: number) => {
+    // Debug the BAL-KC game specifically
+    if ((game.homeTeam === 'KC' && game.awayTeam === 'BAL') || (game.homeTeam === 'BAL' && game.awayTeam === 'KC')) {
+      console.log('DEBUG BAL-KC Game Raw API:', {
+        homeTeam: game.homeTeam,
+        awayTeam: game.awayTeam,
+        homeScore: game.homeScore,
+        awayScore: game.awayScore,
+        homeScoreType: typeof game.homeScore,
+        awayScoreType: typeof game.awayScore,
+        allFields: Object.keys(game)
+      });
+    }
+    
     return {
     id: game.id || `game_${selectedWeek}_${index}`,
     homeTeam: game.homeTeam,
