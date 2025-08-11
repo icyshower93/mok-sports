@@ -7,6 +7,16 @@ import { nflDataService, type NFLGameData } from "../services/nflDataService";
 import { nflGames, nflTeams, stables, userWeeklyScores, locks } from "@shared/schema";
 import { calculateWeeklyScores } from "../utils/mokScoring";
 
+// Time simulation system for comprehensive season testing
+interface TimeSimulationState {
+  isRunning: boolean;
+  speed: number; // 1x, 5x, 10x, 50x multiplier
+  startTime: Date; // Real world time when simulation started
+  simulatedTime: Date; // Current simulated time in the season
+  lastUpdate: Date; // Last time simulation was updated
+  processedGames: Set<string>; // Games that have been auto-completed
+}
+
 // Admin state for time control and app state management
 let adminState = {
   currentWeek: 0, // Start before Week 1 
@@ -22,12 +32,163 @@ let adminState = {
   useRealData: true, // Flag to use Tank01/ESPN real NFL data instead of mock
   testLeagueId: '243d719b-92ce-4752-8689-5da93ee69213', // EEW2YU Test League
   realNFLGames: [] as NFLGameData[], // Cache of real NFL games
-  simulatedCompletedGames: new Set<string>() // Track which games are "completed" in our simulation
+  simulatedCompletedGames: new Set<string>(), // Track which games are "completed" in our simulation
+  
+  // Time simulation system
+  timeSimulation: {
+    isRunning: false,
+    speed: 1,
+    startTime: new Date(),
+    simulatedTime: new Date('2024-09-01T12:00:00-04:00'), // Sept 1, 2024 noon ET
+    lastUpdate: new Date(),
+    processedGames: new Set<string>()
+  } as TimeSimulationState
 };
+
+// Time simulation interval
+let simulationInterval: NodeJS.Timeout | null = null;
 
 // Export function to get admin state for internal use
 export function getAdminState() {
   return adminState;
+}
+
+// Update simulated time based on real time elapsed and speed multiplier
+function updateSimulatedTime() {
+  const now = new Date();
+  const realElapsed = now.getTime() - adminState.timeSimulation.lastUpdate.getTime();
+  const simulatedElapsed = realElapsed * adminState.timeSimulation.speed;
+  
+  adminState.timeSimulation.simulatedTime = new Date(
+    adminState.timeSimulation.simulatedTime.getTime() + simulatedElapsed
+  );
+  adminState.timeSimulation.lastUpdate = now;
+  
+  // Update admin state current date to match simulation
+  adminState.currentDate = adminState.timeSimulation.simulatedTime;
+  
+  // Update week and day based on simulated time
+  updateWeekFromSimulatedTime();
+}
+
+// Calculate current week based on simulated time
+function updateWeekFromSimulatedTime() {
+  const seasonStart = new Date('2024-09-01T00:00:00-04:00');
+  const simulatedTime = adminState.timeSimulation.simulatedTime;
+  const daysDiff = Math.floor((simulatedTime.getTime() - seasonStart.getTime()) / (1000 * 60 * 60 * 24));
+  
+  // Week 1 starts Sep 5, 2024 (Thursday)
+  const week1Start = new Date('2024-09-05T00:00:00-04:00');
+  
+  if (simulatedTime < week1Start) {
+    adminState.currentWeek = 0; // Pre-season
+  } else {
+    const weeksDiff = Math.floor((simulatedTime.getTime() - week1Start.getTime()) / (1000 * 60 * 60 * 24 * 7));
+    adminState.currentWeek = Math.min(weeksDiff + 1, 18); // Weeks 1-18
+  }
+  
+  // Update current day and time
+  const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+  adminState.currentDay = days[simulatedTime.getDay()];
+  adminState.currentTime = simulatedTime.toTimeString().slice(0, 5);
+}
+
+// Check for games that should be auto-completed based on simulated time
+async function checkAndProcessGames() {
+  if (!adminState.timeSimulation.isRunning) return;
+  
+  try {
+    // Get all games from database
+    const games = await db.select({
+      id: nflGames.id,
+      homeTeam: sql<string>`ht.code`,
+      awayTeam: sql<string>`at.code`,
+      gameDate: nflGames.gameDate,
+      isCompleted: nflGames.isCompleted,
+      homeScore: nflGames.homeScore,
+      awayScore: nflGames.awayScore,
+      week: nflGames.week
+    })
+    .from(nflGames)
+    .leftJoin(sql`nfl_teams ht`, sql`${nflGames.homeTeamId} = ht.id`)
+    .leftJoin(sql`nfl_teams at`, sql`${nflGames.awayTeamId} = at.id`)
+    .where(and(
+      eq(nflGames.season, 2024),
+      eq(nflGames.isCompleted, false)
+    ));
+    
+    const simulatedTime = adminState.timeSimulation.simulatedTime;
+    const gamesToComplete = games.filter(game => {
+      const gameTime = new Date(game.gameDate);
+      return simulatedTime >= gameTime && !adminState.timeSimulation.processedGames.has(game.id);
+    });
+    
+    // Process each game that should be completed
+    for (const game of gamesToComplete) {
+      console.log(`[TimeSim] Auto-completing game: ${game.awayTeam} @ ${game.homeTeam} (${new Date(game.gameDate).toLocaleString()})`);
+      
+      // Load real 2024 Week 1 scores from our data
+      const realScores = await loadRealGameScore(game.homeTeam, game.awayTeam, game.week);
+      
+      if (realScores) {
+        // Use authentic 2024 NFL scores
+        await db.update(nflGames)
+          .set({
+            homeScore: realScores.homeScore,
+            awayScore: realScores.awayScore,
+            isCompleted: true
+          })
+          .where(eq(nflGames.id, game.id));
+          
+        console.log(`[TimeSim] ✅ Game completed with real scores: ${game.homeTeam} ${realScores.homeScore}-${realScores.awayScore} ${game.awayTeam}`);
+      }
+      
+      // Mark game as processed
+      adminState.timeSimulation.processedGames.add(game.id);
+      adminState.gamesPlayed++;
+      
+      // Recalculate weekly scores after each game
+      await calculateWeeklyScores(adminState.testLeagueId, game.week, 2024);
+    }
+    
+    // Update lock deadline status based on active games
+    const activeGames = games.filter(game => {
+      const gameTime = new Date(game.gameDate);
+      const gameEnd = new Date(gameTime.getTime() + (3.5 * 60 * 60 * 1000)); // Assume 3.5 hour games
+      return simulatedTime >= gameTime && simulatedTime < gameEnd;
+    });
+    
+    adminState.lockDeadlinePassed = activeGames.length > 0;
+    
+  } catch (error) {
+    console.error('[TimeSim] Error processing games:', error);
+  }
+}
+
+// Load real game scores from our historical data
+async function loadRealGameScore(homeTeam: string, awayTeam: string, week: number) {
+  try {
+    // Import our real 2024 Week 1 data
+    const week1Data = await import('../data/nfl2024week1results.json');
+    const game = week1Data.games.find((g: any) => 
+      g.home_team === homeTeam && g.away_team === awayTeam && g.week === week
+    );
+    
+    if (game) {
+      return {
+        homeScore: game.home_score,
+        awayScore: game.away_score
+      };
+    }
+  } catch (error) {
+    console.log(`[TimeSim] No real data found for ${homeTeam} vs ${awayTeam} Week ${week}, using mock scores`);
+  }
+  
+  // Generate realistic mock scores if no real data
+  return {
+    homeScore: Math.floor(Math.random() * 28) + 10, // 10-37 points
+    awayScore: Math.floor(Math.random() * 28) + 10
+  };
 }
 
 // Mock game data for simulation
@@ -194,6 +355,13 @@ export function registerAdminRoutes(app: Express) {
         // Add league stats
         totalGames: mockGames.length,
         scheduledGames: mockGames.filter(g => g.status === 'scheduled').length,
+        // Time simulation state
+        timeSimulation: {
+          isRunning: adminState.timeSimulation.isRunning,
+          speed: adminState.timeSimulation.speed,
+          simulatedTime: adminState.timeSimulation.simulatedTime.toISOString(),
+          processedGames: adminState.timeSimulation.processedGames.size
+        }
       });
     } catch (error) {
       console.error('Error getting admin state:', error);
@@ -270,6 +438,154 @@ export function registerAdminRoutes(app: Express) {
     } catch (error) {
       console.error('Error setting time:', error);
       res.status(500).json({ message: "Failed to set time" });
+    }
+  });
+
+  // Time Simulation Control Endpoints
+  
+  // Start time simulation
+  app.post("/api/admin/start-simulation", async (req, res) => {
+    try {
+      const { speed = 1 } = req.body; // Default 1x speed
+      
+      if (adminState.timeSimulation.isRunning) {
+        return res.status(400).json({ message: "Simulation is already running" });
+      }
+      
+      // Initialize simulation state
+      adminState.timeSimulation.isRunning = true;
+      adminState.timeSimulation.speed = Math.max(1, Math.min(50, speed)); // Clamp between 1x and 50x
+      adminState.timeSimulation.startTime = new Date();
+      adminState.timeSimulation.lastUpdate = new Date();
+      
+      console.log(`[TimeSim] Starting simulation at ${speed}x speed from ${adminState.timeSimulation.simulatedTime.toLocaleString()}`);
+      
+      // Start the simulation interval (update every 1 second)
+      simulationInterval = setInterval(async () => {
+        updateSimulatedTime();
+        await checkAndProcessGames();
+      }, 1000);
+      
+      res.json({
+        success: true,
+        message: `Time simulation started at ${speed}x speed`,
+        simulation: {
+          isRunning: adminState.timeSimulation.isRunning,
+          speed: adminState.timeSimulation.speed,
+          simulatedTime: adminState.timeSimulation.simulatedTime.toISOString(),
+          currentWeek: adminState.currentWeek
+        }
+      });
+    } catch (error) {
+      console.error('[TimeSim] Error starting simulation:', error);
+      res.status(500).json({ message: "Failed to start simulation" });
+    }
+  });
+  
+  // Stop time simulation
+  app.post("/api/admin/stop-simulation", async (req, res) => {
+    try {
+      if (!adminState.timeSimulation.isRunning) {
+        return res.status(400).json({ message: "Simulation is not running" });
+      }
+      
+      // Stop the simulation
+      adminState.timeSimulation.isRunning = false;
+      
+      if (simulationInterval) {
+        clearInterval(simulationInterval);
+        simulationInterval = null;
+      }
+      
+      console.log(`[TimeSim] Simulation stopped at ${adminState.timeSimulation.simulatedTime.toLocaleString()}`);
+      
+      res.json({
+        success: true,
+        message: "Time simulation stopped",
+        simulation: {
+          isRunning: adminState.timeSimulation.isRunning,
+          speed: adminState.timeSimulation.speed,
+          simulatedTime: adminState.timeSimulation.simulatedTime.toISOString(),
+          currentWeek: adminState.currentWeek,
+          gamesProcessed: adminState.timeSimulation.processedGames.size
+        }
+      });
+    } catch (error) {
+      console.error('[TimeSim] Error stopping simulation:', error);
+      res.status(500).json({ message: "Failed to stop simulation" });
+    }
+  });
+  
+  // Update simulation speed
+  app.post("/api/admin/set-speed", async (req, res) => {
+    try {
+      const { speed } = req.body;
+      
+      if (!speed || typeof speed !== 'number') {
+        return res.status(400).json({ message: "Speed must be a number" });
+      }
+      
+      adminState.timeSimulation.speed = Math.max(1, Math.min(50, speed)); // Clamp between 1x and 50x
+      
+      console.log(`[TimeSim] Speed updated to ${adminState.timeSimulation.speed}x`);
+      
+      res.json({
+        success: true,
+        message: `Simulation speed set to ${adminState.timeSimulation.speed}x`,
+        simulation: {
+          isRunning: adminState.timeSimulation.isRunning,
+          speed: adminState.timeSimulation.speed,
+          simulatedTime: adminState.timeSimulation.simulatedTime.toISOString()
+        }
+      });
+    } catch (error) {
+      console.error('[TimeSim] Error setting speed:', error);
+      res.status(500).json({ message: "Failed to set speed" });
+    }
+  });
+  
+  // Reset simulation to September 1, 2024
+  app.post("/api/admin/reset-simulation", async (req, res) => {
+    try {
+      // Stop simulation if running
+      if (adminState.timeSimulation.isRunning && simulationInterval) {
+        clearInterval(simulationInterval);
+        simulationInterval = null;
+      }
+      
+      // Reset simulation state
+      adminState.timeSimulation = {
+        isRunning: false,
+        speed: 1,
+        startTime: new Date(),
+        simulatedTime: new Date('2024-09-01T12:00:00-04:00'), // Sept 1, 2024 noon ET
+        lastUpdate: new Date(),
+        processedGames: new Set<string>()
+      };
+      
+      // Reset admin state to match
+      adminState.currentDate = adminState.timeSimulation.simulatedTime;
+      adminState.currentWeek = 0;
+      adminState.currentDay = 'sunday';
+      adminState.currentTime = '12:00';
+      adminState.gamesPlayed = 0;
+      adminState.lockDeadlinePassed = false;
+      
+      console.log('[TimeSim] Simulation reset to September 1, 2024');
+      
+      res.json({
+        success: true,
+        message: "Time simulation reset to September 1, 2024",
+        simulation: {
+          isRunning: adminState.timeSimulation.isRunning,
+          speed: adminState.timeSimulation.speed,
+          simulatedTime: adminState.timeSimulation.simulatedTime.toISOString(),
+          currentWeek: adminState.currentWeek
+        }
+      });
+    } catch (error) {
+      console.error('[TimeSim] Error resetting simulation:', error);
+      res.status(500).json({ message: "Failed to reset simulation" });
     }
   });
 

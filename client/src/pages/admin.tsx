@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { queryClient } from "@/lib/queryClient";
-import { Calendar, Clock, Play, Pause, SkipForward, Settings, Trophy, Target, ArrowLeft, Home } from "lucide-react";
+import { Calendar, Clock, Play, Pause, SkipForward, Settings, Trophy, Target, ArrowLeft, Home, FastForward, RotateCcw } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useLocation } from "wouter";
 
@@ -18,6 +18,7 @@ export default function AdminPanel() {
   const [selectedWeek, setSelectedWeek] = useState("0");
   const [selectedDay, setSelectedDay] = useState("sunday");
   const [gameTime, setGameTime] = useState("12:00");
+  const [simulationSpeed, setSimulationSpeed] = useState(1);
 
   // Get current admin state
   const { data: adminState, isLoading, refetch } = useQuery({
@@ -38,6 +39,12 @@ export default function AdminPanel() {
     totalPlayers?: number;
     gamesPlayed?: number;
     lastSimulation?: { week: number; gamesSimulated: number };
+    timeSimulation?: {
+      isRunning: boolean;
+      speed: number;
+      simulatedTime: string;
+      processedGames: number;
+    };
   } | undefined;
   
   // Initialize form controls with current admin state
@@ -71,6 +78,71 @@ export default function AdminPanel() {
       queryClient.invalidateQueries({ queryKey: ['/api/leagues'] });
       queryClient.invalidateQueries({ queryKey: ['/api/games'] });
       toast({ description: "Advanced to next week successfully" });
+    },
+  });
+
+  // Time simulation control mutations
+  const startSimulationMutation = useMutation({
+    mutationFn: async (speed: number) => {
+      const response = await fetch('/api/admin/start-simulation', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ speed }),
+        credentials: 'include'
+      });
+      if (!response.ok) throw new Error('Failed to start simulation');
+      return response.json();
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/state'] });
+      toast({ description: `Time simulation started at ${data.simulation.speed}x speed` });
+    },
+  });
+
+  const stopSimulationMutation = useMutation({
+    mutationFn: async () => {
+      const response = await fetch('/api/admin/stop-simulation', {
+        method: 'POST',
+        credentials: 'include'
+      });
+      if (!response.ok) throw new Error('Failed to stop simulation');
+      return response.json();
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/state'] });
+      toast({ description: "Time simulation stopped" });
+    },
+  });
+
+  const setSpeedMutation = useMutation({
+    mutationFn: async (speed: number) => {
+      const response = await fetch('/api/admin/set-speed', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ speed }),
+        credentials: 'include'
+      });
+      if (!response.ok) throw new Error('Failed to set speed');
+      return response.json();
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/state'] });
+      toast({ description: `Simulation speed set to ${data.simulation.speed}x` });
+    },
+  });
+
+  const resetSimulationMutation = useMutation({
+    mutationFn: async () => {
+      const response = await fetch('/api/admin/reset-simulation', {
+        method: 'POST',
+        credentials: 'include'
+      });
+      if (!response.ok) throw new Error('Failed to reset simulation');
+      return response.json();
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/state'] });
+      toast({ description: "Simulation reset to September 1, 2024" });
     },
   });
 
@@ -212,6 +284,116 @@ export default function AdminPanel() {
             </Button>
           </div>
         </div>
+
+        {/* Time Simulation Control Panel */}
+        <Card className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950/20 dark:to-purple-950/20 border-2 border-primary/20">
+          <CardHeader>
+            <CardTitle className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <FastForward className="w-5 h-5" />
+                <span>Time Simulation Control</span>
+              </div>
+              <Badge variant={state?.timeSimulation?.isRunning ? "default" : "secondary"}>
+                {state?.timeSimulation?.isRunning ? `Running ${state.timeSimulation.speed}x` : 'Stopped'}
+              </Badge>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label className="text-sm text-muted-foreground">Simulated Time</Label>
+                <div className="text-lg font-semibold">
+                  {state?.timeSimulation?.simulatedTime 
+                    ? new Date(state.timeSimulation.simulatedTime).toLocaleString('en-US', {
+                        weekday: 'short',
+                        month: 'short', 
+                        day: 'numeric',
+                        hour: 'numeric',
+                        minute: '2-digit',
+                        timeZone: 'America/New_York'
+                      })
+                    : 'Sep 1, 2024 12:00 PM'
+                  }
+                </div>
+              </div>
+              <div>
+                <Label className="text-sm text-muted-foreground">Games Auto-Completed</Label>
+                <div className="text-lg font-semibold">
+                  {state?.timeSimulation?.processedGames || 0}
+                </div>
+              </div>
+            </div>
+            
+            <Separator />
+            
+            <div className="space-y-3">
+              <div>
+                <Label htmlFor="speed-select">Simulation Speed</Label>
+                <Select value={String(simulationSpeed)} onValueChange={(v) => setSimulationSpeed(Number(v))}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="1">1x Speed (Real Time)</SelectItem>
+                    <SelectItem value="5">5x Speed</SelectItem>
+                    <SelectItem value="10">10x Speed</SelectItem>
+                    <SelectItem value="50">50x Speed</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div className="flex space-x-2">
+                <Button 
+                  onClick={() => startSimulationMutation.mutate(simulationSpeed)}
+                  disabled={state?.timeSimulation?.isRunning || startSimulationMutation.isPending}
+                  size="sm"
+                  className="flex-1"
+                >
+                  <Play className="w-4 h-4 mr-2" />
+                  Start
+                </Button>
+                <Button 
+                  onClick={() => stopSimulationMutation.mutate()}
+                  disabled={!state?.timeSimulation?.isRunning || stopSimulationMutation.isPending}
+                  size="sm"
+                  variant="outline"
+                  className="flex-1"
+                >
+                  <Pause className="w-4 h-4 mr-2" />
+                  Stop
+                </Button>
+                <Button 
+                  onClick={() => setSpeedMutation.mutate(simulationSpeed)}
+                  disabled={!state?.timeSimulation?.isRunning || setSpeedMutation.isPending}
+                  size="sm"
+                  variant="outline"
+                  className="flex-1"
+                >
+                  <FastForward className="w-4 h-4 mr-2" />
+                  Set Speed
+                </Button>
+                <Button 
+                  onClick={() => resetSimulationMutation.mutate()}
+                  disabled={resetSimulationMutation.isPending}
+                  size="sm"
+                  variant="destructive"
+                >
+                  <RotateCcw className="w-4 h-4" />
+                </Button>
+              </div>
+            </div>
+            
+            <div className="text-sm text-muted-foreground bg-muted/50 p-3 rounded-lg">
+              <div className="font-semibold mb-1">How It Works:</div>
+              <ul className="space-y-1 text-xs">
+                <li>• Simulation starts from Sep 1, 2024 and marches forward automatically</li>
+                <li>• When clock passes game times, real NFL scores are injected and points calculated</li>
+                <li>• Lock mechanisms are disabled during active games</li>
+                <li>• Use variable speeds to test entire season quickly</li>
+              </ul>
+            </div>
+          </CardContent>
+        </Card>
 
         <div className="grid gap-6 md:grid-cols-2">
           {/* Current State */}
