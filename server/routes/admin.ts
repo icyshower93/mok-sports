@@ -109,8 +109,8 @@ router.post('/simulation/reset', async (req, res) => {
       simulationInterval = null;
     }
     
-    // Reset to September 1, 2024
-    simulationState.simulationDate = new Date('2024-09-01T00:00:00Z');
+    // Reset to August 31, 2024, 8:00 PM (before season starts)
+    simulationState.simulationDate = new Date('2024-08-31T20:00:00Z');
     simulationState.currentWeek = 1;
     simulationState.completedGames = 0;
     simulationState.lastSimulationUpdate = Date.now();
@@ -121,7 +121,7 @@ router.post('/simulation/reset', async (req, res) => {
     // Broadcast to all connected admin clients
     broadcastAdminUpdate();
     
-    res.json({ success: true, message: 'Simulation reset to September 1, 2024' });
+    res.json({ success: true, message: 'Simulation reset to August 31, 2024, 8:00 PM' });
   } catch (error) {
     console.error('Error resetting simulation:', error);
     res.status(500).json({ error: 'Failed to reset simulation' });
