@@ -12,6 +12,47 @@ import {
 
 const router = express.Router();
 
+// Helper function to calculate Mok points for a single team in a game
+function calculateGameMokPoints(teamScore: number, opponentScore: number, isHome: boolean, isLocked: boolean, isLockAndLoad: boolean): number {
+  if (teamScore === null || opponentScore === null) return 0;
+  
+  let points = 0;
+  
+  // Base points for win/tie
+  if (teamScore > opponentScore) {
+    points += 1; // Win = +1 point
+    
+    // Blowout bonus: +1 for winning by 20+ points
+    if (teamScore - opponentScore >= 20) {
+      points += 1;
+    }
+  } else if (teamScore === opponentScore) {
+    points += 0.5; // Tie = +0.5 points
+  }
+  // Loss = 0 base points
+  
+  // Shutout bonus: +1 if opponent scored 0
+  if (opponentScore === 0) {
+    points += 1;
+  }
+  
+  // Lock bonus: +1 additional point if this team was locked
+  if (isLocked && !isLockAndLoad) {
+    points += 1;
+  }
+  
+  // Lock & Load: +2 for win, -1 for loss
+  if (isLockAndLoad) {
+    if (teamScore > opponentScore) {
+      points += 2; // +2 for Lock & Load win
+    } else if (teamScore < opponentScore) {
+      points -= 1; // -1 for Lock & Load loss
+    }
+  }
+  
+  return points;
+}
+
 // Current week endpoint
 router.get("/current-week", async (req, res) => {
   try {
@@ -115,9 +156,9 @@ router.get("/week/:week", async (req, res) => {
       awayLocked: row.away_locked,
       homeLockAndLoad: row.home_lock_and_load,
       awayLockAndLoad: row.away_lock_and_load,
-      // Points would be calculated based on scoring rules
-      homeMokPoints: 0, // TODO: Calculate based on game results and locks
-      awayMokPoints: 0   // TODO: Calculate based on game results and locks
+      // Calculate actual Mok points for each team
+      homeMokPoints: row.home_owner_name ? calculateGameMokPoints(row.home_score, row.away_score, true, row.home_locked, row.home_lock_and_load) : 0,
+      awayMokPoints: row.away_owner_name ? calculateGameMokPoints(row.away_score, row.home_score, false, row.away_locked, row.away_lock_and_load) : 0
     }));
     
     res.json({
