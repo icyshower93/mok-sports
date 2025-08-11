@@ -1,0 +1,206 @@
+Content script initialized successfully.
+index-PWanqrhk.js:372 🏗️ Build Info: {version: 1754954275720, date: '2025-08-11T23:17:55.720Z', env: 'production', hash: 'me7qgpl4'}
+index-PWanqrhk.js:372 📦 Version: me7qgpl4
+index-PWanqrhk.js:372 📅 Built: 2025-08-11T23:17:55.720Z
+index-PWanqrhk.js:372 🔧 Environment: production
+index-PWanqrhk.js:323 [Auth] Token check - Has token: true Has user: false Loading: true
+index-PWanqrhk.js:323 [SW Hook] EMERGENCY: Unregistering all existing service workers
+index-PWanqrhk.js:323 [SW Hook] Found 1 existing registrations
+index-PWanqrhk.js:323 [SW Hook] Unregistering existing service worker
+index-PWanqrhk.js:323 [SW Hook] Found 0 caches to delete
+scores:1 Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner.
+index-PWanqrhk.js:323 [Auth] Token check - Has token: true Has user: true Loading: false
+index-PWanqrhk.js:323 [AutoPushRefresh] Legacy hook delegating to SubscriptionManager
+index-PWanqrhk.js:323 [SW Hook] Registering fresh service worker: /sw.js?v=1754954275862&r=0.746153821350347
+index-PWanqrhk.js:372 🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE
+index-PWanqrhk.js:372 🧪 Test functions added to window: testAdminReset() and testAdminAdvance()
+index-PWanqrhk.js:372 🔌 SCORES PAGE WEBSOCKET USEEFFECT TRIGGERED - SETTING UP CONNECTION
+index-PWanqrhk.js:372 🔍 UserAgent check: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36
+index-PWanqrhk.js:372 🔍 Window location: https://mok-sports-draft-mokfantasysport.replit.app/scores
+index-PWanqrhk.js:372 🔍 WebSocket support: true
+index-PWanqrhk.js:372 🚀 Attempting to connect WebSocket for scores page: wss://mok-sports-draft-mokfantasysport.replit.app/draft-ws
+index-PWanqrhk.js:372 🔍 Current protocol: https:
+index-PWanqrhk.js:372 🔍 Current host: mok-sports-draft-mokfantasysport.replit.app
+index-PWanqrhk.js:372 [DEBUG] Fetching games for week 1 season 2024
+index-PWanqrhk.js:372 [WebSocket] Connecting to draft WebSocket for lock updates: wss://mok-sports-draft-mokfantasysport.replit.app/draft-ws
+sw.js?v=1754954275862&r=0.746153821350347:2 [SW] NUCLEAR OPTION - Emergency service worker loading
+sw.js?v=1754954275862&r=0.746153821350347:88 [SW] Service worker starting, version: v1.7.0-nuclear-unregister-1754954275925
+sw.js?v=1754954275862&r=0.746153821350347:305 [SW] Service worker script loaded successfully
+sw.js?v=1754954275862&r=0.746153821350347:19 [SW] EMERGENCY INSTALL - Clearing all caches and forcing activation
+index-PWanqrhk.js:323 [SW Hook] Service worker registered successfully
+sw.js?v=1754954275862&r=0.746153821350347:92 [SW] Installing service worker, version: v1.7.0-nuclear-unregister-1754954275925
+sw.js?v=1754954275862&r=0.746153821350347:22 [SW] Found caches to delete: []
+sw.js?v=1754954275862&r=0.746153821350347:30 [SW] All caches deleted - skipping waiting
+sw.js?v=1754954275862&r=0.746153821350347:96 [SW] Caching static files
+2index-PWanqrhk.js:372 🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE
+index-PWanqrhk.js:372 [DEBUG] API Response: {games: Array(16), week: 1, season: 2024}
+index-PWanqrhk.js:372 🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE
+index-PWanqrhk.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-PWanqrhk.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-PWanqrhk.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-PWanqrhk.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-PWanqrhk.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-PWanqrhk.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-PWanqrhk.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-PWanqrhk.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-PWanqrhk.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-PWanqrhk.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-PWanqrhk.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-PWanqrhk.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-PWanqrhk.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-PWanqrhk.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-PWanqrhk.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-PWanqrhk.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-PWanqrhk.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-PWanqrhk.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-PWanqrhk.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-PWanqrhk.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-PWanqrhk.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-PWanqrhk.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-PWanqrhk.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-PWanqrhk.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-PWanqrhk.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-PWanqrhk.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-PWanqrhk.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-PWanqrhk.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-PWanqrhk.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-PWanqrhk.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-PWanqrhk.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-PWanqrhk.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-PWanqrhk.js:372 🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE
+index-PWanqrhk.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-PWanqrhk.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-PWanqrhk.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-PWanqrhk.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-PWanqrhk.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-PWanqrhk.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-PWanqrhk.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-PWanqrhk.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-PWanqrhk.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-PWanqrhk.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-PWanqrhk.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-PWanqrhk.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-PWanqrhk.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-PWanqrhk.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-PWanqrhk.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-PWanqrhk.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-PWanqrhk.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-PWanqrhk.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-PWanqrhk.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-PWanqrhk.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-PWanqrhk.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-PWanqrhk.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-PWanqrhk.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-PWanqrhk.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-PWanqrhk.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-PWanqrhk.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-PWanqrhk.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-PWanqrhk.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-PWanqrhk.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-PWanqrhk.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-PWanqrhk.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-PWanqrhk.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-PWanqrhk.js:372 [Image Error] Failed to load BAL logo, trying fallback
+index-PWanqrhk.js:372 [Image Error] Failed to load KC logo, trying fallback
+index-PWanqrhk.js:372 ✅ Scores WebSocket connected successfully for live admin updates
+index-PWanqrhk.js:372 🔗 WebSocket state: 1
+index-PWanqrhk.js:372 📤 Sending identify message: {type: 'identify', userId: 'scores_page_user', draftId: 'admin_updates', source: 'scores_page', connectionId: 'scores_1754954276045'}
+index-PWanqrhk.js:372 [Image Error] Failed to load PHI logo, trying fallback
+index-PWanqrhk.js:372 [Image Error] Failed to load GB logo, trying fallback
+index-PWanqrhk.js:372 [Image Error] Failed to load ARI logo, trying fallback
+index-PWanqrhk.js:372 [Image Error] Failed to load CHI logo, trying fallback
+index-PWanqrhk.js:372 [Image Error] Failed to load BUF logo, trying fallback
+index-PWanqrhk.js:372 [Image Error] Failed to load MIN logo, trying fallback
+index-PWanqrhk.js:372 [Image Error] Failed to load MIA logo, trying fallback
+index-PWanqrhk.js:372 [Image Error] Failed to load CIN logo, trying fallback
+index-PWanqrhk.js:372 [Image Error] Failed to load ATL logo, trying fallback
+index-PWanqrhk.js:372 [Image Error] Failed to load NYG logo, trying fallback
+index-PWanqrhk.js:372 [Image Error] Failed to load SEA logo, trying fallback
+index-PWanqrhk.js:372 [Image Error] Failed to load DAL logo, trying fallback
+index-PWanqrhk.js:372 [Image Error] Failed to load LAC logo, trying fallback
+index-PWanqrhk.js:372 [Image Error] Failed to load LV logo, trying fallback
+index-PWanqrhk.js:372 [Image Error] Failed to load TB logo, trying fallback
+index-PWanqrhk.js:372 Scores WebSocket received message: identified
+index-PWanqrhk.js:372 [Image Error] Failed to load LAR logo, trying fallback
+index-PWanqrhk.js:372 [Image Error] Failed to load JAX logo, trying fallback
+index-PWanqrhk.js:372 [Image Error] Failed to load HOU logo, trying fallback
+index-PWanqrhk.js:372 [Image Error] Failed to load DEN logo, trying fallback
+index-PWanqrhk.js:372 [Image Error] Failed to load TEN logo, trying fallback
+index-PWanqrhk.js:372 [Image Error] Failed to load PIT logo, trying fallback
+index-PWanqrhk.js:372 [Image Error] Failed to load SF logo, trying fallback
+sw.js?v=1754954275862&r=0.746153821350347:99 [SW] Static files cached successfully
+sw.js?v=1754954275862&r=0.746153821350347:41 [SW] EMERGENCY ACTIVATE - Taking control of all clients
+sw.js?v=1754954275862&r=0.746153821350347:110 [SW] Activating service worker, version: v1.7.0-nuclear-unregister-1754954275925
+sw.js?v=1754954275862&r=0.746153821350347:46 [SW] Deleting remaining cache: mok-sports-static-v1.7.0-nuclear-unregister-1754954275925
+sw.js?v=1754954275862&r=0.746153821350347:116 [SW] Found caches: ['mok-sports-static-v1.7.0-nuclear-unregister-1754954275925']
+sw.js?v=1754954275862&r=0.746153821350347:129 [SW] Service worker activated and controlling all clients
+sw.js?v=1754954275862&r=0.746153821350347:51 [SW] Claiming all clients immediately
+index-PWanqrhk.js:372 [Image Error] Failed to load NE logo, trying fallback
+index-PWanqrhk.js:372 [Image Error] Failed to load CLE logo, trying fallback
+index-PWanqrhk.js:372 [Image Error] Failed to load NYJ logo, trying fallback
+index-PWanqrhk.js:372 [Image Error] Failed to load NO logo, trying fallback
+index-PWanqrhk.js:372 [Image Error] Failed to load WSH logo, trying fallback
+index-PWanqrhk.js:372 [Image Error] Failed to load DET logo, trying fallback
+index-PWanqrhk.js:372 [Image Error] Failed to load IND logo, trying fallback
+index-PWanqrhk.js:372 [Image Error] Failed to load CAR logo, trying fallback
+index-PWanqrhk.js:372 [WebSocket] Connected to draft WebSocket for lock updates
+index-PWanqrhk.js:372 🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE
+index-PWanqrhk.js:372 [DEBUG] ✅ YOUR TEAM FOUND: BUF - Should be GREEN
+index-PWanqrhk.js:372 [DEBUG] ✅ YOUR TEAM FOUND: NE - Should be GREEN
+index-PWanqrhk.js:372 [DEBUG] ✅ YOUR TEAM FOUND: LAC - Should be GREEN
+index-PWanqrhk.js:372 [DEBUG] ✅ YOUR TEAM FOUND: DAL - Should be GREEN
+index-PWanqrhk.js:372 [DEBUG] ✅ YOUR TEAM FOUND: WSH - Should be GREEN
+index-PWanqrhk.js:372 🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE
+index-PWanqrhk.js:372 [DEBUG] ✅ YOUR TEAM FOUND: BUF - Should be GREEN
+index-PWanqrhk.js:372 [DEBUG] ✅ YOUR TEAM FOUND: NE - Should be GREEN
+index-PWanqrhk.js:372 [DEBUG] ✅ YOUR TEAM FOUND: LAC - Should be GREEN
+index-PWanqrhk.js:372 [DEBUG] ✅ YOUR TEAM FOUND: DAL - Should be GREEN
+index-PWanqrhk.js:372 [DEBUG] ✅ YOUR TEAM FOUND: WSH - Should be GREEN
+index-PWanqrhk.js:372 🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE
+index-PWanqrhk.js:372 [DEBUG] ✅ YOUR TEAM FOUND: BUF - Should be GREEN
+index-PWanqrhk.js:372 [DEBUG] ✅ YOUR TEAM FOUND: NE - Should be GREEN
+index-PWanqrhk.js:372 [DEBUG] ✅ YOUR TEAM FOUND: LAC - Should be GREEN
+index-PWanqrhk.js:372 [DEBUG] ✅ YOUR TEAM FOUND: DAL - Should be GREEN
+index-PWanqrhk.js:372 [DEBUG] ✅ YOUR TEAM FOUND: WSH - Should be GREEN
+index-PWanqrhk.js:372 🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE
+index-PWanqrhk.js:372 [DEBUG] ✅ YOUR TEAM FOUND: BUF - Should be GREEN
+index-PWanqrhk.js:372 [DEBUG] ✅ YOUR TEAM FOUND: NE - Should be GREEN
+index-PWanqrhk.js:372 [DEBUG] ✅ YOUR TEAM FOUND: LAC - Should be GREEN
+index-PWanqrhk.js:372 [DEBUG] ✅ YOUR TEAM FOUND: DAL - Should be GREEN
+index-PWanqrhk.js:372 [DEBUG] ✅ YOUR TEAM FOUND: WSH - Should be GREEN
+index-PWanqrhk.js:372 🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE
+index-PWanqrhk.js:372 [DEBUG] ✅ YOUR TEAM FOUND: BUF - Should be GREEN
+index-PWanqrhk.js:372 [DEBUG] ✅ YOUR TEAM FOUND: NE - Should be GREEN
+index-PWanqrhk.js:372 [DEBUG] ✅ YOUR TEAM FOUND: LAC - Should be GREEN
+index-PWanqrhk.js:372 [DEBUG] ✅ YOUR TEAM FOUND: DAL - Should be GREEN
+index-PWanqrhk.js:372 [DEBUG] ✅ YOUR TEAM FOUND: WSH - Should be GREEN
+index-PWanqrhk.js:372 🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE
+index-PWanqrhk.js:372 [DEBUG] ✅ YOUR TEAM FOUND: BUF - Should be GREEN
+index-PWanqrhk.js:372 [DEBUG] ✅ YOUR TEAM FOUND: NE - Should be GREEN
+index-PWanqrhk.js:372 [DEBUG] ✅ YOUR TEAM FOUND: LAC - Should be GREEN
+index-PWanqrhk.js:372 [DEBUG] ✅ YOUR TEAM FOUND: DAL - Should be GREEN
+index-PWanqrhk.js:372 [DEBUG] ✅ YOUR TEAM FOUND: WSH - Should be GREEN
+index-PWanqrhk.js:372 🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE
+index-PWanqrhk.js:372 [DEBUG] ✅ YOUR TEAM FOUND: BUF - Should be GREEN
+index-PWanqrhk.js:372 [DEBUG] ✅ YOUR TEAM FOUND: NE - Should be GREEN
+index-PWanqrhk.js:372 [DEBUG] ✅ YOUR TEAM FOUND: LAC - Should be GREEN
+index-PWanqrhk.js:372 [DEBUG] ✅ YOUR TEAM FOUND: DAL - Should be GREEN
+index-PWanqrhk.js:372 [DEBUG] ✅ YOUR TEAM FOUND: WSH - Should be GREEN
+index-PWanqrhk.js:372 🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE
+index-PWanqrhk.js:372 [DEBUG] ✅ YOUR TEAM FOUND: BUF - Should be GREEN
+index-PWanqrhk.js:372 [DEBUG] ✅ YOUR TEAM FOUND: NE - Should be GREEN
+index-PWanqrhk.js:372 [DEBUG] ✅ YOUR TEAM FOUND: LAC - Should be GREEN
+index-PWanqrhk.js:372 [DEBUG] ✅ YOUR TEAM FOUND: DAL - Should be GREEN
+index-PWanqrhk.js:372 [DEBUG] ✅ YOUR TEAM FOUND: WSH - Should be GREEN
+index-PWanqrhk.js:372 🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE
+index-PWanqrhk.js:372 [DEBUG] ✅ YOUR TEAM FOUND: BUF - Should be GREEN
+index-PWanqrhk.js:372 [DEBUG] ✅ YOUR TEAM FOUND: NE - Should be GREEN
+index-PWanqrhk.js:372 [DEBUG] ✅ YOUR TEAM FOUND: LAC - Should be GREEN
+index-PWanqrhk.js:372 [DEBUG] ✅ YOUR TEAM FOUND: DAL - Should be GREEN
+index-PWanqrhk.js:372 [DEBUG] ✅ YOUR TEAM FOUND: WSH - Should be GREEN
+index-PWanqrhk.js:372 🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE
+index-PWanqrhk.js:372 [DEBUG] ✅ YOUR TEAM FOUND: BUF - Should be GREEN
+index-PWanqrhk.js:372 [DEBUG] ✅ YOUR TEAM FOUND: NE - Should be GREEN
+index-PWanqrhk.js:372 [DEBUG] ✅ YOUR TEAM FOUND: LAC - Should be GREEN
+index-PWanqrhk.js:372 [DEBUG] ✅ YOUR TEAM FOUND: DAL - Should be GREEN
+index-PWanqrhk.js:372 [DEBUG] ✅ YOUR TEAM FOUND: WSH - Should be GREEN
