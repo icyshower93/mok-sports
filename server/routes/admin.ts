@@ -537,13 +537,11 @@ async function calculateAndApplyMokScoring(game: any, gameResult: any) {
 // Store team performance data for Mok scoring
 async function storeTeamPerformance(teamId: string, game: any, teamScore: number, opponentScore: number, isWin: boolean, isTie: boolean, isBlowout: boolean, isShutout: boolean) {
   try {
-    // Calculate base Mok points
+    // Calculate ONLY base Mok points (win=1, tie=0.5, loss=0)
     let baseMokPoints = 0;
-    if (isWin) baseMokPoints += 1;
-    else if (isTie) baseMokPoints += 0.5;
-    
-    if (isBlowout) baseMokPoints += 1;
-    if (isShutout) baseMokPoints += 1;
+    if (isWin) baseMokPoints = 1;
+    else if (isTie) baseMokPoints = 0.5;
+    // Note: Blowout, shutout, weekly high/low bonuses are NOT part of base points
     
     // Store team performance (weekly high/low will be updated later)
     await db.insert(teamPerformance).values({
