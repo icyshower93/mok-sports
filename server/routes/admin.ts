@@ -648,7 +648,7 @@ async function calculateUserScores(week: number, season: number) {
     }
     
     // Store user weekly scores
-    for (const [, userScore] of userScores) {
+    for (const userScore of userScores.values()) {
       const totalPoints = userScore.basePoints + userScore.lockBonusPoints + userScore.lockAndLoadBonusPoints;
       
       await db.insert(userWeeklyScores).values({
@@ -661,7 +661,7 @@ async function calculateUserScores(week: number, season: number) {
         lockAndLoadBonusPoints: userScore.lockAndLoadBonusPoints,
         totalPoints
       }).onConflictDoUpdate({
-        target: userWeeklyScores.uniqueUserWeek.columns,
+        target: [userWeeklyScores.userId, userWeeklyScores.leagueId, userWeeklyScores.season, userWeeklyScores.week],
         set: {
           basePoints: userScore.basePoints,
           lockBonusPoints: userScore.lockBonusPoints,
