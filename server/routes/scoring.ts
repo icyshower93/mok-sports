@@ -18,12 +18,12 @@ router.get("/current-week", async (req, res) => {
     // Get current week from admin state
     const adminModule = await import("./admin.js");
     // In a real implementation, this would come from the admin state
-    // For now, return Week 0 of 2024 season
+    // Return Week 1 of 2024 season for testing with authentic results
     res.json({
-      currentWeek: 0,
+      currentWeek: 1,
       season: 2024,
-      status: "preseason", // before Week 1 starts
-      message: "App is set to before Week 1 of 2024 NFL season"
+      status: "completed", // Week 1 has been completed
+      message: "App is showing 2024 NFL season Week 1 results"
     });
   } catch (error) {
     console.error('[Scoring] Error getting current week:', error);
@@ -43,9 +43,6 @@ router.get("/week/:week", async (req, res) => {
     }
     
     console.log(`[Scoring] Getting scores for Week ${week} of ${season} with ownership data...`);
-    
-    // Update scores from Tank01 if needed
-    await updateGameScoresFromTank01(week, season);
     
     // Get games with team ownership and lock information
     const gamesResult = await db.execute(sql`
@@ -97,28 +94,16 @@ router.get("/week/:week", async (req, res) => {
       ORDER BY g.game_date
     `);
     
-    // Get current app time for game completion logic
-    let currentAppDate = new Date();
-    try {
-      const adminResponse = await fetch('http://localhost:5000/api/admin/state');
-      if (adminResponse.ok) {
-        const adminState = await adminResponse.json();
-        if (adminState?.currentDateISO) {
-          currentAppDate = new Date(adminState.currentDateISO);
-        }
-      }
-    } catch (error) {
-      console.log('[Scoring] Could not get admin state, using current time');
-    }
-
+    console.log(`[Scoring] Found ${gamesResult.rows.length} games for Week ${week} (${gamesResult.rows.filter(r => r.is_completed).length} completed)`);
+    
     const games = gamesResult.rows.map((row: any) => ({
       id: row.game_id,
       homeTeam: row.home_team,
       awayTeam: row.away_team,
       homeScore: row.home_score,
       awayScore: row.away_score,
-      // Only show as completed if current app time is after game time
-      isCompleted: row.is_completed && currentAppDate > new Date(row.game_date),
+      // Show completion status directly from database
+      isCompleted: Boolean(row.is_completed),
       gameDate: row.game_date,
       // Team ownership information
       homeOwner: row.home_owner_id,
