@@ -253,6 +253,19 @@ export function registerAdminRoutes(app: Express) {
       await updateAdminState();
       adminState.processingInProgress = false;
 
+      // Broadcast update to all connected clients to refresh scores
+      const draftManager = (global as any).draftManager;
+      if (draftManager && draftManager.broadcast) {
+        draftManager.broadcast({
+          type: 'admin_date_advanced',
+          data: {
+            newDate: adminState.currentDate.toISOString(),
+            gamesProcessed: processedCount,
+            currentWeek: adminState.currentWeek
+          }
+        });
+      }
+
       res.json({
         success: true,
         newDate: adminState.currentDate.toISOString(),

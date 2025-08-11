@@ -74,6 +74,46 @@ export default function ScoresPage() {
   const [selectedGame, setSelectedGame] = useState<any>(null);
   const [selectedSeason] = useState(2024); // Using completed 2024 NFL season for testing
 
+  // Listen for admin date advances to refresh scores automatically
+  useEffect(() => {
+    const connectWebSocket = () => {
+      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      const wsUrl = `${protocol}//${window.location.host}/admin-ws`;
+      
+      try {
+        const ws = new WebSocket(wsUrl);
+        
+        ws.onmessage = (event) => {
+          try {
+            const message = JSON.parse(event.data);
+            if (message.type === 'admin_date_advanced') {
+              console.log('Admin date advanced, refreshing scores...');
+              // Invalidate scores queries to trigger refresh
+              queryClient.invalidateQueries({ queryKey: ['/api/scores'] });
+              queryClient.invalidateQueries({ queryKey: [`/api/scores/week/${selectedWeek}`] });
+            }
+          } catch (e) {
+            console.log('WebSocket message parsing error:', e);
+          }
+        };
+
+        ws.onopen = () => console.log('Scores WebSocket connected for live admin updates');
+        ws.onclose = () => console.log('Scores WebSocket disconnected');
+        ws.onerror = (error) => console.log('Scores WebSocket error:', error);
+        
+        return ws;
+      } catch (error) {
+        console.log('WebSocket connection failed:', error);
+        return null;
+      }
+    };
+
+    const ws = connectWebSocket();
+    return () => {
+      if (ws) ws.close();
+    };
+  }, [queryClient, selectedWeek]);
+
   // Get user's leagues to show scores for
   const { data: userLeagues } = useQuery({
     queryKey: ['/api/user/leagues'],
