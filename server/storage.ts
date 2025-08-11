@@ -1,5 +1,5 @@
 import { 
-  users, leagues, leagueMembers, nflTeams, nflGames, pushSubscriptions, drafts, draftPicks, draftTimers, stables,
+  users, leagues, leagueMembers, nflTeams, nflGames, pushSubscriptions, drafts, draftPicks, draftTimers, stables, weeklyLocks,
   type User, type InsertUser,
   type League, type InsertLeague,
   type LeagueMember, type InsertLeagueMember,
@@ -1024,13 +1024,73 @@ export class DatabaseStorage implements IStorage {
 
   // Scoring methods - stub implementations
   async getUserLockHistory(userId: string, leagueId: string, season: number): Promise<any[]> {
-    // TODO: Implement with weeklyLocks table
-    return [];
+    try {
+      const userLocks = await db.select()
+        .from(weeklyLocks)
+        .where(and(
+          eq(weeklyLocks.userId, userId),
+          eq(weeklyLocks.leagueId, leagueId),
+          eq(weeklyLocks.season, season)
+        ))
+        .orderBy(weeklyLocks.week);
+      
+      return userLocks;
+    } catch (error) {
+      console.error('Error getting user lock history:', error);
+      return [];
+    }
   }
 
   async setWeeklyLocks(userId: string, leagueId: string, season: number, week: number, locks: { lockedTeamId?: string; lockAndLoadTeamId?: string }): Promise<void> {
-    // TODO: Implement with weeklyLocks table
-    console.log(`Setting locks for user ${userId} in league ${leagueId}, season ${season}, week ${week}:`, locks);
+    try {
+      console.log(`[Storage] Setting locks for user ${userId} in league ${leagueId}, season ${season}, week ${week}:`, locks);
+      
+      // Check if lock record exists for this user/league/season/week
+      const existingLock = await db.select()
+        .from(weeklyLocks)
+        .where(and(
+          eq(weeklyLocks.userId, userId),
+          eq(weeklyLocks.leagueId, leagueId),
+          eq(weeklyLocks.season, season),
+          eq(weeklyLocks.week, week)
+        ));
+
+      if (existingLock.length > 0) {
+        // Update existing lock
+        await db.update(weeklyLocks)
+          .set({
+            lockedTeamId: locks.lockedTeamId || null,
+            lockAndLoadTeamId: locks.lockAndLoadTeamId || null,
+            updatedAt: new Date()
+          })
+          .where(and(
+            eq(weeklyLocks.userId, userId),
+            eq(weeklyLocks.leagueId, leagueId),
+            eq(weeklyLocks.season, season),
+            eq(weeklyLocks.week, week)
+          ));
+        
+        console.log(`[Storage] Updated existing lock for user ${userId}, week ${week}`);
+      } else {
+        // Create new lock record
+        await db.insert(weeklyLocks).values({
+          userId,
+          leagueId,
+          season,
+          week,
+          lockedTeamId: locks.lockedTeamId || null,
+          lockAndLoadTeamId: locks.lockAndLoadTeamId || null,
+          lockPoints: 0,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        });
+        
+        console.log(`[Storage] Created new lock for user ${userId}, week ${week}`);
+      }
+    } catch (error) {
+      console.error('Error setting weekly locks:', error);
+      throw error;
+    }
   }
 
   // NFL Game methods for opponent data
@@ -1089,7 +1149,7 @@ export class DatabaseStorage implements IStorage {
           console.log(`[Storage] Found point spread for ${gameData.homeTeamCode} vs ${gameData.awayTeamCode}: ${pointSpread}`);
         } else {
           // Historical 2024 NFL point spreads for realistic demo data
-          const historicalSpreads = {
+          const historicalSpreads: Record<string, number> = {
             'BUF-ARI': 6.5,  // Bills favored by 6.5 at home vs Cardinals
             'CIN-NE': 7.5,   // Bengals favored by 7.5 on road vs Patriots  
             'CLE-DAL': 2.5,  // Browns favored by 2.5 on road vs Cowboys
@@ -1137,8 +1197,14 @@ export class DatabaseStorage implements IStorage {
   async getTimerState(): Promise<any> {
     // Connect to the existing admin state management
     try {
-      const { getAdminState } = await import('./routes/admin.js');
-      return getAdminState();
+      const adminModule = await import('./routes/admin.js');
+      const adminState = (adminModule as any).adminState;
+      return adminState || {
+        currentWeek: 1,
+        currentDay: 'tuesday', 
+        currentTime: '15:00',
+        season: 2024
+      };
     } catch (error) {
       console.error('Error getting timer state:', error);
       // Fallback to basic state - using Week 1 since games start September 5th

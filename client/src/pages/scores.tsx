@@ -129,6 +129,11 @@ export default function ScoresPage() {
               // Force invalidate ALL queries to trigger complete refresh and show cleared scores
               queryClient.invalidateQueries();
               console.log('📊 [WebSocket] Invalidated ALL queries after admin season reset');
+            } else if (message.type === 'lock_updated') {
+              console.log('Lock updated, refreshing scores to show lock icons...');
+              // Force invalidate ALL queries to trigger complete refresh with updated lock status
+              queryClient.invalidateQueries();
+              console.log('📊 [WebSocket] Invalidated ALL queries after lock update');
             }
           } catch (e) {
             console.log('WebSocket message parsing error:', e);

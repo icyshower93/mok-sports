@@ -1194,26 +1194,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
         console.log(`[Lock] ✅ Team ${team.code} locked for user ${userId} in week ${week}`);
         
-        // Broadcast lock update to all connected clients
-        try {
-          const { globalDraftManager } = await import("./routes/draft.js");
-          if (globalDraftManager?.webSocketManager) {
-            const broadcastData = {
-              type: 'lock-update',
+        // Broadcast lock update to all connected clients for instant UI refresh
+        const draftManager = (global as any).draftManager;
+        if (draftManager && draftManager.broadcast) {
+          draftManager.broadcast({
+            type: 'lock_updated',
+            data: {
               userId: userId,
-              teamId: teamId,
-              week: week,
-              lockType: 'lock',
               leagueId: leagueId,
+              season: 2024,
+              week: week,
+              lockedTeamId: teamId,
+              lockAndLoadTeamId: null,
+              userName: user.name,
               teamCode: team.code,
               teamName: team.name,
-              timestamp: Date.now()
-            };
-            globalDraftManager.webSocketManager.broadcastToAll(broadcastData);
-            console.log(`[Lock] Broadcasted lock update for team ${team.code} to all clients`);
-          }
-        } catch (error) {
-          console.error('[Lock] Failed to broadcast lock update:', error);
+              lockType: 'lock'
+            }
+          });
+          console.log(`[Locks] ✅ Broadcast sent for lock update by ${user.name} - ${team.code}`);
+        } else {
+          console.log(`[Locks] ❌ Could not broadcast - draftManager not available`);
         }
         
         res.json({ 
@@ -1232,26 +1233,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
         console.log(`[Lock] ⚡ Lock & Load activated for team ${team.code} for user ${userId} in week ${week}`);
         
-        // Broadcast Lock & Load update to all connected clients
-        try {
-          const { globalDraftManager } = await import("./routes/draft.js");
-          if (globalDraftManager?.webSocketManager) {
-            const broadcastData = {
-              type: 'lock-update',
+        // Broadcast Lock & Load update to all connected clients for instant UI refresh
+        const draftManager = (global as any).draftManager;
+        if (draftManager && draftManager.broadcast) {
+          draftManager.broadcast({
+            type: 'lock_updated',
+            data: {
               userId: userId,
-              teamId: teamId,
-              week: week,
-              lockType: 'lockAndLoad',
               leagueId: leagueId,
+              season: 2024,
+              week: week,
+              lockedTeamId: existingWeeklyLock.lockedTeamId,
+              lockAndLoadTeamId: teamId,
+              userName: user.name,
               teamCode: team.code,
               teamName: team.name,
-              timestamp: Date.now()
-            };
-            globalDraftManager.webSocketManager.broadcastToAll(broadcastData);
-            console.log(`[Lock] Broadcasted Lock & Load update for team ${team.code} to all clients`);
-          }
-        } catch (error) {
-          console.error('[Lock] Failed to broadcast Lock & Load update:', error);
+              lockType: 'lockAndLoad'
+            }
+          });
+          console.log(`[Locks] ✅ Broadcast sent for Lock & Load update by ${user.name} - ${team.code}`);
+        } else {
+          console.log(`[Locks] ❌ Could not broadcast - draftManager not available`);
         }
         
         res.json({ 

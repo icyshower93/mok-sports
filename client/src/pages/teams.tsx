@@ -132,8 +132,8 @@ export default function StablePage() {
             : `${teamName} is locked with 2x risk/reward for Week ${selectedWeek}`,
         });
 
-        // Refresh team data to get updated lock states
-        queryClient.invalidateQueries({ queryKey: [`/api/user/stable/${selectedLeague}`] });
+        // Refresh all data to show updated lock states everywhere including scores page  
+        queryClient.invalidateQueries();
       };
 
       // Schedule cleanup and updates separately with multiple animation frames

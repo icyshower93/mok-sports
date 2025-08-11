@@ -396,7 +396,7 @@ export function setupScoringRoutes(app: express.Express) {
       }
 
       // TODO: Implement calculateSeasonStandings function
-      const standings = [];
+      const standings: any[] = [];
       res.json(standings);
     } catch (error) {
       console.error('Error getting season standings:', error);
@@ -444,8 +444,26 @@ export function setupScoringRoutes(app: express.Express) {
         // }
       }
 
-      // TODO: Implement storage method for weekly locks
-      // await storage.setWeeklyLocks(user.id, leagueId, season, week, { lockedTeamId, lockAndLoadTeamId });
+      // Set weekly locks in database
+      await storage.setWeeklyLocks(user.id, leagueId, season, week, { lockedTeamId, lockAndLoadTeamId });
+
+      // Broadcast lock update to all connected clients for instant UI refresh
+      const draftManager = (global as any).draftManager;
+      if (draftManager && draftManager.broadcast) {
+        draftManager.broadcast({
+          type: 'lock_updated',
+          data: {
+            userId: user.id,
+            leagueId,
+            season,
+            week,
+            lockedTeamId,
+            lockAndLoadTeamId,
+            userName: user.name
+          }
+        });
+        console.log(`[Locks] ✅ Broadcast sent for lock update by ${user.name}`);
+      }
 
       res.json({ 
         success: true, 
