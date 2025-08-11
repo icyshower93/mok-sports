@@ -1,14 +1,114 @@
 import { useState, useEffect } from "react";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Play, Pause, RotateCcw, Clock } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { ArrowLeft, Play, Pause, RotateCcw, Clock, Wifi, WifiOff } from "lucide-react";
 import { useLocation } from "wouter";
+import { queryClient } from "@/lib/queryClient";
 
 export default function AdminPanel() {
   const [, navigate] = useLocation();
-  const [isRunning, setIsRunning] = useState(false);
-  const [time, setTime] = useState(0); // Time in seconds
-  const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null);
+  const [isConnected, setIsConnected] = useState(false);
+  const [ws, setWs] = useState<WebSocket | null>(null);
+
+  // Fetch admin state from server
+  const { data: adminState, refetch } = useQuery({
+    queryKey: ['/api/admin/state'],
+    refetchInterval: 1000, // Refetch every second for real-time updates
+    staleTime: 0
+  });
+
+  const currentTime = adminState?.timerElapsed || 0;
+  const isRunning = adminState?.isTimerRunning || false;
+
+  // Timer control mutations
+  const startTimerMutation = useMutation({
+    mutationFn: async () => {
+      const response = await fetch('/api/admin/timer/start', { 
+        method: 'POST',
+        credentials: 'include'
+      });
+      if (!response.ok) throw new Error('Failed to start timer');
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/state'] });
+    }
+  });
+
+  const stopTimerMutation = useMutation({
+    mutationFn: async () => {
+      const response = await fetch('/api/admin/timer/stop', { 
+        method: 'POST',
+        credentials: 'include'
+      });
+      if (!response.ok) throw new Error('Failed to stop timer');
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/state'] });
+    }
+  });
+
+  const resetTimerMutation = useMutation({
+    mutationFn: async () => {
+      const response = await fetch('/api/admin/timer/reset', { 
+        method: 'POST',
+        credentials: 'include'
+      });
+      if (!response.ok) throw new Error('Failed to reset timer');
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/state'] });
+    }
+  });
+
+  // WebSocket connection for real-time updates
+  useEffect(() => {
+    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const wsUrl = `${protocol}//${window.location.host}/admin-ws`;
+    
+    try {
+      const websocket = new WebSocket(wsUrl);
+      
+      websocket.onopen = () => {
+        console.log('Admin WebSocket connected');
+        setIsConnected(true);
+        setWs(websocket);
+      };
+
+      websocket.onmessage = (event) => {
+        try {
+          const message = JSON.parse(event.data);
+          if (message.type === 'admin-update') {
+            // Invalidate queries to trigger re-fetch with fresh data
+            queryClient.invalidateQueries({ queryKey: ['/api/admin/state'] });
+          }
+        } catch (error) {
+          console.error('Error parsing WebSocket message:', error);
+        }
+      };
+
+      websocket.onclose = () => {
+        console.log('Admin WebSocket disconnected');
+        setIsConnected(false);
+        setWs(null);
+      };
+
+      websocket.onerror = (error) => {
+        console.error('Admin WebSocket error:', error);
+        setIsConnected(false);
+      };
+
+      return () => {
+        websocket.close();
+      };
+    } catch (error) {
+      console.error('Failed to create WebSocket connection:', error);
+    }
+  }, []);
 
   // Format time as MM:SS
   const formatTime = (seconds: number) => {
@@ -16,44 +116,6 @@ export default function AdminPanel() {
     const secs = seconds % 60;
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
-
-  // Start/Stop timer
-  const toggleTimer = () => {
-    if (isRunning) {
-      // Stop timer
-      if (intervalId) {
-        clearInterval(intervalId);
-        setIntervalId(null);
-      }
-      setIsRunning(false);
-    } else {
-      // Start timer
-      const id = setInterval(() => {
-        setTime(prevTime => prevTime + 1);
-      }, 1000);
-      setIntervalId(id);
-      setIsRunning(true);
-    }
-  };
-
-  // Reset timer
-  const resetTimer = () => {
-    if (intervalId) {
-      clearInterval(intervalId);
-      setIntervalId(null);
-    }
-    setTime(0);
-    setIsRunning(false);
-  };
-
-  // Cleanup interval on unmount
-  useEffect(() => {
-    return () => {
-      if (intervalId) {
-        clearInterval(intervalId);
-      }
-    };
-  }, [intervalId]);
 
   return (
     <div className="min-h-screen bg-background">
