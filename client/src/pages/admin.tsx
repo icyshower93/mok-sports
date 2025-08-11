@@ -3,8 +3,7 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Slider } from "@/components/ui/slider";
-import { ArrowLeft, Play, Pause, RotateCcw, Clock, Wifi, WifiOff, Calendar, Zap } from "lucide-react";
+import { ArrowLeft, Play, Pause, RotateCcw, Clock, Wifi, WifiOff } from "lucide-react";
 import { useLocation } from "wouter";
 import { queryClient } from "@/lib/queryClient";
 
@@ -20,20 +19,17 @@ export default function AdminPanel() {
     staleTime: 0
   });
 
-  const isRunning = adminState?.isSimulationRunning || false;
-  const simulationSpeed = adminState?.simulationSpeed || 1;
-  const currentDate = adminState?.currentDateFormatted || 'September 1, 2024';
-  const currentWeek = adminState?.currentWeek || 0;
-  const processedGames = adminState?.processedGames || 0;
+  const currentTime = adminState?.timerElapsed || 0;
+  const isRunning = adminState?.isTimerRunning || false;
 
-  // NFL season simulation control mutations
-  const startSimulationMutation = useMutation({
+  // Timer control mutations
+  const startTimerMutation = useMutation({
     mutationFn: async () => {
-      const response = await fetch('/api/admin/simulation/start', { 
+      const response = await fetch('/api/admin/timer/start', { 
         method: 'POST',
         credentials: 'include'
       });
-      if (!response.ok) throw new Error('Failed to start simulation');
+      if (!response.ok) throw new Error('Failed to start timer');
       return response.json();
     },
     onSuccess: () => {
@@ -41,13 +37,13 @@ export default function AdminPanel() {
     }
   });
 
-  const stopSimulationMutation = useMutation({
+  const stopTimerMutation = useMutation({
     mutationFn: async () => {
-      const response = await fetch('/api/admin/simulation/stop', { 
+      const response = await fetch('/api/admin/timer/stop', { 
         method: 'POST',
         credentials: 'include'
       });
-      if (!response.ok) throw new Error('Failed to stop simulation');
+      if (!response.ok) throw new Error('Failed to stop timer');
       return response.json();
     },
     onSuccess: () => {
@@ -55,29 +51,13 @@ export default function AdminPanel() {
     }
   });
 
-  const resetSimulationMutation = useMutation({
+  const resetTimerMutation = useMutation({
     mutationFn: async () => {
-      const response = await fetch('/api/admin/simulation/reset', { 
+      const response = await fetch('/api/admin/timer/reset', { 
         method: 'POST',
         credentials: 'include'
       });
-      if (!response.ok) throw new Error('Failed to reset simulation');
-      return response.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/admin/state'] });
-    }
-  });
-
-  const setSpeedMutation = useMutation({
-    mutationFn: async (speed: number) => {
-      const response = await fetch('/api/admin/simulation/speed', { 
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ speed })
-      });
-      if (!response.ok) throw new Error('Failed to set speed');
+      if (!response.ok) throw new Error('Failed to reset timer');
       return response.json();
     },
     onSuccess: () => {
@@ -130,14 +110,12 @@ export default function AdminPanel() {
     }
   }, []);
 
-  // Handle speed change
-  const handleSpeedChange = (newSpeed: number[]) => {
-    const speed = newSpeed[0];
-    setSpeedMutation.mutate(speed);
+  // Format time as MM:SS
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
-
-  // Speed options for quick selection
-  const speedPresets = [1, 5, 10, 30, 60, 120, 300]; // 1x to 300x speed
 
   return (
     <div className="min-h-screen bg-background">
@@ -155,8 +133,8 @@ export default function AdminPanel() {
               <span>Back</span>
             </Button>
             <div className="flex items-center space-x-2">
-              <Calendar className="w-6 h-6 text-blue-600" />
-              <h1 className="text-2xl font-bold">NFL Season Simulator</h1>
+              <Clock className="w-6 h-6 text-blue-600" />
+              <h1 className="text-2xl font-bold">Admin Time Control</h1>
             </div>
           </div>
           <Badge variant={isConnected ? "default" : "secondary"} className="flex items-center space-x-1">
@@ -165,44 +143,28 @@ export default function AdminPanel() {
           </Badge>
         </div>
 
-        {/* Current Date Display */}
-        <Card className="mb-6">
-          <CardContent className="pt-6">
-            <div className="text-center space-y-4">
-              <div className="text-4xl font-bold text-blue-600 dark:text-blue-400">
-                {currentDate}
-              </div>
-              <div className="flex justify-center space-x-6 text-sm text-muted-foreground">
-                <div className="flex items-center space-x-2">
-                  <Clock className="w-4 h-4" />
-                  <span>Week {currentWeek}</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Zap className="w-4 h-4" />
-                  <span>{processedGames} games processed</span>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Simulation Controls */}
+        {/* Timer Card */}
         <Card className="mb-6">
           <CardHeader>
-            <CardTitle className="text-center">Time Simulation Controls</CardTitle>
+            <CardTitle className="text-center">Synchronized Timer</CardTitle>
             <p className="text-center text-sm text-muted-foreground">
-              Control NFL season time flow and game simulation
+              This timer syncs across all devices in real-time
             </p>
           </CardHeader>
-          <CardContent className="space-y-6">
-            {/* Play/Pause/Reset Controls */}
+          <CardContent className="text-center space-y-6">
+            {/* Time Display */}
+            <div className="text-6xl font-mono font-bold text-blue-600 dark:text-blue-400">
+              {formatTime(currentTime)}
+            </div>
+
+            {/* Controls */}
             <div className="flex justify-center space-x-4">
               <Button
-                onClick={() => isRunning ? stopSimulationMutation.mutate() : startSimulationMutation.mutate()}
+                onClick={() => isRunning ? stopTimerMutation.mutate() : startTimerMutation.mutate()}
                 size="lg"
                 variant={isRunning ? "destructive" : "default"}
                 className="w-32"
-                disabled={startSimulationMutation.isPending || stopSimulationMutation.isPending}
+                disabled={startTimerMutation.isPending || stopTimerMutation.isPending}
               >
                 {isRunning ? (
                   <>
@@ -218,55 +180,15 @@ export default function AdminPanel() {
               </Button>
 
               <Button
-                onClick={() => resetSimulationMutation.mutate()}
+                onClick={() => resetTimerMutation.mutate()}
                 size="lg"
                 variant="outline"
                 className="w-32"
-                disabled={resetSimulationMutation.isPending}
+                disabled={resetTimerMutation.isPending}
               >
                 <RotateCcw className="w-5 h-5 mr-2" />
                 Reset
               </Button>
-            </div>
-
-            {/* Speed Control */}
-            <div className="space-y-4">
-              <div className="text-center">
-                <p className="text-sm font-medium mb-2">Time Speed: {simulationSpeed}x</p>
-                <p className="text-xs text-muted-foreground">
-                  {simulationSpeed === 1 ? 'Real time' : 
-                   simulationSpeed < 60 ? `${simulationSpeed} minutes = 1 hour` :
-                   simulationSpeed === 60 ? '1 minute = 1 hour' :
-                   simulationSpeed === 120 ? '1 minute = 2 hours' :
-                   simulationSpeed === 300 ? '1 minute = 5 hours' :
-                   `${Math.round(simulationSpeed/60*10)/10} hours per minute`}
-                </p>
-              </div>
-              
-              <Slider
-                value={[simulationSpeed]}
-                onValueChange={handleSpeedChange}
-                min={1}
-                max={300}
-                step={1}
-                className="w-full"
-                disabled={setSpeedMutation.isPending}
-              />
-
-              {/* Speed Presets */}
-              <div className="flex flex-wrap justify-center gap-2">
-                {speedPresets.map(preset => (
-                  <Button
-                    key={preset}
-                    onClick={() => setSpeedMutation.mutate(preset)}
-                    size="sm"
-                    variant={simulationSpeed === preset ? "default" : "outline"}
-                    disabled={setSpeedMutation.isPending}
-                  >
-                    {preset}x
-                  </Button>
-                ))}
-              </div>
             </div>
           </CardContent>
         </Card>
