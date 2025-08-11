@@ -3,10 +3,22 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+// Removed Select components to fix DOM manipulation errors
+import { ChevronDown } from "lucide-react";
 import { ArrowLeft, Play, Pause, RotateCcw, Clock, Wifi, WifiOff, FastForward, Calendar, Trophy } from "lucide-react";
 import { useLocation } from "wouter";
 import { queryClient } from "@/lib/queryClient";
+
+// Define admin state type
+interface AdminState {
+  simulationDate: string;
+  isSimulationRunning: boolean;
+  timeAcceleration: number;
+  completedGames: number;
+  upcomingGames: any[];
+  currentWeek: number;
+  leagueStandings: any[];
+}
 
 export default function AdminPanel() {
   const [, navigate] = useLocation();
@@ -14,7 +26,7 @@ export default function AdminPanel() {
   const [ws, setWs] = useState<WebSocket | null>(null);
 
   // Fetch admin state from server
-  const { data: adminState, refetch } = useQuery({
+  const { data: adminState, refetch, isLoading } = useQuery<AdminState>({
     queryKey: ['/api/admin/state'],
     refetchInterval: 1000, // Refetch every second for real-time updates
     staleTime: 0
@@ -261,56 +273,59 @@ export default function AdminPanel() {
                 {/* Time Acceleration */}
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Time Acceleration</label>
-                  <Select 
-                    key={`speed-${currentSpeed}`}
-                    value={currentSpeed.toString()} 
-                    onValueChange={(value) => {
-                      if (value && !setTimeAccelerationMutation.isPending) {
-                        setTimeAccelerationMutation.mutate(parseInt(value));
-                      }
-                    }}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder={getSpeedLabel(currentSpeed)} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="1">Real Time (1x)</SelectItem>
-                      <SelectItem value="10">10x Speed</SelectItem>
-                      <SelectItem value="60">1 minute/second</SelectItem>
-                      <SelectItem value="300">5 minutes/second</SelectItem>
-                      <SelectItem value="1800">30 minutes/second</SelectItem>
-                      <SelectItem value="3600">1 hour/second</SelectItem>
-                      <SelectItem value="86400">1 day/second</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <div className="relative">
+                    <select
+                      value={currentSpeed}
+                      onChange={(e) => {
+                        const value = parseInt(e.target.value);
+                        if (!setTimeAccelerationMutation.isPending) {
+                          setTimeAccelerationMutation.mutate(value);
+                        }
+                      }}
+                      disabled={setTimeAccelerationMutation.isPending}
+                      className="w-full px-3 py-2 text-sm border border-input bg-background rounded-md focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring appearance-none pr-10"
+                    >
+                      <option value={1}>Real Time (1x)</option>
+                      <option value={10}>10x Speed</option>
+                      <option value={60}>1 minute/second</option>
+                      <option value={300}>5 minutes/second</option>
+                      <option value={1800}>30 minutes/second</option>
+                      <option value={3600}>1 hour/second</option>
+                      <option value={86400}>1 day/second</option>
+                    </select>
+                    <ChevronDown className="absolute right-3 top-2.5 h-4 w-4 opacity-50 pointer-events-none" />
+                  </div>
                 </div>
 
                 {/* Quick Jump */}
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Jump to Week</label>
-                  <Select 
-                    key={`week-jump-${currentWeek}`}
-                    onValueChange={(value) => {
-                      if (value && !jumpToWeekMutation.isPending) {
-                        jumpToWeekMutation.mutate(parseInt(value));
-                      }
-                    }}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder={`Current: Week ${currentWeek}`} />
-                    </SelectTrigger>
-                    <SelectContent>
+                  <div className="relative">
+                    <select
+                      value=""
+                      onChange={(e) => {
+                        const value = parseInt(e.target.value);
+                        if (value && !jumpToWeekMutation.isPending) {
+                          jumpToWeekMutation.mutate(value);
+                          e.target.value = ""; // Reset selection
+                        }
+                      }}
+                      disabled={jumpToWeekMutation.isPending}
+                      className="w-full px-3 py-2 text-sm border border-input bg-background rounded-md focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring appearance-none pr-10"
+                    >
+                      <option value="">{`Current: Week ${currentWeek}`}</option>
                       {Array.from({ length: 18 }, (_, i) => i + 1).map(week => (
-                        <SelectItem key={week} value={week.toString()}>
+                        <option key={week} value={week}>
                           Week {week}
-                        </SelectItem>
+                        </option>
                       ))}
-                      <SelectItem value="19">Wild Card</SelectItem>
-                      <SelectItem value="20">Divisional</SelectItem>
-                      <SelectItem value="21">Conference Championship</SelectItem>
-                      <SelectItem value="22">Super Bowl</SelectItem>
-                    </SelectContent>
-                  </Select>
+                      <option value={19}>Wild Card</option>
+                      <option value={20}>Divisional</option>
+                      <option value={21}>Conference Championship</option>
+                      <option value={22}>Super Bowl</option>
+                    </select>
+                    <ChevronDown className="absolute right-3 top-2.5 h-4 w-4 opacity-50 pointer-events-none" />
+                  </div>
                 </div>
               </CardContent>
             </Card>
