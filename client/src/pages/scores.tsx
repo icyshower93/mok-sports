@@ -121,18 +121,14 @@ export default function ScoresPage() {
             
             if (message.type === 'admin_date_advanced') {
               console.log('Admin date advanced, refreshing scores...');
-              // Invalidate all score-related queries to trigger refresh
-              queryClient.invalidateQueries({ queryKey: ['/api/scores'] });
-              queryClient.invalidateQueries({ queryKey: [`/api/scores/week`] });
-              queryClient.invalidateQueries({ queryKey: [`/api/leagues`] });
-              console.log('📊 [WebSocket] Refreshed all score queries after admin date advance');
+              // Force invalidate ALL queries to trigger complete refresh
+              queryClient.invalidateQueries();
+              console.log('📊 [WebSocket] Invalidated ALL queries after admin date advance');
             } else if (message.type === 'admin_season_reset') {
               console.log('Admin season reset, refreshing scores to show 0-0...');
-              // Invalidate all score-related queries to trigger refresh and show cleared scores
-              queryClient.invalidateQueries({ queryKey: ['/api/scores'] });
-              queryClient.invalidateQueries({ queryKey: [`/api/scores/week`] });
-              queryClient.invalidateQueries({ queryKey: [`/api/leagues`] });
-              console.log('📊 [WebSocket] Refreshed all score queries after admin season reset');
+              // Force invalidate ALL queries to trigger complete refresh and show cleared scores
+              queryClient.invalidateQueries();
+              console.log('📊 [WebSocket] Invalidated ALL queries after admin season reset');
             }
           } catch (e) {
             console.log('WebSocket message parsing error:', e);
