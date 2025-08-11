@@ -110,9 +110,15 @@ export default function ScoresPage() {
   });
 
   // Get real NFL games for selected week from the scores API 
-  const { data: nflGamesData, isLoading: loadingGames } = useQuery({
+  const { data: nflGamesData, isLoading: loadingGames, error: gamesError } = useQuery({
     queryKey: [`/api/scores/week/${selectedWeek}`],
-    queryFn: () => fetch(`/api/scores/week/${selectedWeek}`).then(res => res.json()),
+    queryFn: async () => {
+      console.log(`[DEBUG] Fetching games for week ${selectedWeek}`);
+      const response = await fetch(`/api/scores/week/${selectedWeek}`);
+      const data = await response.json();
+      console.log(`[DEBUG] API Response:`, data);
+      return data;
+    },
     enabled: !!currentLeague && selectedWeek >= -3 && selectedWeek <= 18
   });
 
@@ -174,7 +180,7 @@ export default function ScoresPage() {
       return false;
     }
     
-    const isOwned = userTeams.some((team: any) => team.nflTeam?.code === teamCode);
+    const isOwned = Array.isArray(userTeams) && userTeams.some((team: any) => team.nflTeam?.code === teamCode);
     if (isOwned) {
       console.log('[DEBUG] ✅ YOUR TEAM FOUND:', teamCode, '- Should be GREEN');
     }
@@ -239,6 +245,11 @@ export default function ScoresPage() {
           {!loadingGames && nflGames.length === 0 && (
             <div className="text-center py-8 text-muted-foreground">
               No games found for {getWeekLabel(selectedWeek)}
+              <div className="text-xs mt-2 space-y-1">
+                <div>Debug: Week {selectedWeek}</div>
+                <div>Games data: {nflGamesData ? JSON.stringify(nflGamesData).substring(0, 200) + '...' : 'null'}</div>
+                {gamesError && <div className="text-red-500">Error: {JSON.stringify(gamesError)}</div>}
+              </div>
             </div>
           )}
           {nflGames
