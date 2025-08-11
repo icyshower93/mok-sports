@@ -470,29 +470,31 @@ export default function ScoresPage() {
                             (e.target as HTMLImageElement).src = `https://a.espncdn.com/i/teamlogos/nfl/500/${game.awayTeam.toLowerCase()}.png`;
                           }}
                         />
-                        <div className="flex items-center gap-2">
-                          <span className={`font-medium ${
-                            isUserTeam(game.awayTeam) 
+                        <div className="flex flex-col">
+                          <div className="flex items-center gap-2">
+                            <span className={`font-medium ${
+                              isUserTeam(game.awayTeam) 
                               ? 'text-green-600 font-bold' 
                               : awayWin ? 'text-foreground' : 'text-muted-foreground'
-                          }`}>
-                            {game.awayTeam}
-                          </span>
-                          {game.awayOwnerName && (
-                            <span className="text-xs text-muted-foreground">
-                              ({game.awayOwnerName})
+                            }`}>
+                              {game.awayTeam}
                             </span>
-                          )}
-                          {awayLockStatus.locked && (
-                            <Lock className="w-3 h-3 text-blue-500" />
-                          )}
-                          {awayLockStatus.lockAndLoad && (
-                            <Zap className="w-3 h-3 text-orange-500" />
-                          )}
-                          {game.isCompleted && (game.awayMokPoints || 0) > 0 && (
-                            <div className="flex items-center space-x-1">
-                              <Flame className="w-3 h-3 text-purple-500" />
-                              <span className="text-xs text-purple-600 font-medium">+{game.awayMokPoints}</span>
+                            {awayLockStatus.locked && (
+                              <Lock className="w-3 h-3 text-blue-500" />
+                            )}
+                            {awayLockStatus.lockAndLoad && (
+                              <Zap className="w-3 h-3 text-orange-500" />
+                            )}
+                            {game.isCompleted && (game.awayMokPoints || 0) > 0 && (
+                              <div className="flex items-center space-x-1">
+                                <Flame className="w-3 h-3 text-purple-500" />
+                                <span className="text-xs text-purple-600 font-medium">+{game.awayMokPoints}</span>
+                              </div>
+                            )}
+                          </div>
+                          {game.awayOwnerName && (
+                            <div className="text-xs text-muted-foreground">
+                              {game.awayOwnerName}
                             </div>
                           )}
                         </div>
@@ -515,29 +517,31 @@ export default function ScoresPage() {
                             (e.target as HTMLImageElement).src = `https://a.espncdn.com/i/teamlogos/nfl/500/${game.homeTeam.toLowerCase()}.png`;
                           }}
                         />
-                        <div className="flex items-center gap-2">
-                          <span className={`font-medium ${
-                            isUserTeam(game.homeTeam) 
-                              ? 'text-green-600 font-bold' 
-                              : homeWin ? 'text-foreground' : 'text-muted-foreground'
-                          }`}>
-                            {game.homeTeam}
-                          </span>
-                          {game.homeOwnerName && (
-                            <span className="text-xs text-muted-foreground">
-                              ({game.homeOwnerName})
+                        <div className="flex flex-col">
+                          <div className="flex items-center gap-2">
+                            <span className={`font-medium ${
+                              isUserTeam(game.homeTeam) 
+                                ? 'text-green-600 font-bold' 
+                                : homeWin ? 'text-foreground' : 'text-muted-foreground'
+                            }`}>
+                              {game.homeTeam}
                             </span>
-                          )}
-                          {homeLockStatus.locked && (
-                            <Lock className="w-3 h-3 text-blue-500" />
-                          )}
-                          {homeLockStatus.lockAndLoad && (
-                            <Zap className="w-3 h-3 text-orange-500" />
-                          )}
-                          {game.isCompleted && (game.homeMokPoints || 0) > 0 && (
-                            <div className="flex items-center space-x-1">
-                              <Flame className="w-3 h-3 text-purple-500" />
-                              <span className="text-xs text-purple-600 font-medium">+{game.homeMokPoints}</span>
+                            {homeLockStatus.locked && (
+                              <Lock className="w-3 h-3 text-blue-500" />
+                            )}
+                            {homeLockStatus.lockAndLoad && (
+                              <Zap className="w-3 h-3 text-orange-500" />
+                            )}
+                            {game.isCompleted && (game.homeMokPoints || 0) > 0 && (
+                              <div className="flex items-center space-x-1">
+                                <Flame className="w-3 h-3 text-purple-500" />
+                                <span className="text-xs text-purple-600 font-medium">+{game.homeMokPoints}</span>
+                              </div>
+                            )}
+                          </div>
+                          {game.homeOwnerName && (
+                            <div className="text-xs text-muted-foreground">
+                              {game.homeOwnerName}
                             </div>
                           )}
                         </div>
