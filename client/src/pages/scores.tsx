@@ -91,6 +91,11 @@ export default function ScoresPage() {
               // Invalidate scores queries to trigger refresh
               queryClient.invalidateQueries({ queryKey: ['/api/scores'] });
               queryClient.invalidateQueries({ queryKey: [`/api/scores/week/${selectedWeek}`] });
+            } else if (message.type === 'admin_season_reset') {
+              console.log('Admin season reset, refreshing scores to show 0-0...');
+              // Invalidate scores queries to trigger refresh and show cleared scores
+              queryClient.invalidateQueries({ queryKey: ['/api/scores'] });
+              queryClient.invalidateQueries({ queryKey: [`/api/scores/week/${selectedWeek}`] });
             }
           } catch (e) {
             console.log('WebSocket message parsing error:', e);

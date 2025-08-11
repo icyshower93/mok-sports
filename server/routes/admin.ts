@@ -343,6 +343,19 @@ export function registerAdminRoutes(app: Express) {
 
       console.log('✅ Season reset completed');
 
+      // Broadcast reset to all connected clients to refresh scores page
+      const draftManager = (global as any).draftManager;
+      if (draftManager && draftManager.broadcast) {
+        draftManager.broadcast({
+          type: 'admin_season_reset',
+          data: {
+            newDate: adminState.currentDate.toISOString(),
+            season: adminState.season,
+            totalGamesReset: adminState.totalGames
+          }
+        });
+      }
+
       res.json({
         success: true,
         message: `Season reset to September 4, ${adminState.season}`,
