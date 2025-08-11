@@ -1,0 +1,149 @@
+🏗️ Build Info: {version: 1754952388168, date: '2025-08-11T22:46:28.168Z', env: 'production', hash: 'me7pc954'}
+index-CngRA991.js:372 📦 Version: me7pc954
+index-CngRA991.js:372 📅 Built: 2025-08-11T22:46:28.168Z
+index-CngRA991.js:372 🔧 Environment: production
+index-CngRA991.js:323 [Auth] Token check - Has token: true Has user: false Loading: true
+index-CngRA991.js:323 [SW Hook] EMERGENCY: Unregistering all existing service workers
+index-CngRA991.js:323 [SW Hook] Found 1 existing registrations
+index-CngRA991.js:323 [SW Hook] Unregistering existing service worker
+index-CngRA991.js:323 [SW Hook] Found 1 caches to delete
+index-CngRA991.js:323 [SW Hook] Deleting cache: mok-sports-dynamic-v1.7.0-nuclear-unregister-1754952373847
+admin:1 Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner.
+index-CngRA991.js:323 [Auth] Token check - Has token: true Has user: true Loading: false
+index-CngRA991.js:323 [AutoPushRefresh] Legacy hook delegating to SubscriptionManager
+contentScript.js:2 Content script initialized successfully.
+index-CngRA991.js:323 [SW Hook] Registering fresh service worker: /sw.js?v=1754952388311&r=0.24020701495658314
+sw.js?v=1754952388311&r=0.24020701495658314:2 [SW] NUCLEAR OPTION - Emergency service worker loading
+sw.js?v=1754952388311&r=0.24020701495658314:88 [SW] Service worker starting, version: v1.7.0-nuclear-unregister-1754952388372
+sw.js?v=1754952388311&r=0.24020701495658314:305 [SW] Service worker script loaded successfully
+index-CngRA991.js:323 [SW Hook] Service worker registered successfully
+sw.js?v=1754952388311&r=0.24020701495658314:19 [SW] EMERGENCY INSTALL - Clearing all caches and forcing activation
+sw.js?v=1754952388311&r=0.24020701495658314:92 [SW] Installing service worker, version: v1.7.0-nuclear-unregister-1754952388372
+sw.js?v=1754952388311&r=0.24020701495658314:22 [SW] Found caches to delete: []
+sw.js?v=1754952388311&r=0.24020701495658314:30 [SW] All caches deleted - skipping waiting
+sw.js?v=1754952388311&r=0.24020701495658314:96 [SW] Caching static files
+sw.js?v=1754952388311&r=0.24020701495658314:99 [SW] Static files cached successfully
+sw.js?v=1754952388311&r=0.24020701495658314:41 [SW] EMERGENCY ACTIVATE - Taking control of all clients
+sw.js?v=1754952388311&r=0.24020701495658314:110 [SW] Activating service worker, version: v1.7.0-nuclear-unregister-1754952388372
+sw.js?v=1754952388311&r=0.24020701495658314:46 [SW] Deleting remaining cache: mok-sports-static-v1.7.0-nuclear-unregister-1754952388372
+sw.js?v=1754952388311&r=0.24020701495658314:116 [SW] Found caches: ['mok-sports-static-v1.7.0-nuclear-unregister-1754952388372']
+sw.js?v=1754952388311&r=0.24020701495658314:129 [SW] Service worker activated and controlling all clients
+sw.js?v=1754952388311&r=0.24020701495658314:51 [SW] Claiming all clients immediately
+index-CngRA991.js:367 Main page debug: {user: 'Sky Evans', leagues: 5, selectedLeague: '', dashboardData: null}
+index-CngRA991.js:367 Main page debug: {user: 'Sky Evans', leagues: 5, selectedLeague: '243d719b-92ce-4752-8689-5da93ee69213', dashboardData: null}
+index-CngRA991.js:367 Main page debug: {user: 'Sky Evans', leagues: 5, selectedLeague: '243d719b-92ce-4752-8689-5da93ee69213', dashboardData: {…}}
+index-CngRA991.js:372 Attempting to connect WebSocket for scores page: wss://mok-sports-draft-mokfantasysport.replit.app/draft-ws
+index-CngRA991.js:372 [DEBUG] Fetching games for week 1 season 2024
+index-CngRA991.js:372 [WebSocket] Connecting to draft WebSocket for lock updates: wss://mok-sports-draft-mokfantasysport.replit.app/draft-ws
+index-CngRA991.js:372 [DEBUG] API Response: {games: Array(16), week: 1, season: 2024}
+index-CngRA991.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-CngRA991.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-CngRA991.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-CngRA991.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-CngRA991.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-CngRA991.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-CngRA991.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-CngRA991.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-CngRA991.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-CngRA991.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-CngRA991.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-CngRA991.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-CngRA991.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-CngRA991.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-CngRA991.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-CngRA991.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-CngRA991.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-CngRA991.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-CngRA991.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-CngRA991.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-CngRA991.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-CngRA991.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-CngRA991.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-CngRA991.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-CngRA991.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-CngRA991.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-CngRA991.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-CngRA991.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-CngRA991.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-CngRA991.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-CngRA991.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-CngRA991.js:372 [DEBUG] isUserTeam: Missing user or userTeams {user: true, userTeams: false}
+index-CngRA991.js:372 ✅ Scores WebSocket connected successfully for live admin updates
+index-CngRA991.js:372 [Image Error] Failed to load GB logo, trying fallback
+index-CngRA991.js:372 [Image Error] Failed to load KC logo, trying fallback
+index-CngRA991.js:372 [Image Error] Failed to load PHI logo, trying fallback
+index-CngRA991.js:372 Scores WebSocket disconnected: 1000 Missing required parameters
+index-CngRA991.js:372 [Image Error] Failed to load CHI logo, trying fallback
+index-CngRA991.js:372 [Image Error] Failed to load NE logo, trying fallback
+index-CngRA991.js:372 [Image Error] Failed to load IND logo, trying fallback
+index-CngRA991.js:372 [Image Error] Failed to load BAL logo, trying fallback
+index-CngRA991.js:372 [Image Error] Failed to load ARI logo, trying fallback
+index-CngRA991.js:372 [Image Error] Failed to load BUF logo, trying fallback
+index-CngRA991.js:372 [Image Error] Failed to load CAR logo, trying fallback
+index-CngRA991.js:372 [Image Error] Failed to load DAL logo, trying fallback
+index-CngRA991.js:372 [Image Error] Failed to load PIT logo, trying fallback
+index-CngRA991.js:372 [Image Error] Failed to load NYG logo, trying fallback
+index-CngRA991.js:372 [Image Error] Failed to load ATL logo, trying fallback
+index-CngRA991.js:372 [Image Error] Failed to load SEA logo, trying fallback
+index-CngRA991.js:372 [Image Error] Failed to load MIN logo, trying fallback
+index-CngRA991.js:372 [Image Error] Failed to load HOU logo, trying fallback
+index-CngRA991.js:372 [Image Error] Failed to load LAR logo, trying fallback
+index-CngRA991.js:372 [Image Error] Failed to load TEN logo, trying fallback
+index-CngRA991.js:372 [Image Error] Failed to load SF logo, trying fallback
+index-CngRA991.js:372 [Image Error] Failed to load JAX logo, trying fallback
+index-CngRA991.js:372 [Image Error] Failed to load LV logo, trying fallback
+index-CngRA991.js:372 [Image Error] Failed to load CIN logo, trying fallback
+index-CngRA991.js:372 [Image Error] Failed to load LAC logo, trying fallback
+index-CngRA991.js:372 [Image Error] Failed to load NYJ logo, trying fallback
+index-CngRA991.js:372 [Image Error] Failed to load WSH logo, trying fallback
+index-CngRA991.js:372 [Image Error] Failed to load DET logo, trying fallback
+index-CngRA991.js:372 [Image Error] Failed to load TB logo, trying fallback
+index-CngRA991.js:372 [Image Error] Failed to load DEN logo, trying fallback
+index-CngRA991.js:372 [Image Error] Failed to load CLE logo, trying fallback
+index-CngRA991.js:372 [Image Error] Failed to load MIA logo, trying fallback
+index-CngRA991.js:372 [Image Error] Failed to load NO logo, trying fallback
+index-CngRA991.js:372 [DEBUG] ✅ YOUR TEAM FOUND: BUF - Should be GREEN
+index-CngRA991.js:372 [DEBUG] ✅ YOUR TEAM FOUND: NE - Should be GREEN
+index-CngRA991.js:372 [DEBUG] ✅ YOUR TEAM FOUND: LAC - Should be GREEN
+index-CngRA991.js:372 [DEBUG] ✅ YOUR TEAM FOUND: DAL - Should be GREEN
+index-CngRA991.js:372 [DEBUG] ✅ YOUR TEAM FOUND: WSH - Should be GREEN
+index-CngRA991.js:372 [WebSocket] Connected to draft WebSocket for lock updates
+index-CngRA991.js:372 [WebSocket] Live scores connection closed
+index-CngRA991.js:372 [DEBUG] ✅ YOUR TEAM FOUND: BUF - Should be GREEN
+index-CngRA991.js:372 [DEBUG] ✅ YOUR TEAM FOUND: NE - Should be GREEN
+index-CngRA991.js:372 [DEBUG] ✅ YOUR TEAM FOUND: LAC - Should be GREEN
+index-CngRA991.js:372 [DEBUG] ✅ YOUR TEAM FOUND: DAL - Should be GREEN
+index-CngRA991.js:372 [DEBUG] ✅ YOUR TEAM FOUND: WSH - Should be GREEN
+index-CngRA991.js:372 [DEBUG] ✅ YOUR TEAM FOUND: BUF - Should be GREEN
+index-CngRA991.js:372 [DEBUG] ✅ YOUR TEAM FOUND: NE - Should be GREEN
+index-CngRA991.js:372 [DEBUG] ✅ YOUR TEAM FOUND: LAC - Should be GREEN
+index-CngRA991.js:372 [DEBUG] ✅ YOUR TEAM FOUND: DAL - Should be GREEN
+index-CngRA991.js:372 [DEBUG] ✅ YOUR TEAM FOUND: WSH - Should be GREEN
+index-CngRA991.js:372 Attempting to reconnect WebSocket...
+index-CngRA991.js:372 Attempting to connect WebSocket for scores page: wss://mok-sports-draft-mokfantasysport.replit.app/draft-ws
+index-CngRA991.js:372 ✅ Scores WebSocket connected successfully for live admin updates
+index-CngRA991.js:372 Scores WebSocket disconnected: 1000 Missing required parameters
+index-CngRA991.js:372 Attempting to reconnect WebSocket...
+index-CngRA991.js:372 Attempting to connect WebSocket for scores page: wss://mok-sports-draft-mokfantasysport.replit.app/draft-ws
+index-CngRA991.js:372 ✅ Scores WebSocket connected successfully for live admin updates
+index-CngRA991.js:372 Scores WebSocket disconnected: 1000 Missing required parameters
+index-CngRA991.js:372 Attempting to reconnect WebSocket...
+index-CngRA991.js:372 Attempting to connect WebSocket for scores page: wss://mok-sports-draft-mokfantasysport.replit.app/draft-ws
+index-CngRA991.js:372 ✅ Scores WebSocket connected successfully for live admin updates
+index-CngRA991.js:372 Scores WebSocket disconnected: 1000 Missing required parameters
+index-CngRA991.js:372 Attempting to reconnect WebSocket...
+index-CngRA991.js:372 Attempting to connect WebSocket for scores page: wss://mok-sports-draft-mokfantasysport.replit.app/draft-ws
+index-CngRA991.js:372 ✅ Scores WebSocket connected successfully for live admin updates
+index-CngRA991.js:372 Scores WebSocket disconnected: 1000 Missing required parameters
+index-CngRA991.js:372 Attempting to reconnect WebSocket...
+index-CngRA991.js:372 Attempting to connect WebSocket for scores page: wss://mok-sports-draft-mokfantasysport.replit.app/draft-ws
+index-CngRA991.js:372 ✅ Scores WebSocket connected successfully for live admin updates
+index-CngRA991.js:372 Scores WebSocket disconnected: 1000 Missing required parameters
+index-CngRA991.js:372 Attempting to reconnect WebSocket...
+index-CngRA991.js:372 Attempting to connect WebSocket for scores page: wss://mok-sports-draft-mokfantasysport.replit.app/draft-ws
+index-CngRA991.js:372 ✅ Scores WebSocket connected successfully for live admin updates
+index-CngRA991.js:372 Scores WebSocket disconnected: 1000 Missing required parameters
+index-CngRA991.js:372 Attempting to reconnect WebSocket...
+index-CngRA991.js:372 Attempting to connect WebSocket for scores page: wss://mok-sports-draft-mokfantasysport.replit.app/draft-ws
+index-CngRA991.js:372 ✅ Scores WebSocket connected successfully for live admin updates
+index-CngRA991.js:372 Scores WebSocket disconnected: 1000 Missing required parameters

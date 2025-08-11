@@ -129,6 +129,8 @@ export class DraftWebSocketManager {
     }, 10000); // Every 10 seconds
   }
 
+
+
   private handleConnection(ws: WebSocket, request: any) {
     console.log('[WebSocket] ========== NEW CONNECTION RECEIVED ==========');
     console.log('[WebSocket] Request URL:', request.url);
@@ -153,11 +155,13 @@ export class DraftWebSocketManager {
     console.log(`[WebSocket] - draftId: ${draftId}`);
     console.log('[WebSocket] ================================================');
 
+    // Allow scores page connections (they send identify message after connecting)
     if (!userId || !draftId) {
-      console.log('[WebSocket] ❌ CONNECTION REJECTED: Missing userId or draftId');
+      console.log('[WebSocket] No query params - checking for scores page or admin connection');
       console.log('[WebSocket] Query object:', JSON.stringify(query, null, 2));
-      console.log('[WebSocket] Available query keys:', Object.keys(query));
-      ws.close(1000, 'Missing required parameters');
+      
+      // Handle scores page connection
+      this.handleAdminConnection(ws, request);
       return;
     }
 
@@ -372,56 +376,63 @@ export class DraftWebSocketManager {
   }
 
   private handleAdminConnection(ws: WebSocket, request: any) {
-    console.log('[WebSocket] ========== ADMIN CONNECTION RECEIVED ==========');
-    console.log('[WebSocket] Admin URL:', request.url);
-    console.log('[WebSocket] Admin timestamp:', new Date().toISOString());
+    console.log('[WebSocket] 🎯 Setting up admin/scores connection');
     
-    // Add to admin connections for broadcasting
-    const { addAdminConnection, removeAdminConnection } = require('../routes/admin.ts');
-    addAdminConnection(ws);
-    
-    // Send admin connection confirmation
-    try {
-      const confirmationMessage = {
-        type: 'admin-connected',
-        timestamp: Date.now(),
-        message: 'Admin WebSocket connection established'
-      };
-      
-      ws.send(JSON.stringify(confirmationMessage));
-      console.log('[WebSocket] ✅ Admin connection confirmation sent');
-    } catch (error) {
-      console.error('[WebSocket] ❌ Failed to send admin connection confirmation:', error);
+    // Store admin connection in special admin_updates draft group
+    const adminConnection: DraftConnection = {
+      userId: 'scores_page_user',
+      draftId: 'admin_updates',
+      socket: ws,
+      isAlive: true
+    };
+
+    // Create admin_updates group if it doesn't exist
+    if (!this.connections.has('admin_updates')) {
+      this.connections.set('admin_updates', []);
     }
     
-    // Handle admin WebSocket close
-    ws.on('close', (code, reason) => {
-      console.log(`[WebSocket] Admin connection closed. Code: ${code}, Reason: ${reason}`);
-      removeAdminConnection(ws);
-    });
-
-    ws.on('error', (error) => {
-      console.error('[WebSocket] Admin WebSocket error:', error);
-      removeAdminConnection(ws);
-    });
+    this.connections.get('admin_updates')!.push(adminConnection);
+    console.log(`[WebSocket] ✅ Admin connection added to admin_updates group`);
     
-    // Handle admin messages (if needed for bidirectional communication)
+    // Handle admin messages
     ws.on('message', (data) => {
       try {
         const message = JSON.parse(data.toString());
-        console.log('[WebSocket] Admin message received:', message);
+        console.log('[WebSocket] Admin message received:', message.type);
         
-        // Handle ping/pong for admin connections
-        if (message.type === 'ping') {
+        if (message.type === 'identify') {
+          console.log('[WebSocket] ✅ Admin client identified:', message.source);
+          ws.send(JSON.stringify({
+            type: 'identified',
+            connectionId: message.connectionId,
+            timestamp: Date.now(),
+            message: 'Admin connection established'
+          }));
+        } else if (message.type === 'ping') {
+          console.log('[WebSocket] 🏓 Admin ping received');
           ws.send(JSON.stringify({
             type: 'pong',
             timestamp: Date.now()
           }));
         }
       } catch (error) {
-        console.error('[WebSocket] Error parsing admin message:', error);
+        console.error('[WebSocket] Admin message error:', error);
       }
     });
+
+    ws.on('close', () => {
+      console.log('[WebSocket] Admin connection closed');
+      // Remove from admin connections
+      const adminConnections = this.connections.get('admin_updates') || [];
+      const filtered = adminConnections.filter(conn => conn.socket !== ws);
+      this.connections.set('admin_updates', filtered);
+    });
+
+    ws.on('error', (error) => {
+      console.error('[WebSocket] Admin connection error:', error);
+    });
+
+    console.log('[WebSocket] ✅ Admin connection setup complete');
   }
 
   private startHeartbeat() {
