@@ -109,11 +109,11 @@ export default function ScoresPage() {
     enabled: !!currentLeague
   });
 
-  // Get real NFL games for selected week with ownership data
+  // Get real NFL games for selected week from the scores API 
   const { data: nflGamesData, isLoading: loadingGames } = useQuery({
-    queryKey: [`/api/scoring/week/${selectedWeek}`, currentLeague?.id],
-    queryFn: () => fetch(`/api/scoring/week/${selectedWeek}?leagueId=${currentLeague?.id}`).then(res => res.json()),
-    enabled: selectedWeek > 0 && !!currentLeague
+    queryKey: [`/api/scores/week/${selectedWeek}`],
+    queryFn: () => fetch(`/api/scores/week/${selectedWeek}`).then(res => res.json()),
+    enabled: !!currentLeague && selectedWeek >= -3 && selectedWeek <= 18
   });
 
   // Get user's teams for highlighting
@@ -138,8 +138,8 @@ export default function ScoresPage() {
     );
   }
 
-  // Transform real NFL games data from Tank01 API with ownership data
-  const nflGames: NFLGame[] = (nflGamesData as any)?.results?.map((game: any, index: number) => {
+  // Transform real NFL games data from the scores API
+  const nflGames: NFLGame[] = (nflGamesData as any)?.games?.map((game: any, index: number) => {
     return {
     id: game.id || `game_${selectedWeek}_${index}`,
     homeTeam: game.homeTeam,
