@@ -29,8 +29,8 @@ async function makeAPIRequest(endpoint: string) {
   const response = await fetch(`https://${RAPIDAPI_HOST}${endpoint}`, {
     method: 'GET',
     headers: {
-      'X-RapidAPI-Key': RAPIDAPI_KEY!,
-      'X-RapidAPI-Host': RAPIDAPI_HOST,
+      'x-rapidapi-key': RAPIDAPI_KEY!,
+      'x-rapidapi-host': RAPIDAPI_HOST,
     },
   });
 

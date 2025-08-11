@@ -1,4 +1,4 @@
-import fetch from 'node-fetch';
+// Using native fetch (Node.js 18+) - no import needed
 
 // Tank01 RapidAPI configuration
 const RAPIDAPI_KEY = process.env.RAPIDAPI_KEY;
@@ -67,8 +67,8 @@ class NFLDataService {
       const response = await fetch(`https://${RAPIDAPI_HOST}${endpoint}`, {
         method: 'GET',
         headers: {
-          'X-RapidAPI-Key': RAPIDAPI_KEY,
-          'X-RapidAPI-Host': RAPIDAPI_HOST,
+          'x-rapidapi-key': RAPIDAPI_KEY,
+          'x-rapidapi-host': RAPIDAPI_HOST,
         },
       });
 
