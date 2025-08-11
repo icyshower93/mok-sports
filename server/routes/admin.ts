@@ -4,18 +4,18 @@ import { nflGames, nflTeams } from '@shared/schema';
 import { eq, and, gte, lte, sql } from 'drizzle-orm';
 import { nflDataService } from '../services/nflDataService';
 
-// Simple admin state management - Production ready for 2025 season
+// Simple admin state management - 2024 season for testing
 let adminState = {
-  currentDate: new Date('2025-09-04'), // Production: Start from September 4, 2025 (Eagles vs Cowboys)
+  currentDate: new Date('2024-09-04'), // Testing: Start from September 4, 2024
   gamesProcessedToday: 0,
   totalGamesProcessed: 0,
   totalGames: 272,
   currentWeek: 1,
   processingInProgress: false,
-  season: 2025 // Current season for production
+  season: 2024 // 2024 season for testing with authentic NFL data
 };
 
-// Calculate current week based on date - Production ready for 2025 season
+// Calculate current week based on date - 2024 season for testing
 function calculateWeekFromDate(date: Date): number {
   const seasonStart = new Date(`${adminState.season}-09-04`); // NFL season typically starts first Thursday of September
   const diffDays = Math.floor((date.getTime() - seasonStart.getTime()) / (1000 * 60 * 60 * 24));
@@ -315,47 +315,5 @@ export function registerAdminRoutes(app: Express) {
     }
   });
 
-  // Switch season endpoint for seamless production transition
-  app.post('/api/admin/switch-season', async (req, res) => {
-    try {
-      const { season } = req.body;
-      
-      if (!season || !Number.isInteger(season) || season < 2024 || season > 2030) {
-        return res.status(400).json({ error: 'Valid season year required (2024-2030)' });
-      }
-
-      if (adminState.processingInProgress) {
-        return res.status(409).json({ error: 'Processing in progress, cannot switch season' });
-      }
-
-      adminState.processingInProgress = true;
-
-      console.log(`🔄 Switching from ${adminState.season} to ${season} season...`);
-
-      // Update admin state for new season
-      adminState.season = season;
-      adminState.currentDate = new Date(`${season}-09-04`); // Season start
-      adminState.gamesProcessedToday = 0;
-      adminState.currentWeek = 1;
-
-      await updateAdminState();
-      adminState.processingInProgress = false;
-
-      console.log(`✅ Successfully switched to ${season} season`);
-
-      res.json({
-        success: true,
-        message: `Switched to ${season} season`,
-        season: adminState.season,
-        currentDate: adminState.currentDate.toISOString(),
-        currentWeek: adminState.currentWeek,
-        totalGames: adminState.totalGames
-      });
-
-    } catch (error) {
-      console.error('Error switching season:', error);
-      adminState.processingInProgress = false;
-      res.status(500).json({ error: 'Failed to switch season' });
-    }
-  });
+  // Removed season switching - focus on 2024 testing season only
 }

@@ -27,14 +27,14 @@ export default function AdminPanel() {
     staleTime: 0
   });
 
-  // Safely extract admin state with defaults
-  const currentDate = adminState?.currentDate ? new Date(adminState.currentDate) : new Date('2025-09-04');
+  // Safely extract admin state with defaults - 2024 testing season only
+  const currentDate = adminState?.currentDate ? new Date(adminState.currentDate) : new Date('2024-09-04');
   const gamesProcessedToday = adminState?.gamesProcessedToday || 0;
   const totalGamesProcessed = adminState?.totalGamesProcessed || 0;
   const totalGames = adminState?.totalGames || 272;
   const currentWeek = adminState?.currentWeek || 1;
   const processingInProgress = adminState?.processingInProgress || false;
-  const season = adminState?.season || 2025;
+  const season = adminState?.season || 2024;
 
   // Simple day progression controls
   const advanceDayMutation = useMutation({
@@ -65,21 +65,7 @@ export default function AdminPanel() {
     }
   });
 
-  const switchSeasonMutation = useMutation({
-    mutationFn: async (targetSeason: number) => {
-      const response = await fetch('/api/admin/switch-season', { 
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ season: targetSeason }),
-        credentials: 'include'
-      });
-      if (!response.ok) throw new Error('Failed to switch season');
-      return response.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/admin/state'] });
-    }
-  });
+  // Removed season switching - focus on 2024 testing season only
 
   // Helper functions
   const formatDate = (date: Date) => {
@@ -176,26 +162,16 @@ export default function AdminPanel() {
                     {processingInProgress ? 'Processing Games...' : 'Advance One Day'}
                   </Button>
 
-                  <div className="grid grid-cols-2 gap-2">
-                    <Button
-                      onClick={() => resetSeasonMutation.mutate()}
-                      size="sm"
-                      variant="outline"
-                      disabled={resetSeasonMutation.isPending}
-                    >
-                      <RotateCcw className="w-4 h-4 mr-1" />
-                      Reset Season
-                    </Button>
-                    
-                    <Button
-                      onClick={() => switchSeasonMutation.mutate(season === 2025 ? 2024 : 2025)}
-                      size="sm"
-                      variant="outline"
-                      disabled={switchSeasonMutation.isPending}
-                    >
-                      Switch to {season === 2025 ? '2024' : '2025'}
-                    </Button>
-                  </div>
+                  <Button
+                    onClick={() => resetSeasonMutation.mutate()}
+                    size="sm"
+                    variant="outline"
+                    disabled={resetSeasonMutation.isPending}
+                    className="w-full"
+                  >
+                    <RotateCcw className="w-4 h-4 mr-1" />
+                    Reset Season
+                  </Button>
                 </div>
               </CardContent>
             </Card>
