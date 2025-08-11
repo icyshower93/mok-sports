@@ -89,7 +89,7 @@ class NFLDataService {
     }
   }
 
-  async getScheduleForSeason(season: number = 2024): Promise<NFLGameData[]> {
+  async getScheduleForSeason(season: number = 2025): Promise<NFLGameData[]> {
     try {
       console.log(`[NFLDataService] Getting schedule for ${season} season...`);
       
@@ -99,24 +99,24 @@ class NFLDataService {
       
       const games: NFLGameData[] = [];
       
-      // Try multiple approaches to get games
-      // Approach 1: Get games for specific dates in the 2024 season
-      const key2024Dates = [
-        '2024-09-05', // Week 1 started Thursday Sept 5, 2024
-        '2024-09-08', // Sunday Sept 8
-        '2024-09-15', // Week 2
-        '2024-09-22', // Week 3
-        '2024-09-29', // Week 4
-        '2024-10-06', // Week 5
-        '2024-10-13', // Week 6
-        '2024-10-20', // Week 7
+      // Get games for 2025 preseason dates
+      const preseason2025Dates = [
+        '2025-08-08', // Preseason Week 1 starts
+        '2025-08-10', // More Preseason Week 1 games
+        '2025-08-15', // Preseason Week 2 starts
+        '2025-08-16', // More Preseason Week 2 games
+        '2025-08-17', // More Preseason Week 2 games
+        '2025-08-22', // Preseason Week 3 starts
+        '2025-08-23', // More Preseason Week 3 games
+        '2025-08-29', // Preseason Week 4 (if exists)
+        '2025-08-30', // More Preseason Week 4 games
       ];
 
-      for (const gameDate of key2024Dates) {
+      for (const gameDate of preseason2025Dates) {
         try {
           console.log(`[NFLDataService] Fetching games for ${gameDate}...`);
           const dateGames = await this.makeRapidAPIRequest(
-            `/getNFLGamesForDate?teamAbv=all&gameDate=${gameDate}&topPerformers=false&twoPointConversions=false`
+            `/getNFLGamesForDate?gameDate=${gameDate.replace(/-/g, '')}`
           );
           
           if (dateGames && dateGames.body) {
@@ -154,21 +154,21 @@ class NFLDataService {
 
   private getWeekFromDate(dateStr: string): number {
     const date = new Date(dateStr);
-    const seasonStart = new Date('2024-09-05'); // Week 1 started Sept 5, 2024
-    const diffTime = date.getTime() - seasonStart.getTime();
+    const preseasonStart = new Date('2025-08-08'); // Preseason Week 1 starts Aug 8, 2025
+    const diffTime = date.getTime() - preseasonStart.getTime();
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return Math.ceil(diffDays / 7) + 1;
+    return Math.max(1, Math.ceil(diffDays / 7) + 1);
   }
 
   async getWeekData(season: number, week: number): Promise<NFLGameData[]> {
     try {
       // Calculate approximate date for the week
-      const startDate = new Date('2024-09-05'); // Week 1 started Sept 5, 2024
+      const startDate = new Date('2025-08-08'); // Preseason Week 1 starts Aug 8, 2025
       const weekStart = new Date(startDate.getTime() + (week - 1) * 7 * 24 * 60 * 60 * 1000);
       const dateStr = weekStart.toISOString().split('T')[0];
       
       const data = await this.makeRapidAPIRequest(
-        `/getNFLGamesForDate?teamAbv=all&gameDate=${dateStr}&topPerformers=false&twoPointConversions=false`
+        `/getNFLGamesForDate?gameDate=${dateStr.replace(/-/g, '')}`
       );
       
       const games: NFLGameData[] = [];

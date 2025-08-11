@@ -10,9 +10,9 @@ const awayTeam = alias(nflTeams, 'awayTeam');
 
 const router = Router();
 
-// Season simulation state
+// Season simulation state - Updated for 2025 preseason
 let simulationState = {
-  simulationDate: new Date('2024-09-01T00:00:00Z'),
+  simulationDate: new Date('2025-08-08T00:00:00Z'), // Start of 2025 preseason
   isSimulationRunning: false,
   timeAcceleration: 1, // 1x = real time, higher = faster
   currentWeek: 1,
@@ -103,6 +103,49 @@ router.post('/simulation/stop', async (req, res) => {
   }
 });
 
+// Import 2025 preseason schedule
+router.post('/import-preseason-schedule', async (req, res) => {
+  try {
+    console.log('📅 Importing 2025 NFL preseason schedule...');
+    
+    // Import schedule using NFL data service
+    const { NFLDataService } = await import('../services/nflDataService.js');
+    const nflService = new NFLDataService();
+    const games = await nflService.getScheduleForSeason(2025);
+    
+    console.log(`📊 Found ${games.length} preseason games for 2025`);
+    
+    // Clear existing 2025 games
+    await db.delete(nflGames).where(eq(nflGames.season, 2025));
+    
+    // Insert new games
+    for (const game of games) {
+      await db.insert(nflGames).values({
+        id: game.id,
+        season: 2025,
+        week: game.week,
+        gameDate: game.gameDate,
+        homeTeamId: game.homeTeam,
+        awayTeamId: game.awayTeam,
+        homeScore: game.homeScore,
+        awayScore: game.awayScore,
+        isCompleted: game.isCompleted,
+        winnerTeamId: null
+      }).onConflictDoNothing();
+    }
+    
+    console.log(`✅ Successfully imported ${games.length} 2025 preseason games`);
+    res.json({ 
+      success: true, 
+      message: `Imported ${games.length} 2025 preseason games`,
+      gamesImported: games.length
+    });
+  } catch (error) {
+    console.error('Error importing preseason schedule:', error);
+    res.status(500).json({ error: 'Failed to import preseason schedule' });
+  }
+});
+
 // Reset simulation
 router.post('/simulation/reset', async (req, res) => {
   try {
@@ -113,8 +156,8 @@ router.post('/simulation/reset', async (req, res) => {
       simulationInterval = null;
     }
     
-    // Reset to August 31, 2024, 8:00 PM (before season starts)
-    simulationState.simulationDate = new Date('2024-08-31T20:00:00Z');
+    // Reset to August 8, 2025, 12:00 AM (before preseason starts)
+    simulationState.simulationDate = new Date('2025-08-08T00:00:00Z');
     simulationState.currentWeek = 1;
     simulationState.completedGames = 0;
     simulationState.lastSimulationUpdate = Date.now();
@@ -269,7 +312,7 @@ async function getLeagueStandings() {
       })
       .from(userWeeklyScores)
       .leftJoin(users, eq(userWeeklyScores.userId, users.id))
-      .where(eq(userWeeklyScores.season, 2024))
+      .where(eq(userWeeklyScores.season, 2025))
       .groupBy(userWeeklyScores.userId, users.name)
       .orderBy(desc(sum(userWeeklyScores.totalPoints)))
       .limit(20);
@@ -412,7 +455,7 @@ async function fetchGame2024Scores(gameId: string) {
     }
 
     // For the season opener KC vs BAL, use authentic result
-    if (gameDetails.homeTeam.code === 'KC' && gameDetails.awayTeam.code === 'BAL' && gameDetails.week === 1) {
+    if (gameDetails.homeTeam?.code === 'KC' && gameDetails.awayTeam?.code === 'BAL' && gameDetails.week === 1) {
       console.log(`[Game Processing] Using authentic 2024 season opener result: KC 27, BAL 20`);
       return {
         gameId,
@@ -442,12 +485,12 @@ async function fetchGame2024Scores(gameId: string) {
     };
     
     // Match by team codes
-    const gameKey = `${gameDetails.awayTeam.code}_${gameDetails.homeTeam.code}`;
-    const reversedGameKey = `${gameDetails.homeTeam.code}_${gameDetails.awayTeam.code}`;
+    const gameKey = `${gameDetails.awayTeam?.code}_${gameDetails.homeTeam?.code}`;
+    const reversedGameKey = `${gameDetails.homeTeam?.code}_${gameDetails.awayTeam?.code}`;
     
     if (authentic2024Week1Results[gameKey]) {
       const result = authentic2024Week1Results[gameKey];
-      console.log(`[Game Processing] Using authentic Week 1 result: ${gameDetails.awayTeam.code} ${result.away}, ${gameDetails.homeTeam.code} ${result.home}`);
+      console.log(`[Game Processing] Using authentic Week 1 result: ${gameDetails.awayTeam?.code} ${result.away}, ${gameDetails.homeTeam?.code} ${result.home}`);
       return {
         gameId,
         awayScore: result.away,
@@ -458,7 +501,7 @@ async function fetchGame2024Scores(gameId: string) {
     
     if (authentic2024Week1Results[reversedGameKey]) {
       const result = authentic2024Week1Results[reversedGameKey];
-      console.log(`[Game Processing] Using authentic Week 1 result (reversed): ${gameDetails.awayTeam.code} ${result.home}, ${gameDetails.homeTeam.code} ${result.away}`);
+      console.log(`[Game Processing] Using authentic Week 1 result (reversed): ${gameDetails.awayTeam?.code} ${result.home}, ${gameDetails.homeTeam?.code} ${result.away}`);
       return {
         gameId,
         awayScore: result.home,
@@ -523,10 +566,10 @@ async function calculateAndApplyMokScoring(game: any, gameResult: any) {
     }
     
     // Calculate user scores for this week (will include weekly high/low after all games complete)
-    await calculateUserScores(game.week, 2024);
+    await calculateUserScores(game.week, 2025);
     
     // Check if all games for this week are now complete
-    const weekComplete = await checkWeekCompletion(game.week, 2024);
+    const weekComplete = await checkWeekCompletion(game.week, 2025);
     
     console.log(`✅ Mok scoring complete for Week ${game.week} game ${weekComplete ? '- WEEK COMPLETE!' : ''}`);
   } catch (error) {
@@ -546,7 +589,7 @@ async function storeTeamPerformance(teamId: string, game: any, teamScore: number
     // Store team performance (weekly high/low will be updated later)
     await db.insert(teamPerformance).values({
       nflTeamId: teamId,
-      season: 2024,
+      season: 2025,
       week: game.week,
       gameId: game.id,
       teamScore,
@@ -648,7 +691,7 @@ async function calculateUserScores(week: number, season: number) {
     }
     
     // Store user weekly scores
-    for (const userScore of userScores.values()) {
+    for (const userScore of Array.from(userScores.values())) {
       const totalPoints = userScore.basePoints + userScore.lockBonusPoints + userScore.lockAndLoadBonusPoints;
       
       await db.insert(userWeeklyScores).values({
@@ -748,17 +791,17 @@ async function updateWeeklyHighLow(week: number, season: number) {
 }
 
 function getDateForWeek(week: number): Date {
-  // Calculate the date for the start of a given NFL week in 2024
-  const season2024Start = new Date('2024-09-05T00:00:00Z'); // Week 1 starts
+  // Calculate the date for the start of a given NFL week in 2025 (preseason starts Aug 8)
+  const season2025Start = new Date('2025-08-08T00:00:00Z'); // Preseason Week 1 starts
   const millisecondsPerWeek = 7 * 24 * 60 * 60 * 1000;
-  return new Date(season2024Start.getTime() + (week - 1) * millisecondsPerWeek);
+  return new Date(season2025Start.getTime() + (week - 1) * millisecondsPerWeek);
 }
 
 function getWeekForDate(date: Date): number {
-  // Calculate which NFL week a given date falls in
-  const season2024Start = new Date('2024-09-05T00:00:00Z');
+  // Calculate which NFL week a given date falls in (2025 preseason)
+  const season2025Start = new Date('2025-08-08T00:00:00Z');
   const millisecondsPerWeek = 7 * 24 * 60 * 60 * 1000;
-  const weeksDiff = Math.floor((date.getTime() - season2024Start.getTime()) / millisecondsPerWeek);
+  const weeksDiff = Math.floor((date.getTime() - season2025Start.getTime()) / millisecondsPerWeek);
   return Math.max(1, Math.min(22, weeksDiff + 1));
 }
 

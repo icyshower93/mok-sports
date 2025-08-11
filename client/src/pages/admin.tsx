@@ -33,7 +33,7 @@ export default function AdminPanel() {
   });
 
   // Safely extract admin state with proper defaults
-  const simulationDate = adminState?.simulationDate ? new Date(adminState.simulationDate) : new Date('2024-09-01T00:00:00Z');
+  const simulationDate = adminState?.simulationDate ? new Date(adminState.simulationDate) : new Date('2025-08-08T00:00:00Z');
   const isRunning = Boolean(adminState?.isSimulationRunning);
   const currentSpeed = Number(adminState?.timeAcceleration) || 1;
   const completedGames = Number(adminState?.completedGames) || 0;
