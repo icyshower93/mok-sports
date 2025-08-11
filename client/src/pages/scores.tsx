@@ -69,6 +69,27 @@ interface NFLGame {
 
 export default function ScoresPage() {
   console.log('🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE');
+  
+  // Add test functions to window for easy admin testing from console
+  useEffect(() => {
+    // @ts-ignore
+    window.testAdminReset = async () => {
+      console.log('🧪 Testing admin reset from scores page...');
+      const response = await fetch('/api/admin/reset-season', { method: 'POST' });
+      const result = await response.json();
+      console.log('🧪 Reset result:', result);
+    };
+    
+    // @ts-ignore
+    window.testAdminAdvance = async () => {
+      console.log('🧪 Testing admin advance from scores page...');
+      const response = await fetch('/api/admin/advance-day', { method: 'POST' });
+      const result = await response.json();
+      console.log('🧪 Advance result:', result);
+    };
+    
+    console.log('🧪 Test functions added to window: testAdminReset() and testAdminAdvance()');
+  }, []);
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const [selectedWeek, setSelectedWeek] = useState(1); // Start with Week 1
