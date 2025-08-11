@@ -17,12 +17,12 @@ if (!RAPIDAPI_KEY) {
   process.exit(1);
 }
 
-// Tank01 team ID mapping to NFL codes
+// Tank01 team ID mapping to NFL codes (WSH is used by Tank01 for Washington)
 const TANK01_TEAM_MAPPING: Record<number, string> = {
   1: 'ARI', 2: 'ATL', 3: 'BAL', 4: 'BUF', 5: 'CAR', 6: 'CHI', 7: 'CIN', 8: 'CLE',
   9: 'DAL', 10: 'DEN', 11: 'DET', 12: 'GB', 13: 'HOU', 14: 'IND', 15: 'JAX', 16: 'KC',
   17: 'LV', 18: 'LAC', 19: 'LAR', 20: 'MIA', 21: 'MIN', 22: 'NE', 23: 'NO', 24: 'NYG',
-  25: 'NYJ', 26: 'PIT', 27: 'SF', 28: 'SEA', 29: 'TB', 30: 'TEN', 31: 'WAS', 32: 'PHI'
+  25: 'NYJ', 26: 'PIT', 27: 'SF', 28: 'SEA', 29: 'TB', 30: 'TEN', 31: 'WSH', 32: 'PHI'
 };
 
 async function makeAPIRequest(endpoint: string) {
