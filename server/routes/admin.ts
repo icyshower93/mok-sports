@@ -4,47 +4,50 @@ import { nflGames, nflTeams } from '@shared/schema';
 import { eq, and, gte, lte, sql } from 'drizzle-orm';
 import { nflDataService } from '../services/nflDataService';
 
-// Simple admin state management
+// Simple admin state management - Production ready for 2025 season
 let adminState = {
-  currentDate: new Date('2024-09-01'), // Start from September 1, 2024
+  currentDate: new Date('2025-09-04'), // Production: Start from September 4, 2025 (Eagles vs Cowboys)
   gamesProcessedToday: 0,
   totalGamesProcessed: 0,
   totalGames: 272,
   currentWeek: 1,
-  processingInProgress: false
+  processingInProgress: false,
+  season: 2025 // Current season for production
 };
 
-// Calculate current week based on date
+// Calculate current week based on date - Production ready for 2025 season
 function calculateWeekFromDate(date: Date): number {
-  const sept1 = new Date('2024-09-01');
-  const diffDays = Math.floor((date.getTime() - sept1.getTime()) / (1000 * 60 * 60 * 24));
+  const seasonStart = new Date(`${adminState.season}-09-04`); // NFL season typically starts first Thursday of September
+  const diffDays = Math.floor((date.getTime() - seasonStart.getTime()) / (1000 * 60 * 60 * 24));
   
-  // NFL weeks roughly start on specific dates
-  if (diffDays < 5) return 1;  // Sept 1-5: Week 1
-  if (diffDays < 12) return 2; // Sept 6-12: Week 2
-  if (diffDays < 19) return 3; // Sept 13-19: Week 3
-  if (diffDays < 26) return 4; // Sept 20-26: Week 4
-  // Continue pattern...
-  return Math.max(1, Math.min(18, Math.floor(diffDays / 7) + 1));
+  // NFL weeks: Thursday start (Week 1), then Sunday-Monday cycles
+  if (diffDays < 0) return 1; // Before season starts
+  if (diffDays < 4) return 1;  // Sept 4-7: Week 1 (Thu-Sun)
+  if (diffDays < 11) return 2; // Sept 8-14: Week 2
+  if (diffDays < 18) return 3; // Sept 15-21: Week 3
+  if (diffDays < 25) return 4; // Sept 22-28: Week 4
+  
+  // Standard 7-day weeks after Week 4
+  return Math.max(1, Math.min(18, Math.floor((diffDays - 4) / 7) + 2));
 }
 
 // Update admin state by fetching from database
 async function updateAdminState() {
   try {
-    // Get total games count
+    // Get total games count for current season
     const totalGamesResult = await db
       .select({ count: sql`count(*)` })
       .from(nflGames)
-      .where(eq(nflGames.season, 2024));
+      .where(eq(nflGames.season, adminState.season));
     
     adminState.totalGames = Number(totalGamesResult[0]?.count) || 272;
 
-    // Get completed games count
+    // Get completed games count for current season
     const completedGamesResult = await db
       .select({ count: sql`count(*)` })
       .from(nflGames)
       .where(and(
-        eq(nflGames.season, 2024),
+        eq(nflGames.season, adminState.season),
         eq(nflGames.isCompleted, true)
       ));
 
@@ -63,7 +66,7 @@ async function updateAdminState() {
       .select({ count: sql`count(*)` })
       .from(nflGames)
       .where(and(
-        eq(nflGames.season, 2024),
+        eq(nflGames.season, adminState.season),
         gte(nflGames.gameDate, todayStart),
         lte(nflGames.gameDate, todayEnd),
         eq(nflGames.isCompleted, true)
@@ -103,7 +106,7 @@ async function processGamesForDate(targetDate: Date): Promise<number> {
       })
       .from(nflGames)
       .where(and(
-        eq(nflGames.season, 2024),
+        eq(nflGames.season, adminState.season),
         gte(nflGames.gameDate, dayStart),
         lte(nflGames.gameDate, dayEnd),
         eq(nflGames.isCompleted, false)
@@ -207,7 +210,8 @@ export function registerAdminRoutes(app: Express) {
         totalGamesProcessed: adminState.totalGamesProcessed,
         totalGames: adminState.totalGames,
         currentWeek: adminState.currentWeek,
-        processingInProgress: adminState.processingInProgress
+        processingInProgress: adminState.processingInProgress,
+        season: adminState.season
       });
     } catch (error) {
       console.error('Error getting admin state:', error);
@@ -252,7 +256,7 @@ export function registerAdminRoutes(app: Express) {
     }
   });
 
-  // Reset season to September 1, 2024
+  // Reset season to beginning of current season
   app.post('/api/admin/reset-season', async (req, res) => {
     try {
       if (adminState.processingInProgress) {
@@ -261,9 +265,9 @@ export function registerAdminRoutes(app: Express) {
 
       adminState.processingInProgress = true;
 
-      console.log('🔄 Resetting season to September 1, 2024...');
+      console.log(`🔄 Resetting ${adminState.season} season to September 4...`);
 
-      // Reset all games to uncompleted with 0 scores
+      // Reset all games to uncompleted with 0 scores for current season
       await db
         .update(nflGames)
         .set({
@@ -273,10 +277,10 @@ export function registerAdminRoutes(app: Express) {
           isTie: false,
           winnerTeamId: null
         })
-        .where(eq(nflGames.season, 2024));
+        .where(eq(nflGames.season, adminState.season));
 
-      // Reset admin state
-      adminState.currentDate = new Date('2024-09-01');
+      // Reset admin state to current season start
+      adminState.currentDate = new Date(`${adminState.season}-09-04`);
       adminState.gamesProcessedToday = 0;
       adminState.currentWeek = 1;
 
@@ -287,8 +291,9 @@ export function registerAdminRoutes(app: Express) {
 
       res.json({
         success: true,
-        message: 'Season reset to September 1, 2024',
+        message: `Season reset to September 4, ${adminState.season}`,
         currentDate: adminState.currentDate.toISOString(),
+        season: adminState.season,
         totalGamesReset: adminState.totalGames
       });
 
@@ -296,6 +301,50 @@ export function registerAdminRoutes(app: Express) {
       console.error('Error resetting season:', error);
       adminState.processingInProgress = false;
       res.status(500).json({ error: 'Failed to reset season' });
+    }
+  });
+
+  // Switch season endpoint for seamless production transition
+  app.post('/api/admin/switch-season', async (req, res) => {
+    try {
+      const { season } = req.body;
+      
+      if (!season || !Number.isInteger(season) || season < 2024 || season > 2030) {
+        return res.status(400).json({ error: 'Valid season year required (2024-2030)' });
+      }
+
+      if (adminState.processingInProgress) {
+        return res.status(409).json({ error: 'Processing in progress, cannot switch season' });
+      }
+
+      adminState.processingInProgress = true;
+
+      console.log(`🔄 Switching from ${adminState.season} to ${season} season...`);
+
+      // Update admin state for new season
+      adminState.season = season;
+      adminState.currentDate = new Date(`${season}-09-04`); // Season start
+      adminState.gamesProcessedToday = 0;
+      adminState.currentWeek = 1;
+
+      await updateAdminState();
+      adminState.processingInProgress = false;
+
+      console.log(`✅ Successfully switched to ${season} season`);
+
+      res.json({
+        success: true,
+        message: `Switched to ${season} season`,
+        season: adminState.season,
+        currentDate: adminState.currentDate.toISOString(),
+        currentWeek: adminState.currentWeek,
+        totalGames: adminState.totalGames
+      });
+
+    } catch (error) {
+      console.error('Error switching season:', error);
+      adminState.processingInProgress = false;
+      res.status(500).json({ error: 'Failed to switch season' });
     }
   });
 }

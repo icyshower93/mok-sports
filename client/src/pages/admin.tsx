@@ -14,6 +14,7 @@ interface AdminState {
   totalGames: number;
   currentWeek: number;
   processingInProgress: boolean;
+  season: number;
 }
 
 export default function AdminPanel() {
@@ -27,12 +28,13 @@ export default function AdminPanel() {
   });
 
   // Safely extract admin state with defaults
-  const currentDate = adminState?.currentDate ? new Date(adminState.currentDate) : new Date('2024-09-01');
+  const currentDate = adminState?.currentDate ? new Date(adminState.currentDate) : new Date('2025-09-04');
   const gamesProcessedToday = adminState?.gamesProcessedToday || 0;
   const totalGamesProcessed = adminState?.totalGamesProcessed || 0;
   const totalGames = adminState?.totalGames || 272;
   const currentWeek = adminState?.currentWeek || 1;
   const processingInProgress = adminState?.processingInProgress || false;
+  const season = adminState?.season || 2025;
 
   // Simple day progression controls
   const advanceDayMutation = useMutation({
@@ -56,6 +58,22 @@ export default function AdminPanel() {
         credentials: 'include'
       });
       if (!response.ok) throw new Error('Failed to reset season');
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/state'] });
+    }
+  });
+
+  const switchSeasonMutation = useMutation({
+    mutationFn: async (targetSeason: number) => {
+      const response = await fetch('/api/admin/switch-season', { 
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ season: targetSeason }),
+        credentials: 'include'
+      });
+      if (!response.ok) throw new Error('Failed to switch season');
       return response.json();
     },
     onSuccess: () => {
@@ -104,7 +122,7 @@ export default function AdminPanel() {
             </Button>
             <div className="flex items-center space-x-2">
               <Calendar className="w-6 h-6 text-blue-600" />
-              <h1 className="text-2xl font-bold">2024 NFL Season Admin</h1>
+              <h1 className="text-2xl font-bold">{season} NFL Season Admin</h1>
             </div>
           </div>
         </div>
@@ -145,7 +163,7 @@ export default function AdminPanel() {
               <CardContent className="space-y-4">
                 <div className="text-center space-y-4">
                   <p className="text-sm text-muted-foreground">
-                    Click to advance one day forward. Games scheduled for that day will be automatically processed with authentic NFL scores.
+                    Click to advance one day forward. Games scheduled for that day will be automatically processed with authentic NFL scores from Tank01 API.
                   </p>
                   
                   <Button
@@ -158,16 +176,26 @@ export default function AdminPanel() {
                     {processingInProgress ? 'Processing Games...' : 'Advance One Day'}
                   </Button>
 
-                  <Button
-                    onClick={() => resetSeasonMutation.mutate()}
-                    size="sm"
-                    variant="outline"
-                    className="w-full"
-                    disabled={resetSeasonMutation.isPending}
-                  >
-                    <RotateCcw className="w-4 h-4 mr-2" />
-                    Reset to September 1, 2024
-                  </Button>
+                  <div className="grid grid-cols-2 gap-2">
+                    <Button
+                      onClick={() => resetSeasonMutation.mutate()}
+                      size="sm"
+                      variant="outline"
+                      disabled={resetSeasonMutation.isPending}
+                    >
+                      <RotateCcw className="w-4 h-4 mr-1" />
+                      Reset Season
+                    </Button>
+                    
+                    <Button
+                      onClick={() => switchSeasonMutation.mutate(season === 2025 ? 2024 : 2025)}
+                      size="sm"
+                      variant="outline"
+                      disabled={switchSeasonMutation.isPending}
+                    >
+                      Switch to {season === 2025 ? '2024' : '2025'}
+                    </Button>
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -191,6 +219,10 @@ export default function AdminPanel() {
                 <div className="flex justify-between">
                   <span className="text-sm text-muted-foreground">Current Week</span>
                   <span className="font-medium">Week {currentWeek}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-sm text-muted-foreground">Season</span>
+                  <span className="font-medium">{season}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-sm text-muted-foreground">Status</span>
