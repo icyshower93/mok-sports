@@ -69,11 +69,13 @@ export default function AdminPanel() {
 
   // Helper functions
   const formatDate = (date: Date) => {
+    // Force UTC interpretation to prevent timezone-related date shifts
     return date.toLocaleDateString('en-US', {
       weekday: 'long',
       year: 'numeric',
       month: 'long',
-      day: 'numeric'
+      day: 'numeric',
+      timeZone: 'UTC'
     });
   };
 
