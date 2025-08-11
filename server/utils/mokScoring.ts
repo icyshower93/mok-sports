@@ -73,7 +73,18 @@ export interface UserWeeklyScore {
   lockAndLoadBonusPoints: number;
 }
 
-// Calculate base Mok Sports points for a team's game result
+// Calculate ONLY the core game result points (win/tie/loss) - NO bonuses
+export function calculateTrueBaseMokPoints(result: TeamGameResult): number {
+  if (result.isWin) {
+    return MOK_SCORING_RULES.winPoints; // 1 point
+  } else if (result.isTie) {
+    return MOK_SCORING_RULES.tiePoints; // 0.5 points
+  } else {
+    return MOK_SCORING_RULES.lossPoints; // 0 points
+  }
+}
+
+// Calculate all Mok Sports points including bonuses (for total scoring)
 export function calculateBaseMokPoints(result: TeamGameResult): number {
   let points = 0;
   
