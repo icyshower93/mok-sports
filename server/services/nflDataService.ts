@@ -223,11 +223,22 @@ class NFLDataService {
   async getBettingOddsForDate(gameDate: string): Promise<Tank01BettingOdds[]> {
     try {
       console.log(`[NFLDataService] Fetching betting odds for ${gameDate}...`);
-      const data = await this.makeRapidAPIRequest(`/getNFLBettingOdds?gameDate=${gameDate}`);
+      const data = await this.makeRapidAPIRequest(`/getNFLBettingOdds?gameDate=${gameDate}&itemFormat=list&impliedTotals=true`);
       
-      if (data && data.body) {
-        console.log(`[NFLDataService] Got betting odds for ${Object.keys(data.body).length} games on ${gameDate}`);
-        return Object.values(data.body) as Tank01BettingOdds[];
+      if (data && data.statusCode === 200 && data.body && Array.isArray(data.body)) {
+        console.log(`[NFLDataService] Got betting odds for ${data.body.length} games on ${gameDate}`);
+        return data.body.map((odds: any) => ({
+          gameID: odds.gameID || '',
+          gameDate: odds.gameDate || gameDate,
+          teamAbv: odds.teamAbv || '',
+          pointSpreadAway: parseFloat(odds.pointSpreadAway) || 0,
+          pointSpreadHome: parseFloat(odds.pointSpreadHome) || 0,
+          totalOver: parseFloat(odds.totalOver) || 0,
+          totalUnder: parseFloat(odds.totalUnder) || 0,
+          moneyLineAway: parseFloat(odds.moneyLineAway) || 0,
+          moneyLineHome: parseFloat(odds.moneyLineHome) || 0,
+          lastUpdated: odds.lastUpdated || new Date().toISOString()
+        }));
       }
       
       console.log(`[NFLDataService] No betting odds found for ${gameDate}`);
