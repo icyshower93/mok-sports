@@ -6,12 +6,14 @@ Mok Sports is a fantasy sports application that redefines traditional fantasy le
 
 ### Complete 2025 NFL Season Integration (Aug 11, 2025)
 - **COMPLETED**: Successfully imported complete 2025 NFL season using Tank01 RapidAPI exclusively
-- **VERIFIED**: 242 authentic regular season games imported with correct week distribution (weeks 5-22)
-- **VERIFIED**: 21 preseason games imported across weeks 1-4 (Aug 8-29, 2025)
+- **VERIFIED**: 242 authentic regular season games imported with correct week distribution (weeks 1-18)
+- **VERIFIED**: 21 preseason games imported across weeks PS 1-4 (Aug 8-29, 2025)
 - Fixed week calculation algorithm to properly distribute games across 18 regular season weeks
+- Implemented proper NFL week numbering: Regular Season = Week 1-18, Preseason = PS Week 1-4
 - All games sourced directly from Tank01 API to match production app behavior exactly
 - Implemented robust Tank01 team ID mapping (1-32) to team codes (ARI, ATL, etc.)
 - Enhanced date parsing to handle Tank01's various date formats
+- Created weekUtils utility for consistent "PS Week X" and "Week X" display formatting
 - **CONFIRMED**: Total 263 games covering complete 2025 NFL season from preseason through playoffs
 - System now production-ready with authentic Tank01 data integration
 

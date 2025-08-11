@@ -211,8 +211,8 @@ async function importFullSeason() {
           calculatedWeek = Math.min(calculatedWeek, 18);
         }
         
-        // Convert to our schema (add 4 for preseason weeks)
-        const schemaWeek = calculatedWeek + 4;
+        // Use calculated week directly (1-18 for regular season, negative for preseason)
+        const schemaWeek = calculatedWeek;
         
         // Get team UUIDs
         const homeTeamId = await getTeamUUIDByCode(homeTeamCode);
@@ -273,7 +273,7 @@ async function importFullSeason() {
     console.log('Week | Games | First Game     | Last Game');
     console.log('-----|-------|----------------|----------------');
     for (const row of summary.rows) {
-      const weekLabel = row.week <= 4 ? `PS${row.week}` : `RS${row.week - 4}`;
+      const weekLabel = row.week <= 0 ? `PS${Math.abs(row.week - 1)}` : `RS${row.week}`;
       const firstGame = new Date(row.first_game).toISOString().split('T')[0];
       const lastGame = new Date(row.last_game).toISOString().split('T')[0];
       console.log(`${weekLabel.padEnd(4)} | ${String(row.game_count).padEnd(5)} | ${firstGame}     | ${lastGame}`);

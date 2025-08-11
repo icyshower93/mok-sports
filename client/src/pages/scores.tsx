@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { BottomNav } from "@/components/layout/bottom-nav";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { getWeekLabel } from "@shared/utils/weekUtils";
 
 interface MokScoringRules {
   winPoints: number;
@@ -213,9 +214,16 @@ export default function ScoresPage() {
                   onChange={(e) => setSelectedWeek(Number(e.target.value))}
                   className="bg-background border border-border rounded-md px-3 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
                 >
+                  {/* Preseason options */}
+                  {Array.from({length: 4}, (_, i) => -3 + i).map(week => (
+                    <option key={week} value={week}>
+                      {getWeekLabel(week)}
+                    </option>
+                  ))}
+                  {/* Regular season options */}
                   {Array.from({length: 18}, (_, i) => i + 1).map(week => (
                     <option key={week} value={week}>
-                      Week {week}
+                      {getWeekLabel(week)}
                     </option>
                   ))}
                 </select>
@@ -226,11 +234,11 @@ export default function ScoresPage() {
         {/* Games List */}
         <div className="space-y-4">
           {loadingGames && (
-            <div className="text-center py-8">Loading Week {selectedWeek} games...</div>
+            <div className="text-center py-8">Loading {getWeekLabel(selectedWeek)} games...</div>
           )}
           {!loadingGames && nflGames.length === 0 && (
             <div className="text-center py-8 text-muted-foreground">
-              No games found for Week {selectedWeek}
+              No games found for {getWeekLabel(selectedWeek)}
             </div>
           )}
           {nflGames

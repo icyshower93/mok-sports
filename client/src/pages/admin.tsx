@@ -8,6 +8,7 @@ import { ChevronDown } from "lucide-react";
 import { ArrowLeft, Play, Pause, RotateCcw, Clock, Wifi, WifiOff, FastForward, Calendar, Trophy } from "lucide-react";
 import { useLocation } from "wouter";
 import { queryClient } from "@/lib/queryClient";
+import { getWeekLabel } from "@shared/utils/weekUtils";
 
 // Define admin state type
 interface AdminState {
@@ -224,7 +225,7 @@ export default function AdminPanel() {
                     {formatDateTime(simulationDate)}
                   </div>
                   <div className="text-sm text-muted-foreground">
-                    Week {currentWeek} • {getSpeedLabel(currentSpeed)}
+                    {getWeekLabel(currentWeek)} • {getSpeedLabel(currentSpeed)}
                   </div>
                 </div>
               </CardContent>
