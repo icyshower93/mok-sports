@@ -13,6 +13,8 @@ Mok Sports is a fantasy sports application that redefines traditional fantasy le
 - Added comprehensive game processing system with Tank01/ESPN API integration for authentic 2024 NFL results
 - Created admin state management with simulation controls: start, stop, reset, speed adjustment, and week jumping
 - Implemented Mok scoring calculation integration for processed games with proper database updates
+- **FIXED: Game Processing Timing** - Games now process only when simulation time crosses their actual scheduled start times, not all at once
+- Replaced problematic Radix UI Select components with native HTML selects to eliminate React DOM manipulation errors
 
 ### Production-Ready Scoring System (Aug 11, 2025)
 - Implemented hybrid scoring system with Tank01 API for current season and ESPN fallback for historical data

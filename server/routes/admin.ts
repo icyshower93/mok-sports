@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { db } from "../db.js";
 import { users, stables, nflGames, nflTeams } from "../../shared/schema.js";
-import { eq, and, lte, desc, gte } from "drizzle-orm";
+import { eq, and, lte, desc, gte, gt } from "drizzle-orm";
 
 const router = Router();
 
@@ -199,14 +199,17 @@ function startSimulationLoop() {
     if (!simulationState.isSimulationRunning) return;
     
     try {
+      // Store previous time before update
+      const previousTime = new Date(simulationState.simulationDate);
+      
       // Update simulation time
       const now = Date.now();
       const timePassed = (now - simulationState.lastSimulationUpdate) * simulationState.timeAcceleration;
       simulationState.simulationDate = new Date(simulationState.simulationDate.getTime() + timePassed);
       simulationState.lastSimulationUpdate = now;
       
-      // Check for games that should have started/completed
-      await checkAndProcessGames(simulationState.simulationDate);
+      // Check for games that should have started/completed between previousTime and current time
+      await checkAndProcessGames(previousTime, simulationState.simulationDate);
       
       // Update current week based on date
       const newWeek = getWeekForDate(simulationState.simulationDate);
@@ -285,23 +288,28 @@ async function resetSeasonData() {
   }
 }
 
-async function checkAndProcessGames(currentDate: Date) {
+async function checkAndProcessGames(previousTime: Date, currentTime: Date) {
   try {
-    // Get games that should have started but haven't been processed
+    // Only process games that should start between the previous tick and current tick
+    // This ensures games are processed only when their scheduled time is crossed
     const gamesToProcess = await db
       .select()
       .from(nflGames)
       .where(and(
-        lte(nflGames.gameDate, currentDate),
+        gt(nflGames.gameDate, previousTime),
+        lte(nflGames.gameDate, currentTime),
         eq(nflGames.isCompleted, false)
       ));
     
     for (const game of gamesToProcess) {
+      console.log(`🏈 Game starting NOW: Week ${game.week} - ${new Date(game.gameDate).toLocaleString()}`);
+      console.log(`   Time window: ${previousTime.toISOString()} → ${currentTime.toISOString()}`);
       await processGame(game);
       simulationState.completedGames++;
     }
     
     if (gamesToProcess.length > 0) {
+      console.log(`✅ Processed ${gamesToProcess.length} games. Total completed: ${simulationState.completedGames}`);
       broadcastAdminUpdate();
     }
     
