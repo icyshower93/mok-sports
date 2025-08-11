@@ -76,7 +76,8 @@ router.get("/current-week", async (req, res) => {
 router.get("/week/:week", async (req, res) => {
   try {
     const week = parseInt(req.params.week);
-    const season = 2024; // Using real 2024 NFL season
+    // Use current year for production, or allow override for testing
+    const season = parseInt(req.query.season as string) || new Date().getFullYear();
     const leagueId = req.query.leagueId || '243d719b-92ce-4752-8689-5da93ee69213'; // Default to EEW2YU league
     
     if (week < 1 || week > 18) {
@@ -137,29 +138,36 @@ router.get("/week/:week", async (req, res) => {
     
     console.log(`[Scoring] Found ${gamesResult.rows.length} games for Week ${week} (${gamesResult.rows.filter(r => r.is_completed).length} completed)`);
     
-    const games = gamesResult.rows.map((row: any) => ({
-      id: row.game_id,
-      homeTeam: row.home_team,
-      awayTeam: row.away_team,
-      homeScore: row.home_score,
-      awayScore: row.away_score,
-      // Show completion status directly from database
-      isCompleted: Boolean(row.is_completed),
-      gameDate: row.game_date,
-      // Team ownership information
-      homeOwner: row.home_owner_id,
-      awayOwner: row.away_owner_id,
-      homeOwnerName: row.home_owner_name,
-      awayOwnerName: row.away_owner_name,
-      // Lock status
-      homeLocked: row.home_locked,
-      awayLocked: row.away_locked,
-      homeLockAndLoad: row.home_lock_and_load,
-      awayLockAndLoad: row.away_lock_and_load,
-      // Calculate actual Mok points for each team
-      homeMokPoints: row.home_owner_name ? calculateGameMokPoints(row.home_score, row.away_score, true, row.home_locked, row.home_lock_and_load) : 0,
-      awayMokPoints: row.away_owner_name ? calculateGameMokPoints(row.away_score, row.home_score, false, row.away_locked, row.away_lock_and_load) : 0
-    }));
+    const games = gamesResult.rows.map((row: any) => {
+      const isCompleted = Boolean(row.is_completed);
+      // For production: only show scores for completed games
+      // For 2024 testing: show all scores for validation
+      const shouldShowScores = isCompleted || season === 2024; // Show all 2024 scores for testing
+      
+      return {
+        id: row.game_id,
+        homeTeam: row.home_team,
+        awayTeam: row.away_team,
+        homeScore: shouldShowScores ? row.home_score : null, // Only show scores for completed games (or 2024 testing)
+        awayScore: shouldShowScores ? row.away_score : null, // Only show scores for completed games (or 2024 testing)
+        // Show completion status directly from database
+        isCompleted,
+        gameDate: row.game_date,
+        // Team ownership information
+        homeOwner: row.home_owner_id,
+        awayOwner: row.away_owner_id,
+        homeOwnerName: row.home_owner_name,
+        awayOwnerName: row.away_owner_name,
+        // Lock status
+        homeLocked: row.home_locked,
+        awayLocked: row.away_locked,
+        homeLockAndLoad: row.home_lock_and_load,
+        awayLockAndLoad: row.away_lock_and_load,
+        // Calculate actual Mok points for each team - only for completed games
+        homeMokPoints: shouldShowScores && row.home_owner_name ? calculateGameMokPoints(row.home_score, row.away_score, true, row.home_locked, row.home_lock_and_load) : 0,
+        awayMokPoints: shouldShowScores && row.away_owner_name ? calculateGameMokPoints(row.away_score, row.home_score, false, row.away_locked, row.away_lock_and_load) : 0
+      };
+    });
     
     res.json({
       week,
@@ -167,6 +175,9 @@ router.get("/week/:week", async (req, res) => {
       leagueId,
       games: games.length,
       completedGames: games.filter(g => g.isCompleted).length,
+      // Add production readiness indicator
+      production: season >= 2025,
+      message: season === 2024 ? 'Testing mode: All scores visible' : 'Production mode: Only completed game scores visible',
       results: games
     });
     

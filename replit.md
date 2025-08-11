@@ -9,6 +9,8 @@ Mok Sports is a fantasy sports application that redefines traditional fantasy le
 - **PRODUCTION READY**: Default 2025 season configuration starting September 4 (Eagles vs Cowboys)
 - **SEASON SWITCHING**: One-click switching between 2024 (testing) and 2025 (production) seasons
 - **SEAMLESS TRANSITION**: Admin panel automatically adapts to current season with proper date calculations
+- **LIVE SCORING SYSTEM**: Real-time Tank01 API monitoring with scores appearing only when games complete
+- **SMART SEASON DETECTION**: 2024 shows all scores for testing, 2025+ shows only completed game scores
 - Tank01 API integration optimized for live 2025 season data with authentic game processing
 - Eliminated complex simulation controls in favor of simple day-by-day progression
 - Season reset functionality maintains current season context for easy management

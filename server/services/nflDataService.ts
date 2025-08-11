@@ -358,6 +358,49 @@ class NFLDataService {
     }
   }
 
+  /**
+   * Get live scores for games currently in progress
+   * This will be used for real-time scoring in production
+   */
+  async getLiveScores(date?: string): Promise<NFLGameData[]> {
+    try {
+      const targetDate = date || new Date().toISOString().split('T')[0];
+      const response = await this.makeRapidAPIRequest(`/getNFLGamesForDate?gameDate=${targetDate}`);
+      
+      if (response && response.body) {
+        return response.body.map((game: Tank01Game) => ({
+          id: game.gameID,
+          week: game.week,
+          season: game.season,
+          gameDate: new Date(`${game.gameDate} ${game.gameTime}`),
+          homeTeam: this.mapTank01TeamToCode(game.homeTeam),
+          awayTeam: this.mapTank01TeamToCode(game.awayTeam),
+          homeScore: game.homePts,
+          awayScore: game.awayPts,
+          isCompleted: game.gameStatus?.toLowerCase().includes('final') || false,
+          status: this.mapGameStatus(game.gameStatus)
+        }));
+      }
+      
+      return [];
+    } catch (error) {
+      console.error(`Error fetching live scores for ${date}:`, error);
+      return [];
+    }
+  }
+
+  private mapGameStatus(status: string): 'scheduled' | 'live' | 'completed' {
+    if (!status) return 'scheduled';
+    
+    const statusLower = status.toLowerCase();
+    if (statusLower.includes('final') || statusLower.includes('completed')) {
+      return 'completed';
+    } else if (statusLower.includes('live') || statusLower.includes('quarter') || statusLower.includes('half')) {
+      return 'live';
+    }
+    return 'scheduled';
+  }
+
   // Get games that should be "completed" based on the simulated current time
   async getGamesForTimeSimulation(simulatedWeek: number, simulatedDay: string, simulatedTime: string): Promise<NFLGameData[]> {
     try {
