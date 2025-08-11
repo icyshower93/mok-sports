@@ -69,9 +69,9 @@ interface NFLGame {
 
 export default function ScoresPage() {
   const { user } = useAuth();
-  const [selectedWeek, setSelectedWeek] = useState(-3); // Start with PS Week 1
+  const [selectedWeek, setSelectedWeek] = useState(1); // Start with Week 1
   const [selectedGame, setSelectedGame] = useState<any>(null);
-  const [selectedSeason] = useState(2025); // Using real 2025 NFL season data
+  const [selectedSeason] = useState(2024); // Using completed 2024 NFL season for testing
 
   // Get user's leagues to show scores for
   const { data: userLeagues } = useQuery({
@@ -119,7 +119,7 @@ export default function ScoresPage() {
       console.log(`[DEBUG] API Response:`, data);
       return data;
     },
-    enabled: !!currentLeague && selectedWeek >= -3 && selectedWeek <= 18
+    enabled: !!currentLeague && selectedWeek >= 1 && selectedWeek <= 18
   });
 
   // Get user's teams for highlighting
@@ -220,16 +220,10 @@ export default function ScoresPage() {
                   onChange={(e) => setSelectedWeek(Number(e.target.value))}
                   className="bg-background border border-border rounded-md px-3 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
                 >
-                  {/* Preseason options - PS Week 1 to PS Week 4 */}
-                  {[-3, -2, -1, 0].map(week => (
-                    <option key={week} value={week}>
-                      {getWeekLabel(week)}
-                    </option>
-                  ))}
                   {/* Regular season options - Week 1 to Week 18 */}
                   {Array.from({length: 18}, (_, i) => i + 1).map(week => (
                     <option key={week} value={week}>
-                      {getWeekLabel(week)}
+                      Week {week}
                     </option>
                   ))}
                 </select>
@@ -240,11 +234,11 @@ export default function ScoresPage() {
         {/* Games List */}
         <div className="space-y-4">
           {loadingGames && (
-            <div className="text-center py-8">Loading {getWeekLabel(selectedWeek)} games...</div>
+            <div className="text-center py-8">Loading Week {selectedWeek} games...</div>
           )}
           {!loadingGames && nflGames.length === 0 && (
             <div className="text-center py-8 text-muted-foreground">
-              No games found for {getWeekLabel(selectedWeek)}
+              No games found for Week {selectedWeek}
               <div className="text-xs mt-2 space-y-1">
                 <div>Debug: Week {selectedWeek}</div>
                 <div>Games data: {nflGamesData ? JSON.stringify(nflGamesData).substring(0, 200) + '...' : 'null'}</div>
