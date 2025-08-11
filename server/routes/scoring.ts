@@ -7,10 +7,7 @@ import { eq, and, sql } from "drizzle-orm";
 import { nflGames, nflTeams, weeklyLocks, userWeeklyScores, draftPicks, drafts, leagues, users } from "@shared/schema";
 import {
   calculateWeeklyScores,
-  calculateSeasonStandings,
-  validateLockUsage,
-  MOK_SCORING_RULES,
-  updateGameScoresFromTank01
+  MOK_SCORING_RULES
 } from "../utils/mokScoring.js";
 
 const router = express.Router();

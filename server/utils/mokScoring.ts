@@ -6,15 +6,6 @@ import { nflGames, nflTeams, weeklyLocks, userWeeklyScores, draftPicks, stables 
 import { eq, and, sql } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
 
-// Tank01 API integration for real-time scoring
-const TANK01_API_OPTIONS = {
-  method: 'GET',
-  headers: {
-    'X-RapidAPI-Key': '005fffe3bemsh0ccee48c9d8de37p1274c5jsn792f60867fc1',
-    'X-RapidAPI-Host': 'tank01-nfl-live-in-game-real-time-statistics-nfl.p.rapidapi.com'
-  }
-};
-
 export interface MokScoringRules {
   // Base scoring
   winPoints: number;     // +1 for wins
@@ -43,7 +34,7 @@ export const MOK_SCORING_RULES: MokScoringRules = {
   tiePoints: 0.5,
   lossPoints: 0,
   blowoutPoints: 1,
-  shutoutPoints: 1,  
+  shutoutPoints: 1,
   weeklyHighPoints: 1,
   weeklyLowPenalty: -1,
   lockBonusPoints: 1,
@@ -55,184 +46,139 @@ export const MOK_SCORING_RULES: MokScoringRules = {
 
 export interface TeamGameResult {
   teamCode: string;
-  week: number;
-  season: number;
   opponentCode: string;
   teamScore: number;
   opponentScore: number;
+  week: number;
+  season: number;
+  gameDate: Date | null;
+  baseMokPoints: number;
   isWin: boolean;
-  isTie: boolean;
   isLoss: boolean;
-  isBlowout: boolean;      // Won by 20+ points
-  isShutout: boolean;      // Held opponent to 0
-  isWeeklyHigh: boolean;   // Highest score this week
-  isWeeklyLow: boolean;    // Lowest score this week
-  baseMokPoints: number;   // Points without lock bonuses
-  gameDate: Date;
+  isTie: boolean;
+  isBlowout: boolean;
+  isShutout: boolean;
+  isWeeklyHigh: boolean;
+  isWeeklyLow: boolean;
 }
 
 export interface UserWeeklyScore {
   userId: string;
-  leagueId: string; 
+  leagueId: string;
   week: number;
   season: number;
-  teamResults: TeamGameResult[];
-  totalBaseMokPoints: number;
-  lockedTeam?: string;
-  lockAndLoadTeam?: string; 
+  totalPoints: number;
+  basePoints: number;
   lockBonusPoints: number;
   lockAndLoadBonusPoints: number;
-  totalMokPoints: number;
 }
 
-// Function to update NFL game scores from Tank01 API
-export async function updateGameScoresFromTank01(week: number, season: number = 2024): Promise<void> {
-  try {
-    console.log(`[Tank01 Scoring] Updating scores for Week ${week} of ${season}...`);
-    
-    const response = await fetch(
-      `https://tank01-nfl-live-in-game-real-time-statistics-nfl.p.rapidapi.com/getNFLGamesForWeek?seasonType=reg&week=${week}&season=${season}`,
-      TANK01_API_OPTIONS
-    );
-    
-    if (!response.ok) {
-      throw new Error(`Tank01 API error: ${response.status}`);
-    }
-    
-    const data = await response.json();
-    
-    if (data.statusCode === 200 && data.body && data.body.length > 0) {
-      const games = data.body;
-      console.log(`[Tank01 Scoring] Found ${games.length} games for Week ${week}`);
-      
-      // Update each game in our database
-      for (const game of games) {
-        if (game.gameStatus === 'Final') {
-          // Parse the score from Tank01 data - need to extract from game details
-          // Tank01 doesn't include scores in the basic endpoint, need to fetch individual game
-          // For now, we'll mark the game as completed and handle scoring separately
-          
-          const awayTeam = game.away === 'WSH' ? 'WAS' : game.away; // Handle Washington mapping
-          const homeTeam = game.home === 'WSH' ? 'WAS' : game.home;
-          
-          // Update game completion status
-          await db
-            .update(nflGames)
-            .set({ 
-              isCompleted: true, 
-              updatedAt: new Date() 
-            })
-            .where(
-              and(
-                eq(nflGames.week, week),
-                eq(nflGames.season, season),
-                sql`EXISTS (
-                  SELECT 1 FROM nfl_teams ht WHERE ht.id = ${nflGames.homeTeamId} AND ht.code = ${homeTeam}
-                ) AND EXISTS (
-                  SELECT 1 FROM nfl_teams at WHERE at.id = ${nflGames.awayTeamId} AND at.code = ${awayTeam}  
-                )`
-              )
-            );
-        }
-      }
-      
-      console.log(`[Tank01 Scoring] Updated completion status for Week ${week} games`);
-    }
-  } catch (error) {
-    console.error(`[Tank01 Scoring] Error updating scores:`, error);
-    throw error;
-  }
-}
-
-// Calculate base Mok points for a team's game result
+// Calculate base Mok Sports points for a team's game result
 export function calculateBaseMokPoints(result: TeamGameResult): number {
-  const rules = MOK_SCORING_RULES;
   let points = 0;
   
-  // Base game result points
-  if (result.isWin) points += rules.winPoints;
-  else if (result.isTie) points += rules.tiePoints;
-  // Losses get 0 points
+  // Base points for game result
+  if (result.isWin) {
+    points += MOK_SCORING_RULES.winPoints;
+  } else if (result.isTie) {
+    points += MOK_SCORING_RULES.tiePoints;
+  } else {
+    points += MOK_SCORING_RULES.lossPoints; // 0 points
+  }
   
   // Bonus points
-  if (result.isBlowout) points += rules.blowoutPoints;
-  if (result.isShutout) points += rules.shutoutPoints;
-  if (result.isWeeklyHigh) points += rules.weeklyHighPoints;
-  if (result.isWeeklyLow) points += rules.weeklyLowPenalty;
+  if (result.isBlowout && result.isWin) {
+    points += MOK_SCORING_RULES.blowoutPoints;
+  }
+  
+  if (result.isShutout && result.isWin) {
+    points += MOK_SCORING_RULES.shutoutPoints;
+  }
+  
+  if (result.isWeeklyHigh) {
+    points += MOK_SCORING_RULES.weeklyHighPoints;
+  }
+  
+  if (result.isWeeklyLow) {
+    points += MOK_SCORING_RULES.weeklyLowPenalty;
+  }
   
   return points;
 }
 
 // Calculate lock bonus points
 export function calculateLockPoints(result: TeamGameResult, isLocked: boolean, isLockAndLoad: boolean): number {
-  const rules = MOK_SCORING_RULES;
   let lockPoints = 0;
   
-  if (isLocked && !isLockAndLoad) {
-    // Regular lock: +1 bonus regardless of outcome
-    lockPoints += rules.lockBonusPoints;
-  } else if (isLockAndLoad) {
-    // Lock & Load: +2 for win, -1 for loss, 0 for tie
+  if (isLockAndLoad) {
+    // Lock & Load scoring overrides regular lock
     if (result.isWin) {
-      lockPoints += rules.lockAndLoadWinPoints;
+      lockPoints += MOK_SCORING_RULES.lockAndLoadWinPoints;
     } else if (result.isLoss) {
-      lockPoints += rules.lockAndLoadLossPenalty; // This is -1
+      lockPoints += MOK_SCORING_RULES.lockAndLoadLossPenalty;
     }
-    // Ties get no lock and load bonus/penalty
+  } else if (isLocked) {
+    // Regular lock bonus (only applies to wins)
+    if (result.isWin) {
+      lockPoints += MOK_SCORING_RULES.lockBonusPoints;
+    }
   }
   
   return lockPoints;
 }
 
-// Get NFL game results for a specific week and season from Tank01 API
-export async function getNFLGameResults(week: number, season: number): Promise<TeamGameResult[]> {
-  console.log(`🏈 [MokScoring] Getting NFL results for Week ${week}, ${season} from Tank01 API`);
+// Get NFL game results for a specific week
+async function getNFLGameResults(week: number, season: number): Promise<TeamGameResult[]> {
+  console.log(`🏈 [MokScoring] Getting NFL results for Week ${week}, ${season}`);
   
   try {
-    // First, get all NFL games from our database for this week
+    // Create table aliases for joining teams table twice (home and away teams)
+    const homeTeam = alias(nflTeams, "home_team");
+    const awayTeam = alias(nflTeams, "away_team");
+
     const dbGames = await db
       .select({
-        gameId: nflGames.id,
+        id: nflGames.id,
+        week: nflGames.week,
+        season: nflGames.season,
+        gameDate: nflGames.gameDate,
         homeTeamId: nflGames.homeTeamId,
         awayTeamId: nflGames.awayTeamId,
         homeScore: nflGames.homeScore,
         awayScore: nflGames.awayScore,
         isCompleted: nflGames.isCompleted,
-        homeTeam: {
-          id: homeTeam.id,
-          code: homeTeam.code,
-          city: homeTeam.city,
-          name: homeTeam.name
-        },
-        awayTeam: {
-          id: awayTeam.id, 
-          code: awayTeam.code,
-          city: awayTeam.city,
-          name: awayTeam.name
-        }
+        homeTeamCode: homeTeam.code,
+        homeTeamName: homeTeam.name,
+        homeTeamCity: homeTeam.city,
+        awayTeamCode: awayTeam.code,
+        awayTeamName: awayTeam.name,
+        awayTeamCity: awayTeam.city,
       })
       .from(nflGames)
-      .innerJoin(homeTeam, eq(nflGames.homeTeamId, homeTeam.id))
-      .innerJoin(awayTeam, eq(nflGames.awayTeamId, awayTeam.id))
+      .leftJoin(homeTeam, eq(nflGames.homeTeamId, homeTeam.id))
+      .leftJoin(awayTeam, eq(nflGames.awayTeamId, awayTeam.id))
       .where(and(
-        eq(nflGames.week, week),
+        eq(nflGames.week, week), 
         eq(nflGames.season, season),
         eq(nflGames.isCompleted, true)
       ));
-
+    
     console.log(`🏈 [MokScoring] Found ${dbGames.length} completed games in database`);
-
-    // Convert database games to TeamGameResult format
+    
     const teamResults: TeamGameResult[] = [];
     
     for (const game of dbGames) {
-      if (game.homeScore !== null && game.awayScore !== null) {
+      if (game.homeScore !== null && game.awayScore !== null && game.homeTeamCode && game.awayTeamCode) {
         // Add home team result
         const homeResult: TeamGameResult = {
-          teamCode: game.homeTeam.code,
-          opponentCode: game.awayTeam.code,
+          teamCode: game.homeTeamCode,
+          opponentCode: game.awayTeamCode,
           teamScore: game.homeScore,
           opponentScore: game.awayScore,
+          week: game.week,
+          season: game.season,
+          gameDate: game.gameDate,
+          baseMokPoints: 0, // Will be calculated later
           isWin: game.homeScore > game.awayScore,
           isLoss: game.homeScore < game.awayScore,
           isTie: game.homeScore === game.awayScore,
@@ -245,10 +191,14 @@ export async function getNFLGameResults(week: number, season: number): Promise<T
 
         // Add away team result
         const awayResult: TeamGameResult = {
-          teamCode: game.awayTeam.code,
-          opponentCode: game.homeTeam.code,
+          teamCode: game.awayTeamCode,
+          opponentCode: game.homeTeamCode,
           teamScore: game.awayScore,
           opponentScore: game.homeScore,
+          week: game.week,
+          season: game.season,
+          gameDate: game.gameDate,
+          baseMokPoints: 0, // Will be calculated later
           isWin: game.awayScore > game.homeScore,
           isLoss: game.awayScore < game.homeScore,
           isTie: game.awayScore === game.homeScore,
@@ -260,8 +210,8 @@ export async function getNFLGameResults(week: number, season: number): Promise<T
         teamResults.push(awayResult);
       }
     }
-
-    // Calculate weekly high and low scoring teams
+    
+    // Calculate weekly highs and lows
     if (teamResults.length > 0) {
       const maxScore = Math.max(...teamResults.map(r => r.teamScore));
       const minScore = Math.min(...teamResults.map(r => r.teamScore));
@@ -286,10 +236,6 @@ export async function getNFLGameResults(week: number, season: number): Promise<T
   }
 }
 
-// Import table aliases for the query
-const homeTeam = alias(nflTeams, 'homeTeam');
-const awayTeam = alias(nflTeams, 'awayTeam');
-
 // Calculate weekly scores for all users in a league
 export async function calculateWeeklyScores(leagueId: string, week: number, season: number): Promise<UserWeeklyScore[]> {
   console.log(`📊 [MokScoring] Calculating scores for league ${leagueId}, Week ${week}, ${season}`);
@@ -298,11 +244,12 @@ export async function calculateWeeklyScores(leagueId: string, week: number, seas
   const userStables = await db
     .select({
       userId: stables.userId,
-      nflTeamCode: stables.nflTeamId, // Note: This should be joined with nflTeams to get the code
+      nflTeamCode: nflTeams.code,
       locksUsed: stables.locksUsed,
       lockAndLoadUsed: stables.lockAndLoadUsed
     })
     .from(stables)
+    .leftJoin(nflTeams, eq(stables.nflTeamId, nflTeams.id))
     .where(eq(stables.leagueId, leagueId));
   
   // Get NFL game results for this week
@@ -349,84 +296,26 @@ export async function calculateWeeklyScores(leagueId: string, week: number, seas
         }
         
         userResults.push(teamResult);
+        console.log(`🏈 [MokScoring] ${team.nflTeamCode}: ${baseMokPoints} points (Win: ${teamResult.isWin}, Score: ${teamResult.teamScore})`);
       }
     }
     
-    const userScore: UserWeeklyScore = {
+    const totalPoints = totalBaseMokPoints + lockBonusPoints + lockAndLoadBonusPoints;
+    
+    userScores.push({
       userId,
       leagueId,
       week,
       season,
-      teamResults: userResults,
-      totalBaseMokPoints,
-      lockedTeam,
-      lockAndLoadTeam,
+      totalPoints,
+      basePoints: totalBaseMokPoints,
       lockBonusPoints,
-      lockAndLoadBonusPoints,
-      totalMokPoints: totalBaseMokPoints + lockBonusPoints + lockAndLoadBonusPoints
-    };
+      lockAndLoadBonusPoints
+    });
     
-    userScores.push(userScore);
+    console.log(`📊 [MokScoring] User ${userId}: ${totalPoints} total points (${totalBaseMokPoints} base + ${lockBonusPoints} lock + ${lockAndLoadBonusPoints} L&L)`);
   }
   
   console.log(`📊 [MokScoring] Calculated scores for ${userScores.length} users`);
   return userScores;
 }
-
-// Calculate season standings
-export async function calculateSeasonStandings(leagueId: string, season: number, throughWeek: number): Promise<any> {
-  console.log(`🏆 [MokScoring] Calculating standings for league ${leagueId}, ${season} through Week ${throughWeek}`);
-  
-  // This would aggregate all weekly scores for the season
-  // For now, return empty standings structure
-  
-  const standings = {
-    leagueId,
-    season,
-    throughWeek,
-    standings: [],
-    totalGamesPlayed: 0,
-    averagePointsPerWeek: 0
-  };
-  
-  console.log(`🏆 [MokScoring] Standings calculated for ${standings.standings.length} users`);
-  return standings;
-}
-
-// Validate lock usage against season limits
-export async function validateLockUsage(userId: string, leagueId: string, nflTeamId: string, lockType: 'lock' | 'lockAndLoad'): Promise<{ valid: boolean; reason?: string }> {
-  console.log(`🔒 [MokScoring] Validating ${lockType} usage for user ${userId}, team ${nflTeamId}`);
-  
-  // Check current usage from stable table
-  const [stable] = await db
-    .select()
-    .from(stables)
-    .where(
-      and(
-        eq(stables.userId, userId),
-        eq(stables.leagueId, leagueId),
-        eq(stables.nflTeamId, nflTeamId)
-      )
-    );
-    
-  if (!stable) {
-    return { valid: false, reason: "You don't own this team" };
-  }
-  
-  const rules = MOK_SCORING_RULES;
-  
-  if (lockType === 'lock') {
-    if (stable.locksUsed >= rules.maxLocksPerTeamPerSeason) {
-      return { valid: false, reason: `You've already used ${stable.locksUsed}/${rules.maxLocksPerTeamPerSeason} regular locks for this team` };
-    }
-  } else if (lockType === 'lockAndLoad') {
-    if (stable.lockAndLoadUsed) {
-      return { valid: false, reason: "You've already used Lock & Load for this team this season" };
-    }
-  }
-  
-  return { valid: true };
-}
-
-// Export for backward compatibility with existing mock system
-export { generateTeamPerformanceData } from './mockScoring.js';

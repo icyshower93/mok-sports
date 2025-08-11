@@ -1,0 +1,116 @@
+{
+  "week1_2024_results": [
+    {
+      "date": "2024-09-05",
+      "homeTeam": "KC",
+      "awayTeam": "BAL", 
+      "homeScore": 27,
+      "awayScore": 20
+    },
+    {
+      "date": "2024-09-06",
+      "homeTeam": "PHI",
+      "awayTeam": "GB",
+      "homeScore": 34,
+      "awayScore": 29
+    },
+    {
+      "date": "2024-09-08",
+      "homeTeam": "BUF",
+      "awayTeam": "ARI",
+      "homeScore": 34,
+      "awayScore": 28
+    },
+    {
+      "date": "2024-09-08",
+      "homeTeam": "CHI",
+      "awayTeam": "TEN",
+      "homeScore": 24,
+      "awayScore": 17
+    },
+    {
+      "date": "2024-09-08",
+      "homeTeam": "CIN",
+      "awayTeam": "NE",
+      "homeScore": 10,
+      "awayScore": 16
+    },
+    {
+      "date": "2024-09-08",
+      "homeTeam": "ATL",
+      "awayTeam": "PIT",
+      "homeScore": 10,
+      "awayScore": 18
+    },
+    {
+      "date": "2024-09-08",
+      "homeTeam": "JAX",
+      "awayTeam": "MIA",
+      "homeScore": 17,
+      "awayScore": 20
+    },
+    {
+      "date": "2024-09-08",
+      "homeTeam": "HOU",
+      "awayTeam": "IND",
+      "homeScore": 29,
+      "awayScore": 27
+    },
+    {
+      "date": "2024-09-08",
+      "homeTeam": "NO",
+      "awayTeam": "CAR",
+      "homeScore": 47,
+      "awayScore": 10
+    },
+    {
+      "date": "2024-09-08",
+      "homeTeam": "LAC",
+      "awayTeam": "LV",
+      "homeScore": 22,
+      "awayScore": 10
+    },
+    {
+      "date": "2024-09-08",
+      "homeTeam": "TB",
+      "awayTeam": "WAS",
+      "homeScore": 20,
+      "awayScore": 37
+    },
+    {
+      "date": "2024-09-08",
+      "homeTeam": "CLE",
+      "awayTeam": "DAL",
+      "homeScore": 17,
+      "awayScore": 33
+    },
+    {
+      "date": "2024-09-08",
+      "homeTeam": "SF",
+      "awayTeam": "NYJ",
+      "homeScore": 32,
+      "awayScore": 19
+    },
+    {
+      "date": "2024-09-08",
+      "homeTeam": "LAR",
+      "awayTeam": "DET",
+      "homeScore": 20,
+      "awayScore": 26
+    },
+    {
+      "date": "2024-09-08",
+      "homeTeam": "SEA",
+      "awayTeam": "DEN",
+      "homeScore": 26,
+      "awayScore": 20
+    },
+    {
+      "date": "2024-09-08",
+      "homeTeam": "NYG",
+      "awayTeam": "MIN",
+      "homeScore": 28,
+      "awayScore": 6
+    }
+  ]
+}
