@@ -333,7 +333,7 @@ export default function ScoresPage() {
                 >
                   {/* Game Header */}
                   <div className="flex justify-between items-center text-sm text-muted-foreground">
-                    <span>{new Date(game.gameDate + 'Z').toLocaleDateString('en-US', { 
+                    <span>{new Date(game.gameDate).toLocaleDateString('en-US', { 
                       weekday: 'short', 
                       month: 'short', 
                       day: 'numeric',
