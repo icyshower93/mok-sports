@@ -117,10 +117,12 @@ async function processGamesForDate(targetDate: Date): Promise<number> {
   try {
     console.log(`🎮 Processing games for ${targetDate.toISOString().split('T')[0]}`);
     
-    const endOfTargetDate = new Date(targetDate);
-    endOfTargetDate.setHours(23, 59, 59, 999);
+    const dayStart = new Date(targetDate);
+    dayStart.setHours(0, 0, 0, 0);
+    const dayEnd = new Date(targetDate);
+    dayEnd.setHours(23, 59, 59, 999);
 
-    // Get games scheduled up to and including this date that aren't completed
+    // Get games scheduled for this specific date that aren't completed
     const games = await db
       .select({
         id: nflGames.id,
@@ -138,7 +140,8 @@ async function processGamesForDate(targetDate: Date): Promise<number> {
       .from(nflGames)
       .where(and(
         eq(nflGames.season, adminState.season),
-        lte(nflGames.gameDate, endOfTargetDate),
+        gte(nflGames.gameDate, dayStart),
+        lte(nflGames.gameDate, dayEnd),
         eq(nflGames.isCompleted, false)
       ));
 
