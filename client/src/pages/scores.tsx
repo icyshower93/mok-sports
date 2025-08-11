@@ -138,21 +138,21 @@ export default function ScoresPage() {
     enabled: !!user && !!currentLeague
   });
 
-  // WebSocket connection for real-time updates
+  // WebSocket connection for real-time updates (using draft WebSocket for lock updates)
   useEffect(() => {
     if (!currentLeague) return;
 
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const wsUrl = `${protocol}//${window.location.host}/ws/live-scores`;
+    const wsUrl = `${protocol}//${window.location.host}/draft-ws`;
     
-    console.log('[WebSocket] Connecting to live scores:', wsUrl);
+    console.log('[WebSocket] Connecting to draft WebSocket for lock updates:', wsUrl);
     const ws = new WebSocket(wsUrl);
     
     ws.onopen = () => {
-      console.log('[WebSocket] Connected to live scores');
-      // Subscribe to score updates for current league
+      console.log('[WebSocket] Connected to draft WebSocket for lock updates');
+      // Send identification as scores page client
       ws.send(JSON.stringify({
-        type: 'subscribe',
+        type: 'scores-page-connect',
         leagueId: currentLeague.id,
         week: selectedWeek
       }));
@@ -163,8 +163,9 @@ export default function ScoresPage() {
         const message = JSON.parse(event.data);
         console.log('[WebSocket] Received live score update:', message);
         
-        if (message.type === 'score-update' || message.type === 'lock-update') {
-          // Invalidate and refetch scores when games are updated
+        if (message.type === 'lock-update') {
+          console.log('[WebSocket] Lock update received:', message);
+          // Invalidate and refetch scores to show updated lock icons
           queryClient.invalidateQueries({ 
             queryKey: [`/api/scores/week/${selectedWeek}`] 
           });
@@ -172,7 +173,7 @@ export default function ScoresPage() {
             queryKey: [`/api/leagues/${currentLeague.id}/scores/${selectedSeason}/${selectedWeek}`] 
           });
           
-          console.log('[WebSocket] Refreshed scores after live update');
+          console.log('[WebSocket] Refreshed scores after lock update');
         }
       } catch (error) {
         console.error('[WebSocket] Error parsing message:', error);
