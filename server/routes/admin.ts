@@ -160,8 +160,8 @@ async function processGamesForDate(targetDate: Date): Promise<number> {
           }
         }
 
-        // Update game in database if we found scores or mark as completed anyway
-        if (foundScores || true) { // Process all games for the day
+        // Only update game in database if we found actual scores
+        if (foundScores) {
           await db
             .update(nflGames)
             .set({
