@@ -312,7 +312,6 @@ export default function AdminPanel() {
                     </SelectContent>
                   </Select>
                 </div>
-                )}
               </CardContent>
             </Card>
 
