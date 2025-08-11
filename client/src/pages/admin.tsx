@@ -1,55 +1,47 @@
-import { useState, useEffect } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-// Removed Select components to fix DOM manipulation errors
-import { ChevronDown } from "lucide-react";
-import { ArrowLeft, Play, Pause, RotateCcw, Clock, Wifi, WifiOff, FastForward, Calendar, Trophy } from "lucide-react";
+import { ArrowLeft, Calendar, ChevronRight, RotateCcw } from "lucide-react";
 import { useLocation } from "wouter";
 import { queryClient } from "@/lib/queryClient";
-import { getWeekLabel } from "@shared/utils/weekUtils";
 
-// Define admin state type
+// Define simple admin state type
 interface AdminState {
-  simulationDate: string;
-  isSimulationRunning: boolean;
-  timeAcceleration: number;
-  completedGames: number;
-  upcomingGames: any[];
+  currentDate: string;
+  gamesProcessedToday: number;
+  totalGamesProcessed: number;
+  totalGames: number;
   currentWeek: number;
-  leagueStandings: any[];
+  processingInProgress: boolean;
 }
 
 export default function AdminPanel() {
   const [, navigate] = useLocation();
-  const [isConnected, setIsConnected] = useState(false);
-  const [ws, setWs] = useState<WebSocket | null>(null);
 
   // Fetch admin state from server
-  const { data: adminState, refetch, isLoading } = useQuery<AdminState>({
+  const { data: adminState, isLoading } = useQuery<AdminState>({
     queryKey: ['/api/admin/state'],
-    refetchInterval: 1000, // Refetch every second for real-time updates
+    refetchInterval: 2000, // Refetch every 2 seconds
     staleTime: 0
   });
 
-  // Safely extract admin state with proper defaults
-  const simulationDate = adminState?.simulationDate ? new Date(adminState.simulationDate) : new Date('2025-08-08T00:00:00Z');
-  const isRunning = Boolean(adminState?.isSimulationRunning);
-  const currentSpeed = Number(adminState?.timeAcceleration) || 1;
-  const completedGames = Number(adminState?.completedGames) || 0;
-  const upcomingGames = Array.isArray(adminState?.upcomingGames) ? adminState.upcomingGames : [];
-  const currentWeek = Number(adminState?.currentWeek) || 1;
-  const leagueStandings = Array.isArray(adminState?.leagueStandings) ? adminState.leagueStandings : [];
+  // Safely extract admin state with defaults
+  const currentDate = adminState?.currentDate ? new Date(adminState.currentDate) : new Date('2024-09-01');
+  const gamesProcessedToday = adminState?.gamesProcessedToday || 0;
+  const totalGamesProcessed = adminState?.totalGamesProcessed || 0;
+  const totalGames = adminState?.totalGames || 272;
+  const currentWeek = adminState?.currentWeek || 1;
+  const processingInProgress = adminState?.processingInProgress || false;
 
-  // Season simulation controls
-  const startSimulationMutation = useMutation({
+  // Simple day progression controls
+  const advanceDayMutation = useMutation({
     mutationFn: async () => {
-      const response = await fetch('/api/admin/simulation/start', { 
+      const response = await fetch('/api/admin/advance-day', { 
         method: 'POST',
         credentials: 'include'
       });
-      if (!response.ok) throw new Error('Failed to start simulation');
+      if (!response.ok) throw new Error('Failed to advance day');
       return response.json();
     },
     onSuccess: () => {
@@ -57,13 +49,13 @@ export default function AdminPanel() {
     }
   });
 
-  const stopSimulationMutation = useMutation({
+  const resetSeasonMutation = useMutation({
     mutationFn: async () => {
-      const response = await fetch('/api/admin/simulation/stop', { 
+      const response = await fetch('/api/admin/reset-season', { 
         method: 'POST',
         credentials: 'include'
       });
-      if (!response.ok) throw new Error('Failed to stop simulation');
+      if (!response.ok) throw new Error('Failed to reset season');
       return response.json();
     },
     onSuccess: () => {
@@ -71,120 +63,33 @@ export default function AdminPanel() {
     }
   });
 
-  const resetSimulationMutation = useMutation({
-    mutationFn: async () => {
-      const response = await fetch('/api/admin/simulation/reset', { 
-        method: 'POST',
-        credentials: 'include'
-      });
-      if (!response.ok) throw new Error('Failed to reset simulation');
-      return response.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/admin/state'] });
-    }
-  });
-
-  const setTimeAccelerationMutation = useMutation({
-    mutationFn: async (speed: number) => {
-      const response = await fetch('/api/admin/simulation/speed', { 
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ speed }),
-        credentials: 'include'
-      });
-      if (!response.ok) throw new Error('Failed to set time acceleration');
-      return response.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/admin/state'] });
-    }
-  });
-
-  const jumpToWeekMutation = useMutation({
-    mutationFn: async (week: number) => {
-      const response = await fetch('/api/admin/simulation/jump-to-week', { 
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ week }),
-        credentials: 'include'
-      });
-      if (!response.ok) throw new Error('Failed to jump to week');
-      return response.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/admin/state'] });
-    }
-  });
-
-  // WebSocket connection for real-time updates
-  useEffect(() => {
-    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const wsUrl = `${protocol}//${window.location.host}/admin-ws`;
-    
-    try {
-      const websocket = new WebSocket(wsUrl);
-      
-      websocket.onopen = () => {
-        console.log('Admin WebSocket connected');
-        setIsConnected(true);
-        setWs(websocket);
-      };
-
-      websocket.onmessage = (event) => {
-        try {
-          const message = JSON.parse(event.data);
-          if (message.type === 'admin-update' || message.type === 'game-completed' || message.type === 'week-completed') {
-            queryClient.invalidateQueries({ queryKey: ['/api/admin/state'] });
-          }
-        } catch (error) {
-          console.error('Error parsing WebSocket message:', error);
-        }
-      };
-
-      websocket.onclose = () => {
-        console.log('Admin WebSocket disconnected');
-        setIsConnected(false);
-        setWs(null);
-      };
-
-      websocket.onerror = (error) => {
-        console.error('Admin WebSocket error:', error);
-        setIsConnected(false);
-      };
-
-      return () => {
-        websocket.close();
-      };
-    } catch (error) {
-      console.error('Failed to create WebSocket connection:', error);
-    }
-  }, []);
-
-  // Format date and time
-  const formatDateTime = (date: Date) => {
+  // Helper functions
+  const formatDate = (date: Date) => {
     return date.toLocaleDateString('en-US', {
-      weekday: 'short',
+      weekday: 'long',
       year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      timeZoneName: 'short'
+      month: 'long',
+      day: 'numeric'
     });
   };
 
-  const getSpeedLabel = (speed: number) => {
-    if (speed === 1) return 'Real Time';
-    if (speed < 60) return `${speed}x Speed`;
-    if (speed < 3600) return `${Math.floor(speed / 60)}min/sec`;
-    if (speed < 86400) return `${Math.floor(speed / 3600)}hr/sec`;
-    return `${Math.floor(speed / 86400)}day/sec`;
+  const getWeekLabel = (week: number) => {
+    if (week <= 18) return `Week ${week}`;
+    if (week === 19) return 'Wild Card';
+    if (week === 20) return 'Divisional';
+    if (week === 21) return 'Conference Championship';
+    if (week === 22) return 'Super Bowl';
+    return `Week ${week}`;
+  };
+
+  const getProgressPercentage = () => {
+    if (totalGames === 0) return 0;
+    return Math.round((totalGamesProcessed / totalGames) * 100);
   };
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="max-w-6xl mx-auto p-4 space-y-6">
+      <div className="max-w-4xl mx-auto p-4 space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
@@ -199,250 +104,116 @@ export default function AdminPanel() {
             </Button>
             <div className="flex items-center space-x-2">
               <Calendar className="w-6 h-6 text-blue-600" />
-              <h1 className="text-2xl font-bold">2025 NFL Preseason Simulator</h1>
+              <h1 className="text-2xl font-bold">2024 NFL Season Admin</h1>
             </div>
           </div>
-          <Badge variant={isConnected ? "default" : "secondary"} className="flex items-center space-x-1">
-            {isConnected ? <Wifi className="w-3 h-3" /> : <WifiOff className="w-3 h-3" />}
-            <span>{isConnected ? "Connected" : "Offline"}</span>
-          </Badge>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Simulation Control */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* Current Date & Time */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Main Control Panel */}
+          <div className="space-y-6">
+            {/* Current Date */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
-                  <Clock className="w-5 h-5" />
-                  <span>Simulation Time</span>
+                  <Calendar className="w-5 h-5" />
+                  <span>Current Date</span>
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="text-center space-y-4">
-                  <div className="text-3xl font-mono font-bold text-blue-600 dark:text-blue-400">
-                    {formatDateTime(simulationDate)}
+                  <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                    {formatDate(currentDate)}
                   </div>
                   <div className="text-sm text-muted-foreground">
-                    {getWeekLabel(currentWeek)} • {getSpeedLabel(currentSpeed)}
+                    {getWeekLabel(currentWeek)}
                   </div>
+                  {gamesProcessedToday > 0 && (
+                    <Badge variant="secondary">
+                      {gamesProcessedToday} games processed today
+                    </Badge>
+                  )}
                 </div>
               </CardContent>
             </Card>
 
-            {/* Simulation Controls */}
+            {/* Simple Controls */}
             <Card>
               <CardHeader>
-                <CardTitle>Simulation Controls</CardTitle>
+                <CardTitle>Day Progression</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                {/* Play/Pause/Reset */}
-                <div className="flex justify-center space-x-3">
+                <div className="text-center space-y-4">
+                  <p className="text-sm text-muted-foreground">
+                    Click to advance one day forward. Games scheduled for that day will be automatically processed with authentic NFL scores.
+                  </p>
+                  
                   <Button
-                    onClick={() => isRunning ? stopSimulationMutation.mutate() : startSimulationMutation.mutate()}
+                    onClick={() => advanceDayMutation.mutate()}
                     size="lg"
-                    variant={isRunning ? "destructive" : "default"}
-                    className="w-32"
-                    disabled={startSimulationMutation.isPending || stopSimulationMutation.isPending}
+                    className="w-full"
+                    disabled={advanceDayMutation.isPending || processingInProgress}
                   >
-                    {isRunning ? (
-                      <>
-                        <Pause className="w-5 h-5 mr-2" />
-                        Pause
-                      </>
-                    ) : (
-                      <>
-                        <Play className="w-5 h-5 mr-2" />
-                        Start
-                      </>
-                    )}
+                    <ChevronRight className="w-5 h-5 mr-2" />
+                    {processingInProgress ? 'Processing Games...' : 'Advance One Day'}
                   </Button>
 
                   <Button
-                    onClick={() => resetSimulationMutation.mutate()}
-                    size="lg"
+                    onClick={() => resetSeasonMutation.mutate()}
+                    size="sm"
                     variant="outline"
-                    className="w-32"
-                    disabled={resetSimulationMutation.isPending}
+                    className="w-full"
+                    disabled={resetSeasonMutation.isPending}
                   >
-                    <RotateCcw className="w-5 h-5 mr-2" />
-                    Reset
+                    <RotateCcw className="w-4 h-4 mr-2" />
+                    Reset to September 1, 2024
                   </Button>
-                </div>
-
-                {/* Time Acceleration */}
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Time Acceleration</label>
-                  <div className="relative">
-                    <select
-                      value={currentSpeed}
-                      onChange={(e) => {
-                        const value = parseInt(e.target.value);
-                        if (!setTimeAccelerationMutation.isPending) {
-                          setTimeAccelerationMutation.mutate(value);
-                        }
-                      }}
-                      disabled={setTimeAccelerationMutation.isPending}
-                      className="w-full px-3 py-2 text-sm border border-input bg-background rounded-md focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring appearance-none pr-10"
-                    >
-                      <option value={1}>Real Time (1x)</option>
-                      <option value={10}>10x Speed</option>
-                      <option value={60}>1 minute/second</option>
-                      <option value={300}>5 minutes/second</option>
-                      <option value={1800}>30 minutes/second</option>
-                      <option value={3600}>1 hour/second</option>
-                      <option value={86400}>1 day/second</option>
-                    </select>
-                    <ChevronDown className="absolute right-3 top-2.5 h-4 w-4 opacity-50 pointer-events-none" />
-                  </div>
-                </div>
-
-                {/* Quick Jump */}
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Jump to Week</label>
-                  <div className="relative">
-                    <select
-                      value=""
-                      onChange={(e) => {
-                        const value = parseInt(e.target.value);
-                        if (value && !jumpToWeekMutation.isPending) {
-                          jumpToWeekMutation.mutate(value);
-                          e.target.value = ""; // Reset selection
-                        }
-                      }}
-                      disabled={jumpToWeekMutation.isPending}
-                      className="w-full px-3 py-2 text-sm border border-input bg-background rounded-md focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring appearance-none pr-10"
-                    >
-                      <option value="">{`Current: Week ${currentWeek}`}</option>
-                      {Array.from({ length: 18 }, (_, i) => i + 1).map(week => (
-                        <option key={week} value={week}>
-                          Week {week}
-                        </option>
-                      ))}
-                      <option value={19}>Wild Card</option>
-                      <option value={20}>Divisional</option>
-                      <option value={21}>Conference Championship</option>
-                      <option value={22}>Super Bowl</option>
-                    </select>
-                    <ChevronDown className="absolute right-3 top-2.5 h-4 w-4 opacity-50 pointer-events-none" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Upcoming Games */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center justify-between">
-                  <span>Next Games</span>
-                  <Badge variant="secondary">{upcomingGames.length} pending</Badge>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3 max-h-64 overflow-y-auto">
-                  {upcomingGames.slice(0, 5).map((game: any, index: number) => (
-                    <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
-                      <div className="flex items-center space-x-3">
-                        <div className="text-sm font-medium">
-                          {game.awayTeam} @ {game.homeTeam}
-                        </div>
-                      </div>
-                      <div className="text-xs text-muted-foreground">
-                        {new Date(game.gameTime).toLocaleDateString('en-US', {
-                          month: 'short',
-                          day: 'numeric',
-                          hour: '2-digit',
-                          minute: '2-digit'
-                        })}
-                      </div>
-                    </div>
-                  ))}
-                  {upcomingGames.length === 0 && (
-                    <div className="text-center text-muted-foreground py-8">
-                      No upcoming games
-                    </div>
-                  )}
                 </div>
               </CardContent>
             </Card>
           </div>
 
-          {/* League Standings */}
+          {/* Season Stats */}
           <div className="space-y-6">
-            {/* Season Stats */}
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Trophy className="w-5 h-5" />
-                  <span>Season Progress</span>
-                </CardTitle>
+                <CardTitle>Season Progress</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-3">
+              <CardContent className="space-y-4">
                 <div className="flex justify-between">
                   <span className="text-sm text-muted-foreground">Games Completed</span>
-                  <span className="font-medium">{completedGames}</span>
+                  <span className="font-medium">{totalGamesProcessed} / {totalGames}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-sm text-muted-foreground">Progress</span>
+                  <span className="font-medium">{getProgressPercentage()}%</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-sm text-muted-foreground">Current Week</span>
                   <span className="font-medium">Week {currentWeek}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-sm text-muted-foreground">Simulation Status</span>
-                  <Badge variant={isRunning ? "default" : "secondary"}>
-                    {isRunning ? "Running" : "Paused"}
+                  <span className="text-sm text-muted-foreground">Status</span>
+                  <Badge variant={processingInProgress ? "default" : "secondary"}>
+                    {processingInProgress ? "Processing" : "Ready"}
                   </Badge>
                 </div>
-              </CardContent>
-            </Card>
-
-            {/* League Standings */}
-            <Card>
-              <CardHeader>
-                <CardTitle>League Standings</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3 max-h-96 overflow-y-auto">
-                  {leagueStandings.map((user: any, index: number) => (
-                    <div key={user.id} className="flex items-center justify-between p-3 border rounded-lg">
-                      <div className="flex items-center space-x-3">
-                        <div className="w-6 h-6 rounded-full bg-primary text-primary-foreground text-xs flex items-center justify-center">
-                          {index + 1}
-                        </div>
-                        <div>
-                          <div className="font-medium">{user.username}</div>
-                          <div className="text-xs text-muted-foreground">
-                            {user.locksUsed || 0} locks used
-                          </div>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <div className="font-bold text-lg">{user.totalPoints || 0}</div>
-                        <div className="text-xs text-muted-foreground">points</div>
-                      </div>
-                    </div>
-                  ))}
-                  {leagueStandings.length === 0 && (
-                    <div className="text-center text-muted-foreground py-8">
-                      No league data available
-                    </div>
-                  )}
+                
+                {/* Progress Bar */}
+                <div className="space-y-2">
+                  <div className="flex justify-between text-xs text-muted-foreground">
+                    <span>Season Progress</span>
+                    <span>{getProgressPercentage()}%</span>
+                  </div>
+                  <div className="w-full bg-secondary rounded-full h-2">
+                    <div 
+                      className="bg-primary h-2 rounded-full transition-all duration-300"
+                      style={{ width: `${getProgressPercentage()}%` }}
+                    />
+                  </div>
                 </div>
               </CardContent>
             </Card>
-          </div>
-        </div>
-
-        {/* Status */}
-        <div className="text-center space-y-2">
-          <div className="text-sm text-muted-foreground">
-            Simulation is <span className="font-medium">{isRunning ? 'running' : 'paused'}</span>
-          </div>
-          <div className="text-xs text-muted-foreground">
-            {isConnected ? 
-              "Real-time sync active - changes will appear on all devices instantly" : 
-              "Offline mode - reconnecting..."
-            }
           </div>
         </div>
       </div>
