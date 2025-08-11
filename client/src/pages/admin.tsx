@@ -20,13 +20,14 @@ export default function AdminPanel() {
     staleTime: 0
   });
 
+  // Safely extract admin state with proper defaults
   const simulationDate = adminState?.simulationDate ? new Date(adminState.simulationDate) : new Date('2024-09-01T00:00:00Z');
-  const isRunning = adminState?.isSimulationRunning || false;
-  const currentSpeed = adminState?.timeAcceleration || 1;
-  const completedGames = adminState?.completedGames || 0;
-  const upcomingGames = adminState?.upcomingGames || [];
-  const currentWeek = adminState?.currentWeek || 1;
-  const leagueStandings = adminState?.leagueStandings || [];
+  const isRunning = Boolean(adminState?.isSimulationRunning);
+  const currentSpeed = Number(adminState?.timeAcceleration) || 1;
+  const completedGames = Number(adminState?.completedGames) || 0;
+  const upcomingGames = Array.isArray(adminState?.upcomingGames) ? adminState.upcomingGames : [];
+  const currentWeek = Number(adminState?.currentWeek) || 1;
+  const leagueStandings = Array.isArray(adminState?.leagueStandings) ? adminState.leagueStandings : [];
 
   // Season simulation controls
   const startSimulationMutation = useMutation({
@@ -260,9 +261,17 @@ export default function AdminPanel() {
                 {/* Time Acceleration */}
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Time Acceleration</label>
-                  <Select value={currentSpeed.toString()} onValueChange={(value) => setTimeAccelerationMutation.mutate(parseInt(value))}>
+                  <Select 
+                    key={`speed-${currentSpeed}`}
+                    value={currentSpeed.toString()} 
+                    onValueChange={(value) => {
+                      if (value && !setTimeAccelerationMutation.isPending) {
+                        setTimeAccelerationMutation.mutate(parseInt(value));
+                      }
+                    }}
+                  >
                     <SelectTrigger>
-                      <SelectValue />
+                      <SelectValue placeholder={getSpeedLabel(currentSpeed)} />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="1">Real Time (1x)</SelectItem>
@@ -279,9 +288,16 @@ export default function AdminPanel() {
                 {/* Quick Jump */}
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Jump to Week</label>
-                  <Select onValueChange={(value) => jumpToWeekMutation.mutate(parseInt(value))}>
+                  <Select 
+                    key={`week-jump-${currentWeek}`}
+                    onValueChange={(value) => {
+                      if (value && !jumpToWeekMutation.isPending) {
+                        jumpToWeekMutation.mutate(parseInt(value));
+                      }
+                    }}
+                  >
                     <SelectTrigger>
-                      <SelectValue placeholder="Select week..." />
+                      <SelectValue placeholder={`Current: Week ${currentWeek}`} />
                     </SelectTrigger>
                     <SelectContent>
                       {Array.from({ length: 18 }, (_, i) => i + 1).map(week => (
@@ -296,6 +312,7 @@ export default function AdminPanel() {
                     </SelectContent>
                   </Select>
                 </div>
+                )}
               </CardContent>
             </Card>
 

@@ -1,0 +1,191 @@
+Content script initialized successfully.
+index-BUxNtViP.js:372 🏗️ Build Info: {version: 1754879697717, date: '2025-08-11T02:34:57.717Z', env: 'production', hash: 'me6i28tx'}
+index-BUxNtViP.js:372 📦 Version: me6i28tx
+index-BUxNtViP.js:372 📅 Built: 2025-08-11T02:34:57.717Z
+index-BUxNtViP.js:372 🔧 Environment: production
+index-BUxNtViP.js:323 [Auth] Token check - Has token: true Has user: false Loading: true
+index-BUxNtViP.js:323 [SW Hook] EMERGENCY: Unregistering all existing service workers
+index-BUxNtViP.js:323 [SW Hook] Found 1 existing registrations
+index-BUxNtViP.js:323 [SW Hook] Unregistering existing service worker
+index-BUxNtViP.js:323 [SW Hook] Found 0 caches to delete
+admin:1 Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner.
+index-BUxNtViP.js:323 [Auth] Token check - Has token: true Has user: true Loading: false
+index-BUxNtViP.js:323 [AutoPushRefresh] Legacy hook delegating to SubscriptionManager
+index-BUxNtViP.js:323 [SW Hook] Registering fresh service worker: /sw.js?v=1754879697859&r=0.4334842758970706
+sw.js?v=1754879697859&r=0.4334842758970706:2 [SW] NUCLEAR OPTION - Emergency service worker loading
+sw.js?v=1754879697859&r=0.4334842758970706:88 [SW] Service worker starting, version: v1.7.0-nuclear-unregister-1754879697921
+sw.js?v=1754879697859&r=0.4334842758970706:305 [SW] Service worker script loaded successfully
+index-BUxNtViP.js:323 [SW Hook] Service worker registered successfully
+sw.js?v=1754879697859&r=0.4334842758970706:19 [SW] EMERGENCY INSTALL - Clearing all caches and forcing activation
+sw.js?v=1754879697859&r=0.4334842758970706:92 [SW] Installing service worker, version: v1.7.0-nuclear-unregister-1754879697921
+sw.js?v=1754879697859&r=0.4334842758970706:22 [SW] Found caches to delete: []
+sw.js?v=1754879697859&r=0.4334842758970706:30 [SW] All caches deleted - skipping waiting
+sw.js?v=1754879697859&r=0.4334842758970706:96 [SW] Caching static files
+index-BUxNtViP.js:372 Admin WebSocket connected
+index-BUxNtViP.js:372 Admin WebSocket disconnected
+sw.js?v=1754879697859&r=0.4334842758970706:99 [SW] Static files cached successfully
+sw.js?v=1754879697859&r=0.4334842758970706:41 [SW] EMERGENCY ACTIVATE - Taking control of all clients
+sw.js?v=1754879697859&r=0.4334842758970706:110 [SW] Activating service worker, version: v1.7.0-nuclear-unregister-1754879697921
+sw.js?v=1754879697859&r=0.4334842758970706:46 [SW] Deleting remaining cache: mok-sports-static-v1.7.0-nuclear-unregister-1754879697921
+sw.js?v=1754879697859&r=0.4334842758970706:116 [SW] Found caches: ['mok-sports-static-v1.7.0-nuclear-unregister-1754879697921']
+sw.js?v=1754879697859&r=0.4334842758970706:129 [SW] Service worker activated and controlling all clients
+sw.js?v=1754879697859&r=0.4334842758970706:51 [SW] Claiming all clients immediately
+index-BUxNtViP.js:323 [ErrorBoundary] Intercepting DOM error, not showing error boundary
+getDerivedStateFromError @ index-BUxNtViP.js:323
+n.payload @ index-BUxNtViP.js:40
+Xa @ index-BUxNtViP.js:38
+oh @ index-BUxNtViP.js:40
+_x @ index-BUxNtViP.js:40
+Ox @ index-BUxNtViP.js:40
+p1 @ index-BUxNtViP.js:40
+sl @ index-BUxNtViP.js:40
+hh @ index-BUxNtViP.js:40
+Or @ index-BUxNtViP.js:38
+is @ index-BUxNtViP.js:40
+At.flushSync @ index-BUxNtViP.js:40
+vv @ index-BUxNtViP.js:48
+bv @ index-BUxNtViP.js:48
+c @ index-BUxNtViP.js:48
+i @ index-BUxNtViP.js:48Understand this warning
+index-BUxNtViP.js:40 NotFoundError: Failed to execute 'removeChild' on 'Node': The node to be removed is not a child of this node.
+    at Tx (index-BUxNtViP.js:40:26061)
+    at Kn (index-BUxNtViP.js:40:25767)
+    at Tx (index-BUxNtViP.js:40:26516)
+    at Kn (index-BUxNtViP.js:40:25767)
+    at Tx (index-BUxNtViP.js:40:26516)
+    at Kn (index-BUxNtViP.js:40:25767)
+    at Tx (index-BUxNtViP.js:40:26516)
+    at Kn (index-BUxNtViP.js:40:25767)
+    at Tx (index-BUxNtViP.js:40:26516)
+    at Kn (index-BUxNtViP.js:40:25767)
+ju @ index-BUxNtViP.js:40
+i.componentDidCatch.n.callback @ index-BUxNtViP.js:40
+Gm @ index-BUxNtViP.js:38
+dh @ index-BUxNtViP.js:40
+Rx @ index-BUxNtViP.js:40
+f1 @ index-BUxNtViP.js:40
+x1 @ index-BUxNtViP.js:40
+$r @ index-BUxNtViP.js:40
+hh @ index-BUxNtViP.js:40
+Or @ index-BUxNtViP.js:38
+is @ index-BUxNtViP.js:40
+At.flushSync @ index-BUxNtViP.js:40
+vv @ index-BUxNtViP.js:48
+bv @ index-BUxNtViP.js:48
+c @ index-BUxNtViP.js:48
+i @ index-BUxNtViP.js:48Understand this error
+index-BUxNtViP.js:323 ErrorBoundary caught an error: Failed to execute 'removeChild' on 'Node': The node to be removed is not a child of this node.
+componentDidCatch @ index-BUxNtViP.js:323
+i.componentDidCatch.n.callback @ index-BUxNtViP.js:40
+Gm @ index-BUxNtViP.js:38
+dh @ index-BUxNtViP.js:40
+Rx @ index-BUxNtViP.js:40
+f1 @ index-BUxNtViP.js:40
+x1 @ index-BUxNtViP.js:40
+$r @ index-BUxNtViP.js:40
+hh @ index-BUxNtViP.js:40
+Or @ index-BUxNtViP.js:38
+is @ index-BUxNtViP.js:40
+At.flushSync @ index-BUxNtViP.js:40
+vv @ index-BUxNtViP.js:48
+bv @ index-BUxNtViP.js:48
+c @ index-BUxNtViP.js:48
+i @ index-BUxNtViP.js:48Understand this error
+index-BUxNtViP.js:323 Component stack: 
+    at https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BUxNtViP.js:372:34083
+    at https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BUxNtViP.js:372:33653
+    at https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BUxNtViP.js:48:47248
+    at https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BUxNtViP.js:48:46820
+    at https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BUxNtViP.js:48:49584
+    at https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BUxNtViP.js:48:53792
+    at SelectPortal
+    at https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BUxNtViP.js:372:49283
+    at u (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BUxNtViP.js:48:45834)
+    at u (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BUxNtViP.js:48:45834)
+    at a (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BUxNtViP.js:48:48427)
+    at u (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BUxNtViP.js:48:45834)
+    at u (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BUxNtViP.js:48:45834)
+    at wy (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BUxNtViP.js:323:46244)
+    at vw (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BUxNtViP.js:372:30498)
+    at div
+    at div
+    at https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BUxNtViP.js:323:67851
+    at div
+    at https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BUxNtViP.js:323:67216
+    at div
+    at div
+    at div
+    at div
+    at wP (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BUxNtViP.js:372:51169)
+    at mt (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BUxNtViP.js:48:3201)
+    at sN (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BUxNtViP.js:48:4017)
+    at De (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BUxNtViP.js:40:42947)
+    at gE (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BUxNtViP.js:323:57495)
+    at u (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BUxNtViP.js:48:45834)
+    at Ly (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BUxNtViP.js:323:50471)
+    at pE (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BUxNtViP.js:323:56967)
+    at jN (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BUxNtViP.js:48:40185)
+    at De (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BUxNtViP.js:40:42947)
+    at LP
+componentDidCatch @ index-BUxNtViP.js:323
+i.componentDidCatch.n.callback @ index-BUxNtViP.js:40
+Gm @ index-BUxNtViP.js:38
+dh @ index-BUxNtViP.js:40
+Rx @ index-BUxNtViP.js:40
+f1 @ index-BUxNtViP.js:40
+x1 @ index-BUxNtViP.js:40
+$r @ index-BUxNtViP.js:40
+hh @ index-BUxNtViP.js:40
+Or @ index-BUxNtViP.js:38
+is @ index-BUxNtViP.js:40
+At.flushSync @ index-BUxNtViP.js:40
+vv @ index-BUxNtViP.js:48
+bv @ index-BUxNtViP.js:48
+c @ index-BUxNtViP.js:48
+i @ index-BUxNtViP.js:48Understand this error
+index-BUxNtViP.js:323 [ErrorBoundary] DOM manipulation error detected - preventing error boundary display
+componentDidCatch @ index-BUxNtViP.js:323
+i.componentDidCatch.n.callback @ index-BUxNtViP.js:40
+Gm @ index-BUxNtViP.js:38
+dh @ index-BUxNtViP.js:40
+Rx @ index-BUxNtViP.js:40
+f1 @ index-BUxNtViP.js:40
+x1 @ index-BUxNtViP.js:40
+$r @ index-BUxNtViP.js:40
+hh @ index-BUxNtViP.js:40
+Or @ index-BUxNtViP.js:38
+is @ index-BUxNtViP.js:40
+At.flushSync @ index-BUxNtViP.js:40
+vv @ index-BUxNtViP.js:48
+bv @ index-BUxNtViP.js:48
+c @ index-BUxNtViP.js:48
+i @ index-BUxNtViP.js:48Understand this warning
+index-BUxNtViP.js:372 🏗️ Build Info: {version: 1754879697717, date: '2025-08-11T02:34:57.717Z', env: 'production', hash: 'me6i28tx'}
+index-BUxNtViP.js:372 📦 Version: me6i28tx
+index-BUxNtViP.js:372 📅 Built: 2025-08-11T02:34:57.717Z
+index-BUxNtViP.js:372 🔧 Environment: production
+index-BUxNtViP.js:323 [Auth] Token check - Has token: true Has user: true Loading: false
+index-BUxNtViP.js:323 [SW Hook] EMERGENCY: Unregistering all existing service workers
+index-BUxNtViP.js:323 [AutoPushRefresh] Legacy hook delegating to SubscriptionManager
+index-BUxNtViP.js:323 [SW Hook] Found 1 existing registrations
+index-BUxNtViP.js:323 [SW Hook] Unregistering existing service worker
+index-BUxNtViP.js:323 [SW Hook] Found 0 caches to delete
+index-BUxNtViP.js:323 [SW Hook] Registering fresh service worker: /sw.js?v=1754879707741&r=0.9708288797720172
+index-BUxNtViP.js:372 Admin WebSocket connected
+index-BUxNtViP.js:372 Admin WebSocket disconnected
+sw.js?v=1754879707741&r=0.9708288797720172:2 [SW] NUCLEAR OPTION - Emergency service worker loading
+sw.js?v=1754879707741&r=0.9708288797720172:88 [SW] Service worker starting, version: v1.7.0-nuclear-unregister-1754879707805
+sw.js?v=1754879707741&r=0.9708288797720172:305 [SW] Service worker script loaded successfully
+sw.js?v=1754879707741&r=0.9708288797720172:19 [SW] EMERGENCY INSTALL - Clearing all caches and forcing activation
+index-BUxNtViP.js:323 [SW Hook] Service worker registered successfully
+sw.js?v=1754879707741&r=0.9708288797720172:92 [SW] Installing service worker, version: v1.7.0-nuclear-unregister-1754879707805
+sw.js?v=1754879707741&r=0.9708288797720172:22 [SW] Found caches to delete: []
+sw.js?v=1754879707741&r=0.9708288797720172:30 [SW] All caches deleted - skipping waiting
+sw.js?v=1754879707741&r=0.9708288797720172:96 [SW] Caching static files
+sw.js?v=1754879707741&r=0.9708288797720172:99 [SW] Static files cached successfully
+sw.js?v=1754879707741&r=0.9708288797720172:41 [SW] EMERGENCY ACTIVATE - Taking control of all clients
+sw.js?v=1754879707741&r=0.9708288797720172:110 [SW] Activating service worker, version: v1.7.0-nuclear-unregister-1754879707805
+sw.js?v=1754879707741&r=0.9708288797720172:46 [SW] Deleting remaining cache: mok-sports-static-v1.7.0-nuclear-unregister-1754879707805
+sw.js?v=1754879707741&r=0.9708288797720172:116 [SW] Found caches: ['mok-sports-static-v1.7.0-nuclear-unregister-1754879707805']
+sw.js?v=1754879707741&r=0.9708288797720172:129 [SW] Service worker activated and controlling all clients
+sw.js?v=1754879707741&r=0.9708288797720172:51 [SW] Claiming all clients immediately
