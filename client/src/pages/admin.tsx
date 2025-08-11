@@ -134,6 +134,99 @@ export default function AdminPanel() {
             </Button>
             <div className="flex items-center space-x-2">
               <Clock className="w-6 h-6 text-blue-600" />
+              <h1 className="text-2xl font-bold">Admin Time Control</h1>
+            </div>
+          </div>
+          <Badge variant={isConnected ? "default" : "secondary"} className="flex items-center space-x-1">
+            {isConnected ? <Wifi className="w-3 h-3" /> : <WifiOff className="w-3 h-3" />}
+            <span>{isConnected ? "Connected" : "Offline"}</span>
+          </Badge>
+        </div>
+
+        {/* Timer Card */}
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle className="text-center">Synchronized Timer</CardTitle>
+            <p className="text-center text-sm text-muted-foreground">
+              This timer syncs across all devices in real-time
+            </p>
+          </CardHeader>
+          <CardContent className="text-center space-y-6">
+            {/* Time Display */}
+            <div className="text-6xl font-mono font-bold text-blue-600 dark:text-blue-400">
+              {formatTime(currentTime)}
+            </div>
+
+            {/* Controls */}
+            <div className="flex justify-center space-x-4">
+              <Button
+                onClick={() => isRunning ? stopTimerMutation.mutate() : startTimerMutation.mutate()}
+                size="lg"
+                variant={isRunning ? "destructive" : "default"}
+                className="w-32"
+                disabled={startTimerMutation.isPending || stopTimerMutation.isPending}
+              >
+                {isRunning ? (
+                  <>
+                    <Pause className="w-5 h-5 mr-2" />
+                    Pause
+                  </>
+                ) : (
+                  <>
+                    <Play className="w-5 h-5 mr-2" />
+                    Start
+                  </>
+                )}
+              </Button>
+
+              <Button
+                onClick={() => resetTimerMutation.mutate()}
+                size="lg"
+                variant="outline"
+                className="w-32"
+                disabled={resetTimerMutation.isPending}
+              >
+                <RotateCcw className="w-5 h-5 mr-2" />
+                Reset
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Status */}
+        <div className="text-center space-y-2">
+          <div className="text-sm text-muted-foreground">
+            Timer is <span className="font-medium">{isRunning ? 'running' : 'stopped'}</span>
+          </div>
+          <div className="text-xs text-muted-foreground">
+            {isConnected ? 
+              "Real-time sync active - changes will appear on all devices" : 
+              "Offline mode - reconnecting..."
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+  return (
+    <div className="min-h-screen bg-background">
+      <div className="max-w-2xl mx-auto p-4">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center space-x-4">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={() => navigate("/")}
+              className="flex items-center space-x-2"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>Back</span>
+            </Button>
+            <div className="flex items-center space-x-2">
+              <Clock className="w-6 h-6 text-blue-600" />
               <h1 className="text-2xl font-bold">Admin Panel</h1>
             </div>
           </div>

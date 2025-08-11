@@ -62,8 +62,8 @@ export class DraftWebSocketManager {
         console.log('[WebSocket] ✅ PROXY OK: Upgrade header present and valid');
       }
       
-      // Check if this is a draft WebSocket request (handle both paths for compatibility)
-      if (request.url?.startsWith('/draft-ws') || request.url?.startsWith('/ws/draft') || request.url?.startsWith('/ws')) {
+      // Check if this is a WebSocket request (handle draft and admin paths)
+      if (request.url?.startsWith('/draft-ws') || request.url?.startsWith('/ws/draft') || request.url?.startsWith('/ws') || request.url?.startsWith('/admin-ws')) {
         console.log('[WebSocket] ✅ HANDLING WEBSOCKET UPGRADE for path:', request.url);
         
         try {
@@ -137,6 +137,14 @@ export class DraftWebSocketManager {
     console.log('[WebSocket] Connection timestamp:', new Date().toISOString());
     
     const { query } = parse(request.url, true);
+    
+    // Handle admin connections
+    if (request.url?.startsWith('/admin-ws')) {
+      console.log('[WebSocket] Admin connection detected');
+      this.handleAdminConnection(ws, request);
+      return;
+    }
+    
     const userId = query.userId as string;
     const draftId = query.draftId as string;
     
@@ -361,6 +369,59 @@ export class DraftWebSocketManager {
     if (connection.socket.readyState === WebSocket.OPEN) {
       connection.socket.send(JSON.stringify(message));
     }
+  }
+
+  private handleAdminConnection(ws: WebSocket, request: any) {
+    console.log('[WebSocket] ========== ADMIN CONNECTION RECEIVED ==========');
+    console.log('[WebSocket] Admin URL:', request.url);
+    console.log('[WebSocket] Admin timestamp:', new Date().toISOString());
+    
+    // Add to admin connections for broadcasting
+    const { addAdminConnection, removeAdminConnection } = require('../routes/admin.ts');
+    addAdminConnection(ws);
+    
+    // Send admin connection confirmation
+    try {
+      const confirmationMessage = {
+        type: 'admin-connected',
+        timestamp: Date.now(),
+        message: 'Admin WebSocket connection established'
+      };
+      
+      ws.send(JSON.stringify(confirmationMessage));
+      console.log('[WebSocket] ✅ Admin connection confirmation sent');
+    } catch (error) {
+      console.error('[WebSocket] ❌ Failed to send admin connection confirmation:', error);
+    }
+    
+    // Handle admin WebSocket close
+    ws.on('close', (code, reason) => {
+      console.log(`[WebSocket] Admin connection closed. Code: ${code}, Reason: ${reason}`);
+      removeAdminConnection(ws);
+    });
+
+    ws.on('error', (error) => {
+      console.error('[WebSocket] Admin WebSocket error:', error);
+      removeAdminConnection(ws);
+    });
+    
+    // Handle admin messages (if needed for bidirectional communication)
+    ws.on('message', (data) => {
+      try {
+        const message = JSON.parse(data.toString());
+        console.log('[WebSocket] Admin message received:', message);
+        
+        // Handle ping/pong for admin connections
+        if (message.type === 'ping') {
+          ws.send(JSON.stringify({
+            type: 'pong',
+            timestamp: Date.now()
+          }));
+        }
+      } catch (error) {
+        console.error('[WebSocket] Error parsing admin message:', error);
+      }
+    });
   }
 
   private startHeartbeat() {

@@ -117,17 +117,11 @@ function AppContent() {
     );
   }
 
-  // If user has no leagues, show leagues page (create/join)
-  const hasLeagues = Array.isArray(userLeagues) && userLeagues.length > 0;
-  if (!hasLeagues) {
-    return <LeaguesPage />;
-  }
-
   return (
     <>
       <Switch>
         <Route path="/login" component={LoginPage} />
-        <Route path="/" component={MainPage} />
+        <Route path="/admin" component={AdminPanel} />
         <Route path="/dashboard" component={DashboardPage} />
         <Route path="/leagues" component={LeaguesPage} />
         <Route path="/league/waiting" component={LeagueWaiting} />
@@ -138,14 +132,25 @@ function AppContent() {
             return <DraftPage />;
           }}
         </Route>
-        <Route path="/main" component={MainPage} />
+        <Route path="/main">
+          {() => {
+            // If user has no leagues, show leagues page instead
+            const hasLeagues = Array.isArray(userLeagues) && userLeagues.length > 0;
+            return hasLeagues ? <MainPage /> : <LeaguesPage />;
+          }}
+        </Route>
         <Route path="/stable" component={StablePage} />
         <Route path="/league" component={LeaguePage} />
         <Route path="/scores" component={ScoresPage} />
         <Route path="/more" component={MorePage} />
         <Route path="/more/trades" component={TradesPage} />
-        <Route path="/admin" component={AdminPanel} />
-
+        <Route path="/">
+          {() => {
+            // If user has no leagues, show leagues page instead
+            const hasLeagues = Array.isArray(userLeagues) && userLeagues.length > 0;
+            return hasLeagues ? <MainPage /> : <LeaguesPage />;
+          }}
+        </Route>
         <Route component={NotFound} />
       </Switch>
       {!isPWA && window.innerWidth >= 768 && <DesktopNotice />}
