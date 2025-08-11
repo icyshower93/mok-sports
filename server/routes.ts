@@ -1289,8 +1289,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const week = parseInt(req.params.week);
       const season = 2025; // Current season
       
-      if (!week || week < 1 || week > 22) {
-        return res.status(400).json({ error: 'Invalid week number' });
+      if (isNaN(week) || week < -3 || week > 18) {
+        return res.status(400).json({ error: 'Invalid week number. Must be between -3 (PS Week 1) and 18 (Week 18)' });
       }
 
       // Use raw SQL to get games with team codes

@@ -2,8 +2,8 @@
 
 export function getWeekLabel(week: number): string {
   if (week <= 0) {
-    // Preseason weeks: 0 = PS Week 4, -1 = PS Week 3, -2 = PS Week 2, -3 = PS Week 1
-    const psWeek = Math.abs(week - 1);
+    // Preseason weeks: -3 = PS Week 1, -2 = PS Week 2, -1 = PS Week 3, 0 = PS Week 4
+    const psWeek = week + 4;
     return `PS Week ${psWeek}`;
   } else {
     // Regular season weeks: 1-18

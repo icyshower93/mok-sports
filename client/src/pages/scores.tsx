@@ -69,7 +69,7 @@ interface NFLGame {
 
 export default function ScoresPage() {
   const { user } = useAuth();
-  const [selectedWeek, setSelectedWeek] = useState(1);
+  const [selectedWeek, setSelectedWeek] = useState(-3); // Start with PS Week 1
   const [selectedGame, setSelectedGame] = useState<any>(null);
   const [selectedSeason] = useState(2025); // Using real 2025 NFL season data
 
@@ -214,13 +214,13 @@ export default function ScoresPage() {
                   onChange={(e) => setSelectedWeek(Number(e.target.value))}
                   className="bg-background border border-border rounded-md px-3 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
                 >
-                  {/* Preseason options */}
-                  {Array.from({length: 4}, (_, i) => -3 + i).map(week => (
+                  {/* Preseason options - PS Week 1 to PS Week 4 */}
+                  {[-3, -2, -1, 0].map(week => (
                     <option key={week} value={week}>
                       {getWeekLabel(week)}
                     </option>
                   ))}
-                  {/* Regular season options */}
+                  {/* Regular season options - Week 1 to Week 18 */}
                   {Array.from({length: 18}, (_, i) => i + 1).map(week => (
                     <option key={week} value={week}>
                       {getWeekLabel(week)}
