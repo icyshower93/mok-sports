@@ -68,6 +68,7 @@ interface NFLGame {
 }
 
 export default function ScoresPage() {
+  console.log('🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE');
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const [selectedWeek, setSelectedWeek] = useState(1); // Start with Week 1
@@ -76,7 +77,11 @@ export default function ScoresPage() {
 
   // Listen for admin date advances to refresh scores automatically
   useEffect(() => {
-    console.log('🔌 Scores page useEffect triggered - setting up WebSocket');
+    console.log('🔌 SCORES PAGE WEBSOCKET USEEFFECT TRIGGERED - SETTING UP CONNECTION');
+    console.log('🔍 UserAgent check:', navigator.userAgent);
+    console.log('🔍 Window location:', window.location.href);
+    console.log('🔍 WebSocket support:', typeof WebSocket !== 'undefined');
+    
     const connectWebSocket = () => {
       const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
       const wsUrl = `${protocol}//${window.location.host}/draft-ws`;

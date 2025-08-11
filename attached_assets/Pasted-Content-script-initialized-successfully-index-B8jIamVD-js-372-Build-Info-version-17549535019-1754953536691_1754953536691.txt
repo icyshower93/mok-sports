@@ -1,0 +1,33 @@
+Content script initialized successfully.
+index-B8jIamVD.js:372 🏗️ Build Info: {version: 1754953501960, date: '2025-08-11T23:05:01.960Z', env: 'production', hash: 'me7q04js'}
+index-B8jIamVD.js:372 📦 Version: me7q04js
+index-B8jIamVD.js:372 📅 Built: 2025-08-11T23:05:01.960Z
+index-B8jIamVD.js:372 🔧 Environment: production
+index-B8jIamVD.js:323 [Auth] Token check - Has token: true Has user: false Loading: true
+index-B8jIamVD.js:323 [SW Hook] EMERGENCY: Unregistering all existing service workers
+index-B8jIamVD.js:323 [SW Hook] Found 1 existing registrations
+index-B8jIamVD.js:323 [SW Hook] Unregistering existing service worker
+index-B8jIamVD.js:323 [SW Hook] Found 0 caches to delete
+(index):1 Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner.
+index-B8jIamVD.js:323 [Auth] Token check - Has token: true Has user: true Loading: false
+index-B8jIamVD.js:323 [AutoPushRefresh] Legacy hook delegating to SubscriptionManager
+index-B8jIamVD.js:323 [SW Hook] Registering fresh service worker: /sw.js?v=1754953502102&r=0.4071422070518391
+sw.js?v=1754953502102&r=0.4071422070518391:2 [SW] NUCLEAR OPTION - Emergency service worker loading
+sw.js?v=1754953502102&r=0.4071422070518391:88 [SW] Service worker starting, version: v1.7.0-nuclear-unregister-1754953502200
+sw.js?v=1754953502102&r=0.4071422070518391:305 [SW] Service worker script loaded successfully
+sw.js?v=1754953502102&r=0.4071422070518391:19 [SW] EMERGENCY INSTALL - Clearing all caches and forcing activation
+sw.js?v=1754953502102&r=0.4071422070518391:92 [SW] Installing service worker, version: v1.7.0-nuclear-unregister-1754953502200
+sw.js?v=1754953502102&r=0.4071422070518391:22 [SW] Found caches to delete: []
+sw.js?v=1754953502102&r=0.4071422070518391:30 [SW] All caches deleted - skipping waiting
+sw.js?v=1754953502102&r=0.4071422070518391:96 [SW] Caching static files
+index-B8jIamVD.js:323 [SW Hook] Service worker registered successfully
+index-B8jIamVD.js:367 Main page debug: {user: 'Sky Evans', leagues: 5, selectedLeague: '', dashboardData: null}
+index-B8jIamVD.js:367 Main page debug: {user: 'Sky Evans', leagues: 5, selectedLeague: '243d719b-92ce-4752-8689-5da93ee69213', dashboardData: null}
+sw.js?v=1754953502102&r=0.4071422070518391:99 [SW] Static files cached successfully
+sw.js?v=1754953502102&r=0.4071422070518391:41 [SW] EMERGENCY ACTIVATE - Taking control of all clients
+sw.js?v=1754953502102&r=0.4071422070518391:110 [SW] Activating service worker, version: v1.7.0-nuclear-unregister-1754953502200
+sw.js?v=1754953502102&r=0.4071422070518391:46 [SW] Deleting remaining cache: mok-sports-static-v1.7.0-nuclear-unregister-1754953502200
+sw.js?v=1754953502102&r=0.4071422070518391:116 [SW] Found caches: ['mok-sports-static-v1.7.0-nuclear-unregister-1754953502200']
+sw.js?v=1754953502102&r=0.4071422070518391:129 [SW] Service worker activated and controlling all clients
+sw.js?v=1754953502102&r=0.4071422070518391:51 [SW] Claiming all clients immediately
+index-B8jIamVD.js:367 Main page debug: {user: 'Sky Evans', leagues: 5, selectedLeague: '243d719b-92ce-4752-8689-5da93ee69213', dashboardData: {…}}
