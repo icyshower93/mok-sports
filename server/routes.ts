@@ -1194,6 +1194,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
         console.log(`[Lock] ✅ Team ${team.code} locked for user ${userId} in week ${week}`);
         
+        // Broadcast lock update to all connected clients
+        try {
+          const { globalDraftManager } = await import("./routes/draft.js");
+          if (globalDraftManager?.webSocketManager) {
+            const broadcastData = {
+              type: 'lock-update',
+              userId: userId,
+              teamId: teamId,
+              week: week,
+              lockType: 'lock',
+              leagueId: leagueId,
+              teamCode: team.code,
+              teamName: team.name,
+              timestamp: Date.now()
+            };
+            globalDraftManager.webSocketManager.broadcastToAll(broadcastData);
+            console.log(`[Lock] Broadcasted lock update for team ${team.code} to all clients`);
+          }
+        } catch (error) {
+          console.error('[Lock] Failed to broadcast lock update:', error);
+        }
+        
         res.json({ 
           success: true, 
           message: `${team.name} locked for Week ${week}`,
@@ -1209,6 +1231,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
           .where(eq(weeklyLocks.id, existingWeeklyLock.id));
 
         console.log(`[Lock] ⚡ Lock & Load activated for team ${team.code} for user ${userId} in week ${week}`);
+        
+        // Broadcast Lock & Load update to all connected clients
+        try {
+          const { globalDraftManager } = await import("./routes/draft.js");
+          if (globalDraftManager?.webSocketManager) {
+            const broadcastData = {
+              type: 'lock-update',
+              userId: userId,
+              teamId: teamId,
+              week: week,
+              lockType: 'lockAndLoad',
+              leagueId: leagueId,
+              teamCode: team.code,
+              teamName: team.name,
+              timestamp: Date.now()
+            };
+            globalDraftManager.webSocketManager.broadcastToAll(broadcastData);
+            console.log(`[Lock] Broadcasted Lock & Load update for team ${team.code} to all clients`);
+          }
+        } catch (error) {
+          console.error('[Lock] Failed to broadcast Lock & Load update:', error);
+        }
         
         res.json({ 
           success: true, 
