@@ -64,6 +64,7 @@ export class DraftWebSocketManager {
       
       // Check if this is a WebSocket request (handle draft and admin paths)
       if (request.url?.startsWith('/draft-ws') || request.url?.startsWith('/ws/draft') || request.url?.startsWith('/ws') || request.url?.startsWith('/admin-ws')) {
+        console.log('[WebSocket] 🎯 WEBSOCKET UPGRADE DETECTED - Processing request for:', request.url);
         console.log('[WebSocket] ✅ HANDLING WEBSOCKET UPGRADE for path:', request.url);
         
         try {
@@ -88,6 +89,7 @@ export class DraftWebSocketManager {
               }
             }, 100);
             
+            console.log('[WebSocket] 🚀 EMITTING CONNECTION EVENT');
             this.wss.emit('connection', ws, request);
           });
         } catch (error) {

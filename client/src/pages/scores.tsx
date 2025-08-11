@@ -76,11 +76,14 @@ export default function ScoresPage() {
 
   // Listen for admin date advances to refresh scores automatically
   useEffect(() => {
+    console.log('🔌 Scores page useEffect triggered - setting up WebSocket');
     const connectWebSocket = () => {
       const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
       const wsUrl = `${protocol}//${window.location.host}/draft-ws`;
       
-      console.log('Attempting to connect WebSocket for scores page:', wsUrl);
+      console.log('🚀 Attempting to connect WebSocket for scores page:', wsUrl);
+      console.log('🔍 Current protocol:', window.location.protocol);
+      console.log('🔍 Current host:', window.location.host);
       
       try {
         const ws = new WebSocket(wsUrl);
@@ -108,14 +111,17 @@ export default function ScoresPage() {
 
         ws.onopen = () => {
           console.log('✅ Scores WebSocket connected successfully for live admin updates');
+          console.log('🔗 WebSocket state:', ws.readyState);
           // Send identification message with fake draft info to connect to the system
-          ws.send(JSON.stringify({ 
+          const identifyMessage = { 
             type: 'identify', 
             userId: 'scores_page_user',
             draftId: 'admin_updates',
             source: 'scores_page',
             connectionId: `scores_${Date.now()}`
-          }));
+          };
+          console.log('📤 Sending identify message:', identifyMessage);
+          ws.send(JSON.stringify(identifyMessage));
         };
         
         ws.onclose = (event) => {
