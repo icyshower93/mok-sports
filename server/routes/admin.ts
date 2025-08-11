@@ -1,7 +1,8 @@
 import { Router } from "express";
 import { db } from "../db.js";
-import { users, stables, nflGames, nflTeams } from "../../shared/schema.js";
-import { eq, and, lte, desc, gte, gt } from "drizzle-orm";
+import { users, stables, nflGames, nflTeams, userWeeklyScores, weeklyLocks, teamPerformance, leagueMembers } from "../../shared/schema.js";
+import { eq, and, lte, desc, gte, gt, sum, max, min } from "drizzle-orm";
+import { calculateBaseMokPoints, calculateLockPoints, MOK_SCORING_RULES } from "../utils/mokScoring.js";
 
 const router = Router();
 
@@ -252,18 +253,31 @@ async function getUpcomingGames(currentDate: Date, currentWeek: number) {
 
 async function getLeagueStandings() {
   try {
+    // Get current season standings aggregated from weekly scores
     const standings = await db
       .select({
-        id: users.id,
-        username: users.username,
-        totalPoints: users.totalPoints,
-        locksUsed: users.locksUsed
+        userId: userWeeklyScores.userId,
+        userName: users.name,
+        totalPoints: sum(userWeeklyScores.totalPoints),
+        weeklyPoints: sum(userWeeklyScores.basePoints),
+        lockBonusPoints: sum(userWeeklyScores.lockBonusPoints),
+        lockAndLoadBonusPoints: sum(userWeeklyScores.lockAndLoadBonusPoints)
       })
-      .from(users)
-      .orderBy(desc(users.totalPoints))
+      .from(userWeeklyScores)
+      .leftJoin(users, eq(userWeeklyScores.userId, users.id))
+      .where(eq(userWeeklyScores.season, 2024))
+      .groupBy(userWeeklyScores.userId, users.name)
+      .orderBy(desc(sum(userWeeklyScores.totalPoints)))
       .limit(20);
     
-    return standings;
+    return standings.map(s => ({
+      id: s.userId,
+      name: s.userName,
+      totalPoints: Number(s.totalPoints) || 0,
+      weeklyPoints: Number(s.weeklyPoints) || 0,
+      lockBonusPoints: Number(s.lockBonusPoints) || 0,
+      lockAndLoadBonusPoints: Number(s.lockAndLoadBonusPoints) || 0
+    }));
   } catch (error) {
     console.error('Error getting league standings:', error);
     return [];
@@ -272,15 +286,23 @@ async function getLeagueStandings() {
 
 async function resetSeasonData() {
   try {
-    await db.update(users).set({
-      totalPoints: 0,
-      locksUsed: 0,
-      weeklyPoints: []
-    });
+    // Reset all weekly scores, locks, and team performance data
+    await db.delete(userWeeklyScores);
+    await db.delete(weeklyLocks);
+    await db.delete(teamPerformance);
     
+    // Reset stable team counters
     await db.update(stables).set({
       locksUsed: 0,
       lockAndLoadUsed: false
+    });
+    
+    // Mark all games as incomplete for fresh season
+    await db.update(nflGames).set({
+      isCompleted: false,
+      homeScore: null,
+      awayScore: null,
+      winnerTeamId: null
     });
     
   } catch (error) {
@@ -348,28 +370,284 @@ async function processGame(game: any) {
   }
 }
 
-async function fetchGame2024Scores(espnGameId: string) {
-  // This will integrate with your existing Tank01/ESPN scoring system
+async function fetchGame2024Scores(gameId: string) {
+  // Generate realistic NFL scores for simulation
   try {
-    const { getGameResult } = await import("../routes/scoring.js");
-    return await getGameResult(espnGameId, 2024);
-  } catch (error) {
-    console.error('Error fetching real game scores:', error);
-    // Return mock scores as fallback
+    // For simulation purposes, generate realistic NFL game scores
+    const awayScore = Math.floor(Math.random() * 28) + 7; // 7-34 points
+    const homeScore = Math.floor(Math.random() * 28) + 7; // 7-34 points
+    
     return {
-      awayScore: Math.floor(Math.random() * 35) + 7,
-      homeScore: Math.floor(Math.random() * 35) + 7
+      gameId,
+      awayScore,
+      homeScore,
+      isCompleted: true
     };
+  } catch (error) {
+    console.error('Error fetching game scores:', error);
+    return null;
   }
 }
 
 async function calculateAndApplyMokScoring(game: any, gameResult: any) {
   try {
-    const { calculateMokPoints } = await import("../utils/mokScoring.js");
-    await calculateMokPoints(game, gameResult);
-    console.log(`Mok points calculated for game: ${game.awayTeam} ${gameResult.awayScore} - ${game.homeTeam} ${gameResult.homeScore}`);
+    console.log(`🎯 Calculating Mok scoring for: ${game.awayTeamId} @ ${game.homeTeamId} - ${gameResult.awayScore}-${gameResult.homeScore}`);
+    
+    // Determine winner and game details
+    const homeWins = gameResult.homeScore > gameResult.awayScore;
+    const awayWins = gameResult.awayScore > gameResult.homeScore;
+    const isTie = gameResult.homeScore === gameResult.awayScore;
+    
+    // Calculate blowouts (20+ point difference)
+    const scoreDiff = Math.abs(gameResult.homeScore - gameResult.awayScore);
+    const isBlowout = scoreDiff >= 20;
+    
+    // Calculate shutouts
+    const homeShutout = gameResult.awayScore === 0;
+    const awayShutout = gameResult.homeScore === 0;
+    
+    // Store team performances
+    await storeTeamPerformance(game.homeTeamId, game, gameResult.homeScore, gameResult.awayScore, homeWins, isTie, isBlowout && homeWins, awayShutout);
+    await storeTeamPerformance(game.awayTeamId, game, gameResult.awayScore, gameResult.homeScore, awayWins, isTie, isBlowout && awayWins, homeShutout);
+    
+    // Update game with winner
+    if (!isTie) {
+      await db.update(nflGames)
+        .set({
+          winnerTeamId: homeWins ? game.homeTeamId : game.awayTeamId,
+          isTie: false
+        })
+        .where(eq(nflGames.id, game.id));
+    } else {
+      await db.update(nflGames)
+        .set({
+          winnerTeamId: null,
+          isTie: true
+        })
+        .where(eq(nflGames.id, game.id));
+    }
+    
+    // Calculate user scores for this week (will include weekly high/low after all games complete)
+    await calculateUserScores(game.week, 2024);
+    
+    console.log(`✅ Mok scoring complete for Week ${game.week} game`);
   } catch (error) {
     console.error('Error calculating Mok scoring:', error);
+  }
+}
+
+// Store team performance data for Mok scoring
+async function storeTeamPerformance(teamId: string, game: any, teamScore: number, opponentScore: number, isWin: boolean, isTie: boolean, isBlowout: boolean, isShutout: boolean) {
+  try {
+    // Calculate base Mok points
+    let baseMokPoints = 0;
+    if (isWin) baseMokPoints += 1;
+    else if (isTie) baseMokPoints += 0.5;
+    
+    if (isBlowout) baseMokPoints += 1;
+    if (isShutout) baseMokPoints += 1;
+    
+    // Store team performance (weekly high/low will be updated later)
+    await db.insert(teamPerformance).values({
+      nflTeamId: teamId,
+      season: 2024,
+      week: game.week,
+      gameId: game.id,
+      teamScore,
+      opponentScore,
+      isWin,
+      isTie,
+      isBlowout,
+      isShutout,
+      baseMokPoints
+    }).onConflictDoNothing();
+    
+  } catch (error) {
+    console.error('Error storing team performance:', error);
+  }
+}
+
+// Calculate user scores for a specific week
+async function calculateUserScores(week: number, season: number) {
+  try {
+    console.log(`💯 Calculating user scores for Week ${week}`);
+    
+    // First, determine weekly high and low scoring teams
+    await updateWeeklyHighLow(week, season);
+    
+    // Get all users with stable teams
+    const userStables = await db
+      .select({
+        userId: stables.userId,
+        leagueId: stables.leagueId,
+        nflTeamId: stables.nflTeamId,
+        locksUsed: stables.locksUsed,
+        lockAndLoadUsed: stables.lockAndLoadUsed
+      })
+      .from(stables)
+      .leftJoin(leagueMembers, eq(stables.leagueId, leagueMembers.leagueId));
+    
+    // Group by user and league
+    const userScores = new Map<string, {
+      userId: string,
+      leagueId: string,
+      basePoints: number,
+      lockBonusPoints: number,
+      lockAndLoadBonusPoints: number
+    }>();
+    
+    for (const stable of userStables) {
+      const key = `${stable.userId}-${stable.leagueId}`;
+      if (!userScores.has(key)) {
+        userScores.set(key, {
+          userId: stable.userId,
+          leagueId: stable.leagueId,
+          basePoints: 0,
+          lockBonusPoints: 0,
+          lockAndLoadBonusPoints: 0
+        });
+      }
+      
+      // Get team performance for this week
+      const [performance] = await db
+        .select()
+        .from(teamPerformance)
+        .where(and(
+          eq(teamPerformance.nflTeamId, stable.nflTeamId),
+          eq(teamPerformance.week, week),
+          eq(teamPerformance.season, season)
+        ));
+      
+      if (performance) {
+        const userScore = userScores.get(key)!;
+        userScore.basePoints += performance.baseMokPoints;
+        
+        // Check for locks
+        const [weeklyLock] = await db
+          .select()
+          .from(weeklyLocks)
+          .where(and(
+            eq(weeklyLocks.userId, stable.userId),
+            eq(weeklyLocks.leagueId, stable.leagueId),
+            eq(weeklyLocks.week, week),
+            eq(weeklyLocks.season, season)
+          ));
+        
+        if (weeklyLock) {
+          // Regular lock bonus (only for wins)
+          if (weeklyLock.lockedTeamId === stable.nflTeamId && performance.isWin) {
+            userScore.lockBonusPoints += 1;
+          }
+          
+          // Lock & Load bonus/penalty
+          if (weeklyLock.lockAndLoadTeamId === stable.nflTeamId) {
+            if (performance.isWin) {
+              userScore.lockAndLoadBonusPoints += 2;
+            } else if (!performance.isTie) {
+              userScore.lockAndLoadBonusPoints -= 1;
+            }
+          }
+        }
+      }
+    }
+    
+    // Store user weekly scores
+    for (const [, userScore] of userScores) {
+      const totalPoints = userScore.basePoints + userScore.lockBonusPoints + userScore.lockAndLoadBonusPoints;
+      
+      await db.insert(userWeeklyScores).values({
+        userId: userScore.userId,
+        leagueId: userScore.leagueId,
+        season,
+        week,
+        basePoints: userScore.basePoints,
+        lockBonusPoints: userScore.lockBonusPoints,
+        lockAndLoadBonusPoints: userScore.lockAndLoadBonusPoints,
+        totalPoints
+      }).onConflictDoUpdate({
+        target: [userWeeklyScores.userId, userWeeklyScores.leagueId, userWeeklyScores.week, userWeeklyScores.season],
+        set: {
+          basePoints: userScore.basePoints,
+          lockBonusPoints: userScore.lockBonusPoints,
+          lockAndLoadBonusPoints: userScore.lockAndLoadBonusPoints,
+          totalPoints,
+          updatedAt: new Date()
+        }
+      });
+    }
+    
+    console.log(`✅ User scores calculated for Week ${week} (${userScores.size} users)`);
+    
+  } catch (error) {
+    console.error('Error calculating user scores:', error);
+  }
+}
+
+// Update weekly high and low scoring teams
+async function updateWeeklyHighLow(week: number, season: number) {
+  try {
+    // Find highest and lowest scoring teams this week
+    const [highestTeam] = await db
+      .select()
+      .from(teamPerformance)
+      .where(and(
+        eq(teamPerformance.week, week),
+        eq(teamPerformance.season, season)
+      ))
+      .orderBy(desc(teamPerformance.teamScore))
+      .limit(1);
+    
+    const [lowestTeam] = await db
+      .select()
+      .from(teamPerformance)
+      .where(and(
+        eq(teamPerformance.week, week),
+        eq(teamPerformance.season, season)
+      ))
+      .orderBy(teamPerformance.teamScore)
+      .limit(1);
+    
+    if (highestTeam && lowestTeam) {
+      // Update all performances to mark weekly high/low
+      await db.update(teamPerformance)
+        .set({ isWeeklyHigh: true })
+        .where(and(
+          eq(teamPerformance.week, week),
+          eq(teamPerformance.season, season),
+          eq(teamPerformance.teamScore, highestTeam.teamScore)
+        ));
+      
+      await db.update(teamPerformance)
+        .set({ isWeeklyLow: true })
+        .where(and(
+          eq(teamPerformance.week, week),
+          eq(teamPerformance.season, season),
+          eq(teamPerformance.teamScore, lowestTeam.teamScore)
+        ));
+      
+      // Update base Mok points for affected teams
+      await db.update(teamPerformance)
+        .set({ 
+          baseMokPoints: sql`${teamPerformance.baseMokPoints} + 1`
+        })
+        .where(and(
+          eq(teamPerformance.week, week),
+          eq(teamPerformance.season, season),
+          eq(teamPerformance.isWeeklyHigh, true)
+        ));
+        
+      await db.update(teamPerformance)
+        .set({ 
+          baseMokPoints: sql`${teamPerformance.baseMokPoints} - 1`
+        })
+        .where(and(
+          eq(teamPerformance.week, week),
+          eq(teamPerformance.season, season),
+          eq(teamPerformance.isWeeklyLow, true)
+        ));
+    }
+  } catch (error) {
+    console.error('Error updating weekly high/low:', error);
   }
 }
 
