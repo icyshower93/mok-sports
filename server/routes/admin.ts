@@ -287,6 +287,10 @@ export function registerAdminRoutes(app: Express) {
 
       // Broadcast update to all connected clients to refresh scores
       const draftManager = (global as any).draftManager;
+      console.log('[Admin] Broadcasting admin_date_advanced to all connected clients');
+      console.log('[Admin] DraftManager available:', !!draftManager);
+      console.log('[Admin] DraftManager.broadcast available:', !!(draftManager && draftManager.broadcast));
+      
       if (draftManager && draftManager.broadcast) {
         draftManager.broadcast({
           type: 'admin_date_advanced',
@@ -296,6 +300,9 @@ export function registerAdminRoutes(app: Express) {
             currentWeek: adminState.currentWeek
           }
         });
+        console.log('[Admin] ✅ Broadcast sent for admin_date_advanced');
+      } else {
+        console.log('[Admin] ❌ Could not broadcast - draftManager or broadcast not available');
       }
 
       res.json({
@@ -347,6 +354,10 @@ export function registerAdminRoutes(app: Express) {
 
       // Broadcast reset to all connected clients to refresh scores page
       const draftManager = (global as any).draftManager;
+      console.log('[Admin] Broadcasting admin_season_reset to all connected clients');
+      console.log('[Admin] DraftManager available:', !!draftManager);
+      console.log('[Admin] DraftManager.broadcast available:', !!(draftManager && draftManager.broadcast));
+      
       if (draftManager && draftManager.broadcast) {
         draftManager.broadcast({
           type: 'admin_season_reset',
@@ -356,6 +367,9 @@ export function registerAdminRoutes(app: Express) {
             totalGamesReset: adminState.totalGames
           }
         });
+        console.log('[Admin] ✅ Broadcast sent for admin_season_reset');
+      } else {
+        console.log('[Admin] ❌ Could not broadcast - draftManager or broadcast not available');
       }
 
       res.json({
