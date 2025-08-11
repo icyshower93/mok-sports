@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { db } from "../db.js";
 import { users, stables, nflGames, nflTeams, userWeeklyScores, weeklyLocks, teamPerformance, leagueMembers } from "../../shared/schema.js";
-import { eq, and, lte, desc, gte, gt, sum, max, min } from "drizzle-orm";
+import { eq, and, lte, desc, gte, gt, sum, max, min, sql } from "drizzle-orm";
 import { calculateBaseMokPoints, calculateLockPoints, MOK_SCORING_RULES } from "../utils/mokScoring.js";
 
 const router = Router();
@@ -430,7 +430,10 @@ async function calculateAndApplyMokScoring(game: any, gameResult: any) {
     // Calculate user scores for this week (will include weekly high/low after all games complete)
     await calculateUserScores(game.week, 2024);
     
-    console.log(`✅ Mok scoring complete for Week ${game.week} game`);
+    // Check if all games for this week are now complete
+    const weekComplete = await checkWeekCompletion(game.week, 2024);
+    
+    console.log(`✅ Mok scoring complete for Week ${game.week} game ${weekComplete ? '- WEEK COMPLETE!' : ''}`);
   } catch (error) {
     console.error('Error calculating Mok scoring:', error);
   }
@@ -722,6 +725,245 @@ function broadcastGameCompleted(game: any, result: any) {
     console.log('Broadcasting game completion:', message);
   } catch (error) {
     console.error('Error broadcasting game completion:', error);
+  }
+}
+
+// Check if all games for a week are completed
+async function checkWeekCompletion(week: number, season: number) {
+  try {
+    const totalGames = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(nflGames)
+      .where(and(
+        eq(nflGames.week, week),
+        eq(nflGames.season, season)
+      ));
+    
+    const completedGames = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(nflGames)
+      .where(and(
+        eq(nflGames.week, week),
+        eq(nflGames.season, season),
+        eq(nflGames.isCompleted, true)
+      ));
+    
+    if (totalGames[0].count === completedGames[0].count && completedGames[0].count > 0) {
+      console.log(`🏁 Week ${week} complete! Processing weekly results...`);
+      await processWeeklyResults(week, season);
+      return true;
+    }
+    
+    return false;
+  } catch (error) {
+    console.error('Error checking week completion:', error);
+    return false;
+  }
+}
+
+// Process weekly results: skin winner, standings reset
+async function processWeeklyResults(week: number, season: number) {
+  try {
+    console.log(`🏆 Processing Week ${week} results...`);
+    
+    // Find skin winner (highest weekly score)
+    const skinWinner = await findWeeklySkinWinner(week, season);
+    
+    if (skinWinner) {
+      console.log(`💰 Week ${week} Skin Winner: ${skinWinner.userName} with ${skinWinner.totalPoints} points`);
+      
+      // Broadcast skin winner
+      broadcastSkinWinner(week, skinWinner);
+    }
+    
+    // Enable locks for next week (if not final week)
+    if (week < 18) {
+      console.log(`🔒 Locks enabled for Week ${week + 1}`);
+    }
+    
+    console.log(`✅ Week ${week} results processed successfully`);
+    
+  } catch (error) {
+    console.error('Error processing weekly results:', error);
+  }
+}
+
+// Find the weekly skin winner
+async function findWeeklySkinWinner(week: number, season: number) {
+  try {
+    const [winner] = await db
+      .select({
+        userId: userWeeklyScores.userId,
+        userName: users.name,
+        totalPoints: userWeeklyScores.totalPoints,
+        leagueId: userWeeklyScores.leagueId
+      })
+      .from(userWeeklyScores)
+      .leftJoin(users, eq(userWeeklyScores.userId, users.id))
+      .where(and(
+        eq(userWeeklyScores.week, week),
+        eq(userWeeklyScores.season, season)
+      ))
+      .orderBy(desc(userWeeklyScores.totalPoints))
+      .limit(1);
+    
+    return winner || null;
+  } catch (error) {
+    console.error('Error finding skin winner:', error);
+    return null;
+  }
+}
+
+// Broadcast skin winner
+function broadcastSkinWinner(week: number, winner: any) {
+  const message = {
+    type: 'skin-winner',
+    data: {
+      week,
+      winner: {
+        userId: winner.userId,
+        userName: winner.userName,
+        totalPoints: winner.totalPoints,
+        prize: 30 // $30 weekly skin
+      }
+    }
+  };
+  
+  console.log(`📡 Week ${week} Skin Winner: ${winner.userName} (${winner.totalPoints} pts) - $30`);
+}
+
+// Lock timing API endpoints
+router.get('/locks/availability/:week', async (req, res) => {
+  try {
+    const week = parseInt(req.params.week);
+    const season = 2024;
+    
+    const lockAvailability = await checkLockAvailability(week, season);
+    
+    res.json({
+      week,
+      season,
+      locksAvailable: lockAvailability.available,
+      reason: lockAvailability.reason,
+      nextAvailableTime: lockAvailability.nextAvailableTime
+    });
+  } catch (error) {
+    console.error('Error checking lock availability:', error);
+    res.status(500).json({ error: 'Failed to check lock availability' });
+  }
+});
+
+router.post('/locks/set', async (req, res) => {
+  try {
+    const { userId, leagueId, week, season, lockedTeamId, lockAndLoadTeamId } = req.body;
+    
+    // Check if locks are available
+    const lockCheck = await checkLockAvailability(week, season);
+    if (!lockCheck.available) {
+      return res.status(400).json({ 
+        error: 'Locks not available', 
+        reason: lockCheck.reason 
+      });
+    }
+    
+    // Set user's locks
+    await db.insert(weeklyLocks).values({
+      userId,
+      leagueId,
+      season,
+      week,
+      lockedTeamId: lockedTeamId || null,
+      lockAndLoadTeamId: lockAndLoadTeamId || null
+    }).onConflictDoUpdate({
+      target: [weeklyLocks.userId, weeklyLocks.leagueId, weeklyLocks.week, weeklyLocks.season],
+      set: {
+        lockedTeamId: lockedTeamId || null,
+        lockAndLoadTeamId: lockAndLoadTeamId || null,
+        updatedAt: new Date()
+      }
+    });
+    
+    res.json({ success: true, message: 'Locks set successfully' });
+  } catch (error) {
+    console.error('Error setting locks:', error);
+    res.status(500).json({ error: 'Failed to set locks' });
+  }
+});
+
+// Check lock availability based on game timing
+async function checkLockAvailability(week: number, season: number) {
+  try {
+    // Get first and last games of the week
+    const weekGames = await db
+      .select({
+        gameDate: nflGames.gameDate,
+        isCompleted: nflGames.isCompleted
+      })
+      .from(nflGames)
+      .where(and(
+        eq(nflGames.week, week),
+        eq(nflGames.season, season)
+      ))
+      .orderBy(nflGames.gameDate);
+    
+    if (weekGames.length === 0) {
+      return {
+        available: false,
+        reason: 'No games scheduled for this week',
+        nextAvailableTime: null
+      };
+    }
+    
+    const now = simulationState.simulationDate; // Use simulation time
+    const firstGameTime = new Date(weekGames[0].gameDate);
+    const lastGameTime = new Date(weekGames[weekGames.length - 1].gameDate);
+    
+    // Check if current week games have started
+    if (now >= firstGameTime && weekGames.some(g => !g.isCompleted)) {
+      return {
+        available: false,
+        reason: 'Week games have started - locks closed',
+        nextAvailableTime: new Date(lastGameTime.getTime() + (3 * 60 * 60 * 1000)) // 3 hours after last game
+      };
+    }
+    
+    // Check if we're between weeks (locks available)
+    const previousWeekGames = await db
+      .select({
+        gameDate: nflGames.gameDate,
+        isCompleted: nflGames.isCompleted
+      })
+      .from(nflGames)
+      .where(and(
+        eq(nflGames.week, week - 1),
+        eq(nflGames.season, season)
+      ))
+      .orderBy(desc(nflGames.gameDate));
+    
+    // Locks available if previous week is complete and current week hasn't started
+    if (previousWeekGames.length === 0 || previousWeekGames.every(g => g.isCompleted)) {
+      if (now < firstGameTime) {
+        return {
+          available: true,
+          reason: 'Between weeks - locks available',
+          nextAvailableTime: firstGameTime
+        };
+      }
+    }
+    
+    return {
+      available: false,
+      reason: 'Locks not currently available',
+      nextAvailableTime: firstGameTime
+    };
+    
+  } catch (error) {
+    console.error('Error checking lock availability:', error);
+    return {
+      available: false,
+      reason: 'Error checking availability',
+      nextAvailableTime: null
+    };
   }
 }
 
