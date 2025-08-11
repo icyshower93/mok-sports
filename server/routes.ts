@@ -13,6 +13,7 @@ import { registerAdminRoutes } from "./routes/admin";
 import { scoringRouter } from "./routes/scoring";
 import { db } from "./db";
 import { eq, and, sql } from "drizzle-orm";
+import { alias } from "drizzle-orm/pg-core";
 import crypto from "crypto";
 import "./auth"; // Initialize passport strategies
 
@@ -1279,6 +1280,42 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(teamsWithLogos);
     } catch (error) {
       res.status(500).json({ message: "Failed to fetch NFL teams" });
+    }
+  });
+
+  // Scores API for displaying games by week
+  app.get("/api/scores/week/:week", async (req, res) => {
+    try {
+      const week = parseInt(req.params.week);
+      const season = 2025; // Current season
+      
+      if (!week || week < 1 || week > 22) {
+        return res.status(400).json({ error: 'Invalid week number' });
+      }
+
+      // Use raw SQL to get games with team codes
+      const games = await db.execute(sql`
+        SELECT 
+          g.id,
+          home_team.code as "homeTeam",
+          away_team.code as "awayTeam", 
+          g.home_score as "homeScore",
+          g.away_score as "awayScore",
+          g.week,
+          g.season,
+          g.game_date as "gameDate",
+          g.is_completed as "isCompleted"
+        FROM nfl_games g
+        LEFT JOIN nfl_teams home_team ON g.home_team_id = home_team.id
+        LEFT JOIN nfl_teams away_team ON g.away_team_id = away_team.id
+        WHERE g.week = ${week} AND g.season = ${season}
+        ORDER BY g.game_date
+      `);
+
+      res.json({ games: games.rows, week, season });
+    } catch (error) {
+      console.error('Error fetching weekly scores:', error);
+      res.status(500).json({ error: 'Failed to fetch weekly scores' });
     }
   });
 

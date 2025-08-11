@@ -70,7 +70,7 @@ export default function ScoresPage() {
   const { user } = useAuth();
   const [selectedWeek, setSelectedWeek] = useState(1);
   const [selectedGame, setSelectedGame] = useState<any>(null);
-  const [selectedSeason] = useState(2024); // Using real 2024 NFL season data
+  const [selectedSeason] = useState(2025); // Using real 2025 NFL season data
 
   // Get user's leagues to show scores for
   const { data: userLeagues } = useQuery({
