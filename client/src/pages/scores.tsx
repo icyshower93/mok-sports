@@ -102,8 +102,19 @@ export default function ScoresPage() {
           }
         };
 
-        ws.onopen = () => console.log('Scores WebSocket connected for live admin updates');
-        ws.onclose = () => console.log('Scores WebSocket disconnected');
+        ws.onopen = () => {
+          console.log('Scores WebSocket connected for live admin updates');
+          // Send a ping to keep connection active
+          ws.send(JSON.stringify({ type: 'ping', source: 'scores_page' }));
+        };
+        ws.onclose = () => {
+          console.log('Scores WebSocket disconnected, attempting reconnect...');
+          // Attempt to reconnect after 2 seconds
+          setTimeout(() => {
+            const newWs = connectWebSocket();
+            return newWs;
+          }, 2000);
+        };
         ws.onerror = (error) => console.log('Scores WebSocket error:', error);
         
         return ws;

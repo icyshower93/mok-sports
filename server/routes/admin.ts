@@ -140,8 +140,7 @@ async function processGamesForDate(targetDate: Date): Promise<number> {
       .from(nflGames)
       .where(and(
         eq(nflGames.season, adminState.season),
-        gte(nflGames.gameDate, dayStart),
-        lte(nflGames.gameDate, dayEnd),
+        sql`DATE(${nflGames.gameDate}) = DATE(${dayStart})`,
         eq(nflGames.isCompleted, false)
       ));
 
