@@ -109,9 +109,8 @@ router.post('/import-preseason-schedule', async (req, res) => {
     console.log('📅 Importing 2025 NFL preseason schedule...');
     
     // Import schedule using NFL data service
-    const { NFLDataService } = await import('../services/nflDataService.js');
-    const nflService = new NFLDataService();
-    const games = await nflService.getScheduleForSeason(2025);
+    const { nflDataService } = await import('../services/nflDataService.js');
+    const games = await nflDataService.getScheduleForSeason(2025);
     
     console.log(`📊 Found ${games.length} preseason games for 2025`);
     

@@ -198,7 +198,7 @@ export default function AdminPanel() {
             </Button>
             <div className="flex items-center space-x-2">
               <Calendar className="w-6 h-6 text-blue-600" />
-              <h1 className="text-2xl font-bold">2024 NFL Season Simulator</h1>
+              <h1 className="text-2xl font-bold">2025 NFL Preseason Simulator</h1>
             </div>
           </div>
           <Badge variant={isConnected ? "default" : "secondary"} className="flex items-center space-x-1">
