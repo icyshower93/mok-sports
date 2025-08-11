@@ -284,13 +284,23 @@ async function getUpcomingGames(currentDate: Date, currentWeek: number) {
       .limit(10)
       .orderBy(nflGames.gameDate);
     
-    return games.map(game => ({
-      id: game.id,
-      awayTeam: game.awayTeamId,
-      homeTeam: game.homeTeamId,
-      gameTime: game.gameDate,
-      week: game.week
+    // Get team codes for display
+    const gameDetails = await Promise.all(games.map(async (game) => {
+      const [awayTeam, homeTeam] = await Promise.all([
+        db.select({ code: nflTeams.code }).from(nflTeams).where(eq(nflTeams.id, game.awayTeamId)).limit(1),
+        db.select({ code: nflTeams.code }).from(nflTeams).where(eq(nflTeams.id, game.homeTeamId)).limit(1)
+      ]);
+      
+      return {
+        id: game.id,
+        awayTeam: awayTeam[0]?.code || 'UNK',
+        homeTeam: homeTeam[0]?.code || 'UNK',
+        gameTime: game.gameDate,
+        week: game.week
+      };
     }));
+
+    return gameDetails;
   } catch (error) {
     console.error('Error getting upcoming games:', error);
     return [];
