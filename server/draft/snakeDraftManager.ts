@@ -872,6 +872,17 @@ export class SnakeDraftManager {
   }
 
   /**
+   * Broadcast a message to all connected clients via WebSocket manager
+   */
+  broadcast(message: any): void {
+    if (this.webSocketManager && this.webSocketManager.broadcast) {
+      this.webSocketManager.broadcast(message);
+    } else {
+      console.log('[SnakeDraftManager] ⚠️ WebSocket manager not available for broadcasting');
+    }
+  }
+
+  /**
    * Cleanup method to clear all timers
    */
   cleanup(): void {

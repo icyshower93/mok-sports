@@ -1920,6 +1920,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   globalDraftManager.robotManager = robotManager;
   console.log('[Server] ✅ Global draft manager updated with WebSocket and Robot managers');
   
+  // Set global draftManager for admin route access
+  (global as any).draftManager = globalDraftManager;
+  console.log('[Server] ✅ Global draft manager assigned for admin route access');
+  
   // Re-initialize draft routes with WebSocket support
   const { default: setupDraftRoutes } = await import("./routes/draft.js");
   await setupDraftRoutes(app, storage, webSocketManager, robotManager);

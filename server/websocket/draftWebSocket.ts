@@ -396,6 +396,11 @@ export class DraftWebSocketManager {
     this.connections.get('admin_updates')!.push(adminConnection);
     console.log(`[WebSocket] ✅ Admin connection added to admin_updates group`);
     
+    // FIX: Update connection stats for admin connections
+    this.connectionStats.totalConnections++;
+    this.connectionStats.activeConnections++;
+    console.log(`[WebSocket] 📊 Stats updated - Total: ${this.connectionStats.totalConnections}, Active: ${this.connectionStats.activeConnections}`);
+    
     // Handle admin messages
     ws.on('message', (data) => {
       try {
@@ -424,10 +429,22 @@ export class DraftWebSocketManager {
 
     ws.on('close', () => {
       console.log('[WebSocket] Admin connection closed');
-      // Remove from admin connections
-      const adminConnections = this.connections.get('admin_updates') || [];
-      const filtered = adminConnections.filter(conn => conn.socket !== ws);
-      this.connections.set('admin_updates', filtered);
+      // Remove from admin_updates group
+      const adminConnections = this.connections.get('admin_updates');
+      if (adminConnections) {
+        const index = adminConnections.findIndex(c => c.socket === ws);
+        if (index !== -1) {
+          adminConnections.splice(index, 1);
+          console.log('[WebSocket] Admin connection removed from admin_updates group');
+        }
+        if (adminConnections.length === 0) {
+          this.connections.delete('admin_updates');
+        }
+      }
+      // Update connection stats
+      this.connectionStats.activeConnections--;
+      this.connectionStats.disconnections++;
+      console.log(`[WebSocket] 📊 Admin disconnect - Active connections: ${this.connectionStats.activeConnections}`);
     });
 
     ws.on('error', (error) => {
@@ -602,6 +619,38 @@ export class DraftWebSocketManager {
         ])
       )
     };
+  }
+
+  // Add broadcast method for admin updates
+  public broadcast(message: any) {
+    console.log(`[WebSocket] 📢 Broadcasting message type '${message.type}' to all connections`);
+    
+    let totalRecipients = 0;
+    
+    // Broadcast to all connection groups
+    this.connections.forEach((connections, draftId) => {
+      connections.forEach(connection => {
+        if (connection.socket.readyState === WebSocket.OPEN) {
+          try {
+            connection.socket.send(JSON.stringify(message));
+            totalRecipients++;
+          } catch (error) {
+            console.error(`[WebSocket] Failed to send to ${connection.userId}:`, error);
+          }
+        }
+      });
+    });
+    
+    console.log(`[WebSocket] ✅ Broadcast complete - Sent to ${totalRecipients} recipients`);
+    console.log(`[WebSocket] Available connection groups:`, Array.from(this.connections.keys()));
+    
+    // Log specific admin_updates group info
+    const adminConnections = this.connections.get('admin_updates');
+    if (adminConnections) {
+      console.log(`[WebSocket] Admin connections: ${adminConnections.length} clients`);
+    } else {
+      console.log(`[WebSocket] ⚠️  No admin_updates group found!`);
+    }
   }
 
   public cleanup() {
