@@ -495,17 +495,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
         week: 1, // This would come from admin state
         totalWeeks: 18,
         memberCount: standings.length,
-        weeklyPot: 150, // Mock data
-        seasonPot: 500  // Mock data
+        weeklyPot: 30, // Skins prize per week
+        seasonPot: 80  // Total season prizes ($50 + $10 + $10 + $10)
       };
 
       res.json({
         league: leagueInfo,
         standings,
         seasonPrizes: [
-          { name: "Most Points", prize: "$200", leader: standings[0]?.name || "TBD", points: standings[0]?.points?.toString() || "-" },
-          { name: "Super Bowl Winner", prize: "$150", leader: "TBD", points: "-" },
-          { name: "Most Correct Locks", prize: "$150", leader: standings.find(s => s.locks > 0)?.name || "TBD", points: standings.find(s => s.locks > 0)?.locks?.toString() || "0" }
+          { name: "Most Points", prize: "$50", leader: standings[0]?.name || "TBD", points: standings[0]?.points?.toString() || "-" },
+          { name: "Super Bowl Winner", prize: "$10", leader: "TBD", points: "-" },
+          { name: "Most Correct Locks", prize: "$10", leader: standings.find(s => s.locks > 0)?.name || "TBD", points: standings.find(s => s.locks > 0)?.locks?.toString() || "0" }
         ]
       });
     } catch (error) {
@@ -899,7 +899,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const userRank = totalStandings.findIndex(member => member.userId === user.id) + 1;
       
       // Get current skins game prize (placeholder - could be from league settings)
-      const weeklyPrize = 250; // TODO: Add weeklyPrize to league schema
+      const weeklyPrize = 30; // Weekly skins prize value
       
       // Get games in progress count (placeholder - could query real game status)
       const gamesInProgress = 0; // TODO: Calculate from NFL games API

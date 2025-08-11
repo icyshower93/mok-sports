@@ -58,8 +58,8 @@ Mok Sports is a fantasy sports application that redefines traditional fantasy le
   - Cannot trade teams once their week has started 
   - Maximum 1 trade transaction per week
   - Free agent pickups available (drop a team to claim free agent)
-- **Skins**: Weekly cash prizes that stack when tied
-- **Season prizes**: Most points, Super Bowl winner, most correct locks
+- **Skins**: Weekly $30 cash prizes that stack when tied
+- **Season prizes**: Most points ($50), Super Bowl winner ($10), most correct locks ($10)
 
 # User Preferences
 
