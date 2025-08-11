@@ -36,8 +36,8 @@ function calculateGameMokPoints(teamScore: number, opponentScore: number, isHome
     points += 1;
   }
   
-  // Lock bonus: +1 additional point if this team was locked
-  if (isLocked && !isLockAndLoad) {
+  // Lock bonus: +1 additional point if this team was locked AND won
+  if (isLocked && !isLockAndLoad && teamScore > opponentScore) {
     points += 1;
   }
   
