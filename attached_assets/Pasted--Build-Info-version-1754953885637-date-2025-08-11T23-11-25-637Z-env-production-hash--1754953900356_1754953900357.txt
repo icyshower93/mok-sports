@@ -1,0 +1,33 @@
+🏗️ Build Info: {version: 1754953885637, date: '2025-08-11T23:11:25.637Z', env: 'production', hash: 'me7q8clh'}
+index-Bwd-zVLX.js:372 📦 Version: me7q8clh
+index-Bwd-zVLX.js:372 📅 Built: 2025-08-11T23:11:25.637Z
+index-Bwd-zVLX.js:372 🔧 Environment: production
+index-Bwd-zVLX.js:323 [Auth] Token check - Has token: true Has user: false Loading: true
+contentScript.js:2 Content script initialized successfully.
+index-Bwd-zVLX.js:323 [SW Hook] EMERGENCY: Unregistering all existing service workers
+index-Bwd-zVLX.js:323 [SW Hook] Found 1 existing registrations
+index-Bwd-zVLX.js:323 [SW Hook] Unregistering existing service worker
+index-Bwd-zVLX.js:323 [SW Hook] Found 0 caches to delete
+(index):1 Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner.
+index-Bwd-zVLX.js:323 [Auth] Token check - Has token: true Has user: true Loading: false
+index-Bwd-zVLX.js:323 [AutoPushRefresh] Legacy hook delegating to SubscriptionManager
+index-Bwd-zVLX.js:323 [SW Hook] Registering fresh service worker: /sw.js?v=1754953885781&r=0.8186173603086775
+sw.js?v=1754953885781&r=0.8186173603086775:2 [SW] NUCLEAR OPTION - Emergency service worker loading
+sw.js?v=1754953885781&r=0.8186173603086775:88 [SW] Service worker starting, version: v1.7.0-nuclear-unregister-1754953885840
+sw.js?v=1754953885781&r=0.8186173603086775:305 [SW] Service worker script loaded successfully
+sw.js?v=1754953885781&r=0.8186173603086775:19 [SW] EMERGENCY INSTALL - Clearing all caches and forcing activation
+index-Bwd-zVLX.js:367 Main page debug: {user: 'Sky Evans', leagues: 5, selectedLeague: '', dashboardData: null}
+sw.js?v=1754953885781&r=0.8186173603086775:92 [SW] Installing service worker, version: v1.7.0-nuclear-unregister-1754953885840
+sw.js?v=1754953885781&r=0.8186173603086775:22 [SW] Found caches to delete: []
+sw.js?v=1754953885781&r=0.8186173603086775:30 [SW] All caches deleted - skipping waiting
+sw.js?v=1754953885781&r=0.8186173603086775:96 [SW] Caching static files
+index-Bwd-zVLX.js:323 [SW Hook] Service worker registered successfully
+index-Bwd-zVLX.js:367 Main page debug: {user: 'Sky Evans', leagues: 5, selectedLeague: '243d719b-92ce-4752-8689-5da93ee69213', dashboardData: null}
+sw.js?v=1754953885781&r=0.8186173603086775:99 [SW] Static files cached successfully
+sw.js?v=1754953885781&r=0.8186173603086775:41 [SW] EMERGENCY ACTIVATE - Taking control of all clients
+sw.js?v=1754953885781&r=0.8186173603086775:110 [SW] Activating service worker, version: v1.7.0-nuclear-unregister-1754953885840
+sw.js?v=1754953885781&r=0.8186173603086775:46 [SW] Deleting remaining cache: mok-sports-static-v1.7.0-nuclear-unregister-1754953885840
+sw.js?v=1754953885781&r=0.8186173603086775:116 [SW] Found caches: ['mok-sports-static-v1.7.0-nuclear-unregister-1754953885840']
+sw.js?v=1754953885781&r=0.8186173603086775:129 [SW] Service worker activated and controlling all clients
+sw.js?v=1754953885781&r=0.8186173603086775:51 [SW] Claiming all clients immediately
+index-Bwd-zVLX.js:367 Main page debug: {user: 'Sky Evans', leagues: 5, selectedLeague: '243d719b-92ce-4752-8689-5da93ee69213', dashboardData: {…}}
