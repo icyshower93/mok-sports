@@ -390,36 +390,93 @@ export function registerAdminRoutes(app: Express) {
       let simulatedCount = 0;
       const gameResults = [];
       
-      // Simulate games that aren't completed yet
-      for (const game of weekGames) {
-        if (!game.isCompleted) {
-          // Generate realistic NFL scores
-          const result = simulateGameResult();
+      // Fetch real 2024 NFL results from Tank01 API for incomplete games
+      const incompleteGames = weekGames.filter(game => !game.isCompleted);
+      
+      if (incompleteGames.length > 0) {
+        console.log(`🏈 [Admin] Fetching real NFL results for Week ${weekNum}, 2024 from Tank01 API`);
+        
+        try {
+          // Fetch from Tank01 API for the specific week and season
+          const apiUrl = `https://tank01-nfl-live-in-game-real-time-statistics-nfl.p.rapidapi.com/getNFLScoresOnly?week=${weekNum}&seasonType=reg&season=2024`;
           
-          // Update game in database
-          await db
-            .update(nflGames)
-            .set({
-              homeScore: result.homeScore,
-              awayScore: result.awayScore,
-              isCompleted: true,
-              isTie: result.homeScore === result.awayScore,
-              winnerTeamId: result.homeScore > result.awayScore ? game.homeTeamId : 
-                          result.homeScore < result.awayScore ? game.awayTeamId : null,
-              updatedAt: new Date(),
-            })
-            .where(eq(nflGames.id, game.id));
-
-          simulatedCount++;
-          gameResults.push({
-            homeTeam: `${game.homeTeam?.city} ${game.homeTeam?.name}`,
-            awayTeam: `${game.awayTeam?.city} ${game.awayTeam?.name}`,
-            homeScore: result.homeScore,
-            awayScore: result.awayScore,
-            winner: result.homeScore > result.awayScore ? `${game.homeTeam?.city} ${game.homeTeam?.name}` : 
-                   result.homeScore < result.awayScore ? `${game.awayTeam?.city} ${game.awayTeam?.name}` : 'TIE'
+          const response = await fetch(apiUrl, {
+            method: 'GET',
+            headers: {
+              'X-RapidAPI-Key': process.env.RAPIDAPI_KEY || '',
+              'X-RapidAPI-Host': 'tank01-nfl-live-in-game-real-time-statistics-nfl.p.rapidapi.com'
+            }
           });
-        } else {
+          
+          if (response.ok) {
+            const apiData = await response.json();
+            console.log(`🏈 [Admin] Tank01 API returned data for ${apiData?.body?.length || 0} games`);
+            
+            // Process API results and update our games
+            if (apiData?.body && Array.isArray(apiData.body)) {
+              for (const apiGame of apiData.body) {
+                // Find matching game in our database by team names
+                const matchingGame = incompleteGames.find(dbGame => {
+                  const homeMatch = (dbGame.homeTeam?.city + " " + dbGame.homeTeam?.name).toLowerCase().includes(apiGame.home?.toLowerCase() || '') ||
+                                   (apiGame.home?.toLowerCase() || '').includes(dbGame.homeTeam?.city.toLowerCase());
+                  const awayMatch = (dbGame.awayTeam?.city + " " + dbGame.awayTeam?.name).toLowerCase().includes(apiGame.away?.toLowerCase() || '') ||
+                                   (apiGame.away?.toLowerCase() || '').includes(dbGame.awayTeam?.city.toLowerCase());
+                  return homeMatch && awayMatch;
+                });
+                
+                if (matchingGame && apiGame.homePts !== null && apiGame.awayPts !== null) {
+                  const homeScore = parseInt(apiGame.homePts) || 0;
+                  const awayScore = parseInt(apiGame.awayPts) || 0;
+                  
+                  // Update the game in database with real results
+                  await db
+                    .update(nflGames)
+                    .set({
+                      homeScore: homeScore,
+                      awayScore: awayScore,
+                      isCompleted: true,
+                      isTie: homeScore === awayScore,
+                      winnerTeamId: homeScore > awayScore ? matchingGame.homeTeamId : 
+                                  homeScore < awayScore ? matchingGame.awayTeamId : null,
+                      updatedAt: new Date(),
+                    })
+                    .where(eq(nflGames.id, matchingGame.id));
+                    
+                  simulatedCount++;
+                  
+                  // Determine winner
+                  let winner = "TIE";
+                  if (homeScore > awayScore) {
+                    winner = `${matchingGame.homeTeam?.city} ${matchingGame.homeTeam?.name}`;
+                  } else if (awayScore > homeScore) {
+                    winner = `${matchingGame.awayTeam?.city} ${matchingGame.awayTeam?.name}`;
+                  }
+                  
+                  gameResults.push({
+                    homeTeam: `${matchingGame.homeTeam?.city} ${matchingGame.homeTeam?.name}`,
+                    awayTeam: `${matchingGame.awayTeam?.city} ${matchingGame.awayTeam?.name}`,
+                    homeScore,
+                    awayScore,
+                    winner,
+                    alreadyCompleted: false
+                  });
+                  
+                  console.log(`🏈 [Admin] Updated ${winner} with real 2024 score: ${homeScore}-${awayScore}`);
+                }
+              }
+            }
+          } else {
+            console.warn(`⚠️ [Admin] Tank01 API request failed with status: ${response.status}`);
+          }
+          
+        } catch (apiError) {
+          console.error(`❌ [Admin] Error fetching from Tank01 API:`, apiError);
+        }
+      }
+      
+      // Add already completed games to results
+      for (const game of weekGames) {
+        if (game.isCompleted) {
           gameResults.push({
             homeTeam: `${game.homeTeam?.city} ${game.homeTeam?.name}`,
             awayTeam: `${game.awayTeam?.city} ${game.awayTeam?.name}`,

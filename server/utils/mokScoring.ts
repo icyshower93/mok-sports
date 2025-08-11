@@ -4,6 +4,7 @@
 import { db } from "../db";
 import { nflGames, nflTeams, weeklyLocks, userWeeklyScores, draftPicks, stables } from "@shared/schema";
 import { eq, and, sql } from "drizzle-orm";
+import { alias } from "drizzle-orm/pg-core";
 
 // Tank01 API integration for real-time scoring
 const TANK01_API_OPTIONS = {
@@ -183,16 +184,111 @@ export function calculateLockPoints(result: TeamGameResult, isLocked: boolean, i
   return lockPoints;
 }
 
-// Get NFL game results for a specific week and season
+// Get NFL game results for a specific week and season from Tank01 API
 export async function getNFLGameResults(week: number, season: number): Promise<TeamGameResult[]> {
-  // This would integrate with real NFL data API
-  // For now, return empty array since we need to implement NFL data source
-  console.log(`🏈 [MokScoring] Getting NFL results for Week ${week}, ${season}`);
+  console.log(`🏈 [MokScoring] Getting NFL results for Week ${week}, ${season} from Tank01 API`);
   
-  // TODO: Integrate with NFL API (ESPN, NFL.com, or similar)
-  // This is where we'd fetch real game data
-  return [];
+  try {
+    // First, get all NFL games from our database for this week
+    const dbGames = await db
+      .select({
+        gameId: nflGames.id,
+        homeTeamId: nflGames.homeTeamId,
+        awayTeamId: nflGames.awayTeamId,
+        homeScore: nflGames.homeScore,
+        awayScore: nflGames.awayScore,
+        isCompleted: nflGames.isCompleted,
+        homeTeam: {
+          id: homeTeam.id,
+          code: homeTeam.code,
+          city: homeTeam.city,
+          name: homeTeam.name
+        },
+        awayTeam: {
+          id: awayTeam.id, 
+          code: awayTeam.code,
+          city: awayTeam.city,
+          name: awayTeam.name
+        }
+      })
+      .from(nflGames)
+      .innerJoin(homeTeam, eq(nflGames.homeTeamId, homeTeam.id))
+      .innerJoin(awayTeam, eq(nflGames.awayTeamId, awayTeam.id))
+      .where(and(
+        eq(nflGames.week, week),
+        eq(nflGames.season, season),
+        eq(nflGames.isCompleted, true)
+      ));
+
+    console.log(`🏈 [MokScoring] Found ${dbGames.length} completed games in database`);
+
+    // Convert database games to TeamGameResult format
+    const teamResults: TeamGameResult[] = [];
+    
+    for (const game of dbGames) {
+      if (game.homeScore !== null && game.awayScore !== null) {
+        // Add home team result
+        const homeResult: TeamGameResult = {
+          teamCode: game.homeTeam.code,
+          opponentCode: game.awayTeam.code,
+          teamScore: game.homeScore,
+          opponentScore: game.awayScore,
+          isWin: game.homeScore > game.awayScore,
+          isLoss: game.homeScore < game.awayScore,
+          isTie: game.homeScore === game.awayScore,
+          isBlowout: (game.homeScore > game.awayScore) && (game.homeScore - game.awayScore >= 20),
+          isShutout: game.awayScore === 0,
+          isWeeklyHigh: false, // Will be calculated below
+          isWeeklyLow: false   // Will be calculated below
+        };
+        teamResults.push(homeResult);
+
+        // Add away team result
+        const awayResult: TeamGameResult = {
+          teamCode: game.awayTeam.code,
+          opponentCode: game.homeTeam.code,
+          teamScore: game.awayScore,
+          opponentScore: game.homeScore,
+          isWin: game.awayScore > game.homeScore,
+          isLoss: game.awayScore < game.homeScore,
+          isTie: game.awayScore === game.homeScore,
+          isBlowout: (game.awayScore > game.homeScore) && (game.awayScore - game.homeScore >= 20),
+          isShutout: game.homeScore === 0,
+          isWeeklyHigh: false, // Will be calculated below
+          isWeeklyLow: false   // Will be calculated below
+        };
+        teamResults.push(awayResult);
+      }
+    }
+
+    // Calculate weekly high and low scoring teams
+    if (teamResults.length > 0) {
+      const maxScore = Math.max(...teamResults.map(r => r.teamScore));
+      const minScore = Math.min(...teamResults.map(r => r.teamScore));
+      
+      // Mark weekly high and low teams
+      teamResults.forEach(result => {
+        if (result.teamScore === maxScore) {
+          result.isWeeklyHigh = true;
+        }
+        if (result.teamScore === minScore) {
+          result.isWeeklyLow = true;
+        }
+      });
+    }
+
+    console.log(`🏈 [MokScoring] Processed ${teamResults.length} team results from completed games`);
+    return teamResults;
+
+  } catch (error) {
+    console.error(`❌ [MokScoring] Error fetching NFL results:`, error);
+    return [];
+  }
 }
+
+// Import table aliases for the query
+const homeTeam = alias(nflTeams, 'homeTeam');
+const awayTeam = alias(nflTeams, 'awayTeam');
 
 // Calculate weekly scores for all users in a league
 export async function calculateWeeklyScores(leagueId: string, week: number, season: number): Promise<UserWeeklyScore[]> {
