@@ -278,7 +278,7 @@ export function registerAdminRoutes(app: Express) {
 
       console.log(`📅 Advanced to ${nextDay.toISOString().split('T')[0]}`);
 
-      // Process games for the new current date
+      // Process games for the new current date (games scheduled for this exact date)
       const processedCount = await processGamesForDate(adminState.currentDate);
       
       // Update state

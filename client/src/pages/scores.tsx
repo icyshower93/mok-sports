@@ -80,12 +80,16 @@ export default function ScoresPage() {
       const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
       const wsUrl = `${protocol}//${window.location.host}/draft-ws`;
       
+      console.log('Attempting to connect WebSocket for scores page:', wsUrl);
+      
       try {
         const ws = new WebSocket(wsUrl);
         
         ws.onmessage = (event) => {
           try {
             const message = JSON.parse(event.data);
+            console.log('Scores WebSocket received message:', message.type);
+            
             if (message.type === 'admin_date_advanced') {
               console.log('Admin date advanced, refreshing scores...');
               // Invalidate scores queries to trigger refresh
@@ -103,30 +107,42 @@ export default function ScoresPage() {
         };
 
         ws.onopen = () => {
-          console.log('Scores WebSocket connected for live admin updates');
-          // Send a ping to keep connection active
-          ws.send(JSON.stringify({ type: 'ping', source: 'scores_page' }));
+          console.log('✅ Scores WebSocket connected successfully for live admin updates');
+          // Send identification message with fake draft info to connect to the system
+          ws.send(JSON.stringify({ 
+            type: 'identify', 
+            userId: 'scores_page_user',
+            draftId: 'admin_updates',
+            source: 'scores_page',
+            connectionId: `scores_${Date.now()}`
+          }));
         };
-        ws.onclose = () => {
-          console.log('Scores WebSocket disconnected, attempting reconnect...');
+        
+        ws.onclose = (event) => {
+          console.log('Scores WebSocket disconnected:', event.code, event.reason);
           // Attempt to reconnect after 2 seconds
           setTimeout(() => {
-            const newWs = connectWebSocket();
-            return newWs;
+            console.log('Attempting to reconnect WebSocket...');
+            connectWebSocket();
           }, 2000);
         };
-        ws.onerror = (error) => console.log('Scores WebSocket error:', error);
+        
+        ws.onerror = (error) => {
+          console.error('Scores WebSocket error:', error);
+        };
         
         return ws;
       } catch (error) {
-        console.log('WebSocket connection failed:', error);
+        console.error('WebSocket connection failed:', error);
         return null;
       }
     };
 
     const ws = connectWebSocket();
     return () => {
-      if (ws) ws.close();
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.close();
+      }
     };
   }, [queryClient, selectedWeek]);
 
