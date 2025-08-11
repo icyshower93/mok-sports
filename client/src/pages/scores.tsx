@@ -1,9 +1,9 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/use-auth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Trophy, Target, Lock, Zap, Flame } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { BottomNav } from "@/components/layout/bottom-nav";
@@ -69,6 +69,7 @@ interface NFLGame {
 
 export default function ScoresPage() {
   const { user } = useAuth();
+  const queryClient = useQueryClient();
   const [selectedWeek, setSelectedWeek] = useState(1); // Start with Week 1
   const [selectedGame, setSelectedGame] = useState<any>(null);
   const [selectedSeason] = useState(2024); // Using completed 2024 NFL season for testing
@@ -103,13 +104,17 @@ export default function ScoresPage() {
     enabled: !!currentLeague
   });
 
-  // Get weekly scores for current league
+  // Get weekly scores for current league with automatic refreshing
   const { data: weeklyScores, isLoading: loadingWeekly } = useQuery<WeeklyScoresResponse>({
     queryKey: [`/api/leagues/${currentLeague?.id}/scores/${selectedSeason}/${selectedWeek}`],
-    enabled: !!currentLeague
+    enabled: !!currentLeague,
+    refetchInterval: 30000, // Refresh scores every 30 seconds
+    refetchIntervalInBackground: true,
+    staleTime: 15000,
+    refetchOnWindowFocus: true
   });
 
-  // Get real NFL games for selected week from the scores API 
+  // Get real NFL games for selected week from the scores API with automatic refreshing
   const { data: nflGamesData, isLoading: loadingGames, error: gamesError } = useQuery({
     queryKey: [`/api/scores/week/${selectedWeek}`],
     queryFn: async () => {
@@ -119,7 +124,12 @@ export default function ScoresPage() {
       console.log(`[DEBUG] API Response:`, data);
       return data;
     },
-    enabled: !!currentLeague && selectedWeek >= 1 && selectedWeek <= 18
+    enabled: !!currentLeague && selectedWeek >= 1 && selectedWeek <= 18,
+    refetchInterval: 30000, // Automatically refresh every 30 seconds
+    refetchIntervalInBackground: true, // Keep refreshing even when tab is not active
+    staleTime: 15000, // Consider data stale after 15 seconds
+    refetchOnWindowFocus: true, // Refresh when user returns to tab
+    refetchOnMount: true // Always fetch fresh data on component mount
   });
 
   // Get user's teams for highlighting
@@ -127,6 +137,62 @@ export default function ScoresPage() {
     queryKey: [`/api/user/stable/${currentLeague?.id}`],
     enabled: !!user && !!currentLeague
   });
+
+  // WebSocket connection for real-time updates
+  useEffect(() => {
+    if (!currentLeague) return;
+
+    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const wsUrl = `${protocol}//${window.location.host}/ws/live-scores`;
+    
+    console.log('[WebSocket] Connecting to live scores:', wsUrl);
+    const ws = new WebSocket(wsUrl);
+    
+    ws.onopen = () => {
+      console.log('[WebSocket] Connected to live scores');
+      // Subscribe to score updates for current league
+      ws.send(JSON.stringify({
+        type: 'subscribe',
+        leagueId: currentLeague.id,
+        week: selectedWeek
+      }));
+    };
+    
+    ws.onmessage = (event) => {
+      try {
+        const message = JSON.parse(event.data);
+        console.log('[WebSocket] Received live score update:', message);
+        
+        if (message.type === 'score-update' || message.type === 'lock-update') {
+          // Invalidate and refetch scores when games are updated
+          queryClient.invalidateQueries({ 
+            queryKey: [`/api/scores/week/${selectedWeek}`] 
+          });
+          queryClient.invalidateQueries({ 
+            queryKey: [`/api/leagues/${currentLeague.id}/scores/${selectedSeason}/${selectedWeek}`] 
+          });
+          
+          console.log('[WebSocket] Refreshed scores after live update');
+        }
+      } catch (error) {
+        console.error('[WebSocket] Error parsing message:', error);
+      }
+    };
+    
+    ws.onerror = (error) => {
+      console.error('[WebSocket] Connection error:', error);
+    };
+    
+    ws.onclose = () => {
+      console.log('[WebSocket] Live scores connection closed');
+    };
+    
+    return () => {
+      if (ws.readyState === WebSocket.OPEN) {
+        ws.close();
+      }
+    };
+  }, [currentLeague, selectedWeek, queryClient, selectedSeason]);
 
   if (!user) {
     return (
