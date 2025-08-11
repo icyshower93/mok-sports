@@ -1,0 +1,104 @@
+Get NFL Game Box Score - Live Real Time:
+
+const fetch = require('node-fetch');
+
+const url = 'https://tank01-nfl-live-in-game-real-time-statistics-nfl.p.rapidapi.com/getNFLBoxScore?gameID=20241020_CAR%40WSH&playByPlay=true&fantasyPoints=true&twoPointConversions=2&passYards=.04&passAttempts=0&passTD=4&passCompletions=0&passInterceptions=-2&pointsPerReception=.5&carries=.2&rushYards=.1&rushTD=6&fumbles=-2&receivingYards=.1&receivingTD=6&targets=0&defTD=6&fgMade=3&fgMissed=-3&xpMade=1&xpMissed=-1&idpTotalTackles=0&idpSoloTackles=0&idpTFL=0&idpQbHits=0&idpInt=0&idpSacks=0&idpPassDeflections=0&idpFumblesRecovered=0';
+const options = {
+  method: 'GET',
+  headers: {
+    'x-rapidapi-key': '005fffe3bemsh0ccee48c9d8de37p1274c5jsn792f60867fc1',
+    'x-rapidapi-host': 'tank01-nfl-live-in-game-real-time-statistics-nfl.p.rapidapi.com'
+  }
+};
+
+try {
+	const response = await fetch(url, options);
+	const result = await response.text();
+	console.log(result);
+} catch (error) {
+	console.error(error);
+}
+
+2. Get Daily NFL Schedule:
+
+const fetch = require('node-fetch');
+
+const url = 'https://tank01-nfl-live-in-game-real-time-statistics-nfl.p.rapidapi.com/getNFLGamesForDate?gameDate=20260104';
+const options = {
+  method: 'GET',
+  headers: {
+    'x-rapidapi-key': '005fffe3bemsh0ccee48c9d8de37p1274c5jsn792f60867fc1',
+    'x-rapidapi-host': 'tank01-nfl-live-in-game-real-time-statistics-nfl.p.rapidapi.com'
+  }
+};
+
+try {
+	const response = await fetch(url, options);
+	const result = await response.text();
+	console.log(result);
+} catch (error) {
+	console.error(error);
+}
+
+3. Get general Game information:
+
+const fetch = require('node-fetch');
+
+const url = 'https://tank01-nfl-live-in-game-real-time-statistics-nfl.p.rapidapi.com/getNFLGameInfo?gameID=20260104_DET%40CHI';
+const options = {
+  method: 'GET',
+  headers: {
+    'x-rapidapi-key': '005fffe3bemsh0ccee48c9d8de37p1274c5jsn792f60867fc1',
+    'x-rapidapi-host': 'tank01-nfl-live-in-game-real-time-statistics-nfl.p.rapidapi.com'
+  }
+};
+
+try {
+	const response = await fetch(url, options);
+	const result = await response.text();
+	console.log(result);
+} catch (error) {
+	console.error(error);
+}
+
+4. Get NFL Team schedule:
+
+const fetch = require('node-fetch');
+
+const url = 'https://tank01-nfl-live-in-game-real-time-statistics-nfl.p.rapidapi.com/getNFLTeamSchedule?teamAbv=PHI&season=2025';
+const options = {
+  method: 'GET',
+  headers: {
+    'x-rapidapi-key': '005fffe3bemsh0ccee48c9d8de37p1274c5jsn792f60867fc1',
+    'x-rapidapi-host': 'tank01-nfl-live-in-game-real-time-statistics-nfl.p.rapidapi.com'
+  }
+};
+
+try {
+	const response = await fetch(url, options);
+	const result = await response.text();
+	console.log(result);
+} catch (error) {
+	console.error(error);
+}
+
+5. Get daily scoreboard - live- real time:
+
+const fetch = require('node-fetch');
+
+const url = 'https://tank01-nfl-live-in-game-real-time-statistics-nfl.p.rapidapi.com/getNFLScoresOnly?gameDate=20250907&topPerformers=true';
+const options = {
+  method: 'GET',
+  headers: {
+    'x-rapidapi-key': '005fffe3bemsh0ccee48c9d8de37p1274c5jsn792f60867fc1',
+    'x-rapidapi-host': 'tank01-nfl-live-in-game-real-time-statistics-nfl.p.rapidapi.com'
+  }
+};
+
+try {
+	const response = await fetch(url, options);
+	const result = await response.text();
+	console.log(result);
+} catch (error) {
+	console.error(error);
+}

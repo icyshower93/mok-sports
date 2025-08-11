@@ -268,6 +268,96 @@ class NFLDataService {
     }
   }
 
+  async getGameBoxScore(gameID: string): Promise<any> {
+    try {
+      console.log(`[NFLDataService] Fetching box score for game ${gameID}...`);
+      const data = await this.makeRapidAPIRequest(`/getNFLBoxScore?gameID=${gameID}&playByPlay=false&fantasyPoints=false`);
+      
+      if (data && data.statusCode === 200 && data.body) {
+        console.log(`[NFLDataService] Got box score for game ${gameID}`);
+        return data.body;
+      }
+      
+      console.log(`[NFLDataService] No box score found for game ${gameID}`);
+      return null;
+    } catch (error) {
+      console.warn(`[NFLDataService] Failed to get box score for game ${gameID}:`, error);
+      return null;
+    }
+  }
+
+  async getGamesForDate(gameDate: string): Promise<any[]> {
+    try {
+      console.log(`[NFLDataService] Fetching games for date ${gameDate}...`);
+      const data = await this.makeRapidAPIRequest(`/getNFLGamesForDate?gameDate=${gameDate}`);
+      
+      if (data && data.statusCode === 200 && data.body && Array.isArray(data.body)) {
+        console.log(`[NFLDataService] Got ${data.body.length} games for ${gameDate}`);
+        return data.body;
+      }
+      
+      console.log(`[NFLDataService] No games found for ${gameDate}`);
+      return [];
+    } catch (error) {
+      console.warn(`[NFLDataService] Failed to get games for ${gameDate}:`, error);
+      return [];
+    }
+  }
+
+  async getGameInfo(gameID: string): Promise<any> {
+    try {
+      console.log(`[NFLDataService] Fetching game info for ${gameID}...`);
+      const data = await this.makeRapidAPIRequest(`/getNFLGameInfo?gameID=${gameID}`);
+      
+      if (data && data.statusCode === 200 && data.body) {
+        console.log(`[NFLDataService] Got game info for ${gameID}`);
+        return data.body;
+      }
+      
+      console.log(`[NFLDataService] No game info found for ${gameID}`);
+      return null;
+    } catch (error) {
+      console.warn(`[NFLDataService] Failed to get game info for ${gameID}:`, error);
+      return null;
+    }
+  }
+
+  async getTeamSchedule(teamAbv: string, season: number = 2024): Promise<any[]> {
+    try {
+      console.log(`[NFLDataService] Fetching team schedule for ${teamAbv} ${season}...`);
+      const data = await this.makeRapidAPIRequest(`/getNFLTeamSchedule?teamAbv=${teamAbv}&season=${season}`);
+      
+      if (data && data.statusCode === 200 && data.body && Array.isArray(data.body)) {
+        console.log(`[NFLDataService] Got ${data.body.length} games for ${teamAbv} ${season}`);
+        return data.body;
+      }
+      
+      console.log(`[NFLDataService] No schedule found for ${teamAbv} ${season}`);
+      return [];
+    } catch (error) {
+      console.warn(`[NFLDataService] Failed to get team schedule for ${teamAbv}:`, error);
+      return [];
+    }
+  }
+
+  async getDailyScoreboard(gameDate: string, topPerformers: boolean = true): Promise<any[]> {
+    try {
+      console.log(`[NFLDataService] Fetching daily scoreboard for ${gameDate}...`);
+      const data = await this.makeRapidAPIRequest(`/getNFLScoresOnly?gameDate=${gameDate}&topPerformers=${topPerformers}`);
+      
+      if (data && data.statusCode === 200 && data.body && Array.isArray(data.body)) {
+        console.log(`[NFLDataService] Got scoreboard with ${data.body.length} games for ${gameDate}`);
+        return data.body;
+      }
+      
+      console.log(`[NFLDataService] No scoreboard found for ${gameDate}`);
+      return [];
+    } catch (error) {
+      console.warn(`[NFLDataService] Failed to get daily scoreboard for ${gameDate}:`, error);
+      return [];
+    }
+  }
+
   // Get games that should be "completed" based on the simulated current time
   async getGamesForTimeSimulation(simulatedWeek: number, simulatedDay: string, simulatedTime: string): Promise<NFLGameData[]> {
     try {
