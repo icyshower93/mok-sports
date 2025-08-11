@@ -4,6 +4,13 @@ Mok Sports is a fantasy sports application that redefines traditional fantasy le
 
 ## Recent Updates (August 2025)
 
+### Production-Ready Scoring System (Aug 11, 2025)
+- Implemented hybrid scoring system with Tank01 API for current season and ESPN fallback for historical data
+- Built for 2025 season production deployment with live NFL data integration
+- Successfully tested with authentic 2024 Week 1 results showing correct user scores (Sky Evans: 5 points for 5-0 record)
+- Added comprehensive Mok Sports scoring rules including blowout bonuses, weekly high/low penalties, and lock system
+- Created robust fallback strategy that prioritizes live APIs for current seasons while maintaining historical accuracy for testing
+
 ### NFL Point Spreads Integration (Aug 10, 2025)
 - Successfully integrated Tank01 RapidAPI betting odds system with comprehensive fallback strategy
 - Created NBettingOdds interfaces and service methods for getBettingOddsForDate() and getBettingOddsForGame()

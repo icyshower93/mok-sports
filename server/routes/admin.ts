@@ -390,84 +390,178 @@ export function registerAdminRoutes(app: Express) {
       let simulatedCount = 0;
       const gameResults = [];
       
-      // Use authentic 2024 Week 1 NFL results from historical data
+      // Production-ready scoring system: Live API with historical fallback
       const incompleteGames = weekGames.filter(game => !game.isCompleted);
       
       if (incompleteGames.length > 0) {
-        console.log(`🏈 [Admin] Using authentic 2024 Week 1 NFL results from historical data`);
+        console.log(`🏈 [Admin] Fetching NFL results for Week ${weekNum}, ${season}`);
         
-        try {
-          // Load authentic 2024 Week 1 results
-          const fs = await import('fs');
-          const path = await import('path');
-          const historicalDataPath = path.join(process.cwd(), 'server/data/nfl2024week1results.json');
-          const historicalData = JSON.parse(fs.readFileSync(historicalDataPath, 'utf8'));
-          
-          console.log(`🏈 [Admin] Loaded ${historicalData.week1_2024_results.length} historical results`);
-          
-          // Process historical results and update our games
-          for (const historicalGame of historicalData.week1_2024_results) {
-            // Find matching game in our database by team codes
-            const matchingGame = incompleteGames.find(dbGame => {
-              const homeTeamCode = dbGame.homeTeam?.code;
-              const awayTeamCode = dbGame.awayTeam?.code;
-              
-              return (homeTeamCode === historicalGame.homeTeam && awayTeamCode === historicalGame.awayTeam) ||
-                     (homeTeamCode === historicalGame.awayTeam && awayTeamCode === historicalGame.homeTeam);
+        let useHistoricalFallback = false;
+        
+        // Try Tank01 API first for current/recent seasons
+        if (season >= 2024) {
+          try {
+            console.log(`🏈 [Admin] Attempting Tank01 API for ${season} Season Week ${weekNum}`);
+            
+            const apiUrl = `https://tank01-nfl-live-in-game-real-time-statistics-nfl.p.rapidapi.com/getNFLScoresOnly?week=${weekNum}&seasonType=reg&season=${season}`;
+            
+            const response = await fetch(apiUrl, {
+              method: 'GET',
+              headers: {
+                'X-RapidAPI-Key': process.env.RAPIDAPI_KEY || '',
+                'X-RapidAPI-Host': 'tank01-nfl-live-in-game-real-time-statistics-nfl.p.rapidapi.com'
+              }
             });
             
-            if (matchingGame) {
-              let homeScore, awayScore;
+            if (response.ok) {
+              const apiData = await response.json();
+              console.log(`🏈 [Admin] Tank01 API returned ${apiData?.body?.length || 0} games for ${season}`);
               
-              // Check if teams are in correct positions or need to be swapped
-              if (matchingGame.homeTeam?.code === historicalGame.homeTeam) {
-                homeScore = historicalGame.homeScore;
-                awayScore = historicalGame.awayScore;
-              } else {
-                // Teams are swapped, so swap scores
-                homeScore = historicalGame.awayScore;
-                awayScore = historicalGame.homeScore;
-              }
-              
-              // Update the game in database with authentic results
-              await db
-                .update(nflGames)
-                .set({
-                  homeScore: homeScore,
-                  awayScore: awayScore,
-                  isCompleted: true,
-                  isTie: homeScore === awayScore,
-                  winnerTeamId: homeScore > awayScore ? matchingGame.homeTeamId : 
-                              homeScore < awayScore ? matchingGame.awayTeamId : null,
-                  updatedAt: new Date(),
-                })
-                .where(eq(nflGames.id, matchingGame.id));
+              // Validate API data quality
+              if (apiData?.body && Array.isArray(apiData.body) && apiData.body.length > 0) {
+                // Check if we're getting the right season data
+                const sampleGame = apiData.body[0];
+                const hasValidScores = sampleGame.homePts !== null && sampleGame.awayPts !== null;
+                const isCurrentSeason = season === 2025; // For 2025 season, accept live data
                 
-              simulatedCount++;
-              
-              // Determine winner
-              let winner = "TIE";
-              if (homeScore > awayScore) {
-                winner = `${matchingGame.homeTeam?.city} ${matchingGame.homeTeam?.name}`;
-              } else if (awayScore > homeScore) {
-                winner = `${matchingGame.awayTeam?.city} ${matchingGame.awayTeam?.name}`;
+                if (hasValidScores || isCurrentSeason) {
+                  console.log(`🏈 [Admin] Using Tank01 API data for production ${season} season`);
+                  
+                  // Process Tank01 API results
+                  for (const apiGame of apiData.body) {
+                    const matchingGame = incompleteGames.find(dbGame => {
+                      const homeMatch = (dbGame.homeTeam?.city + " " + dbGame.homeTeam?.name).toLowerCase().includes(apiGame.home?.toLowerCase() || '');
+                      const awayMatch = (dbGame.awayTeam?.city + " " + dbGame.awayTeam?.name).toLowerCase().includes(apiGame.away?.toLowerCase() || '');
+                      return homeMatch && awayMatch;
+                    });
+                    
+                    if (matchingGame && apiGame.homePts !== null && apiGame.awayPts !== null) {
+                      const homeScore = parseInt(apiGame.homePts) || 0;
+                      const awayScore = parseInt(apiGame.awayPts) || 0;
+                      
+                      await db
+                        .update(nflGames)
+                        .set({
+                          homeScore: homeScore,
+                          awayScore: awayScore,
+                          isCompleted: true,
+                          isTie: homeScore === awayScore,
+                          winnerTeamId: homeScore > awayScore ? matchingGame.homeTeamId : 
+                                      homeScore < awayScore ? matchingGame.awayTeamId : null,
+                          updatedAt: new Date(),
+                        })
+                        .where(eq(nflGames.id, matchingGame.id));
+                        
+                      simulatedCount++;
+                      
+                      let winner = "TIE";
+                      if (homeScore > awayScore) {
+                        winner = `${matchingGame.homeTeam?.city} ${matchingGame.homeTeam?.name}`;
+                      } else if (awayScore > homeScore) {
+                        winner = `${matchingGame.awayTeam?.city} ${matchingGame.awayTeam?.name}`;
+                      }
+                      
+                      gameResults.push({
+                        homeTeam: `${matchingGame.homeTeam?.city} ${matchingGame.homeTeam?.name}`,
+                        awayTeam: `${matchingGame.awayTeam?.city} ${matchingGame.awayTeam?.name}`,
+                        homeScore,
+                        awayScore,
+                        winner,
+                        alreadyCompleted: false
+                      });
+                      
+                      console.log(`🏈 [Admin] Tank01: ${winner} ${homeScore}-${awayScore}`);
+                    }
+                  }
+                } else {
+                  console.log(`🏈 [Admin] Tank01 data quality insufficient, falling back to historical data`);
+                  useHistoricalFallback = true;
+                }
+              } else {
+                console.log(`🏈 [Admin] Tank01 API returned no valid data, using historical fallback`);
+                useHistoricalFallback = true;
               }
-              
-              gameResults.push({
-                homeTeam: `${matchingGame.homeTeam?.city} ${matchingGame.homeTeam?.name}`,
-                awayTeam: `${matchingGame.awayTeam?.city} ${matchingGame.awayTeam?.name}`,
-                homeScore,
-                awayScore,
-                winner,
-                alreadyCompleted: false
+            } else {
+              console.log(`🏈 [Admin] Tank01 API failed with status ${response.status}, using historical fallback`);
+              useHistoricalFallback = true;
+            }
+            
+          } catch (apiError) {
+            console.error(`❌ [Admin] Tank01 API error:`, apiError);
+            useHistoricalFallback = true;
+          }
+        } else {
+          console.log(`🏈 [Admin] Using historical data for ${season} season (pre-2024)`);
+          useHistoricalFallback = true;
+        }
+        
+        // Historical fallback system for development and testing
+        if (useHistoricalFallback && season === 2024 && weekNum === 1) {
+          try {
+            console.log(`🏈 [Admin] Loading ESPN-sourced 2024 Week 1 historical data`);
+            
+            const fs = await import('fs');
+            const path = await import('path');
+            const historicalDataPath = path.join(process.cwd(), 'server/data/nfl2024week1results.json');
+            const historicalData = JSON.parse(fs.readFileSync(historicalDataPath, 'utf8'));
+            
+            for (const historicalGame of historicalData.week1_2024_results) {
+              const matchingGame = incompleteGames.find(dbGame => {
+                const homeTeamCode = dbGame.homeTeam?.code;
+                const awayTeamCode = dbGame.awayTeam?.code;
+                
+                return (homeTeamCode === historicalGame.homeTeam && awayTeamCode === historicalGame.awayTeam) ||
+                       (homeTeamCode === historicalGame.awayTeam && awayTeamCode === historicalGame.homeTeam);
               });
               
-              console.log(`🏈 [Admin] Updated ${winner} with authentic 2024 score: ${homeScore}-${awayScore}`);
+              if (matchingGame) {
+                let homeScore, awayScore;
+                
+                if (matchingGame.homeTeam?.code === historicalGame.homeTeam) {
+                  homeScore = historicalGame.homeScore;
+                  awayScore = historicalGame.awayScore;
+                } else {
+                  homeScore = historicalGame.awayScore;
+                  awayScore = historicalGame.homeScore;
+                }
+                
+                await db
+                  .update(nflGames)
+                  .set({
+                    homeScore: homeScore,
+                    awayScore: awayScore,
+                    isCompleted: true,
+                    isTie: homeScore === awayScore,
+                    winnerTeamId: homeScore > awayScore ? matchingGame.homeTeamId : 
+                                homeScore < awayScore ? matchingGame.awayTeamId : null,
+                    updatedAt: new Date(),
+                  })
+                  .where(eq(nflGames.id, matchingGame.id));
+                  
+                simulatedCount++;
+                
+                let winner = "TIE";
+                if (homeScore > awayScore) {
+                  winner = `${matchingGame.homeTeam?.city} ${matchingGame.homeTeam?.name}`;
+                } else if (awayScore > homeScore) {
+                  winner = `${matchingGame.awayTeam?.city} ${matchingGame.awayTeam?.name}`;
+                }
+                
+                gameResults.push({
+                  homeTeam: `${matchingGame.homeTeam?.city} ${matchingGame.homeTeam?.name}`,
+                  awayTeam: `${matchingGame.awayTeam?.city} ${matchingGame.awayTeam?.name}`,
+                  homeScore,
+                  awayScore,
+                  winner,
+                  alreadyCompleted: false
+                });
+                
+                console.log(`🏈 [Admin] Historical: ${winner} ${homeScore}-${awayScore}`);
+              }
             }
+          } catch (dataError) {
+            console.error(`❌ [Admin] Error loading historical data:`, dataError);
           }
-          
-        } catch (dataError) {
-          console.error(`❌ [Admin] Error loading historical data:`, dataError);
         }
       }
       
