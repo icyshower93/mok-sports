@@ -116,10 +116,10 @@ export default function ScoresPage() {
 
   // Get real NFL games for selected week from the scores API with automatic refreshing
   const { data: nflGamesData, isLoading: loadingGames, error: gamesError } = useQuery({
-    queryKey: [`/api/scores/week/${selectedWeek}`],
+    queryKey: [`/api/scores/week/${selectedWeek}/${selectedSeason}`],
     queryFn: async () => {
-      console.log(`[DEBUG] Fetching games for week ${selectedWeek}`);
-      const response = await fetch(`/api/scores/week/${selectedWeek}`);
+      console.log(`[DEBUG] Fetching games for week ${selectedWeek} season ${selectedSeason}`);
+      const response = await fetch(`/api/scores/week/${selectedWeek}?season=${selectedSeason}`);
       const data = await response.json();
       console.log(`[DEBUG] API Response:`, data);
       return data;

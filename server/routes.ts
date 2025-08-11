@@ -1331,7 +1331,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/scores/week/:week", async (req, res) => {
     try {
       const week = parseInt(req.params.week);
-      const season = 2024; // Using completed 2024 season for testing
+      const season = parseInt(req.query.season as string) || 2024; // Support season parameter, default to 2024
       
       if (isNaN(week) || week < 1 || week > 18) {
         return res.status(400).json({ error: 'Invalid week number. Must be between 1 and 18' });
