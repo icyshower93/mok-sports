@@ -167,30 +167,52 @@ async function importFullSeason() {
           continue;
         }
         
-        // Parse date more carefully
+        // Parse Tank01 date format
         let gameDate: Date;
         try {
           if (game.gameDate) {
-            gameDate = new Date(game.gameDate);
+            // Tank01 returns dates in various formats, handle them all
+            const dateStr = game.gameDate.toString();
+            if (dateStr.includes('T')) {
+              // ISO format
+              gameDate = new Date(dateStr);
+            } else if (dateStr.match(/^\d{8}$/)) {
+              // YYYYMMDD format
+              const year = dateStr.substring(0, 4);
+              const month = dateStr.substring(4, 6);
+              const day = dateStr.substring(6, 8);
+              gameDate = new Date(`${year}-${month}-${day}T17:00:00.000Z`);
+            } else {
+              gameDate = new Date(dateStr);
+            }
+            
             if (isNaN(gameDate.getTime())) {
               throw new Error('Invalid date');
             }
           } else {
-            // Fallback to estimated date based on week
-            const season2025Start = new Date('2025-09-07'); // Week 1 starts Sept 7, 2025
-            const weekNumber = parseInt(game.week) || 1;
-            gameDate = new Date(season2025Start.getTime() + (weekNumber - 1) * 7 * 24 * 60 * 60 * 1000);
+            console.warn(`⚠️ Skipping game - no date provided`);
+            errorCount++;
+            continue;
           }
         } catch (error) {
-          console.warn(`⚠️ Skipping game - invalid date: ${game.gameDate}`);
+          console.warn(`⚠️ Skipping game - invalid date format: ${game.gameDate}`);
           errorCount++;
           continue;
         }
         
-        const week = parseInt(game.week) || 1;
+        // Calculate proper week based on game date since Tank01 week field may be inconsistent
+        let calculatedWeek = 1;
+        const sep7 = new Date('2025-09-07').getTime(); // Week 1 starts Sept 7
+        const daysSinceWeek1 = Math.floor((gameDate.getTime() - sep7) / (24 * 60 * 60 * 1000));
         
-        // Convert week to our schema (add 4 for preseason weeks)
-        const schemaWeek = week + 4;
+        if (daysSinceWeek1 >= 0) {
+          calculatedWeek = Math.floor(daysSinceWeek1 / 7) + 1;
+          // Cap at week 18
+          calculatedWeek = Math.min(calculatedWeek, 18);
+        }
+        
+        // Convert to our schema (add 4 for preseason weeks)
+        const schemaWeek = calculatedWeek + 4;
         
         // Get team UUIDs
         const homeTeamId = await getTeamUUIDByCode(homeTeamCode);
@@ -202,8 +224,8 @@ async function importFullSeason() {
           continue;
         }
         
-        // Create game ID
-        const gameId = `${gameDate.getFullYear()}${String(gameDate.getMonth() + 1).padStart(2, '0')}${String(gameDate.getDate()).padStart(2, '0')}_${awayTeamCode}@${homeTeamCode}`;
+        // Use Tank01 game ID if available, otherwise create one
+        const gameId = game.gameID || `${gameDate.getFullYear()}${String(gameDate.getMonth() + 1).padStart(2, '0')}${String(gameDate.getDate()).padStart(2, '0')}_${awayTeamCode}@${homeTeamCode}`;
         
         // Check if game already exists
         const existingGame = await db.select().from(nflGames).where(eq(nflGames.id, gameId)).limit(1);
@@ -225,7 +247,7 @@ async function importFullSeason() {
           awayScore: null
         });
         
-        console.log(`✅ Imported: Week ${week} (${schemaWeek}) - ${awayTeamCode}@${homeTeamCode} on ${gameDate.toISOString().split('T')[0]}`);
+        console.log(`✅ Imported: Week ${calculatedWeek} (${schemaWeek}) - ${awayTeamCode}@${homeTeamCode} on ${gameDate.toISOString().split('T')[0]}`);
         importCount++;
         
       } catch (gameError) {
