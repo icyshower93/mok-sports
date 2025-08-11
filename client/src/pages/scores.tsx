@@ -78,7 +78,7 @@ export default function ScoresPage() {
   useEffect(() => {
     const connectWebSocket = () => {
       const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-      const wsUrl = `${protocol}//${window.location.host}/admin-ws`;
+      const wsUrl = `${protocol}//${window.location.host}/draft-ws`;
       
       try {
         const ws = new WebSocket(wsUrl);
