@@ -274,7 +274,7 @@ async function getLeagueStandings() {
       .orderBy(desc(sum(userWeeklyScores.totalPoints)))
       .limit(20);
     
-    return standings.map(s => ({
+    const formattedStandings = standings.map(s => ({
       id: s.userId,
       name: s.userName,
       totalPoints: Number(s.totalPoints) || 0,
@@ -282,6 +282,11 @@ async function getLeagueStandings() {
       lockBonusPoints: Number(s.lockBonusPoints) || 0,
       lockAndLoadBonusPoints: Number(s.lockAndLoadBonusPoints) || 0
     }));
+    
+    console.log(`📊 League standings calculated: ${formattedStandings.length} users`);
+    formattedStandings.forEach(s => console.log(`  ${s.name}: ${s.totalPoints} points (base: ${s.weeklyPoints}, lock: ${s.lockBonusPoints}, L&L: ${s.lockAndLoadBonusPoints})`));
+    
+    return formattedStandings;
   } catch (error) {
     console.error('Error getting league standings:', error);
     return [];
@@ -658,7 +663,7 @@ async function calculateUserScores(week: number, season: number) {
         lockAndLoadBonusPoints: userScore.lockAndLoadBonusPoints,
         totalPoints
       }).onConflictDoUpdate({
-        target: [userWeeklyScores.userId, userWeeklyScores.leagueId, userWeeklyScores.week, userWeeklyScores.season],
+        target: userWeeklyScores.uniqueUserWeek.columns,
         set: {
           basePoints: userScore.basePoints,
           lockBonusPoints: userScore.lockBonusPoints,

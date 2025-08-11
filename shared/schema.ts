@@ -1,5 +1,5 @@
 import { sql, relations } from "drizzle-orm";
-import { pgTable, text, varchar, timestamp, integer, boolean } from "drizzle-orm/pg-core";
+import { pgTable, text, varchar, timestamp, integer, boolean, unique } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -180,7 +180,10 @@ export const userWeeklyScores = pgTable("user_weekly_scores", {
   totalPoints: integer("total_points").notNull().default(0), // Sum of all points
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
-});
+}, (table) => ({
+  // Add unique constraint for proper ON CONFLICT handling
+  uniqueUserWeek: unique().on(table.userId, table.leagueId, table.season, table.week),
+}));
 
 // Relations
 export const usersRelations = relations(users, ({ many }) => ({
