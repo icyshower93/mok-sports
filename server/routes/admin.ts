@@ -1,8 +1,9 @@
 import { Express } from 'express';
 import { db } from '../db';
-import { nflGames, nflTeams } from '@shared/schema';
+import { nflGames, nflTeams, userWeeklyScores, stables, users, leagues } from '@shared/schema';
 import { eq, and, gte, lte, sql } from 'drizzle-orm';
 import { nflDataService } from '../services/nflDataService';
+import { calculateBaseMokPoints } from '../utils/mokScoring';
 
 // Simple admin state management - 2024 season for testing
 let adminState = {
@@ -217,6 +218,9 @@ async function processGamesForDate(targetDate: Date): Promise<number> {
             })
             .where(eq(nflGames.id, game.id));
 
+          // Calculate and update Mok points for this game
+          await calculateAndUpdateMokPoints(game.id.toString(), game.season, game.week, homeScore, awayScore, game.homeTeamId, game.awayTeamId, game.homeTeamCode, game.awayTeamCode);
+
           processedCount++;
           console.log(`✅ Updated game: ${game.awayTeamCode} ${awayScore} - ${homeScore} ${game.homeTeamCode}`);
         }
@@ -235,6 +239,177 @@ async function processGamesForDate(targetDate: Date): Promise<number> {
   } catch (error) {
     console.error('Error processing games for date:', error);
     return 0;
+  }
+}
+
+// Calculate and update Mok points for a completed game
+async function calculateAndUpdateMokPoints(
+  gameId: string, 
+  season: number, 
+  week: number, 
+  homeScore: number, 
+  awayScore: number, 
+  homeTeamId: number, 
+  awayTeamId: number,
+  homeTeamCode: string,
+  awayTeamCode: string
+) {
+  try {
+    console.log(`🎯 Calculating Mok points for ${awayTeamCode} @ ${homeTeamCode}: ${awayScore}-${homeScore}`);
+
+    // Get all users who own these teams
+    const teamOwners = await db.select({
+      userId: stables.userId,
+      userName: users.name,
+      leagueId: stables.leagueId,
+      teamId: stables.nflTeamId,
+      teamCode: nflTeams.code
+    })
+    .from(stables)
+    .innerJoin(users, eq(stables.userId, users.id))
+    .innerJoin(nflTeams, eq(stables.nflTeamId, nflTeams.id))
+    .where(sql`${stables.nflTeamId} IN (${homeTeamId}, ${awayTeamId})`);
+
+    console.log(`Found ${teamOwners.length} team owners for this game`);
+
+    // Calculate points for each team owner
+    for (const owner of teamOwners) {
+      const isHomeTeam = owner.teamId === homeTeamId;
+      const teamScore = isHomeTeam ? homeScore : awayScore;
+      const opponentScore = isHomeTeam ? awayScore : homeScore;
+
+      // Create team game result
+      const teamResult = {
+        teamCode: owner.teamCode,
+        opponentCode: isHomeTeam ? awayTeamCode : homeTeamCode,
+        teamScore,
+        opponentScore,
+        week,
+        season,
+        gameDate: new Date(),
+        baseMokPoints: 0,
+        isWin: teamScore > opponentScore,
+        isLoss: teamScore < opponentScore,
+        isTie: teamScore === opponentScore,
+        isBlowout: (teamScore > opponentScore) && (teamScore - opponentScore >= 20),
+        isShutout: opponentScore === 0,
+        isWeeklyHigh: false, // calculated at week end
+        isWeeklyLow: false   // calculated at week end
+      };
+
+      // Calculate base game result points
+      const basePoints = calculateBaseMokPoints(teamResult);
+      const lockPoints = 0; // TODO: implement lock checking
+      const totalPoints = basePoints + lockPoints;
+
+      console.log(`${owner.userName} (${owner.teamCode}): ${totalPoints} points (${teamScore}-${opponentScore})`);
+
+      // Update or insert weekly scores
+      await db.insert(userWeeklyScores)
+        .values({
+          userId: owner.userId,
+          leagueId: owner.leagueId,
+          season,
+          week,
+          basePoints: basePoints,
+          lockBonusPoints: lockPoints,
+          lockAndLoadBonusPoints: 0, // TODO: implement
+          totalPoints: totalPoints
+        })
+        .onConflictDoUpdate({
+          target: [userWeeklyScores.userId, userWeeklyScores.leagueId, userWeeklyScores.season, userWeeklyScores.week],
+          set: {
+            basePoints: sql`${userWeeklyScores.basePoints} + ${basePoints}`,
+            lockBonusPoints: sql`${userWeeklyScores.lockBonusPoints} + ${lockPoints}`,
+            totalPoints: sql`${userWeeklyScores.totalPoints} + ${totalPoints}`,
+            updatedAt: new Date()
+          }
+        });
+    }
+
+    // Check if this is the last game of the week to calculate high/low bonuses
+    await checkAndCalculateWeeklyBonuses(season, week);
+
+  } catch (error) {
+    console.error('Error calculating Mok points:', error);
+  }
+}
+
+// Check if week is complete and calculate weekly high/low bonuses
+async function checkAndCalculateWeeklyBonuses(season: number, week: number) {
+  try {
+    // Count total games and completed games for this week
+    const gameStats = await db.select({
+      total: sql<number>`COUNT(*)`,
+      completed: sql<number>`COUNT(CASE WHEN ${nflGames.isCompleted} = true THEN 1 END)`
+    })
+    .from(nflGames)
+    .where(and(
+      eq(nflGames.season, season),
+      eq(nflGames.week, week)
+    ));
+
+    const { total, completed } = gameStats[0];
+    console.log(`Week ${week}: ${completed}/${total} games completed`);
+
+    // If all games are completed, calculate weekly bonuses
+    if (completed === total && total > 0) {
+      console.log(`🏆 Week ${week} completed! Calculating weekly high/low bonuses...`);
+      
+      // Get all weekly scores for this week
+      const weeklyScores = await db.select({
+        userId: userWeeklyScores.userId,
+        leagueId: userWeeklyScores.leagueId,
+        totalPoints: userWeeklyScores.totalPoints
+      })
+      .from(userWeeklyScores)
+      .where(and(
+        eq(userWeeklyScores.season, season),
+        eq(userWeeklyScores.week, week)
+      ))
+      .orderBy(sql`${userWeeklyScores.totalPoints} DESC`);
+
+      if (weeklyScores.length > 0) {
+        const highScore = weeklyScores[0].totalPoints;
+        const lowScore = weeklyScores[weeklyScores.length - 1].totalPoints;
+        
+        // Award high score bonus (+1 point)
+        const highScoreUsers = weeklyScores.filter(s => s.totalPoints === highScore);
+        for (const user of highScoreUsers) {
+          await db.update(userWeeklyScores)
+            .set({
+              totalPoints: sql`${userWeeklyScores.totalPoints} + 1`,
+              updatedAt: new Date()
+            })
+            .where(and(
+              eq(userWeeklyScores.userId, user.userId),
+              eq(userWeeklyScores.leagueId, user.leagueId),
+              eq(userWeeklyScores.season, season),
+              eq(userWeeklyScores.week, week)
+            ));
+        }
+        
+        // Apply low score penalty (-1 point)
+        const lowScoreUsers = weeklyScores.filter(s => s.totalPoints === lowScore);
+        for (const user of lowScoreUsers) {
+          await db.update(userWeeklyScores)
+            .set({
+              totalPoints: sql`${userWeeklyScores.totalPoints} - 1`,
+              updatedAt: new Date()
+            })
+            .where(and(
+              eq(userWeeklyScores.userId, user.userId),
+              eq(userWeeklyScores.leagueId, user.leagueId),
+              eq(userWeeklyScores.season, season),
+              eq(userWeeklyScores.week, week)
+            ));
+        }
+
+        console.log(`✅ Applied weekly bonuses: High (${highScore} pts) to ${highScoreUsers.length} users, Low (${lowScore} pts) to ${lowScoreUsers.length} users`);
+      }
+    }
+  } catch (error) {
+    console.error('Error calculating weekly bonuses:', error);
   }
 }
 
@@ -329,6 +504,13 @@ export function registerAdminRoutes(app: Express) {
       adminState.processingInProgress = true;
 
       console.log(`🔄 Resetting ${adminState.season} season to September 4...`);
+
+      // Clear all weekly scores for current season
+      await db
+        .delete(userWeeklyScores)
+        .where(eq(userWeeklyScores.season, adminState.season));
+
+      console.log(`🧹 Cleared all weekly scores for ${adminState.season} season`);
 
       // Reset all games to uncompleted with 0 scores for current season
       await db
