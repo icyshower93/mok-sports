@@ -397,9 +397,9 @@ async function checkAndCalculateWeeklyBonuses(season: number, week: number) {
     const { total, completed } = gameStats[0];
     console.log(`Week ${week}: ${completed}/${total} games completed`);
 
-    // If all games are completed, calculate weekly bonuses
+    // Only calculate weekly bonuses if ALL games of the week are completed
     if (completed === total && total > 0) {
-      console.log(`🏆 Week ${week} completed! Calculating weekly high/low bonuses based on NFL team scores...`);
+      console.log(`🏆 ALL Week ${week} games completed! Now calculating weekly high/low bonuses based on NFL team scores...`);
       
       // Find highest and lowest scoring NFL teams this week
       const teamScores = await db.select({
