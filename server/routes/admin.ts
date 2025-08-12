@@ -320,20 +320,20 @@ async function calculateAndUpdateMokPoints(
       let lockBonusPoints = 0;
       let lockAndLoadBonusPoints = 0;
       
-      // Check for lock-and-load bonus first
-      if (isLockAndLoad) {
-        // Lock & Load scoring: +2 for win, -1 for loss
-        if (teamResult.isWin) {
-          lockAndLoadBonusPoints = 2;
-        } else if (teamResult.isLoss) {
-          lockAndLoadBonusPoints = -1;
-        }
-      }
-      
-      // Check for regular lock bonus (can be in addition to lock-and-load)
+      // Check for regular lock bonus first
       if (isLocked && teamResult.isWin) {
         // Regular lock bonus: +1 for wins only
         lockBonusPoints = 1;
+      }
+      
+      // Check for lock-and-load bonus (additional +1/-1 on top of lock)
+      if (isLockAndLoad) {
+        // Lock & Load scoring: +1 for win, -1 for loss (on top of lock bonus)
+        if (teamResult.isWin) {
+          lockAndLoadBonusPoints = 1;
+        } else if (teamResult.isLoss) {
+          lockAndLoadBonusPoints = -1;
+        }
       }
       
       const totalPoints = basePoints + lockBonusPoints + lockAndLoadBonusPoints;
