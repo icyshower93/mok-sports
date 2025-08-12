@@ -135,9 +135,9 @@ export default function LeaguePage() {
                   className={`${member.isCurrentUser ? 'ring-2 ring-primary/20 bg-primary/5' : ''}`}
                 >
                   <CardContent className="p-4">
-                    <div className="flex items-center justify-between gap-4">
-                      {/* Left: Rank + User Info */}
-                      <div className="flex items-center space-x-3 flex-1 min-w-0">
+                    <div className="flex items-center w-full">
+                      {/* Left Side: Rank + Full Name (takes up most space) */}
+                      <div className="flex items-center space-x-3 flex-1">
                         {/* Rank Badge */}
                         <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 ${
                           member.rank === 1 ? 'bg-yellow-500 text-white' :
@@ -148,23 +148,23 @@ export default function LeaguePage() {
                           {member.rank}
                         </div>
                         
-                        {/* User Info */}
-                        <div className="flex items-center flex-1 min-w-0">
-                          <span className="font-semibold text-base truncate">{formatName(member.name)}</span>
+                        {/* Full Name (no truncation) */}
+                        <div className="flex-1">
+                          <span className="font-semibold text-base">{member.name}</span>
                         </div>
                       </div>
                       
-                      {/* Right: Stats + Chevron */}
-                      <div className="flex items-center space-x-6 text-sm flex-shrink-0">
-                        <div className="text-center min-w-[48px]">
+                      {/* Right Side: Stats pushed to far right */}
+                      <div className="flex items-center space-x-4 ml-auto">
+                        <div className="text-center min-w-[36px]">
                           <div className="text-xs text-muted-foreground">LOCKS</div>
                           <div className="font-medium">{member.locks}</div>
                         </div>
-                        <div className="text-center min-w-[48px]">
+                        <div className="text-center min-w-[36px]">
                           <div className="text-xs text-muted-foreground">SKINS</div>
                           <div className="font-medium">{member.skinsWon || 0}</div>
                         </div>
-                        <div className="text-center min-w-[48px]">
+                        <div className="text-center min-w-[36px]">
                           <div className="text-xs text-muted-foreground">PTS</div>
                           <div className="text-lg font-bold">{member.points}</div>
                         </div>
@@ -172,7 +172,7 @@ export default function LeaguePage() {
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="p-2 ml-2"
+                          className="p-1 h-8 w-8"
                           onClick={() => toggleUserExpansion(member.name)}
                         >
                           {expandedUsers.has(member.name) ? (
