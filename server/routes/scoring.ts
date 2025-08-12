@@ -453,7 +453,17 @@ router.get("/leagues/:leagueId/week-scores/:season/:week", authenticateUser, asy
 
     // Check if week is complete and get high/low score teams
     const { endOfWeekProcessor } = await import("../utils/endOfWeekProcessor.js");
-    const weekEndResults = await endOfWeekProcessor.getWeekEndResults(parseInt(season), parseInt(week), leagueId);
+    
+    // Get current simulated date from admin state
+    let currentSimulatedDate: Date | undefined;
+    try {
+      const adminModule = await import("./admin.js");
+      currentSimulatedDate = adminModule.getAdminState().currentDate;
+    } catch (error) {
+      console.log('[Scoring] Could not get admin state, using fallback logic');
+    }
+    
+    const weekEndResults = await endOfWeekProcessor.getWeekEndResults(parseInt(season), parseInt(week), leagueId, currentSimulatedDate);
 
     // If no weekly scores exist yet, get league members and show them with 0 points
     if (weeklyScores.length === 0) {

@@ -384,23 +384,23 @@ async function calculateAndUpdateMokPoints(
 // Check if week is complete and calculate weekly high/low bonuses
 async function checkAndCalculateWeeklyBonuses(season: number, week: number) {
   try {
-    // Count total games and completed games for this week
-    const gameStats = await db.select({
-      total: sql<number>`COUNT(*)`,
-      completed: sql<number>`COUNT(CASE WHEN ${nflGames.isCompleted} = true THEN 1 END)`
-    })
-    .from(nflGames)
-    .where(and(
-      eq(nflGames.season, season),
-      eq(nflGames.week, week)
-    ));
+    // Get all games for this week
+    const weekGames = await db.select().from(nflGames).where(
+      and(
+        eq(nflGames.season, season),
+        eq(nflGames.week, week)
+      )
+    );
 
-    const { total, completed } = gameStats[0];
-    console.log(`Week ${week}: ${completed}/${total} games completed`);
+    // Check if week is complete using the corrected logic that considers simulated date
+    const { endOfWeekProcessor } = await import("../utils/endOfWeekProcessor.js");
+    const weekComplete = await endOfWeekProcessor.isWeekComplete(season, week, adminState.currentDate);
+    
+    console.log(`Week ${week}: ${weekGames.length} total games, week complete: ${weekComplete} (simulated date: ${adminState.currentDate.toISOString()})`);
 
-    // Only calculate weekly bonuses if ALL games of the week are completed
-    if (completed === total && total > 0) {
-      console.log(`🏆 ALL Week ${week} games completed! Now calculating weekly high/low bonuses based on NFL team scores...`);
+    // Only calculate weekly bonuses if ALL games of the week are actually completed according to simulated time
+    if (weekComplete && weekGames.length > 0) {
+      console.log(`🏆 Week ${week} actually completed according to simulated date! Now calculating weekly high/low bonuses...`);
       
       // Find highest and lowest scoring NFL teams this week
       const teamScores = await db.select({

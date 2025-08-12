@@ -43,7 +43,7 @@ export interface WeekEndResults {
 export class EndOfWeekProcessor {
   
   // Check if a week is complete (all games finished)
-  async isWeekComplete(season: number, week: number): Promise<boolean> {
+  async isWeekComplete(season: number, week: number, currentSimulatedDate?: Date): Promise<boolean> {
     const weekGames = await db.select().from(nflGames).where(
       and(
         eq(nflGames.season, season),
@@ -51,15 +51,29 @@ export class EndOfWeekProcessor {
       )
     );
     
-    return weekGames.length > 0 && weekGames.every(game => game.isCompleted);
+    if (weekGames.length === 0) return false;
+    
+    // If currentSimulatedDate is provided, check if all games have actually occurred
+    if (currentSimulatedDate) {
+      const gamesActuallyCompleted = weekGames.filter(game => {
+        // Game must be marked as completed AND its date must have passed
+        return game.isCompleted && new Date(game.gameDate) <= currentSimulatedDate;
+      });
+      
+      // Week is complete only if ALL games have both occurred and been marked as completed
+      return gamesActuallyCompleted.length === weekGames.length;
+    }
+    
+    // Fallback to original logic if no simulated date provided
+    return weekGames.every(game => game.isCompleted);
   }
 
   // Process end-of-week: determine high/low scores and award weekly skins
-  async processEndOfWeek(season: number, week: number, leagueId: string): Promise<WeekEndResults> {
+  async processEndOfWeek(season: number, week: number, leagueId: string, currentSimulatedDate?: Date): Promise<WeekEndResults> {
     console.log(`[EndOfWeek] Processing end of week ${week} for season ${season}, league ${leagueId}`);
     
     // First, verify week is actually complete
-    const weekComplete = await this.isWeekComplete(season, week);
+    const weekComplete = await this.isWeekComplete(season, week, currentSimulatedDate);
     if (!weekComplete) {
       throw new Error(`Cannot process end of week - Week ${week} is not yet complete`);
     }
@@ -354,15 +368,15 @@ export class EndOfWeekProcessor {
   }
 
   // Get end-of-week results for display purposes
-  async getWeekEndResults(season: number, week: number, leagueId: string): Promise<WeekEndResults | null> {
-    const weekComplete = await this.isWeekComplete(season, week);
+  async getWeekEndResults(season: number, week: number, leagueId: string, currentSimulatedDate?: Date): Promise<WeekEndResults | null> {
+    const weekComplete = await this.isWeekComplete(season, week, currentSimulatedDate);
     if (!weekComplete) {
       return null;
     }
 
     // This would return the same data as processEndOfWeek but without making changes
     // Implementation would be similar but read-only
-    return this.processEndOfWeek(season, week, leagueId);
+    return this.processEndOfWeek(season, week, leagueId, currentSimulatedDate);
   }
 }
 
