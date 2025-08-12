@@ -72,6 +72,107 @@ router.get("/current-week", async (req, res) => {
   }
 });
 
+// Get individual member stats for a specific league/season/week
+router.get("/leagues/:leagueId/member-stats/:season/:week", async (req, res) => {
+  try {
+    const { leagueId, season, week } = req.params;
+    const user = req.user;
+    
+    if (!user) {
+      return res.status(401).json({ error: 'Authentication required' });
+    }
+
+    // Get user's total points for the season
+    const [userSeasonScore] = await db.select({
+      totalPoints: sql<number>`COALESCE(SUM(${userWeeklyScores.totalPoints}), 0)`
+    })
+    .from(userWeeklyScores)
+    .where(
+      and(
+        eq(userWeeklyScores.userId, user.id),
+        eq(userWeeklyScores.leagueId, leagueId),
+        eq(userWeeklyScores.season, parseInt(season))
+      )
+    );
+
+    // Get user's weekly points for current week
+    const [userWeekScore] = await db.select({
+      weeklyPoints: userWeeklyScores.totalPoints
+    })
+    .from(userWeeklyScores)
+    .where(
+      and(
+        eq(userWeeklyScores.userId, user.id),
+        eq(userWeeklyScores.leagueId, leagueId),
+        eq(userWeeklyScores.season, parseInt(season)),
+        eq(userWeeklyScores.week, parseInt(week))
+      )
+    );
+
+    // Get user's rank in the league
+    const leagueRankings = await db.select({
+      userId: userWeeklyScores.userId,
+      totalPoints: sql<number>`COALESCE(SUM(${userWeeklyScores.totalPoints}), 0)`
+    })
+    .from(userWeeklyScores)
+    .where(
+      and(
+        eq(userWeeklyScores.leagueId, leagueId),
+        eq(userWeeklyScores.season, parseInt(season))
+      )
+    )
+    .groupBy(userWeeklyScores.userId)
+    .orderBy(sql`COALESCE(SUM(${userWeeklyScores.totalPoints}), 0) DESC`);
+
+    const userRank = leagueRankings.findIndex(r => r.userId === user.id) + 1;
+
+    // Calculate skins won (number of weeks where user had highest score)
+    const weeksWithHighestScore = await db.select({
+      week: userWeeklyScores.week,
+      maxPoints: sql<number>`MAX(${userWeeklyScores.totalPoints})`
+    })
+    .from(userWeeklyScores)
+    .where(
+      and(
+        eq(userWeeklyScores.leagueId, leagueId),
+        eq(userWeeklyScores.season, parseInt(season))
+      )
+    )
+    .groupBy(userWeeklyScores.week);
+
+    let skinsWon = 0;
+    for (const weekData of weeksWithHighestScore) {
+      const [userWeekData] = await db.select({
+        points: userWeeklyScores.totalPoints
+      })
+      .from(userWeeklyScores)
+      .where(
+        and(
+          eq(userWeeklyScores.userId, user.id),
+          eq(userWeeklyScores.leagueId, leagueId),
+          eq(userWeeklyScores.season, parseInt(season)),
+          eq(userWeeklyScores.week, weekData.week)
+        )
+      );
+
+      if (userWeekData && userWeekData.points === weekData.maxPoints) {
+        skinsWon++;
+      }
+    }
+
+    res.json({
+      totalPoints: userSeasonScore?.totalPoints || 0,
+      weeklyPoints: userWeekScore?.weeklyPoints || 0,
+      rank: userRank || 0,
+      skinsWon
+    });
+
+  } catch (error) {
+    console.error('[Scoring] Error getting member stats:', error);
+    res.status(500).json({ error: 'Failed to get member stats' });
+  }
+});
+
 // Get week scores with team ownership and lock data
 router.get("/week/:week", async (req, res) => {
   try {
@@ -173,7 +274,36 @@ router.get("/week/:week", async (req, res) => {
         awayMokPoints: shouldShowScores && row.away_owner_name ? calculateGameMokPoints(row.away_score, row.home_score, false, row.away_locked, row.away_lock_and_load) : 0
       };
     });
+
+    // Calculate user scores for this week
+    const userScores = new Map();
     
+    games.forEach(game => {
+      if (game.homeOwner && game.homeMokPoints > 0) {
+        userScores.set(game.homeOwner, (userScores.get(game.homeOwner) || 0) + game.homeMokPoints);
+      }
+      if (game.awayOwner && game.awayMokPoints > 0) {
+        userScores.set(game.awayOwner, (userScores.get(game.awayOwner) || 0) + game.awayMokPoints);
+      }
+    });
+
+    // Add user names and create response
+    const userRankings = [];
+    for (const [userId, points] of userScores.entries()) {
+      const user = await storage.getUser(userId);
+      if (user) {
+        userRankings.push({
+          userId,
+          name: user.name,
+          weeklyPoints: points,
+          gamesRemaining: games.filter(g => !g.isCompleted && (g.homeOwner === userId || g.awayOwner === userId)).length
+        });
+      }
+    }
+
+    // Sort by weekly points
+    userRankings.sort((a, b) => b.weeklyPoints - a.weeklyPoints);
+
     res.json({
       week,
       season,
@@ -260,6 +390,127 @@ router.get("/standings/:leagueId", async (req, res) => {
   } catch (error) {
     console.error('[Scoring] Error getting standings:', error);
     res.status(500).json({ error: 'Failed to get standings' });
+  }
+});
+
+// Get weekly rankings for a specific league/season/week
+router.get("/leagues/:leagueId/week-scores/:season/:week", async (req, res) => {
+  try {
+    const { leagueId, season, week } = req.params;
+    const user = req.user;
+    
+    if (!user) {
+      return res.status(401).json({ error: 'Authentication required' });
+    }
+
+    // Get weekly scores from the database
+    const weeklyScores = await db.select({
+      userId: userWeeklyScores.userId,
+      userName: users.name,
+      weeklyPoints: userWeeklyScores.totalPoints,
+      gamesRemaining: sql<number>`0` // Will calculate below
+    })
+    .from(userWeeklyScores)
+    .innerJoin(users, eq(userWeeklyScores.userId, users.id))
+    .where(
+      and(
+        eq(userWeeklyScores.leagueId, leagueId),
+        eq(userWeeklyScores.season, parseInt(season)),
+        eq(userWeeklyScores.week, parseInt(week))
+      )
+    )
+    .orderBy(sql`${userWeeklyScores.totalPoints} DESC`);
+
+    // Add isCurrentUser flag and format for frontend
+    const rankings = weeklyScores.map(score => ({
+      name: score.userName,
+      weeklyPoints: score.weeklyPoints,
+      gamesRemaining: score.gamesRemaining,
+      isCurrentUser: score.userId === user.id
+    }));
+
+    res.json(rankings);
+
+  } catch (error) {
+    console.error('[Scoring] Error getting weekly rankings:', error);
+    res.status(500).json({ error: 'Failed to get weekly rankings' });
+  }
+});
+
+// Get teams left to play for a specific league/season/week
+router.get("/leagues/:leagueId/teams-left-to-play/:season/:week", async (req, res) => {
+  try {
+    const { leagueId, season, week } = req.params;
+    
+    // Get games that haven't been completed yet for this week
+    const incompleteGames = await db.execute(sql`
+      SELECT DISTINCT
+        ht.code as home_team_code,
+        at.code as away_team_code,
+        ht.name as home_team_name,
+        at.name as away_team_name,
+        home_user.name as home_owner_name,
+        away_user.name as away_owner_name,
+        g.game_date
+      FROM nfl_games g
+      JOIN nfl_teams ht ON g.home_team_id = ht.id
+      JOIN nfl_teams at ON g.away_team_id = at.id
+      -- Get team owners from draft picks
+      LEFT JOIN (
+        SELECT DISTINCT dp.nfl_team_id, u.name
+        FROM draft_picks dp
+        JOIN users u ON dp.user_id = u.id
+        JOIN drafts d ON dp.draft_id = d.id
+        WHERE d.league_id = ${leagueId}
+      ) home_user ON home_user.nfl_team_id = ht.id
+      LEFT JOIN (
+        SELECT DISTINCT dp.nfl_team_id, u.name
+        FROM draft_picks dp
+        JOIN users u ON dp.user_id = u.id
+        JOIN drafts d ON dp.draft_id = d.id
+        WHERE d.league_id = ${leagueId}
+      ) away_user ON away_user.nfl_team_id = at.id
+      WHERE g.week = ${week} 
+        AND g.season = ${season}
+        AND g.is_completed = false
+      ORDER BY g.game_date
+    `);
+
+    const teamsLeftToPlay = [];
+    
+    incompleteGames.rows.forEach((game: any) => {
+      // Add home team if it has an owner
+      if (game.home_owner_name) {
+        teamsLeftToPlay.push({
+          teamCode: game.home_team_code,
+          teamName: game.home_team_name,
+          ownerName: game.home_owner_name,
+          opponent: `@ ${game.away_team_code}`,
+          gameDate: game.game_date
+        });
+      }
+      
+      // Add away team if it has an owner
+      if (game.away_owner_name) {
+        teamsLeftToPlay.push({
+          teamCode: game.away_team_code,
+          teamName: game.away_team_name,
+          ownerName: game.away_owner_name,
+          opponent: `vs ${game.home_team_code}`,
+          gameDate: game.game_date
+        });
+      }
+    });
+
+    res.json({
+      teamsLeftToPlay,
+      totalTeams: teamsLeftToPlay.length,
+      gamesRemaining: incompleteGames.rows.length
+    });
+
+  } catch (error) {
+    console.error('[Scoring] Error getting teams left to play:', error);
+    res.status(500).json({ error: 'Failed to get teams left to play' });
   }
 });
 
