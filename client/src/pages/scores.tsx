@@ -534,9 +534,13 @@ export default function ScoresPage() {
                         })}{" "}
                         ET
                       </span>
-                      {game.isCompleted && (
+                      {game.isCompleted ? (
                         <Badge variant="outline" className="text-xs">
                           Final
+                        </Badge>
+                      ) : (
+                        <Badge variant="outline" className="text-xs">
+                          Scheduled
                         </Badge>
                       )}
                     </div>
@@ -600,7 +604,7 @@ export default function ScoresPage() {
                         <div
                           className={`text-xl font-bold ${awayWin ? "text-foreground" : "text-muted-foreground"}`}
                         >
-                          {game.awayScore !== null &&
+                          {game.isCompleted && game.awayScore !== null &&
                           game.awayScore !== undefined
                             ? game.awayScore
                             : "-"}
@@ -664,7 +668,7 @@ export default function ScoresPage() {
                         <div
                           className={`text-xl font-bold ${homeWin ? "text-foreground" : "text-muted-foreground"}`}
                         >
-                          {game.homeScore !== null &&
+                          {game.isCompleted && game.homeScore !== null &&
                           game.homeScore !== undefined
                             ? game.homeScore
                             : "-"}
