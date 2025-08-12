@@ -70,11 +70,15 @@ export default function MainPage() {
     enabled: !!selectedLeague && !!user,
   });
 
-  // Fetch weekly rankings - fixed endpoint
-  const { data: weeklyRankings = [], isLoading: weeklyLoading } = useQuery({
+  // Fetch weekly rankings - fixed endpoint  
+  const { data: weeklyRankingsData, isLoading: weeklyLoading } = useQuery({
     queryKey: [`/api/scoring/leagues/${selectedLeague}/week-scores/2024/${currentWeek}`],
     enabled: !!selectedLeague,
   });
+
+  // Extract rankings and week-end results
+  const weeklyRankings = (weeklyRankingsData as any)?.rankings || [];
+  const weekEndResults = (weeklyRankingsData as any)?.weekEndResults;
 
   // Fetch teams left to play for current week
   const { data: teamsLeftData } = useQuery({
@@ -255,6 +259,93 @@ export default function MainPage() {
                       )}
                     </Button>
                   )}
+                </div>
+              )}
+
+              {/* Week-End Results Section */}
+              {weekEndResults?.weekComplete && (
+                <div className="mt-4 pt-4 border-t border-border">
+                  <h4 className="font-semibold text-sm mb-3 flex items-center gap-2">
+                    <Target className="w-4 h-4" />
+                    Week {currentWeek} Results
+                  </h4>
+                  
+                  <div className="space-y-3">
+                    {/* High Score Teams */}
+                    {weekEndResults.highScoreTeams && weekEndResults.highScoreTeams.length > 0 && (
+                      <div className="bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800 rounded-lg p-3">
+                        <div className="flex items-center gap-2 mb-2">
+                          <Trophy className="w-4 h-4 text-green-600" />
+                          <span className="font-medium text-green-700 dark:text-green-300 text-sm">
+                            Week High (+1 bonus)
+                          </span>
+                        </div>
+                        {weekEndResults.highScoreTeams.map((team: any) => (
+                          <div key={team.teamId} className="flex items-center gap-3">
+                            <img
+                              src={`https://a.espncdn.com/i/teamlogos/nfl/500/${team.teamCode.toLowerCase()}.png`}
+                              alt={team.teamCode}
+                              className="w-6 h-6"
+                            />
+                            <div>
+                              <div className="font-medium text-sm">{team.teamName}</div>
+                              <div className="text-xs text-green-600 dark:text-green-400">
+                                {team.score} points
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Low Score Teams */}
+                    {weekEndResults.lowScoreTeams && weekEndResults.lowScoreTeams.length > 0 && (
+                      <div className="bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 rounded-lg p-3">
+                        <div className="flex items-center gap-2 mb-2">
+                          <Target className="w-4 h-4 text-red-600" />
+                          <span className="font-medium text-red-700 dark:text-red-300 text-sm">
+                            Week Low (-1 penalty)
+                          </span>
+                        </div>
+                        {weekEndResults.lowScoreTeams.map((team: any) => (
+                          <div key={team.teamId} className="flex items-center gap-3">
+                            <img
+                              src={`https://a.espncdn.com/i/teamlogos/nfl/500/${team.teamCode.toLowerCase()}.png`}
+                              alt={team.teamCode}
+                              className="w-6 h-6"
+                            />
+                            <div>
+                              <div className="font-medium text-sm">{team.teamName}</div>
+                              <div className="text-xs text-red-600 dark:text-red-400">
+                                {team.score} points
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Weekly Skins Winner */}
+                    {weekEndResults.weeklySkinsWinner && (
+                      <div className="bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 rounded-lg p-3">
+                        <div className="flex items-center gap-2 mb-2">
+                          <Trophy className="w-4 h-4 text-amber-600" />
+                          <span className="font-medium text-amber-700 dark:text-amber-300 text-sm">
+                            Weekly Skins Winner
+                          </span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <div className="font-medium text-sm">{weekEndResults.weeklySkinsWinner.userName}</div>
+                          <div className="text-right">
+                            <div className="font-bold text-amber-600 text-sm">${weekEndResults.weeklySkinsWinner.prizeAmount}</div>
+                            <div className="text-xs text-amber-600">
+                              {weekEndResults.weeklySkinsWinner.totalWeeklyPoints} points
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
               )}
             </CardContent>
