@@ -603,8 +603,32 @@ export function setupScoringRoutes(app: express.Express) {
 
       const { season, week, lockedTeamId, lockAndLoadTeamId } = lockSchema.parse(req.body);
 
-      // TODO: Validate lock usage if provided
+      // Check week lock restrictions first
+      const { weekLockRestrictions } = await import("../utils/weekLockRestrictions.js");
+      const weekLockStatus = await weekLockRestrictions.checkWeekLockStatus(season, week);
+      
+      if (!weekLockStatus.canLock) {
+        return res.status(400).json({ 
+          message: weekLockStatus.reason || "Locks are not available during this week",
+          weekStatus: weekLockStatus.weekStatus,
+          gamesInProgress: weekLockStatus.gamesInProgress,
+          gamesCompleted: weekLockStatus.gamesCompleted,
+          totalGames: weekLockStatus.totalGames
+        });
+      }
+
+      // Validate team-specific lock restrictions
       if (lockedTeamId) {
+        // Get team code from team ID
+        const team = await storage.getNflTeamById(lockedTeamId);
+        if (team) {
+          const teamLockStatus = await weekLockRestrictions.checkTeamLockStatus(season, week, team.code);
+          if (!teamLockStatus.canLock) {
+            return res.status(400).json({ message: teamLockStatus.reason });
+          }
+        }
+        
+        // TODO: Additional validation for lock usage limits
         // const validation = await validateLockUsage(user.id, leagueId, lockedTeamId, 'lock');
         // if (!validation.valid) {
         //   return res.status(400).json({ message: validation.reason });
@@ -612,6 +636,16 @@ export function setupScoringRoutes(app: express.Express) {
       }
 
       if (lockAndLoadTeamId) {
+        // Get team code from team ID  
+        const team = await storage.getNflTeamById(lockAndLoadTeamId);
+        if (team) {
+          const teamLockStatus = await weekLockRestrictions.checkTeamLockStatus(season, week, team.code);
+          if (!teamLockStatus.canLock) {
+            return res.status(400).json({ message: teamLockStatus.reason });
+          }
+        }
+        
+        // TODO: Additional validation for lock & load usage limits
         // const validation = await validateLockUsage(user.id, leagueId, lockAndLoadTeamId, 'lockAndLoad');
         // if (!validation.valid) {
         //   return res.status(400).json({ message: validation.reason });
@@ -710,14 +744,46 @@ export function setupScoringRoutes(app: express.Express) {
       const validationSchema = z.object({
         nflTeamId: z.string(),
         lockType: z.enum(['lock', 'lockAndLoad']),
+        season: z.number(),
+        week: z.number(),
       });
 
-      const { nflTeamId, lockType } = validationSchema.parse(req.body);
+      const { nflTeamId, lockType, season, week } = validationSchema.parse(req.body);
 
-      // TODO: Implement validateLockUsage function
-      const validation = { valid: true, reason: null };
+      // Check week lock restrictions
+      const { weekLockRestrictions } = await import("../utils/weekLockRestrictions.js");
+      const weekLockStatus = await weekLockRestrictions.checkWeekLockStatus(season, week);
       
-      res.json(validation);
+      if (!weekLockStatus.canLock) {
+        return res.json({
+          valid: false,
+          reason: weekLockStatus.reason,
+          weekStatus: weekLockStatus.weekStatus,
+          gamesInProgress: weekLockStatus.gamesInProgress,
+          gamesCompleted: weekLockStatus.gamesCompleted,
+          totalGames: weekLockStatus.totalGames
+        });
+      }
+
+      // Check team-specific restrictions
+      const team = await storage.getNflTeamById(nflTeamId);
+      if (team) {
+        const teamLockStatus = await weekLockRestrictions.checkTeamLockStatus(season, week, team.code);
+        if (!teamLockStatus.canLock) {
+          return res.json({
+            valid: false,
+            reason: teamLockStatus.reason
+          });
+        }
+      }
+
+      // TODO: Check usage limits (locks per team per season, etc.)
+      
+      res.json({ 
+        valid: true,
+        weekStatus: weekLockStatus.weekStatus,
+        message: weekLockRestrictions.getLockStatusMessage(weekLockStatus)
+      });
     } catch (error) {
       if (error instanceof z.ZodError) {
         return res.status(400).json({ 
@@ -727,6 +793,51 @@ export function setupScoringRoutes(app: express.Express) {
       }
       console.error('Error validating lock usage:', error);
       res.status(500).json({ message: "Failed to validate lock usage" });
+    }
+  });
+
+  // Get week lock status for frontend
+  app.get("/api/leagues/:leagueId/week-lock-status/:season/:week", async (req, res) => {
+    try {
+      const user = await getAuthenticatedUser(req);
+      if (!user) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+
+      const { leagueId, season, week } = req.params;
+      
+      // Check if user is member of this league
+      const isMember = await storage.isUserInLeague(user.id, leagueId);
+      if (!isMember) {
+        return res.status(403).json({ message: "Not authorized to view this league" });
+      }
+
+      const seasonNum = parseInt(season);
+      const weekNum = parseInt(week);
+
+      if (isNaN(seasonNum) || isNaN(weekNum)) {
+        return res.status(400).json({ message: "Invalid season or week" });
+      }
+
+      // Get week lock status
+      const { weekLockRestrictions } = await import("../utils/weekLockRestrictions.js");
+      const weekLockStatus = await weekLockRestrictions.checkWeekLockStatus(seasonNum, weekNum);
+      
+      res.json({
+        canLock: weekLockStatus.canLock,
+        weekStatus: weekLockStatus.weekStatus,
+        reason: weekLockStatus.reason,
+        message: weekLockRestrictions.getLockStatusMessage(weekLockStatus),
+        gamesInProgress: weekLockStatus.gamesInProgress,
+        gamesCompleted: weekLockStatus.gamesCompleted,
+        totalGames: weekLockStatus.totalGames,
+        firstGameStart: weekLockStatus.firstGameStart,
+        lastGameEnd: weekLockStatus.lastGameEnd
+      });
+
+    } catch (error) {
+      console.error('Error getting week lock status:', error);
+      res.status(500).json({ message: "Failed to get week lock status" });
     }
   });
 

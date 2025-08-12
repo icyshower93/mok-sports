@@ -46,6 +46,13 @@ export default function StablePage() {
     enabled: !!user && !!selectedLeague,
   });
 
+  // Fetch week lock status to check if locks are allowed
+  const { data: weekLockStatus, isLoading: lockStatusLoading } = useQuery({
+    queryKey: [`/api/leagues/${selectedLeague}/week-lock-status/2024/${selectedWeek}`],
+    enabled: !!user && !!selectedLeague,
+    refetchInterval: 30000, // Check every 30 seconds for live updates
+  });
+
   // Mutations for locking teams
   // Development reset mutation
   const resetLocksMutation = useMutation({
@@ -165,10 +172,10 @@ export default function StablePage() {
     },
   });
 
-  // Lock deadline (Thursday 8:20 PM ET for current week)
-  const lockDeadline = new Date();
-  lockDeadline.setDate(lockDeadline.getDate() + (4 - lockDeadline.getDay() + 7) % 7); // Next Thursday
-  lockDeadline.setHours(20, 20, 0, 0); // 8:20 PM
+  // Check if locks are currently allowed based on week status
+  const locksAllowed = weekLockStatus?.canLock ?? true;
+  const lockRestrictionMessage = weekLockStatus?.message || '';
+  const weekStatus = weekLockStatus?.weekStatus || 'pre_week';
 
   // Dialog handlers
   const handleLockClick = (team: any) => {
@@ -185,6 +192,17 @@ export default function StablePage() {
 
   const confirmLock = () => {
     try {
+      // Check if locks are allowed before proceeding
+      if (!locksAllowed) {
+        toast({
+          title: "Locks Not Available",
+          description: lockRestrictionMessage,
+          variant: "destructive"
+        });
+        setLockDialogOpen(false);
+        return;
+      }
+
       console.log('[Dialog] Confirming lock for team:', selectedTeam?.nflTeam?.name);
       console.log('[Dialog] selectedTeam full object:', JSON.stringify(selectedTeam, null, 2));
       console.log('[Dialog] selectedLeague:', selectedLeague);
@@ -211,6 +229,17 @@ export default function StablePage() {
 
   const confirmLockAndLoad = () => {
     try {
+      // Check if locks are allowed before proceeding
+      if (!locksAllowed) {
+        toast({
+          title: "Lock & Load Not Available",
+          description: lockRestrictionMessage,
+          variant: "destructive"
+        });
+        setLockAndLoadDialogOpen(false);
+        return;
+      }
+
       console.log('[Dialog] Confirming Lock & Load for team:', selectedTeam?.nflTeam?.name);
       console.log('[Dialog] selectedTeam full object:', JSON.stringify(selectedTeam, null, 2));
       
@@ -318,7 +347,14 @@ export default function StablePage() {
                 <div className="flex-1">
                   <CardTitle className="text-lg mb-1">Choose Your Lock</CardTitle>
                   <div className="text-sm text-muted-foreground">
-                    Deadline: {lockDeadline.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })} 8:20 PM ET
+                    {locksAllowed ? (
+                      `Locks available - ${lockRestrictionMessage}`
+                    ) : (
+                      <span className="text-red-600 dark:text-red-400 font-medium flex items-center space-x-1">
+                        <AlertTriangle className="w-4 h-4" />
+                        <span>{lockRestrictionMessage}</span>
+                      </span>
+                    )}
                   </div>
                 </div>
                 <Badge variant="secondary" className="text-xs px-2 py-1 mt-1">
@@ -415,8 +451,8 @@ export default function StablePage() {
                           <Button 
                             size="sm"
                             className={`flex-1 h-9 text-sm ${isTeamLocked ? 'bg-green-600 hover:bg-green-700' : ''}`}
-                            disabled={isTeamLocked || lockTeamMutation.isPending}
-                            onClick={() => !isTeamLocked && handleLockClick(team)}
+                            disabled={isTeamLocked || lockTeamMutation.isPending || !locksAllowed}
+                            onClick={() => !isTeamLocked && locksAllowed && handleLockClick(team)}
                           >
                             {lockTeamMutation.isPending && selectedTeam?.id === team.id ? (
                               <>
@@ -448,8 +484,8 @@ export default function StablePage() {
                                     ? 'border-orange-400 dark:border-orange-500 text-orange-700 dark:text-orange-300 bg-orange-50 dark:bg-orange-950/20 hover:bg-orange-100 dark:hover:bg-orange-950/30' 
                                     : 'border-amber-200 dark:border-amber-800 text-amber-700 dark:text-amber-300 hover:bg-amber-50 dark:hover:bg-amber-950/20'
                               }`}
-                              disabled={team.isLockAndLoad || !isTeamLocked || lockTeamMutation.isPending}
-                              onClick={() => !team.isLockAndLoad && isTeamLocked && handleLockAndLoadClick(team)}
+                              disabled={team.isLockAndLoad || !isTeamLocked || lockTeamMutation.isPending || !locksAllowed}
+                              onClick={() => !team.isLockAndLoad && isTeamLocked && locksAllowed && handleLockAndLoadClick(team)}
                             >
                               {lockTeamMutation.isPending && selectedTeam?.id === team.id ? (
                                 <>

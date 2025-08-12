@@ -1194,6 +1194,16 @@ export class DatabaseStorage implements IStorage {
     }
   }
 
+  async getNflTeamById(teamId: string): Promise<NflTeam | null> {
+    try {
+      const [team] = await db.select().from(nflTeams).where(eq(nflTeams.id, teamId));
+      return team || null;
+    } catch (error) {
+      console.error('Error getting team by ID:', error);
+      return null;
+    }
+  }
+
   async getTimerState(): Promise<any> {
     // Connect to the existing admin state management
     try {
