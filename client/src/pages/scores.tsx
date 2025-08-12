@@ -498,161 +498,7 @@ export default function ScoresPage() {
             </div>
           </div>
 
-          {/* Weekly Rankings */}
-          {weeklyRankings && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Trophy className="w-5 h-5 text-amber-500" />
-                  Week {selectedWeek} Rankings
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {weeklyRankings.rankings.map((player, index) => (
-                    <div
-                      key={player.name}
-                      className={`flex items-center justify-between p-3 rounded-lg ${
-                        player.isCurrentUser 
-                          ? "bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800" 
-                          : "bg-muted/30"
-                      }`}
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
-                          index === 0 ? "bg-amber-500 text-white" :
-                          index === 1 ? "bg-gray-400 text-white" :
-                          index === 2 ? "bg-amber-600 text-white" :
-                          "bg-muted text-muted-foreground"
-                        }`}>
-                          {index + 1}
-                        </div>
-                        <div>
-                          <div className={`font-medium ${player.isCurrentUser ? "text-green-700 dark:text-green-300" : ""}`}>
-                            {player.name}
-                            {player.isCurrentUser && (
-                              <span className="ml-2 text-xs text-green-600 dark:text-green-400 font-normal">
-                                (You)
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <div className="font-bold text-lg">{player.weeklyPoints}</div>
-                        <div className="text-xs text-muted-foreground">points</div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Week-End Results Section */}
-                {weeklyRankings.weekEndResults?.weekComplete && (
-                  <div className="mt-6 pt-4 border-t border-border">
-                    <h4 className="font-semibold text-sm mb-3 flex items-center gap-2">
-                      <Target className="w-4 h-4" />
-                      Week {selectedWeek} Results
-                    </h4>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {/* High Score Teams */}
-                      {weeklyRankings.weekEndResults.highScoreTeams && weeklyRankings.weekEndResults.highScoreTeams.length > 0 && (
-                        <div className="bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800 rounded-lg p-3">
-                          <div className="flex items-center gap-2 mb-2">
-                            <Trophy className="w-4 h-4 text-green-600" />
-                            <span className="font-medium text-green-700 dark:text-green-300 text-sm">
-                              Week High (+1 bonus)
-                            </span>
-                          </div>
-                          {weeklyRankings.weekEndResults.highScoreTeams.map((team) => (
-                            <div key={team.teamId} className="flex items-center gap-3">
-                              <img
-                                src={`https://a.espncdn.com/i/teamlogos/nfl/500/${team.teamCode.toLowerCase()}.png`}
-                                alt={team.teamCode}
-                                className="w-8 h-8"
-                              />
-                              <div>
-                                <div className="font-medium text-sm">{team.teamName}</div>
-                                <div className="text-xs text-green-600 dark:text-green-400">
-                                  {team.score} points
-                                </div>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-
-                      {/* Low Score Teams */}
-                      {weeklyRankings.weekEndResults.lowScoreTeams && weeklyRankings.weekEndResults.lowScoreTeams.length > 0 && (
-                        <div className="bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 rounded-lg p-3">
-                          <div className="flex items-center gap-2 mb-2">
-                            <Target className="w-4 h-4 text-red-600" />
-                            <span className="font-medium text-red-700 dark:text-red-300 text-sm">
-                              Week Low (-1 penalty)
-                            </span>
-                          </div>
-                          {weeklyRankings.weekEndResults.lowScoreTeams.map((team) => (
-                            <div key={team.teamId} className="flex items-center gap-3">
-                              <img
-                                src={`https://a.espncdn.com/i/teamlogos/nfl/500/${team.teamCode.toLowerCase()}.png`}
-                                alt={team.teamCode}
-                                className="w-8 h-8"
-                              />
-                              <div>
-                                <div className="font-medium text-sm">{team.teamName}</div>
-                                <div className="text-xs text-red-600 dark:text-red-400">
-                                  {team.score} points
-                                </div>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Weekly Skins Winner */}
-                    {weeklyRankings.weekEndResults.weeklySkinsWinner && (
-                      <div className="mt-4 bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 rounded-lg p-3">
-                        <div className="flex items-center gap-2 mb-2">
-                          <Trophy className="w-4 h-4 text-amber-600" />
-                          <span className="font-medium text-amber-700 dark:text-amber-300 text-sm">
-                            Weekly Skins Winner
-                          </span>
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <div className="font-medium">{weeklyRankings.weekEndResults.weeklySkinsWinner.userName}</div>
-                          <div className="text-right">
-                            <div className="font-bold text-amber-600">${weeklyRankings.weekEndResults.weeklySkinsWinner.prizeAmount}</div>
-                            <div className="text-xs text-amber-600">
-                              {weeklyRankings.weekEndResults.weeklySkinsWinner.totalWeeklyPoints} points
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Skins Rollover */}
-                    {weeklyRankings.weekEndResults.skinsRollover && (
-                      <div className="mt-4 bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3">
-                        <div className="flex items-center gap-2 mb-2">
-                          <Target className="w-4 h-4 text-blue-600" />
-                          <span className="font-medium text-blue-700 dark:text-blue-300 text-sm">
-                            Skins Rollover
-                          </span>
-                        </div>
-                        <div className="text-sm text-blue-700 dark:text-blue-300">
-                          {weeklyRankings.weekEndResults.skinsRollover.reason}
-                        </div>
-                        <div className="text-xs text-blue-600 mt-1">
-                          Next week prize: ${weeklyRankings.weekEndResults.skinsRollover.nextWeekPrize}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          )}
+          {/* Weekly Rankings removed - now displayed only on main tab */}
 
           {/* Games List */}
           <div className="space-y-4">
@@ -704,6 +550,25 @@ export default function ScoresPage() {
 
                 const homeLockStatus = isTeamLocked(game.homeTeam);
                 const awayLockStatus = isTeamLocked(game.awayTeam);
+
+                // Check if teams are high/low scorers when week is complete
+                const isWeekComplete = weeklyRankings?.weekEndResults?.weekComplete;
+                const homeIsHighScore = isWeekComplete && 
+                  weeklyRankings?.weekEndResults?.highScoreTeams?.some(
+                    (team: any) => team.teamCode === game.homeTeam
+                  );
+                const homeIsLowScore = isWeekComplete && 
+                  weeklyRankings?.weekEndResults?.lowScoreTeams?.some(
+                    (team: any) => team.teamCode === game.homeTeam
+                  );
+                const awayIsHighScore = isWeekComplete && 
+                  weeklyRankings?.weekEndResults?.highScoreTeams?.some(
+                    (team: any) => team.teamCode === game.awayTeam
+                  );
+                const awayIsLowScore = isWeekComplete && 
+                  weeklyRankings?.weekEndResults?.lowScoreTeams?.some(
+                    (team: any) => team.teamCode === game.awayTeam
+                  );
 
                 return (
                   <div
@@ -788,6 +653,22 @@ export default function ScoresPage() {
                                     </span>
                                   </div>
                                 )}
+                              {awayIsHighScore && (
+                                <div className="flex items-center space-x-1">
+                                  <Trophy className="w-3 h-3 text-green-500" />
+                                  <span className="text-xs text-green-600 font-medium">
+                                    +1 HS
+                                  </span>
+                                </div>
+                              )}
+                              {awayIsLowScore && (
+                                <div className="flex items-center space-x-1">
+                                  <Target className="w-3 h-3 text-red-500" />
+                                  <span className="text-xs text-red-600 font-medium">
+                                    -1 LS
+                                  </span>
+                                </div>
+                              )}
                             </div>
                           </div>
                         </div>
@@ -852,6 +733,22 @@ export default function ScoresPage() {
                                     </span>
                                   </div>
                                 )}
+                              {homeIsHighScore && (
+                                <div className="flex items-center space-x-1">
+                                  <Trophy className="w-3 h-3 text-green-500" />
+                                  <span className="text-xs text-green-600 font-medium">
+                                    +1 HS
+                                  </span>
+                                </div>
+                              )}
+                              {homeIsLowScore && (
+                                <div className="flex items-center space-x-1">
+                                  <Target className="w-3 h-3 text-red-500" />
+                                  <span className="text-xs text-red-600 font-medium">
+                                    -1 LS
+                                  </span>
+                                </div>
+                              )}
                             </div>
                           </div>
                         </div>
