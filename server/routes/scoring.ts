@@ -137,6 +137,11 @@ router.get("/week/:week", async (req, res) => {
     `);
     
     console.log(`[Scoring] Found ${gamesResult.rows.length} games for Week ${week} (${gamesResult.rows.filter(r => r.is_completed).length} completed)`);
+    console.log(`[Scoring] Sample ownership data:`, gamesResult.rows.slice(0, 3).map(r => ({
+      game: `${r.away_team}@${r.home_team}`,
+      homeOwner: r.home_owner_name,
+      awayOwner: r.away_owner_name
+    })));
     
     const games = gamesResult.rows.map((row: any) => {
       const isCompleted = Boolean(row.is_completed);

@@ -7,7 +7,12 @@ import { useState, useEffect, useCallback } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { BottomNav } from "@/components/layout/bottom-nav";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { getWeekLabel } from "@shared/utils/weekUtils";
 
 interface MokScoringRules {
@@ -68,27 +73,33 @@ interface NFLGame {
 }
 
 export default function ScoresPage() {
-  console.log('🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE');
-  
+  console.log("🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE");
+
   // Add test functions to window for easy admin testing from console
   useEffect(() => {
     // @ts-ignore
     window.testAdminReset = async () => {
-      console.log('🧪 Testing admin reset from scores page...');
-      const response = await fetch('/api/admin/reset-season', { method: 'POST' });
+      console.log("🧪 Testing admin reset from scores page...");
+      const response = await fetch("/api/admin/reset-season", {
+        method: "POST",
+      });
       const result = await response.json();
-      console.log('🧪 Reset result:', result);
+      console.log("🧪 Reset result:", result);
     };
-    
+
     // @ts-ignore
     window.testAdminAdvance = async () => {
-      console.log('🧪 Testing admin advance from scores page...');
-      const response = await fetch('/api/admin/advance-day', { method: 'POST' });
+      console.log("🧪 Testing admin advance from scores page...");
+      const response = await fetch("/api/admin/advance-day", {
+        method: "POST",
+      });
       const result = await response.json();
-      console.log('🧪 Advance result:', result);
+      console.log("🧪 Advance result:", result);
     };
-    
-    console.log('🧪 Test functions added to window: testAdminReset() and testAdminAdvance()');
+
+    console.log(
+      "🧪 Test functions added to window: testAdminReset() and testAdminAdvance()",
+    );
   }, []);
   const { user } = useAuth();
   const queryClient = useQueryClient();
@@ -98,79 +109,97 @@ export default function ScoresPage() {
 
   // Listen for admin date advances to refresh scores automatically
   useEffect(() => {
-    console.log('🔌 SCORES PAGE WEBSOCKET USEEFFECT TRIGGERED - SETTING UP CONNECTION');
-    console.log('🔍 UserAgent check:', navigator.userAgent);
-    console.log('🔍 Window location:', window.location.href);
-    console.log('🔍 WebSocket support:', typeof WebSocket !== 'undefined');
-    
+    console.log(
+      "🔌 SCORES PAGE WEBSOCKET USEEFFECT TRIGGERED - SETTING UP CONNECTION",
+    );
+    console.log("🔍 UserAgent check:", navigator.userAgent);
+    console.log("🔍 Window location:", window.location.href);
+    console.log("🔍 WebSocket support:", typeof WebSocket !== "undefined");
+
     const connectWebSocket = () => {
-      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
       const wsUrl = `${protocol}//${window.location.host}/draft-ws`;
-      
-      console.log('🚀 Attempting to connect WebSocket for scores page:', wsUrl);
-      console.log('🔍 Current protocol:', window.location.protocol);
-      console.log('🔍 Current host:', window.location.host);
-      
+
+      console.log("🚀 Attempting to connect WebSocket for scores page:", wsUrl);
+      console.log("🔍 Current protocol:", window.location.protocol);
+      console.log("🔍 Current host:", window.location.host);
+
       try {
         const ws = new WebSocket(wsUrl);
-        
+
         ws.onmessage = (event) => {
           try {
             const message = JSON.parse(event.data);
-            console.log('Scores WebSocket received message:', message.type);
-            
-            if (message.type === 'admin_date_advanced') {
-              console.log('Admin date advanced, refreshing scores...');
+            console.log("Scores WebSocket received message:", message.type);
+
+            if (message.type === "admin_date_advanced") {
+              console.log("Admin date advanced, refreshing scores...");
               // Force invalidate ALL queries to trigger complete refresh
               queryClient.invalidateQueries();
-              console.log('📊 [WebSocket] Invalidated ALL queries after admin date advance');
-            } else if (message.type === 'admin_season_reset') {
-              console.log('Admin season reset, refreshing scores to show 0-0...');
+              console.log(
+                "📊 [WebSocket] Invalidated ALL queries after admin date advance",
+              );
+            } else if (message.type === "admin_season_reset") {
+              console.log(
+                "Admin season reset, refreshing scores to show 0-0...",
+              );
               // Force invalidate ALL queries to trigger complete refresh and show cleared scores
               queryClient.invalidateQueries();
-              console.log('📊 [WebSocket] Invalidated ALL queries after admin season reset');
-            } else if (message.type === 'lock_updated') {
-              console.log('Lock updated, refreshing scores to show lock icons...');
+              console.log(
+                "📊 [WebSocket] Invalidated ALL queries after admin season reset",
+              );
+            } else if (message.type === "lock_updated") {
+              console.log(
+                "Lock updated, refreshing scores to show lock icons...",
+              );
               // Force invalidate ALL queries to trigger complete refresh with updated lock status
               queryClient.invalidateQueries();
-              console.log('📊 [WebSocket] Invalidated ALL queries after lock update');
+              console.log(
+                "📊 [WebSocket] Invalidated ALL queries after lock update",
+              );
             }
           } catch (e) {
-            console.log('WebSocket message parsing error:', e);
+            console.log("WebSocket message parsing error:", e);
           }
         };
 
         ws.onopen = () => {
-          console.log('✅ Scores WebSocket connected successfully for live admin updates');
-          console.log('🔗 WebSocket state:', ws.readyState);
+          console.log(
+            "✅ Scores WebSocket connected successfully for live admin updates",
+          );
+          console.log("🔗 WebSocket state:", ws.readyState);
           // Send identification message with fake draft info to connect to the system
-          const identifyMessage = { 
-            type: 'identify', 
-            userId: 'scores_page_user',
-            draftId: 'admin_updates',
-            source: 'scores_page',
-            connectionId: `scores_${Date.now()}`
+          const identifyMessage = {
+            type: "identify",
+            userId: "scores_page_user",
+            draftId: "admin_updates",
+            source: "scores_page",
+            connectionId: `scores_${Date.now()}`,
           };
-          console.log('📤 Sending identify message:', identifyMessage);
+          console.log("📤 Sending identify message:", identifyMessage);
           ws.send(JSON.stringify(identifyMessage));
         };
-        
+
         ws.onclose = (event) => {
-          console.log('Scores WebSocket disconnected:', event.code, event.reason);
+          console.log(
+            "Scores WebSocket disconnected:",
+            event.code,
+            event.reason,
+          );
           // Attempt to reconnect after 2 seconds
           setTimeout(() => {
-            console.log('Attempting to reconnect WebSocket...');
+            console.log("Attempting to reconnect WebSocket...");
             connectWebSocket();
           }, 2000);
         };
-        
+
         ws.onerror = (error) => {
-          console.error('Scores WebSocket error:', error);
+          console.error("Scores WebSocket error:", error);
         };
-        
+
         return ws;
       } catch (error) {
-        console.error('WebSocket connection failed:', error);
+        console.error("WebSocket connection failed:", error);
         return null;
       }
     };
@@ -185,50 +214,64 @@ export default function ScoresPage() {
 
   // Get user's leagues to show scores for
   const { data: userLeagues } = useQuery({
-    queryKey: ['/api/user/leagues'],
-    enabled: !!user
+    queryKey: ["/api/user/leagues"],
+    enabled: !!user,
   });
 
   // Get scoring rules
   const { data: scoringRules } = useQuery<MokScoringRules>({
-    queryKey: ['/api/scoring/rules']
+    queryKey: ["/api/scoring/rules"],
   });
 
-  // Get current league (use real EEW2YU test league)  
-  const currentLeague = (userLeagues && Array.isArray(userLeagues) && userLeagues.length > 0) ? userLeagues[0] : {
-    id: '243d719b-92ce-4752-8689-5da93ee69213',
-    name: 'Test League 1',
-    season: 2024
-  };
+  // Get current league (use real EEW2YU test league)
+  const currentLeague =
+    userLeagues && Array.isArray(userLeagues) && userLeagues.length > 0
+      ? userLeagues[0]
+      : {
+          id: "243d719b-92ce-4752-8689-5da93ee69213",
+          name: "Test League 1",
+          season: 2024,
+        };
 
   // Get NFL teams to map logos and owners
   const { data: nflTeams } = useQuery({
-    queryKey: ['/api/nfl-teams'],
-    enabled: !!currentLeague
+    queryKey: ["/api/nfl-teams"],
+    enabled: !!currentLeague,
   });
 
   // Get league members to show ownership
   const { data: leagueMembers } = useQuery({
     queryKey: [`/api/leagues/${currentLeague?.id}/members`],
-    enabled: !!currentLeague
+    enabled: !!currentLeague,
   });
 
   // Get weekly scores for current league with automatic refreshing
-  const { data: weeklyScores, isLoading: loadingWeekly } = useQuery<WeeklyScoresResponse>({
-    queryKey: [`/api/leagues/${currentLeague?.id}/scores/${selectedSeason}/${selectedWeek}`],
-    enabled: !!currentLeague,
-    refetchInterval: 30000, // Refresh scores every 30 seconds
-    refetchIntervalInBackground: true,
-    staleTime: 15000,
-    refetchOnWindowFocus: true
-  });
+  const { data: weeklyScores, isLoading: loadingWeekly } =
+    useQuery<WeeklyScoresResponse>({
+      queryKey: [
+        `/api/leagues/${currentLeague?.id}/scores/${selectedSeason}/${selectedWeek}`,
+      ],
+      enabled: !!currentLeague,
+      refetchInterval: 30000, // Refresh scores every 30 seconds
+      refetchIntervalInBackground: true,
+      staleTime: 15000,
+      refetchOnWindowFocus: true,
+    });
 
   // Get real NFL games for selected week from the scores API with automatic refreshing
-  const { data: nflGamesData, isLoading: loadingGames, error: gamesError } = useQuery({
-    queryKey: [`/api/scores/week/${selectedWeek}/${selectedSeason}`],
+  const {
+    data: nflGamesData,
+    isLoading: loadingGames,
+    error: gamesError,
+  } = useQuery({
+    queryKey: [`/api/scoring/week/${selectedWeek}/${selectedSeason}`],
     queryFn: async () => {
-      console.log(`[DEBUG] Fetching games for week ${selectedWeek} season ${selectedSeason}`);
-      const response = await fetch(`/api/scores/week/${selectedWeek}?season=${selectedSeason}`);
+      console.log(
+        `[DEBUG] Fetching games for week ${selectedWeek} season ${selectedSeason}`,
+      );
+      const response = await fetch(
+        `/api/scoring/week/${selectedWeek}?season=${selectedSeason}&leagueId=${currentLeague?.id}`,
+      );
       const data = await response.json();
       console.log(`[DEBUG] API Response:`, data);
       return data;
@@ -238,65 +281,72 @@ export default function ScoresPage() {
     refetchIntervalInBackground: true, // Keep refreshing even when tab is not active
     staleTime: 15000, // Consider data stale after 15 seconds
     refetchOnWindowFocus: true, // Refresh when user returns to tab
-    refetchOnMount: true // Always fetch fresh data on component mount
+    refetchOnMount: true, // Always fetch fresh data on component mount
   });
 
   // Get user's teams for highlighting
   const { data: userTeams } = useQuery({
     queryKey: [`/api/user/stable/${currentLeague?.id}`],
-    enabled: !!user && !!currentLeague
+    enabled: !!user && !!currentLeague,
   });
 
   // WebSocket connection for real-time updates (using draft WebSocket for lock updates)
   useEffect(() => {
     if (!currentLeague) return;
 
-    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
     const wsUrl = `${protocol}//${window.location.host}/draft-ws`;
-    
-    console.log('[WebSocket] Connecting to draft WebSocket for lock updates:', wsUrl);
+
+    console.log(
+      "[WebSocket] Connecting to draft WebSocket for lock updates:",
+      wsUrl,
+    );
     const ws = new WebSocket(wsUrl);
-    
+
     ws.onopen = () => {
-      console.log('[WebSocket] Connected to draft WebSocket for lock updates');
+      console.log("[WebSocket] Connected to draft WebSocket for lock updates");
       // Send identification as scores page client
-      ws.send(JSON.stringify({
-        type: 'scores-page-connect',
-        leagueId: currentLeague.id,
-        week: selectedWeek
-      }));
+      ws.send(
+        JSON.stringify({
+          type: "scores-page-connect",
+          leagueId: currentLeague.id,
+          week: selectedWeek,
+        }),
+      );
     };
-    
+
     ws.onmessage = (event) => {
       try {
         const message = JSON.parse(event.data);
-        console.log('[WebSocket] Received live score update:', message);
-        
-        if (message.type === 'lock-update') {
-          console.log('[WebSocket] Lock update received:', message);
+        console.log("[WebSocket] Received live score update:", message);
+
+        if (message.type === "lock-update") {
+          console.log("[WebSocket] Lock update received:", message);
           // Invalidate and refetch scores to show updated lock icons
-          queryClient.invalidateQueries({ 
-            queryKey: [`/api/scores/week/${selectedWeek}`] 
+          queryClient.invalidateQueries({
+            queryKey: [`/api/scores/week/${selectedWeek}`],
           });
-          queryClient.invalidateQueries({ 
-            queryKey: [`/api/leagues/${currentLeague.id}/scores/${selectedSeason}/${selectedWeek}`] 
+          queryClient.invalidateQueries({
+            queryKey: [
+              `/api/leagues/${currentLeague.id}/scores/${selectedSeason}/${selectedWeek}`,
+            ],
           });
-          
-          console.log('[WebSocket] Refreshed scores after lock update');
+
+          console.log("[WebSocket] Refreshed scores after lock update");
         }
       } catch (error) {
-        console.error('[WebSocket] Error parsing message:', error);
+        console.error("[WebSocket] Error parsing message:", error);
       }
     };
-    
+
     ws.onerror = (error) => {
-      console.error('[WebSocket] Connection error:', error);
+      console.error("[WebSocket] Connection error:", error);
     };
-    
+
     ws.onclose = () => {
-      console.log('[WebSocket] Live scores connection closed');
+      console.log("[WebSocket] Live scores connection closed");
     };
-    
+
     return () => {
       if (ws.readyState === WebSocket.OPEN) {
         ws.close();
@@ -321,51 +371,59 @@ export default function ScoresPage() {
   }
 
   // Transform real NFL games data from the scores API
-  const nflGames: NFLGame[] = (nflGamesData as any)?.games?.map((game: any, index: number) => {
-    return {
-    id: game.id || `game_${selectedWeek}_${index}`,
-    homeTeam: game.homeTeam,
-    awayTeam: game.awayTeam,
-    homeScore: game.homeScore,
-    awayScore: game.awayScore,
-    week: selectedWeek,
-    season: selectedSeason,
-    gameDate: new Date(game.gameDate),
-    isCompleted: game.isCompleted || false,
-    // Team ownership from draft data
-    homeOwner: game.homeOwner || '',
-    homeOwnerName: game.homeOwnerName || '',
-    awayOwner: game.awayOwner || '',
-    awayOwnerName: game.awayOwnerName || '',
-    // Lock status
-    homeLocked: game.homeLocked || false,
-    awayLocked: game.awayLocked || false,
-    homeLockAndLoad: game.homeLockAndLoad || false,
-    awayLockAndLoad: game.awayLockAndLoad || false,
-    // Mok points
-    homeMokPoints: game.homeMokPoints || 0,
-    awayMokPoints: game.awayMokPoints || 0
-    };
-  }) || [];
-
-
+  const nflGames: NFLGame[] =
+    (nflGamesData as any)?.games?.map((game: any, index: number) => {
+      return {
+        id: game.id || `game_${selectedWeek}_${index}`,
+        homeTeam: game.homeTeam,
+        awayTeam: game.awayTeam,
+        homeScore: game.homeScore,
+        awayScore: game.awayScore,
+        week: selectedWeek,
+        season: selectedSeason,
+        gameDate: new Date(game.gameDate),
+        isCompleted: game.isCompleted || false,
+        // Team ownership from draft data
+        homeOwner: game.homeOwner || "",
+        homeOwnerName: game.homeOwnerName || "",
+        awayOwner: game.awayOwner || "",
+        awayOwnerName: game.awayOwnerName || "",
+        // Lock status
+        homeLocked: game.homeLocked || false,
+        awayLocked: game.awayLocked || false,
+        homeLockAndLoad: game.homeLockAndLoad || false,
+        awayLockAndLoad: game.awayLockAndLoad || false,
+        // Mok points
+        homeMokPoints: game.homeMokPoints || 0,
+        awayMokPoints: game.awayMokPoints || 0,
+      };
+    }) || [];
 
   const isUserTeam = (teamCode: string): boolean => {
     if (!user || !userTeams) {
-      console.log('[DEBUG] isUserTeam: Missing user or userTeams', { user: !!user, userTeams: !!userTeams });
+      console.log("[DEBUG] isUserTeam: Missing user or userTeams", {
+        user: !!user,
+        userTeams: !!userTeams,
+      });
       return false;
     }
-    
-    const isOwned = Array.isArray(userTeams) && userTeams.some((team: any) => team.nflTeam?.code === teamCode);
+
+    const isOwned =
+      Array.isArray(userTeams) &&
+      userTeams.some((team: any) => team.nflTeam?.code === teamCode);
     if (isOwned) {
-      console.log('[DEBUG] ✅ YOUR TEAM FOUND:', teamCode, '- Should be GREEN');
+      console.log("[DEBUG] ✅ YOUR TEAM FOUND:", teamCode, "- Should be GREEN");
     }
-    
+
     return isOwned;
   };
 
-  const isTeamLocked = (teamCode: string): { locked: boolean; lockAndLoad: boolean } => {
-    const game = nflGames.find(g => g.homeTeam === teamCode || g.awayTeam === teamCode);
+  const isTeamLocked = (
+    teamCode: string,
+  ): { locked: boolean; lockAndLoad: boolean } => {
+    const game = nflGames.find(
+      (g) => g.homeTeam === teamCode || g.awayTeam === teamCode,
+    );
     if (game?.homeTeam === teamCode) {
       return { locked: !!game.homeLocked, lockAndLoad: !!game.homeLockAndLoad };
     }
@@ -387,17 +445,17 @@ export default function ScoresPage() {
                 <h1 className="text-2xl font-bold">Scores</h1>
                 <p className="text-muted-foreground">{currentLeague.name}</p>
               </div>
-              
+
               {/* Week Selector - Dropdown Style */}
               <div className="flex items-center gap-2">
                 <span className="text-sm text-muted-foreground">Week</span>
-                <select 
+                <select
                   value={selectedWeek}
                   onChange={(e) => setSelectedWeek(Number(e.target.value))}
                   className="bg-background border border-border rounded-md px-3 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
                 >
                   {/* Regular season options - Week 1 to Week 18 */}
-                  {Array.from({length: 18}, (_, i) => i + 1).map(week => (
+                  {Array.from({ length: 18 }, (_, i) => i + 1).map((week) => (
                     <option key={week} value={week}>
                       Week {week}
                     </option>
@@ -407,177 +465,233 @@ export default function ScoresPage() {
             </div>
           </div>
 
-        {/* Games List */}
-        <div className="space-y-4">
-          {loadingGames && (
-            <div className="text-center py-8">Loading Week {selectedWeek} games...</div>
-          )}
-          {!loadingGames && nflGames.length === 0 && (
-            <div className="text-center py-8 text-muted-foreground">
-              No games found for Week {selectedWeek}
-              <div className="text-xs mt-2 space-y-1">
-                <div>Debug: Week {selectedWeek}</div>
-                <div>Games data: {nflGamesData ? JSON.stringify(nflGamesData).substring(0, 200) + '...' : 'null'}</div>
-                {gamesError && <div className="text-red-500">Error: {JSON.stringify(gamesError)}</div>}
+          {/* Games List */}
+          <div className="space-y-4">
+            {loadingGames && (
+              <div className="text-center py-8">
+                Loading Week {selectedWeek} games...
               </div>
-            </div>
-          )}
-          {nflGames
-            .sort((a: NFLGame, b: NFLGame) => new Date(a.gameDate).getTime() - new Date(b.gameDate).getTime())
-            .map((game: NFLGame) => {
-              const homeWin = game.homeScore !== null && game.awayScore !== null && game.homeScore > game.awayScore;
-              const awayWin = game.awayScore !== null && game.homeScore !== null && game.awayScore > game.homeScore;
-              const scoreDiff = (game.homeScore !== null && game.awayScore !== null) ? Math.abs(game.homeScore - game.awayScore) : 0;
-              const isBlowout = scoreDiff >= 20;
-              const isShutout = game.homeScore === 0 || game.awayScore === 0;
-              
-              const homeLockStatus = isTeamLocked(game.homeTeam);
-              const awayLockStatus = isTeamLocked(game.awayTeam);
-              
-              return (
-                <div 
-                  key={game.id} 
-                  className="bg-card rounded-lg p-4 space-y-3 cursor-pointer hover:shadow-md transition-shadow"
-                  onClick={() => setSelectedGame(game)}
-                >
-                  {/* Game Header */}
-                  <div className="flex justify-between items-center text-sm text-muted-foreground">
-                    <span>{new Date(game.gameDate).toLocaleDateString('en-US', { 
-                      weekday: 'short', 
-                      month: 'short', 
-                      day: 'numeric',
-                      hour: 'numeric',
-                      minute: '2-digit',
-                      timeZone: 'America/New_York'
-                    })} ET</span>
-                    {game.isCompleted && (
-                      <Badge variant="outline" className="text-xs">Final</Badge>
-                    )}
+            )}
+            {!loadingGames && nflGames.length === 0 && (
+              <div className="text-center py-8 text-muted-foreground">
+                No games found for Week {selectedWeek}
+                <div className="text-xs mt-2 space-y-1">
+                  <div>Debug: Week {selectedWeek}</div>
+                  <div>
+                    Games data:{" "}
+                    {nflGamesData
+                      ? JSON.stringify(nflGamesData).substring(0, 200) + "..."
+                      : "null"}
                   </div>
-
-                  {/* Teams and Scores */}
-                  <div className="space-y-2">
-                    {/* Away Team */}
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3 flex-1">
-                        <img 
-                          src={`/images/nfl/team_logos/${game.awayTeam}.png`}
-                          alt={game.awayTeam}
-                          className="w-8 h-8"
-                          onError={(e) => {
-                            console.log(`[Image Error] Failed to load ${game.awayTeam} logo, trying fallback`);
-                            // Use ESPN's reliable team logo API
-                            (e.target as HTMLImageElement).src = `https://a.espncdn.com/i/teamlogos/nfl/500/${game.awayTeam.toLowerCase()}.png`;
-                          }}
-                        />
-                        <div className="flex flex-col">
-                          <div className="flex items-center gap-2">
-                            <span className={`font-medium ${
-                              isUserTeam(game.awayTeam) 
-                              ? 'text-green-600 font-bold' 
-                              : awayWin ? 'text-foreground' : 'text-muted-foreground'
-                            }`}>
-                              {game.awayTeam}
-                            </span>
-                            {awayLockStatus.locked && (
-                              <Lock className="w-3 h-3 text-blue-500" />
-                            )}
-                            {awayLockStatus.lockAndLoad && (
-                              <Zap className="w-3 h-3 text-orange-500" />
-                            )}
-                            {game.isCompleted && (game.awayMokPoints || 0) > 0 && (
-                              <div className="flex items-center space-x-1">
-                                <Flame className="w-3 h-3 text-purple-500" />
-                                <span className="text-xs text-purple-600 font-medium">+{game.awayMokPoints}</span>
-                              </div>
-                            )}
-                          </div>
-                          {game.awayOwnerName && (
-                            <div className="text-xs text-muted-foreground">
-                              {game.awayOwnerName}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                      <div className={`text-xl font-bold ${awayWin ? 'text-foreground' : 'text-muted-foreground'}`}>
-                        {game.awayScore !== null && game.awayScore !== undefined ? game.awayScore : '-'}
-                      </div>
-                    </div>
-
-                    {/* Home Team */}
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3 flex-1">
-                        <img 
-                          src={`/images/nfl/team_logos/${game.homeTeam}.png`}
-                          alt={game.homeTeam}
-                          className="w-8 h-8"
-                          onError={(e) => {
-                            console.log(`[Image Error] Failed to load ${game.homeTeam} logo, trying fallback`);
-                            // Use ESPN's reliable team logo API
-                            (e.target as HTMLImageElement).src = `https://a.espncdn.com/i/teamlogos/nfl/500/${game.homeTeam.toLowerCase()}.png`;
-                          }}
-                        />
-                        <div className="flex flex-col">
-                          <div className="flex items-center gap-2">
-                            <span className={`font-medium ${
-                              isUserTeam(game.homeTeam) 
-                                ? 'text-green-600 font-bold' 
-                                : homeWin ? 'text-foreground' : 'text-muted-foreground'
-                            }`}>
-                              {game.homeTeam}
-                            </span>
-                            {homeLockStatus.locked && (
-                              <Lock className="w-3 h-3 text-blue-500" />
-                            )}
-                            {homeLockStatus.lockAndLoad && (
-                              <Zap className="w-3 h-3 text-orange-500" />
-                            )}
-                            {game.isCompleted && (game.homeMokPoints || 0) > 0 && (
-                              <div className="flex items-center space-x-1">
-                                <Flame className="w-3 h-3 text-purple-500" />
-                                <span className="text-xs text-purple-600 font-medium">+{game.homeMokPoints}</span>
-                              </div>
-                            )}
-                          </div>
-                          {game.homeOwnerName && (
-                            <div className="text-xs text-muted-foreground">
-                              {game.homeOwnerName}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                      <div className={`text-xl font-bold ${homeWin ? 'text-foreground' : 'text-muted-foreground'}`}>
-                        {game.homeScore !== null && game.homeScore !== undefined ? game.homeScore : '-'}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Game Bonuses */}
-                  {game.isCompleted && (isBlowout || isShutout) && (
-                    <div className="flex gap-2 pt-2 border-t border-border">
-                      {isBlowout && (
-                        <Badge variant="secondary" className="text-xs">
-                          <Trophy className="w-3 h-3 mr-1" />
-                          Blowout
-                        </Badge>
-                      )}
-                      {isShutout && (
-                        <Badge variant="secondary" className="text-xs">
-                          <Target className="w-3 h-3 mr-1" />
-                          Shutout
-                        </Badge>
-                      )}
+                  {gamesError && (
+                    <div className="text-red-500">
+                      Error: {JSON.stringify(gamesError)}
                     </div>
                   )}
                 </div>
-              );
-            })}
+              </div>
+            )}
+            {nflGames
+              .sort(
+                (a: NFLGame, b: NFLGame) =>
+                  new Date(a.gameDate).getTime() -
+                  new Date(b.gameDate).getTime(),
+              )
+              .map((game: NFLGame) => {
+                const homeWin =
+                  game.homeScore !== null &&
+                  game.awayScore !== null &&
+                  game.homeScore > game.awayScore;
+                const awayWin =
+                  game.awayScore !== null &&
+                  game.homeScore !== null &&
+                  game.awayScore > game.homeScore;
+                const scoreDiff =
+                  game.homeScore !== null && game.awayScore !== null
+                    ? Math.abs(game.homeScore - game.awayScore)
+                    : 0;
+                const isBlowout = scoreDiff >= 20;
+                const isShutout = game.homeScore === 0 || game.awayScore === 0;
+
+                const homeLockStatus = isTeamLocked(game.homeTeam);
+                const awayLockStatus = isTeamLocked(game.awayTeam);
+
+                return (
+                  <div
+                    key={game.id}
+                    className="bg-card rounded-lg p-4 space-y-3 cursor-pointer hover:shadow-md transition-shadow"
+                    onClick={() => setSelectedGame(game)}
+                  >
+                    {/* Game Header */}
+                    <div className="flex justify-between items-center text-sm text-muted-foreground">
+                      <span>
+                        {new Date(game.gameDate).toLocaleDateString("en-US", {
+                          weekday: "short",
+                          month: "short",
+                          day: "numeric",
+                          hour: "numeric",
+                          minute: "2-digit",
+                          timeZone: "America/New_York",
+                        })}{" "}
+                        ET
+                      </span>
+                      {game.isCompleted && (
+                        <Badge variant="outline" className="text-xs">
+                          Final
+                        </Badge>
+                      )}
+                    </div>
+
+                    {/* Teams and Scores */}
+                    <div className="space-y-2">
+                      {/* Away Team */}
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3 flex-1">
+                          <img
+                            src={`/images/nfl/team_logos/${game.awayTeam}.png`}
+                            alt={game.awayTeam}
+                            className="w-8 h-8"
+                            onError={(e) => {
+                              console.log(
+                                `[Image Error] Failed to load ${game.awayTeam} logo, trying fallback`,
+                              );
+                              // Use ESPN's reliable team logo API
+                              (e.target as HTMLImageElement).src =
+                                `https://a.espncdn.com/i/teamlogos/nfl/500/${game.awayTeam.toLowerCase()}.png`;
+                            }}
+                          />
+                          <div className="flex flex-col">
+                            <div className="flex items-center gap-2">
+                              <span
+                                className={`font-medium ${
+                                  isUserTeam(game.awayTeam)
+                                    ? "text-green-600 font-bold"
+                                    : awayWin
+                                      ? "text-foreground"
+                                      : "text-muted-foreground"
+                                }`}
+                              >
+                                {game.awayTeam}{" "}
+                                {game.awayOwnerName &&
+                                  `(${game.awayOwnerName})`}
+                              </span>
+                              {awayLockStatus.locked && (
+                                <Lock className="w-3 h-3 text-blue-500" />
+                              )}
+                              {awayLockStatus.lockAndLoad && (
+                                <Zap className="w-3 h-3 text-orange-500" />
+                              )}
+                              {game.isCompleted &&
+                                (game.awayMokPoints || 0) > 0 && (
+                                  <div className="flex items-center space-x-1">
+                                    <Flame className="w-3 h-3 text-purple-500" />
+                                    <span className="text-xs text-purple-600 font-medium">
+                                      +{game.awayMokPoints}
+                                    </span>
+                                  </div>
+                                )}
+                            </div>
+                          </div>
+                        </div>
+                        <div
+                          className={`text-xl font-bold ${awayWin ? "text-foreground" : "text-muted-foreground"}`}
+                        >
+                          {game.awayScore !== null &&
+                          game.awayScore !== undefined
+                            ? game.awayScore
+                            : "-"}
+                        </div>
+                      </div>
+
+                      {/* Home Team */}
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3 flex-1">
+                          <img
+                            src={`/images/nfl/team_logos/${game.homeTeam}.png`}
+                            alt={game.homeTeam}
+                            className="w-8 h-8"
+                            onError={(e) => {
+                              console.log(
+                                `[Image Error] Failed to load ${game.homeTeam} logo, trying fallback`,
+                              );
+                              // Use ESPN's reliable team logo API
+                              (e.target as HTMLImageElement).src =
+                                `https://a.espncdn.com/i/teamlogos/nfl/500/${game.homeTeam.toLowerCase()}.png`;
+                            }}
+                          />
+                          <div className="flex flex-col">
+                            <div className="flex items-center gap-2">
+                              <span
+                                className={`font-medium ${
+                                  isUserTeam(game.homeTeam)
+                                    ? "text-green-600 font-bold"
+                                    : homeWin
+                                      ? "text-foreground"
+                                      : "text-muted-foreground"
+                                }`}
+                              >
+                                {game.homeTeam}{" "}
+                                {game.homeOwnerName &&
+                                  `(${game.homeOwnerName})`}
+                              </span>
+                              {homeLockStatus.locked && (
+                                <Lock className="w-3 h-3 text-blue-500" />
+                              )}
+                              {homeLockStatus.lockAndLoad && (
+                                <Zap className="w-3 h-3 text-orange-500" />
+                              )}
+                              {game.isCompleted &&
+                                (game.homeMokPoints || 0) > 0 && (
+                                  <div className="flex items-center space-x-1">
+                                    <Flame className="w-3 h-3 text-purple-500" />
+                                    <span className="text-xs text-purple-600 font-medium">
+                                      +{game.homeMokPoints}
+                                    </span>
+                                  </div>
+                                )}
+                            </div>
+                          </div>
+                        </div>
+                        <div
+                          className={`text-xl font-bold ${homeWin ? "text-foreground" : "text-muted-foreground"}`}
+                        >
+                          {game.homeScore !== null &&
+                          game.homeScore !== undefined
+                            ? game.homeScore
+                            : "-"}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Game Bonuses */}
+                    {game.isCompleted && (isBlowout || isShutout) && (
+                      <div className="flex gap-2 pt-2 border-t border-border">
+                        {isBlowout && (
+                          <Badge variant="secondary" className="text-xs">
+                            <Trophy className="w-3 h-3 mr-1" />
+                            Blowout
+                          </Badge>
+                        )}
+                        {isShutout && (
+                          <Badge variant="secondary" className="text-xs">
+                            <Target className="w-3 h-3 mr-1" />
+                            Shutout
+                          </Badge>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
           </div>
         </div>
       </div>
 
       {/* Game Details Modal - Sleeper/ESPN Style */}
-      <Dialog open={!!selectedGame} onOpenChange={(open) => !open && setSelectedGame(null)}>
+      <Dialog
+        open={!!selectedGame}
+        onOpenChange={(open) => !open && setSelectedGame(null)}
+      >
         <DialogContent className="max-w-md p-0 gap-0">
           {selectedGame && (
             <div className="relative">
@@ -585,22 +699,30 @@ export default function ScoresPage() {
               <div className="bg-gradient-to-br from-blue-600 to-purple-700 text-white p-4 rounded-t-lg">
                 <div className="flex justify-between items-start mb-2">
                   <div className="text-sm opacity-90">
-                    Week {selectedGame.week} • {new Date(selectedGame.gameDate).toLocaleDateString('en-US', {
-                      weekday: 'short',
-                      month: 'short', 
-                      day: 'numeric'
-                    })}
+                    Week {selectedGame.week} •{" "}
+                    {new Date(selectedGame.gameDate).toLocaleDateString(
+                      "en-US",
+                      {
+                        weekday: "short",
+                        month: "short",
+                        day: "numeric",
+                      },
+                    )}
                   </div>
-                  <Badge variant="secondary" className="text-xs bg-white/20 text-white border-0">
+                  <Badge
+                    variant="secondary"
+                    className="text-xs bg-white/20 text-white border-0"
+                  >
                     Final
                   </Badge>
                 </div>
                 <div className="text-xs opacity-75">
-                  {new Date(selectedGame.gameDate).toLocaleTimeString('en-US', {
-                    hour: 'numeric',
-                    minute: '2-digit',
-                    timeZone: 'America/New_York'
-                  })} ET
+                  {new Date(selectedGame.gameDate).toLocaleTimeString("en-US", {
+                    hour: "numeric",
+                    minute: "2-digit",
+                    timeZone: "America/New_York",
+                  })}{" "}
+                  ET
                 </div>
               </div>
 
@@ -610,23 +732,30 @@ export default function ScoresPage() {
                 <div className="flex items-center justify-between p-4 border-b border-border/50">
                   <div className="flex items-center gap-4 flex-1">
                     <div className="relative">
-                      <img 
+                      <img
                         src={`/images/nfl/team_logos/${selectedGame.awayTeam}.png`}
                         alt={selectedGame.awayTeam}
                         className="w-12 h-12"
                         onError={(e) => {
-                          (e.target as HTMLImageElement).src = `https://www.fantasynerds.com/images/nfl/team_logos/${selectedGame.awayTeam}.png`;
+                          (e.target as HTMLImageElement).src =
+                            `https://www.fantasynerds.com/images/nfl/team_logos/${selectedGame.awayTeam}.png`;
                         }}
                       />
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">
-                        <div className={`font-bold text-lg ${selectedGame.awayScore > selectedGame.homeScore ? 'text-green-600' : 'text-muted-foreground'}`}>
+                        <div
+                          className={`font-bold text-lg ${selectedGame.awayScore > selectedGame.homeScore ? "text-green-600" : "text-muted-foreground"}`}
+                        >
                           {selectedGame.awayTeam}
                         </div>
                         <div className="flex items-center gap-1">
-                          {selectedGame.awayLocked && <Lock className="w-4 h-4 text-blue-500" />}
-                          {selectedGame.awayLockAndLoad && <Zap className="w-4 h-4 text-orange-500" />}
+                          {selectedGame.awayLocked && (
+                            <Lock className="w-4 h-4 text-blue-500" />
+                          )}
+                          {selectedGame.awayLockAndLoad && (
+                            <Zap className="w-4 h-4 text-orange-500" />
+                          )}
                         </div>
                       </div>
                       {selectedGame.awayOwnerName && (
@@ -640,10 +769,14 @@ export default function ScoresPage() {
                     {(selectedGame.awayMokPoints || 0) > 0 && (
                       <div className="flex items-center gap-1 bg-purple-100 dark:bg-purple-900/30 px-2 py-1 rounded-full">
                         <Flame className="w-3 h-3 text-purple-600" />
-                        <span className="text-xs font-medium text-purple-700 dark:text-purple-300">+{selectedGame.awayMokPoints}</span>
+                        <span className="text-xs font-medium text-purple-700 dark:text-purple-300">
+                          +{selectedGame.awayMokPoints}
+                        </span>
                       </div>
                     )}
-                    <div className={`text-2xl font-bold ${selectedGame.awayScore > selectedGame.homeScore ? 'text-foreground' : 'text-muted-foreground'}`}>
+                    <div
+                      className={`text-2xl font-bold ${selectedGame.awayScore > selectedGame.homeScore ? "text-foreground" : "text-muted-foreground"}`}
+                    >
                       {selectedGame.awayScore}
                     </div>
                   </div>
@@ -653,23 +786,30 @@ export default function ScoresPage() {
                 <div className="flex items-center justify-between p-4">
                   <div className="flex items-center gap-4 flex-1">
                     <div className="relative">
-                      <img 
+                      <img
                         src={`/images/nfl/team_logos/${selectedGame.homeTeam}.png`}
                         alt={selectedGame.homeTeam}
                         className="w-12 h-12"
                         onError={(e) => {
-                          (e.target as HTMLImageElement).src = `https://www.fantasynerds.com/images/nfl/team_logos/${selectedGame.homeTeam}.png`;
+                          (e.target as HTMLImageElement).src =
+                            `https://www.fantasynerds.com/images/nfl/team_logos/${selectedGame.homeTeam}.png`;
                         }}
                       />
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">
-                        <div className={`font-bold text-lg ${selectedGame.homeScore > selectedGame.awayScore ? 'text-green-600' : 'text-muted-foreground'}`}>
+                        <div
+                          className={`font-bold text-lg ${selectedGame.homeScore > selectedGame.awayScore ? "text-green-600" : "text-muted-foreground"}`}
+                        >
                           {selectedGame.homeTeam}
                         </div>
                         <div className="flex items-center gap-1">
-                          {selectedGame.homeLocked && <Lock className="w-4 h-4 text-blue-500" />}
-                          {selectedGame.homeLockAndLoad && <Zap className="w-4 h-4 text-orange-500" />}
+                          {selectedGame.homeLocked && (
+                            <Lock className="w-4 h-4 text-blue-500" />
+                          )}
+                          {selectedGame.homeLockAndLoad && (
+                            <Zap className="w-4 h-4 text-orange-500" />
+                          )}
                         </div>
                       </div>
                       {selectedGame.homeOwnerName && (
@@ -683,10 +823,14 @@ export default function ScoresPage() {
                     {(selectedGame.homeMokPoints || 0) > 0 && (
                       <div className="flex items-center gap-1 bg-purple-100 dark:bg-purple-900/30 px-2 py-1 rounded-full">
                         <Flame className="w-3 h-3 text-purple-600" />
-                        <span className="text-xs font-medium text-purple-700 dark:text-purple-300">+{selectedGame.homeMokPoints}</span>
+                        <span className="text-xs font-medium text-purple-700 dark:text-purple-300">
+                          +{selectedGame.homeMokPoints}
+                        </span>
                       </div>
                     )}
-                    <div className={`text-2xl font-bold ${selectedGame.homeScore > selectedGame.awayScore ? 'text-foreground' : 'text-muted-foreground'}`}>
+                    <div
+                      className={`text-2xl font-bold ${selectedGame.homeScore > selectedGame.awayScore ? "text-foreground" : "text-muted-foreground"}`}
+                    >
                       {selectedGame.homeScore}
                     </div>
                   </div>
@@ -697,41 +841,57 @@ export default function ScoresPage() {
               <div className="bg-muted/30 p-4 space-y-3">
                 <div className="flex items-center gap-2">
                   <Flame className="w-4 h-4 text-purple-600" />
-                  <h4 className="font-semibold text-sm">Mok Points Breakdown</h4>
+                  <h4 className="font-semibold text-sm">
+                    Mok Points Breakdown
+                  </h4>
                 </div>
                 <div className="grid grid-cols-2 gap-3 text-xs">
                   <div className="space-y-2">
                     <div className="flex items-center gap-2">
                       <Trophy className="w-3 h-3 text-amber-500" />
-                      <span>Win: <span className="font-medium">+1</span></span>
+                      <span>
+                        Win: <span className="font-medium">+1</span>
+                      </span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Lock className="w-3 h-3 text-blue-500" />
-                      <span>Lock Bonus: <span className="font-medium">+1</span></span>
+                      <span>
+                        Lock Bonus: <span className="font-medium">+1</span>
+                      </span>
                     </div>
                   </div>
                   <div className="space-y-2">
                     <div className="flex items-center gap-2">
                       <Target className="w-3 h-3 text-red-500" />
-                      <span>Blowout: <span className="font-medium">+1</span></span>
+                      <span>
+                        Blowout: <span className="font-medium">+1</span>
+                      </span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Zap className="w-3 h-3 text-orange-500" />
-                      <span>L&L: <span className="font-medium">+2/-1</span></span>
+                      <span>
+                        L&L: <span className="font-medium">+2/-1</span>
+                      </span>
                     </div>
                   </div>
                 </div>
-                
+
                 {/* Game bonuses if applicable */}
                 {(() => {
-                  const scoreDiff = Math.abs(selectedGame.homeScore - selectedGame.awayScore);
+                  const scoreDiff = Math.abs(
+                    selectedGame.homeScore - selectedGame.awayScore,
+                  );
                   const isBlowout = scoreDiff >= 20;
-                  const isShutout = selectedGame.homeScore === 0 || selectedGame.awayScore === 0;
-                  
+                  const isShutout =
+                    selectedGame.homeScore === 0 ||
+                    selectedGame.awayScore === 0;
+
                   if (isBlowout || isShutout) {
                     return (
                       <div className="pt-2 border-t border-border/50">
-                        <div className="text-xs font-medium text-muted-foreground mb-1">Game Bonuses:</div>
+                        <div className="text-xs font-medium text-muted-foreground mb-1">
+                          Game Bonuses:
+                        </div>
                         <div className="flex gap-2">
                           {isBlowout && (
                             <Badge variant="secondary" className="text-xs">
