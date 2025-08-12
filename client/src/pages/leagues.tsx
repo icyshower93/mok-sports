@@ -19,10 +19,7 @@ export default function LeaguesPage() {
 
   const joinLeagueMutation = useMutation({
     mutationFn: async (code: string) => {
-      return apiRequest(`/api/leagues/join`, {
-        method: "POST",
-        body: { joinCode: code }
-      });
+      return apiRequest("POST", "/api/leagues/join", { joinCode: code });
     },
     onSuccess: () => {
       toast({
@@ -43,10 +40,7 @@ export default function LeaguesPage() {
 
   const createLeagueMutation = useMutation({
     mutationFn: async (name: string) => {
-      return apiRequest(`/api/leagues`, {
-        method: "POST",
-        body: { name }
-      });
+      return apiRequest("POST", "/api/leagues", { name, maxTeams: 6 });
     },
     onSuccess: () => {
       toast({
