@@ -4,6 +4,15 @@ Mok Sports is a fantasy sports application that redefines traditional fantasy le
 
 ## Recent Updates (August 2025)
 
+### Complete Lock and Load Scoring System (Aug 12, 2025)
+- **COMPLETED**: Fully implemented and verified lock and load bonus point calculations in admin scoring system
+- **VERIFIED**: Sky Evans correctly receives 4 points for BUF's Week 1 win (Base: 1, Lock: +1, Lock-and-Load: +2)
+- **ENHANCED**: Fixed scoring logic to allow teams to earn BOTH lock bonus and lock-and-load bonus simultaneously
+- **PRODUCTION READY**: Authentic scoring calculation with proper database queries and real-time updates
+- Lock system now correctly awards +1 for locked team wins and +2/-1 for lock-and-load wins/losses
+- Database integration includes proper weeklyLocks table joins with NFL teams for accurate bonus calculations
+- Debug logging provides detailed scoring breakdown for transparent point allocation verification
+
 ### Production-Ready Season Management (Aug 11, 2025)
 - **COMPLETED**: Simplified admin panel with single-button day progression for seamless operation
 - **PRODUCTION READY**: Default 2025 season configuration starting September 4 (Eagles vs Cowboys)

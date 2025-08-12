@@ -1,6 +1,6 @@
 import { Express } from 'express';
 import { db } from '../db';
-import { nflGames, nflTeams, userWeeklyScores, stables, users, leagues } from '@shared/schema';
+import { nflGames, nflTeams, userWeeklyScores, stables, users, leagues, weeklyLocks } from '@shared/schema';
 import { eq, and, gte, lte, sql } from 'drizzle-orm';
 import { nflDataService } from '../services/nflDataService';
 import { calculateBaseMokPoints } from '../utils/mokScoring';
@@ -299,10 +299,47 @@ async function calculateAndUpdateMokPoints(
 
       // Calculate base game result points
       const basePoints = calculateBaseMokPoints(teamResult);
-      const lockPoints = 0; // TODO: implement lock checking
-      const totalPoints = basePoints + lockPoints;
+      
+      // Check for lock bonuses
+      const lockData = await db.select({
+        lockedTeamId: weeklyLocks.lockedTeamId,
+        lockAndLoadTeamId: weeklyLocks.lockAndLoadTeamId
+      })
+      .from(weeklyLocks)
+      .where(and(
+        eq(weeklyLocks.userId, owner.userId),
+        eq(weeklyLocks.leagueId, owner.leagueId),
+        eq(weeklyLocks.week, week),
+        eq(weeklyLocks.season, season)
+      ));
+      
+      const userLock = lockData[0];
+      const isLocked = userLock?.lockedTeamId === owner.teamId;
+      const isLockAndLoad = userLock?.lockAndLoadTeamId === owner.teamId;
+      
+      let lockBonusPoints = 0;
+      let lockAndLoadBonusPoints = 0;
+      
+      // Check for lock-and-load bonus first
+      if (isLockAndLoad) {
+        // Lock & Load scoring: +2 for win, -1 for loss
+        if (teamResult.isWin) {
+          lockAndLoadBonusPoints = 2;
+        } else if (teamResult.isLoss) {
+          lockAndLoadBonusPoints = -1;
+        }
+      }
+      
+      // Check for regular lock bonus (can be in addition to lock-and-load)
+      if (isLocked && teamResult.isWin) {
+        // Regular lock bonus: +1 for wins only
+        lockBonusPoints = 1;
+      }
+      
+      const totalPoints = basePoints + lockBonusPoints + lockAndLoadBonusPoints;
 
-      console.log(`${owner.userName} (${owner.teamCode}): ${totalPoints} points (${teamScore}-${opponentScore})`);
+      const lockInfo = isLockAndLoad ? 'LOAD' : isLocked ? 'LOCK' : '';
+      console.log(`${owner.userName} (${owner.teamCode}): ${totalPoints} points (${teamScore}-${opponentScore}) ${lockInfo} [Base: ${basePoints}, Lock: ${lockBonusPoints}, L&L: ${lockAndLoadBonusPoints}] - Locked=${isLocked}, Load=${isLockAndLoad}`);
 
       // Update or insert weekly scores
       await db.insert(userWeeklyScores)
@@ -312,15 +349,16 @@ async function calculateAndUpdateMokPoints(
           season,
           week,
           basePoints: basePoints,
-          lockBonusPoints: lockPoints,
-          lockAndLoadBonusPoints: 0, // TODO: implement
+          lockBonusPoints: lockBonusPoints,
+          lockAndLoadBonusPoints: lockAndLoadBonusPoints,
           totalPoints: totalPoints
         })
         .onConflictDoUpdate({
           target: [userWeeklyScores.userId, userWeeklyScores.leagueId, userWeeklyScores.season, userWeeklyScores.week],
           set: {
             basePoints: sql`${userWeeklyScores.basePoints} + ${basePoints}`,
-            lockBonusPoints: sql`${userWeeklyScores.lockBonusPoints} + ${lockPoints}`,
+            lockBonusPoints: sql`${userWeeklyScores.lockBonusPoints} + ${lockBonusPoints}`,
+            lockAndLoadBonusPoints: sql`${userWeeklyScores.lockAndLoadBonusPoints} + ${lockAndLoadBonusPoints}`,
             totalPoints: sql`${userWeeklyScores.totalPoints} + ${totalPoints}`,
             updatedAt: new Date()
           }

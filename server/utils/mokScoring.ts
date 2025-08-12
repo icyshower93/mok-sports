@@ -282,9 +282,32 @@ export async function calculateWeeklyScores(leagueId: string, week: number, seas
     let lockBonusPoints = 0;
     let lockAndLoadBonusPoints = 0;
     
-    // TODO: Get user's lock selections for this week from database
-    const lockedTeam = undefined; // Would come from user's weekly lock selection
-    const lockAndLoadTeam = undefined; // Would come from user's weekly lock & load selection
+    // Get user's lock selections for this week from database
+    const lockedTeamTable = alias(nflTeams, 'lockedTeam');
+    const lockAndLoadTeamTable = alias(nflTeams, 'lockAndLoadTeam');
+    
+    const userLocks = await db
+      .select({
+        lockedTeamCode: lockedTeamTable.code,
+        lockAndLoadTeamCode: lockAndLoadTeamTable.code
+      })
+      .from(weeklyLocks)
+      .leftJoin(lockedTeamTable, eq(weeklyLocks.lockedTeamId, lockedTeamTable.id))
+      .leftJoin(lockAndLoadTeamTable, eq(weeklyLocks.lockAndLoadTeamId, lockAndLoadTeamTable.id))
+      .where(
+        and(
+          eq(weeklyLocks.userId, userId),
+          eq(weeklyLocks.leagueId, leagueId),
+          eq(weeklyLocks.week, week),
+          eq(weeklyLocks.season, season)
+        )
+      );
+    
+    const lockData = userLocks[0];
+    const lockedTeam = lockData?.lockedTeamCode;
+    const lockAndLoadTeam = lockData?.lockAndLoadTeamCode;
+    
+    console.log(`🔒 [MokScoring] User ${userId}: Locked=${lockedTeam}, Load=${lockAndLoadTeam}`);
     
     // Calculate points for each team the user owns
     for (const team of teams) {
