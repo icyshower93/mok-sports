@@ -9,6 +9,10 @@ import {
   calculateWeeklyScores,
   MOK_SCORING_RULES
 } from "../utils/mokScoring.js";
+import { authenticateJWT } from "../auth.js";
+
+// Create middleware for authentication
+const authenticateUser = authenticateJWT;
 
 const router = express.Router();
 
@@ -394,7 +398,7 @@ router.get("/standings/:leagueId", async (req, res) => {
 });
 
 // Get weekly rankings for a specific league/season/week
-router.get("/leagues/:leagueId/week-scores/:season/:week", async (req, res) => {
+router.get("/leagues/:leagueId/week-scores/:season/:week", authenticateUser, async (req, res) => {
   try {
     const { leagueId, season, week } = req.params;
     const user = req.user;
@@ -444,7 +448,7 @@ router.get("/leagues/:leagueId/week-scores/:season/:week", async (req, res) => {
         name: member.userName,
         weeklyPoints: 0,
         gamesRemaining: 0,
-        isCurrentUser: member.userId === user.id
+        isCurrentUser: member.userId === (user as any).id
       }));
 
       console.log(`[Scoring] Returning ${fallbackRankings.length} fallback rankings`);
@@ -456,7 +460,7 @@ router.get("/leagues/:leagueId/week-scores/:season/:week", async (req, res) => {
       name: score.userName,
       weeklyPoints: score.weeklyPoints,
       gamesRemaining: score.gamesRemaining,
-      isCurrentUser: score.userId === user.id
+      isCurrentUser: score.userId === (user as any).id
     }));
 
     res.json(rankings);

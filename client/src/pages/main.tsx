@@ -185,14 +185,14 @@ export default function MainPage() {
               </div>
             </CardHeader>
             <CardContent className="space-y-3">
-              {(weeklyRankings as any[]).length === 0 ? (
+              {!weeklyRankings || (weeklyRankings as any[]).length === 0 ? (
                 <div className="text-center py-6 text-muted-foreground">
                   <Trophy className="w-8 h-8 mx-auto mb-2 opacity-50" />
                   <p className="text-sm">Weekly rankings will appear here once games start</p>
                 </div>
               ) : (
                 <div className="space-y-3">
-                  {(weeklyRankings as any[]).slice(0, 4).map((member: any, index: number) => (
+                  {weeklyRankings && (weeklyRankings as any[]).slice(0, 4).map((member: any, index: number) => (
                     <Card 
                       key={member.name || index} 
                       className={`${member.isCurrentUser ? 'ring-2 ring-primary/20 bg-primary/5' : ''}`}
@@ -233,7 +233,7 @@ export default function MainPage() {
                       </CardContent>
                     </Card>
                   ))}
-                  {(weeklyRankings as any[]).length > 4 && (
+                  {weeklyRankings && (weeklyRankings as any[]).length > 4 && (
                     <Button 
                       variant="ghost" 
                       size="sm" 
@@ -249,7 +249,7 @@ export default function MainPage() {
           </Card>
 
           {/* Teams Left to Play */}
-          {teamsLeftToPlay.length > 0 && (
+          {teamsLeftToPlay && teamsLeftToPlay.length > 0 && (
             <Card>
               <CardHeader className="pb-4">
                 <CardTitle className="text-lg flex items-center space-x-2">
