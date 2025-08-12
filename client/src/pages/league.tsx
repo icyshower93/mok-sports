@@ -135,9 +135,9 @@ export default function LeaguePage() {
                   className={`${member.isCurrentUser ? 'ring-2 ring-primary/20 bg-primary/5' : ''}`}
                 >
                   <CardContent className="p-4">
-                    <div className="flex items-center w-full">
-                      {/* Left Side: Rank + Full Name (takes up most space) */}
-                      <div className="flex items-center space-x-3 flex-1">
+                    <div className="flex items-center justify-between w-full">
+                      {/* Left Side: Rank + Full Name */}
+                      <div className="flex items-center space-x-3 min-w-0 flex-shrink">
                         {/* Rank Badge */}
                         <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 ${
                           member.rank === 1 ? 'bg-yellow-500 text-white' :
@@ -148,31 +148,32 @@ export default function LeaguePage() {
                           {member.rank}
                         </div>
                         
-                        {/* Full Name (no truncation) */}
-                        <div className="flex-1">
-                          <span className="font-semibold text-base">{member.name}</span>
-                        </div>
+                        {/* Full Name */}
+                        <span className="font-semibold text-base text-foreground">{member.name}</span>
                       </div>
                       
-                      {/* Right Side: Stats pushed to far right */}
-                      <div className="flex items-center space-x-4 ml-auto">
-                        <div className="text-center min-w-[36px]">
-                          <div className="text-xs text-muted-foreground">LOCKS</div>
-                          <div className="font-medium">{member.locks}</div>
+                      {/* Large spacer to push stats far right */}
+                      <div className="flex-1"></div>
+                      
+                      {/* Far Right: Stats with wider spacing */}
+                      <div className="flex items-center space-x-6 flex-shrink-0">
+                        <div className="text-center min-w-[40px]">
+                          <div className="text-xs text-muted-foreground font-medium">LOCKS</div>
+                          <div className="font-semibold text-sm">{member.locks}</div>
                         </div>
-                        <div className="text-center min-w-[36px]">
-                          <div className="text-xs text-muted-foreground">SKINS</div>
-                          <div className="font-medium">{member.skinsWon || 0}</div>
+                        <div className="text-center min-w-[40px]">
+                          <div className="text-xs text-muted-foreground font-medium">SKINS</div>
+                          <div className="font-semibold text-sm">{member.skinsWon || 0}</div>
                         </div>
-                        <div className="text-center min-w-[36px]">
-                          <div className="text-xs text-muted-foreground">PTS</div>
-                          <div className="text-lg font-bold">{member.points}</div>
+                        <div className="text-center min-w-[40px]">
+                          <div className="text-xs text-muted-foreground font-medium">PTS</div>
+                          <div className="text-xl font-bold text-foreground">{member.points}</div>
                         </div>
                         {/* Chevron for teams expansion */}
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="p-1 h-8 w-8"
+                          className="p-1.5 h-8 w-8 ml-2"
                           onClick={() => toggleUserExpansion(member.name)}
                         >
                           {expandedUsers.has(member.name) ? (
