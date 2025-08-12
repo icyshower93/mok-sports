@@ -15,6 +15,13 @@ Mok Sports is a fantasy sports application that redefines traditional fantasy le
 - Eliminated complex simulation controls in favor of simple day-by-day progression
 - Season reset functionality maintains current season context for easy management
 
+### Complete Mok Sports Rules Documentation (Aug 12, 2025)
+- **COMPLETED**: Created comprehensive rules file `MOK_SPORTS_RULES.md` with all game mechanics
+- Official documentation includes league structure, draft system, scoring rules, lock mechanics
+- Trading system rules with precise timing windows and restrictions documented
+- Prize structure and season timeline clearly outlined for player reference
+- Strategic tips and gameplay guidance included for new and experienced players
+
 ### Complete 2024 NFL Season Integration (Aug 11, 2025)
 - Successfully imported complete 2024 NFL season using Tank01 RapidAPI exclusively
 - All regular season games imported with authentic scores and completion status (weeks 1-18)
@@ -80,6 +87,8 @@ Mok Sports is a fantasy sports application that redefines traditional fantasy le
 - Established three-stage workflow: development → production validation → release
 
 ## Game Mechanics Summary
+Complete rules documentation available in `MOK_SPORTS_RULES.md`
+
 - **6-player leagues** with **5 NFL teams** each (30/32 teams drafted, 2 free agents)
 - **Snake draft** with **division restrictions** (max 1 team per division unless unavoidable)
 - **Weekly scoring**: Wins (+1), Ties (+0.5), Blowouts (+1), Shutouts (+1), Weekly high (+1), Weekly low (-1)
