@@ -403,6 +403,8 @@ router.get("/leagues/:leagueId/week-scores/:season/:week", async (req, res) => {
       return res.status(401).json({ error: 'Authentication required' });
     }
 
+    console.log(`[Scoring] Getting weekly scores for league ${leagueId}, season ${season}, week ${week}`);
+
     // Get weekly scores from the database
     const weeklyScores = await db.select({
       userId: userWeeklyScores.userId,
@@ -420,6 +422,34 @@ router.get("/leagues/:leagueId/week-scores/:season/:week", async (req, res) => {
       )
     )
     .orderBy(sql`${userWeeklyScores.totalPoints} DESC`);
+
+    console.log(`[Scoring] Found ${weeklyScores.length} weekly scores`);
+
+    // If no weekly scores exist yet, get league members and show them with 0 points
+    if (weeklyScores.length === 0) {
+      console.log('[Scoring] No weekly scores found, falling back to league members');
+      
+      // Get league members from draft picks
+      const leagueMembers = await db.select({
+        userId: draftPicks.userId,
+        userName: users.name
+      })
+      .from(draftPicks)
+      .innerJoin(drafts, eq(draftPicks.draftId, drafts.id))
+      .innerJoin(users, eq(draftPicks.userId, users.id))
+      .where(eq(drafts.leagueId, leagueId))
+      .groupBy(draftPicks.userId, users.name);
+
+      const fallbackRankings = leagueMembers.map(member => ({
+        name: member.userName,
+        weeklyPoints: 0,
+        gamesRemaining: 0,
+        isCurrentUser: member.userId === user.id
+      }));
+
+      console.log(`[Scoring] Returning ${fallbackRankings.length} fallback rankings`);
+      return res.json(fallbackRankings);
+    }
 
     // Add isCurrentUser flag and format for frontend
     const rankings = weeklyScores.map(score => ({

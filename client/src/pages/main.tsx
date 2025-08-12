@@ -67,9 +67,9 @@ export default function MainPage() {
     enabled: !!selectedLeague && !!user,
   });
 
-  // Fetch weekly rankings
-  const { data: weeklyRankings = [] } = useQuery({
-    queryKey: [`/api/leagues/${selectedLeague}/week-scores/2024/${currentWeek}`],
+  // Fetch weekly rankings - fixed endpoint
+  const { data: weeklyRankings = [], isLoading: weeklyLoading } = useQuery({
+    queryKey: [`/api/scoring/leagues/${selectedLeague}/week-scores/2024/${currentWeek}`],
     enabled: !!selectedLeague,
   });
 
@@ -129,121 +129,109 @@ export default function MainPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-muted/20 pb-20">
-      <div className="max-w-lg mx-auto">
+    <div className="min-h-screen bg-background pb-20">
+      <div className="max-w-md mx-auto px-2 sm:max-w-lg sm:px-0">
         
-        {/* Hero Header */}
-        <div className="bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 dark:from-slate-950 dark:via-blue-950 dark:to-slate-950 text-white p-6 pt-12">
-          <div className="flex items-center justify-between mb-6">
+        {/* Simple Header - Matching League Style */}
+        <div className="p-4 sm:p-6 pb-4">
+          <div className="flex items-center space-x-3">
+            <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-full">
+              <Trophy className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+            </div>
             <div>
-              <h1 className="text-2xl font-bold">Welcome back,</h1>
-              <p className="text-lg text-blue-200">{user?.name}</p>
+              <h1 className="text-2xl font-bold">Dashboard</h1>
+              <p className="text-sm text-muted-foreground">Week {currentWeek} • 2024 Season</p>
             </div>
-            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center">
-              <Trophy className="w-6 h-6" />
-            </div>
-          </div>
-
-          {/* Key Stats Row */}
-          <div className="grid grid-cols-3 gap-4 mb-4">
-            <div className="text-center">
-              <div className="text-2xl font-bold">{userTotalPoints}</div>
-              <div className="text-xs text-blue-200 uppercase tracking-wide">Total Points</div>
-            </div>
-            <div className="text-center">
-              <div className="flex items-center justify-center space-x-1">
-                <span className="text-2xl font-bold">#{userRank}</span>
-                {userRank === 1 && <Crown className="w-4 h-4 text-yellow-400" />}
-              </div>
-              <div className="text-xs text-blue-200 uppercase tracking-wide">League Rank</div>
-            </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-emerald-300">${userSkinsWon * weeklyPrize}</div>
-              <div className="text-xs text-blue-200 uppercase tracking-wide">Winnings</div>
-            </div>
-          </div>
-
-          {/* Week Progress */}
-          <div className="bg-white/10 backdrop-blur rounded-lg p-4">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium">Week {currentWeek} Progress</span>
-              <span className="text-xs text-blue-200">2024 Season</span>
-            </div>
-            <div className="h-2 bg-white/20 rounded-full overflow-hidden">
-              <div 
-                className="h-full bg-gradient-to-r from-blue-400 to-purple-400 transition-all duration-500"
-                style={{ width: `${(currentWeek / 18) * 100}%` }}
-              />
-            </div>
-            <div className="text-xs text-blue-200 mt-1">Week {currentWeek} of 18</div>
           </div>
         </div>
 
-        <div className="p-4 space-y-6">
+        <div className="px-4 sm:px-6 space-y-6">
           
-          {/* This Week's Battle */}
-          <Card className="border-0 shadow-lg bg-gradient-to-br from-white to-gray-50 dark:from-gray-900 dark:to-gray-950">
+          {/* User Stats Cards */}
+          <div className="grid grid-cols-3 gap-3">
+            <Card>
+              <CardContent className="p-4 text-center">
+                <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">{userTotalPoints}</div>
+                <div className="text-xs text-muted-foreground font-medium">Total Points</div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardContent className="p-4 text-center">
+                <div className="flex items-center justify-center space-x-1">
+                  <span className="text-2xl font-bold text-amber-600 dark:text-amber-400">#{userRank}</span>
+                  {userRank === 1 && <Crown className="w-4 h-4 text-amber-600" />}
+                </div>
+                <div className="text-xs text-muted-foreground font-medium">League Rank</div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardContent className="p-4 text-center">
+                <div className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">{userSkinsWon}</div>
+                <div className="text-xs text-muted-foreground font-medium">Skins Won</div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Weekly Rankings */}
+          <Card>
             <CardHeader className="pb-4">
               <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-2">
-                  <Flame className="w-5 h-5 text-orange-500" />
-                  <CardTitle className="text-lg">This Week's Battle</CardTitle>
-                </div>
-                <Badge className="bg-gradient-to-r from-green-500 to-emerald-500 text-white">
+                <CardTitle className="text-lg">Weekly Race</CardTitle>
+                <Badge variant="outline" className="text-emerald-600 border-emerald-200">
                   ${weeklyPrize} Prize
                 </Badge>
               </div>
             </CardHeader>
             <CardContent className="space-y-3">
               {(weeklyRankings as any[]).length === 0 ? (
-                <div className="text-center py-8">
-                  <div className="w-16 h-16 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 rounded-full flex items-center justify-center mx-auto mb-3">
-                    <Activity className="w-8 h-8 text-gray-400" />
-                  </div>
-                  <p className="text-sm text-muted-foreground">Battle begins when games start</p>
+                <div className="text-center py-6 text-muted-foreground">
+                  <Trophy className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                  <p className="text-sm">Weekly rankings will appear here once games start</p>
                 </div>
               ) : (
-                <div className="space-y-2">
+                <div className="space-y-3">
                   {(weeklyRankings as any[]).slice(0, 4).map((member: any, index: number) => (
-                    <div 
+                    <Card 
                       key={member.name || index} 
-                      className={`flex items-center justify-between p-3 rounded-xl transition-all duration-200 ${
-                        member.isCurrentUser 
-                          ? 'bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 ring-2 ring-blue-200 dark:ring-blue-800' 
-                          : 'bg-gray-50 dark:bg-gray-800/50'
-                      }`}
+                      className={`${member.isCurrentUser ? 'ring-2 ring-primary/20 bg-primary/5' : ''}`}
                     >
-                      <div className="flex items-center space-x-3">
-                        <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
-                          index === 0 ? 'bg-gradient-to-br from-yellow-400 to-orange-500 text-white' :
-                          index === 1 ? 'bg-gradient-to-br from-gray-300 to-gray-500 text-white' :
-                          index === 2 ? 'bg-gradient-to-br from-orange-400 to-red-500 text-white' :
-                          'bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300'
-                        }`}>
-                          {index === 0 ? <Crown className="w-4 h-4" /> : index + 1}
-                        </div>
-                        <div>
-                          <div className="font-medium text-sm flex items-center space-x-2">
-                            <span>{member.name}</span>
-                            {member.isCurrentUser && (
-                              <Badge variant="secondary" className="text-xs px-2 py-0.5 bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300">
-                                You
-                              </Badge>
+                      <CardContent className="p-3">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-3 flex-1">
+                            <div className={`w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold ${
+                              index === 0 ? 'bg-yellow-500 text-white' :
+                              index === 1 ? 'bg-gray-400 text-white' :
+                              index === 2 ? 'bg-orange-500 text-white' :
+                              'bg-muted text-muted-foreground'
+                            }`}>
+                              {index === 0 ? <Crown className="w-3 h-3" /> : index + 1}
+                            </div>
+                            
+                            <div className="flex items-center space-x-2">
+                              <span className="font-medium text-sm">{member.name}</span>
+                              {member.isCurrentUser && (
+                                <Badge variant="secondary" className="text-xs px-1.5 py-0.5">You</Badge>
+                              )}
+                            </div>
+                          </div>
+                          
+                          <div className="flex items-center space-x-4 text-sm">
+                            <div className="text-center">
+                              <div className="font-semibold">{member.weeklyPoints || 0}</div>
+                              <div className="text-xs text-muted-foreground">pts</div>
+                            </div>
+                            {member.gamesRemaining > 0 && (
+                              <div className="text-center">
+                                <div className="w-2 h-2 bg-green-500 rounded-full mx-auto mb-1"></div>
+                                <div className="text-xs text-muted-foreground">Live</div>
+                              </div>
                             )}
                           </div>
-                          {member.gamesRemaining > 0 && (
-                            <div className="flex items-center space-x-1 mt-1">
-                              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                              <span className="text-xs text-green-600 dark:text-green-400">Live</span>
-                            </div>
-                          )}
                         </div>
-                      </div>
-                      <div className="text-right">
-                        <div className="font-bold text-lg">{member.weeklyPoints || 0}</div>
-                        <div className="text-xs text-muted-foreground">points</div>
-                      </div>
-                    </div>
+                      </CardContent>
+                    </Card>
                   ))}
                   {(weeklyRankings as any[]).length > 4 && (
                     <Button 
@@ -260,16 +248,16 @@ export default function MainPage() {
             </CardContent>
           </Card>
 
-          {/* Teams Still Playing */}
+          {/* Teams Left to Play */}
           {teamsLeftToPlay.length > 0 && (
-            <Card className="border-0 shadow-lg">
+            <Card>
               <CardHeader className="pb-4">
                 <CardTitle className="text-lg flex items-center space-x-2">
-                  <Clock className="w-5 h-5 text-blue-500" />
-                  <span>Teams Still Playing</span>
+                  <Clock className="w-5 h-5" />
+                  <span>Teams Left to Play</span>
                 </CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="space-y-3">
                 <div className="space-y-3">
                   {Object.entries(
                     teamsLeftToPlay.reduce((acc: any, team: any) => {
@@ -279,11 +267,11 @@ export default function MainPage() {
                       return acc;
                     }, {})
                   ).slice(0, 3).map(([ownerName, teams]: [string, any]) => (
-                    <div key={ownerName} className="flex items-center justify-between p-3 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 rounded-lg">
+                    <div key={ownerName} className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">
                       <div className="flex items-center space-x-3">
                         <div className="font-medium text-sm">{ownerName}</div>
                         {ownerName === user?.name && (
-                          <Badge className="text-xs px-2 py-0.5 bg-blue-500 text-white">You</Badge>
+                          <Badge variant="secondary" className="text-xs px-1.5 py-0.5">You</Badge>
                         )}
                       </div>
                       <div className="flex items-center space-x-2">
@@ -294,9 +282,9 @@ export default function MainPage() {
                               logoUrl={`/images/nfl/team_logos/${team.teamCode}.png`}
                               teamName={team.teamCode}
                               size="sm" 
-                              className="w-7 h-7"
+                              className="w-6 h-6"
                             />
-                            <span className="text-xs text-muted-foreground font-medium">
+                            <span className="text-xs text-muted-foreground">
                               {team.opponent}
                             </span>
                           </div>
@@ -314,47 +302,24 @@ export default function MainPage() {
             </Card>
           )}
 
-          {/* Quick Actions Grid */}
+          {/* Quick Actions */}
           <div className="grid grid-cols-2 gap-3">
             <Button 
-              className="h-14 bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-lg"
+              variant="outline" 
+              className="h-12 flex items-center justify-center space-x-2"
               onClick={() => navigate('/stable')}
             >
-              <div className="flex flex-col items-center space-y-1">
-                <Shield className="w-5 h-5" />
-                <span className="text-sm font-medium">My Stable</span>
-              </div>
+              <Shield className="w-4 h-4" />
+              <span>My Stable</span>
             </Button>
             
             <Button 
-              className="h-14 bg-gradient-to-br from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white shadow-lg"
+              variant="outline" 
+              className="h-12 flex items-center justify-center space-x-2"
               onClick={() => navigate('/scores')}
             >
-              <div className="flex flex-col items-center space-y-1">
-                <TrendingUp className="w-5 h-5" />
-                <span className="text-sm font-medium">Live Scores</span>
-              </div>
-            </Button>
-          </div>
-
-          {/* Secondary Actions */}
-          <div className="grid grid-cols-2 gap-3">
-            <Button 
-              variant="outline" 
-              className="h-12 border-2 hover:bg-gray-50 dark:hover:bg-gray-900"
-              onClick={() => navigate('/league')}
-            >
-              <Users className="w-4 h-4 mr-2" />
-              <span>League</span>
-            </Button>
-            
-            <Button 
-              variant="outline" 
-              className="h-12 border-2 hover:bg-gray-50 dark:hover:bg-gray-900"
-              onClick={() => navigate('/more')}
-            >
-              <Target className="w-4 h-4 mr-2" />
-              <span>More</span>
+              <TrendingUp className="w-4 h-4" />
+              <span>Live Scores</span>
             </Button>
           </div>
 
