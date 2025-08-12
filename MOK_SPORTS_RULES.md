@@ -34,11 +34,12 @@
   - Bonus applies only if the team wins
 
 ## Lock and Load System
-- **High Risk/High Reward**: Special weekly selection
+- **High Risk/High Reward**: Special weekly selection that acts as both a lock AND load
 - **Usage Limit**: Once per team per entire season
 - **Scoring**:
-  - **Win**: +2 points
-  - **Loss**: -1 point
+  - **Win**: +2 points (+1 for lock + 1 for load)
+  - **Loss**: -1 point (+0 for lock - 1 for load)
+  - **Tie**: +0.5 points (+0.5 for lock + 0 for load)
 - **Strategy**: Save for games you're most confident about
 
 ## Trading System
