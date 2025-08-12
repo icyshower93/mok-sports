@@ -1,6 +1,6 @@
 import { Express } from 'express';
 import { db } from '../db';
-import { nflGames, nflTeams, userWeeklyScores, stables, users, leagues, weeklyLocks, weeklySkins } from '@shared/schema';
+import { nflGames, nflTeams, userWeeklyScores, stables, users, leagues, weeklyLocks, weeklySkins, leagueMembers } from '@shared/schema';
 import { eq, and, gte, lte, sql } from 'drizzle-orm';
 import { nflDataService } from '../services/nflDataService';
 import { calculateBaseMokPoints } from '../utils/mokScoring';
@@ -15,6 +15,8 @@ let adminState = {
   processingInProgress: false,
   season: 2024 // 2024 season for testing with authentic NFL data
 };
+
+
 
 // Authentic 2024 NFL Week 1 scores for testing
 function get2024Week1Scores(awayTeam: string, homeTeam: string, gameDate: Date): { homeScore: number, awayScore: number } | null {
@@ -639,7 +641,121 @@ export function registerAdminRoutes(app: Express) {
     }
   });
 
+  // Manual weekly bonus calculation route for testing
+  app.post('/api/admin/recalculate-weekly-bonuses', async (req, res) => {
+    try {
+      const { season, week } = req.body;
+      
+      if (!season || !week) {
+        return res.status(400).json({ error: 'Season and week are required' });
+      }
+      
+      await checkAndCalculateWeeklyBonuses(season, week);
+      
+      res.json({
+        success: true,
+        message: `Recalculated weekly bonuses for Season ${season}, Week ${week}`
+      });
+    } catch (error) {
+      console.error('Error recalculating weekly bonuses:', error);
+      res.status(500).json({ error: 'Failed to recalculate weekly bonuses' });
+    }
+  });
+
   // Removed season switching - focus on 2024 testing season only
+  console.log('Admin routes registered successfully');
+}
+
+// Handle week progression when date advances to a new week
+async function handleWeekProgression(oldWeek: number, newWeek: number, season: number) {
+  try {
+    console.log(`🏁 Finalizing Week ${oldWeek} and starting Week ${newWeek}`);
+    
+    // Ensure final week bonuses are calculated
+    await checkAndCalculateWeeklyBonuses(season, oldWeek);
+    
+    // Initialize user weekly scores for the new week (all users start at 0)
+    await initializeNewWeekScores(season, newWeek);
+    
+    console.log(`✅ Week progression complete: ${oldWeek} → ${newWeek}`);
+  } catch (error) {
+    console.error('Error handling week progression:', error);
+  }
+}
+
+// Award weekly skins to the highest scoring users
+async function awardWeeklySkins(season: number, week: number, highScoreUsers: any[]) {
+  try {
+    if (highScoreUsers.length === 0) return;
+    
+    // Group by league
+    const leagueGroups = highScoreUsers.reduce((groups, user) => {
+      if (!groups[user.leagueId]) groups[user.leagueId] = [];
+      groups[user.leagueId].push(user);
+      return groups;
+    }, {} as Record<string, any[]>);
+    
+    // Award skins for each league
+    for (const [leagueId, winners] of Object.entries(leagueGroups)) {
+      const isTied = winners.length > 1;
+      const winningScore = winners[0].totalPoints + 1; // After high score bonus
+      
+      for (const winner of winners) {
+        await db.insert(weeklySkins)
+          .values({
+            leagueId,
+            season,
+            week,
+            winnerId: winner.userId,
+            winningScore,
+            prizeAmount: 30, // $30 prize
+            isTied,
+            awardedAt: new Date()
+          })
+          .onConflictDoNothing(); // Prevent duplicates
+      }
+      
+      console.log(`🏆 Awarded Week ${week} skins to ${winners.length} winner(s) in league ${leagueId} (${winningScore} pts${isTied ? ', tied' : ''})`);
+    }
+  } catch (error) {
+    console.error('Error awarding weekly skins:', error);
+  }
+}
+
+// Initialize weekly scores for all users in active leagues for new week
+async function initializeNewWeekScores(season: number, week: number) {
+  try {
+    // Get all league members (not just creators)  
+    const allLeagueMembers = await db.select({
+      userId: leagueMembers.userId,
+      leagueId: leagueMembers.leagueId
+    })
+    .from(leagueMembers)
+    .innerJoin(leagues, eq(leagueMembers.leagueId, leagues.id))
+    .where(eq(leagues.isActive, true));
+    
+    // Initialize scores for all members
+    for (const member of allLeagueMembers) {
+      await db.insert(userWeeklyScores)
+        .values({
+          userId: member.userId,
+          leagueId: member.leagueId,
+          season,
+          week,
+          basePoints: 0,
+          lockBonusPoints: 0,
+          lockAndLoadBonusPoints: 0,
+          totalPoints: 0,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        })
+        .onConflictDoNothing(); // Skip if already exists
+    }
+    
+    console.log(`📊 Initialized Week ${week} scores for ${allLeagueMembers.length} league members`);
+  } catch (error) {
+    console.error('Error initializing new week scores:', error);
+  }
 }
 
 // Export function to get admin state
