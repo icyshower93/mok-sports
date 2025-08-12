@@ -199,15 +199,15 @@ class NFLDataService {
   }
 
   private mapGameStatus(status: string): 'scheduled' | 'live' | 'completed' {
-    const statusLower = (status || '').toLowerCase();
+    if (!status) return 'scheduled';
     
+    const statusLower = status.toLowerCase();
     if (statusLower.includes('final') || statusLower.includes('completed')) {
       return 'completed';
-    } else if (statusLower.includes('live') || statusLower.includes('in progress')) {
+    } else if (statusLower.includes('live') || statusLower.includes('quarter') || statusLower.includes('half') || statusLower.includes('in progress')) {
       return 'live';
-    } else {
-      return 'scheduled';
     }
+    return 'scheduled';
   }
 
   async getTeamsData(): Promise<any[]> {
@@ -389,16 +389,20 @@ class NFLDataService {
     }
   }
 
-  private mapGameStatus(status: string): 'scheduled' | 'live' | 'completed' {
-    if (!status) return 'scheduled';
+  private mapTank01TeamToCode(teamName: string): string {
+    // Basic team name to code mapping - Tank01 uses full names
+    const teamMapping: Record<string, string> = {
+      'Cardinals': 'ARI', 'Falcons': 'ATL', 'Ravens': 'BAL', 'Bills': 'BUF',
+      'Panthers': 'CAR', 'Bears': 'CHI', 'Bengals': 'CIN', 'Browns': 'CLE',
+      'Cowboys': 'DAL', 'Broncos': 'DEN', 'Lions': 'DET', 'Packers': 'GB',
+      'Texans': 'HOU', 'Colts': 'IND', 'Jaguars': 'JAX', 'Chiefs': 'KC',
+      'Raiders': 'LV', 'Chargers': 'LAC', 'Rams': 'LAR', 'Dolphins': 'MIA',
+      'Vikings': 'MIN', 'Patriots': 'NE', 'Saints': 'NO', 'Giants': 'NYG',
+      'Jets': 'NYJ', 'Eagles': 'PHI', 'Steelers': 'PIT', '49ers': 'SF',
+      'Seahawks': 'SEA', 'Buccaneers': 'TB', 'Titans': 'TEN', 'Commanders': 'WAS'
+    };
     
-    const statusLower = status.toLowerCase();
-    if (statusLower.includes('final') || statusLower.includes('completed')) {
-      return 'completed';
-    } else if (statusLower.includes('live') || statusLower.includes('quarter') || statusLower.includes('half')) {
-      return 'live';
-    }
-    return 'scheduled';
+    return teamMapping[teamName] || teamName;
   }
 
   // Get games that should be "completed" based on the simulated current time
@@ -435,5 +439,7 @@ class NFLDataService {
   }
 }
 
+// Export both class and singleton instance
+export { NFLDataService };
 export const nflDataService = new NFLDataService();
 export type { NFLGameData };

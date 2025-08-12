@@ -65,12 +65,12 @@ export class WeekLockRestrictions {
       const { getAdminState } = await import("../routes/admin.js");
       const adminState = getAdminState();
       const currentWeek = adminState.currentWeek;
-      const simulationRunning = adminState.simulationRunning;
+      const processingInProgress = adminState.processingInProgress;
 
       // Get games for this week from database to count totals
       const weekGames = await this.nflDataService.getWeekData(season, week);
       const totalGames = weekGames.length;
-      const gamesCompleted = weekGames.filter(game => game.isCompleted).length;
+      const gamesCompleted = weekGames.filter((game: any) => game.isCompleted).length;
       const gamesInProgress = totalGames - gamesCompleted;
 
       // In testing: Allow locks if simulation is not running OR week hasn't started yet
@@ -97,7 +97,7 @@ export class WeekLockRestrictions {
       }
 
       // Current week
-      if (simulationRunning) {
+      if (processingInProgress) {
         // Week is actively being simulated - no locks allowed
         return {
           canLock: false,
@@ -158,7 +158,7 @@ export class WeekLockRestrictions {
       const totalGames = weekGames.length;
       
       // Sort games by date to find first and last
-      const sortedGames = weekGames.sort((a, b) => a.gameDate.getTime() - b.gameDate.getTime());
+      const sortedGames = weekGames.sort((a: any, b: any) => a.gameDate.getTime() - b.gameDate.getTime());
       const firstGame = sortedGames[0];
       const lastGame = sortedGames[sortedGames.length - 1];
       
@@ -264,7 +264,7 @@ export class WeekLockRestrictions {
       // For production, also check if this specific team's game has started
       if (season >= 2025) {
         const weekGames = await this.nflDataService.getWeekData(season, week);
-        const teamGame = weekGames.find(game => 
+        const teamGame = weekGames.find((game: any) => 
           game.homeTeam === teamCode || game.awayTeam === teamCode
         );
 
