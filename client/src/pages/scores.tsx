@@ -578,7 +578,7 @@ export default function ScoresPage() {
                                   {game.awayTeam}
                                 </span>
                                 {game.awayOwnerName && (
-                                  <span className="text-xs text-muted-foreground/70">
+                                  <span className="text-xs text-slate-500 dark:text-slate-400">
                                     ({game.awayOwnerName})
                                   </span>
                                 )}
@@ -642,7 +642,7 @@ export default function ScoresPage() {
                                   {game.homeTeam}
                                 </span>
                                 {game.homeOwnerName && (
-                                  <span className="text-xs text-muted-foreground/70">
+                                  <span className="text-xs text-slate-500 dark:text-slate-400">
                                     ({game.homeOwnerName})
                                   </span>
                                 )}
