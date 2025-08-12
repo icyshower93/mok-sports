@@ -561,19 +561,24 @@ export default function ScoresPage() {
                           />
                           <div className="flex flex-col">
                             <div className="flex items-center gap-2">
-                              <span
-                                className={`font-medium ${
-                                  isUserTeam(game.awayTeam)
-                                    ? "text-green-600 font-bold"
-                                    : awayWin
-                                      ? "text-foreground"
-                                      : "text-muted-foreground"
-                                }`}
-                              >
-                                {game.awayTeam}{" "}
-                                {game.awayOwnerName &&
-                                  `(${game.awayOwnerName})`}
-                              </span>
+                              <div className="flex items-center gap-1">
+                                <span
+                                  className={`font-medium ${
+                                    isUserTeam(game.awayTeam)
+                                      ? "text-green-600 font-bold"
+                                      : awayWin
+                                        ? "text-foreground"
+                                        : "text-muted-foreground"
+                                  }`}
+                                >
+                                  {game.awayTeam}
+                                </span>
+                                {game.awayOwnerName && (
+                                  <span className="text-xs text-muted-foreground/70">
+                                    ({game.awayOwnerName})
+                                  </span>
+                                )}
+                              </div>
                               {awayLockStatus.locked && (
                                 <Lock className="w-3 h-3 text-blue-500" />
                               )}
@@ -620,19 +625,24 @@ export default function ScoresPage() {
                           />
                           <div className="flex flex-col">
                             <div className="flex items-center gap-2">
-                              <span
-                                className={`font-medium ${
-                                  isUserTeam(game.homeTeam)
-                                    ? "text-green-600 font-bold"
-                                    : homeWin
-                                      ? "text-foreground"
-                                      : "text-muted-foreground"
-                                }`}
-                              >
-                                {game.homeTeam}{" "}
-                                {game.homeOwnerName &&
-                                  `(${game.homeOwnerName})`}
-                              </span>
+                              <div className="flex items-center gap-1">
+                                <span
+                                  className={`font-medium ${
+                                    isUserTeam(game.homeTeam)
+                                      ? "text-green-600 font-bold"
+                                      : homeWin
+                                        ? "text-foreground"
+                                        : "text-muted-foreground"
+                                  }`}
+                                >
+                                  {game.homeTeam}
+                                </span>
+                                {game.homeOwnerName && (
+                                  <span className="text-xs text-muted-foreground/70">
+                                    ({game.homeOwnerName})
+                                  </span>
+                                )}
+                              </div>
                               {homeLockStatus.locked && (
                                 <Lock className="w-3 h-3 text-blue-500" />
                               )}
