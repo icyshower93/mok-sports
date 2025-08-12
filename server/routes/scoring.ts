@@ -173,12 +173,12 @@ router.get("/week/:week", async (req, res) => {
       week,
       season,
       leagueId,
-      games: games.length,
+      gameCount: games.length,
       completedGames: games.filter(g => g.isCompleted).length,
       // Add production readiness indicator
       production: season >= 2025,
       message: season === 2024 ? 'Testing mode: All scores visible' : 'Production mode: Only completed game scores visible',
-      results: games
+      games: games // Frontend expects 'games', not 'results'
     });
     
   } catch (error) {
