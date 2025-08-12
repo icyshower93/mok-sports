@@ -378,6 +378,175 @@ export function setupScoringRoutes(app: express.Express) {
     }
   });
 
+  // Enhanced dashboard endpoint with teams left to play
+  app.get("/api/leagues/:leagueId/dashboard/:week", async (req, res) => {
+    try {
+      const user = await getAuthenticatedUser(req);
+      if (!user) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+
+      const { leagueId, week } = req.params;
+      const season = parseInt(req.query.season as string) || 2024;
+      const weekNum = parseInt(week);
+      
+      // Check if user is member of this league
+      const isMember = await storage.isUserInLeague(user.id, leagueId);
+      if (!isMember) {
+        return res.status(403).json({ message: "Not authorized to view this league" });
+      }
+
+      if (isNaN(weekNum) || weekNum < 1 || weekNum > 18) {
+        return res.status(400).json({ message: "Invalid week" });
+      }
+
+      console.log(`[Dashboard] Getting dashboard data for Week ${weekNum} of ${season}, League ${leagueId}`);
+
+      // Get league members and their teams
+      const membersResult = await db.execute(sql`
+        SELECT DISTINCT
+          u.id as user_id,
+          u.name as user_name,
+          dp.nfl_team_id,
+          nt.code as team_code,
+          nt.name as team_name
+        FROM users u
+        JOIN league_members lm ON u.id = lm.user_id
+        JOIN draft_picks dp ON u.id = dp.user_id
+        JOIN nfl_teams nt ON dp.nfl_team_id = nt.id
+        JOIN drafts d ON dp.draft_id = d.id
+        WHERE lm.league_id = ${leagueId} AND d.league_id = ${leagueId}
+        ORDER BY u.name, nt.code
+      `);
+
+      // Get games for this week with completion status
+      const gamesResult = await db.execute(sql`
+        SELECT DISTINCT
+          g.id as game_id,
+          ht.id as home_team_id,
+          ht.code as home_team,
+          ht.name as home_team_name,
+          at.id as away_team_id,
+          at.code as away_team,
+          at.name as away_team_name,
+          g.home_score,
+          g.away_score,
+          g.is_completed,
+          g.game_date
+        FROM nfl_games g
+        JOIN nfl_teams ht ON g.home_team_id = ht.id
+        JOIN nfl_teams at ON g.away_team_id = at.id
+        WHERE g.week = ${weekNum} AND g.season = ${season}
+        ORDER BY g.game_date
+      `);
+
+      // Process member data
+      const memberTeams = membersResult.rows.reduce((acc: any, row: any) => {
+        const userId = row.user_id;
+        if (!acc[userId]) {
+          acc[userId] = {
+            userId,
+            userName: row.user_name,
+            teams: [],
+            teamsLeftToPlay: [],
+            totalPoints: 0,
+            weekPoints: 0,
+            rank: 0,
+            avatar: row.user_name.substring(0, 2).toUpperCase(),
+            isCurrentUser: row.user_id === user.id
+          };
+        }
+        
+        const team = {
+          id: row.nfl_team_id,
+          code: row.team_code,
+          name: row.team_name
+        };
+        
+        acc[userId].teams.push(team);
+        
+        // Check if team has remaining games this week
+        const hasRemainingGame = gamesResult.rows.some((game: any) => 
+          (game.home_team_id === row.nfl_team_id || game.away_team_id === row.nfl_team_id) && 
+          !game.is_completed
+        );
+        
+        if (hasRemainingGame) {
+          const gameInfo = gamesResult.rows.find((game: any) => 
+            game.home_team_id === row.nfl_team_id || game.away_team_id === row.nfl_team_id
+          );
+          
+          if (gameInfo) {
+            const isHome = gameInfo.home_team_id === row.nfl_team_id;
+            acc[userId].teamsLeftToPlay.push({
+              ...team,
+              opponent: isHome ? {
+                code: gameInfo.away_team,
+                name: gameInfo.away_team_name
+              } : {
+                code: gameInfo.home_team,
+                name: gameInfo.home_team_name
+              },
+              isHome,
+              gameDate: gameInfo.game_date
+            });
+          }
+        }
+        
+        return acc;
+      }, {});
+
+      // Calculate scores for each member
+      const weeklyScores = await calculateWeeklyScores(leagueId, weekNum, season);
+      
+      // Update member data with scores
+      Object.values(memberTeams).forEach((member: any) => {
+        const userScore = weeklyScores.find((score: any) => score.userId === member.userId);
+        if (userScore) {
+          member.totalPoints = userScore.totalPoints || 0;
+          member.weekPoints = userScore.weekPoints || 0;
+        }
+      });
+
+      // Sort by total points for rankings
+      const sortedMembers = Object.values(memberTeams).sort((a: any, b: any) => b.totalPoints - a.totalPoints);
+      sortedMembers.forEach((member: any, index: number) => {
+        member.rank = index + 1;
+      });
+
+      // Get current user stats
+      const currentUserStats = sortedMembers.find((member: any) => member.isCurrentUser) || {
+        rank: 0,
+        totalPoints: 0,
+        weekPoints: 0
+      };
+
+      // Count games in progress
+      const gamesInProgress = gamesResult.rows.filter((game: any) => !game.is_completed).length;
+
+      // Calculate weekly prize (simplified - $30 per week)
+      const weeklyPrize = 30;
+
+      res.json({
+        userStats: {
+          rank: currentUserStats.rank,
+          totalPoints: currentUserStats.totalPoints,
+          weekPoints: currentUserStats.weekPoints
+        },
+        weeklyStandings: sortedMembers,
+        weeklyPrize,
+        gamesInProgress,
+        week: weekNum,
+        season,
+        leagueId
+      });
+
+    } catch (error) {
+      console.error('Error getting dashboard data:', error);
+      res.status(500).json({ message: "Failed to get dashboard data" });
+    }
+  });
+
   // Get season standings for a league
   app.get("/api/leagues/:leagueId/standings/:season", async (req, res) => {
     try {
