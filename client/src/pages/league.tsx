@@ -91,6 +91,23 @@ export default function LeaguePage() {
     });
   };
 
+  // Format name as "First L." or "F. L." for long first names
+  const formatName = (fullName: string) => {
+    const parts = fullName.trim().split(' ');
+    if (parts.length === 1) return fullName; // Single name, return as is
+    
+    const firstName = parts[0];
+    const lastName = parts[parts.length - 1];
+    
+    // If first name is longer than 8 characters, use initials
+    if (firstName.length > 8) {
+      return `${firstName[0]}. ${lastName[0]}.`;
+    }
+    
+    // Otherwise use "First L."
+    return `${firstName} ${lastName[0]}.`;
+  };
+
   return (
     <div className="min-h-screen bg-background pb-20">
       <div className="max-w-4xl mx-auto px-4">
@@ -133,7 +150,7 @@ export default function LeaguePage() {
                         
                         {/* User Info */}
                         <div className="flex items-center space-x-2">
-                          <span className="font-semibold text-base">{member.name}</span>
+                          <span className="font-semibold text-base">{formatName(member.name)}</span>
                           {member.isCurrentUser && (
                             <Badge variant="secondary" className="text-xs">You</Badge>
                           )}
@@ -176,20 +193,18 @@ export default function LeaguePage() {
                 {expandedUsers.has(member.name) && member.teams && member.teams.length > 0 && (
                   <Card className="mt-2 ml-8">
                     <CardContent className="p-3">
-                      <div className="flex items-center space-x-2 flex-wrap gap-2">
+                      <div className="flex items-center space-x-1 flex-wrap">
                         {member.teams.map((team: any) => (
-                          <div key={team.code} className="flex items-center space-x-2 bg-muted/30 rounded-lg px-3 py-2">
-                            <img 
-                              src={`/images/nfl/team_logos/${team.code}.png`}
-                              alt={team.code}
-                              title={team.name}
-                              className="w-6 h-6 rounded object-contain"
-                              onError={(e) => {
-                                (e.target as HTMLImageElement).src = `https://a.espncdn.com/i/teamlogos/nfl/500/${team.code.toLowerCase()}.png`;
-                              }}
-                            />
-                            <span className="text-sm font-medium">{team.code}</span>
-                          </div>
+                          <img 
+                            key={team.code}
+                            src={`/images/nfl/team_logos/${team.code}.png`}
+                            alt={team.code}
+                            title={`${team.name} (${team.code})`}
+                            className="w-8 h-8 rounded object-contain"
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).src = `https://a.espncdn.com/i/teamlogos/nfl/500/${team.code.toLowerCase()}.png`;
+                            }}
+                          />
                         ))}
                       </div>
                     </CardContent>
