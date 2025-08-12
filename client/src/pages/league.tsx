@@ -34,6 +34,12 @@ export default function LeaguePage() {
   // Use the provided league ID or fall back to EEW2YU league
   const targetLeagueId = leagueId || (userLeagues as any[])?.[0]?.id || '243d719b-92ce-4752-8689-5da93ee69213';
   
+  // Get current week info
+  const { data: currentWeekData } = useQuery({
+    queryKey: ['/api/admin/current-week'],
+    enabled: !!user,
+  });
+  
   // Get league standings data
   const { data: leagueData, isLoading } = useQuery({
     queryKey: [`/api/leagues/${targetLeagueId}/standings`],
@@ -86,7 +92,7 @@ export default function LeaguePage() {
         <div className="px-6 pb-6">
           <div className="mb-4">
             <h2 className="text-xl font-bold">Standings</h2>
-            <p className="text-sm text-muted-foreground">{leagueInfo.memberCount} teams • Week {leagueInfo.week}</p>
+            <p className="text-sm text-muted-foreground">Week {currentWeekData?.currentWeek || leagueInfo.week}</p>
           </div>
           
           <div className="space-y-3">

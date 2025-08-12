@@ -387,5 +387,26 @@ export function registerAdminRoutes(app: Express) {
     }
   });
 
+  // Get current week and season info for frontend
+  app.get("/api/admin/current-week", async (req, res) => {
+    try {
+      await updateAdminState();
+      
+      res.json({
+        currentWeek: adminState.currentWeek,
+        season: adminState.season,
+        currentDate: adminState.currentDate.toISOString()
+      });
+    } catch (error) {
+      console.error('Error getting current week:', error);
+      res.status(500).json({ message: "Failed to get current week" });
+    }
+  });
+
   // Removed season switching - focus on 2024 testing season only
+}
+
+// Export function to get admin state
+export function getAdminState() {
+  return adminState;
 }
