@@ -221,11 +221,20 @@ export class EndOfWeekProcessor {
 
     // Update each user's weekly score
     for (const owner of teamOwners) {
+      const updateData: any = {
+        totalPoints: sql`${userWeeklyScores.totalPoints} + ${bonusPoints}`,
+        updatedAt: new Date()
+      };
+
+      // Update specific bonus/penalty columns based on reason
+      if (reason === 'weekly_high') {
+        updateData.weeklyHighBonusPoints = sql`${userWeeklyScores.weeklyHighBonusPoints} + ${bonusPoints}`;
+      } else if (reason === 'weekly_low') {
+        updateData.weeklyLowPenaltyPoints = sql`${userWeeklyScores.weeklyLowPenaltyPoints} + ${bonusPoints}`;
+      }
+
       await db.update(userWeeklyScores)
-        .set({
-          totalPoints: sql`${userWeeklyScores.totalPoints} + ${bonusPoints}`,
-          updatedAt: new Date()
-        })
+        .set(updateData)
         .where(
           and(
             eq(userWeeklyScores.userId, owner.userId),

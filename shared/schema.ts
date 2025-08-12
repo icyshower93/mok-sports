@@ -177,6 +177,8 @@ export const userWeeklyScores = pgTable("user_weekly_scores", {
   basePoints: integer("base_points").notNull().default(0), // Points without lock bonuses
   lockBonusPoints: integer("lock_bonus_points").notNull().default(0),
   lockAndLoadBonusPoints: integer("lock_and_load_bonus_points").notNull().default(0),
+  weeklyHighBonusPoints: integer("weekly_high_bonus_points").notNull().default(0), // +1 for weekly high score
+  weeklyLowPenaltyPoints: integer("weekly_low_penalty_points").notNull().default(0), // -1 for weekly low score
   totalPoints: integer("total_points").notNull().default(0), // Sum of all points
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
