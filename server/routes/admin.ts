@@ -1,6 +1,6 @@
 import { Express } from 'express';
 import { db } from '../db';
-import { nflGames, nflTeams, userWeeklyScores, stables, users, leagues, weeklyLocks } from '@shared/schema';
+import { nflGames, nflTeams, userWeeklyScores, stables, users, leagues, weeklyLocks, weeklySkins } from '@shared/schema';
 import { eq, and, gte, lte, sql } from 'drizzle-orm';
 import { nflDataService } from '../services/nflDataService';
 import { calculateBaseMokPoints } from '../utils/mokScoring';
@@ -449,6 +449,9 @@ async function checkAndCalculateWeeklyBonuses(season: number, week: number) {
         }
 
         console.log(`✅ Applied weekly bonuses: High (${highScore} pts) to ${highScoreUsers.length} users, Low (${lowScore} pts) to ${lowScoreUsers.length} users`);
+        
+        // Award weekly skins to highest scorers (after bonuses applied)
+        await awardWeeklySkins(season, week, highScoreUsers);
       }
     }
   } catch (error) {
@@ -498,6 +501,14 @@ export function registerAdminRoutes(app: Express) {
 
       // Process games for the new current date (games scheduled for this exact date)
       const processedCount = await processGamesForDate(adminState.currentDate);
+      
+      // Check if week has changed and handle week progression
+      const newWeek = calculateWeekFromDate(adminState.currentDate);
+      if (newWeek !== adminState.currentWeek) {
+        console.log(`📈 Week progression: ${adminState.currentWeek} → ${newWeek}`);
+        await handleWeekProgression(adminState.currentWeek, newWeek, adminState.season);
+        adminState.currentWeek = newWeek;
+      }
       
       // Update state
       await updateAdminState();

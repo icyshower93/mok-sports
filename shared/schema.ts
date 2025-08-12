@@ -185,6 +185,23 @@ export const userWeeklyScores = pgTable("user_weekly_scores", {
   uniqueUserWeek: unique().on(table.userId, table.leagueId, table.season, table.week),
 }));
 
+// Weekly Skins Winners - tracks who wins the weekly $30 prize
+export const weeklySkins = pgTable("weekly_skins", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  leagueId: varchar("league_id").notNull().references(() => leagues.id),
+  season: integer("season").notNull(),
+  week: integer("week").notNull(),
+  winnerId: varchar("winner_id").notNull().references(() => users.id),
+  winningScore: integer("winning_score").notNull(), // The score that won the week
+  prizeAmount: integer("prize_amount").notNull().default(30), // $30 default prize
+  isTied: boolean("is_tied").notNull().default(false), // If multiple winners tied
+  awardedAt: timestamp("awarded_at").defaultNow().notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  // Add unique constraint for proper weekly prize tracking
+  uniqueLeagueWeek: unique().on(table.leagueId, table.season, table.week, table.winnerId),
+}));
+
 // Relations
 export const usersRelations = relations(users, ({ many }) => ({
   createdLeagues: many(leagues),
