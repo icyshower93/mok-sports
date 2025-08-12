@@ -82,36 +82,8 @@ export default function LeaguePage() {
           </div>
         </div>
 
-        {/* Current Skins Prize */}
-        <div className="px-6 pb-6">
-          <Card className="bg-gradient-to-r from-emerald-50 to-green-50 dark:from-emerald-950/20 dark:to-green-950/20 border-emerald-200 dark:border-emerald-800">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-full">
-                    <DollarSign className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
-                  </div>
-                  <div>
-                    <div className="font-semibold text-emerald-800 dark:text-emerald-200">
-                      Weekly Skins
-                    </div>
-                    <div className="text-sm text-emerald-600 dark:text-emerald-400">
-                      Week {leagueInfo.week} prize
-                    </div>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <div className="text-2xl font-bold text-emerald-700 dark:text-emerald-300">
-                    ${leagueInfo.weeklyPot}
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
         {/* Standings */}
-        <div className="px-6">
+        <div className="px-6 pb-6">
           <div className="mb-4">
             <h2 className="text-xl font-bold">Standings</h2>
             <p className="text-sm text-muted-foreground">{leagueInfo.memberCount} teams • Week {leagueInfo.week}</p>
@@ -189,7 +161,7 @@ export default function LeaguePage() {
         </div>
 
         {/* Season Prizes */}
-        <div className="p-6">
+        <div className="px-6 pb-6">
           <div className="mb-4 flex items-center space-x-2">
             <Award className="w-5 h-5 text-yellow-500" />
             <h2 className="text-xl font-bold">Season Prizes</h2>
@@ -217,6 +189,34 @@ export default function LeaguePage() {
               </Card>
             ))}
           </div>
+        </div>
+
+        {/* Weekly Skins - Now Below Season Prizes */}
+        <div className="px-6 pb-6">
+          <Card className="bg-gradient-to-r from-emerald-50 to-green-50 dark:from-emerald-950/20 dark:to-green-950/20 border-emerald-200 dark:border-emerald-800">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-full">
+                    <DollarSign className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+                  </div>
+                  <div>
+                    <div className="font-semibold text-emerald-800 dark:text-emerald-200">
+                      Weekly Skins
+                    </div>
+                    <div className="text-sm text-emerald-600 dark:text-emerald-400">
+                      Week {leagueInfo.week} prize
+                    </div>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="text-2xl font-bold text-emerald-700 dark:text-emerald-300">
+                    ${leagueInfo.weeklyPot}
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
       <BottomNav />
