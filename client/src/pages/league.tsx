@@ -7,6 +7,7 @@ import { Progress } from "@/components/ui/progress";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/use-auth";
 import { useLocation } from "wouter";
+import { useState } from "react";
 import { 
   Trophy, 
   DollarSign, 
@@ -14,12 +15,15 @@ import {
   Settings,
   Award,
   Target,
-  Loader2
+  Loader2,
+  ChevronDown,
+  ChevronUp
 } from "lucide-react";
 
 export default function LeaguePage() {
   const { user } = useAuth();
   const [location] = useLocation();
+  const [expandedUsers, setExpandedUsers] = useState<Set<string>>(new Set());
   
   // Get league ID from URL (assumes pattern /league?id=...)
   const searchParams = new URLSearchParams(location.split('?')[1] || '');
@@ -75,6 +79,18 @@ export default function LeaguePage() {
 
   const { league: leagueInfo, standings, seasonPrizes } = leagueData || { league: null, standings: [], seasonPrizes: [] };
 
+  const toggleUserExpansion = (userName: string) => {
+    setExpandedUsers(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(userName)) {
+        newSet.delete(userName);
+      } else {
+        newSet.add(userName);
+      }
+      return newSet;
+    });
+  };
+
   return (
     <div className="min-h-screen bg-background pb-20">
       <div className="max-w-4xl mx-auto px-4">
@@ -97,71 +113,89 @@ export default function LeaguePage() {
           
           <div className="space-y-3">
             {standings.map((member: any, index: number) => (
-              <Card 
-                key={member.name} 
-                className={`${member.isCurrentUser ? 'ring-2 ring-primary/20 bg-primary/5' : ''}`}
-              >
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between gap-2">
-                    {/* Left: Rank + Team Info */}
-                    <div className="flex items-center space-x-3 flex-1 min-w-0">
-                      {/* Rank Badge */}
-                      <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
-                        member.rank === 1 ? 'bg-yellow-500 text-white' :
-                        member.rank === 2 ? 'bg-gray-400 text-white' :
-                        member.rank === 3 ? 'bg-orange-500 text-white' :
-                        'bg-muted text-muted-foreground'
-                      }`}>
-                        {member.rank}
-                      </div>
-                      
-                      {/* Team Info */}
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center space-x-2 mb-2">
+              <div key={member.name}>
+                <Card 
+                  className={`${member.isCurrentUser ? 'ring-2 ring-primary/20 bg-primary/5' : ''}`}
+                >
+                  <CardContent className="p-4">
+                    <div className="flex items-center justify-between gap-2">
+                      {/* Left: Rank + User Info */}
+                      <div className="flex items-center space-x-3 flex-1 min-w-0">
+                        {/* Rank Badge */}
+                        <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
+                          member.rank === 1 ? 'bg-yellow-500 text-white' :
+                          member.rank === 2 ? 'bg-gray-400 text-white' :
+                          member.rank === 3 ? 'bg-orange-500 text-white' :
+                          'bg-muted text-muted-foreground'
+                        }`}>
+                          {member.rank}
+                        </div>
+                        
+                        {/* User Info */}
+                        <div className="flex items-center space-x-2">
                           <span className="font-semibold text-base">{member.name}</span>
                           {member.isCurrentUser && (
                             <Badge variant="secondary" className="text-xs">You</Badge>
                           )}
                         </div>
-                        
-                        {/* Team Logos - Show all 5 teams */}
-                        {member.teams && member.teams.length > 0 && (
-                          <div className="flex items-center space-x-1">
-                            {member.teams.map((team: any) => (
-                              <img 
-                                key={team.code}
-                                src={`/images/nfl/team_logos/${team.code}.png`}
-                                alt={team.code}
-                                title={team.name}
-                                className="w-6 h-6 rounded object-contain"
-                                onError={(e) => {
-                                  (e.target as HTMLImageElement).src = `https://a.espncdn.com/i/teamlogos/nfl/500/${team.code.toLowerCase()}.png`;
-                                }}
-                              />
-                            ))}
+                      </div>
+                      
+                      {/* Right: Stats + Chevron */}
+                      <div className="flex items-center space-x-6 text-sm">
+                        <div className="text-center">
+                          <div className="text-xs text-muted-foreground">LOCKS</div>
+                          <div className="font-medium">{member.locks}</div>
+                        </div>
+                        <div className="text-center">
+                          <div className="text-xs text-muted-foreground">SKINS</div>
+                          <div className="font-medium">{member.skinsWon || 0}</div>
+                        </div>
+                        <div className="text-center">
+                          <div className="text-xs text-muted-foreground">PTS</div>
+                          <div className="text-lg font-bold">{member.points}</div>
+                        </div>
+                        {/* Chevron for teams expansion */}
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="p-2"
+                          onClick={() => toggleUserExpansion(member.name)}
+                        >
+                          {expandedUsers.has(member.name) ? (
+                            <ChevronUp className="w-4 h-4" />
+                          ) : (
+                            <ChevronDown className="w-4 h-4" />
+                          )}
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+                
+                {/* Expanded Teams Section */}
+                {expandedUsers.has(member.name) && member.teams && member.teams.length > 0 && (
+                  <Card className="mt-2 ml-8">
+                    <CardContent className="p-3">
+                      <div className="flex items-center space-x-2 flex-wrap gap-2">
+                        {member.teams.map((team: any) => (
+                          <div key={team.code} className="flex items-center space-x-2 bg-muted/30 rounded-lg px-3 py-2">
+                            <img 
+                              src={`/images/nfl/team_logos/${team.code}.png`}
+                              alt={team.code}
+                              title={team.name}
+                              className="w-6 h-6 rounded object-contain"
+                              onError={(e) => {
+                                (e.target as HTMLImageElement).src = `https://a.espncdn.com/i/teamlogos/nfl/500/${team.code.toLowerCase()}.png`;
+                              }}
+                            />
+                            <span className="text-sm font-medium">{team.code}</span>
                           </div>
-                        )}
+                        ))}
                       </div>
-                    </div>
-                    
-                    {/* Right: Stats */}
-                    <div className="flex items-center space-x-6 text-sm">
-                      <div className="text-center">
-                        <div className="text-xs text-muted-foreground">LOCKS</div>
-                        <div className="font-medium">{member.locks}</div>
-                      </div>
-                      <div className="text-center">
-                        <div className="text-xs text-muted-foreground">SKINS</div>
-                        <div className="font-medium">{member.skinsWon || 0}</div>
-                      </div>
-                      <div className="text-center">
-                        <div className="text-xs text-muted-foreground">PTS</div>
-                        <div className="text-lg font-bold">{member.points}</div>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+                    </CardContent>
+                  </Card>
+                )}
+              </div>
             ))}
           </div>
         </div>
