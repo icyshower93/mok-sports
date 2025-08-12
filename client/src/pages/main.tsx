@@ -76,9 +76,9 @@ export default function MainPage() {
     enabled: !!selectedLeague,
   });
 
-  // Extract rankings and week-end results
-  const weeklyRankings = (weeklyRankingsData as any)?.rankings || [];
-  const weekEndResults = (weeklyRankingsData as any)?.weekEndResults;
+  // Extract rankings and week-end results with proper fallbacks
+  const weeklyRankings = Array.isArray((weeklyRankingsData as any)?.rankings) ? (weeklyRankingsData as any)?.rankings : [];
+  const weekEndResults = (weeklyRankingsData as any)?.weekEndResults || null;
 
   // Fetch teams left to play for current week
   const { data: teamsLeftData } = useQuery({
@@ -92,7 +92,7 @@ export default function MainPage() {
   const userRank = currentUserStanding?.rank || 0;
   const userSkinsWon = currentUserStanding?.skinsWon || 0;
   const weeklyPrize = 30; // Static $30 per week as per Mok rules
-  const teamsLeftToPlay = (teamsLeftData as any)?.teamsLeftToPlay || [];
+  const teamsLeftToPlay = Array.isArray((teamsLeftData as any)?.teamsLeftToPlay) ? (teamsLeftData as any)?.teamsLeftToPlay : [];
 
   // Debug logging
   console.log('Main page debug:', {
@@ -202,7 +202,7 @@ export default function MainPage() {
                 </div>
               ) : (
                 <div className="space-y-3">
-                  {weeklyRankings && (weeklyRankings as any[])
+                  {Array.isArray(weeklyRankings) && (weeklyRankings as any[])
                     .slice(0, showAllWeeklyRankings ? (weeklyRankings as any[]).length : 3)
                     .map((member: any, index: number) => (
                     <Card 
@@ -245,7 +245,7 @@ export default function MainPage() {
                       </CardContent>
                     </Card>
                   ))}
-                  {weeklyRankings && (weeklyRankings as any[]).length > 3 && (
+                  {Array.isArray(weeklyRankings) && (weeklyRankings as any[]).length > 3 && (
                     <Button 
                       variant="ghost" 
                       size="sm" 
@@ -272,7 +272,7 @@ export default function MainPage() {
                   
                   <div className="space-y-3">
                     {/* High Score Teams */}
-                    {weekEndResults.highScoreTeams && weekEndResults.highScoreTeams.length > 0 && (
+                    {Array.isArray(weekEndResults?.highScoreTeams) && weekEndResults.highScoreTeams.length > 0 && (
                       <div className="bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800 rounded-lg p-3">
                         <div className="flex items-center gap-2 mb-2">
                           <Trophy className="w-4 h-4 text-green-600" />
@@ -299,7 +299,7 @@ export default function MainPage() {
                     )}
 
                     {/* Low Score Teams */}
-                    {weekEndResults.lowScoreTeams && weekEndResults.lowScoreTeams.length > 0 && (
+                    {Array.isArray(weekEndResults?.lowScoreTeams) && weekEndResults.lowScoreTeams.length > 0 && (
                       <div className="bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 rounded-lg p-3">
                         <div className="flex items-center gap-2 mb-2">
                           <Target className="w-4 h-4 text-red-600" />

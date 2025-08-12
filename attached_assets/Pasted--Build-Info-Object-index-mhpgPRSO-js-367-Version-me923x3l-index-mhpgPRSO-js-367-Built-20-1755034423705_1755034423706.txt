@@ -1,0 +1,72 @@
+🏗️ Build Info: Object
+index-mhpgPRSO.js:367 📦 Version: me923x3l
+index-mhpgPRSO.js:367 📅 Built: 2025-08-12T21:31:40.497Z
+index-mhpgPRSO.js:367 🔧 Environment: production
+index-mhpgPRSO.js:323 [Auth] Token check - Has token: true Has user: false Loading: true
+index-mhpgPRSO.js:323 [SW Hook] EMERGENCY: Unregistering all existing service workers
+index-mhpgPRSO.js:323 [SW Hook] Found 1 existing registrations
+index-mhpgPRSO.js:323 [SW Hook] Unregistering existing service worker
+index-mhpgPRSO.js:323 [SW Hook] Found 0 caches to delete
+/admin:1 Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner.
+index-mhpgPRSO.js:323 [Auth] Token check - Has token: true Has user: true Loading: false
+index-mhpgPRSO.js:323 [SubscriptionManager] 5:31:40 PM - Permission is granted and no active subscription - auto-creating subscription
+index-mhpgPRSO.js:323 [AutoPushRefresh] Legacy hook delegating to SubscriptionManager
+index-mhpgPRSO.js:323 [SW Hook] Registering fresh service worker: /sw.js?v=1755034300614&r=0.8878739241102523
+sw.js?v=1755034300614&r=0.8878739241102523:2 [SW] NUCLEAR OPTION - Emergency service worker loading
+sw.js?v=1755034300614&r=0.8878739241102523:88 [SW] Service worker starting, version: v1.7.0-nuclear-unregister-1755034300696
+sw.js?v=1755034300614&r=0.8878739241102523:305 [SW] Service worker script loaded successfully
+index-mhpgPRSO.js:323 [SW Hook] Service worker registered successfully
+sw.js?v=1755034300614&r=0.8878739241102523:19 [SW] EMERGENCY INSTALL - Clearing all caches and forcing activation
+sw.js?v=1755034300614&r=0.8878739241102523:92 [SW] Installing service worker, version: v1.7.0-nuclear-unregister-1755034300696
+sw.js?v=1755034300614&r=0.8878739241102523:22 [SW] Found caches to delete: Array(0)
+sw.js?v=1755034300614&r=0.8878739241102523:30 [SW] All caches deleted - skipping waiting
+sw.js?v=1755034300614&r=0.8878739241102523:96 [SW] Caching static files
+sw.js?v=1755034300614&r=0.8878739241102523:99 [SW] Static files cached successfully
+sw.js?v=1755034300614&r=0.8878739241102523:41 [SW] EMERGENCY ACTIVATE - Taking control of all clients
+sw.js?v=1755034300614&r=0.8878739241102523:110 [SW] Activating service worker, version: v1.7.0-nuclear-unregister-1755034300696
+sw.js?v=1755034300614&r=0.8878739241102523:46 [SW] Deleting remaining cache: mok-sports-static-v1.7.0-nuclear-unregister-1755034300696
+sw.js?v=1755034300614&r=0.8878739241102523:116 [SW] Found caches: Array(1)
+sw.js?v=1755034300614&r=0.8878739241102523:129 [SW] Service worker activated and controlling all clients
+sw.js?v=1755034300614&r=0.8878739241102523:51 [SW] Claiming all clients immediately
+index-mhpgPRSO.js:323 [SubscriptionManager] 5:31:41 PM - Starting subscription refresh...
+index-mhpgPRSO.js:323 [SubscriptionManager] 5:31:41 PM - Creating new push subscription...
+index-mhpgPRSO.js:323 [SubscriptionManager] 5:31:41 PM - Sending subscription to server: https://fcm.googleapis.com/fcm/send/f2mORyzIXrg:AP...
+index-mhpgPRSO.js:323 [SubscriptionManager] 5:31:41 PM - Server response: 201 
+index-mhpgPRSO.js:323 [SubscriptionManager] 5:31:41 PM - Subscription registered successfully: Subscription registered successfully
+index-mhpgPRSO.js:367 Main page debug: Object
+index-mhpgPRSO.js:367 Main page debug: Object
+sw.js?v=1755034300614&r=0.8878739241102523:164 [SW] Fetching /favicon.ico from network
+index-mhpgPRSO.js:367 Main page debug: Object
+index-mhpgPRSO.js:367 Main page debug: Object
+index-mhpgPRSO.js:367 Main page debug: Object
+index-mhpgPRSO.js:367 Main page debug: Object
+index-mhpgPRSO.js:40 TypeError: m.slice is not a function
+    at wp (index-mhpgPRSO.js:367:104349)
+    at Jd (index-mhpgPRSO.js:38:16998)
+    at Nu (index-mhpgPRSO.js:40:3139)
+    at $x (index-mhpgPRSO.js:40:44737)
+    at _x (index-mhpgPRSO.js:40:39727)
+    at p1 (index-mhpgPRSO.js:40:39655)
+    at sl (index-mhpgPRSO.js:40:39508)
+    at Ou (index-mhpgPRSO.js:40:35875)
+    at vh (index-mhpgPRSO.js:40:36678)
+    at Ar (index-mhpgPRSO.js:38:3274)
+Su @ index-mhpgPRSO.js:40Understand this error
+index-mhpgPRSO.js:323 ErrorBoundary caught an error: m.slice is not a function
+componentDidCatch @ index-mhpgPRSO.js:323Understand this error
+index-mhpgPRSO.js:323 Component stack: 
+    at wp (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-mhpgPRSO.js:367:100339)
+    at st (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-mhpgPRSO.js:48:3201)
+    at sN (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-mhpgPRSO.js:48:4017)
+    at KP (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-mhpgPRSO.js:367:229245)
+    at hE (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-mhpgPRSO.js:323:57511)
+    at u (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-mhpgPRSO.js:48:45834)
+    at Ay (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-mhpgPRSO.js:323:50485)
+    at mE (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-mhpgPRSO.js:323:56983)
+    at jN (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-mhpgPRSO.js:48:40185)
+    at wE (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-mhpgPRSO.js:323:70964)
+    at qP
+componentDidCatch @ index-mhpgPRSO.js:323Understand this error
+sw.js?v=1755034300614&r=0.8878739241102523:64 [SW] BYPASSING CACHE for JS file: https://mok-sports-draft-mokfantasysport.replit.app/manifest.json
+sw.js?v=1755034300614&r=0.8878739241102523:164 [SW] Fetching / from network
+sw.js?v=1755034300614&r=0.8878739241102523:164 [SW] Fetching /assets/index-bHPMdtU8.css from network
