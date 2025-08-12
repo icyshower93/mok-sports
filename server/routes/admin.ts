@@ -399,61 +399,118 @@ async function checkAndCalculateWeeklyBonuses(season: number, week: number) {
 
     // If all games are completed, calculate weekly bonuses
     if (completed === total && total > 0) {
-      console.log(`🏆 Week ${week} completed! Calculating weekly high/low bonuses...`);
+      console.log(`🏆 Week ${week} completed! Calculating weekly high/low bonuses based on NFL team scores...`);
       
-      // Get all weekly scores for this week
-      const weeklyScores = await db.select({
-        userId: userWeeklyScores.userId,
-        leagueId: userWeeklyScores.leagueId,
-        totalPoints: userWeeklyScores.totalPoints
+      // Find highest and lowest scoring NFL teams this week
+      const teamScores = await db.select({
+        teamId: nflGames.homeTeamId,
+        teamCode: nflTeams.code,
+        score: nflGames.homeScore
       })
-      .from(userWeeklyScores)
+      .from(nflGames)
+      .innerJoin(nflTeams, eq(nflGames.homeTeamId, nflTeams.id))
       .where(and(
-        eq(userWeeklyScores.season, season),
-        eq(userWeeklyScores.week, week)
+        eq(nflGames.season, season),
+        eq(nflGames.week, week),
+        eq(nflGames.isCompleted, true)
       ))
-      .orderBy(sql`${userWeeklyScores.totalPoints} DESC`);
+      .union(
+        db.select({
+          teamId: nflGames.awayTeamId,
+          teamCode: nflTeams.code,
+          score: nflGames.awayScore
+        })
+        .from(nflGames)
+        .innerJoin(nflTeams, eq(nflGames.awayTeamId, nflTeams.id))
+        .where(and(
+          eq(nflGames.season, season),
+          eq(nflGames.week, week),
+          eq(nflGames.isCompleted, true)
+        ))
+      );
 
-      if (weeklyScores.length > 0) {
-        const highScore = weeklyScores[0].totalPoints;
-        const lowScore = weeklyScores[weeklyScores.length - 1].totalPoints;
+      if (teamScores.length > 0) {
+        // Find highest and lowest team scores
+        const sortedScores = teamScores.sort((a, b) => b.score! - a.score!);
+        const highestScore = sortedScores[0].score!;
+        const lowestScore = sortedScores[sortedScores.length - 1].score!;
         
-        // Award high score bonus (+1 point)
-        const highScoreUsers = weeklyScores.filter(s => s.totalPoints === highScore);
-        for (const user of highScoreUsers) {
-          await db.update(userWeeklyScores)
-            .set({
-              totalPoints: sql`${userWeeklyScores.totalPoints} + 1`,
-              updatedAt: new Date()
-            })
-            .where(and(
-              eq(userWeeklyScores.userId, user.userId),
-              eq(userWeeklyScores.leagueId, user.leagueId),
-              eq(userWeeklyScores.season, season),
-              eq(userWeeklyScores.week, week)
-            ));
+        console.log(`📊 Week ${week} NFL team scores: High=${highestScore}, Low=${lowestScore}`);
+        
+        // Find teams with highest and lowest scores
+        const highestTeams = teamScores.filter(t => t.score === highestScore);
+        const lowestTeams = teamScores.filter(t => t.score === lowestScore);
+        
+        // Award +1 to users who own highest scoring teams
+        for (const team of highestTeams) {
+          const teamOwners = await db.select({
+            userId: stables.userId,
+            leagueId: stables.leagueId
+          })
+          .from(stables)
+          .where(eq(stables.nflTeamId, team.teamId));
+          
+          for (const owner of teamOwners) {
+            await db.update(userWeeklyScores)
+              .set({
+                totalPoints: sql`${userWeeklyScores.totalPoints} + 1`,
+                updatedAt: new Date()
+              })
+              .where(and(
+                eq(userWeeklyScores.userId, owner.userId),
+                eq(userWeeklyScores.leagueId, owner.leagueId),
+                eq(userWeeklyScores.season, season),
+                eq(userWeeklyScores.week, week)
+              ));
+            
+            console.log(`🏆 +1 bonus for owning ${team.teamCode} (${highestScore} pts)`);
+          }
         }
         
-        // Apply low score penalty (-1 point)
-        const lowScoreUsers = weeklyScores.filter(s => s.totalPoints === lowScore);
-        for (const user of lowScoreUsers) {
-          await db.update(userWeeklyScores)
-            .set({
-              totalPoints: sql`${userWeeklyScores.totalPoints} - 1`,
-              updatedAt: new Date()
-            })
-            .where(and(
-              eq(userWeeklyScores.userId, user.userId),
-              eq(userWeeklyScores.leagueId, user.leagueId),
-              eq(userWeeklyScores.season, season),
-              eq(userWeeklyScores.week, week)
-            ));
+        // Apply -1 penalty to users who own lowest scoring teams
+        for (const team of lowestTeams) {
+          const teamOwners = await db.select({
+            userId: stables.userId,
+            leagueId: stables.leagueId
+          })
+          .from(stables)
+          .where(eq(stables.nflTeamId, team.teamId));
+          
+          for (const owner of teamOwners) {
+            await db.update(userWeeklyScores)
+              .set({
+                totalPoints: sql`${userWeeklyScores.totalPoints} - 1`,
+                updatedAt: new Date()
+              })
+              .where(and(
+                eq(userWeeklyScores.userId, owner.userId),
+                eq(userWeeklyScores.leagueId, owner.leagueId),
+                eq(userWeeklyScores.season, season),
+                eq(userWeeklyScores.week, week)
+              ));
+            
+            console.log(`💥 -1 penalty for owning ${team.teamCode} (${lowestScore} pts)`);
+          }
         }
 
-        console.log(`✅ Applied weekly bonuses: High (${highScore} pts) to ${highScoreUsers.length} users, Low (${lowScore} pts) to ${lowScoreUsers.length} users`);
-        
+        // Get updated weekly scores for skins calculation
+        const weeklyScores = await db.select({
+          userId: userWeeklyScores.userId,
+          leagueId: userWeeklyScores.leagueId,
+          totalPoints: userWeeklyScores.totalPoints
+        })
+        .from(userWeeklyScores)
+        .where(and(
+          eq(userWeeklyScores.season, season),
+          eq(userWeeklyScores.week, week)
+        ))
+        .orderBy(sql`${userWeeklyScores.totalPoints} DESC`);
+
         // Award weekly skins to highest scorers (after bonuses applied)
+        const highScoreUsers = weeklyScores.filter(s => s.totalPoints === weeklyScores[0].totalPoints);
         await awardWeeklySkins(season, week, highScoreUsers);
+        
+        console.log(`✅ Applied NFL team-based weekly bonuses: High (${highestScore}) to ${highestTeams.length} teams, Low (${lowestScore}) to ${lowestTeams.length} teams`);
       }
     }
   } catch (error) {
