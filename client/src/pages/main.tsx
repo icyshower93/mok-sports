@@ -64,9 +64,9 @@ export default function MainPage() {
     }
   }, [leagues, selectedLeague]);
 
-  // Fetch current user's stats for the league
-  const { data: userStats } = useQuery({
-    queryKey: [`/api/leagues/${selectedLeague}/member-stats/2024/${currentWeek}`],
+  // Fetch league standings data (same as league tab)
+  const { data: leagueData } = useQuery({
+    queryKey: [`/api/leagues/${selectedLeague}/standings`],
     enabled: !!selectedLeague && !!user,
   });
 
@@ -82,10 +82,11 @@ export default function MainPage() {
     enabled: !!selectedLeague,
   });
 
-  // Extract dynamic data from APIs
-  const userTotalPoints = (userStats as any)?.totalPoints || 0;
-  const userRank = (userStats as any)?.rank || 0;
-  const userSkinsWon = (userStats as any)?.skinsWon || 0;
+  // Extract current user's data from league standings
+  const currentUserStanding = (leagueData as any)?.standings?.find((member: any) => member.isCurrentUser);
+  const userTotalPoints = currentUserStanding?.points || 0;
+  const userRank = currentUserStanding?.rank || 0;
+  const userSkinsWon = currentUserStanding?.skinsWon || 0;
   const weeklyPrize = 30; // Static $30 per week as per Mok rules
   const teamsLeftToPlay = (teamsLeftData as any)?.teamsLeftToPlay || [];
 
@@ -95,6 +96,8 @@ export default function MainPage() {
     leagues: (leagues as any[])?.length || 0,
     selectedLeague,
     currentWeek,
+    leagueData: leagueData ? 'loaded' : 'null',
+    currentUserStanding,
     userStats: {
       totalPoints: userTotalPoints,
       rank: userRank,
