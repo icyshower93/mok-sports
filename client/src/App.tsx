@@ -27,6 +27,7 @@ import AgentsPage from "@/pages/agents";
 import MorePage from "@/pages/more";
 import TradesPage from "@/pages/trades";
 import AdminPanel from "@/pages/admin";
+import DatabaseViewer from "@/pages/database-viewer";
 import { LeagueWaiting } from "@/pages/league-waiting";
 import NotFound from "@/pages/not-found";
 import { logBuildInfo } from "@/lib/buildInfo";
@@ -122,6 +123,7 @@ function AppContent() {
       <Switch>
         <Route path="/login" component={LoginPage} />
         <Route path="/admin" component={AdminPanel} />
+        <Route path="/database" component={DatabaseViewer} />
         <Route path="/dashboard" component={DashboardPage} />
         <Route path="/leagues" component={LeaguesPage} />
         <Route path="/league/waiting" component={LeagueWaiting} />

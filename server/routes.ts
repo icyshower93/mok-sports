@@ -11,6 +11,7 @@ import { registerPushDiagnosticsRoutes } from "./routes/push-diagnostics";
 import { registerSubscriptionValidationRoutes } from "./routes/subscription-validation";
 import { registerAdminRoutes } from "./routes/admin";
 import { scoringRouter } from "./routes/scoring";
+import { registerDatabaseViewerRoutes } from "./routes/database-viewer";
 import { db } from "./db";
 import { eq, and, sql } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
@@ -1379,6 +1380,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Register scoring routes with Tank01 integration
   app.use('/api/scoring', scoringRouter);
+
+  // Register database viewer routes for debugging
+  registerDatabaseViewerRoutes(app);
   
   // Schedule import routes
   const scheduleImportRoutes = (await import('./routes/schedule-import.js')).default;
