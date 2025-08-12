@@ -13,6 +13,8 @@ import {
   Trophy, 
   Calendar,
   ChevronRight,
+  ChevronDown,
+  ChevronUp,
   Crown,
   Users,
   Zap,
@@ -38,6 +40,7 @@ export default function MainPage() {
   const { user } = useAuth();
   const [, navigate] = useLocation();
   const [selectedLeague, setSelectedLeague] = useState<string>("");
+  const [showAllWeeklyRankings, setShowAllWeeklyRankings] = useState(false);
 
   // Fetch user's leagues
   const { data: leagues = [], isLoading: leaguesLoading } = useQuery({
@@ -130,10 +133,10 @@ export default function MainPage() {
 
   return (
     <div className="min-h-screen bg-background pb-20">
-      <div className="max-w-md mx-auto px-2 sm:max-w-lg sm:px-0">
+      <div className="max-w-4xl mx-auto px-4">
         
         {/* Simple Header - Matching League Style */}
-        <div className="p-4 sm:p-6 pb-4">
+        <div className="py-6 pb-4">
           <div className="flex items-center space-x-3">
             <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-full">
               <Trophy className="w-5 h-5 text-blue-600 dark:text-blue-400" />
@@ -145,7 +148,7 @@ export default function MainPage() {
           </div>
         </div>
 
-        <div className="px-4 sm:px-6 space-y-6">
+        <div className="space-y-6">
           
           {/* User Stats Cards */}
           <div className="grid grid-cols-3 gap-3">
@@ -192,7 +195,9 @@ export default function MainPage() {
                 </div>
               ) : (
                 <div className="space-y-3">
-                  {weeklyRankings && (weeklyRankings as any[]).slice(0, 4).map((member: any, index: number) => (
+                  {weeklyRankings && (weeklyRankings as any[])
+                    .slice(0, showAllWeeklyRankings ? (weeklyRankings as any[]).length : 3)
+                    .map((member: any, index: number) => (
                     <Card 
                       key={member.name || index} 
                       className={`${member.isCurrentUser ? 'ring-2 ring-primary/20 bg-primary/5' : ''}`}
@@ -233,14 +238,18 @@ export default function MainPage() {
                       </CardContent>
                     </Card>
                   ))}
-                  {weeklyRankings && (weeklyRankings as any[]).length > 4 && (
+                  {weeklyRankings && (weeklyRankings as any[]).length > 3 && (
                     <Button 
                       variant="ghost" 
                       size="sm" 
                       className="w-full mt-2"
-                      onClick={() => navigate('/league')}
+                      onClick={() => setShowAllWeeklyRankings(!showAllWeeklyRankings)}
                     >
-                      View All Players <ChevronRight className="w-4 h-4 ml-1" />
+                      {showAllWeeklyRankings ? (
+                        <>Show Top 3 <ChevronUp className="w-4 h-4 ml-1" /></>
+                      ) : (
+                        <>View All 6 <ChevronDown className="w-4 h-4 ml-1" /></>
+                      )}
                     </Button>
                   )}
                 </div>

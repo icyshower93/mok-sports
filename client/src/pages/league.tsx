@@ -77,9 +77,9 @@ export default function LeaguePage() {
 
   return (
     <div className="min-h-screen bg-background pb-20">
-      <div className="max-w-lg mx-auto px-4">
+      <div className="max-w-4xl mx-auto px-4">
         {/* Simple Header */}
-        <div className="p-6 pb-4">
+        <div className="py-6 pb-4">
           <div className="flex items-center space-x-3">
             <div className="p-2 bg-yellow-100 dark:bg-yellow-900/30 rounded-full">
               <Trophy className="w-5 h-5 text-yellow-600 dark:text-yellow-400" />
@@ -89,7 +89,7 @@ export default function LeaguePage() {
         </div>
 
         {/* Standings */}
-        <div className="px-6 pb-6">
+        <div className="pb-6">
           <div className="mb-4">
             <h2 className="text-xl font-bold">Standings</h2>
             <p className="text-sm text-muted-foreground">Week {currentWeekData?.currentWeek || leagueInfo.week}</p>
@@ -167,7 +167,7 @@ export default function LeaguePage() {
         </div>
 
         {/* Season Prizes */}
-        <div className="px-6 pb-6">
+        <div className="pb-6">
           <div className="mb-4 flex items-center space-x-2">
             <Award className="w-5 h-5 text-yellow-500" />
             <h2 className="text-xl font-bold">Season Prizes</h2>
