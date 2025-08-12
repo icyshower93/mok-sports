@@ -4,6 +4,7 @@ import { nflGames, nflTeams, userWeeklyScores, stables, users, leagues, weeklyLo
 import { eq, and, gte, lte, sql } from 'drizzle-orm';
 import { nflDataService } from '../services/nflDataService';
 import { calculateBaseMokPoints } from '../utils/mokScoring';
+import { endOfWeekProcessor } from '../utils/endOfWeekProcessor';
 
 // Simple admin state management - 2024 season for testing
 let adminState = {
