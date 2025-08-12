@@ -139,125 +139,172 @@ export default function MainPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background pb-20">
-      <div className="max-w-4xl mx-auto px-4">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 pb-20">
+      <div className="max-w-4xl mx-auto">
         
-        {/* Simple Header - Matching League Style */}
-        <div className="py-6 pb-4">
-          <div className="flex items-center space-x-3">
-            <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-full">
-              <Trophy className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-            </div>
+        {/* Hero Header with Welcome Message */}
+        <div className="relative px-6 py-8 bg-gradient-to-r from-primary/10 via-primary/5 to-background">
+          <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold">Dashboard</h1>
-              <p className="text-sm text-muted-foreground">Week {currentWeek} • 2024 Season</p>
+              <h1 className="text-2xl font-bold text-foreground">Welcome back, {user.name.split(' ')[0]}!</h1>
+              <p className="text-sm text-muted-foreground mt-1">Week {currentWeek} • 2024 NFL Season</p>
+            </div>
+            <div className="p-3 bg-primary/10 rounded-full">
+              <Trophy className="w-6 h-6 text-primary" />
             </div>
           </div>
         </div>
 
-        <div className="space-y-6">
+        <div className="px-4 space-y-6 mt-6">
           
-          {/* User Stats Cards */}
-          <div className="grid grid-cols-3 gap-3">
-            <Card>
-              <CardContent className="p-4 text-center">
-                <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">{userTotalPoints}</div>
-                <div className="text-xs text-muted-foreground font-medium">Total Points</div>
+          {/* Enhanced Stats Cards with Better Visual Hierarchy */}
+          <div className="grid grid-cols-3 gap-4">
+            <Card className="bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-950/30 dark:to-blue-900/20 border-blue-200 dark:border-blue-800">
+              <CardContent className="p-5 text-center">
+                <div className="text-3xl font-black text-blue-600 dark:text-blue-400 mb-1">{userTotalPoints}</div>
+                <div className="text-xs text-blue-700/70 dark:text-blue-300/70 font-semibold uppercase tracking-wide">Total Points</div>
               </CardContent>
             </Card>
 
-            <Card>
-              <CardContent className="p-4 text-center">
-                <div className="flex items-center justify-center space-x-1">
-                  <span className="text-2xl font-bold text-amber-600 dark:text-amber-400">#{userRank}</span>
-                  {userRank === 1 && <Crown className="w-4 h-4 text-amber-600" />}
+            <Card className="bg-gradient-to-br from-amber-50 to-yellow-100/50 dark:from-amber-950/30 dark:to-yellow-900/20 border-amber-200 dark:border-amber-800">
+              <CardContent className="p-5 text-center">
+                <div className="flex items-center justify-center space-x-2 mb-1">
+                  <span className="text-3xl font-black text-amber-600 dark:text-amber-400">#{userRank}</span>
+                  {userRank === 1 && <Crown className="w-5 h-5 text-amber-600" />}
                 </div>
-                <div className="text-xs text-muted-foreground font-medium">League Rank</div>
+                <div className="text-xs text-amber-700/70 dark:text-amber-300/70 font-semibold uppercase tracking-wide">League Rank</div>
               </CardContent>
             </Card>
 
-            <Card>
-              <CardContent className="p-4 text-center">
-                <div className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">{userSkinsWon}</div>
-                <div className="text-xs text-muted-foreground font-medium">Skins Won</div>
+            <Card className="bg-gradient-to-br from-emerald-50 to-green-100/50 dark:from-emerald-950/30 dark:to-green-900/20 border-emerald-200 dark:border-emerald-800">
+              <CardContent className="p-5 text-center">
+                <div className="text-3xl font-black text-emerald-600 dark:text-emerald-400 mb-1">${userSkinsWon * 30}</div>
+                <div className="text-xs text-emerald-700/70 dark:text-emerald-300/70 font-semibold uppercase tracking-wide">Skins Won</div>
               </CardContent>
             </Card>
           </div>
 
-          {/* Weekly Rankings */}
-          <Card>
-            <CardHeader className="pb-4">
+          {/* Quick Actions Row */}
+          <div className="grid grid-cols-2 gap-3">
+            <Button 
+              variant="outline" 
+              className="h-14 bg-gradient-to-r from-primary/5 to-primary/10 border-primary/20 hover:from-primary/10 hover:to-primary/15"
+              onClick={() => navigate('/stable')}
+            >
+              <div className="flex items-center space-x-3">
+                <Shield className="w-5 h-5 text-primary" />
+                <div className="text-left">
+                  <div className="font-semibold text-sm">My Teams</div>
+                  <div className="text-xs text-muted-foreground">View Stable</div>
+                </div>
+              </div>
+            </Button>
+            
+            <Button 
+              variant="outline" 
+              className="h-14 bg-gradient-to-r from-green-500/5 to-emerald-500/10 border-green-500/20 hover:from-green-500/10 hover:to-emerald-500/15"
+              onClick={() => navigate('/scores')}
+            >
+              <div className="flex items-center space-x-3">
+                <Activity className="w-5 h-5 text-green-600" />
+                <div className="text-left">
+                  <div className="font-semibold text-sm">Live Scores</div>
+                  <div className="text-xs text-muted-foreground">NFL Games</div>
+                </div>
+              </div>
+            </Button>
+          </div>
+
+          {/* Weekly Leaderboard with Enhanced Design */}
+          <Card className="overflow-hidden bg-gradient-to-br from-card to-card/50 border-border/50 shadow-lg">
+            <CardHeader className="pb-4 bg-gradient-to-r from-primary/5 to-primary/10">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-lg">Weekly Race</CardTitle>
-                <Badge variant="outline" className="text-emerald-600 border-emerald-200">
+                <div className="flex items-center space-x-3">
+                  <div className="p-2 bg-primary/10 rounded-full">
+                    <Flame className="w-5 h-5 text-primary" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-xl font-bold">Week {currentWeek} Leaderboard</CardTitle>
+                    <p className="text-sm text-muted-foreground">Live scoring battle</p>
+                  </div>
+                </div>
+                <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/50 dark:text-emerald-300 dark:border-emerald-800 px-3 py-1">
+                  <DollarSign className="w-3 h-3 mr-1" />
                   ${weeklyPrize} Prize
                 </Badge>
               </div>
             </CardHeader>
-            <CardContent className="space-y-3">
+            <CardContent className="p-0">
               {!weeklyRankings || (weeklyRankings as any[]).length === 0 ? (
-                <div className="text-center py-6 text-muted-foreground">
-                  <Trophy className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                  <p className="text-sm">Weekly rankings will appear here once games start</p>
+                <div className="text-center py-12 px-6">
+                  <div className="p-4 bg-muted/20 rounded-full w-fit mx-auto mb-4">
+                    <Trophy className="w-8 h-8 text-muted-foreground/50" />
+                  </div>
+                  <h4 className="font-semibold text-lg mb-2">Week {currentWeek} Competition</h4>
+                  <p className="text-sm text-muted-foreground">Leaderboard will update as games begin</p>
                 </div>
               ) : (
-                <div className="space-y-3">
+                <div className="space-y-1">
                   {Array.isArray(weeklyRankings) && (weeklyRankings as any[])
                     .slice(0, showAllWeeklyRankings ? (weeklyRankings as any[]).length : 3)
                     .map((member: any, index: number) => (
-                    <Card 
+                    <div 
                       key={member.name || index} 
-                      className={`${member.isCurrentUser ? 'ring-2 ring-primary/20 bg-primary/5' : ''}`}
+                      className={`p-4 border-b border-border/50 last:border-b-0 transition-colors hover:bg-muted/20 ${
+                        member.isCurrentUser ? 'bg-primary/5 border-primary/20' : ''
+                      }`}
                     >
-                      <CardContent className="p-3">
-                        <div className="flex items-center justify-between">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-4 flex-1">
+                          <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold shadow-sm ${
+                            index === 0 ? 'bg-gradient-to-br from-yellow-400 to-yellow-600 text-white' :
+                            index === 1 ? 'bg-gradient-to-br from-gray-300 to-gray-500 text-white' :
+                            index === 2 ? 'bg-gradient-to-br from-orange-400 to-orange-600 text-white' :
+                            'bg-muted text-muted-foreground'
+                          }`}>
+                            {index === 0 ? <Crown className="w-4 h-4" /> : index + 1}
+                          </div>
+                          
                           <div className="flex items-center space-x-3 flex-1">
-                            <div className={`w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold ${
-                              index === 0 ? 'bg-yellow-500 text-white' :
-                              index === 1 ? 'bg-gray-400 text-white' :
-                              index === 2 ? 'bg-orange-500 text-white' :
-                              'bg-muted text-muted-foreground'
-                            }`}>
-                              {index === 0 ? <Crown className="w-3 h-3" /> : index + 1}
-                            </div>
-                            
-                            <div className="flex items-center space-x-2">
-                              <span className="font-medium text-sm">{member.name}</span>
+                            <div>
+                              <div className="font-semibold text-base">{member.name}</div>
                               {member.isCurrentUser && (
-                                <Badge variant="secondary" className="text-xs px-1.5 py-0.5">You</Badge>
+                                <Badge variant="secondary" className="text-xs px-2 py-0.5 mt-1">You</Badge>
                               )}
                             </div>
                           </div>
-                          
-                          <div className="flex items-center space-x-4 text-sm">
-                            <div className="text-center">
-                              <div className="font-semibold">{member.weeklyPoints || 0}</div>
-                              <div className="text-xs text-muted-foreground">pts</div>
-                            </div>
-                            {member.gamesRemaining > 0 && (
-                              <div className="text-center">
-                                <div className="w-2 h-2 bg-green-500 rounded-full mx-auto mb-1"></div>
-                                <div className="text-xs text-muted-foreground">Live</div>
-                              </div>
-                            )}
-                          </div>
                         </div>
-                      </CardContent>
-                    </Card>
+                        
+                        <div className="flex items-center space-x-6">
+                          <div className="text-right">
+                            <div className="text-2xl font-bold text-foreground">{member.weeklyPoints || 0}</div>
+                            <div className="text-xs text-muted-foreground font-medium">points</div>
+                          </div>
+                          {member.gamesRemaining > 0 && (
+                            <div className="flex items-center space-x-1 text-green-600">
+                              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                              <span className="text-xs font-medium">LIVE</span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
                   ))}
                   {Array.isArray(weeklyRankings) && (weeklyRankings as any[]).length > 3 && (
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      className="w-full mt-2"
-                      onClick={() => setShowAllWeeklyRankings(!showAllWeeklyRankings)}
-                    >
-                      {showAllWeeklyRankings ? (
-                        <>Show Top 3 <ChevronUp className="w-4 h-4 ml-1" /></>
-                      ) : (
-                        <>View All 6 <ChevronDown className="w-4 h-4 ml-1" /></>
-                      )}
-                    </Button>
+                    <div className="p-4 bg-muted/10">
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        className="w-full text-sm"
+                        onClick={() => setShowAllWeeklyRankings(!showAllWeeklyRankings)}
+                      >
+                        {showAllWeeklyRankings ? (
+                          <>Show Top 3 <ChevronUp className="w-4 h-4 ml-2" /></>
+                        ) : (
+                          <>View All 6 Players <ChevronDown className="w-4 h-4 ml-2" /></>
+                        )}
+                      </Button>
+                    </div>
                   )}
                 </div>
               )}
