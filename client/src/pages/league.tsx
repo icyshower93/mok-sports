@@ -77,9 +77,9 @@ export default function LeaguePage() {
 
   return (
     <div className="min-h-screen bg-background pb-20">
-      <div className="max-w-lg mx-auto">
+      <div className="max-w-md mx-auto px-2 sm:max-w-lg sm:px-0">
         {/* Simple Header */}
-        <div className="p-6 pb-4">
+        <div className="p-4 sm:p-6 pb-4">
           <div className="flex items-center space-x-3">
             <div className="p-2 bg-yellow-100 dark:bg-yellow-900/30 rounded-full">
               <Trophy className="w-5 h-5 text-yellow-600 dark:text-yellow-400" />
@@ -89,7 +89,7 @@ export default function LeaguePage() {
         </div>
 
         {/* Standings */}
-        <div className="px-6 pb-6">
+        <div className="px-4 sm:px-6 pb-6">
           <div className="mb-4">
             <h2 className="text-xl font-bold">Standings</h2>
             <p className="text-sm text-muted-foreground">Week {currentWeekData?.currentWeek || leagueInfo.week}</p>
@@ -101,10 +101,10 @@ export default function LeaguePage() {
                 key={member.name} 
                 className={`${member.isCurrentUser ? 'ring-2 ring-primary/20 bg-primary/5' : ''}`}
               >
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between">
+                <CardContent className="p-3 sm:p-4">
+                  <div className="flex items-center justify-between gap-2">
                     {/* Left: Rank + Team Info */}
-                    <div className="flex items-center space-x-4 flex-1">
+                    <div className="flex items-center space-x-3 flex-1 min-w-0">
                       {/* Rank Badge */}
                       <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
                         member.rank === 1 ? 'bg-yellow-500 text-white' :
@@ -115,46 +115,49 @@ export default function LeaguePage() {
                         {member.rank}
                       </div>
                       
-                      {/* Team Info */}
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center space-x-2 mb-2">
-                          <span className="font-semibold text-base">{member.name}</span>
+                      {/* Team Info - More constrained width */}
+                      <div className="flex-1 min-w-0 max-w-[55%]">
+                        <div className="flex items-center space-x-2 mb-1">
+                          <span className="font-semibold text-base truncate">{member.name}</span>
                           {member.isCurrentUser && (
-                            <Badge variant="secondary" className="text-xs">You</Badge>
+                            <Badge variant="secondary" className="text-xs flex-shrink-0">You</Badge>
                           )}
                         </div>
                         
-                        {/* Team Logos - Larger and Better Spaced */}
+                        {/* Team Logos - More compact */}
                         {member.teams && member.teams.length > 0 && (
-                          <div className="flex items-center space-x-1">
-                            {member.teams.map((team: any) => (
+                          <div className="flex items-center space-x-1 overflow-hidden">
+                            {member.teams.slice(0, 4).map((team: any) => (
                               <img 
                                 key={team.code}
                                 src={`/images/nfl/team_logos/${team.code}.png`}
                                 alt={team.code}
                                 title={team.name}
-                                className="w-6 h-6 rounded object-contain"
+                                className="w-5 h-5 rounded object-contain flex-shrink-0"
                                 onError={(e) => {
                                   (e.target as HTMLImageElement).src = `https://a.espncdn.com/i/teamlogos/nfl/500/${team.code.toLowerCase()}.png`;
                                 }}
                               />
                             ))}
+                            {member.teams.length > 4 && (
+                              <span className="text-xs text-muted-foreground ml-1 flex-shrink-0">+{member.teams.length - 4}</span>
+                            )}
                           </div>
                         )}
                       </div>
                     </div>
                     
-                    {/* Right: Stats */}
-                    <div className="flex items-center space-x-6 text-sm">
-                      <div className="text-center">
+                    {/* Right: Stats - More compact with flex-shrink-0 */}
+                    <div className="flex items-center space-x-4 text-sm flex-shrink-0">
+                      <div className="text-center min-w-[34px]">
                         <div className="text-xs text-muted-foreground">LOCKS</div>
                         <div className="font-medium">{member.locks}</div>
                       </div>
-                      <div className="text-center">
+                      <div className="text-center min-w-[34px]">
                         <div className="text-xs text-muted-foreground">SKINS</div>
                         <div className="font-medium">{member.skinsWon || 0}</div>
                       </div>
-                      <div className="text-center">
+                      <div className="text-center min-w-[42px]">
                         <div className="text-xs text-muted-foreground">PTS</div>
                         <div className="text-lg font-bold">{member.points}</div>
                       </div>
@@ -167,7 +170,7 @@ export default function LeaguePage() {
         </div>
 
         {/* Season Prizes */}
-        <div className="px-6 pb-6">
+        <div className="px-4 sm:px-6 pb-6">
           <div className="mb-4 flex items-center space-x-2">
             <Award className="w-5 h-5 text-yellow-500" />
             <h2 className="text-xl font-bold">Season Prizes</h2>
