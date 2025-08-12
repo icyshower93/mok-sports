@@ -68,10 +68,23 @@ export class WeekLockRestrictions {
       const processingInProgress = adminState.processingInProgress;
 
       // Get games for this week from database to count totals
-      const weekGames = await this.nflDataService.getWeekData(season, week);
-      const totalGames = weekGames.length;
-      const gamesCompleted = weekGames.filter((game: any) => game.isCompleted).length;
+      const { db } = await import("../db.js");
+      const { nflGames } = await import("@shared/schema.js");
+      const { eq, and } = await import("drizzle-orm");
+      
+      const weekGamesResult = await db.select().from(nflGames).where(
+        and(
+          eq(nflGames.season, season),
+          eq(nflGames.week, week)
+        )
+      );
+      
+      const totalGames = weekGamesResult.length;
+      const gamesCompleted = weekGamesResult.filter((game: any) => game.isCompleted).length;
       const gamesInProgress = totalGames - gamesCompleted;
+
+      console.log(`[WeekLockRestrictions] Admin currentWeek: ${currentWeek}, requested week: ${week}`);
+      console.log(`[WeekLockRestrictions] Week ${week} games: ${gamesCompleted}/${totalGames} completed, processingInProgress: ${processingInProgress}`);
 
       // In testing: Allow locks if simulation is not running OR week hasn't started yet
       if (week > currentWeek) {
@@ -96,25 +109,37 @@ export class WeekLockRestrictions {
         };
       }
 
-      // Current week
-      if (processingInProgress) {
-        // Week is actively being simulated - no locks allowed
-        return {
-          canLock: false,
-          reason: 'Week is currently in progress - locks disabled until week completes',
-          weekStatus: 'week_in_progress',
-          gamesInProgress,
-          gamesCompleted,
-          totalGames
-        };
-      } else {
-        // Simulation paused or stopped - allow locks
+      // Current week - check if any games have started
+      if (gamesCompleted > 0) {
+        // Some games have started/completed - no locks allowed until week is completely done
         const allComplete = gamesCompleted === totalGames;
+        if (allComplete) {
+          // All games complete - allow locks for next week
+          return {
+            canLock: true,
+            weekStatus: 'week_complete',
+            gamesInProgress: 0,
+            gamesCompleted,
+            totalGames
+          };
+        } else {
+          // Week in progress - no locks allowed
+          return {
+            canLock: false,
+            reason: `Week ${week} is in progress - locks disabled once first game starts`,
+            weekStatus: 'week_in_progress',
+            gamesInProgress,
+            gamesCompleted,
+            totalGames
+          };
+        }
+      } else {
+        // No games completed yet - allow locks (week hasn't started)
         return {
           canLock: true,
-          weekStatus: allComplete ? 'week_complete' : 'pre_week',
-          gamesInProgress,
-          gamesCompleted,
+          weekStatus: 'pre_week',
+          gamesInProgress: 0,
+          gamesCompleted: 0,
           totalGames
         };
       }

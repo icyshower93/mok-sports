@@ -1380,6 +1380,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Register scoring routes with Tank01 integration
   app.use('/api/scoring', scoringRouter);
+  
+  // Setup additional scoring routes that use full paths
+  const { setupScoringRoutes } = await import("./routes/scoring.js");
+  setupScoringRoutes(app);
 
   // Register database viewer routes for debugging
   registerDatabaseViewerRoutes(app);
