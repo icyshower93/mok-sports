@@ -216,11 +216,19 @@ export default function MainPage() {
                   <h2 className="text-lg font-bold text-foreground">{leagueName}</h2>
                   <p className="text-xs text-muted-foreground">Current standings</p>
                 </div>
-                <div className="p-2 bg-primary/10 rounded-full">
+                <div className="p-3 bg-primary/10 rounded-full flex items-center justify-center">
                   <img 
                     src="/attached_assets/MokSports_White_1755068930869.png" 
                     alt="Mok Sports"
-                    className="w-4 h-4 object-contain"
+                    className="w-7 h-7 object-contain filter invert dark:invert-0"
+                    onLoad={() => console.log('Mok Sports logo loaded successfully')}
+                    onError={(e) => {
+                      console.log('Logo failed to load at path:', e.currentTarget.src);
+                      const container = e.currentTarget.parentElement;
+                      if (container) {
+                        container.innerHTML = '<svg class="w-6 h-6 text-primary" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L13.5 8.5L20 7L14.5 12L20 17L13.5 15.5L12 22L10.5 15.5L4 17L9.5 12L4 7L10.5 8.5Z"/></svg>';
+                      }
+                    }}
                   />
                 </div>
               </div>
