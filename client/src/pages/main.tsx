@@ -231,10 +231,10 @@ export default function MainPage() {
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
                 <Flame className="w-5 h-5 text-purple-500" />
-                <h3 className="text-lg font-bold">This Week's Skins Leaders</h3>
+                <h3 className="text-lg font-bold">Weekly Skins Game</h3>
               </div>
               <Button variant="ghost" size="sm" className="text-primary hover:text-primary/80">
-                View All <ChevronRight className="w-4 h-4 ml-1" />
+                $30 Prize <ChevronRight className="w-4 h-4 ml-1" />
               </Button>
             </div>
             
