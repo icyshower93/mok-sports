@@ -283,26 +283,22 @@ export class EndOfWeekProcessor {
 
     console.log(`[EndOfWeek] Highest score: ${highestScore}, Winners: ${winners.length}`);
 
-    // Check for previous week rollover to determine prize amount
-    const previousWeekSkins = await db.select()
+    // Check for previous rollover skins to determine prize amount
+    const previousRollovers = await db.select()
       .from(weeklySkins)
       .where(
         and(
           eq(weeklySkins.leagueId, leagueId),
           eq(weeklySkins.season, season),
-          eq(weeklySkins.week, week - 1),
-          eq(weeklySkins.isTied, true)
+          eq(weeklySkins.isTied, true),
+          eq(weeklySkins.isRollover, true)
         )
       );
 
-    let prizeAmount = 30; // Base $30 prize
-    if (previousWeekSkins.length > 0) {
-      prizeAmount = 60; // Double prize due to previous week tie
-      console.log(`[EndOfWeek] Previous week had ties - doubling prize to $${prizeAmount}`);
-    }
-
+    const totalSkinsThisWeek = 1 + previousRollovers.length; // Base 1 skin + rollovers
+    
     if (winners.length === 1) {
-      // Single winner - award the skin
+      // Single winner - award all accumulated skins
       const winner = winners[0];
       
       await db.insert(weeklySkins).values({
@@ -311,42 +307,44 @@ export class EndOfWeekProcessor {
         week,
         winnerId: winner.userId,
         winningScore: winner.totalPoints,
-        prizeAmount,
-        isTied: false
+        prizeAmount: totalSkinsThisWeek,
+        isTied: false,
+        isRollover: false,
+        awardedAt: new Date()
       }).onConflictDoNothing();
 
-      console.log(`[EndOfWeek] Awarded $${prizeAmount} weekly skin to ${winner.userName} with ${winner.totalPoints} points`);
+      console.log(`[EndOfWeek] 🏆 ${winner.userName} wins ${totalSkinsThisWeek} skin(s) with ${winner.totalPoints} points`);
 
       return {
         winner: {
           userId: winner.userId,
           userName: winner.userName,
           totalWeeklyPoints: winner.totalPoints,
-          prizeAmount,
+          prizeAmount: totalSkinsThisWeek,
           isTied: false
         }
       };
     } else {
-      // Multiple winners - tie, rollover to next week
-      console.log(`[EndOfWeek] ${winners.length} users tied with ${highestScore} points - rolling over to next week`);
+      // Multiple winners - tie, rollover skins to next week
+      console.log(`[EndOfWeek] 🔄 ${winners.length} users tied with ${highestScore} points - ${totalSkinsThisWeek} skin(s) rolled over`);
 
-      // Record the tie
-      for (const winner of winners) {
-        await db.insert(weeklySkins).values({
-          leagueId,
-          season,
-          week,
-          winnerId: winner.userId,
-          winningScore: winner.totalPoints,
-          prizeAmount: 0, // No prize awarded due to tie
-          isTied: true
-        }).onConflictDoNothing();
-      }
+      // Record the tie with rollover flag
+      await db.insert(weeklySkins).values({
+        leagueId,
+        season,
+        week,
+        winnerId: null, // No winner for ties
+        winningScore: highestScore,
+        prizeAmount: totalSkinsThisWeek,
+        isTied: true,
+        isRollover: true,
+        awardedAt: null // No award given
+      }).onConflictDoNothing();
 
       return {
         rollover: {
           reason: `${winners.length} users tied with ${highestScore} points`,
-          nextWeekPrize: prizeAmount * 2
+          nextWeekPrize: totalSkinsThisWeek + 1 // Next week will be worth current + 1 more
         }
       };
     }

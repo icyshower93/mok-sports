@@ -1,7 +1,7 @@
 import { Express } from 'express';
 import { db } from '../db';
 import { nflGames, nflTeams, userWeeklyScores, stables, users, leagues, weeklyLocks, weeklySkins, leagueMembers } from '@shared/schema';
-import { eq, and, gte, lte, sql } from 'drizzle-orm';
+import { eq, and, gte, lte, sql, desc } from 'drizzle-orm';
 import { nflDataService } from '../services/nflDataService';
 import { calculateBaseMokPoints } from '../utils/mokScoring';
 import { endOfWeekProcessor } from '../utils/endOfWeekProcessor';
@@ -396,11 +396,12 @@ async function checkAndCalculateWeeklyBonuses(season: number, week: number, forc
     const completedGamesCount = weekGames.filter(g => g.isCompleted).length;
     const isAllGamesCompleted = completedGamesCount === weekGames.length;
     
-    // If forced check (triggered by game completion), use simple completion logic
+    // If forced check (triggered by game completion or API), use simple completion logic
     // Otherwise use the endOfWeekProcessor logic with simulated date
     let weekComplete = false;
     if (forceCheck) {
       weekComplete = isAllGamesCompleted && weekGames.length > 0;
+      console.log(`🔧 Force check enabled - Week ${week} complete: ${weekComplete} (${completedGamesCount}/${weekGames.length} games)`);
     } else {
       const { endOfWeekProcessor } = await import("../utils/endOfWeekProcessor.js");
       weekComplete = await endOfWeekProcessor.isWeekComplete(season, week, adminState.currentDate);
@@ -538,22 +539,36 @@ async function checkAndCalculateWeeklyBonuses(season: number, week: number, forc
           }
         }
 
-        // Get updated weekly scores for skins calculation
-        const weeklyScores = await db.select({
+        // Now that high/low bonuses are applied, find the final highest scoring users and award skins
+        const finalUserScores = await db.select({
           userId: userWeeklyScores.userId,
           leagueId: userWeeklyScores.leagueId,
-          totalPoints: userWeeklyScores.totalPoints
+          totalPoints: userWeeklyScores.totalPoints,
+          userName: users.name
         })
         .from(userWeeklyScores)
+        .innerJoin(users, eq(userWeeklyScores.userId, users.id))
         .where(and(
           eq(userWeeklyScores.season, season),
           eq(userWeeklyScores.week, week)
         ))
-        .orderBy(sql`${userWeeklyScores.totalPoints} DESC`);
-
-        // Award weekly skins to highest scorers (after bonuses applied)
-        const highScoreUsers = weeklyScores.filter(s => s.totalPoints === weeklyScores[0].totalPoints);
-        await awardWeeklySkins(season, week, highScoreUsers);
+        .orderBy(desc(userWeeklyScores.totalPoints));
+        
+        // Group users by league and find highest scorers for skins
+        const leagueScores: Record<string, any[]> = {};
+        for (const score of finalUserScores) {
+          if (!leagueScores[score.leagueId]) leagueScores[score.leagueId] = [];
+          leagueScores[score.leagueId].push(score);
+        }
+        
+        // Award skins for each league
+        for (const [leagueId, scores] of Object.entries(leagueScores)) {
+          if (scores.length > 0) {
+            const highestScore = scores[0].totalPoints;
+            const highScoreUsers = scores.filter(s => s.totalPoints === highestScore);
+            await awardWeeklySkins(season, week, highScoreUsers);
+          }
+        }
         
         console.log(`✅ Applied NFL team-based weekly bonuses: High (${highestScore}) to ${highestTeams.length} teams, Low (${lowestScore}) to ${lowestTeams.length} teams`);
       }
@@ -752,7 +767,8 @@ export function registerAdminRoutes(app: Express) {
         return res.status(400).json({ error: 'Season and week are required' });
       }
       
-      await checkAndCalculateWeeklyBonuses(season, week);
+      // Force check to bypass date validation  
+      await checkAndCalculateWeeklyBonuses(season, week, true);
       
       res.json({
         success: true,
@@ -761,6 +777,63 @@ export function registerAdminRoutes(app: Express) {
     } catch (error) {
       console.error('Error recalculating weekly bonuses:', error);
       res.status(500).json({ error: 'Failed to recalculate weekly bonuses' });
+    }
+  });
+
+  // Test skins awarding route
+  app.post('/api/admin/test-skins', async (req, res) => {
+    try {
+      const { season, week } = req.body;
+      
+      if (!season || !week) {
+        return res.status(400).json({ error: 'Season and week are required' });
+      }
+
+      // Get highest scoring users for this week
+      const finalUserScores = await db.select({
+        userId: userWeeklyScores.userId,
+        leagueId: userWeeklyScores.leagueId,
+        totalPoints: userWeeklyScores.totalPoints,
+        userName: users.name
+      })
+      .from(userWeeklyScores)
+      .innerJoin(users, eq(userWeeklyScores.userId, users.id))
+      .where(and(
+        eq(userWeeklyScores.season, season),
+        eq(userWeeklyScores.week, week)
+      ))
+      .orderBy(desc(userWeeklyScores.totalPoints));
+      
+      // Group users by league and award skins
+      const leagueScores: Record<string, any[]> = {};
+      for (const score of finalUserScores) {
+        if (!leagueScores[score.leagueId]) leagueScores[score.leagueId] = [];
+        leagueScores[score.leagueId].push(score);
+      }
+      
+      let results = [];
+      for (const [leagueId, scores] of Object.entries(leagueScores)) {
+        if (scores.length > 0) {
+          const highestScore = scores[0].totalPoints;
+          const highScoreUsers = scores.filter(s => s.totalPoints === highestScore);
+          await awardWeeklySkins(season, week, highScoreUsers);
+          results.push({
+            leagueId,
+            highestScore, 
+            winners: highScoreUsers.map(u => ({ name: u.userName, score: u.totalPoints })),
+            isTied: highScoreUsers.length > 1
+          });
+        }
+      }
+      
+      res.json({
+        success: true,
+        message: `Tested skins awarding for Season ${season}, Week ${week}`,
+        results
+      });
+    } catch (error) {
+      console.error('Error testing skins:', error);
+      res.status(500).json({ error: 'Failed to test skins awarding' });
     }
   });
 
@@ -785,7 +858,7 @@ async function handleWeekProgression(oldWeek: number, newWeek: number, season: n
   }
 }
 
-// Award weekly skins to the highest scoring users
+// Award weekly skins to the highest scoring users (or roll over if tied)
 async function awardWeeklySkins(season: number, week: number, highScoreUsers: any[]) {
   try {
     if (highScoreUsers.length === 0) return;
@@ -797,12 +870,43 @@ async function awardWeeklySkins(season: number, week: number, highScoreUsers: an
       return groups;
     }, {} as Record<string, any[]>);
     
-    // Award skins for each league
+    // Process skins for each league
     for (const [leagueId, winners] of Object.entries(leagueGroups)) {
       const isTied = winners.length > 1;
-      const winningScore = winners[0].totalPoints + 1; // After high score bonus
+      const winningScore = winners[0].totalPoints;
       
-      for (const winner of winners) {
+      // Calculate total skins available this week (current week + any rollovers)
+      const previousRollovers = await db.select()
+        .from(weeklySkins)
+        .where(and(
+          eq(weeklySkins.leagueId, leagueId),
+          eq(weeklySkins.season, season),
+          eq(weeklySkins.isTied, true),
+          eq(weeklySkins.isRollover, true)
+        ));
+      
+      const totalSkinsThisWeek = 1 + previousRollovers.length; // Base 1 skin + rollovers
+      
+      if (isTied) {
+        // No winner - skins roll over to next week
+        await db.insert(weeklySkins)
+          .values({
+            leagueId,
+            season,
+            week,
+            winnerId: null, // No winner
+            winningScore,
+            prizeAmount: totalSkinsThisWeek,
+            isTied: true,
+            isRollover: true,
+            awardedAt: null, // No award given
+          })
+          .onConflictDoNothing();
+        
+        console.log(`🔄 Week ${week} tied in league ${leagueId} (${winningScore} pts) - ${totalSkinsThisWeek} skin(s) rolled over to next week`);
+      } else {
+        // Single winner - award all accumulated skins
+        const winner = winners[0];
         await db.insert(weeklySkins)
           .values({
             leagueId,
@@ -810,14 +914,20 @@ async function awardWeeklySkins(season: number, week: number, highScoreUsers: an
             week,
             winnerId: winner.userId,
             winningScore,
-            prizeAmount: 30, // $30 prize
-            isTied,
+            prizeAmount: totalSkinsThisWeek,
+            isTied: false,
+            isRollover: false,
             awardedAt: new Date()
           })
-          .onConflictDoNothing(); // Prevent duplicates
+          .onConflictDoNothing();
+        
+        console.log(`🏆 Week ${week} winner in league ${leagueId}: ${winner.userName || 'Unknown'} wins ${totalSkinsThisWeek} skin(s) with ${winningScore} pts`);
+        
+        // Clear any previous rollover entries since they've been awarded
+        if (previousRollovers.length > 0) {
+          console.log(`🧹 Cleared ${previousRollovers.length} previous rollover entries`);
+        }
       }
-      
-      console.log(`🏆 Awarded Week ${week} skins to ${winners.length} winner(s) in league ${leagueId} (${winningScore} pts${isTied ? ', tied' : ''})`);
     }
   } catch (error) {
     console.error('Error awarding weekly skins:', error);

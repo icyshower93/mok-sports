@@ -193,15 +193,16 @@ export const weeklySkins = pgTable("weekly_skins", {
   leagueId: varchar("league_id").notNull().references(() => leagues.id),
   season: integer("season").notNull(),
   week: integer("week").notNull(),
-  winnerId: varchar("winner_id").notNull().references(() => users.id),
-  winningScore: integer("winning_score").notNull(), // The score that won the week
-  prizeAmount: integer("prize_amount").notNull().default(30), // $30 default prize
+  winnerId: varchar("winner_id").references(() => users.id), // Null if no winner (tied week)
+  winningScore: integer("winning_score"), // The score that won the week
+  prizeAmount: integer("prize_amount").notNull().default(1), // 1 skin default, can accumulate
   isTied: boolean("is_tied").notNull().default(false), // If multiple winners tied
-  awardedAt: timestamp("awarded_at").defaultNow().notNull(),
+  isRollover: boolean("is_rollover").notNull().default(false), // If skins rolled over to next week
+  awardedAt: timestamp("awarded_at"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 }, (table) => ({
-  // Add unique constraint for proper weekly prize tracking
-  uniqueLeagueWeek: unique().on(table.leagueId, table.season, table.week, table.winnerId),
+  // Add unique constraint for proper weekly prize tracking  
+  uniqueLeagueWeek: unique().on(table.leagueId, table.season, table.week),
 }));
 
 // Relations
