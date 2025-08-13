@@ -230,7 +230,7 @@ export default function MainPage() {
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
-                <Flame className="w-5 h-5 text-orange-500" />
+                <Flame className="w-5 h-5 text-purple-500" />
                 <h3 className="text-lg font-bold">This Week's Skins Leaders</h3>
               </div>
               <Button variant="ghost" size="sm" className="text-primary hover:text-primary/80">
