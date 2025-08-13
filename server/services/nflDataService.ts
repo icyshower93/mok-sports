@@ -304,6 +304,24 @@ class NFLDataService {
     }
   }
 
+  async getGamesForWeek(season: number, week: number): Promise<any[]> {
+    try {
+      console.log(`[NFLDataService] Fetching games for Season ${season}, Week ${week}...`);
+      const data = await this.makeRapidAPIRequest(`/getNFLGamesForWeek?season=${season}&week=${week}&seasonType=reg`);
+      
+      if (data && data.statusCode === 200 && data.body && Array.isArray(data.body)) {
+        console.log(`[NFLDataService] Got ${data.body.length} games for Season ${season}, Week ${week}`);
+        return data.body;
+      }
+      
+      console.log(`[NFLDataService] No games found for Season ${season}, Week ${week}`);
+      return [];
+    } catch (error) {
+      console.warn(`[NFLDataService] Failed to get games for Season ${season}, Week ${week}:`, error);
+      return [];
+    }
+  }
+
   async getGameInfo(gameID: string): Promise<any> {
     try {
       console.log(`[NFLDataService] Fetching game info for ${gameID}...`);
