@@ -178,24 +178,24 @@ export default function LeaguePage() {
                       </div>
                       
                       {/* Right: Stats */}
-                      <div className="flex items-center space-x-6">
-                        {/* Locks and Skins - Grouped together and positioned right */}
-                        <div className="flex items-center space-x-2 ml-auto">
+                      <div className="flex items-center">
+                        {/* Locks and Skins - Tightly grouped and pushed far right */}
+                        <div className="flex items-center space-x-1 ml-auto mr-8">
                           {/* Locks Correct */}
-                          <div className="text-center min-w-[36px]">
+                          <div className="text-center min-w-[32px]">
                             <div className="text-xs text-muted-foreground font-medium">LOCKS</div>
                             <div className="text-sm font-bold text-foreground">{member.locks}</div>
                           </div>
                           
                           {/* Skins Won */}
-                          <div className="text-center min-w-[36px]">
+                          <div className="text-center min-w-[32px]">
                             <div className="text-xs text-muted-foreground font-medium">SKINS</div>
                             <div className="text-sm font-bold text-foreground">{member.skinsWon || 0}</div>
                           </div>
                         </div>
                         
                         {/* Total Season Points - Most Prominent */}
-                        <div className="text-right min-w-[50px]">
+                        <div className="text-right min-w-[50px] mr-4">
                           <div className="text-2xl font-black text-foreground">{member.points}</div>
                           <div className="text-xs text-muted-foreground font-medium">PTS</div>
                         </div>
