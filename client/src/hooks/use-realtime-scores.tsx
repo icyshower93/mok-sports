@@ -62,6 +62,15 @@ export function useRealtimeScores() {
               queryClient.invalidateQueries({ queryKey: ['/api/scoring'] });
               break;
               
+            case 'admin_season_reset':
+              console.log('[RealtimeScores] Season reset - refreshing all data');
+              // Comprehensive refresh when season is reset
+              queryClient.invalidateQueries({ queryKey: ['/api/leagues'] });
+              queryClient.invalidateQueries({ queryKey: ['/api/scoring'] });
+              queryClient.invalidateQueries({ queryKey: ['/api/user/stable'] });
+              queryClient.invalidateQueries({ queryKey: ['/api/admin'] });
+              break;
+              
             default:
               // Ignore other message types (draft-specific, etc.)
               break;

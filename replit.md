@@ -84,6 +84,23 @@ Google OAuth2 is the primary authentication mechanism. JWT tokens are securely s
 
 # Recent Updates (August 2025)
 
+## Real-Time Score Updates System - IMPLEMENTED  
+- **Created WebSocket Score Listener**: Built `useRealtimeScores` hook to automatically refresh all score data when admin advances days
+- **Integrated Admin Broadcasting**: Connected to existing WebSocket infrastructure using admin_updates group for real-time notifications
+- **Automatic Cache Invalidation**: React Query cache automatically refreshes when "admin_date_advanced" or "admin_season_reset" events received
+- **Smart Reconnection Logic**: Exponential backoff reconnection system handles connection drops gracefully
+- **Multi-Page Coverage**: Works across League standings, Scores page, and Stable page - no more manual refresh needed
+- **Build Hash**: meamhjp5 includes complete real-time update system
+- **Date**: August 13, 2025
+
+## Season Reset with Skins Reset - IMPLEMENTED
+- **Enhanced Reset Season Button**: Added weekly skins table cleanup to `/api/admin/reset-season` endpoint  
+- **Complete Data Reset**: Now clears userWeeklyScores AND weeklySkins tables when season is reset
+- **Real-Time Broadcast**: Season reset triggers "admin_season_reset" WebSocket event for immediate UI refresh
+- **Comprehensive Cleanup**: Removes all skins winners, rollover data, and prize tracking for clean testing restart
+- **TypeScript Error Resolution**: Fixed all remaining LSP diagnostics in admin routes
+- **Date**: August 13, 2025
+
 ## Page Loading & API Endpoint Fixes - RESOLVED
 - **Fixed League Page Loading**: Corrected API endpoints from non-existent `/api/leagues/{id}/members` to working `/api/leagues/{id}/standings`
 - **Fixed Scores Page User Teams**: Changed from missing `/api/user/teams` to working `/api/user/stable/{leagueId}` endpoint

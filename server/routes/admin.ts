@@ -255,7 +255,7 @@ async function processGamesForDate(targetDate: Date): Promise<number> {
             .where(eq(nflGames.id, game.id));
 
           // Calculate and update Mok points for this game
-          await calculateAndUpdateMokPoints(game.id, game.season, game.week, homeScore, awayScore, game.homeTeamId, game.awayTeamId, game.homeTeamCode, game.awayTeamCode);
+          await calculateAndUpdateMokPoints(parseInt(game.id), game.season, game.week, homeScore, awayScore, parseInt(game.homeTeamId), parseInt(game.awayTeamId), game.homeTeamCode, game.awayTeamCode);
 
           processedCount++;
           console.log(`✅ Updated game: ${game.awayTeamCode} ${awayScore} - ${homeScore} ${game.homeTeamCode}`);
@@ -320,7 +320,7 @@ async function calculateAndUpdateMokPoints(
 
     // Calculate points for each team owner
     for (const owner of teamOwners) {
-      const isHomeTeam = owner.teamId === homeTeamId;
+      const isHomeTeam = parseInt(owner.teamId) === homeTeamId;
       const teamScore = isHomeTeam ? homeScore : awayScore;
       const opponentScore = isHomeTeam ? awayScore : homeScore;
 
@@ -767,6 +767,13 @@ export function registerAdminRoutes(app: Express) {
 
       console.log(`🧹 Cleared all weekly scores for ${adminState.season} season`);
 
+      // Clear all weekly skins for current season
+      await db
+        .delete(weeklySkins)
+        .where(eq(weeklySkins.season, adminState.season));
+
+      console.log(`🧹 Cleared all weekly skins for ${adminState.season} season`);
+
       // Reset all games to uncompleted with 0 scores for current season
       await db
         .update(nflGames)
@@ -992,7 +999,7 @@ async function awardWeeklySkins(season: number, week: number, highScoreUsers: an
     if (highScoreUsers.length === 0) return;
     
     // Group by league
-    const leagueGroups = highScoreUsers.reduce((groups, user) => {
+    const leagueGroups = highScoreUsers.reduce((groups: Record<string, any[]>, user: any) => {
       if (!groups[user.leagueId]) groups[user.leagueId] = [];
       groups[user.leagueId].push(user);
       return groups;
@@ -1000,8 +1007,8 @@ async function awardWeeklySkins(season: number, week: number, highScoreUsers: an
     
     // Process skins for each league
     for (const [leagueId, winners] of Object.entries(leagueGroups)) {
-      const isTied = winners.length > 1;
-      const winningScore = winners[0].totalPoints;
+      const isTied = (winners as any[]).length > 1;
+      const winningScore = (winners as any[])[0].totalPoints;
       
       // Calculate total skins available this week (current week + any rollovers)
       const previousRollovers = await db.select()
@@ -1034,7 +1041,7 @@ async function awardWeeklySkins(season: number, week: number, highScoreUsers: an
         console.log(`🔄 Week ${week} tied in league ${leagueId} (${winningScore} pts) - ${totalSkinsThisWeek} skin(s) rolled over to next week`);
       } else {
         // Single winner - award all accumulated skins
-        const winner = winners[0];
+        const winner = (winners as any[])[0];
         await db.insert(weeklySkins)
           .values({
             leagueId,
