@@ -154,7 +154,7 @@ export default function MainPage() {
         <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm border-b border-border/50 px-6 py-4">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-xl font-bold text-foreground">Mok Sports League</h1>
+              <h1 className="text-xl font-bold text-foreground">Welcome, {user.name.split(' ')[0]}!</h1>
               <p className="text-sm text-muted-foreground">Week {currentWeek} • 2024 Season</p>
             </div>
             <Avatar className="w-10 h-10 border-2 border-primary/20">
