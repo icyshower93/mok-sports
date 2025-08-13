@@ -363,6 +363,12 @@ app.use((req, res, next) => {
           return next();
         }
         
+        // Don't intercept static asset requests (images, fonts, etc.)
+        if (req.path.match(/\.(png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot|css|js)$/i)) {
+          console.log('[Static] Allowing static asset request to pass through:', req.path);
+          return next();
+        }
+        
         // Don't intercept asset requests or static files
         if (req.path.startsWith('/assets/') || 
             req.path.endsWith('.js') || 
