@@ -758,6 +758,24 @@ export function registerAdminRoutes(app: Express) {
     }
   });
 
+  // Get the appropriate week for scores display (current or next week if current is complete)
+  app.get("/api/admin/scores-week", async (req, res) => {
+    try {
+      await updateAdminState();
+      const scoresWeek = await getScoresDisplayWeek(adminState.season, adminState.currentWeek, adminState.currentDate);
+      
+      res.json({
+        scoresDisplayWeek: scoresWeek,
+        currentWeek: adminState.currentWeek,
+        season: adminState.season,
+        currentDate: adminState.currentDate.toISOString()
+      });
+    } catch (error) {
+      console.error('Error getting scores display week:', error);
+      res.status(500).json({ message: "Failed to get scores display week" });
+    }
+  });
+
   // Manual weekly bonus calculation route for testing
   app.post('/api/admin/recalculate-weekly-bonuses', async (req, res) => {
     try {
@@ -859,6 +877,30 @@ async function handleWeekProgression(oldWeek: number, newWeek: number, season: n
 }
 
 // Award weekly skins to the highest scoring users (or roll over if tied)
+// Get the appropriate week to display in scores tab
+// If current week is complete, show next week; otherwise show current week
+async function getScoresDisplayWeek(season: number, currentWeek: number, currentDate: Date): Promise<number> {
+  try {
+    // Check if current week is complete using endOfWeekProcessor logic
+    const { endOfWeekProcessor } = await import("../utils/endOfWeekProcessor.js");
+    const isCurrentWeekComplete = await endOfWeekProcessor.isWeekComplete(season, currentWeek, currentDate);
+    
+    // If current week is complete and we're not at the end of season, show next week
+    if (isCurrentWeekComplete && currentWeek < 18) {
+      console.log(`📊 Week ${currentWeek} complete, scores will display Week ${currentWeek + 1}`);
+      return currentWeek + 1;
+    }
+    
+    // Otherwise show current week
+    console.log(`📊 Week ${currentWeek} in progress, scores will display Week ${currentWeek}`);
+    return currentWeek;
+  } catch (error) {
+    console.error('Error determining scores display week:', error);
+    // Fallback to current week
+    return currentWeek;
+  }
+}
+
 async function awardWeeklySkins(season: number, week: number, highScoreUsers: any[]) {
   try {
     if (highScoreUsers.length === 0) return;

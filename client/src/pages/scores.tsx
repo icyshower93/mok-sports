@@ -137,9 +137,28 @@ export default function ScoresPage() {
   }, []);
   const { user } = useAuth();
   const queryClient = useQueryClient();
-  const [selectedWeek, setSelectedWeek] = useState(1); // Start with Week 1
+  const [selectedWeek, setSelectedWeek] = useState(1); // Will be updated by scores-week API
   const [selectedGame, setSelectedGame] = useState<any>(null);
   const [selectedSeason] = useState(2024); // Using completed 2024 NFL season for testing
+
+  // Fetch the appropriate week for scores display
+  const { data: scoresWeekData } = useQuery({
+    queryKey: ['/api/admin/scores-week'],
+    queryFn: async () => {
+      const response = await fetch('/api/admin/scores-week');
+      return response.json();
+    },
+    refetchInterval: 30000, // Refresh every 30 seconds to catch week changes
+    staleTime: 0, // Always consider stale to check for updates
+  });
+
+  // Update selected week when scores week data changes
+  useEffect(() => {
+    if (scoresWeekData?.scoresDisplayWeek && scoresWeekData.scoresDisplayWeek !== selectedWeek) {
+      console.log(`📊 Auto-switching to Week ${scoresWeekData.scoresDisplayWeek} based on game completion status`);
+      setSelectedWeek(scoresWeekData.scoresDisplayWeek);
+    }
+  }, [scoresWeekData?.scoresDisplayWeek, selectedWeek]);
 
   // Listen for admin date advances to refresh scores automatically
   useEffect(() => {
@@ -170,6 +189,8 @@ export default function ScoresPage() {
               console.log("Admin date advanced, refreshing scores...");
               // Force invalidate ALL queries to trigger complete refresh
               queryClient.invalidateQueries();
+              // Also specifically refresh the scores week to check for auto-week-switching
+              queryClient.invalidateQueries({ queryKey: ['/api/admin/scores-week'] });
               console.log(
                 "📊 [WebSocket] Invalidated ALL queries after admin date advance",
               );
@@ -491,9 +512,15 @@ export default function ScoresPage() {
                   {Array.from({ length: 18 }, (_, i) => i + 1).map((week) => (
                     <option key={week} value={week}>
                       Week {week}
+                      {scoresWeekData?.scoresDisplayWeek === week ? ' (Auto)' : ''}
                     </option>
                   ))}
                 </select>
+                {scoresWeekData?.scoresDisplayWeek === selectedWeek && (
+                  <Badge variant="secondary" className="text-xs px-2 py-1">
+                    Auto
+                  </Badge>
+                )}
               </div>
             </div>
           </div>
