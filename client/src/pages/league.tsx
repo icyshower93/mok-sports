@@ -180,7 +180,7 @@ export default function LeaguePage() {
                       {/* Right: Stats */}
                       <div className="flex items-center justify-end flex-1">
                         {/* Locks and Skins - Positioned far right with proper spacing */}
-                        <div className="flex items-center space-x-3 mr-6">
+                        <div className="flex items-center space-x-3 mr-4">
                           {/* Locks Correct */}
                           <div className="text-center min-w-[36px]">
                             <div className="text-xs text-muted-foreground font-medium">LOCKS</div>
