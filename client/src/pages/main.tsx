@@ -4,7 +4,8 @@ import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 import { 
   Shield, 
@@ -25,7 +26,12 @@ import {
   ArrowDown,
   Minus,
   Activity,
-  DollarSign
+  DollarSign,
+  Bell,
+  User,
+  ExternalLink,
+  ChevronLeft,
+  Play
 } from "lucide-react";
 import { BottomNav } from "@/components/layout/bottom-nav";
 import { TeamLogo } from "@/components/team-logo";
@@ -139,340 +145,240 @@ export default function MainPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 pb-20">
+    <div className="min-h-screen bg-gradient-to-br from-background to-muted/10 pb-20">
       <div className="max-w-4xl mx-auto">
         
-        {/* Hero Header with Welcome Message */}
-        <div className="relative px-6 py-8 bg-gradient-to-r from-primary/10 via-primary/5 to-background">
+        {/* Sticky App Bar */}
+        <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm border-b border-border/50 px-6 py-4">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-foreground">Welcome back, {user.name.split(' ')[0]}!</h1>
-              <p className="text-sm text-muted-foreground mt-1">Week {currentWeek} • 2024 NFL Season</p>
+              <h1 className="text-xl font-bold text-foreground">Mok Sports League</h1>
+              <p className="text-sm text-muted-foreground">Week {currentWeek} • 2024 Season</p>
             </div>
-            <div className="p-3 bg-primary/10 rounded-full">
-              <Trophy className="w-6 h-6 text-primary" />
-            </div>
+            <Avatar className="w-10 h-10 border-2 border-primary/20">
+              <AvatarFallback className="bg-primary/10 text-primary font-semibold">
+                {user.name.split(' ').map(n => n[0]).join('').toUpperCase()}
+              </AvatarFallback>
+            </Avatar>
           </div>
         </div>
 
         <div className="px-4 space-y-6 mt-6">
           
-          {/* Enhanced Stats Cards with Better Visual Hierarchy */}
-          <div className="grid grid-cols-3 gap-4">
-            <Card className="bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-950/30 dark:to-blue-900/20 border-blue-200 dark:border-blue-800">
-              <CardContent className="p-5 text-center">
-                <div className="text-3xl font-black text-blue-600 dark:text-blue-400 mb-1">{userTotalPoints}</div>
-                <div className="text-xs text-blue-700/70 dark:text-blue-300/70 font-semibold uppercase tracking-wide">Total Points</div>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-gradient-to-br from-amber-50 to-yellow-100/50 dark:from-amber-950/30 dark:to-yellow-900/20 border-amber-200 dark:border-amber-800">
-              <CardContent className="p-5 text-center">
-                <div className="flex items-center justify-center space-x-2 mb-1">
-                  <span className="text-3xl font-black text-amber-600 dark:text-amber-400">#{userRank}</span>
-                  {userRank === 1 && <Crown className="w-5 h-5 text-amber-600" />}
+          {/* User Statistics Card - Large Hero Card */}
+          <Card className="bg-gradient-to-br from-primary/5 via-primary/10 to-primary/5 border-primary/20 shadow-xl rounded-2xl overflow-hidden">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h2 className="text-2xl font-bold text-foreground">Season Stats</h2>
+                  <p className="text-sm text-muted-foreground">Your performance this season</p>
                 </div>
-                <div className="text-xs text-amber-700/70 dark:text-amber-300/70 font-semibold uppercase tracking-wide">League Rank</div>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-gradient-to-br from-emerald-50 to-green-100/50 dark:from-emerald-950/30 dark:to-green-900/20 border-emerald-200 dark:border-emerald-800">
-              <CardContent className="p-5 text-center">
-                <div className="text-3xl font-black text-emerald-600 dark:text-emerald-400 mb-1">${userSkinsWon * 30}</div>
-                <div className="text-xs text-emerald-700/70 dark:text-emerald-300/70 font-semibold uppercase tracking-wide">Skins Won</div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Quick Actions Row */}
-          <div className="grid grid-cols-2 gap-3">
-            <Button 
-              variant="outline" 
-              className="h-14 bg-gradient-to-r from-primary/5 to-primary/10 border-primary/20 hover:from-primary/10 hover:to-primary/15"
-              onClick={() => navigate('/stable')}
-            >
-              <div className="flex items-center space-x-3">
-                <Shield className="w-5 h-5 text-primary" />
-                <div className="text-left">
-                  <div className="font-semibold text-sm">My Teams</div>
-                  <div className="text-xs text-muted-foreground">View Stable</div>
+                <div className="p-3 bg-primary/20 rounded-full">
+                  <Trophy className="w-6 h-6 text-primary" />
                 </div>
               </div>
-            </Button>
-            
-            <Button 
-              variant="outline" 
-              className="h-14 bg-gradient-to-r from-green-500/5 to-emerald-500/10 border-green-500/20 hover:from-green-500/10 hover:to-emerald-500/15"
-              onClick={() => navigate('/scores')}
-            >
-              <div className="flex items-center space-x-3">
-                <Activity className="w-5 h-5 text-green-600" />
-                <div className="text-left">
-                  <div className="font-semibold text-sm">Live Scores</div>
-                  <div className="text-xs text-muted-foreground">NFL Games</div>
-                </div>
-              </div>
-            </Button>
-          </div>
-
-          {/* Weekly Leaderboard with Enhanced Design */}
-          <Card className="overflow-hidden bg-gradient-to-br from-card to-card/50 border-border/50 shadow-lg">
-            <CardHeader className="pb-4 bg-gradient-to-r from-primary/5 to-primary/10">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <div className="p-2 bg-primary/10 rounded-full">
-                    <Flame className="w-5 h-5 text-primary" />
-                  </div>
-                  <div>
-                    <CardTitle className="text-xl font-bold">Week {currentWeek} Leaderboard</CardTitle>
-                    <p className="text-sm text-muted-foreground">Live scoring battle</p>
+              
+              <div className="grid grid-cols-3 gap-6">
+                <div className="text-center">
+                  <div className="text-4xl font-black text-blue-600 dark:text-blue-400 mb-2">{userTotalPoints}</div>
+                  <div className="text-sm text-muted-foreground font-medium flex items-center justify-center gap-1">
+                    <Trophy className="w-4 h-4" />
+                    Total Points
                   </div>
                 </div>
-                <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/50 dark:text-emerald-300 dark:border-emerald-800 px-3 py-1">
-                  <DollarSign className="w-3 h-3 mr-1" />
-                  ${weeklyPrize} Prize
-                </Badge>
-              </div>
-            </CardHeader>
-            <CardContent className="p-0">
-              {!weeklyRankings || (weeklyRankings as any[]).length === 0 ? (
-                <div className="text-center py-12 px-6">
-                  <div className="p-4 bg-muted/20 rounded-full w-fit mx-auto mb-4">
-                    <Trophy className="w-8 h-8 text-muted-foreground/50" />
+                
+                <div className="text-center">
+                  <div className="flex items-center justify-center space-x-1 mb-2">
+                    <span className="text-4xl font-black text-amber-600 dark:text-amber-400">
+                      {userRank === 1 ? '1st' : userRank === 2 ? '2nd' : userRank === 3 ? '3rd' : `${userRank}th`}
+                    </span>
+                    {userRank === 1 && <Crown className="w-6 h-6 text-amber-600" />}
                   </div>
-                  <h4 className="font-semibold text-lg mb-2">Week {currentWeek} Competition</h4>
-                  <p className="text-sm text-muted-foreground">Leaderboard will update as games begin</p>
+                  <div className="text-sm text-muted-foreground font-medium">
+                    out of {(leagueData as any)?.standings?.length || 6}
+                  </div>
                 </div>
-              ) : (
-                <div className="space-y-1">
-                  {Array.isArray(weeklyRankings) && (weeklyRankings as any[])
-                    .slice(0, showAllWeeklyRankings ? (weeklyRankings as any[]).length : 3)
-                    .map((member: any, index: number) => (
-                    <div 
-                      key={member.name || index} 
-                      className={`p-4 border-b border-border/50 last:border-b-0 transition-colors hover:bg-muted/20 ${
-                        member.isCurrentUser ? 'bg-primary/5 border-primary/20' : ''
-                      }`}
-                    >
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-4 flex-1">
-                          <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold shadow-sm ${
-                            index === 0 ? 'bg-gradient-to-br from-yellow-400 to-yellow-600 text-white' :
-                            index === 1 ? 'bg-gradient-to-br from-gray-300 to-gray-500 text-white' :
-                            index === 2 ? 'bg-gradient-to-br from-orange-400 to-orange-600 text-white' :
-                            'bg-muted text-muted-foreground'
-                          }`}>
-                            {index === 0 ? <Crown className="w-4 h-4" /> : index + 1}
-                          </div>
-                          
-                          <div className="flex items-center space-x-3 flex-1">
-                            <div>
-                              <div className="font-semibold text-base">{member.name}</div>
-                              {member.isCurrentUser && (
-                                <Badge variant="secondary" className="text-xs px-2 py-0.5 mt-1">You</Badge>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                        
-                        <div className="flex items-center space-x-6">
-                          <div className="text-right">
-                            <div className="text-2xl font-bold text-foreground">{member.weeklyPoints || 0}</div>
-                            <div className="text-xs text-muted-foreground font-medium">points</div>
-                          </div>
-                          {member.gamesRemaining > 0 && (
-                            <div className="flex items-center space-x-1 text-green-600">
-                              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                              <span className="text-xs font-medium">LIVE</span>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                  {Array.isArray(weeklyRankings) && (weeklyRankings as any[]).length > 3 && (
-                    <div className="p-4 bg-muted/10">
-                      <Button 
-                        variant="ghost" 
-                        size="sm" 
-                        className="w-full text-sm"
-                        onClick={() => setShowAllWeeklyRankings(!showAllWeeklyRankings)}
-                      >
-                        {showAllWeeklyRankings ? (
-                          <>Show Top 3 <ChevronUp className="w-4 h-4 ml-2" /></>
-                        ) : (
-                          <>View All 6 Players <ChevronDown className="w-4 h-4 ml-2" /></>
-                        )}
-                      </Button>
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {/* Week-End Results Section */}
-              {weekEndResults?.weekComplete && (
-                <div className="mt-4 pt-4 border-t border-border">
-                  <h4 className="font-semibold text-sm mb-3 flex items-center gap-2">
+                
+                <div className="text-center">
+                  <div className="text-4xl font-black text-emerald-600 dark:text-emerald-400 mb-2">{userSkinsWon}</div>
+                  <div className="text-sm text-muted-foreground font-medium flex items-center justify-center gap-1">
                     <Target className="w-4 h-4" />
-                    Week {currentWeek} Results
-                  </h4>
-                  
-                  <div className="space-y-3">
-                    {/* High Score Teams */}
-                    {Array.isArray(weekEndResults?.highScoreTeams) && weekEndResults.highScoreTeams.length > 0 && (
-                      <div className="bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800 rounded-lg p-3">
-                        <div className="flex items-center gap-2 mb-2">
-                          <Trophy className="w-4 h-4 text-green-600" />
-                          <span className="font-medium text-green-700 dark:text-green-300 text-sm">
-                            Week High (+1 bonus)
-                          </span>
-                        </div>
-                        {weekEndResults.highScoreTeams.map((team: any) => (
-                          <div key={team.teamId} className="flex items-center gap-3">
-                            <img
-                              src={`https://a.espncdn.com/i/teamlogos/nfl/500/${team.teamCode.toLowerCase()}.png`}
-                              alt={team.teamCode}
-                              className="w-6 h-6"
-                            />
-                            <div>
-                              <div className="font-medium text-sm">{team.teamName}</div>
-                              <div className="text-xs text-green-600 dark:text-green-400">
-                                {team.score} points
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-
-                    {/* Low Score Teams */}
-                    {Array.isArray(weekEndResults?.lowScoreTeams) && weekEndResults.lowScoreTeams.length > 0 && (
-                      <div className="bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 rounded-lg p-3">
-                        <div className="flex items-center gap-2 mb-2">
-                          <Target className="w-4 h-4 text-red-600" />
-                          <span className="font-medium text-red-700 dark:text-red-300 text-sm">
-                            Week Low (-1 penalty)
-                          </span>
-                        </div>
-                        {weekEndResults.lowScoreTeams.map((team: any) => (
-                          <div key={team.teamId} className="flex items-center gap-3">
-                            <img
-                              src={`https://a.espncdn.com/i/teamlogos/nfl/500/${team.teamCode.toLowerCase()}.png`}
-                              alt={team.teamCode}
-                              className="w-6 h-6"
-                            />
-                            <div>
-                              <div className="font-medium text-sm">{team.teamName}</div>
-                              <div className="text-xs text-red-600 dark:text-red-400">
-                                {team.score} points
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-
-                    {/* Weekly Skins Winner */}
-                    {weekEndResults.weeklySkinsWinner && (
-                      <div className="bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 rounded-lg p-3">
-                        <div className="flex items-center gap-2 mb-2">
-                          <Trophy className="w-4 h-4 text-amber-600" />
-                          <span className="font-medium text-amber-700 dark:text-amber-300 text-sm">
-                            Weekly Skins Winner
-                          </span>
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <div className="font-medium text-sm">{weekEndResults.weeklySkinsWinner.userName}</div>
-                          <div className="text-right">
-                            <div className="font-bold text-amber-600 text-sm">${weekEndResults.weeklySkinsWinner.prizeAmount}</div>
-                            <div className="text-xs text-amber-600">
-                              {weekEndResults.weeklySkinsWinner.totalWeeklyPoints} points
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    )}
+                    Skins Won
                   </div>
                 </div>
-              )}
+              </div>
             </CardContent>
           </Card>
 
-          {/* Teams Left to Play */}
-          {teamsLeftToPlay && teamsLeftToPlay.length > 0 && (
-            <Card>
-              <CardHeader className="pb-4">
-                <CardTitle className="text-lg flex items-center space-x-2">
-                  <Clock className="w-5 h-5" />
-                  <span>Teams Left to Play</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <div className="space-y-3">
-                  {Object.entries(
-                    teamsLeftToPlay.reduce((acc: any, team: any) => {
-                      const ownerName = team.ownerName || 'Unknown';
-                      if (!acc[ownerName]) acc[ownerName] = [];
-                      acc[ownerName].push(team);
-                      return acc;
-                    }, {})
-                  ).slice(0, 3).map(([ownerName, teams]: [string, any]) => (
-                    <div key={ownerName} className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">
-                      <div className="flex items-center space-x-3">
-                        <div className="font-medium text-sm">{ownerName}</div>
-                        {ownerName === user?.name && (
-                          <Badge variant="secondary" className="text-xs px-1.5 py-0.5">You</Badge>
-                        )}
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        {(teams as any[]).slice(0, 2).map((team: any) => (
-                          <div key={team.teamCode} className="flex items-center space-x-1">
-                            <TeamLogo 
-                              teamCode={team.teamCode} 
-                              logoUrl={`/images/nfl/team_logos/${team.teamCode}.png`}
-                              teamName={team.teamCode}
-                              size="sm" 
-                              className="w-6 h-6"
-                            />
-                            <span className="text-xs text-muted-foreground">
-                              {team.opponent}
-                            </span>
-                          </div>
-                        ))}
-                        {(teams as any[]).length > 2 && (
-                          <Badge variant="outline" className="text-xs">
-                            +{(teams as any[]).length - 2}
-                          </Badge>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          )}
-
-          {/* Quick Actions */}
-          <div className="grid grid-cols-2 gap-3">
-            <Button 
-              variant="outline" 
-              className="h-12 flex items-center justify-center space-x-2"
-              onClick={() => navigate('/stable')}
-            >
-              <Shield className="w-4 h-4" />
-              <span>My Stable</span>
-            </Button>
+          {/* Weekly Skins Ranking - Horizontal Scroll */}
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <Flame className="w-5 h-5 text-orange-500" />
+                <h3 className="text-lg font-bold">This Week's Skins Leaders</h3>
+              </div>
+              <Button variant="ghost" size="sm" className="text-primary hover:text-primary/80">
+                View All <ChevronRight className="w-4 h-4 ml-1" />
+              </Button>
+            </div>
             
-            <Button 
-              variant="outline" 
-              className="h-12 flex items-center justify-center space-x-2"
-              onClick={() => navigate('/scores')}
-            >
-              <TrendingUp className="w-4 h-4" />
-              <span>Live Scores</span>
-            </Button>
+            <ScrollArea className="w-full whitespace-nowrap">
+              <div className="flex space-x-3 pb-4">
+                {Array.isArray(weeklyRankings) && weeklyRankings.length > 0 ? (
+                  weeklyRankings.slice(0, 6).map((member: any, index: number) => (
+                    <Card key={member.name} className="flex-shrink-0 w-32 bg-gradient-to-br from-card to-card/50 border-border/50 rounded-2xl">
+                      <CardContent className="p-4 text-center">
+                        <div className="relative mb-3">
+                          <Avatar className="w-12 h-12 mx-auto border-2 border-primary/20">
+                            <AvatarFallback className="bg-primary/10 text-primary font-semibold text-sm">
+                              {member.name.split(' ').map((n: string) => n[0]).join('').toUpperCase()}
+                            </AvatarFallback>
+                          </Avatar>
+                          {index === 0 && (
+                            <Crown className="w-4 h-4 text-yellow-500 absolute -top-1 -right-1 bg-background rounded-full p-0.5" />
+                          )}
+                        </div>
+                        <p className="text-xs font-medium text-foreground truncate">{member.name}</p>
+                        <p className="text-lg font-bold text-primary">{member.weeklyPoints || 0}</p>
+                        <p className="text-xs text-muted-foreground">pts</p>
+                      </CardContent>
+                    </Card>
+                  ))
+                ) : (
+                  <Card className="flex-shrink-0 w-full bg-muted/20 rounded-2xl">
+                    <CardContent className="p-6 text-center">
+                      <Trophy className="w-8 h-8 mx-auto mb-2 text-muted-foreground/50" />
+                      <p className="text-sm text-muted-foreground">Week {currentWeek} rankings coming soon</p>
+                    </CardContent>
+                  </Card>
+                )}
+              </div>
+            </ScrollArea>
           </div>
 
+          {/* Games Today */}
+          <Card className="rounded-2xl border-border/50 bg-gradient-to-br from-card to-card/50">
+            <CardHeader className="pb-4">
+              <div className="flex items-center space-x-2">
+                <Play className="w-5 h-5 text-green-600" />
+                <CardTitle className="text-lg font-bold">Games Today</CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {/* Mock games for today - replace with actual API data */}
+              <div className="space-y-2">
+                <p className="text-center text-sm text-muted-foreground py-6">
+                  No games scheduled today
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* News Section */}
+          <Card className="rounded-2xl border-border/50 bg-gradient-to-br from-card to-card/50">
+            <CardHeader className="pb-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <Bell className="w-5 h-5 text-blue-600" />
+                  <CardTitle className="text-lg font-bold">League & NFL News</CardTitle>
+                </div>
+                <Button variant="ghost" size="sm" className="text-primary hover:text-primary/80">
+                  View All <ExternalLink className="w-4 h-4 ml-1" />
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {/* Mock news items */}
+              <div className="space-y-3">
+                <Card className="p-3 bg-muted/20 rounded-xl">
+                  <div className="flex space-x-3">
+                    <div className="w-16 h-16 bg-gradient-to-br from-primary/20 to-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <Trophy className="w-6 h-6 text-primary" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h4 className="font-semibold text-sm text-foreground truncate">Week {currentWeek} Skins Prize Pool</h4>
+                      <p className="text-xs text-muted-foreground mt-1">$30 weekly prize up for grabs this week</p>
+                      <p className="text-xs text-muted-foreground">2 hours ago</p>
+                    </div>
+                  </div>
+                </Card>
+                
+                <Card className="p-3 bg-muted/20 rounded-xl">
+                  <div className="flex space-x-3">
+                    <div className="w-16 h-16 bg-gradient-to-br from-green-500/20 to-green-500/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <Activity className="w-6 h-6 text-green-600" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h4 className="font-semibold text-sm text-foreground truncate">NFL Week {currentWeek} Schedule</h4>
+                      <p className="text-xs text-muted-foreground mt-1">Check out this week's matchups and point spreads</p>
+                      <p className="text-xs text-muted-foreground">1 day ago</p>
+                    </div>
+                  </div>
+                </Card>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Activity Feed */}
+          <Card className="rounded-2xl border-border/50 bg-gradient-to-br from-card to-card/50 mb-8">
+            <CardHeader className="pb-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <Activity className="w-5 h-5 text-purple-600" />
+                  <CardTitle className="text-lg font-bold">Recent Activity</CardTitle>
+                </div>
+                <Button variant="ghost" size="sm" className="text-primary hover:text-primary/80">
+                  View All <ChevronRight className="w-4 h-4 ml-1" />
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <div className="space-y-3">
+                {/* Mock activity items with user avatars */}
+                <div className="flex items-start space-x-3 p-3 bg-muted/10 rounded-xl">
+                  <Avatar className="w-8 h-8 border border-border/50">
+                    <AvatarFallback className="bg-emerald-100 text-emerald-700 text-xs font-semibold">
+                      G
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm text-foreground">
+                      <span className="font-semibold">Gamma</span> is leading this week with 7 points
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-1">3 hours ago</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start space-x-3 p-3 bg-muted/10 rounded-xl">
+                  <Avatar className="w-8 h-8 border border-border/50">
+                    <AvatarFallback className="bg-blue-100 text-blue-700 text-xs font-semibold">
+                      MS
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm text-foreground">
+                      <span className="font-semibold">Mok Sports</span> received weekly low penalty (-1)
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-1">1 day ago</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start space-x-3 p-3 bg-muted/10 rounded-xl">
+                  <Avatar className="w-8 h-8 border border-border/50">
+                    <AvatarFallback className="bg-amber-100 text-amber-700 text-xs font-semibold">
+                      A
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm text-foreground">
+                      Week {currentWeek} skins prize pool is now <span className="font-semibold">$30</span>
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-1">2 days ago</p>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
       <BottomNav />

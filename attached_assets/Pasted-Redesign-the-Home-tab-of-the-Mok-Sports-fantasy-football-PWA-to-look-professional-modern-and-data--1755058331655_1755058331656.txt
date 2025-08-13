@@ -1,0 +1,83 @@
+Redesign the Home tab of the Mok Sports fantasy football PWA to look professional, modern, and data-rich—similar in quality and polish to Sleeper and ESPN Fantasy mobile apps.
+
+Overall Style & Layout:
+
+Mobile-first, responsive design with card-based layout, subtle shadows, and rounded corners (2xl) for all cards.
+
+Use team colors and subtle gradients where appropriate, but keep the overall theme consistent with our brand palette.
+
+Typography: bold, clean headlines for section titles, smaller text for stats, and clear labels.
+
+Spacing: at least p-4 padding inside all sections for readability.
+
+Sticky top app bar with the league name and user avatar on the right.
+
+Scrollable vertical layout with clear section separation and consistent margins.
+
+Sections & Requirements
+User Statistics Card (Top of screen)
+
+Large, visually appealing card that shows:
+
+Total Season Points (large number, bold)
+
+Current League Rank (e.g., "2nd out of 6")
+
+Skins Won (e.g., "4 skins this season")
+
+Use icons for each stat (e.g., trophy for rank, target for skins).
+
+Slight gradient background or team color accent.
+
+Weekly Skins Ranking
+
+Horizontal scroll list showing the current week’s top players in the skins game.
+
+Each player card: small avatar, name, points, and a crown icon for first place.
+
+Section title: “This Week’s Skins Leaders” with a “View All” link.
+
+Games Today
+
+Small schedule section showing NFL games happening today.
+
+Each row: team logos, matchup (e.g., "NE vs BUF"), start time, and maybe point spread.
+
+If no games today, show "No games scheduled today" message.
+
+News Section
+
+“League & NFL News” header.
+
+2–3 news cards showing latest updates from the NFL or league announcements.
+
+Each card: image thumbnail, headline, and short snippet.
+
+“View All News” link at the bottom.
+
+Activity Feed
+
+Recent events in the league: e.g., “John won this week’s skins”, “Sarah is now in 1st place”, “Mike updated payouts”.
+
+List format with small user avatars and timestamps.
+
+Clickable to expand into full league activity page.
+
+UI Inspiration References
+Sleeper: Card-based stats layout, playful but modern color accents, clean spacing.
+
+ESPN Fantasy: Clear typography, section separation, and data hierarchy.
+
+Yahoo Fantasy: Simple but information-rich dashboard.
+
+Technical Implementation Notes
+Use Tailwind CSS for styling with grid and flex layouts.
+
+Use shadcn/ui components for cards, tabs, and avatars.
+
+Optimize for PWA with smooth scrolling and lightweight assets.
+
+Consider lazy-loading images for news & games.
+
+Each card should be independently clickable to drill into details.
+
