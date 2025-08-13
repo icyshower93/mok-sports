@@ -54,14 +54,18 @@ const LogoDisplay = () => {
       loading="eager"
       decoding="async"
       onError={(e) => {
+        const target = e.target as HTMLImageElement;
         // Fallback to regular logo if white version fails
-        (e.target as HTMLImageElement).src = mokSportsLogo;
-        (e.target as HTMLImageElement).onError = () => {
+        target.src = mokSportsLogo;
+        target.onerror = () => {
           // Ultimate fallback: replace with Trophy icon
           const fallback = document.createElement('div');
           fallback.className = "w-8 h-8 rounded-full bg-gradient-to-br from-fantasy-green to-trust-blue flex items-center justify-center";
           fallback.innerHTML = '<svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 0 0 0 5H6m0-5v5m0-5h12m-12 5h12m0-5H19.5a2.5 2.5 0 0 1 0 5H18m0-5v5m-6-9v9m0-9a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1z"/></svg>';
-          e.target.parentNode?.replaceChild(fallback, e.target);
+          const parent = target.parentNode as HTMLElement;
+          if (parent) {
+            parent.replaceChild(fallback, target);
+          }
         };
       }}
     />
