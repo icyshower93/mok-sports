@@ -189,9 +189,9 @@ export default function MainPage() {
     <div className="min-h-screen bg-gradient-to-br from-background to-muted/10 pb-20">
       <div className="max-w-4xl mx-auto">
         
-        {/* App Bar */}
-        <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm border-b border-border/50 px-6 py-4">
-          <div className="flex items-center justify-between">
+        {/* Standardized Sticky Header */}
+        <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm border-b border-border/50 h-16">
+          <div className="flex items-center justify-between h-full px-6">
             <div>
               <h1 className="text-xl font-bold text-foreground">Welcome, {user.name.split(' ')[0]}!</h1>
               <p className="text-sm text-muted-foreground">Week {currentWeek} • 2024 Season</p>
