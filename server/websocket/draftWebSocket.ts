@@ -43,7 +43,10 @@ export class DraftWebSocketManager {
     // FIX #2/#4: REPLIT PROXY COMPATIBILITY - Enhanced upgrade handling for Reserved VM
     server.on('upgrade', (request, socket, head) => {
       console.log('[WebSocket] 🔍 REPLIT UPGRADE REQUEST (Reserved VM Compatible)');
+      console.log('[WebSocket] ===========================================');
       console.log('[WebSocket] URL:', request.url);
+      console.log('[WebSocket] Method:', request.method);
+      console.log('[WebSocket] HTTP Version:', request.httpVersion);
       console.log('[WebSocket] Origin:', request.headers.origin);
       console.log('[WebSocket] User-Agent:', request.headers['user-agent']);
       console.log('[WebSocket] Connection header:', request.headers.connection);
@@ -51,13 +54,19 @@ export class DraftWebSocketManager {
       console.log('[WebSocket] Host header:', request.headers.host);
       console.log('[WebSocket] X-Forwarded-For:', request.headers['x-forwarded-for']);
       console.log('[WebSocket] X-Forwarded-Proto:', request.headers['x-forwarded-proto']);
+      console.log('[WebSocket] Sec-WebSocket-Key:', request.headers['sec-websocket-key']);
+      console.log('[WebSocket] Sec-WebSocket-Version:', request.headers['sec-websocket-version']);
       console.log('[WebSocket] Sec-WebSocket-Protocol:', request.headers['sec-websocket-protocol']);
+      console.log('[WebSocket] All headers:', JSON.stringify(request.headers, null, 2));
+      console.log('[WebSocket] ===========================================');
       console.log('[WebSocket] 🔍 PROXY VALIDATION: Checking for stripped Upgrade headers');
       
       // FIX #4: Validate critical WebSocket headers for Replit proxy
       if (!request.headers.upgrade || request.headers.upgrade.toLowerCase() !== 'websocket') {
         console.log('[WebSocket] ❌ PROXY ISSUE: Missing or invalid Upgrade header');
         console.log('[WebSocket] Expected: websocket, Got:', request.headers.upgrade);
+        console.log('[WebSocket] ⚠️  REPLIT HTTP/2 PROXY DETECTED - WebSocket upgrades require HTTP/1.1');
+        console.log('[WebSocket] 🔧 SOLUTION: Frontend should use HTTP/1.1 for WebSocket connections');
       } else {
         console.log('[WebSocket] ✅ PROXY OK: Upgrade header present and valid');
       }
@@ -161,6 +170,7 @@ export class DraftWebSocketManager {
     if (!userId || !draftId) {
       console.log('[WebSocket] No query params - checking for scores page or admin connection');
       console.log('[WebSocket] Query object:', JSON.stringify(query, null, 2));
+      console.log('[WebSocket] 🎯 SCORES PAGE CONNECTION: Setting up admin connection for real-time updates');
       
       // Handle scores page connection
       this.handleAdminConnection(ws, request);
@@ -395,11 +405,25 @@ export class DraftWebSocketManager {
     
     this.connections.get('admin_updates')!.push(adminConnection);
     console.log(`[WebSocket] ✅ Admin connection added to admin_updates group`);
+    console.log(`[WebSocket] 📊 Admin connections now: ${this.connections.get('admin_updates')?.length}`);
     
     // FIX: Update connection stats for admin connections
     this.connectionStats.totalConnections++;
     this.connectionStats.activeConnections++;
     console.log(`[WebSocket] 📊 Stats updated - Total: ${this.connectionStats.totalConnections}, Active: ${this.connectionStats.activeConnections}`);
+    
+    // Send immediate acknowledgment for scores page
+    setTimeout(() => {
+      if (ws.readyState === 1) { // OPEN
+        ws.send(JSON.stringify({
+          type: 'connected',
+          connectionId: 'scores_page',
+          timestamp: Date.now(),
+          message: 'Scores page WebSocket connection established'
+        }));
+        console.log('[WebSocket] 📤 Sent connection acknowledgment to scores page');
+      }
+    }, 100);
     
     // Handle admin messages
     ws.on('message', (data) => {
@@ -493,14 +517,17 @@ export class DraftWebSocketManager {
       const timeDiffSeconds = (now - this.connectionStats.lastResetTime) / 1000;
       this.connectionStats.messagesPerSecond = this.connectionStats.messageCount / timeDiffSeconds;
       
-      // Log comprehensive metrics
+      // Log comprehensive metrics including admin connections
       console.log('[WebSocket] ========== CONNECTION METRICS ==========');
       console.log(`[WebSocket] Total connections: ${this.connectionStats.totalConnections}`);
       console.log(`[WebSocket] Active connections: ${this.connectionStats.activeConnections}`);
+      console.log(`[WebSocket] Admin connections: ${this.connections.get('admin_updates')?.length || 0}`);
+      console.log(`[WebSocket] Draft connections: ${Array.from(this.connections.keys()).filter(k => k !== 'admin_updates').length}`);
       console.log(`[WebSocket] Messages/sec: ${this.connectionStats.messagesPerSecond.toFixed(2)}`);
       console.log(`[WebSocket] Total messages: ${this.connectionStats.messageCount}`);
       console.log(`[WebSocket] Errors: ${this.connectionStats.errors}`);
       console.log(`[WebSocket] Disconnections: ${this.connectionStats.disconnections}`);
+      console.log(`[WebSocket] Available connection groups: [${Array.from(this.connections.keys()).join(', ')}]`);
       console.log('[WebSocket] =============================================');
       
       // Reset counters for next period

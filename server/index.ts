@@ -363,6 +363,15 @@ app.use((req, res, next) => {
           return next();
         }
         
+        // CRITICAL: Don't intercept WebSocket upgrade paths
+        if (req.path.startsWith('/draft-ws') || 
+            req.path.startsWith('/ws/draft') || 
+            req.path.startsWith('/ws') || 
+            req.path.startsWith('/admin-ws')) {
+          console.log('[WebSocket] Allowing WebSocket path to pass through for upgrade:', req.path);
+          return next();
+        }
+        
         // Don't intercept static asset requests (images, fonts, etc.)
         if (req.path.match(/\.(png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot|css|js)$/i)) {
           console.log('[Static] Allowing static asset request to pass through:', req.path);

@@ -81,3 +81,12 @@ Google OAuth2 is the primary authentication mechanism. JWT tokens are securely s
 ## Third-Party APIs
 - **Tank01 RapidAPI**: NFL game data, scores, and betting odds.
 - **ESPN API**: Fallback for historical NFL data.
+
+# Recent Updates (August 2025)
+
+## Bonus Calculation System - RESOLVED
+- **Fixed Critical Duplicate Processing Bug**: Eliminated bonus calculations happening multiple times causing inflated scores (Gamma Bot showing 8+ points instead of 7)
+- **Improved Deduplication Logic**: Added robust checks to prevent multiple bonus applications for the same week
+- **Corrected Timing**: Bonuses now calculate immediately after Monday Night Football completion (Sep 9) instead of appearing one day late (Sep 10)
+- **Enhanced WebSocket Tracking**: Improved admin/scores page connection handling with better logging and statistics
+- **Date**: August 13, 2025
