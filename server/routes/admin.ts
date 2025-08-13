@@ -373,8 +373,8 @@ async function calculateAndUpdateMokPoints(
         });
     }
 
-    // Check if this is the last game of the week to calculate high/low bonuses
-    await checkAndCalculateWeeklyBonuses(season, week);
+    // Check if this was the last game of the week to calculate high/low bonuses
+    await checkAndCalculateWeeklyBonuses(season, week, true);
 
   } catch (error) {
     console.error('Error calculating Mok points:', error);
@@ -382,7 +382,7 @@ async function calculateAndUpdateMokPoints(
 }
 
 // Check if week is complete and calculate weekly high/low bonuses
-async function checkAndCalculateWeeklyBonuses(season: number, week: number) {
+async function checkAndCalculateWeeklyBonuses(season: number, week: number, forceCheck: boolean = false) {
   try {
     // Get all games for this week
     const weekGames = await db.select().from(nflGames).where(
@@ -392,15 +392,25 @@ async function checkAndCalculateWeeklyBonuses(season: number, week: number) {
       )
     );
 
-    // Check if week is complete using the corrected logic that considers simulated date
-    const { endOfWeekProcessor } = await import("../utils/endOfWeekProcessor.js");
-    const weekComplete = await endOfWeekProcessor.isWeekComplete(season, week, adminState.currentDate);
+    // Check completed games count
+    const completedGamesCount = weekGames.filter(g => g.isCompleted).length;
+    const isAllGamesCompleted = completedGamesCount === weekGames.length;
     
-    console.log(`Week ${week}: ${weekGames.length} total games, week complete: ${weekComplete} (simulated date: ${adminState.currentDate.toISOString()})`);
+    // If forced check (triggered by game completion), use simple completion logic
+    // Otherwise use the endOfWeekProcessor logic with simulated date
+    let weekComplete = false;
+    if (forceCheck) {
+      weekComplete = isAllGamesCompleted && weekGames.length > 0;
+    } else {
+      const { endOfWeekProcessor } = await import("../utils/endOfWeekProcessor.js");
+      weekComplete = await endOfWeekProcessor.isWeekComplete(season, week, adminState.currentDate);
+    }
+    
+    console.log(`Week ${week}: ${weekGames.length} total games, ${completedGamesCount} completed, week complete: ${weekComplete} (${forceCheck ? 'forced check' : 'simulated date check'})`);
 
-    // Only calculate weekly bonuses if ALL games of the week are actually completed according to simulated time
+    // Only calculate weekly bonuses if ALL games of the week are actually completed
     if (weekComplete && weekGames.length > 0) {
-      console.log(`🏆 Week ${week} actually completed according to simulated date! Now calculating weekly high/low bonuses...`);
+      console.log(`🏆 Week ${week} games all completed! Now calculating weekly high/low bonuses...`);
       
       // Find highest and lowest scoring NFL teams this week
       const teamScores = await db.select({
@@ -442,7 +452,7 @@ async function checkAndCalculateWeeklyBonuses(season: number, week: number) {
         const highestTeams = teamScores.filter(t => t.score === highestScore);
         const lowestTeams = teamScores.filter(t => t.score === lowestScore);
         
-        // Award +1 to users who own highest scoring teams
+        // Award +1 to users who own highest scoring teams (only if not already awarded)
         for (const team of highestTeams) {
           const teamOwners = await db.select({
             userId: stables.userId,
@@ -452,23 +462,40 @@ async function checkAndCalculateWeeklyBonuses(season: number, week: number) {
           .where(eq(stables.nflTeamId, team.teamId));
           
           for (const owner of teamOwners) {
-            await db.update(userWeeklyScores)
-              .set({
-                totalPoints: sql`${userWeeklyScores.totalPoints} + 1`,
-                updatedAt: new Date()
-              })
-              .where(and(
-                eq(userWeeklyScores.userId, owner.userId),
-                eq(userWeeklyScores.leagueId, owner.leagueId),
-                eq(userWeeklyScores.season, season),
-                eq(userWeeklyScores.week, week)
-              ));
-            
-            console.log(`🏆 +1 bonus for owning ${team.teamCode} (${highestScore} pts)`);
+            // Check if high bonus already applied
+            const existingScore = await db.select({
+              weeklyHighBonusPoints: userWeeklyScores.weeklyHighBonusPoints
+            })
+            .from(userWeeklyScores)
+            .where(and(
+              eq(userWeeklyScores.userId, owner.userId),
+              eq(userWeeklyScores.leagueId, owner.leagueId),
+              eq(userWeeklyScores.season, season),
+              eq(userWeeklyScores.week, week)
+            ))
+            .limit(1);
+
+            // Only award if not already given
+            if (existingScore.length > 0 && (existingScore[0].weeklyHighBonusPoints || 0) === 0) {
+              await db.update(userWeeklyScores)
+                .set({
+                  weeklyHighBonusPoints: 1,
+                  totalPoints: sql`${userWeeklyScores.totalPoints} + 1`,
+                  updatedAt: new Date()
+                })
+                .where(and(
+                  eq(userWeeklyScores.userId, owner.userId),
+                  eq(userWeeklyScores.leagueId, owner.leagueId),
+                  eq(userWeeklyScores.season, season),
+                  eq(userWeeklyScores.week, week)
+                ));
+              
+              console.log(`🏆 +1 high score bonus for owning ${team.teamCode} (${highestScore} pts)`);
+            }
           }
         }
         
-        // Apply -1 penalty to users who own lowest scoring teams
+        // Apply -1 penalty to users who own lowest scoring teams (only if not already applied)
         for (const team of lowestTeams) {
           const teamOwners = await db.select({
             userId: stables.userId,
@@ -478,19 +505,36 @@ async function checkAndCalculateWeeklyBonuses(season: number, week: number) {
           .where(eq(stables.nflTeamId, team.teamId));
           
           for (const owner of teamOwners) {
-            await db.update(userWeeklyScores)
-              .set({
-                totalPoints: sql`${userWeeklyScores.totalPoints} - 1`,
-                updatedAt: new Date()
-              })
-              .where(and(
-                eq(userWeeklyScores.userId, owner.userId),
-                eq(userWeeklyScores.leagueId, owner.leagueId),
-                eq(userWeeklyScores.season, season),
-                eq(userWeeklyScores.week, week)
-              ));
-            
-            console.log(`💥 -1 penalty for owning ${team.teamCode} (${lowestScore} pts)`);
+            // Check if low penalty already applied
+            const existingScore = await db.select({
+              weeklyLowPenaltyPoints: userWeeklyScores.weeklyLowPenaltyPoints
+            })
+            .from(userWeeklyScores)
+            .where(and(
+              eq(userWeeklyScores.userId, owner.userId),
+              eq(userWeeklyScores.leagueId, owner.leagueId),
+              eq(userWeeklyScores.season, season),
+              eq(userWeeklyScores.week, week)
+            ))
+            .limit(1);
+
+            // Only apply penalty if not already given
+            if (existingScore.length > 0 && (existingScore[0].weeklyLowPenaltyPoints || 0) === 0) {
+              await db.update(userWeeklyScores)
+                .set({
+                  weeklyLowPenaltyPoints: -1,
+                  totalPoints: sql`${userWeeklyScores.totalPoints} - 1`,
+                  updatedAt: new Date()
+                })
+                .where(and(
+                  eq(userWeeklyScores.userId, owner.userId),
+                  eq(userWeeklyScores.leagueId, owner.leagueId),
+                  eq(userWeeklyScores.season, season),
+                  eq(userWeeklyScores.week, week)
+                ));
+              
+              console.log(`📉 -1 low score penalty for owning ${team.teamCode} (${lowestScore} pts)`);
+            }
           }
         }
 
