@@ -49,15 +49,26 @@ const LogoDisplay = () => {
   useEffect(() => {
     // Try PNG first (original uploaded logo)
     const pngImg = new Image();
-    pngImg.onload = () => setLogoState('png');
-    pngImg.onerror = () => {
+    pngImg.onload = () => {
+      console.log('✅ PNG logo loaded successfully');
+      setLogoState('png');
+    };
+    pngImg.onerror = (e) => {
+      console.log('❌ PNG logo failed to load:', e);
       // PNG failed, try SVG fallback
       const svgImg = new Image();
-      svgImg.onload = () => setLogoState('svg');
-      svgImg.onerror = () => setLogoState('fallback');
+      svgImg.onload = () => {
+        console.log('✅ SVG logo loaded successfully');
+        setLogoState('svg');
+      };
+      svgImg.onerror = (e) => {
+        console.log('❌ SVG logo failed to load:', e);
+        setLogoState('fallback');
+      };
       svgImg.src = "/moksports-logo.svg";
     };
     pngImg.src = "/moksports-logo.png";
+    console.log('🔄 Attempting to load logo from:', pngImg.src);
   }, []);
 
   // Loading state
