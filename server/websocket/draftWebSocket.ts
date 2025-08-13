@@ -293,6 +293,32 @@ export class DraftWebSocketManager {
           return;
         }
 
+        // Handle joining admin updates group for real-time score updates
+        if (message.type === 'join_admin_updates') {
+          console.log(`[WebSocket] Client joining admin_updates group - UserID: ${userId}`);
+          
+          // Add to admin_updates group instead of draft-specific group
+          const adminConnections = this.connections.get('admin_updates') || [];
+          
+          // Check if already connected to avoid duplicates
+          const existingConnection = adminConnections.find(c => c.userId === userId);
+          if (!existingConnection) {
+            adminConnections.push(connection);
+            this.connections.set('admin_updates', adminConnections);
+            console.log(`[WebSocket] Added to admin_updates group. Total connections: ${adminConnections.length}`);
+          } else {
+            console.log(`[WebSocket] User ${userId} already in admin_updates group`);
+          }
+          
+          connection.isAlive = true;
+          ws.send(JSON.stringify({
+            type: 'admin_updates_joined',
+            timestamp: Date.now(),
+            message: 'Successfully joined real-time score updates'
+          }));
+          return;
+        }
+
         // Handle keep-alive
         if (message.type === 'keep_alive') {
           console.log(`[WebSocket] Keep-alive from user ${userId}, ConnectionID: ${message.connectionId}`);
