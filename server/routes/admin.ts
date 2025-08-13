@@ -864,8 +864,8 @@ async function handleWeekProgression(oldWeek: number, newWeek: number, season: n
   try {
     console.log(`🏁 Finalizing Week ${oldWeek} and starting Week ${newWeek}`);
     
-    // Ensure final week bonuses are calculated
-    await checkAndCalculateWeeklyBonuses(season, oldWeek);
+    // Force calculate final week bonuses (including skins) for completed week
+    await checkAndCalculateWeeklyBonuses(season, oldWeek, true); // Force check for week progression
     
     // Initialize user weekly scores for the new week (all users start at 0)
     await initializeNewWeekScores(season, newWeek);
