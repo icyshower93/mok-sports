@@ -754,7 +754,6 @@ export default function StablePage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-        </div>
       </div>
     </div>
   );

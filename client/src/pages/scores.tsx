@@ -1021,6 +1021,9 @@ export default function ScoresPage() {
           )}
         </DialogContent>
       </Dialog>
+          </div>
+        </div>
+      </div>
 
       <BottomNav />
     </div>
