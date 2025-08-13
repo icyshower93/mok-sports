@@ -218,17 +218,25 @@ export default function LeaguePage() {
                           {member.teams.map((team: any, teamIndex: number) => (
                             <div 
                               key={team.code} 
-                              className="animate-in fade-in-0 duration-300"
+                              className="w-10 h-10 rounded-lg bg-muted/20 flex items-center justify-center animate-in fade-in-0 duration-300"
                               style={{ animationDelay: `${teamIndex * 50}ms` }}
                             >
                               <img 
                                 src={`/images/nfl/team_logos/${team.code}.png`}
                                 alt={team.code}
                                 title={`${team.name} (${team.code})`}
-                                className="w-10 h-10 rounded-lg object-contain shadow-sm hover:scale-105 transition-transform duration-150"
+                                className="w-10 h-10 rounded-lg object-contain shadow-sm hover:scale-105 transition-all duration-150"
+                                onLoad={(e) => {
+                                  // Remove background once image loads
+                                  const container = e.currentTarget.parentElement;
+                                  if (container) {
+                                    container.classList.remove('bg-muted/20');
+                                  }
+                                }}
                                 onError={(e) => {
                                   (e.target as HTMLImageElement).src = `https://a.espncdn.com/i/teamlogos/nfl/500/${team.code.toLowerCase()}.png`;
                                 }}
+                                loading="eager"
                               />
                             </div>
                           ))}
