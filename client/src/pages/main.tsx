@@ -98,6 +98,7 @@ export default function MainPage() {
   const userTotalPoints = currentUserStanding?.points || 0;
   const userRank = currentUserStanding?.rank || 0;
   const userSkinsWon = currentUserStanding?.skinsWon || 0;
+  const leagueName = (leagueData as any)?.league?.name || 'My Season';
   const weeklyPrize = 30; // Static $30 per week as per Mok rules
   const teamsLeftToPlay = Array.isArray((teamsLeftData as any)?.teamsLeftToPlay) ? (teamsLeftData as any)?.teamsLeftToPlay : [];
 
@@ -172,7 +173,7 @@ export default function MainPage() {
               {/* Header */}
               <div className="flex items-center justify-between mb-5">
                 <div>
-                  <h2 className="text-lg font-bold text-foreground">My Season</h2>
+                  <h2 className="text-lg font-bold text-foreground">{leagueName}</h2>
                   <p className="text-xs text-muted-foreground">Current standings</p>
                 </div>
                 <div className="p-2 bg-primary/10 rounded-full">
