@@ -32,11 +32,36 @@ import {
   User,
   ExternalLink,
   ChevronLeft,
-  Play
+  Play,
+  Globe,
+  FileText,
+  Monitor,
+  Newspaper
 } from "lucide-react";
 import { BottomNav } from "@/components/layout/bottom-nav";
 import { TeamLogo } from "@/components/team-logo";
 import { useAuth } from "@/hooks/use-auth";
+
+// Helper function to get news source icon
+const getNewsSourceIcon = (source: string) => {
+  const sourceLower = source.toLowerCase();
+  
+  if (sourceLower.includes('espn')) {
+    return <Monitor className="w-6 h-6 text-red-600" />;
+  } else if (sourceLower.includes('nfl') || sourceLower.includes('nfl.com')) {
+    return <Shield className="w-6 h-6 text-blue-600" />;
+  } else if (sourceLower.includes('twitter') || sourceLower.includes('x.com')) {
+    return <FileText className="w-6 h-6 text-black dark:text-white" />;
+  } else if (sourceLower.includes('cnn') || sourceLower.includes('fox') || sourceLower.includes('abc') || sourceLower.includes('nbc')) {
+    return <Monitor className="w-6 h-6 text-blue-600" />;
+  } else if (sourceLower.includes('times') || sourceLower.includes('post') || sourceLower.includes('news')) {
+    return <Newspaper className="w-6 h-6 text-gray-700 dark:text-gray-300" />;
+  } else if (sourceLower.includes('yahoo')) {
+    return <Globe className="w-6 h-6 text-purple-600" />;
+  } else {
+    return <Bell className="w-6 h-6 text-blue-600" />;
+  }
+};
 
 interface League {
   id: string;
@@ -308,7 +333,7 @@ export default function MainPage() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-2">
                   <Bell className="w-5 h-5 text-blue-600" />
-                  <CardTitle className="text-lg font-bold">League & NFL News</CardTitle>
+                  <CardTitle className="text-lg font-bold">NFL News</CardTitle>
                 </div>
                 <Button variant="ghost" size="sm" className="text-primary hover:text-primary/80">
                   View All <ExternalLink className="w-4 h-4 ml-1" />
@@ -351,12 +376,14 @@ export default function MainPage() {
                   {(nflNewsData as any)?.articles?.slice(0, 3).map((article: any) => (
                     <Card key={article.id} className="p-3 bg-muted/20 rounded-xl hover:bg-muted/30 transition-colors cursor-pointer">
                       <div className="flex space-x-3">
-                        <div className="w-16 h-16 bg-gradient-to-br from-blue-500/20 to-blue-500/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                          <Bell className="w-6 h-6 text-blue-600" />
+                        <div className="w-16 h-16 bg-gradient-to-br from-muted/40 to-muted/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                          {getNewsSourceIcon(article.source || '')}
                         </div>
                         <div className="flex-1 min-w-0">
                           <h4 className="font-semibold text-sm text-foreground truncate">{article.title}</h4>
-                          <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{article.description}</p>
+                          <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
+                            {article.description || article.summary || 'Latest NFL news and updates'}
+                          </p>
                           <p className="text-xs text-muted-foreground">
                             {new Date(article.publishedAt).toLocaleDateString()} • {article.source}
                           </p>
