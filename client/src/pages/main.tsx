@@ -41,7 +41,6 @@ import {
 import { BottomNav } from "@/components/layout/bottom-nav";
 import { TeamLogo } from "@/components/team-logo";
 import { useAuth } from "@/hooks/use-auth";
-import mokSportsLogo from "@assets/moksports logo_1755069436420.png";
 
 // Helper function to get news source icon
 const getNewsSourceIcon = (source: string) => {
@@ -218,19 +217,19 @@ export default function MainPage() {
                   <p className="text-xs text-muted-foreground">Current standings</p>
                 </div>
                 <div className="p-3 bg-primary/10 rounded-full flex items-center justify-center">
-                  {mokSportsLogo ? (
-                    <img 
-                      src={mokSportsLogo} 
-                      alt="Mok Sports"
-                      className="w-8 h-8 object-contain filter invert dark:invert-0"
-                      onLoad={() => console.log('Mok Sports logo loaded successfully')}
-                      onError={() => {
-                        console.log('Logo failed to load, check browser console');
-                      }}
-                    />
-                  ) : (
-                    <Trophy className="w-6 h-6 text-primary" />
-                  )}
+                  <img 
+                    src="/moksports-logo.png" 
+                    alt="Mok Sports"
+                    className="w-8 h-8 object-contain filter invert dark:invert-0"
+                    onLoad={() => console.log('Mok Sports logo loaded successfully')}
+                    onError={(e) => {
+                      console.log('Logo failed to load from public directory, using fallback');
+                      e.currentTarget.style.display = 'none';
+                      const trophy = document.createElement('div');
+                      trophy.innerHTML = '<svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>';
+                      e.currentTarget.parentElement?.appendChild(trophy);
+                    }}
+                  />
                 </div>
               </div>
               
