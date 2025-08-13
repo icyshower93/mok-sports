@@ -108,10 +108,10 @@ export default function ScoresPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header with Week Selector */}
-      <div className="sticky top-0 z-40 bg-background/80 backdrop-blur-sm border-b border-border/50">
-        <div className="flex items-center justify-between p-4">
-          <h1 className="text-2xl font-bold">Scores</h1>
+      {/* Standardized Sticky Header */}
+      <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm border-b border-border/50 h-16">
+        <div className="flex items-center justify-between h-full px-6">
+          <h1 className="text-xl font-bold">Scores</h1>
           <select
             value={selectedWeek}
             onChange={(e) => setSelectedWeek(Number(e.target.value))}
@@ -126,7 +126,7 @@ export default function ScoresPage() {
         </div>
       </div>
 
-      <div className="p-4 space-y-6">
+      <div className="p-4 pt-6 space-y-6">
         {/* Current User Summary */}
         {currentUserScore && (
           <Card className="p-4 bg-gradient-to-r from-primary/10 to-secondary/10 border-primary/20">

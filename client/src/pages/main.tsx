@@ -364,19 +364,28 @@ export default function MainPage() {
                   
                   {/* Real NFL News */}
                   {(nflNewsData as any)?.articles?.slice(0, 3).map((article: any) => (
-                    <Card key={article.id} className="p-3 bg-muted/20 rounded-xl hover:bg-muted/30 transition-colors cursor-pointer">
+                    <Card 
+                      key={article.id} 
+                      className="p-3 bg-muted/20 rounded-xl hover:bg-muted/30 transition-colors cursor-pointer"
+                      onClick={() => article.link && window.open(article.link, '_blank')}
+                    >
                       <div className="flex space-x-3">
                         <div className="w-12 h-12 bg-gradient-to-br from-muted/40 to-muted/20 rounded-lg flex items-center justify-center flex-shrink-0">
                           {getNewsSourceIcon(article.source || '')}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <h4 className="font-semibold text-sm text-foreground truncate">{article.title}</h4>
+                          <h4 className="font-semibold text-sm text-foreground line-clamp-2 leading-tight">{article.title}</h4>
                           <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
-                            {article.description || article.summary || article.content || 'No description available'}
+                            {article.description || article.summary || article.content || 'Latest NFL news and updates'}
                           </p>
-                          <p className="text-xs text-muted-foreground">
-                            {new Date(article.publishedAt).toLocaleDateString()} • {article.source}
-                          </p>
+                          <div className="flex items-center justify-between mt-2">
+                            <p className="text-xs text-muted-foreground">
+                              {article.publishedAt ? new Date(article.publishedAt).toLocaleDateString() : 'Recent'} • {article.source}
+                            </p>
+                            {article.link && (
+                              <ExternalLink className="w-3 h-3 text-muted-foreground opacity-60" />
+                            )}
+                          </div>
                         </div>
                       </div>
                     </Card>
