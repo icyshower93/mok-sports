@@ -47,6 +47,18 @@ export default function MainPage() {
   const [, navigate] = useLocation();
   const [selectedLeague, setSelectedLeague] = useState<string>("");
   const [showAllWeeklyRankings, setShowAllWeeklyRankings] = useState(false);
+  const [expandedUsers, setExpandedUsers] = useState<Set<string>>(new Set());
+
+  // Helper function to toggle expanded user
+  const toggleUserExpansion = (userName: string) => {
+    const newExpanded = new Set(expandedUsers);
+    if (newExpanded.has(userName)) {
+      newExpanded.delete(userName);
+    } else {
+      newExpanded.add(userName);
+    }
+    setExpandedUsers(newExpanded);
+  };
 
   // Fetch user's leagues
   const { data: leagues = [], isLoading: leaguesLoading } = useQuery({
@@ -258,6 +270,132 @@ export default function MainPage() {
               </div>
             </ScrollArea>
           </div>
+
+          {/* Season Standings - Modern Design */}
+          <Card className="bg-gradient-to-r from-slate-50 to-gray-50 dark:from-slate-900/50 dark:to-gray-900/50 border-slate-200/50 dark:border-slate-700/50 shadow-sm rounded-2xl">
+            <CardHeader className="pb-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <Trophy className="w-5 h-5 text-amber-600" />
+                  <CardTitle className="text-lg font-bold">Season Standings</CardTitle>
+                </div>
+                <Badge variant="outline" className="text-xs px-2 py-1">
+                  Week {currentWeek}
+                </Badge>
+              </div>
+            </CardHeader>
+            <CardContent className="p-0">
+              <div className="space-y-1">
+                {Array.isArray((leagueData as any)?.standings) && ((leagueData as any).standings as any[])
+                  .sort((a: any, b: any) => (b.totalPoints || 0) - (a.totalPoints || 0))
+                  .map((member: any, index: number) => (
+                  <div key={member.name || index} className="border-b border-slate-200/50 dark:border-slate-700/50 last:border-b-0">
+                    
+                    {/* Main Row */}
+                    <div 
+                      className={`p-4 transition-colors hover:bg-slate-100/50 dark:hover:bg-slate-800/30 cursor-pointer ${
+                        member.isCurrentUser ? 'bg-blue-50/50 dark:bg-blue-950/20' : ''
+                      }`}
+                      onClick={() => toggleUserExpansion(member.name)}
+                    >
+                      <div className="flex items-center justify-between">
+                        
+                        {/* Left: Rank + Username */}
+                        <div className="flex items-center space-x-3 flex-1">
+                          <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
+                            index === 0 ? 'bg-gradient-to-br from-yellow-400 to-yellow-600 text-white' :
+                            index === 1 ? 'bg-gradient-to-br from-gray-300 to-gray-500 text-white' :
+                            index === 2 ? 'bg-gradient-to-br from-orange-400 to-orange-600 text-white' :
+                            'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300'
+                          }`}>
+                            {index === 0 ? <Crown className="w-4 h-4" /> : index + 1}
+                          </div>
+                          
+                          <div className="font-semibold text-base text-slate-900 dark:text-slate-100">
+                            {member.name}
+                            {member.isCurrentUser && (
+                              <Badge variant="secondary" className="ml-2 text-xs px-1.5 py-0.5">You</Badge>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Center: Secondary Stats */}
+                        <div className="flex items-center space-x-6">
+                          {/* Locks Correct */}
+                          <div className="flex items-center space-x-1">
+                            <Target className="w-4 h-4 text-emerald-600" />
+                            <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                              {member.locksCorrect || 0}
+                            </span>
+                          </div>
+
+                          {/* Skins Won */}
+                          <div className="flex items-center space-x-1">
+                            <DollarSign className="w-4 h-4 text-green-600" />
+                            <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                              {member.skinsWon || 0}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Right: Total Points + Chevron */}
+                        <div className="flex items-center space-x-3">
+                          <div className="text-right">
+                            <div className="text-xl font-bold text-slate-900 dark:text-slate-100">
+                              {member.totalPoints || 0}
+                            </div>
+                            <div className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+                              points
+                            </div>
+                          </div>
+                          
+                          <ChevronRight 
+                            className={`w-5 h-5 text-slate-400 transition-transform duration-200 ${
+                              expandedUsers.has(member.name) ? 'rotate-90' : ''
+                            }`}
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Expanded Team Logos */}
+                    {expandedUsers.has(member.name) && (
+                      <div className="px-4 pb-4 pt-2 bg-slate-50/50 dark:bg-slate-900/20 border-t border-slate-200/30 dark:border-slate-700/30">
+                        <div className="flex items-center space-x-2 mb-2">
+                          <Shield className="w-4 h-4 text-slate-500" />
+                          <span className="text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide">
+                            Team Roster
+                          </span>
+                        </div>
+                        <div className="flex flex-wrap gap-3">
+                          {member.teams && member.teams.length > 0 ? (
+                            member.teams.map((team: any, teamIndex: number) => (
+                              <div key={teamIndex} className="flex items-center space-x-2 bg-white dark:bg-slate-800 rounded-lg p-2 shadow-sm">
+                                <TeamLogo 
+                                  teamCode={team.teamCode || team.code} 
+                                  logoUrl={`/images/nfl/team_logos/${team.teamCode || team.code}.png`}
+                                  teamName={team.teamName || team.name || team.teamCode || team.code}
+                                  size="sm" 
+                                  className="w-6 h-6"
+                                />
+                                <span className="text-xs font-medium text-slate-700 dark:text-slate-300">
+                                  {team.teamCode || team.code}
+                                </span>
+                              </div>
+                            ))
+                          ) : (
+                            <div className="text-xs text-slate-500 dark:text-slate-400 italic">
+                              No teams drafted yet
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
 
           {/* Games Today */}
           <Card className="rounded-2xl border-border/50 bg-gradient-to-br from-card to-card/50">
