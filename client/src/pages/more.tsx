@@ -118,6 +118,7 @@ export default function MorePage() {
             </CardContent>
           </Card>
         </div>
+        </div>
       </div>
       <BottomNav />
     </div>
