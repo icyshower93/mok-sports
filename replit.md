@@ -84,6 +84,18 @@ Google OAuth2 is the primary authentication mechanism. JWT tokens are securely s
 
 # Recent Updates (August 2025)
 
+## Page Loading & API Endpoint Fixes - RESOLVED
+- **Fixed League Page Loading**: Corrected API endpoints from non-existent `/api/leagues/{id}/members` to working `/api/leagues/{id}/standings`
+- **Fixed Scores Page User Teams**: Changed from missing `/api/user/teams` to working `/api/user/stable/{leagueId}` endpoint
+- **Verified API Functionality**: All core endpoints now operational:
+  - `/api/leagues/{id}/standings` - Complete league standings with all members
+  - `/api/scoring/leagues/{id}/week-scores/{season}/{week}` - Weekly scoring data
+  - `/api/scoring/skins/{leagueId}/{season}` - Weekly skins winners and prizes
+  - `/api/user/stable/{leagueId}` - User's teams for highlighting owned teams
+- **Page Navigation Fixed**: Both League and Scores tabs now load without "something is wrong" errors
+- **Data Integration Working**: Real-time scoring, team highlighting, and skins tracking all functional
+- **Date**: August 13, 2025
+
 ## Bonus Calculation System - RESOLVED
 - **Fixed Critical Duplicate Processing Bug**: Eliminated bonus calculations happening multiple times causing inflated scores (Gamma Bot showing 8+ points instead of 7)
 - **Improved Deduplication Logic**: Added robust checks to prevent multiple bonus applications for the same week
