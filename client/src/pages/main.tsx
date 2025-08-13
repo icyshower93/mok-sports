@@ -213,7 +213,7 @@ export default function MainPage() {
                   {/* Skins Won */}
                   <div className="flex items-center space-x-2">
                     <div className="p-1.5 bg-emerald-50 dark:bg-emerald-950/30 rounded-md">
-                      <Gift className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                      <DollarSign className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
                     </div>
                     <div>
                       <div className="text-lg font-bold text-foreground">{userSkinsWon}</div>
