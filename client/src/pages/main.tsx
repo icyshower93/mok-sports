@@ -165,47 +165,50 @@ export default function MainPage() {
 
         <div className="px-4 space-y-6 mt-6">
           
-          {/* User Statistics Card - Large Hero Card */}
-          <Card className="bg-gradient-to-br from-primary/5 via-primary/10 to-primary/5 border-primary/20 shadow-xl rounded-2xl overflow-hidden">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between mb-6">
-                <div>
-                  <h2 className="text-2xl font-bold text-foreground">Season Stats</h2>
-                  <p className="text-sm text-muted-foreground">Your performance this season</p>
-                </div>
-                <div className="p-3 bg-primary/20 rounded-full">
-                  <Trophy className="w-6 h-6 text-primary" />
-                </div>
-              </div>
-              
-              <div className="grid grid-cols-3 gap-6">
-                <div className="text-center">
-                  <div className="text-4xl font-black text-blue-600 dark:text-blue-400 mb-2">{userTotalPoints}</div>
-                  <div className="text-sm text-muted-foreground font-medium flex items-center justify-center gap-1">
-                    <Trophy className="w-4 h-4" />
-                    Total Points
+          {/* Season Stats Card - Sleeper Style Condensed */}
+          <Card className="bg-gradient-to-r from-slate-50 to-gray-50 dark:from-slate-900/50 dark:to-gray-900/50 border-slate-200/50 dark:border-slate-700/50 shadow-sm rounded-2xl">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                
+                {/* Total Season Points - Primary Stat */}
+                <div className="flex items-center space-x-3">
+                  <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
+                    <Trophy className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                  </div>
+                  <div>
+                    <div className="text-2xl font-bold text-slate-900 dark:text-slate-100">{userTotalPoints}</div>
+                    <div className="text-xs text-slate-500 dark:text-slate-400 font-medium">Season Points</div>
                   </div>
                 </div>
-                
-                <div className="text-center">
-                  <div className="flex items-center justify-center space-x-1 mb-2">
-                    <span className="text-4xl font-black text-amber-600 dark:text-amber-400">
+
+                {/* League Rank - Secondary Stat */}
+                <div className="flex items-center space-x-3">
+                  <div className="p-2 bg-amber-100 dark:bg-amber-900/30 rounded-lg">
+                    {userRank === 1 ? (
+                      <Crown className="w-5 h-5 text-amber-600 dark:text-amber-400" />
+                    ) : (
+                      <Target className="w-5 h-5 text-amber-600 dark:text-amber-400" />
+                    )}
+                  </div>
+                  <div>
+                    <div className="text-xl font-bold text-slate-900 dark:text-slate-100">
                       {userRank === 1 ? '1st' : userRank === 2 ? '2nd' : userRank === 3 ? '3rd' : `${userRank}th`}
-                    </span>
-                    {userRank === 1 && <Crown className="w-6 h-6 text-amber-600" />}
-                  </div>
-                  <div className="text-sm text-muted-foreground font-medium">
-                    out of {(leagueData as any)?.standings?.length || 6}
+                    </div>
+                    <div className="text-xs text-slate-500 dark:text-slate-400 font-medium">League Rank</div>
                   </div>
                 </div>
-                
-                <div className="text-center">
-                  <div className="text-4xl font-black text-emerald-600 dark:text-emerald-400 mb-2">{userSkinsWon}</div>
-                  <div className="text-sm text-muted-foreground font-medium flex items-center justify-center gap-1">
-                    <Target className="w-4 h-4" />
-                    Skins Won
+
+                {/* Skins Won - Tertiary Stat */}
+                <div className="flex items-center space-x-3">
+                  <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg">
+                    <DollarSign className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+                  </div>
+                  <div>
+                    <div className="text-xl font-bold text-slate-900 dark:text-slate-100">{userSkinsWon}</div>
+                    <div className="text-xs text-slate-500 dark:text-slate-400 font-medium">Skins Won</div>
                   </div>
                 </div>
+
               </div>
             </CardContent>
           </Card>
