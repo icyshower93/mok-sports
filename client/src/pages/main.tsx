@@ -233,9 +233,7 @@ export default function MainPage() {
                 <Flame className="w-5 h-5 text-purple-500" />
                 <h3 className="text-lg font-bold">Weekly Skins Game</h3>
               </div>
-              <Button variant="ghost" size="sm" className="text-primary hover:text-primary/80">
-                $30 Prize <ChevronRight className="w-4 h-4 ml-1" />
-              </Button>
+              <div className="text-lg font-semibold text-primary">$30</div>
             </div>
             
             <ScrollArea className="w-full whitespace-nowrap">
