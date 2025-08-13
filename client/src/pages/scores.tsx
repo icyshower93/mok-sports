@@ -78,6 +78,12 @@ export default function ScoresPage() {
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const [selectedWeek, setSelectedWeek] = useState(21);
+
+  // Add NFL games data query
+  const { data: nflGames } = useQuery({
+    queryKey: [`/api/scores/week/${selectedWeek}`],
+    enabled: !!user,
+  });
   const [selectedGame, setSelectedGame] = useState<any>(null);
   const [isGameDialogOpen, setIsGameDialogOpen] = useState(false);
 
@@ -122,7 +128,7 @@ export default function ScoresPage() {
 
       <div className="p-4 space-y-6">
         {/* Current User Summary */}
-        {currentUserScore && (
+        {currentUserScore ? (
           <Card className="p-4 bg-gradient-to-r from-primary/10 to-secondary/10 border-primary/20">
             <div className="flex items-center justify-between">
               <div>
@@ -142,7 +148,7 @@ export default function ScoresPage() {
               </div>
             </div>
           </Card>
-        )}
+        ) : null}
 
         {/* Week End Results */}
         {weekEndResults && (weekEndResults as WeekEndResults).weekComplete && (
@@ -187,10 +193,10 @@ export default function ScoresPage() {
           </Card>
         )}
 
-        {/* Scores Table */}
+        {/* Weekly Scores */}
         <Card className="p-4">
           <CardHeader className="p-0 pb-4">
-            <CardTitle className="text-lg">League Standings - Week {selectedWeek}</CardTitle>
+            <CardTitle className="text-lg">Week {selectedWeek} Scores</CardTitle>
           </CardHeader>
           <CardContent className="p-0">
             {scoresLoading ? (
@@ -252,6 +258,61 @@ export default function ScoresPage() {
           </CardContent>
         </Card>
 
+        {/* NFL Games Results */}
+        {nflGames && (nflGames as any)?.games?.length > 0 && (
+          <Card className="p-4">
+            <CardHeader className="p-0 pb-4">
+              <CardTitle className="text-lg">Week {selectedWeek} NFL Games</CardTitle>
+            </CardHeader>
+            <CardContent className="p-0">
+              <div className="grid gap-3">
+                {(nflGames as any).games.map((game: any, index: number) => (
+                  <div key={game.id} className="p-3 bg-card border border-border rounded-lg hover:bg-muted/50 transition-colors cursor-pointer"
+                       onClick={() => {
+                         setSelectedGame(game);
+                         setIsGameDialogOpen(true);
+                       }}>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-3">
+                        <div className="w-8 h-8 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-lg flex items-center justify-center">
+                          <span className="text-xs font-bold">
+                            {game.awayTeam}
+                          </span>
+                        </div>
+                        <div>
+                          <p className="font-semibold text-sm">{game.awayTeam} @ {game.homeTeam}</p>
+                          <p className="text-xs text-muted-foreground">
+                            {new Date(game.gameDate).toLocaleDateString()} • {game.isCompleted ? 'Final' : 'Scheduled'}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        {game.isCompleted ? (
+                          <div className="flex items-center gap-2">
+                            <span className="text-lg font-bold">
+                              {game.awayScore} - {game.homeScore}
+                            </span>
+                            {game.homeScore > game.awayScore ? 
+                              <Trophy className="w-4 h-4 text-green-600" /> : 
+                              game.awayScore > game.homeScore ? 
+                              <Trophy className="w-4 h-4 text-blue-600" /> : 
+                              <Target className="w-4 h-4 text-yellow-600" />
+                            }
+                          </div>
+                        ) : (
+                          <div className="text-sm text-muted-foreground">
+                            {new Date(game.gameDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Team Results */}
         {currentUserScore?.teamResults && (
           <Card className="p-4">
@@ -308,52 +369,77 @@ export default function ScoresPage() {
           {selectedGame && (
             <div className="space-y-4">
               <div className="text-center">
-                <h3 className="text-xl font-bold">{selectedGame.teamName}</h3>
-                <p className="text-sm text-muted-foreground">vs {selectedGame.opponentName}</p>
-                <p className="text-2xl font-bold mt-2">
-                  {selectedGame.teamScore} - {selectedGame.opponentScore}
-                </p>
-                <Badge variant={selectedGame.gameResult === 'W' ? 'default' : selectedGame.gameResult === 'T' ? 'secondary' : 'destructive'} className="mt-2">
-                  {selectedGame.gameResult === 'W' ? 'Win' : selectedGame.gameResult === 'T' ? 'Tie' : 'Loss'}
-                </Badge>
+                {selectedGame.teamName ? (
+                  /* Team Result View */
+                  <>
+                    <h3 className="text-xl font-bold">{selectedGame.teamName}</h3>
+                    <p className="text-sm text-muted-foreground">vs {selectedGame.opponentName}</p>
+                    <p className="text-2xl font-bold mt-2">
+                      {selectedGame.teamScore} - {selectedGame.opponentScore}
+                    </p>
+                    <Badge variant={selectedGame.gameResult === 'W' ? 'default' : selectedGame.gameResult === 'T' ? 'secondary' : 'destructive'} className="mt-2">
+                      {selectedGame.gameResult === 'W' ? 'Win' : selectedGame.gameResult === 'T' ? 'Tie' : 'Loss'}
+                    </Badge>
+                  </>
+                ) : (
+                  /* NFL Game View */
+                  <>
+                    <h3 className="text-xl font-bold">{selectedGame.awayTeam} @ {selectedGame.homeTeam}</h3>
+                    <p className="text-sm text-muted-foreground">
+                      {new Date(selectedGame.gameDate).toLocaleDateString()} • Week {selectedGame.week}
+                    </p>
+                    {selectedGame.isCompleted ? (
+                      <>
+                        <p className="text-2xl font-bold mt-2">
+                          {selectedGame.awayScore} - {selectedGame.homeScore}
+                        </p>
+                        <Badge variant="default" className="mt-2">Final</Badge>
+                      </>
+                    ) : (
+                      <Badge variant="secondary" className="mt-2">Scheduled</Badge>
+                    )}
+                  </>
+                )}
               </div>
 
-              <div className="space-y-3">
-                <div className="flex justify-between">
-                  <span className="text-sm text-muted-foreground">Base Points:</span>
-                  <span className="font-semibold">{selectedGame.mokPoints?.toFixed(1) || '0.0'}</span>
-                </div>
-                
-                {(() => {
-                  const isBlowout = Math.abs(selectedGame.teamScore - selectedGame.opponentScore) >= 21;
-                  const isShutout = selectedGame.teamScore === 0 || selectedGame.opponentScore === 0;
+              {selectedGame.mokPoints && (
+                <div className="space-y-3">
+                  <div className="flex justify-between">
+                    <span className="text-sm text-muted-foreground">Mok Points:</span>
+                    <span className="font-semibold">{selectedGame.mokPoints?.toFixed(1) || '0.0'}</span>
+                  </div>
                   
-                  if (isBlowout || isShutout) {
-                    return (
-                      <div className="pt-2 border-t border-border/50">
-                        <div className="text-xs font-medium text-muted-foreground mb-1">
-                          Game Bonuses:
+                  {(() => {
+                    const isBlowout = Math.abs(selectedGame.teamScore - selectedGame.opponentScore) >= 21;
+                    const isShutout = selectedGame.teamScore === 0 || selectedGame.opponentScore === 0;
+                    
+                    if (isBlowout || isShutout) {
+                      return (
+                        <div className="pt-2 border-t border-border/50">
+                          <div className="text-xs font-medium text-muted-foreground mb-1">
+                            Game Bonuses:
+                          </div>
+                          <div className="flex gap-2">
+                            {isBlowout && (
+                              <Badge variant="secondary" className="text-xs">
+                                <Trophy className="w-3 h-3 mr-1" />
+                                Blowout
+                              </Badge>
+                            )}
+                            {isShutout && (
+                              <Badge variant="secondary" className="text-xs">
+                                <Target className="w-3 h-3 mr-1" />
+                                Shutout
+                              </Badge>
+                            )}
+                          </div>
                         </div>
-                        <div className="flex gap-2">
-                          {isBlowout && (
-                            <Badge variant="secondary" className="text-xs">
-                              <Trophy className="w-3 h-3 mr-1" />
-                              Blowout
-                            </Badge>
-                          )}
-                          {isShutout && (
-                            <Badge variant="secondary" className="text-xs">
-                              <Target className="w-3 h-3 mr-1" />
-                              Shutout
-                            </Badge>
-                          )}
-                        </div>
-                      </div>
-                    );
-                  }
-                  return null;
-                })()}
-              </div>
+                      );
+                    }
+                    return null;
+                  })()}
+                </div>
+              )}
             </div>
           )}
         </DialogContent>
