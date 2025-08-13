@@ -17,6 +17,9 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   static getDerivedStateFromError(error: Error): State {
+    console.error('[ErrorBoundary] Error caught:', error.name, error.message);
+    console.error('[ErrorBoundary] Stack trace:', error.stack);
+    
     // Prevent error boundary from showing for DOM manipulation errors
     if (error.message?.includes('removeChild') || 
         error.message?.includes('DOM') ||
@@ -28,8 +31,10 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error('ErrorBoundary caught an error:', error.message);
-    console.error('Component stack:', errorInfo.componentStack);
+    console.error('[ErrorBoundary] DETAILED ERROR - Name:', error.name);
+    console.error('[ErrorBoundary] DETAILED ERROR - Message:', error.message);
+    console.error('[ErrorBoundary] DETAILED ERROR - Stack:', error.stack);
+    console.error('[ErrorBoundary] Component stack:', errorInfo.componentStack);
     
     // Skip DOM manipulation errors that are recoverable
     if (error.message?.includes('removeChild') || 

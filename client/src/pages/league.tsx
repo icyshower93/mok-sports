@@ -95,7 +95,7 @@ export default function LeaguePage() {
 
   // Process skins data to calculate skins won per user
   const userSkinsWon = useMemo(() => {
-    if (!skinsData?.skins) return {};
+    if (!skinsData || !Array.isArray(skinsData.skins)) return {};
     
     const skinsCount: Record<string, number> = {};
     skinsData.skins.forEach((skin: any) => {
