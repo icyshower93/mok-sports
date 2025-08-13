@@ -151,7 +151,7 @@ export default function LeaguePage() {
                   {/* Main Player Row */}
                   <div 
                     className={`px-4 py-3 transition-all duration-200 cursor-pointer hover:bg-muted/20 ${
-                      member.isCurrentUser ? 'bg-primary/5 border-primary/20' : ''
+                      member.isCurrentUser ? 'bg-gradient-to-r from-primary/10 to-primary/5 border-l-4 border-primary/40' : ''
                     } ${expandedUsers.has(member.name) ? 'bg-muted/10' : ''}`}
                     onClick={() => toggleUserExpansion(member.name)}
                   >
@@ -170,10 +170,9 @@ export default function LeaguePage() {
                         
                         {/* Username */}
                         <div className="flex-1 min-w-0">
-                          <div className="font-bold text-base text-foreground truncate">{member.name}</div>
-                          {member.isCurrentUser && (
-                            <Badge variant="secondary" className="text-xs px-2 py-0.5 mt-0.5">You</Badge>
-                          )}
+                          <div className={`font-bold text-base truncate ${
+                            member.isCurrentUser ? 'text-primary' : 'text-foreground'
+                          }`}>{member.name}</div>
                         </div>
                       </div>
                       
