@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 import { 
@@ -158,7 +158,7 @@ export default function MainPage() {
               <p className="text-sm text-muted-foreground">Week {currentWeek} • 2024 Season</p>
             </div>
             <Avatar className="w-10 h-10 border-2 border-primary/20">
-              <AvatarImage src={user.profilePicture} alt={user.name} />
+              <AvatarImage src={user.avatar} alt={user.name} />
               <AvatarFallback className="bg-primary/10 text-primary font-semibold">
                 {user.name.split(' ').map(n => n[0]).join('').toUpperCase()}
               </AvatarFallback>
@@ -237,8 +237,8 @@ export default function MainPage() {
               <div className="text-lg font-semibold text-primary">$30</div>
             </div>
             
-            <ScrollArea className="w-full whitespace-nowrap">
-              <div className="flex space-x-3 pb-4">
+            <div className="overflow-x-auto scrollbar-hide horizontal-scroll">
+              <div className="flex space-x-3 pb-4 min-w-max">
                 {Array.isArray(weeklyRankings) && weeklyRankings.length > 0 ? (
                   weeklyRankings.map((member: any, index: number) => (
                     <Card key={member.name} className="flex-shrink-0 w-32 bg-gradient-to-br from-card to-card/50 border-border/50 rounded-2xl">
@@ -268,7 +268,7 @@ export default function MainPage() {
                   </Card>
                 )}
               </div>
-            </ScrollArea>
+            </div>
           </div>
 
           {/* Games Today */}

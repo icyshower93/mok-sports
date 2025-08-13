@@ -45,6 +45,22 @@ body {
   overscroll-behavior-x: none;
 }
 
+/* Allow horizontal scrolling for specific containers */
+.horizontal-scroll {
+  touch-action: pan-x;
+  overscroll-behavior-x: auto;
+}
+
+/* Hide scrollbars while maintaining functionality */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
 /* Prevent accidental text selection on mobile while preserving input functionality */
 * {
   -webkit-touch-callout: none;
