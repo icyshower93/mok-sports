@@ -74,372 +74,944 @@ interface WeekEndResults {
   };
 }
 
+interface WeeklyRankingsResponse {
+  rankings: Array<{
+    name: string;
+    weeklyPoints: number;
+    gamesRemaining: number;
+    isCurrentUser: boolean;
+  }>;
+  weekEndResults: WeekEndResults;
+}
+
+interface NFLGame {
+  id: string;
+  homeTeam: string;
+  awayTeam: string;
+  homeScore: number;
+  awayScore: number;
+  week: number;
+  season: number;
+  gameDate: Date;
+  isCompleted: boolean;
+  homeOwner?: string;
+  awayOwner?: string;
+  homeOwnerName?: string;
+  awayOwnerName?: string;
+  homeLocked?: boolean;
+  awayLocked?: boolean;
+  homeLockAndLoad?: boolean;
+  awayLockAndLoad?: boolean;
+  homeMokPoints?: number;
+  awayMokPoints?: number;
+}
+
 export default function ScoresPage() {
+  console.log("🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE");
+
+  // Add test functions to window for easy admin testing from console
+  useEffect(() => {
+    // @ts-ignore
+    window.testAdminReset = async () => {
+      console.log("🧪 Testing admin reset from scores page...");
+      const response = await fetch("/api/admin/reset-season", {
+        method: "POST",
+      });
+      const result = await response.json();
+      console.log("🧪 Reset result:", result);
+    };
+
+    // @ts-ignore
+    window.testAdminAdvance = async () => {
+      console.log("🧪 Testing admin advance from scores page...");
+      const response = await fetch("/api/admin/advance-day", {
+        method: "POST",
+      });
+      const result = await response.json();
+      console.log("🧪 Advance result:", result);
+    };
+
+    console.log(
+      "🧪 Test functions added to window: testAdminReset() and testAdminAdvance()",
+    );
+  }, []);
   const { user } = useAuth();
   const queryClient = useQueryClient();
-  const [selectedWeek, setSelectedWeek] = useState(21);
-
-  // Add NFL games data query
-  const { data: nflGames } = useQuery({
-    queryKey: [`/api/scores/week/${selectedWeek}`],
-    enabled: !!user,
-  });
+  const [selectedWeek, setSelectedWeek] = useState(1); // Start with Week 1
   const [selectedGame, setSelectedGame] = useState<any>(null);
-  const [isGameDialogOpen, setIsGameDialogOpen] = useState(false);
+  const [selectedSeason] = useState(2024); // Using completed 2024 NFL season for testing
 
-  const { data: weeklyScores, isLoading: scoresLoading } = useQuery({
-    queryKey: [`/api/scores/weekly/${selectedWeek}`],
+  // Listen for admin date advances to refresh scores automatically
+  useEffect(() => {
+    console.log(
+      "🔌 SCORES PAGE WEBSOCKET USEEFFECT TRIGGERED - SETTING UP CONNECTION",
+    );
+    console.log("🔍 UserAgent check:", navigator.userAgent);
+    console.log("🔍 Window location:", window.location.href);
+    console.log("🔍 WebSocket support:", typeof WebSocket !== "undefined");
+
+    const connectWebSocket = () => {
+      const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+      const wsUrl = `${protocol}//${window.location.host}/draft-ws`;
+
+      console.log("🚀 Attempting to connect WebSocket for scores page:", wsUrl);
+      console.log("🔍 Current protocol:", window.location.protocol);
+      console.log("🔍 Current host:", window.location.host);
+
+      try {
+        const ws = new WebSocket(wsUrl);
+
+        ws.onmessage = (event) => {
+          try {
+            const message = JSON.parse(event.data);
+            console.log("Scores WebSocket received message:", message.type);
+
+            if (message.type === "admin_date_advanced") {
+              console.log("Admin date advanced, refreshing scores...");
+              // Force invalidate ALL queries to trigger complete refresh
+              queryClient.invalidateQueries();
+              console.log(
+                "📊 [WebSocket] Invalidated ALL queries after admin date advance",
+              );
+            } else if (message.type === "admin_season_reset") {
+              console.log(
+                "Admin season reset, refreshing scores to show 0-0...",
+              );
+              // Force invalidate ALL queries to trigger complete refresh and show cleared scores
+              queryClient.invalidateQueries();
+              console.log(
+                "📊 [WebSocket] Invalidated ALL queries after admin season reset",
+              );
+            } else if (message.type === "lock_updated") {
+              console.log(
+                "Lock updated, refreshing scores to show lock icons...",
+              );
+              // Force invalidate ALL queries to trigger complete refresh with updated lock status
+              queryClient.invalidateQueries();
+              console.log(
+                "📊 [WebSocket] Invalidated ALL queries after lock update",
+              );
+            }
+          } catch (e) {
+            console.log("WebSocket message parsing error:", e);
+          }
+        };
+
+        ws.onopen = () => {
+          console.log(
+            "✅ Scores WebSocket connected successfully for live admin updates",
+          );
+          console.log("🔗 WebSocket state:", ws.readyState);
+          // Send identification message with fake draft info to connect to the system
+          const identifyMessage = {
+            type: "identify",
+            userId: "scores_page_user",
+            draftId: "admin_updates",
+            source: "scores_page",
+            connectionId: `scores_${Date.now()}`,
+          };
+          console.log("📤 Sending identify message:", identifyMessage);
+          ws.send(JSON.stringify(identifyMessage));
+        };
+
+        ws.onclose = (event) => {
+          console.log(
+            "Scores WebSocket disconnected:",
+            event.code,
+            event.reason,
+          );
+          // Attempt to reconnect after 2 seconds
+          setTimeout(() => {
+            console.log("Attempting to reconnect WebSocket...");
+            connectWebSocket();
+          }, 2000);
+        };
+
+        ws.onerror = (error) => {
+          console.error("Scores WebSocket error:", error);
+        };
+
+        return ws;
+      } catch (error) {
+        console.error("WebSocket connection failed:", error);
+        return null;
+      }
+    };
+
+    const ws = connectWebSocket();
+    return () => {
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.close();
+      }
+    };
+  }, [queryClient, selectedWeek]);
+
+  // Get user's leagues to show scores for
+  const { data: userLeagues } = useQuery({
+    queryKey: ["/api/user/leagues"],
     enabled: !!user,
   });
 
-  const { data: mokRules } = useQuery({
-    queryKey: ["/api/scores/mok-rules"],
-    enabled: !!user,
+  // Get scoring rules
+  const { data: scoringRules } = useQuery<MokScoringRules>({
+    queryKey: ["/api/scoring/rules"],
   });
 
-  const { data: weekEndResults } = useQuery({
-    queryKey: [`/api/scores/week-end-results/${selectedWeek}`],
-    enabled: !!user,
+  // Get current league (use real EEW2YU test league)
+  const currentLeague =
+    userLeagues && Array.isArray(userLeagues) && userLeagues.length > 0
+      ? userLeagues[0]
+      : {
+          id: "243d719b-92ce-4752-8689-5da93ee69213",
+          name: "Test League 1",
+          season: 2024,
+        };
+
+  // Get NFL teams to map logos and owners
+  const { data: nflTeams } = useQuery({
+    queryKey: ["/api/nfl-teams"],
+    enabled: !!currentLeague,
   });
 
-  const currentUserScore = (weeklyScores as WeeklyScoresResponse)?.scores?.find(
-    (score) => score.userId === user?.id
-  );
+  // Get league members to show ownership
+  const { data: leagueMembers } = useQuery({
+    queryKey: [`/api/leagues/${currentLeague?.id}/members`],
+    enabled: !!currentLeague,
+  });
+
+  // Get weekly rankings for current league with automatic refreshing
+  const { data: weeklyRankings, isLoading: loadingWeekly } =
+    useQuery<WeeklyRankingsResponse>({
+      queryKey: [
+        `/api/scoring/leagues/${currentLeague?.id}/week-scores/${selectedSeason}/${selectedWeek}`,
+      ],
+      enabled: !!currentLeague,
+      refetchInterval: 30000, // Refresh scores every 30 seconds
+      refetchIntervalInBackground: true,
+      staleTime: 15000,
+      refetchOnWindowFocus: true,
+    });
+
+  // Get real NFL games for selected week from the scores API with automatic refreshing
+  const {
+    data: nflGamesData,
+    isLoading: loadingGames,
+    error: gamesError,
+  } = useQuery({
+    queryKey: [`/api/scoring/week/${selectedWeek}/${selectedSeason}`],
+    queryFn: async () => {
+      console.log(
+        `[DEBUG] Fetching games for week ${selectedWeek} season ${selectedSeason}`,
+      );
+      const response = await fetch(
+        `/api/scoring/week/${selectedWeek}?season=${selectedSeason}&leagueId=${currentLeague?.id}`,
+      );
+      const data = await response.json();
+      console.log(`[DEBUG] API Response:`, data);
+      return data;
+    },
+    enabled: !!currentLeague && selectedWeek >= 1 && selectedWeek <= 18,
+    refetchInterval: 30000, // Automatically refresh every 30 seconds
+    refetchIntervalInBackground: true, // Keep refreshing even when tab is not active
+    staleTime: 15000, // Consider data stale after 15 seconds
+    refetchOnWindowFocus: true, // Refresh when user returns to tab
+    refetchOnMount: true, // Always fetch fresh data on component mount
+  });
+
+  // Get user's teams for highlighting
+  const { data: userTeams } = useQuery({
+    queryKey: [`/api/user/stable/${currentLeague?.id}`],
+    enabled: !!user && !!currentLeague,
+  });
+
+  // WebSocket connection for real-time updates (using draft WebSocket for lock updates)
+  useEffect(() => {
+    if (!currentLeague) return;
+
+    const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+    const wsUrl = `${protocol}//${window.location.host}/draft-ws`;
+
+    console.log(
+      "[WebSocket] Connecting to draft WebSocket for lock updates:",
+      wsUrl,
+    );
+    const ws = new WebSocket(wsUrl);
+
+    ws.onopen = () => {
+      console.log("[WebSocket] Connected to draft WebSocket for lock updates");
+      // Send identification as scores page client
+      ws.send(
+        JSON.stringify({
+          type: "scores-page-connect",
+          leagueId: currentLeague.id,
+          week: selectedWeek,
+        }),
+      );
+    };
+
+    ws.onmessage = (event) => {
+      try {
+        const message = JSON.parse(event.data);
+        console.log("[WebSocket] Received live score update:", message);
+
+        if (message.type === "lock-update") {
+          console.log("[WebSocket] Lock update received:", message);
+          // Invalidate and refetch scores to show updated lock icons
+          queryClient.invalidateQueries({
+            queryKey: [`/api/scores/week/${selectedWeek}`],
+          });
+          queryClient.invalidateQueries({
+            queryKey: [
+              `/api/leagues/${currentLeague.id}/scores/${selectedSeason}/${selectedWeek}`,
+            ],
+          });
+
+          console.log("[WebSocket] Refreshed scores after lock update");
+        }
+      } catch (error) {
+        console.error("[WebSocket] Error parsing message:", error);
+      }
+    };
+
+    ws.onerror = (error) => {
+      console.error("[WebSocket] Connection error:", error);
+    };
+
+    ws.onclose = () => {
+      console.log("[WebSocket] Live scores connection closed");
+    };
+
+    return () => {
+      if (ws.readyState === WebSocket.OPEN) {
+        ws.close();
+      }
+    };
+  }, [currentLeague, selectedWeek, queryClient, selectedSeason]);
+
+  if (!user) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <p>Please sign in to view scores</p>
+      </div>
+    );
+  }
+
+  if (!currentLeague) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <p>Join a league to view scores</p>
+      </div>
+    );
+  }
+
+  // Transform real NFL games data from the scores API
+  const nflGames: NFLGame[] =
+    (nflGamesData as any)?.games?.map((game: any, index: number) => {
+      return {
+        id: game.id || `game_${selectedWeek}_${index}`,
+        homeTeam: game.homeTeam,
+        awayTeam: game.awayTeam,
+        homeScore: game.homeScore,
+        awayScore: game.awayScore,
+        week: selectedWeek,
+        season: selectedSeason,
+        gameDate: new Date(game.gameDate),
+        isCompleted: game.isCompleted || false,
+        // Team ownership from draft data
+        homeOwner: game.homeOwner || "",
+        homeOwnerName: game.homeOwnerName || "",
+        awayOwner: game.awayOwner || "",
+        awayOwnerName: game.awayOwnerName || "",
+        // Lock status
+        homeLocked: game.homeLocked || false,
+        awayLocked: game.awayLocked || false,
+        homeLockAndLoad: game.homeLockAndLoad || false,
+        awayLockAndLoad: game.awayLockAndLoad || false,
+        // Mok points
+        homeMokPoints: game.homeMokPoints || 0,
+        awayMokPoints: game.awayMokPoints || 0,
+      };
+    }) || [];
+
+  const isUserTeam = (teamCode: string): boolean => {
+    if (!user || !userTeams) {
+      console.log("[DEBUG] isUserTeam: Missing user or userTeams", {
+        user: !!user,
+        userTeams: !!userTeams,
+      });
+      return false;
+    }
+
+    const isOwned =
+      Array.isArray(userTeams) &&
+      userTeams.some((team: any) => team.nflTeam?.code === teamCode);
+    if (isOwned) {
+      console.log("[DEBUG] ✅ YOUR TEAM FOUND:", teamCode, "- Should be GREEN");
+    }
+
+    return isOwned;
+  };
+
+  const isTeamLocked = (
+    teamCode: string,
+  ): { locked: boolean; lockAndLoad: boolean } => {
+    const game = nflGames.find(
+      (g) => g.homeTeam === teamCode || g.awayTeam === teamCode,
+    );
+    if (game?.homeTeam === teamCode) {
+      return { locked: !!game.homeLocked, lockAndLoad: !!game.homeLockAndLoad };
+    }
+    if (game?.awayTeam === teamCode) {
+      return { locked: !!game.awayLocked, lockAndLoad: !!game.awayLockAndLoad };
+    }
+    return { locked: false, lockAndLoad: false };
+  };
 
   return (
-    <div className="min-h-screen bg-background pb-20">
-      {/* Standardized Sticky Header */}
-      <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm border-b border-border/50 h-16">
-        <div className="flex items-center justify-between h-full px-6">
-          <h1 className="text-xl font-bold">Scores</h1>
-          <select
-            value={selectedWeek}
-            onChange={(e) => setSelectedWeek(Number(e.target.value))}
-            className="px-3 py-2 bg-card border border-border rounded-lg text-sm"
-          >
-            {Array.from({ length: 22 }, (_, i) => i + 1).map((week) => (
-              <option key={week} value={week}>
-                {getWeekLabel(week)}
-              </option>
-            ))}
-          </select>
+    <div className="flex flex-col min-h-screen">
+      {/* Main Content */}
+      <div className="flex-1 container mx-auto px-4 py-6 max-w-4xl pb-24">
+        <div className="flex flex-col space-y-6">
+          {/* Header */}
+          <div className="flex flex-col gap-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-2xl font-bold">Scores</h1>
+                <p className="text-muted-foreground">{currentLeague.name}</p>
+              </div>
+
+              {/* Week Selector - Dropdown Style */}
+              <div className="flex items-center gap-2">
+                <select
+                  value={selectedWeek}
+                  onChange={(e) => setSelectedWeek(Number(e.target.value))}
+                  className="bg-background border border-border rounded-md px-3 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                >
+                  {/* Regular season options - Week 1 to Week 18 */}
+                  {Array.from({ length: 18 }, (_, i) => i + 1).map((week) => (
+                    <option key={week} value={week}>
+                      Week {week}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          </div>
+
+          {/* Weekly Rankings removed - now displayed only on main tab */}
+
+          {/* Games List */}
+          <div className="space-y-4">
+            {loadingGames && (
+              <div className="text-center py-8">
+                Loading Week {selectedWeek} games...
+              </div>
+            )}
+            {!loadingGames && nflGames.length === 0 && (
+              <div className="text-center py-8 text-muted-foreground">
+                No games found for Week {selectedWeek}
+                <div className="text-xs mt-2 space-y-1">
+                  <div>Debug: Week {selectedWeek}</div>
+                  <div>
+                    Games data:{" "}
+                    {nflGamesData
+                      ? JSON.stringify(nflGamesData).substring(0, 200) + "..."
+                      : "null"}
+                  </div>
+                  {gamesError && (
+                    <div className="text-red-500">
+                      Error: {JSON.stringify(gamesError)}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+            {nflGames
+              .sort(
+                (a: NFLGame, b: NFLGame) =>
+                  new Date(a.gameDate).getTime() -
+                  new Date(b.gameDate).getTime(),
+              )
+              .map((game: NFLGame) => {
+                const homeWin =
+                  game.homeScore !== null &&
+                  game.awayScore !== null &&
+                  game.homeScore > game.awayScore;
+                const awayWin =
+                  game.awayScore !== null &&
+                  game.homeScore !== null &&
+                  game.awayScore > game.homeScore;
+                const scoreDiff =
+                  game.homeScore !== null && game.awayScore !== null
+                    ? Math.abs(game.homeScore - game.awayScore)
+                    : 0;
+                const isBlowout = scoreDiff >= 20;
+                const isShutout = game.homeScore === 0 || game.awayScore === 0;
+
+                const homeLockStatus = isTeamLocked(game.homeTeam);
+                const awayLockStatus = isTeamLocked(game.awayTeam);
+
+                // Check if teams are high/low scorers when week is complete
+                const isWeekComplete = weeklyRankings?.weekEndResults?.weekComplete;
+                const homeIsHighScore = isWeekComplete && 
+                  weeklyRankings?.weekEndResults?.highScoreTeams?.some(
+                    (team: any) => team.teamCode === game.homeTeam
+                  );
+                const homeIsLowScore = isWeekComplete && 
+                  weeklyRankings?.weekEndResults?.lowScoreTeams?.some(
+                    (team: any) => team.teamCode === game.homeTeam
+                  );
+                const awayIsHighScore = isWeekComplete && 
+                  weeklyRankings?.weekEndResults?.highScoreTeams?.some(
+                    (team: any) => team.teamCode === game.awayTeam
+                  );
+                const awayIsLowScore = isWeekComplete && 
+                  weeklyRankings?.weekEndResults?.lowScoreTeams?.some(
+                    (team: any) => team.teamCode === game.awayTeam
+                  );
+
+                return (
+                  <div
+                    key={game.id}
+                    className="bg-card rounded-lg p-4 space-y-3 cursor-pointer hover:shadow-md transition-shadow"
+                    onClick={() => setSelectedGame(game)}
+                  >
+                    {/* Game Header */}
+                    <div className="flex justify-between items-center text-sm text-muted-foreground">
+                      <span>
+                        {new Date(game.gameDate).toLocaleDateString("en-US", {
+                          weekday: "short",
+                          month: "short",
+                          day: "numeric",
+                          hour: "numeric",
+                          minute: "2-digit",
+                          timeZone: "America/New_York",
+                        })}{" "}
+                        ET
+                      </span>
+                      {game.isCompleted ? (
+                        <Badge variant="outline" className="text-xs">
+                          Final
+                        </Badge>
+                      ) : (
+                        <Badge variant="outline" className="text-xs">
+                          Scheduled
+                        </Badge>
+                      )}
+                    </div>
+
+                    {/* Teams and Scores */}
+                    <div className="space-y-2">
+                      {/* Away Team */}
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3 flex-1">
+                          <img
+                            src={`/images/nfl/team_logos/${game.awayTeam}.png`}
+                            alt={game.awayTeam}
+                            className="w-8 h-8"
+                            onError={(e) => {
+                              console.log(
+                                `[Image Error] Failed to load ${game.awayTeam} logo, trying fallback`,
+                              );
+                              // Use ESPN's reliable team logo API
+                              (e.target as HTMLImageElement).src =
+                                `https://a.espncdn.com/i/teamlogos/nfl/500/${game.awayTeam.toLowerCase()}.png`;
+                            }}
+                          />
+                          <div className="flex flex-col">
+                            <div className="flex items-center gap-2">
+                              <div className="flex items-center gap-1">
+                                <span
+                                  className={`font-medium ${
+                                    isUserTeam(game.awayTeam)
+                                      ? "text-green-600 font-bold"
+                                      : awayWin
+                                        ? "text-foreground"
+                                        : "text-muted-foreground"
+                                  }`}
+                                >
+                                  {game.awayTeam}
+                                </span>
+                                {game.awayOwnerName && (
+                                  <span className="text-xs text-slate-500 dark:text-slate-400">
+                                    ({game.awayOwnerName})
+                                  </span>
+                                )}
+                              </div>
+                              {awayLockStatus.locked && (
+                                <Lock className="w-3 h-3 text-blue-500" />
+                              )}
+                              {awayLockStatus.lockAndLoad && (
+                                <Zap className="w-3 h-3 text-orange-500" />
+                              )}
+                              {game.isCompleted &&
+                                (game.awayMokPoints || 0) > 0 && (
+                                  <div className="flex items-center space-x-1">
+                                    <Flame className="w-3 h-3 text-purple-500" />
+                                    <span className="text-xs text-purple-600 font-medium">
+                                      +{game.awayMokPoints}
+                                    </span>
+                                  </div>
+                                )}
+                              {awayIsHighScore && (
+                                <div className="flex items-center space-x-1">
+                                  <Trophy className="w-3 h-3 text-green-500" />
+                                  <span className="text-xs text-green-600 font-medium">
+                                    +1 HS
+                                  </span>
+                                </div>
+                              )}
+                              {awayIsLowScore && (
+                                <div className="flex items-center space-x-1">
+                                  <Target className="w-3 h-3 text-red-500" />
+                                  <span className="text-xs text-red-600 font-medium">
+                                    -1 LS
+                                  </span>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                        <div
+                          className={`text-xl font-bold ${awayWin ? "text-foreground" : "text-muted-foreground"}`}
+                        >
+                          {game.isCompleted && game.awayScore !== null &&
+                          game.awayScore !== undefined
+                            ? game.awayScore
+                            : "-"}
+                        </div>
+                      </div>
+
+                      {/* Home Team */}
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3 flex-1">
+                          <img
+                            src={`/images/nfl/team_logos/${game.homeTeam}.png`}
+                            alt={game.homeTeam}
+                            className="w-8 h-8"
+                            onError={(e) => {
+                              console.log(
+                                `[Image Error] Failed to load ${game.homeTeam} logo, trying fallback`,
+                              );
+                              // Use ESPN's reliable team logo API
+                              (e.target as HTMLImageElement).src =
+                                `https://a.espncdn.com/i/teamlogos/nfl/500/${game.homeTeam.toLowerCase()}.png`;
+                            }}
+                          />
+                          <div className="flex flex-col">
+                            <div className="flex items-center gap-2">
+                              <div className="flex items-center gap-1">
+                                <span
+                                  className={`font-medium ${
+                                    isUserTeam(game.homeTeam)
+                                      ? "text-green-600 font-bold"
+                                      : homeWin
+                                        ? "text-foreground"
+                                        : "text-muted-foreground"
+                                  }`}
+                                >
+                                  {game.homeTeam}
+                                </span>
+                                {game.homeOwnerName && (
+                                  <span className="text-xs text-slate-500 dark:text-slate-400">
+                                    ({game.homeOwnerName})
+                                  </span>
+                                )}
+                              </div>
+                              {homeLockStatus.locked && (
+                                <Lock className="w-3 h-3 text-blue-500" />
+                              )}
+                              {homeLockStatus.lockAndLoad && (
+                                <Zap className="w-3 h-3 text-orange-500" />
+                              )}
+                              {game.isCompleted &&
+                                (game.homeMokPoints || 0) > 0 && (
+                                  <div className="flex items-center space-x-1">
+                                    <Flame className="w-3 h-3 text-purple-500" />
+                                    <span className="text-xs text-purple-600 font-medium">
+                                      +{game.homeMokPoints}
+                                    </span>
+                                  </div>
+                                )}
+                              {homeIsHighScore && (
+                                <div className="flex items-center space-x-1">
+                                  <Trophy className="w-3 h-3 text-green-500" />
+                                  <span className="text-xs text-green-600 font-medium">
+                                    +1 HS
+                                  </span>
+                                </div>
+                              )}
+                              {homeIsLowScore && (
+                                <div className="flex items-center space-x-1">
+                                  <Target className="w-3 h-3 text-red-500" />
+                                  <span className="text-xs text-red-600 font-medium">
+                                    -1 LS
+                                  </span>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                        <div
+                          className={`text-xl font-bold ${homeWin ? "text-foreground" : "text-muted-foreground"}`}
+                        >
+                          {game.isCompleted && game.homeScore !== null &&
+                          game.homeScore !== undefined
+                            ? game.homeScore
+                            : "-"}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Game Bonuses */}
+                    {game.isCompleted && (isBlowout || isShutout) && (
+                      <div className="flex gap-2 pt-2 border-t border-border">
+                        {isBlowout && (
+                          <Badge variant="secondary" className="text-xs">
+                            <Trophy className="w-3 h-3 mr-1" />
+                            Blowout
+                          </Badge>
+                        )}
+                        {isShutout && (
+                          <Badge variant="secondary" className="text-xs">
+                            <Target className="w-3 h-3 mr-1" />
+                            Shutout
+                          </Badge>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+          </div>
         </div>
       </div>
 
-      <div className="p-4 pt-6 space-y-6">
-        {/* Current User Summary */}
-        {currentUserScore ? (
-          <Card className="p-4 bg-gradient-to-r from-primary/10 to-secondary/10 border-primary/20">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="font-semibold text-lg">Your Week {selectedWeek} Score</h3>
-                <p className="text-3xl font-bold text-primary mt-1">
-                  {currentUserScore.totalMokPoints.toFixed(1)}
-                </p>
-              </div>
-              <div className="text-right">
-                <p className="text-sm text-muted-foreground">Base Points</p>
-                <p className="text-xl font-semibold">{currentUserScore.totalBaseMokPoints.toFixed(1)}</p>
-                {(currentUserScore.lockBonusPoints > 0 || currentUserScore.lockAndLoadBonusPoints > 0) && (
-                  <p className="text-sm text-green-600">
-                    +{(currentUserScore.lockBonusPoints + currentUserScore.lockAndLoadBonusPoints).toFixed(1)} bonus
-                  </p>
-                )}
-              </div>
-            </div>
-          </Card>
-        ) : null}
-
-        {/* Week End Results */}
-        {weekEndResults && (weekEndResults as WeekEndResults).weekComplete ? (
-          <Card className="p-4">
-            <CardHeader className="p-0 pb-4">
-              <CardTitle className="text-lg">Week {selectedWeek} Results</CardTitle>
-            </CardHeader>
-            <CardContent className="p-0 space-y-4">
-              {/* Weekly Skins Winner */}
-              {(weekEndResults as WeekEndResults).weeklySkinsWinner && (
-                <div className="p-3 bg-gradient-to-r from-yellow-500/10 to-yellow-600/10 border border-yellow-500/20 rounded-lg">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Trophy className="w-5 h-5 text-yellow-600" />
-                    <span className="font-semibold text-yellow-700">Weekly Skins Winner</span>
-                  </div>
-                  <p className="text-lg font-bold">
-                    {(weekEndResults as WeekEndResults).weeklySkinsWinner?.userName}
-                  </p>
-                  <p className="text-sm text-muted-foreground">
-                    {(weekEndResults as WeekEndResults).weeklySkinsWinner?.totalWeeklyPoints.toFixed(1)} points • 
-                    ${(weekEndResults as WeekEndResults).weeklySkinsWinner?.prizeAmount}
-                  </p>
-                </div>
-              )}
-
-              {/* Skins Rollover */}
-              {(weekEndResults as WeekEndResults).skinsRollover && (
-                <div className="p-3 bg-gradient-to-r from-orange-500/10 to-orange-600/10 border border-orange-500/20 rounded-lg">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Zap className="w-5 h-5 text-orange-600" />
-                    <span className="font-semibold text-orange-700">Skins Rollover</span>
-                  </div>
-                  <p className="text-sm">
-                    {(weekEndResults as WeekEndResults).skinsRollover?.reason}
-                  </p>
-                  <p className="text-lg font-bold text-orange-700">
-                    Next week: ${(weekEndResults as WeekEndResults).skinsRollover?.nextWeekPrize}
-                  </p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        ) : null}
-
-        {/* Weekly Scores */}
-        <Card className="p-4">
-          <CardHeader className="p-0 pb-4">
-            <CardTitle className="text-lg">Week {selectedWeek} Scores</CardTitle>
-          </CardHeader>
-          <CardContent className="p-0">
-            {scoresLoading ? (
-              <div className="space-y-3">
-                {Array.from({ length: 6 }, (_, i) => (
-                  <div key={i} className="flex items-center space-x-3 p-3 bg-muted/20 rounded-lg animate-pulse">
-                    <div className="w-8 h-8 bg-muted rounded-full"></div>
-                    <div className="flex-1">
-                      <div className="w-24 h-4 bg-muted rounded"></div>
-                      <div className="w-16 h-3 bg-muted rounded mt-1"></div>
-                    </div>
-                    <div className="w-12 h-6 bg-muted rounded"></div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="space-y-2">
-                {(weeklyScores as WeeklyScoresResponse)?.scores
-                  ?.sort((a, b) => b.totalMokPoints - a.totalMokPoints)
-                  ?.map((score, index) => (
-                    <div key={score.userId} className="flex items-center justify-between p-3 bg-card border border-border rounded-lg hover:bg-muted/50 transition-colors">
-                      <div className="flex items-center space-x-3">
-                        <div className="w-8 h-8 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-full flex items-center justify-center">
-                          <span className="text-sm font-bold">#{index + 1}</span>
-                        </div>
-                        <div>
-                          <p className="font-semibold">User {score.userId.slice(0, 8)}</p>
-                          <div className="flex gap-2 text-xs">
-                            {score.lockedTeam && (
-                              <Badge variant="outline" className="text-xs">
-                                <Lock className="w-3 h-3 mr-1" />
-                                {score.lockedTeam}
-                              </Badge>
-                            )}
-                            {score.lockAndLoadTeam && (
-                              <Badge variant="outline" className="text-xs">
-                                <Zap className="w-3 h-3 mr-1" />
-                                {score.lockAndLoadTeam}
-                              </Badge>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-lg font-bold">{score.totalMokPoints.toFixed(1)}</p>
-                        <p className="text-xs text-muted-foreground">
-                          {score.totalBaseMokPoints.toFixed(1)} base
-                          {(score.lockBonusPoints > 0 || score.lockAndLoadBonusPoints > 0) && (
-                            <span className="text-green-600 ml-1">
-                              +{(score.lockBonusPoints + score.lockAndLoadBonusPoints).toFixed(1)}
-                            </span>
-                          )}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* NFL Games Results */}
-        {nflGames && (nflGames as any)?.games?.length > 0 && (
-          <Card className="p-4">
-            <CardHeader className="p-0 pb-4">
-              <CardTitle className="text-lg">Week {selectedWeek} NFL Games</CardTitle>
-            </CardHeader>
-            <CardContent className="p-0">
-              <div className="grid gap-3">
-                {(nflGames as any).games.map((game: any, index: number) => (
-                  <div key={game.id} className="p-3 bg-card border border-border rounded-lg hover:bg-muted/50 transition-colors cursor-pointer"
-                       onClick={() => {
-                         setSelectedGame(game);
-                         setIsGameDialogOpen(true);
-                       }}>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-3">
-                        <div className="w-8 h-8 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-lg flex items-center justify-center">
-                          <span className="text-xs font-bold">
-                            {game.awayTeam}
-                          </span>
-                        </div>
-                        <div>
-                          <p className="font-semibold text-sm">{game.awayTeam} @ {game.homeTeam}</p>
-                          <p className="text-xs text-muted-foreground">
-                            {new Date(game.gameDate).toLocaleDateString()} • {game.isCompleted ? 'Final' : 'Scheduled'}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        {game.isCompleted ? (
-                          <div className="flex items-center gap-2">
-                            <span className="text-lg font-bold">
-                              {game.awayScore} - {game.homeScore}
-                            </span>
-                            {game.homeScore > game.awayScore ? 
-                              <Trophy className="w-4 h-4 text-green-600" /> : 
-                              game.awayScore > game.homeScore ? 
-                              <Trophy className="w-4 h-4 text-blue-600" /> : 
-                              <Target className="w-4 h-4 text-yellow-600" />
-                            }
-                          </div>
-                        ) : (
-                          <div className="text-sm text-muted-foreground">
-                            {new Date(game.gameDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Team Results */}
-        {currentUserScore?.teamResults && (
-          <Card className="p-4">
-            <CardHeader className="p-0 pb-4">
-              <CardTitle className="text-lg">Your Team Results</CardTitle>
-            </CardHeader>
-            <CardContent className="p-0">
-              <div className="grid gap-3">
-                {currentUserScore.teamResults.map((result: any, index: number) => (
-                  <div key={index} className="p-3 bg-card border border-border rounded-lg hover:bg-muted/50 transition-colors cursor-pointer"
-                       onClick={() => {
-                         setSelectedGame(result);
-                         setIsGameDialogOpen(true);
-                       }}>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-3">
-                        <div className="w-8 h-8 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-lg flex items-center justify-center">
-                          <span className="text-xs font-bold">{result.teamCode}</span>
-                        </div>
-                        <div>
-                          <p className="font-semibold text-sm">{result.teamName}</p>
-                          <p className="text-xs text-muted-foreground">
-                            vs {result.opponentCode} • {result.homeAway === 'home' ? 'Home' : 'Away'}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <div className="flex items-center gap-2">
-                          <span className="text-lg font-bold">
-                            {result.mokPoints?.toFixed(1) || '0.0'}
-                          </span>
-                          {result.gameResult === 'W' && <Trophy className="w-4 h-4 text-green-600" />}
-                          {result.gameResult === 'T' && <Target className="w-4 h-4 text-yellow-600" />}
-                        </div>
-                        <p className="text-xs text-muted-foreground">
-                          {result.teamScore}-{result.opponentScore} • {result.gameResult}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        )}
-      </div>
-
-      {/* Game Detail Dialog */}
-      <Dialog open={isGameDialogOpen} onOpenChange={setIsGameDialogOpen}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle>Game Details</DialogTitle>
-          </DialogHeader>
+      {/* Game Details Modal - Sleeper/ESPN Style */}
+      <Dialog
+        open={!!selectedGame}
+        onOpenChange={(open) => !open && setSelectedGame(null)}
+      >
+        <DialogContent className="max-w-md p-0 gap-0">
           {selectedGame && (
-            <div className="space-y-4">
-              <div className="text-center">
-                {selectedGame.teamName ? (
-                  /* Team Result View */
-                  <>
-                    <h3 className="text-xl font-bold">{selectedGame.teamName}</h3>
-                    <p className="text-sm text-muted-foreground">vs {selectedGame.opponentName}</p>
-                    <p className="text-2xl font-bold mt-2">
-                      {selectedGame.teamScore} - {selectedGame.opponentScore}
-                    </p>
-                    <Badge variant={selectedGame.gameResult === 'W' ? 'default' : selectedGame.gameResult === 'T' ? 'secondary' : 'destructive'} className="mt-2">
-                      {selectedGame.gameResult === 'W' ? 'Win' : selectedGame.gameResult === 'T' ? 'Tie' : 'Loss'}
-                    </Badge>
-                  </>
-                ) : (
-                  /* NFL Game View */
-                  <>
-                    <h3 className="text-xl font-bold">{selectedGame.awayTeam} @ {selectedGame.homeTeam}</h3>
-                    <p className="text-sm text-muted-foreground">
-                      {new Date(selectedGame.gameDate).toLocaleDateString()} • Week {selectedGame.week}
-                    </p>
-                    {selectedGame.isCompleted ? (
-                      <>
-                        <p className="text-2xl font-bold mt-2">
-                          {selectedGame.awayScore} - {selectedGame.homeScore}
-                        </p>
-                        <Badge variant="default" className="mt-2">Final</Badge>
-                      </>
-                    ) : (
-                      <Badge variant="secondary" className="mt-2">Scheduled</Badge>
+            <div className="relative">
+              {/* Header with gradient background */}
+              <div className="bg-gradient-to-br from-blue-600 to-purple-700 text-white p-4 rounded-t-lg">
+                <div className="flex justify-between items-start mb-2">
+                  <div className="text-sm opacity-90">
+                    Week {selectedGame.week} •{" "}
+                    {new Date(selectedGame.gameDate).toLocaleDateString(
+                      "en-US",
+                      {
+                        weekday: "short",
+                        month: "short",
+                        day: "numeric",
+                      },
                     )}
-                  </>
-                )}
+                  </div>
+                  <Badge
+                    variant="secondary"
+                    className="text-xs bg-white/20 text-white border-0"
+                  >
+                    Final
+                  </Badge>
+                </div>
+                <div className="text-xs opacity-75">
+                  {new Date(selectedGame.gameDate).toLocaleTimeString("en-US", {
+                    hour: "numeric",
+                    minute: "2-digit",
+                    timeZone: "America/New_York",
+                  })}{" "}
+                  ET
+                </div>
               </div>
 
-              {selectedGame.mokPoints && (
-                <div className="space-y-3">
-                  <div className="flex justify-between">
-                    <span className="text-sm text-muted-foreground">Mok Points:</span>
-                    <span className="font-semibold">{selectedGame.mokPoints?.toFixed(1) || '0.0'}</span>
-                  </div>
-                  
-                  {(() => {
-                    const isBlowout = Math.abs(selectedGame.teamScore - selectedGame.opponentScore) >= 21;
-                    const isShutout = selectedGame.teamScore === 0 || selectedGame.opponentScore === 0;
-                    
-                    if (isBlowout || isShutout) {
-                      return (
-                        <div className="pt-2 border-t border-border/50">
-                          <div className="text-xs font-medium text-muted-foreground mb-1">
-                            Game Bonuses:
-                          </div>
-                          <div className="flex gap-2">
-                            {isBlowout && (
-                              <Badge variant="secondary" className="text-xs">
-                                <Trophy className="w-3 h-3 mr-1" />
-                                Blowout
-                              </Badge>
-                            )}
-                            {isShutout && (
-                              <Badge variant="secondary" className="text-xs">
-                                <Target className="w-3 h-3 mr-1" />
-                                Shutout
-                              </Badge>
-                            )}
-                          </div>
+              {/* Main Score Display */}
+              <div className="bg-card">
+                {/* Away Team */}
+                <div className="flex items-center justify-between p-4 border-b border-border/50">
+                  <div className="flex items-center gap-4 flex-1">
+                    <div className="relative">
+                      <img
+                        src={`/images/nfl/team_logos/${selectedGame.awayTeam}.png`}
+                        alt={selectedGame.awayTeam}
+                        className="w-12 h-12"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src =
+                            `https://www.fantasynerds.com/images/nfl/team_logos/${selectedGame.awayTeam}.png`;
+                        }}
+                      />
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-1">
+                        <div
+                          className={`font-bold text-lg ${selectedGame.awayScore > selectedGame.homeScore ? "text-green-600" : "text-muted-foreground"}`}
+                        >
+                          {selectedGame.awayTeam}
                         </div>
-                      );
-                    }
-                    return null;
-                  })()}
+                        <div className="flex items-center gap-1">
+                          {selectedGame.awayLocked && (
+                            <Lock className="w-4 h-4 text-blue-500" />
+                          )}
+                          {selectedGame.awayLockAndLoad && (
+                            <Zap className="w-4 h-4 text-orange-500" />
+                          )}
+                        </div>
+                      </div>
+                      {selectedGame.awayOwnerName && (
+                        <div className="text-sm text-muted-foreground">
+                          {selectedGame.awayOwnerName}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    {(selectedGame.awayMokPoints || 0) > 0 && (
+                      <div className="flex items-center gap-1 bg-purple-100 dark:bg-purple-900/30 px-2 py-1 rounded-full">
+                        <Flame className="w-3 h-3 text-purple-600" />
+                        <span className="text-xs font-medium text-purple-700 dark:text-purple-300">
+                          +{selectedGame.awayMokPoints}
+                        </span>
+                      </div>
+                    )}
+                    <div
+                      className={`text-2xl font-bold ${selectedGame.awayScore > selectedGame.homeScore ? "text-foreground" : "text-muted-foreground"}`}
+                    >
+                      {selectedGame.awayScore}
+                    </div>
+                  </div>
                 </div>
-              )}
+
+                {/* Home Team */}
+                <div className="flex items-center justify-between p-4">
+                  <div className="flex items-center gap-4 flex-1">
+                    <div className="relative">
+                      <img
+                        src={`/images/nfl/team_logos/${selectedGame.homeTeam}.png`}
+                        alt={selectedGame.homeTeam}
+                        className="w-12 h-12"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src =
+                            `https://www.fantasynerds.com/images/nfl/team_logos/${selectedGame.homeTeam}.png`;
+                        }}
+                      />
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-1">
+                        <div
+                          className={`font-bold text-lg ${selectedGame.homeScore > selectedGame.awayScore ? "text-green-600" : "text-muted-foreground"}`}
+                        >
+                          {selectedGame.homeTeam}
+                        </div>
+                        <div className="flex items-center gap-1">
+                          {selectedGame.homeLocked && (
+                            <Lock className="w-4 h-4 text-blue-500" />
+                          )}
+                          {selectedGame.homeLockAndLoad && (
+                            <Zap className="w-4 h-4 text-orange-500" />
+                          )}
+                        </div>
+                      </div>
+                      {selectedGame.homeOwnerName && (
+                        <div className="text-sm text-muted-foreground">
+                          {selectedGame.homeOwnerName}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    {(selectedGame.homeMokPoints || 0) > 0 && (
+                      <div className="flex items-center gap-1 bg-purple-100 dark:bg-purple-900/30 px-2 py-1 rounded-full">
+                        <Flame className="w-3 h-3 text-purple-600" />
+                        <span className="text-xs font-medium text-purple-700 dark:text-purple-300">
+                          +{selectedGame.homeMokPoints}
+                        </span>
+                      </div>
+                    )}
+                    <div
+                      className={`text-2xl font-bold ${selectedGame.homeScore > selectedGame.awayScore ? "text-foreground" : "text-muted-foreground"}`}
+                    >
+                      {selectedGame.homeScore}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Mok Points Breakdown */}
+              <div className="bg-muted/30 p-4 space-y-3">
+                <div className="flex items-center gap-2">
+                  <Flame className="w-4 h-4 text-purple-600" />
+                  <h4 className="font-semibold text-sm">
+                    Mok Points Breakdown
+                  </h4>
+                </div>
+                <div className="grid grid-cols-2 gap-3 text-xs">
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <Trophy className="w-3 h-3 text-amber-500" />
+                      <span>
+                        Win: <span className="font-medium">+1</span>
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Lock className="w-3 h-3 text-blue-500" />
+                      <span>
+                        Lock Bonus: <span className="font-medium">+1</span>
+                      </span>
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <Target className="w-3 h-3 text-red-500" />
+                      <span>
+                        Blowout: <span className="font-medium">+1</span>
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Zap className="w-3 h-3 text-orange-500" />
+                      <span>
+                        L&L: <span className="font-medium">+2/-1</span>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Game bonuses if applicable */}
+                {(() => {
+                  const scoreDiff = Math.abs(
+                    selectedGame.homeScore - selectedGame.awayScore,
+                  );
+                  const isBlowout = scoreDiff >= 20;
+                  const isShutout =
+                    selectedGame.homeScore === 0 ||
+                    selectedGame.awayScore === 0;
+
+                  if (isBlowout || isShutout) {
+                    return (
+                      <div className="pt-2 border-t border-border/50">
+                        <div className="text-xs font-medium text-muted-foreground mb-1">
+                          Game Bonuses:
+                        </div>
+                        <div className="flex gap-2">
+                          {isBlowout && (
+                            <Badge variant="secondary" className="text-xs">
+                              <Trophy className="w-3 h-3 mr-1" />
+                              Blowout
+                            </Badge>
+                          )}
+                          {isShutout && (
+                            <Badge variant="secondary" className="text-xs">
+                              <Target className="w-3 h-3 mr-1" />
+                              Shutout
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  }
+                  return null;
+                })()}
+              </div>
             </div>
           )}
         </DialogContent>

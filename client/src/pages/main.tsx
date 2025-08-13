@@ -47,19 +47,19 @@ const getNewsSourceIcon = (source: string) => {
   const sourceLower = source.toLowerCase();
   
   if (sourceLower.includes('espn')) {
-    return <Monitor className="w-4 h-4 text-red-600" />;
+    return <Monitor className="w-6 h-6 text-red-600" />;
   } else if (sourceLower.includes('nfl') || sourceLower.includes('nfl.com')) {
-    return <Shield className="w-4 h-4 text-blue-600" />;
+    return <Shield className="w-6 h-6 text-blue-600" />;
   } else if (sourceLower.includes('twitter') || sourceLower.includes('x.com')) {
-    return <FileText className="w-4 h-4 text-black dark:text-white" />;
+    return <FileText className="w-6 h-6 text-black dark:text-white" />;
   } else if (sourceLower.includes('cnn') || sourceLower.includes('fox') || sourceLower.includes('abc') || sourceLower.includes('nbc')) {
-    return <Monitor className="w-4 h-4 text-blue-600" />;
+    return <Monitor className="w-6 h-6 text-blue-600" />;
   } else if (sourceLower.includes('times') || sourceLower.includes('post') || sourceLower.includes('news')) {
-    return <Newspaper className="w-4 h-4 text-gray-700 dark:text-gray-300" />;
+    return <Newspaper className="w-6 h-6 text-gray-700 dark:text-gray-300" />;
   } else if (sourceLower.includes('yahoo')) {
-    return <Globe className="w-4 h-4 text-purple-600" />;
+    return <Globe className="w-6 h-6 text-purple-600" />;
   } else {
-    return <Bell className="w-4 h-4 text-blue-600" />;
+    return <Bell className="w-6 h-6 text-blue-600" />;
   }
 };
 
@@ -189,9 +189,9 @@ export default function MainPage() {
     <div className="min-h-screen bg-gradient-to-br from-background to-muted/10 pb-20">
       <div className="max-w-4xl mx-auto">
         
-        {/* Standardized Sticky Header */}
-        <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm border-b border-border/50 h-16">
-          <div className="flex items-center justify-between h-full px-6">
+        {/* App Bar */}
+        <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm border-b border-border/50 px-6 py-4">
+          <div className="flex items-center justify-between">
             <div>
               <h1 className="text-xl font-bold text-foreground">Welcome, {user.name.split(' ')[0]}!</h1>
               <p className="text-sm text-muted-foreground">Week {currentWeek} • 2024 Season</p>
@@ -347,7 +347,7 @@ export default function MainPage() {
                   {[...Array(3)].map((_, i) => (
                     <Card key={i} className="p-3 bg-muted/20 rounded-xl animate-pulse">
                       <div className="flex space-x-3">
-                        <div className="w-12 h-12 bg-muted/40 rounded-lg flex-shrink-0" />
+                        <div className="w-16 h-16 bg-muted/40 rounded-lg flex-shrink-0" />
                         <div className="flex-1 min-w-0 space-y-2">
                           <div className="h-4 bg-muted/40 rounded w-3/4" />
                           <div className="h-3 bg-muted/30 rounded w-full" />
@@ -360,32 +360,34 @@ export default function MainPage() {
               ) : (
                 <div className="space-y-3">
                   {/* Weekly Skins Card First */}
-
+                  <Card className="p-3 bg-muted/20 rounded-xl">
+                    <div className="flex space-x-3">
+                      <div className="w-16 h-16 bg-gradient-to-br from-primary/20 to-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <Trophy className="w-6 h-6 text-primary" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-semibold text-sm text-foreground truncate">Week {currentWeek} Skins Prize Pool</h4>
+                        <p className="text-xs text-muted-foreground mt-1">$30 weekly prize up for grabs this week</p>
+                        <p className="text-xs text-muted-foreground">Active now</p>
+                      </div>
+                    </div>
+                  </Card>
                   
                   {/* Real NFL News */}
                   {(nflNewsData as any)?.articles?.slice(0, 3).map((article: any) => (
-                    <Card 
-                      key={article.id} 
-                      className="p-3 bg-muted/20 rounded-xl hover:bg-muted/30 transition-colors cursor-pointer"
-                      onClick={() => article.link && window.open(article.link, '_blank')}
-                    >
+                    <Card key={article.id} className="p-3 bg-muted/20 rounded-xl hover:bg-muted/30 transition-colors cursor-pointer">
                       <div className="flex space-x-3">
-                        <div className="w-12 h-12 bg-gradient-to-br from-muted/40 to-muted/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <div className="w-16 h-16 bg-gradient-to-br from-muted/40 to-muted/20 rounded-lg flex items-center justify-center flex-shrink-0">
                           {getNewsSourceIcon(article.source || '')}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <h4 className="font-semibold text-sm text-foreground line-clamp-2 leading-tight">{article.title}</h4>
+                          <h4 className="font-semibold text-sm text-foreground truncate">{article.title}</h4>
                           <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
-                            {article.description || article.summary || article.content || 'Latest NFL news and updates'}
+                            {article.description || article.summary || 'Latest NFL news and updates'}
                           </p>
-                          <div className="flex items-center justify-between mt-2">
-                            <p className="text-xs text-muted-foreground">
-                              {article.publishedAt ? new Date(article.publishedAt).toLocaleDateString() : 'Recent'} • {article.source}
-                            </p>
-                            {article.link && (
-                              <ExternalLink className="w-3 h-3 text-muted-foreground opacity-60" />
-                            )}
-                          </div>
+                          <p className="text-xs text-muted-foreground">
+                            {new Date(article.publishedAt).toLocaleDateString()} • {article.source}
+                          </p>
                         </div>
                       </div>
                     </Card>
@@ -395,8 +397,8 @@ export default function MainPage() {
                   {!(nflNewsData as any)?.articles?.length && (
                     <Card className="p-3 bg-muted/20 rounded-xl">
                       <div className="flex space-x-3">
-                        <div className="w-12 h-12 bg-gradient-to-br from-gray-500/20 to-gray-500/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                          <Bell className="w-4 h-4 text-gray-600" />
+                        <div className="w-16 h-16 bg-gradient-to-br from-gray-500/20 to-gray-500/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                          <Bell className="w-6 h-6 text-gray-600" />
                         </div>
                         <div className="flex-1 min-w-0">
                           <h4 className="font-semibold text-sm text-foreground truncate">NFL News</h4>

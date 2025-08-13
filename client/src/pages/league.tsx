@@ -118,16 +118,16 @@ export default function LeaguePage() {
 
   return (
     <div className="min-h-screen bg-background pb-20">
-      <div className="max-w-4xl mx-auto">
-        {/* Standardized Sticky Header */}
-        <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm border-b border-border/50 h-16">
-          <div className="flex items-center h-full px-6">
-            <Trophy className="w-6 h-6 text-primary mr-2" />
-            <h1 className="text-xl font-bold">{leagueInfo.name}</h1>
+      <div className="max-w-4xl mx-auto px-4">
+        {/* Simple Header */}
+        <div className="py-6 pb-4">
+          <div className="flex items-center space-x-3">
+            <div className="p-2 bg-yellow-100 dark:bg-yellow-900/30 rounded-full">
+              <Trophy className="w-5 h-5 text-yellow-600 dark:text-yellow-400" />
+            </div>
+            <h1 className="text-2xl font-bold">{leagueInfo.name}</h1>
           </div>
         </div>
-
-        <div className="px-4 pt-6">
 
         {/* Professional Standings Card */}
         <Card className="overflow-hidden bg-gradient-to-br from-card to-card/50 border-border/50 shadow-lg rounded-2xl mb-6">
@@ -151,7 +151,7 @@ export default function LeaguePage() {
                   {/* Main Player Row */}
                   <div 
                     className={`px-4 py-3 transition-all duration-200 cursor-pointer hover:bg-muted/20 ${
-                      member.isCurrentUser ? 'bg-gradient-to-r from-primary/10 to-primary/5 border-l-4 border-primary/40' : ''
+                      member.isCurrentUser ? 'bg-primary/5 border-primary/20' : ''
                     } ${expandedUsers.has(member.name) ? 'bg-muted/10' : ''}`}
                     onClick={() => toggleUserExpansion(member.name)}
                   >
@@ -170,9 +170,10 @@ export default function LeaguePage() {
                         
                         {/* Username */}
                         <div className="flex-1 min-w-0">
-                          <div className={`font-bold text-base truncate ${
-                            member.isCurrentUser ? 'text-primary' : 'text-foreground'
-                          }`}>{member.name}</div>
+                          <div className="font-bold text-base text-foreground truncate">{member.name}</div>
+                          {member.isCurrentUser && (
+                            <Badge variant="secondary" className="text-xs px-2 py-0.5 mt-0.5">You</Badge>
+                          )}
                         </div>
                       </div>
                       
@@ -296,7 +297,6 @@ export default function LeaguePage() {
               </Card>
             ))}
           </div>
-        </div>
         </div>
       </div>
       <BottomNav />
