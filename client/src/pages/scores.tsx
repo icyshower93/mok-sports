@@ -395,9 +395,12 @@ export default function ScoresPage() {
   });
 
   // Get user's teams for highlighting
-  const { data: userTeams } = useQuery({
+  const { data: userTeams, isLoading: userTeamsLoading, error: userTeamsError } = useQuery({
     queryKey: [`/api/user/stable/${currentLeague?.id}`],
     enabled: !!user && !!currentLeague,
+    retry: 3,
+    retryDelay: 1000,
+    staleTime: 30000, // Keep user teams data fresh
   });
 
   // WebSocket connection for real-time updates (using draft WebSocket for lock updates)
@@ -515,17 +518,27 @@ export default function ScoresPage() {
     }) || [];
 
   const isUserTeam = (teamCode: string): boolean => {
+    // Don't try to check if data is still loading
+    if (userTeamsLoading) {
+      return false;
+    }
+
     if (!user || !userTeams) {
-      console.log("[DEBUG] isUserTeam: Missing user or userTeams", {
-        user: !!user,
-        userTeams: !!userTeams,
-      });
+      // Only log error if not loading and error exists
+      if (!userTeamsLoading && userTeamsError) {
+        console.log("[DEBUG] isUserTeam: Error loading user teams", {
+          user: !!user,
+          userTeams: !!userTeams,
+          error: userTeamsError
+        });
+      }
       return false;
     }
 
     const isOwned =
       Array.isArray(userTeams) &&
       userTeams.some((team: any) => team.nflTeam?.code === teamCode);
+    
     if (isOwned) {
       console.log("[DEBUG] ✅ YOUR TEAM FOUND:", teamCode, "- Should be GREEN");
     }
