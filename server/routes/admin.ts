@@ -52,20 +52,53 @@ function get2024Week1Scores(awayTeam: string, homeTeam: string, gameDate: Date):
   return week1Scores[gameKey] || null;
 }
 
-// Calculate current week based on date - 2024 season for testing
-function calculateWeekFromDate(date: Date): number {
-  const seasonStart = new Date(`${adminState.season}-09-04`); // NFL season typically starts first Thursday of September
-  const diffDays = Math.floor((date.getTime() - seasonStart.getTime()) / (1000 * 60 * 60 * 24));
-  
-  // NFL weeks: Thursday start (Week 1), then Sunday-Monday cycles
-  if (diffDays < 0) return 1; // Before season starts
-  if (diffDays < 4) return 1;  // Sept 4-7: Week 1 (Thu-Sun)
-  if (diffDays < 11) return 2; // Sept 8-14: Week 2
-  if (diffDays < 18) return 3; // Sept 15-21: Week 3
-  if (diffDays < 25) return 4; // Sept 22-28: Week 4
-  
-  // Standard 7-day weeks after Week 4
-  return Math.max(1, Math.min(18, Math.floor((diffDays - 4) / 7) + 2));
+// Calculate current week based on actual NFL game schedule - Thursday to Monday cycles
+async function calculateWeekFromDate(date: Date): Promise<number> {
+  try {
+    // Get all games for the season, ordered by date
+    const allGames = await db.select({
+      week: nflGames.week,
+      gameDate: nflGames.gameDate,
+    }).from(nflGames)
+    .where(eq(nflGames.season, adminState.season))
+    .orderBy(nflGames.gameDate);
+
+    if (allGames.length === 0) return 1; // Fallback if no games found
+
+    // Find the appropriate week based on the date
+    // NFL weeks run from Thursday (first game) to Monday (last game)
+    for (let week = 1; week <= 18; week++) {
+      const weekGames = allGames.filter(g => g.week === week);
+      if (weekGames.length === 0) continue;
+
+      // Get first game (Thursday) and last game (Monday) of the week
+      const weekStart = new Date(weekGames[0].gameDate);
+      const weekEnd = new Date(weekGames[weekGames.length - 1].gameDate);
+      
+      // Extend the week end to include the full Monday (11:59 PM)
+      weekEnd.setHours(23, 59, 59, 999);
+
+      // If current date falls within this week's game period
+      if (date >= weekStart && date <= weekEnd) {
+        return week;
+      }
+
+      // If current date is before this week starts, we're still in the previous week
+      // (or pre-season if it's week 1)
+      if (date < weekStart) {
+        return Math.max(1, week - 1);
+      }
+    }
+
+    // If we're past all games, we're in the final week (18)
+    return 18;
+  } catch (error) {
+    console.error('Error calculating week from date:', error);
+    // Fallback to simple calculation if database query fails
+    const seasonStart = new Date(`${adminState.season}-09-04`);
+    const diffDays = Math.floor((date.getTime() - seasonStart.getTime()) / (1000 * 60 * 60 * 24));
+    return Math.max(1, Math.min(18, Math.floor(diffDays / 7) + 1));
+  }
 }
 
 // Update admin state by fetching from database
@@ -90,8 +123,8 @@ async function updateAdminState() {
 
     adminState.totalGamesProcessed = Number(completedGamesResult[0]?.count) || 0;
 
-    // Calculate current week
-    adminState.currentWeek = calculateWeekFromDate(adminState.currentDate);
+    // Calculate current week (async now)
+    adminState.currentWeek = await calculateWeekFromDate(adminState.currentDate);
 
     // Get games processed today
     const todayStart = new Date(adminState.currentDate);
@@ -622,7 +655,7 @@ export function registerAdminRoutes(app: Express) {
       const processedCount = await processGamesForDate(adminState.currentDate);
       
       // Check if week has changed and handle week progression
-      const newWeek = calculateWeekFromDate(adminState.currentDate);
+      const newWeek = await calculateWeekFromDate(adminState.currentDate);
       if (newWeek !== adminState.currentWeek) {
         console.log(`📈 Week progression: ${adminState.currentWeek} → ${newWeek}`);
         await handleWeekProgression(adminState.currentWeek, newWeek, adminState.season);
