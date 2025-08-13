@@ -1,7 +1,7 @@
 import { Express } from 'express';
 import { db } from '../db';
 import { nflGames, nflTeams, userWeeklyScores, stables, users, leagues, weeklyLocks, weeklySkins, leagueMembers } from '@shared/schema';
-import { eq, and, gte, lte, sql, desc } from 'drizzle-orm';
+import { eq, and, gte, lte, sql, desc, or, gt, lt, inArray, isNull } from 'drizzle-orm';
 import { nflDataService } from '../services/nflDataService';
 import { calculateBaseMokPoints } from '../utils/mokScoring';
 import { endOfWeekProcessor } from '../utils/endOfWeekProcessor';
@@ -455,7 +455,11 @@ async function checkAndCalculateWeeklyBonuses(season: number, week: number, forc
     // Only calculate weekly bonuses if ALL games of the week are actually completed
     if (weekComplete && weekGames.length > 0) {
       // Check if bonuses have already been calculated for this week to prevent duplicates
-      const existingBonuses = await db.select()
+      const existingBonuses = await db.select({
+        userId: userWeeklyScores.userId,
+        highBonus: userWeeklyScores.weeklyHighBonusPoints,
+        lowPenalty: userWeeklyScores.weeklyLowPenaltyPoints
+      })
         .from(userWeeklyScores)
         .where(and(
           eq(userWeeklyScores.season, season),
@@ -464,11 +468,11 @@ async function checkAndCalculateWeeklyBonuses(season: number, week: number, forc
             gt(userWeeklyScores.weeklyHighBonusPoints, 0),
             lt(userWeeklyScores.weeklyLowPenaltyPoints, 0)
           )
-        ))
-        .limit(1);
+        ));
 
       if (existingBonuses.length > 0) {
-        console.log(`⚠️  Week ${week} bonuses already calculated - skipping to prevent duplicates`);
+        console.log(`⚠️  Week ${week} bonuses already calculated for ${existingBonuses.length} users - skipping to prevent duplicates`);
+        console.log(`⚠️  Existing bonuses:`, existingBonuses.map(b => `User ${b.userId}: +${b.highBonus || 0}/-${Math.abs(b.lowPenalty || 0)}`));
         return;
       }
 
