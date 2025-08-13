@@ -239,7 +239,7 @@ export default function MainPage() {
             <ScrollArea className="w-full whitespace-nowrap">
               <div className="flex space-x-3 pb-4">
                 {Array.isArray(weeklyRankings) && weeklyRankings.length > 0 ? (
-                  weeklyRankings.slice(0, 6).map((member: any, index: number) => (
+                  weeklyRankings.map((member: any, index: number) => (
                     <Card key={member.name} className="flex-shrink-0 w-32 bg-gradient-to-br from-card to-card/50 border-border/50 rounded-2xl">
                       <CardContent className="p-4 text-center">
                         <div className="relative mb-3">
