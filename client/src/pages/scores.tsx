@@ -107,7 +107,7 @@ export default function ScoresPage() {
   );
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background pb-20">
       {/* Standardized Sticky Header */}
       <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm border-b border-border/50 h-16">
         <div className="flex items-center justify-between h-full px-6">
@@ -128,7 +128,7 @@ export default function ScoresPage() {
 
       <div className="p-4 pt-6 space-y-6">
         {/* Current User Summary */}
-        {currentUserScore && (
+        {currentUserScore ? (
           <Card className="p-4 bg-gradient-to-r from-primary/10 to-secondary/10 border-primary/20">
             <div className="flex items-center justify-between">
               <div>
@@ -148,7 +148,7 @@ export default function ScoresPage() {
               </div>
             </div>
           </Card>
-        )}
+        ) : null}
 
         {/* Week End Results */}
         {weekEndResults && (weekEndResults as WeekEndResults).weekComplete ? (
