@@ -128,7 +128,7 @@ export default function ScoresPage() {
 
       <div className="p-4 space-y-6">
         {/* Current User Summary */}
-        {currentUserScore ? (
+        {currentUserScore && (
           <Card className="p-4 bg-gradient-to-r from-primary/10 to-secondary/10 border-primary/20">
             <div className="flex items-center justify-between">
               <div>
@@ -148,10 +148,10 @@ export default function ScoresPage() {
               </div>
             </div>
           </Card>
-        ) : null}
+        )}
 
         {/* Week End Results */}
-        {weekEndResults && (weekEndResults as WeekEndResults).weekComplete && (
+        {weekEndResults && (weekEndResults as WeekEndResults).weekComplete ? (
           <Card className="p-4">
             <CardHeader className="p-0 pb-4">
               <CardTitle className="text-lg">Week {selectedWeek} Results</CardTitle>
@@ -191,7 +191,7 @@ export default function ScoresPage() {
               )}
             </CardContent>
           </Card>
-        )}
+        ) : null}
 
         {/* Weekly Scores */}
         <Card className="p-4">
