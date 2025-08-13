@@ -178,7 +178,7 @@ export default function LeaguePage() {
                       </div>
                       
                       {/* Right: Stats */}
-                      <div className="flex items-center space-x-4">
+                      <div className="flex items-center justify-end space-x-6">
                         {/* Locks Correct */}
                         <div className="text-center min-w-[40px]">
                           <div className="text-xs text-muted-foreground font-medium">LOCKS</div>
