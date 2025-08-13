@@ -19,11 +19,11 @@ let adminState = {
 
 
 
-// Authentic 2024 NFL Week 1 scores for testing
-function get2024Week1Scores(awayTeam: string, homeTeam: string, gameDate: Date): { homeScore: number, awayScore: number } | null {
+// Authentic 2024 NFL scores for testing (Weeks 1-2)
+function get2024AuthenticScores(awayTeam: string, homeTeam: string, gameDate: Date): { homeScore: number, awayScore: number } | null {
   const dateStr = gameDate.toISOString().split('T')[0];
   
-  // Week 1 2024 authentic NFL scores
+  // Week 1 2024 authentic NFL scores (Sept 5-9)
   const week1Scores: Record<string, { homeScore: number, awayScore: number }> = {
     // Thursday 9/5
     'BAL@KC': { homeScore: 27, awayScore: 20 },
@@ -47,9 +47,35 @@ function get2024Week1Scores(awayTeam: string, homeTeam: string, gameDate: Date):
     // Monday 9/9
     'SF@NYJ': { homeScore: 19, awayScore: 32 }
   };
+
+  // Week 2 2024 authentic NFL scores (Sept 12-16)
+  const week2Scores: Record<string, { homeScore: number, awayScore: number }> = {
+    // Thursday 9/12
+    'MIA@BUF': { homeScore: 31, awayScore: 10 },
+    // Sunday 9/15 Early
+    'SF@MIN': { homeScore: 17, awayScore: 23 },
+    'NYJ@TEN': { homeScore: 17, awayScore: 24 },
+    'CAR@LAC': { homeScore: 26, awayScore: 3 },
+    'NE@SEA': { homeScore: 23, awayScore: 20 }, // OT
+    'DET@TB': { homeScore: 20, awayScore: 16 },
+    'NYG@WSH': { homeScore: 21, awayScore: 18 },
+    'GB@IND': { homeScore: 16, awayScore: 21 },
+    // Sunday 9/15 Late
+    'BAL@LV': { homeScore: 26, awayScore: 23 },
+    'DAL@NO': { homeScore: 44, awayScore: 19 },
+    'JAX@CLE': { homeScore: 18, awayScore: 13 },
+    'LAR@ARI': { homeScore: 41, awayScore: 10 },
+    'CIN@KC': { homeScore: 26, awayScore: 25 },
+    'DEN@PIT': { homeScore: 13, awayScore: 6 },
+    'HOU@CHI': { homeScore: 19, awayScore: 13 },
+    // Monday 9/16
+    'PHI@ATL': { homeScore: 22, awayScore: 21 }
+  };
   
   const gameKey = `${awayTeam}@${homeTeam}`;
-  return week1Scores[gameKey] || null;
+  
+  // Check both weeks
+  return week1Scores[gameKey] || week2Scores[gameKey] || null;
 }
 
 // Calculate current week based on actual NFL game schedule - Thursday to Monday cycles
@@ -231,7 +257,7 @@ async function processGamesForDate(targetDate: Date): Promise<number> {
 
         // For 2024 testing season, always use authentic NFL scores since Tank01 may not have historical data
         if (adminState.season === 2024) {
-          const authentic2024Scores = get2024Week1Scores(game.awayTeamCode, game.homeTeamCode, game.gameDate);
+          const authentic2024Scores = get2024AuthenticScores(game.awayTeamCode, game.homeTeamCode, game.gameDate);
           if (authentic2024Scores) {
             homeScore = authentic2024Scores.homeScore;
             awayScore = authentic2024Scores.awayScore;
