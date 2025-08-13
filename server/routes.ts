@@ -1828,6 +1828,60 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // NFL News endpoint using Tank01 API
+  app.get("/api/nfl-news", async (req, res) => {
+    try {
+      const maxItems = parseInt(req.query.maxItems as string) || 20;
+      const fantasyNews = req.query.fantasyNews === 'true';
+      
+      const url = `https://tank01-nfl-live-in-game-real-time-statistics-nfl.p.rapidapi.com/getNFLNews?fantasyNews=${fantasyNews}&maxItems=${maxItems}`;
+      const options = {
+        method: 'GET',
+        headers: {
+          'x-rapidapi-key': process.env.RAPIDAPI_KEY || '',
+          'x-rapidapi-host': 'tank01-nfl-live-in-game-real-time-statistics-nfl.p.rapidapi.com'
+        }
+      };
+
+      const response = await fetch(url, options);
+      
+      if (!response.ok) {
+        throw new Error(`Tank01 API returned ${response.status}: ${response.statusText}`);
+      }
+      
+      const data = await response.json();
+      
+      // Transform the data to include our custom fields
+      const transformedNews = data.body?.map((article: any) => ({
+        id: article.id || Math.random().toString(36).substr(2, 9),
+        title: article.title || 'NFL News Update',
+        description: article.description || article.summary || 'Latest NFL news and updates',
+        source: article.source || 'NFL',
+        publishedAt: article.published || article.timePosted || new Date().toISOString(),
+        url: article.link || article.url || '#',
+        imageUrl: article.image || article.thumbnail || null,
+        category: article.category || 'general',
+        isFantasyRelated: fantasyNews
+      })) || [];
+
+      res.json({
+        success: true,
+        articles: transformedNews,
+        totalCount: transformedNews.length,
+        requestedMax: maxItems,
+        fantasyNews
+      });
+      
+    } catch (error) {
+      console.error('Error fetching NFL news:', error);
+      res.status(500).json({ 
+        success: false,
+        message: "Failed to fetch NFL news",
+        error: error instanceof Error ? error.message : 'Unknown error'
+      });
+    }
+  });
+
   // Debug endpoint to verify asset serving and MIME types
   app.get("/api/debug/asset-check", async (req, res) => {
     try {

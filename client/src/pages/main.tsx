@@ -93,6 +93,20 @@ export default function MainPage() {
     enabled: !!selectedLeague,
   });
 
+  // Fetch NFL news
+  const { data: nflNewsData, isLoading: newsLoading } = useQuery({
+    queryKey: ['/api/nfl-news'],
+    queryFn: async () => {
+      const response = await fetch('/api/nfl-news?fantasyNews=true&maxItems=5');
+      if (!response.ok) {
+        throw new Error('Failed to fetch NFL news');
+      }
+      return response.json();
+    },
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    refetchInterval: 10 * 60 * 1000, // Refresh every 10 minutes
+  });
+
   // Extract current user's data from league standings
   const currentUserStanding = (leagueData as any)?.standings?.find((member: any) => member.isCurrentUser);
   const userTotalPoints = currentUserStanding?.points || 0;
@@ -303,34 +317,72 @@ export default function MainPage() {
               </div>
             </CardHeader>
             <CardContent className="space-y-4">
-              {/* Mock news items */}
-              <div className="space-y-3">
-                <Card className="p-3 bg-muted/20 rounded-xl">
-                  <div className="flex space-x-3">
-                    <div className="w-16 h-16 bg-gradient-to-br from-primary/20 to-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                      <Trophy className="w-6 h-6 text-primary" />
+              {newsLoading ? (
+                <div className="space-y-3">
+                  {[...Array(3)].map((_, i) => (
+                    <Card key={i} className="p-3 bg-muted/20 rounded-xl animate-pulse">
+                      <div className="flex space-x-3">
+                        <div className="w-16 h-16 bg-muted/40 rounded-lg flex-shrink-0" />
+                        <div className="flex-1 min-w-0 space-y-2">
+                          <div className="h-4 bg-muted/40 rounded w-3/4" />
+                          <div className="h-3 bg-muted/30 rounded w-full" />
+                          <div className="h-3 bg-muted/30 rounded w-1/2" />
+                        </div>
+                      </div>
+                    </Card>
+                  ))}
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {/* Weekly Skins Card First */}
+                  <Card className="p-3 bg-muted/20 rounded-xl">
+                    <div className="flex space-x-3">
+                      <div className="w-16 h-16 bg-gradient-to-br from-primary/20 to-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <Trophy className="w-6 h-6 text-primary" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-semibold text-sm text-foreground truncate">Week {currentWeek} Skins Prize Pool</h4>
+                        <p className="text-xs text-muted-foreground mt-1">$30 weekly prize up for grabs this week</p>
+                        <p className="text-xs text-muted-foreground">Active now</p>
+                      </div>
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <h4 className="font-semibold text-sm text-foreground truncate">Week {currentWeek} Skins Prize Pool</h4>
-                      <p className="text-xs text-muted-foreground mt-1">$30 weekly prize up for grabs this week</p>
-                      <p className="text-xs text-muted-foreground">2 hours ago</p>
-                    </div>
-                  </div>
-                </Card>
-                
-                <Card className="p-3 bg-muted/20 rounded-xl">
-                  <div className="flex space-x-3">
-                    <div className="w-16 h-16 bg-gradient-to-br from-green-500/20 to-green-500/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                      <Activity className="w-6 h-6 text-green-600" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <h4 className="font-semibold text-sm text-foreground truncate">NFL Week {currentWeek} Schedule</h4>
-                      <p className="text-xs text-muted-foreground mt-1">Check out this week's matchups and point spreads</p>
-                      <p className="text-xs text-muted-foreground">1 day ago</p>
-                    </div>
-                  </div>
-                </Card>
-              </div>
+                  </Card>
+                  
+                  {/* Real NFL News */}
+                  {(nflNewsData as any)?.articles?.slice(0, 3).map((article: any) => (
+                    <Card key={article.id} className="p-3 bg-muted/20 rounded-xl hover:bg-muted/30 transition-colors cursor-pointer">
+                      <div className="flex space-x-3">
+                        <div className="w-16 h-16 bg-gradient-to-br from-blue-500/20 to-blue-500/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                          <Bell className="w-6 h-6 text-blue-600" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h4 className="font-semibold text-sm text-foreground truncate">{article.title}</h4>
+                          <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{article.description}</p>
+                          <p className="text-xs text-muted-foreground">
+                            {new Date(article.publishedAt).toLocaleDateString()} • {article.source}
+                          </p>
+                        </div>
+                      </div>
+                    </Card>
+                  ))}
+                  
+                  {/* Fallback if no news */}
+                  {!(nflNewsData as any)?.articles?.length && (
+                    <Card className="p-3 bg-muted/20 rounded-xl">
+                      <div className="flex space-x-3">
+                        <div className="w-16 h-16 bg-gradient-to-br from-gray-500/20 to-gray-500/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                          <Bell className="w-6 h-6 text-gray-600" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h4 className="font-semibold text-sm text-foreground truncate">NFL News</h4>
+                          <p className="text-xs text-muted-foreground mt-1">Latest news updates coming soon</p>
+                          <p className="text-xs text-muted-foreground">Check back later</p>
+                        </div>
+                      </div>
+                    </Card>
+                  )}
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>
