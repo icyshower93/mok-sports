@@ -422,8 +422,25 @@ export class DraftWebSocketManager {
           message: 'Scores page WebSocket connection established'
         }));
         console.log('[WebSocket] 📤 Sent connection acknowledgment to scores page');
+        console.log(`[WebSocket] 📊 CURRENT ADMIN CONNECTIONS: ${this.connections.get('admin_updates')?.length || 0}`);
       }
     }, 100);
+    
+    // Add periodic ping to keep connection alive
+    const pingInterval = setInterval(() => {
+      if (ws.readyState === 1) { // OPEN
+        try {
+          ws.ping();
+          console.log('[WebSocket] 🏓 Admin connection ping sent to keep alive');
+        } catch (error) {
+          console.log('[WebSocket] Admin ping failed, connection likely closed:', error);
+          clearInterval(pingInterval);
+        }
+      } else {
+        console.log('[WebSocket] Admin connection not open, clearing ping interval');
+        clearInterval(pingInterval);
+      }
+    }, 30000); // Ping every 30 seconds
     
     // Handle admin messages
     ws.on('message', (data) => {
