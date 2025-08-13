@@ -217,7 +217,11 @@ export default function MainPage() {
                   <p className="text-xs text-muted-foreground">Current standings</p>
                 </div>
                 <div className="p-2 bg-primary/10 rounded-full">
-                  <Trophy className="w-4 h-4 text-primary" />
+                  <img 
+                    src="/attached_assets/MokSports_White_1755068930869.png" 
+                    alt="Mok Sports"
+                    className="w-4 h-4 object-contain"
+                  />
                 </div>
               </div>
               
