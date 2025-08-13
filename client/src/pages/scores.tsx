@@ -215,6 +215,15 @@ export default function ScoresPage() {
               console.log(
                 "📊 [WebSocket] Invalidated ALL queries after lock update",
               );
+            } else if (message.type === "weekly_bonuses_calculated") {
+              console.log(
+                "Weekly bonuses calculated, refreshing scores immediately...",
+              );
+              // Force invalidate ALL queries to show updated scores with bonuses
+              queryClient.invalidateQueries();
+              console.log(
+                "📊 [WebSocket] Invalidated ALL queries after weekly bonus calculation",
+              );
             }
           } catch (e) {
             console.log("WebSocket message parsing error:", e);
@@ -391,6 +400,11 @@ export default function ScoresPage() {
           });
 
           console.log("[WebSocket] Refreshed scores after lock update");
+        } else if (message.type === "weekly_bonuses_calculated") {
+          console.log("[WebSocket] Weekly bonuses calculated - refreshing scores immediately");
+          // Force invalidate ALL queries to show updated scores with bonuses
+          queryClient.invalidateQueries();
+          console.log("[WebSocket] Invalidated all queries after weekly bonus calculation");
         }
       } catch (error) {
         console.error("[WebSocket] Error parsing message:", error);

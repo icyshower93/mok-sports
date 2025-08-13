@@ -613,6 +613,23 @@ async function checkAndCalculateWeeklyBonuses(season: number, week: number, forc
           }
         }
         
+        // Broadcast changes to UI immediately after applying bonuses
+        const draftManager = (global as any).draftManager;
+        if (draftManager && draftManager.broadcast) {
+          draftManager.broadcast({
+            type: 'weekly_bonuses_calculated',
+            data: {
+              season,
+              week,
+              highestScore,
+              lowestScore,
+              highestTeams: highestTeams.map(t => t.teamCode),
+              lowestTeams: lowestTeams.map(t => t.teamCode)
+            }
+          });
+          console.log(`📢 Broadcast weekly bonuses calculation for Week ${week}`);
+        }
+        
         console.log(`✅ Applied NFL team-based weekly bonuses: High (${highestScore}) to ${highestTeams.length} teams, Low (${lowestScore}) to ${lowestTeams.length} teams`);
       }
     }
