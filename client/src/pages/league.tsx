@@ -7,7 +7,7 @@ import { Progress } from "@/components/ui/progress";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/use-auth";
 import { useLocation } from "wouter";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { 
   Trophy, 
   DollarSign, 
@@ -94,7 +94,7 @@ export default function LeaguePage() {
   const { league: leagueInfo, standings, seasonPrizes } = leagueData as any || { league: null, standings: [], seasonPrizes: [] };
 
   // Process skins data to calculate skins won per user
-  const userSkinsWon = React.useMemo(() => {
+  const userSkinsWon = useMemo(() => {
     if (!skinsData?.skins) return {};
     
     const skinsCount: Record<string, number> = {};
