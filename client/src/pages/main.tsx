@@ -218,15 +218,16 @@ export default function MainPage() {
                 </div>
                 <div className="p-3 bg-primary/10 rounded-full flex items-center justify-center">
                   <img 
-                    src="/attached_assets/MokSports_White_1755068930869.png" 
+                    src="/attached_assets/moksports logo_1755069436420.png" 
                     alt="Mok Sports"
-                    className="w-7 h-7 object-contain filter invert dark:invert-0"
+                    className="w-8 h-8 object-contain filter invert dark:invert-0"
                     onLoad={() => console.log('Mok Sports logo loaded successfully')}
                     onError={(e) => {
                       console.log('Logo failed to load at path:', e.currentTarget.src);
+                      // Fallback to trophy icon instead of star
                       const container = e.currentTarget.parentElement;
                       if (container) {
-                        container.innerHTML = '<svg class="w-6 h-6 text-primary" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L13.5 8.5L20 7L14.5 12L20 17L13.5 15.5L12 22L10.5 15.5L4 17L9.5 12L4 7L10.5 8.5Z"/></svg>';
+                        container.innerHTML = '<svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>';
                       }
                     }}
                   />
