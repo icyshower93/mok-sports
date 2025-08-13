@@ -1,148 +1,122 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Emergency Cache Break - Mok Sports</title>
+    <title>🚨 EMERGENCY CACHE FIX - Mok Sports</title>
+    <meta charset="utf-8">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <style>
-        body {
-            background: #0f172a;
-            color: white;
-            font-family: system-ui;
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif; 
+            max-width: 400px; 
+            margin: 20px auto; 
+            padding: 20px; 
+            background: #1a202c;
+            color: #e2e8f0;
             text-align: center;
-            padding: 50px 20px;
         }
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
+        .critical { 
+            background: linear-gradient(135deg, #e53e3e, #c53030); 
+            color: white; 
+            padding: 20px; 
+            margin: 20px 0; 
+            border-radius: 12px; 
+            font-weight: bold;
+            animation: pulse 2s infinite;
         }
-        h1 { color: #10b981; }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(229, 62, 62, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(229, 62, 62, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(229, 62, 62, 0); }
+        }
+        .step { 
+            background: #2d3748; 
+            padding: 15px; 
+            margin: 15px 0; 
+            border-radius: 8px; 
+            border-left: 4px solid #48bb78;
+        }
+        .code { 
+            background: #4a5568; 
+            padding: 8px 12px; 
+            border-radius: 6px; 
+            font-family: 'Monaco', monospace;
+            font-weight: bold;
+            color: #fbb6ce;
+            display: inline-block;
+            margin: 5px;
+        }
+        .success { color: #68d391; font-weight: bold; }
+        .warning { color: #f6e05e; font-weight: bold; }
+        h1 { color: #f56565; }
+        .instructions {
+            text-align: left;
+            line-height: 1.6;
+        }
         .button {
-            background: #10b981;
+            background: #48bb78;
             color: white;
             padding: 12px 24px;
             border: none;
             border-radius: 8px;
+            font-weight: bold;
             cursor: pointer;
-            font-size: 16px;
             margin: 10px;
-        }
-        .button:hover {
-            background: #059669;
-        }
-        .status {
-            margin: 20px 0;
-            padding: 15px;
-            border-radius: 8px;
-            background: #1e293b;
+            text-decoration: none;
+            display: inline-block;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>🚨 Emergency Cache Recovery</h1>
-        <p>Your browser has extreme cache corruption. We need to manually break the cache cycle.</p>
-        
-        <div class="status" id="status">
-            Ready to clear all caches and force fresh load
-        </div>
-        
-        <button class="button" onclick="emergencyReset()">
-            🗑️ Emergency Cache Clear + Reload
-        </button>
-        
-        <button class="button" onclick="manualReset()">
-            🔄 Manual Hard Refresh
-        </button>
-        
-        <button class="button" onclick="checkStatus()">
-            📊 Check Cache Status
-        </button>
+    <h1>🚨 ROUTING EMERGENCY</h1>
+    
+    <div class="critical">
+        Your browser is loading SCORES page when you click LEAGUE tab!<br>
+        This is a severe routing cache corruption.
     </div>
 
-    <script>
-        console.log('[Emergency] Cache break page loaded');
-        
-        async function emergencyReset() {
-            const status = document.getElementById('status');
-            
-            try {
-                status.innerHTML = 'Step 1: Unregistering all service workers...';
-                
-                // Unregister ALL service workers
-                if ('serviceWorker' in navigator) {
-                    const registrations = await navigator.serviceWorker.getRegistrations();
-                    console.log('[Emergency] Found', registrations.length, 'service workers');
-                    for (let registration of registrations) {
-                        await registration.unregister();
-                        console.log('[Emergency] Unregistered service worker');
-                    }
-                }
-                
-                status.innerHTML = 'Step 2: Clearing all browser caches...';
-                
-                // Clear all caches
-                if ('caches' in window) {
-                    const cacheNames = await caches.keys();
-                    console.log('[Emergency] Found', cacheNames.length, 'caches');
-                    for (let cacheName of cacheNames) {
-                        await caches.delete(cacheName);
-                        console.log('[Emergency] Deleted cache:', cacheName);
-                    }
-                }
-                
-                status.innerHTML = 'Step 3: Clearing local storage...';
-                
-                // Clear all storage
-                localStorage.clear();
-                sessionStorage.clear();
-                
-                status.innerHTML = 'Step 4: Force refreshing to main app...';
-                
-                // Navigate to main app with extreme cache busting
-                const url = new URL(window.location.origin);
-                url.searchParams.set('emergency-reset', Date.now());
-                url.searchParams.set('cache-break', Math.random().toString(36));
-                url.searchParams.set('force-refresh', 'true');
-                
-                setTimeout(() => {
-                    window.location.href = url.toString();
-                }, 1000);
-                
-            } catch (error) {
-                status.innerHTML = '❌ Error: ' + error.message;
-                console.error('[Emergency] Reset failed:', error);
-            }
-        }
-        
-        function manualReset() {
-            alert('Please manually:\n1. Press Ctrl+Shift+R (or Cmd+Shift+R on Mac)\n2. If that fails, open DevTools > Application > Storage > Clear site data');
-        }
-        
-        async function checkStatus() {
-            const status = document.getElementById('status');
-            let report = [];
-            
-            // Check service workers
-            if ('serviceWorker' in navigator) {
-                const registrations = await navigator.serviceWorker.getRegistrations();
-                report.push(`Service Workers: ${registrations.length}`);
-                registrations.forEach(reg => {
-                    report.push(`- ${reg.scope}: ${reg.active?.scriptURL || 'inactive'}`);
-                });
-            }
-            
-            // Check caches
-            if ('caches' in window) {
-                const cacheNames = await caches.keys();
-                report.push(`Browser Caches: ${cacheNames.length}`);
-                cacheNames.forEach(name => {
-                    report.push(`- ${name}`);
-                });
-            }
-            
-            status.innerHTML = '<pre>' + report.join('\\n') + '</pre>';
-        }
-    </script>
+    <div class="step instructions">
+        <h3>🔥 NUCLEAR CACHE DESTRUCTION:</h3>
+        <p><strong>Chrome/Edge:</strong></p>
+        <ol>
+            <li>Press <span class="code">F12</span> to open DevTools</li>
+            <li>Go to <strong>Application</strong> tab</li>
+            <li>Click <strong>Storage</strong> on left sidebar</li>
+            <li>Click <strong>"Clear site data"</strong> button</li>
+            <li>Close DevTools</li>
+        </ol>
+
+        <p><strong>Firefox:</strong></p>
+        <ol>
+            <li>Press <span class="code">Ctrl+Shift+I</span></li>
+            <li>Go to <strong>Storage</strong> tab</li>
+            <li>Right-click your domain</li>
+            <li>Select <strong>"Delete All"</strong></li>
+        </ol>
+
+        <p><strong>Safari:</strong></p>
+        <ol>
+            <li>Press <span class="code">Cmd+Option+E</span> (Empty Cache)</li>
+            <li>Then <span class="code">Cmd+Option+R</span> (Hard Reload)</li>
+        </ol>
+    </div>
+
+    <div class="step">
+        <h3>✅ Verification:</h3>
+        <p>After clearing, you should see:</p>
+        <ul>
+            <li class="success">Build version "meaj1f0x" (not "meag0cce")</li>
+            <li class="success">League tab shows league data (not scores)</li>
+            <li class="success">NO "SCORES PAGE COMPONENT RENDERING" in console when on League tab</li>
+        </ul>
+    </div>
+
+    <div class="step">
+        <p class="warning">If this still fails, try Incognito/Private mode:</p>
+        <div class="code">Ctrl+Shift+N (Chrome) or Cmd+Shift+N (Safari)</div>
+    </div>
+
+    <a href="/" class="button">🔄 Try App Again</a>
 </body>
 </html>

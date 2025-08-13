@@ -1,0 +1,947 @@
+🏗️ Build Info: Object
+index-T-lt5Bch.js:397 📦 Version: meag0cce
+index-T-lt5Bch.js:397 📅 Built: 2025-08-13T20:48:34.430Z
+index-T-lt5Bch.js:397 🔧 Environment: production
+index-T-lt5Bch.js:353 [Auth] Token check - Has token: true Has user: false Loading: true
+index-T-lt5Bch.js:353 [SW Hook] EMERGENCY: Unregistering all existing service workers
+index-T-lt5Bch.js:353 [SW Hook] Found 1 existing registrations
+index-T-lt5Bch.js:353 [SW Hook] Unregistering existing service worker
+index-T-lt5Bch.js:353 [SW Hook] Found 1 caches to delete
+index-T-lt5Bch.js:353 [SW Hook] Deleting cache: mok-sports-dynamic-v1.7.0-nuclear-unregister-1755118110013
+index-T-lt5Bch.js:353 [Auth] Token check - Has token: true Has user: true Loading: false
+index-T-lt5Bch.js:353 [SubscriptionManager] 4:48:34 PM - Permission is granted and no active subscription - auto-creating subscription
+index-T-lt5Bch.js:353 [AutoPushRefresh] Legacy hook delegating to SubscriptionManager
+index-T-lt5Bch.js:353 [SW Hook] Registering fresh service worker: /sw.js?v=1755118114549&r=0.751557407485411
+league:1 Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner.
+sw.js?v=1755118114549&r=0.751557407485411:2 [SW] NUCLEAR OPTION - Emergency service worker loading
+sw.js?v=1755118114549&r=0.751557407485411:88 [SW] Service worker starting, version: v1.7.0-nuclear-unregister-1755118114614
+sw.js?v=1755118114549&r=0.751557407485411:305 [SW] Service worker script loaded successfully
+sw.js?v=1755118114549&r=0.751557407485411:19 [SW] EMERGENCY INSTALL - Clearing all caches and forcing activation
+index-T-lt5Bch.js:353 [SW Hook] Service worker registered successfully
+sw.js?v=1755118114549&r=0.751557407485411:92 [SW] Installing service worker, version: v1.7.0-nuclear-unregister-1755118114614
+sw.js?v=1755118114549&r=0.751557407485411:22 [SW] Found caches to delete: Array(1)
+sw.js?v=1755118114549&r=0.751557407485411:25 [SW] Force deleting cache: mok-sports-dynamic-v1.7.0-nuclear-unregister-1755118110013
+sw.js?v=1755118114549&r=0.751557407485411:96 [SW] Caching static files
+sw.js?v=1755118114549&r=0.751557407485411:30 [SW] All caches deleted - skipping waiting
+sw.js?v=1755118114549&r=0.751557407485411:99 [SW] Static files cached successfully
+index-T-lt5Bch.js:353 [SubscriptionManager] 4:48:35 PM - Starting subscription refresh...
+index-T-lt5Bch.js:353 [SubscriptionManager] 4:48:35 PM - Creating new push subscription...
+index-T-lt5Bch.js:353 [SubscriptionManager] 4:48:35 PM - Sending subscription to server: https://fcm.googleapis.com/fcm/send/f15BxoHrsQo:AP...
+index-T-lt5Bch.js:353 [SubscriptionManager] 4:48:35 PM - Server response: 201 
+index-T-lt5Bch.js:353 [SubscriptionManager] 4:48:35 PM - Subscription registered successfully: Subscription registered successfully
+sw.js?v=1755118114549&r=0.751557407485411:41 [SW] EMERGENCY ACTIVATE - Taking control of all clients
+sw.js?v=1755118114549&r=0.751557407485411:110 [SW] Activating service worker, version: v1.7.0-nuclear-unregister-1755118114614
+sw.js?v=1755118114549&r=0.751557407485411:46 [SW] Deleting remaining cache: mok-sports-static-v1.7.0-nuclear-unregister-1755118114614
+sw.js?v=1755118114549&r=0.751557407485411:116 [SW] Found caches: Array(1)
+sw.js?v=1755118114549&r=0.751557407485411:129 [SW] Service worker activated and controlling all clients
+sw.js?v=1755118114549&r=0.751557407485411:51 [SW] Claiming all clients immediately
+index-T-lt5Bch.js:397 🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE
+index-T-lt5Bch.js:397 🧪 Test functions added to window: testAdminReset() and testAdminAdvance()
+index-T-lt5Bch.js:397 🔌 SCORES PAGE WEBSOCKET USEEFFECT TRIGGERED - SETTING UP CONNECTION
+index-T-lt5Bch.js:397 🔍 UserAgent check: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36
+index-T-lt5Bch.js:397 🔍 Window location: https://mok-sports-draft-mokfantasysport.replit.app/scores
+index-T-lt5Bch.js:397 🔍 WebSocket support: true
+index-T-lt5Bch.js:397 🚀 Attempting to connect WebSocket for scores page: wss://mok-sports-draft-mokfantasysport.replit.app/draft-ws
+index-T-lt5Bch.js:397 🔍 Current protocol: https:
+index-T-lt5Bch.js:397 🔍 Current host: mok-sports-draft-mokfantasysport.replit.app
+index-T-lt5Bch.js:397 [DEBUG] Fetching games for week 1 season 2024
+index-T-lt5Bch.js:397 [WebSocket] Connecting to draft WebSocket for lock updates: wss://mok-sports-draft-mokfantasysport.replit.app/draft-ws
+sw.js?v=1755118114549&r=0.751557407485411:164 [SW] Fetching /favicon.ico from network
+3index-T-lt5Bch.js:397 🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE
+index-T-lt5Bch.js:397 ✅ Scores WebSocket connected successfully for live admin updates
+index-T-lt5Bch.js:397 🔗 WebSocket state: 1
+index-T-lt5Bch.js:397 📤 Sending identify message: Object
+index-T-lt5Bch.js:397 🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE
+index-T-lt5Bch.js:397 📊 Setting default week to 1 based on current date
+index-T-lt5Bch.js:397 🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE
+index-T-lt5Bch.js:397 Scores WebSocket received message: identified
+index-T-lt5Bch.js:397 🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE
+index-T-lt5Bch.js:397 [DEBUG] API Response: Object
+index-T-lt5Bch.js:397 🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE
+index-T-lt5Bch.js:397 [DEBUG] isUserTeam: Missing user or userTeams Object
+index-T-lt5Bch.js:397 [DEBUG] isUserTeam: Missing user or userTeams Object
+index-T-lt5Bch.js:397 [DEBUG] isUserTeam: Missing user or userTeams Object
+index-T-lt5Bch.js:397 [DEBUG] isUserTeam: Missing user or userTeams Object
+index-T-lt5Bch.js:397 [DEBUG] isUserTeam: Missing user or userTeams Object
+index-T-lt5Bch.js:397 [DEBUG] isUserTeam: Missing user or userTeams Object
+index-T-lt5Bch.js:397 [DEBUG] isUserTeam: Missing user or userTeams Object
+index-T-lt5Bch.js:397 [DEBUG] isUserTeam: Missing user or userTeams Object
+index-T-lt5Bch.js:397 [DEBUG] isUserTeam: Missing user or userTeams Object
+index-T-lt5Bch.js:397 [DEBUG] isUserTeam: Missing user or userTeams Object
+index-T-lt5Bch.js:397 [DEBUG] isUserTeam: Missing user or userTeams Object
+index-T-lt5Bch.js:397 [DEBUG] isUserTeam: Missing user or userTeams Object
+index-T-lt5Bch.js:397 [DEBUG] isUserTeam: Missing user or userTeams Object
+index-T-lt5Bch.js:397 [DEBUG] isUserTeam: Missing user or userTeams Object
+index-T-lt5Bch.js:397 [DEBUG] isUserTeam: Missing user or userTeams Object
+index-T-lt5Bch.js:397 [DEBUG] isUserTeam: Missing user or userTeams Object
+index-T-lt5Bch.js:397 [DEBUG] isUserTeam: Missing user or userTeams Object
+index-T-lt5Bch.js:397 [DEBUG] isUserTeam: Missing user or userTeams Object
+index-T-lt5Bch.js:397 [DEBUG] isUserTeam: Missing user or userTeams Object
+index-T-lt5Bch.js:397 [DEBUG] isUserTeam: Missing user or userTeams Object
+index-T-lt5Bch.js:397 [DEBUG] isUserTeam: Missing user or userTeams Object
+index-T-lt5Bch.js:397 [DEBUG] isUserTeam: Missing user or userTeams Object
+index-T-lt5Bch.js:397 [DEBUG] isUserTeam: Missing user or userTeams Object
+index-T-lt5Bch.js:397 [DEBUG] isUserTeam: Missing user or userTeams Object
+index-T-lt5Bch.js:397 [DEBUG] isUserTeam: Missing user or userTeams Object
+index-T-lt5Bch.js:397 [DEBUG] isUserTeam: Missing user or userTeams Object
+index-T-lt5Bch.js:397 [DEBUG] isUserTeam: Missing user or userTeams Object
+index-T-lt5Bch.js:397 [DEBUG] isUserTeam: Missing user or userTeams Object
+index-T-lt5Bch.js:397 [DEBUG] isUserTeam: Missing user or userTeams Object
+index-T-lt5Bch.js:397 [DEBUG] isUserTeam: Missing user or userTeams Object
+index-T-lt5Bch.js:397 [DEBUG] isUserTeam: Missing user or userTeams Object
+index-T-lt5Bch.js:397 [DEBUG] isUserTeam: Missing user or userTeams Object
+sw.js?v=1755118114549&r=0.751557407485411:164 [SW] Fetching /images/nfl/team_logos/BAL.png from network
+sw.js?v=1755118114549&r=0.751557407485411:164 [SW] Fetching /images/nfl/team_logos/KC.png from network
+sw.js?v=1755118114549&r=0.751557407485411:164 [SW] Fetching /images/nfl/team_logos/PHI.png from network
+sw.js?v=1755118114549&r=0.751557407485411:164 [SW] Fetching /images/nfl/team_logos/GB.png from network
+sw.js?v=1755118114549&r=0.751557407485411:164 [SW] Fetching /images/nfl/team_logos/ARI.png from network
+sw.js?v=1755118114549&r=0.751557407485411:164 [SW] Fetching /images/nfl/team_logos/BUF.png from network
+sw.js?v=1755118114549&r=0.751557407485411:164 [SW] Fetching /images/nfl/team_logos/CAR.png from network
+sw.js?v=1755118114549&r=0.751557407485411:164 [SW] Fetching /images/nfl/team_logos/NO.png from network
+sw.js?v=1755118114549&r=0.751557407485411:164 [SW] Fetching /images/nfl/team_logos/CHI.png from network
+sw.js?v=1755118114549&r=0.751557407485411:164 [SW] Fetching /images/nfl/team_logos/TEN.png from network
+sw.js?v=1755118114549&r=0.751557407485411:164 [SW] Fetching /images/nfl/team_logos/IND.png from network
+sw.js?v=1755118114549&r=0.751557407485411:164 [SW] Fetching /images/nfl/team_logos/HOU.png from network
+sw.js?v=1755118114549&r=0.751557407485411:164 [SW] Fetching /images/nfl/team_logos/JAX.png from network
+sw.js?v=1755118114549&r=0.751557407485411:164 [SW] Fetching /images/nfl/team_logos/MIA.png from network
+sw.js?v=1755118114549&r=0.751557407485411:164 [SW] Fetching /images/nfl/team_logos/NE.png from network
+sw.js?v=1755118114549&r=0.751557407485411:164 [SW] Fetching /images/nfl/team_logos/CIN.png from network
+sw.js?v=1755118114549&r=0.751557407485411:164 [SW] Fetching /images/nfl/team_logos/NYG.png from network
+sw.js?v=1755118114549&r=0.751557407485411:164 [SW] Fetching /images/nfl/team_logos/MIN.png from network
+sw.js?v=1755118114549&r=0.751557407485411:164 [SW] Fetching /images/nfl/team_logos/PIT.png from network
+sw.js?v=1755118114549&r=0.751557407485411:164 [SW] Fetching /images/nfl/team_logos/ATL.png from network
+sw.js?v=1755118114549&r=0.751557407485411:164 [SW] Fetching /images/nfl/team_logos/DAL.png from network
+sw.js?v=1755118114549&r=0.751557407485411:164 [SW] Fetching /images/nfl/team_logos/CLE.png from network
+sw.js?v=1755118114549&r=0.751557407485411:164 [SW] Fetching /images/nfl/team_logos/DEN.png from network
+sw.js?v=1755118114549&r=0.751557407485411:164 [SW] Fetching /images/nfl/team_logos/SEA.png from network
+sw.js?v=1755118114549&r=0.751557407485411:164 [SW] Fetching /images/nfl/team_logos/LAC.png from network
+sw.js?v=1755118114549&r=0.751557407485411:164 [SW] Fetching /images/nfl/team_logos/LV.png from network
+sw.js?v=1755118114549&r=0.751557407485411:164 [SW] Fetching /images/nfl/team_logos/DET.png from network
+sw.js?v=1755118114549&r=0.751557407485411:164 [SW] Fetching /images/nfl/team_logos/LAR.png from network
+sw.js?v=1755118114549&r=0.751557407485411:164 [SW] Fetching /images/nfl/team_logos/WSH.png from network
+sw.js?v=1755118114549&r=0.751557407485411:164 [SW] Fetching /images/nfl/team_logos/TB.png from network
+sw.js?v=1755118114549&r=0.751557407485411:164 [SW] Fetching /images/nfl/team_logos/SF.png from network
+sw.js?v=1755118114549&r=0.751557407485411:164 [SW] Fetching /images/nfl/team_logos/NYJ.png from network
+index-T-lt5Bch.js:397 [WebSocket] Connected to draft WebSocket for lock updates
+index-T-lt5Bch.js:397 [Image Error] Failed to load KC logo, trying fallback
+sw.js?v=1755118114549&r=0.751557407485411:164 [SW] Fetching /i/teamlogos/nfl/500/kc.png from network
+index-T-lt5Bch.js:397 [Image Error] Failed to load PHI logo, trying fallback
+sw.js?v=1755118114549&r=0.751557407485411:164 [SW] Fetching /i/teamlogos/nfl/500/phi.png from network
+index-T-lt5Bch.js:397 [Image Error] Failed to load BUF logo, trying fallback
+sw.js?v=1755118114549&r=0.751557407485411:164 [SW] Fetching /i/teamlogos/nfl/500/buf.png from network
+index-T-lt5Bch.js:397 [Image Error] Failed to load GB logo, trying fallback
+sw.js?v=1755118114549&r=0.751557407485411:164 [SW] Fetching /i/teamlogos/nfl/500/gb.png from network
+index-T-lt5Bch.js:397 [Image Error] Failed to load CAR logo, trying fallback
+sw.js?v=1755118114549&r=0.751557407485411:164 [SW] Fetching /i/teamlogos/nfl/500/car.png from network
+index-T-lt5Bch.js:397 [Image Error] Failed to load ARI logo, trying fallback
+sw.js?v=1755118114549&r=0.751557407485411:164 [SW] Fetching /i/teamlogos/nfl/500/ari.png from network
+index-T-lt5Bch.js:397 [Image Error] Failed to load CLE logo, trying fallback
+sw.js?v=1755118114549&r=0.751557407485411:164 [SW] Fetching /i/teamlogos/nfl/500/cle.png from network
+index-T-lt5Bch.js:397 [Image Error] Failed to load NYG logo, trying fallback
+sw.js?v=1755118114549&r=0.751557407485411:164 [SW] Fetching /i/teamlogos/nfl/500/nyg.png from network
+index-T-lt5Bch.js:397 [Image Error] Failed to load MIA logo, trying fallback
+sw.js?v=1755118114549&r=0.751557407485411:164 [SW] Fetching /i/teamlogos/nfl/500/mia.png from network
+index-T-lt5Bch.js:397 [Image Error] Failed to load IND logo, trying fallback
+sw.js?v=1755118114549&r=0.751557407485411:164 [SW] Fetching /i/teamlogos/nfl/500/ind.png from network
+index-T-lt5Bch.js:397 [Image Error] Failed to load MIN logo, trying fallback
+sw.js?v=1755118114549&r=0.751557407485411:164 [SW] Fetching /i/teamlogos/nfl/500/min.png from network
+index-T-lt5Bch.js:397 [Image Error] Failed to load NO logo, trying fallback
+sw.js?v=1755118114549&r=0.751557407485411:164 [SW] Fetching /i/teamlogos/nfl/500/no.png from network
+index-T-lt5Bch.js:397 [Image Error] Failed to load JAX logo, trying fallback
+sw.js?v=1755118114549&r=0.751557407485411:164 [SW] Fetching /i/teamlogos/nfl/500/jax.png from network
+index-T-lt5Bch.js:397 [Image Error] Failed to load PIT logo, trying fallback
+index-T-lt5Bch.js:397 [Image Error] Failed to load HOU logo, trying fallback
+sw.js?v=1755118114549&r=0.751557407485411:164 [SW] Fetching /i/teamlogos/nfl/500/pit.png from network
+sw.js?v=1755118114549&r=0.751557407485411:164 [SW] Fetching /i/teamlogos/nfl/500/hou.png from network
+index-T-lt5Bch.js:397 [Image Error] Failed to load SF logo, trying fallback
+sw.js?v=1755118114549&r=0.751557407485411:164 [SW] Fetching /i/teamlogos/nfl/500/sf.png from network
+index-T-lt5Bch.js:397 [Image Error] Failed to load WSH logo, trying fallback
+sw.js?v=1755118114549&r=0.751557407485411:164 [SW] Fetching /i/teamlogos/nfl/500/wsh.png from network
+index-T-lt5Bch.js:397 [Image Error] Failed to load TEN logo, trying fallback
+index-T-lt5Bch.js:397 [Image Error] Failed to load DAL logo, trying fallback
+index-T-lt5Bch.js:397 [Image Error] Failed to load TB logo, trying fallback
+sw.js?v=1755118114549&r=0.751557407485411:164 [SW] Fetching /i/teamlogos/nfl/500/ten.png from network
+sw.js?v=1755118114549&r=0.751557407485411:164 [SW] Fetching /i/teamlogos/nfl/500/dal.png from network
+sw.js?v=1755118114549&r=0.751557407485411:164 [SW] Fetching /i/teamlogos/nfl/500/tb.png from network
+index-T-lt5Bch.js:397 [Image Error] Failed to load BAL logo, trying fallback
+sw.js?v=1755118114549&r=0.751557407485411:164 [SW] Fetching /i/teamlogos/nfl/500/bal.png from network
+index-T-lt5Bch.js:397 [Image Error] Failed to load CHI logo, trying fallback
+sw.js?v=1755118114549&r=0.751557407485411:164 [SW] Fetching /i/teamlogos/nfl/500/chi.png from network
+index-T-lt5Bch.js:397 [Image Error] Failed to load ATL logo, trying fallback
+sw.js?v=1755118114549&r=0.751557407485411:164 [SW] Fetching /i/teamlogos/nfl/500/atl.png from network
+index-T-lt5Bch.js:397 [Image Error] Failed to load NYJ logo, trying fallback
+sw.js?v=1755118114549&r=0.751557407485411:164 [SW] Fetching /i/teamlogos/nfl/500/nyj.png from network
+index-T-lt5Bch.js:397 [Image Error] Failed to load LV logo, trying fallback
+sw.js?v=1755118114549&r=0.751557407485411:164 [SW] Fetching /i/teamlogos/nfl/500/lv.png from network
+index-T-lt5Bch.js:397 [Image Error] Failed to load NE logo, trying fallback
+sw.js?v=1755118114549&r=0.751557407485411:164 [SW] Fetching /i/teamlogos/nfl/500/ne.png from network
+index-T-lt5Bch.js:397 [Image Error] Failed to load LAR logo, trying fallback
+sw.js?v=1755118114549&r=0.751557407485411:164 [SW] Fetching /i/teamlogos/nfl/500/lar.png from network
+index-T-lt5Bch.js:397 [Image Error] Failed to load DEN logo, trying fallback
+sw.js?v=1755118114549&r=0.751557407485411:164 [SW] Fetching /i/teamlogos/nfl/500/den.png from network
+index-T-lt5Bch.js:397 [Image Error] Failed to load DET logo, trying fallback
+sw.js?v=1755118114549&r=0.751557407485411:164 [SW] Fetching /i/teamlogos/nfl/500/det.png from network
+index-T-lt5Bch.js:397 [Image Error] Failed to load CIN logo, trying fallback
+index-T-lt5Bch.js:397 [Image Error] Failed to load LAC logo, trying fallback
+index-T-lt5Bch.js:397 [Image Error] Failed to load SEA logo, trying fallback
+sw.js?v=1755118114549&r=0.751557407485411:164 [SW] Fetching /i/teamlogos/nfl/500/cin.png from network
+sw.js?v=1755118114549&r=0.751557407485411:164 [SW] Fetching /i/teamlogos/nfl/500/lac.png from network
+sw.js?v=1755118114549&r=0.751557407485411:164 [SW] Fetching /i/teamlogos/nfl/500/sea.png from network
+index-T-lt5Bch.js:397 🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE
+index-T-lt5Bch.js:397 [DEBUG] isUserTeam: Missing user or userTeams Object
+index-T-lt5Bch.js:397 [DEBUG] isUserTeam: Missing user or userTeams Object
+index-T-lt5Bch.js:397 [DEBUG] isUserTeam: Missing user or userTeams Object
+index-T-lt5Bch.js:397 [DEBUG] isUserTeam: Missing user or userTeams Object
+index-T-lt5Bch.js:397 [DEBUG] isUserTeam: Missing user or userTeams Object
+index-T-lt5Bch.js:397 [DEBUG] isUserTeam: Missing user or userTeams Object
+index-T-lt5Bch.js:397 [DEBUG] isUserTeam: Missing user or userTeams Object
+index-T-lt5Bch.js:397 [DEBUG] isUserTeam: Missing user or userTeams Object
+index-T-lt5Bch.js:397 [DEBUG] isUserTeam: Missing user or userTeams Object
+index-T-lt5Bch.js:397 [DEBUG] isUserTeam: Missing user or userTeams Object
+index-T-lt5Bch.js:397 [DEBUG] isUserTeam: Missing user or userTeams Object
+index-T-lt5Bch.js:397 [DEBUG] isUserTeam: Missing user or userTeams Object
+index-T-lt5Bch.js:397 [DEBUG] isUserTeam: Missing user or userTeams Object
+index-T-lt5Bch.js:397 [DEBUG] isUserTeam: Missing user or userTeams Object
+index-T-lt5Bch.js:397 [DEBUG] isUserTeam: Missing user or userTeams Object
+index-T-lt5Bch.js:397 [DEBUG] isUserTeam: Missing user or userTeams Object
+index-T-lt5Bch.js:397 [DEBUG] isUserTeam: Missing user or userTeams Object
+index-T-lt5Bch.js:397 [DEBUG] isUserTeam: Missing user or userTeams Object
+index-T-lt5Bch.js:397 [DEBUG] isUserTeam: Missing user or userTeams Object
+index-T-lt5Bch.js:397 [DEBUG] isUserTeam: Missing user or userTeams Object
+index-T-lt5Bch.js:397 [DEBUG] isUserTeam: Missing user or userTeams Object
+index-T-lt5Bch.js:397 [DEBUG] isUserTeam: Missing user or userTeams Object
+index-T-lt5Bch.js:397 [DEBUG] isUserTeam: Missing user or userTeams Object
+index-T-lt5Bch.js:397 [DEBUG] isUserTeam: Missing user or userTeams Object
+index-T-lt5Bch.js:397 [DEBUG] isUserTeam: Missing user or userTeams Object
+index-T-lt5Bch.js:397 [DEBUG] isUserTeam: Missing user or userTeams Object
+index-T-lt5Bch.js:397 [DEBUG] isUserTeam: Missing user or userTeams Object
+index-T-lt5Bch.js:397 [DEBUG] isUserTeam: Missing user or userTeams Object
+index-T-lt5Bch.js:397 [DEBUG] isUserTeam: Missing user or userTeams Object
+index-T-lt5Bch.js:397 [DEBUG] isUserTeam: Missing user or userTeams Object
+index-T-lt5Bch.js:397 [DEBUG] isUserTeam: Missing user or userTeams Object
+index-T-lt5Bch.js:397 [DEBUG] isUserTeam: Missing user or userTeams Object
+index-T-lt5Bch.js:397 🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: ARI - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYG - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: MIN - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: LV - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYJ - Should be GREEN
+index-T-lt5Bch.js:397 🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: ARI - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYG - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: MIN - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: LV - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYJ - Should be GREEN
+index-T-lt5Bch.js:397 Scores WebSocket received message: admin_date_advanced
+index-T-lt5Bch.js:397 Admin date advanced, refreshing scores...
+index-T-lt5Bch.js:397 [DEBUG] Fetching games for week 1 season 2024
+index-T-lt5Bch.js:397 📊 [WebSocket] Invalidated ALL queries after admin date advance
+index-T-lt5Bch.js:397 [WebSocket] Received live score update: Object
+index-T-lt5Bch.js:397 🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: ARI - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYG - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: MIN - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: LV - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYJ - Should be GREEN
+index-T-lt5Bch.js:397 🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: ARI - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYG - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: MIN - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: LV - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYJ - Should be GREEN
+index-T-lt5Bch.js:397 🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: ARI - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYG - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: MIN - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: LV - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYJ - Should be GREEN
+index-T-lt5Bch.js:397 🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: ARI - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYG - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: MIN - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: LV - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYJ - Should be GREEN
+index-T-lt5Bch.js:397 🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: ARI - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYG - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: MIN - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: LV - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYJ - Should be GREEN
+index-T-lt5Bch.js:397 🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: ARI - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYG - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: MIN - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: LV - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYJ - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] API Response: Object
+index-T-lt5Bch.js:397 🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: ARI - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYG - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: MIN - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: LV - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYJ - Should be GREEN
+index-T-lt5Bch.js:397 🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: ARI - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYG - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: MIN - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: LV - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYJ - Should be GREEN
+index-T-lt5Bch.js:397 Scores WebSocket received message: admin_date_advanced
+index-T-lt5Bch.js:397 Admin date advanced, refreshing scores...
+index-T-lt5Bch.js:397 [DEBUG] Fetching games for week 1 season 2024
+index-T-lt5Bch.js:397 📊 [WebSocket] Invalidated ALL queries after admin date advance
+index-T-lt5Bch.js:397 [WebSocket] Received live score update: Object
+index-T-lt5Bch.js:397 🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: ARI - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYG - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: MIN - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: LV - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYJ - Should be GREEN
+index-T-lt5Bch.js:397 🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: ARI - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYG - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: MIN - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: LV - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYJ - Should be GREEN
+index-T-lt5Bch.js:397 🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: ARI - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYG - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: MIN - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: LV - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYJ - Should be GREEN
+index-T-lt5Bch.js:397 🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: ARI - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYG - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: MIN - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: LV - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYJ - Should be GREEN
+index-T-lt5Bch.js:397 🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: ARI - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYG - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: MIN - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: LV - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYJ - Should be GREEN
+index-T-lt5Bch.js:397 🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: ARI - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYG - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: MIN - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: LV - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYJ - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] API Response: Object
+index-T-lt5Bch.js:397 🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: ARI - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYG - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: MIN - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: LV - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYJ - Should be GREEN
+index-T-lt5Bch.js:397 🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: ARI - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYG - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: MIN - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: LV - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYJ - Should be GREEN
+index-T-lt5Bch.js:397 🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: ARI - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYG - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: MIN - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: LV - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYJ - Should be GREEN
+index-T-lt5Bch.js:397 [WebSocket] Received live score update: Object
+index-T-lt5Bch.js:397 Scores WebSocket received message: admin_date_advanced
+index-T-lt5Bch.js:397 Admin date advanced, refreshing scores...
+index-T-lt5Bch.js:397 [DEBUG] Fetching games for week 1 season 2024
+index-T-lt5Bch.js:397 📊 [WebSocket] Invalidated ALL queries after admin date advance
+index-T-lt5Bch.js:397 🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: ARI - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYG - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: MIN - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: LV - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYJ - Should be GREEN
+index-T-lt5Bch.js:397 🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: ARI - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYG - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: MIN - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: LV - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYJ - Should be GREEN
+index-T-lt5Bch.js:397 🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: ARI - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYG - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: MIN - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: LV - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYJ - Should be GREEN
+index-T-lt5Bch.js:397 🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: ARI - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYG - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: MIN - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: LV - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYJ - Should be GREEN
+index-T-lt5Bch.js:397 🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: ARI - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYG - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: MIN - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: LV - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYJ - Should be GREEN
+index-T-lt5Bch.js:397 🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: ARI - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYG - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: MIN - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: LV - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYJ - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] API Response: Object
+index-T-lt5Bch.js:397 🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: ARI - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYG - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: MIN - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: LV - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYJ - Should be GREEN
+index-T-lt5Bch.js:397 🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: ARI - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYG - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: MIN - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: LV - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYJ - Should be GREEN
+index-T-lt5Bch.js:397 🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: ARI - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYG - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: MIN - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: LV - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYJ - Should be GREEN
+index-T-lt5Bch.js:397 🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: ARI - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYG - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: MIN - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: LV - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYJ - Should be GREEN
+index-T-lt5Bch.js:397 Scores WebSocket received message: admin_date_advanced
+index-T-lt5Bch.js:397 Admin date advanced, refreshing scores...
+index-T-lt5Bch.js:397 [DEBUG] Fetching games for week 1 season 2024
+index-T-lt5Bch.js:397 📊 [WebSocket] Invalidated ALL queries after admin date advance
+index-T-lt5Bch.js:397 [WebSocket] Received live score update: Object
+index-T-lt5Bch.js:397 🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: ARI - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYG - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: MIN - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: LV - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYJ - Should be GREEN
+index-T-lt5Bch.js:397 🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: ARI - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYG - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: MIN - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: LV - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYJ - Should be GREEN
+index-T-lt5Bch.js:397 🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: ARI - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYG - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: MIN - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: LV - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYJ - Should be GREEN
+index-T-lt5Bch.js:397 🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: ARI - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYG - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: MIN - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: LV - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYJ - Should be GREEN
+index-T-lt5Bch.js:397 🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: ARI - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYG - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: MIN - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: LV - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYJ - Should be GREEN
+index-T-lt5Bch.js:397 🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: ARI - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYG - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: MIN - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: LV - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYJ - Should be GREEN
+index-T-lt5Bch.js:397 🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: ARI - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYG - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: MIN - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: LV - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYJ - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] API Response: Object
+index-T-lt5Bch.js:397 🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: ARI - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYG - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: MIN - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: LV - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYJ - Should be GREEN
+index-T-lt5Bch.js:397 🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: ARI - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYG - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: MIN - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: LV - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYJ - Should be GREEN
+index-T-lt5Bch.js:397 🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: ARI - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYG - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: MIN - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: LV - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYJ - Should be GREEN
+index-T-lt5Bch.js:397 Scores WebSocket received message: admin_date_advanced
+index-T-lt5Bch.js:397 Admin date advanced, refreshing scores...
+index-T-lt5Bch.js:397 [DEBUG] Fetching games for week 1 season 2024
+index-T-lt5Bch.js:397 📊 [WebSocket] Invalidated ALL queries after admin date advance
+index-T-lt5Bch.js:397 [WebSocket] Received live score update: Object
+index-T-lt5Bch.js:397 🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: ARI - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYG - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: MIN - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: LV - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYJ - Should be GREEN
+index-T-lt5Bch.js:397 🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: ARI - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYG - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: MIN - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: LV - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYJ - Should be GREEN
+index-T-lt5Bch.js:397 🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: ARI - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYG - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: MIN - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: LV - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYJ - Should be GREEN
+index-T-lt5Bch.js:397 🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: ARI - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYG - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: MIN - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: LV - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYJ - Should be GREEN
+index-T-lt5Bch.js:397 🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: ARI - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYG - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: MIN - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: LV - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYJ - Should be GREEN
+index-T-lt5Bch.js:397 🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: ARI - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYG - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: MIN - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: LV - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYJ - Should be GREEN
+index-T-lt5Bch.js:397 🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: ARI - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYG - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: MIN - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: LV - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYJ - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] API Response: Object
+index-T-lt5Bch.js:397 🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: ARI - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYG - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: MIN - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: LV - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYJ - Should be GREEN
+index-T-lt5Bch.js:397 🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: ARI - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYG - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: MIN - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: LV - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYJ - Should be GREEN
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /favicon.ico from cache
+index-T-lt5Bch.js:397 Scores WebSocket disconnected: 1005 
+index-T-lt5Bch.js:397 [WebSocket] Live scores connection closed
+index-T-lt5Bch.js:397 Attempting to reconnect WebSocket...
+index-T-lt5Bch.js:397 🚀 Attempting to connect WebSocket for scores page: wss://mok-sports-draft-mokfantasysport.replit.app/draft-ws
+index-T-lt5Bch.js:397 🔍 Current protocol: https:
+index-T-lt5Bch.js:397 🔍 Current host: mok-sports-draft-mokfantasysport.replit.app
+index-T-lt5Bch.js:397 ✅ Scores WebSocket connected successfully for live admin updates
+index-T-lt5Bch.js:397 🔗 WebSocket state: 1
+index-T-lt5Bch.js:397 📤 Sending identify message: Object
+index-T-lt5Bch.js:397 Scores WebSocket received message: identified
+index-T-lt5Bch.js:397 🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: ARI - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYG - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: MIN - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: LV - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYJ - Should be GREEN
+index-T-lt5Bch.js:397 🧪 Test functions added to window: testAdminReset() and testAdminAdvance()
+index-T-lt5Bch.js:397 📊 Setting default week to 1 based on current date
+index-T-lt5Bch.js:397 🔌 SCORES PAGE WEBSOCKET USEEFFECT TRIGGERED - SETTING UP CONNECTION
+index-T-lt5Bch.js:397 🔍 UserAgent check: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36
+index-T-lt5Bch.js:397 🔍 Window location: https://mok-sports-draft-mokfantasysport.replit.app/scores
+index-T-lt5Bch.js:397 🔍 WebSocket support: true
+index-T-lt5Bch.js:397 🚀 Attempting to connect WebSocket for scores page: wss://mok-sports-draft-mokfantasysport.replit.app/draft-ws
+index-T-lt5Bch.js:397 🔍 Current protocol: https:
+index-T-lt5Bch.js:397 🔍 Current host: mok-sports-draft-mokfantasysport.replit.app
+index-T-lt5Bch.js:397 [WebSocket] Connecting to draft WebSocket for lock updates: wss://mok-sports-draft-mokfantasysport.replit.app/draft-ws
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/PHI.png from cache
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/BAL.png from cache
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/KC.png from cache
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/GB.png from cache
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/ARI.png from cache
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/CAR.png from cache
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/NO.png from cache
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/CHI.png from cache
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/TEN.png from cache
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/IND.png from cache
+index-T-lt5Bch.js:397 [Image Error] Failed to load PHI logo, trying fallback
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/BUF.png from cache
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/HOU.png from cache
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/JAX.png from cache
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/MIA.png from cache
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/NE.png from cache
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/CIN.png from cache
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/NYG.png from cache
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/MIN.png from cache
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/PIT.png from cache
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/ATL.png from cache
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/DAL.png from cache
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/CLE.png from cache
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/DEN.png from cache
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/SEA.png from cache
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/LAC.png from cache
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/LV.png from cache
+index-T-lt5Bch.js:397 [Image Error] Failed to load BAL logo, trying fallback
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/DET.png from cache
+index-T-lt5Bch.js:397 [Image Error] Failed to load KC logo, trying fallback
+index-T-lt5Bch.js:397 [Image Error] Failed to load GB logo, trying fallback
+index-T-lt5Bch.js:397 [Image Error] Failed to load ARI logo, trying fallback
+index-T-lt5Bch.js:397 [Image Error] Failed to load CAR logo, trying fallback
+index-T-lt5Bch.js:397 [Image Error] Failed to load NO logo, trying fallback
+index-T-lt5Bch.js:397 [Image Error] Failed to load CHI logo, trying fallback
+index-T-lt5Bch.js:397 [Image Error] Failed to load TEN logo, trying fallback
+index-T-lt5Bch.js:397 [Image Error] Failed to load IND logo, trying fallback
+index-T-lt5Bch.js:397 [Image Error] Failed to load BUF logo, trying fallback
+index-T-lt5Bch.js:397 [Image Error] Failed to load HOU logo, trying fallback
+index-T-lt5Bch.js:397 [Image Error] Failed to load JAX logo, trying fallback
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/LAR.png from cache
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/WSH.png from cache
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/TB.png from cache
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/SF.png from cache
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/NYJ.png from cache
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /favicon.ico from cache
+index-T-lt5Bch.js:397 [Image Error] Failed to load MIA logo, trying fallback
+index-T-lt5Bch.js:397 [Image Error] Failed to load NE logo, trying fallback
+index-T-lt5Bch.js:397 [Image Error] Failed to load CIN logo, trying fallback
+index-T-lt5Bch.js:397 [Image Error] Failed to load LAR logo, trying fallback
+index-T-lt5Bch.js:397 [Image Error] Failed to load WSH logo, trying fallback
+index-T-lt5Bch.js:397 [Image Error] Failed to load TB logo, trying fallback
+index-T-lt5Bch.js:397 [Image Error] Failed to load SF logo, trying fallback
+index-T-lt5Bch.js:397 [Image Error] Failed to load NYJ logo, trying fallback
+index-T-lt5Bch.js:397 [Image Error] Failed to load NYG logo, trying fallback
+index-T-lt5Bch.js:397 [Image Error] Failed to load MIN logo, trying fallback
+index-T-lt5Bch.js:397 [Image Error] Failed to load PIT logo, trying fallback
+index-T-lt5Bch.js:397 [Image Error] Failed to load ATL logo, trying fallback
+index-T-lt5Bch.js:397 [Image Error] Failed to load DAL logo, trying fallback
+index-T-lt5Bch.js:397 [Image Error] Failed to load CLE logo, trying fallback
+index-T-lt5Bch.js:397 [Image Error] Failed to load DEN logo, trying fallback
+index-T-lt5Bch.js:397 [Image Error] Failed to load SEA logo, trying fallback
+index-T-lt5Bch.js:397 [Image Error] Failed to load LAC logo, trying fallback
+index-T-lt5Bch.js:397 [Image Error] Failed to load LV logo, trying fallback
+index-T-lt5Bch.js:397 [Image Error] Failed to load DET logo, trying fallback
+index-T-lt5Bch.js:397 🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: ARI - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYG - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: MIN - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: LV - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYJ - Should be GREEN
+index-T-lt5Bch.js:397 🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: ARI - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYG - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: MIN - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: LV - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYJ - Should be GREEN
+index-T-lt5Bch.js:397 ✅ Scores WebSocket connected successfully for live admin updates
+index-T-lt5Bch.js:397 🔗 WebSocket state: 1
+index-T-lt5Bch.js:397 📤 Sending identify message: Object
+index-T-lt5Bch.js:397 Scores WebSocket received message: identified
+index-T-lt5Bch.js:397 [WebSocket] Connected to draft WebSocket for lock updates
+index-T-lt5Bch.js:397 🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: ARI - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYG - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: MIN - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: LV - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYJ - Should be GREEN
+index-T-lt5Bch.js:397 Scores WebSocket received message: admin_date_advanced
+index-T-lt5Bch.js:397 Admin date advanced, refreshing scores...
+index-T-lt5Bch.js:397 [DEBUG] Fetching games for week 1 season 2024
+index-T-lt5Bch.js:397 📊 [WebSocket] Invalidated ALL queries after admin date advance
+index-T-lt5Bch.js:397 [WebSocket] Received live score update: Object
+index-T-lt5Bch.js:397 Scores WebSocket received message: admin_date_advanced
+index-T-lt5Bch.js:397 Admin date advanced, refreshing scores...
+index-T-lt5Bch.js:397 [DEBUG] Fetching games for week 1 season 2024
+index-T-lt5Bch.js:397 📊 [WebSocket] Invalidated ALL queries after admin date advance
+index-T-lt5Bch.js:397 🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: ARI - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYG - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: MIN - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: LV - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYJ - Should be GREEN
+index-T-lt5Bch.js:397 🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: ARI - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYG - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: MIN - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: LV - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYJ - Should be GREEN
+index-T-lt5Bch.js:397 🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: ARI - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYG - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: MIN - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: LV - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYJ - Should be GREEN
+index-T-lt5Bch.js:397 🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: ARI - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYG - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: MIN - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: LV - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYJ - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] API Response: Object
+index-T-lt5Bch.js:397 🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: ARI - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYG - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: MIN - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: LV - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYJ - Should be GREEN
+index-T-lt5Bch.js:397 📊 Setting default week to 2 based on current date
+index-T-lt5Bch.js:397 🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE
+index-T-lt5Bch.js:397 🔌 SCORES PAGE WEBSOCKET USEEFFECT TRIGGERED - SETTING UP CONNECTION
+index-T-lt5Bch.js:397 🔍 UserAgent check: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36
+index-T-lt5Bch.js:397 🔍 Window location: https://mok-sports-draft-mokfantasysport.replit.app/scores
+index-T-lt5Bch.js:397 🔍 WebSocket support: true
+index-T-lt5Bch.js:397 🚀 Attempting to connect WebSocket for scores page: wss://mok-sports-draft-mokfantasysport.replit.app/draft-ws
+index-T-lt5Bch.js:397 🔍 Current protocol: https:
+index-T-lt5Bch.js:397 🔍 Current host: mok-sports-draft-mokfantasysport.replit.app
+index-T-lt5Bch.js:397 [DEBUG] Fetching games for week 2 season 2024
+index-T-lt5Bch.js:397 [WebSocket] Connecting to draft WebSocket for lock updates: wss://mok-sports-draft-mokfantasysport.replit.app/draft-ws
+index-T-lt5Bch.js:397 [WebSocket] Live scores connection closed
+index-T-lt5Bch.js:397 Scores WebSocket disconnected: 1005 
+index-T-lt5Bch.js:397 🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE
+index-T-lt5Bch.js:397 [DEBUG] API Response: Object
+index-T-lt5Bch.js:397 🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE
+index-T-lt5Bch.js:397 ✅ Scores WebSocket connected successfully for live admin updates
+index-T-lt5Bch.js:397 🔗 WebSocket state: 1
+index-T-lt5Bch.js:397 📤 Sending identify message: Object
+index-T-lt5Bch.js:397 Scores WebSocket received message: identified
+index-T-lt5Bch.js:397 [DEBUG] API Response: Object
+index-T-lt5Bch.js:397 🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: LV - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYJ - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: MIN - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYG - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: ARI - Should be GREEN
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/BUF.png from cache
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/MIA.png from cache
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/CIN.png from cache
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/KC.png from cache
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/CLE.png from cache
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/JAX.png from cache
+index-T-lt5Bch.js:397 [Image Error] Failed to load BUF logo, trying fallback
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/HOU.png from cache
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/CHI.png from cache
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/IND.png from cache
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/GB.png from cache
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/LAC.png from cache
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/CAR.png from cache
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/LV.png from cache
+index-T-lt5Bch.js:397 [Image Error] Failed to load MIA logo, trying fallback
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/BAL.png from cache
+index-T-lt5Bch.js:397 [Image Error] Failed to load CIN logo, trying fallback
+index-T-lt5Bch.js:397 [Image Error] Failed to load KC logo, trying fallback
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/NYJ.png from cache
+index-T-lt5Bch.js:397 [Image Error] Failed to load CLE logo, trying fallback
+index-T-lt5Bch.js:397 [Image Error] Failed to load JAX logo, trying fallback
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/TEN.png from cache
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/SEA.png from cache
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/NE.png from cache
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/SF.png from cache
+index-T-lt5Bch.js:397 [Image Error] Failed to load HOU logo, trying fallback
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/MIN.png from cache
+index-T-lt5Bch.js:397 [Image Error] Failed to load CHI logo, trying fallback
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/WSH.png from cache
+index-T-lt5Bch.js:397 [Image Error] Failed to load IND logo, trying fallback
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/NYG.png from cache
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/LAR.png from cache
+index-T-lt5Bch.js:397 [Image Error] Failed to load GB logo, trying fallback
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/ARI.png from cache
+index-T-lt5Bch.js:397 [Image Error] Failed to load LAC logo, trying fallback
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/PIT.png from cache
+index-T-lt5Bch.js:397 [Image Error] Failed to load LV logo, trying fallback
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/DEN.png from cache
+index-T-lt5Bch.js:397 [Image Error] Failed to load CAR logo, trying fallback
+index-T-lt5Bch.js:397 [Image Error] Failed to load BAL logo, trying fallback
+index-T-lt5Bch.js:397 [Image Error] Failed to load NYJ logo, trying fallback
+index-T-lt5Bch.js:397 [Image Error] Failed to load TEN logo, trying fallback
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/TB.png from cache
+index-T-lt5Bch.js:397 [Image Error] Failed to load SEA logo, trying fallback
+index-T-lt5Bch.js:397 [Image Error] Failed to load NE logo, trying fallback
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/DET.png from cache
+index-T-lt5Bch.js:397 [Image Error] Failed to load SF logo, trying fallback
+index-T-lt5Bch.js:397 [Image Error] Failed to load MIN logo, trying fallback
+index-T-lt5Bch.js:397 [Image Error] Failed to load WSH logo, trying fallback
+index-T-lt5Bch.js:397 [Image Error] Failed to load NYG logo, trying fallback
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/DAL.png from cache
+index-T-lt5Bch.js:397 [Image Error] Failed to load LAR logo, trying fallback
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/NO.png from cache
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/ATL.png from cache
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/PHI.png from cache
+index-T-lt5Bch.js:397 [Image Error] Failed to load DAL logo, trying fallback
+index-T-lt5Bch.js:397 [Image Error] Failed to load ARI logo, trying fallback
+index-T-lt5Bch.js:397 [Image Error] Failed to load PIT logo, trying fallback
+index-T-lt5Bch.js:397 [Image Error] Failed to load DEN logo, trying fallback
+index-T-lt5Bch.js:397 [Image Error] Failed to load TB logo, trying fallback
+index-T-lt5Bch.js:397 [Image Error] Failed to load DET logo, trying fallback
+index-T-lt5Bch.js:397 [Image Error] Failed to load NO logo, trying fallback
+index-T-lt5Bch.js:397 [Image Error] Failed to load ATL logo, trying fallback
+index-T-lt5Bch.js:397 [Image Error] Failed to load PHI logo, trying fallback
+index-T-lt5Bch.js:397 [WebSocket] Connected to draft WebSocket for lock updates
+index-T-lt5Bch.js:397 🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: LV - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYJ - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: MIN - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYG - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: ARI - Should be GREEN
+index-T-lt5Bch.js:397 Attempting to reconnect WebSocket...
+index-T-lt5Bch.js:397 🚀 Attempting to connect WebSocket for scores page: wss://mok-sports-draft-mokfantasysport.replit.app/draft-ws
+index-T-lt5Bch.js:397 🔍 Current protocol: https:
+index-T-lt5Bch.js:397 🔍 Current host: mok-sports-draft-mokfantasysport.replit.app
+index-T-lt5Bch.js:397 ✅ Scores WebSocket connected successfully for live admin updates
+index-T-lt5Bch.js:397 🔗 WebSocket state: 1
+index-T-lt5Bch.js:397 📤 Sending identify message: Object
+index-T-lt5Bch.js:397 Scores WebSocket received message: identified
+index-T-lt5Bch.js:397 🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: ARI - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYG - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: MIN - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: LV - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYJ - Should be GREEN
+index-T-lt5Bch.js:397 🔌 SCORES PAGE WEBSOCKET USEEFFECT TRIGGERED - SETTING UP CONNECTION
+index-T-lt5Bch.js:397 🔍 UserAgent check: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36
+index-T-lt5Bch.js:397 🔍 Window location: https://mok-sports-draft-mokfantasysport.replit.app/scores
+index-T-lt5Bch.js:397 🔍 WebSocket support: true
+index-T-lt5Bch.js:397 🚀 Attempting to connect WebSocket for scores page: wss://mok-sports-draft-mokfantasysport.replit.app/draft-ws
+index-T-lt5Bch.js:397 🔍 Current protocol: https:
+index-T-lt5Bch.js:397 🔍 Current host: mok-sports-draft-mokfantasysport.replit.app
+index-T-lt5Bch.js:397 [WebSocket] Connecting to draft WebSocket for lock updates: wss://mok-sports-draft-mokfantasysport.replit.app/draft-ws
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/BAL.png from cache
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/KC.png from cache
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/PHI.png from cache
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/GB.png from cache
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/ARI.png from cache
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/BUF.png from cache
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/CAR.png from cache
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/NO.png from cache
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/CHI.png from cache
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/TEN.png from cache
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/IND.png from cache
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/HOU.png from cache
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/JAX.png from cache
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/MIA.png from cache
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/NE.png from cache
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/CIN.png from cache
+index-T-lt5Bch.js:397 [Image Error] Failed to load BAL logo, trying fallback
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/NYG.png from cache
+index-T-lt5Bch.js:397 [Image Error] Failed to load KC logo, trying fallback
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/MIN.png from cache
+index-T-lt5Bch.js:397 [Image Error] Failed to load PHI logo, trying fallback
+index-T-lt5Bch.js:397 [Image Error] Failed to load GB logo, trying fallback
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/PIT.png from cache
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/ATL.png from cache
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/DAL.png from cache
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/CLE.png from cache
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/DEN.png from cache
+index-T-lt5Bch.js:397 [Image Error] Failed to load ARI logo, trying fallback
+index-T-lt5Bch.js:397 [Image Error] Failed to load BUF logo, trying fallback
+index-T-lt5Bch.js:397 [Image Error] Failed to load CAR logo, trying fallback
+index-T-lt5Bch.js:397 [Image Error] Failed to load NO logo, trying fallback
+index-T-lt5Bch.js:397 [Image Error] Failed to load CHI logo, trying fallback
+index-T-lt5Bch.js:397 [Image Error] Failed to load TEN logo, trying fallback
+index-T-lt5Bch.js:397 [Image Error] Failed to load IND logo, trying fallback
+index-T-lt5Bch.js:397 [Image Error] Failed to load HOU logo, trying fallback
+index-T-lt5Bch.js:397 [Image Error] Failed to load JAX logo, trying fallback
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/SEA.png from cache
+index-T-lt5Bch.js:397 [Image Error] Failed to load MIA logo, trying fallback
+index-T-lt5Bch.js:397 [Image Error] Failed to load NE logo, trying fallback
+index-T-lt5Bch.js:397 [Image Error] Failed to load CIN logo, trying fallback
+index-T-lt5Bch.js:397 [Image Error] Failed to load NYG logo, trying fallback
+index-T-lt5Bch.js:397 [Image Error] Failed to load MIN logo, trying fallback
+index-T-lt5Bch.js:397 [Image Error] Failed to load PIT logo, trying fallback
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/LAC.png from cache
+index-T-lt5Bch.js:397 [Image Error] Failed to load ATL logo, trying fallback
+index-T-lt5Bch.js:397 [Image Error] Failed to load DAL logo, trying fallback
+index-T-lt5Bch.js:397 [Image Error] Failed to load CLE logo, trying fallback
+index-T-lt5Bch.js:397 [Image Error] Failed to load DEN logo, trying fallback
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/LV.png from cache
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/DET.png from cache
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/LAR.png from cache
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/WSH.png from cache
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/TB.png from cache
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/SF.png from cache
+index-T-lt5Bch.js:397 [Image Error] Failed to load SEA logo, trying fallback
+index-T-lt5Bch.js:397 [Image Error] Failed to load LAC logo, trying fallback
+index-T-lt5Bch.js:397 [Image Error] Failed to load LV logo, trying fallback
+index-T-lt5Bch.js:397 [Image Error] Failed to load DET logo, trying fallback
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /images/nfl/team_logos/NYJ.png from cache
+index-T-lt5Bch.js:397 [Image Error] Failed to load LAR logo, trying fallback
+index-T-lt5Bch.js:397 [Image Error] Failed to load WSH logo, trying fallback
+index-T-lt5Bch.js:397 [Image Error] Failed to load TB logo, trying fallback
+index-T-lt5Bch.js:397 [Image Error] Failed to load SF logo, trying fallback
+index-T-lt5Bch.js:397 [Image Error] Failed to load NYJ logo, trying fallback
+index-T-lt5Bch.js:397 [WebSocket] Live scores connection closed
+index-T-lt5Bch.js:397 Scores WebSocket disconnected: 1006 
+index-T-lt5Bch.js:397 ✅ Scores WebSocket connected successfully for live admin updates
+index-T-lt5Bch.js:397 🔗 WebSocket state: 1
+index-T-lt5Bch.js:397 📤 Sending identify message: Object
+index-T-lt5Bch.js:397 Scores WebSocket received message: identified
+index-T-lt5Bch.js:397 [WebSocket] Connected to draft WebSocket for lock updates
+index-T-lt5Bch.js:397 Attempting to reconnect WebSocket...
+index-T-lt5Bch.js:397 🚀 Attempting to connect WebSocket for scores page: wss://mok-sports-draft-mokfantasysport.replit.app/draft-ws
+index-T-lt5Bch.js:397 🔍 Current protocol: https:
+index-T-lt5Bch.js:397 🔍 Current host: mok-sports-draft-mokfantasysport.replit.app
+index-T-lt5Bch.js:397 ✅ Scores WebSocket connected successfully for live admin updates
+index-T-lt5Bch.js:397 🔗 WebSocket state: 1
+index-T-lt5Bch.js:397 📤 Sending identify message: Object
+index-T-lt5Bch.js:397 🏈 SCORES PAGE COMPONENT RENDERING - FIRST LOG LINE
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: ARI - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYG - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: MIN - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: LV - Should be GREEN
+index-T-lt5Bch.js:397 [DEBUG] ✅ YOUR TEAM FOUND: NYJ - Should be GREEN
+sw.js?v=1755118114549&r=0.751557407485411:160 [SW] Serving /favicon.ico from cache
+index-T-lt5Bch.js:397 Scores WebSocket received message: identified
+index-T-lt5Bch.js:397 Scores WebSocket disconnected: 1005 
+index-T-lt5Bch.js:397 [WebSocket] Live scores connection closed
+index-T-lt5Bch.js:397 Attempting to reconnect WebSocket...
+index-T-lt5Bch.js:397 🚀 Attempting to connect WebSocket for scores page: wss://mok-sports-draft-mokfantasysport.replit.app/draft-ws
+index-T-lt5Bch.js:397 🔍 Current protocol: https:
+index-T-lt5Bch.js:397 🔍 Current host: mok-sports-draft-mokfantasysport.replit.app
+index-T-lt5Bch.js:397 ✅ Scores WebSocket connected successfully for live admin updates
+index-T-lt5Bch.js:397 🔗 WebSocket state: 1
+index-T-lt5Bch.js:397 📤 Sending identify message: Object
+index-T-lt5Bch.js:397 Scores WebSocket received message: identified
+sw.js?v=1755118114549&r=0.751557407485411:64 [SW] BYPASSING CACHE for JS file: https://mok-sports-draft-mokfantasysport.replit.app/manifest.json
+sw.js?v=1755118114549&r=0.751557407485411:164 [SW] Fetching /league from network
+sw.js?v=1755118114549&r=0.751557407485411:164 [SW] Fetching /assets/index-CbRrnplr.css from network
+4index-T-lt5Bch.js:397 Scores WebSocket disconnected: 1006 
+index-T-lt5Bch.js:397 Attempting to reconnect WebSocket...
+index-T-lt5Bch.js:397 🚀 Attempting to connect WebSocket for scores page: wss://mok-sports-draft-mokfantasysport.replit.app/draft-ws
+index-T-lt5Bch.js:397 🔍 Current protocol: https:
+index-T-lt5Bch.js:397 🔍 Current host: mok-sports-draft-mokfantasysport.replit.app
+index-T-lt5Bch.js:397 Attempting to reconnect WebSocket...
+index-T-lt5Bch.js:397 🚀 Attempting to connect WebSocket for scores page: wss://mok-sports-draft-mokfantasysport.replit.app/draft-ws
+index-T-lt5Bch.js:397 🔍 Current protocol: https:
+index-T-lt5Bch.js:397 🔍 Current host: mok-sports-draft-mokfantasysport.replit.app
+index-T-lt5Bch.js:397 Attempting to reconnect WebSocket...
+index-T-lt5Bch.js:397 🚀 Attempting to connect WebSocket for scores page: wss://mok-sports-draft-mokfantasysport.replit.app/draft-ws
+index-T-lt5Bch.js:397 🔍 Current protocol: https:
+index-T-lt5Bch.js:397 🔍 Current host: mok-sports-draft-mokfantasysport.replit.app
+index-T-lt5Bch.js:397 Attempting to reconnect WebSocket...
+index-T-lt5Bch.js:397 🚀 Attempting to connect WebSocket for scores page: wss://mok-sports-draft-mokfantasysport.replit.app/draft-ws
+index-T-lt5Bch.js:397 🔍 Current protocol: https:
+index-T-lt5Bch.js:397 🔍 Current host: mok-sports-draft-mokfantasysport.replit.app
+index-T-lt5Bch.js:397 ✅ Scores WebSocket connected successfully for live admin updates
+index-T-lt5Bch.js:397 🔗 WebSocket state: 1
+index-T-lt5Bch.js:397 📤 Sending identify message: {type: 'identify', userId: 'scores_page_user', draftId: 'admin_updates', source: 'scores_page', connectionId: 'scores_1755118185207'}
+index-T-lt5Bch.js:397 Scores WebSocket received message: identified
+index-T-lt5Bch.js:397 ✅ Scores WebSocket connected successfully for live admin updates
+index-T-lt5Bch.js:397 🔗 WebSocket state: 1
+index-T-lt5Bch.js:397 📤 Sending identify message: {type: 'identify', userId: 'scores_page_user', draftId: 'admin_updates', source: 'scores_page', connectionId: 'scores_1755118185347'}
+index-T-lt5Bch.js:397 Scores WebSocket received message: identified
+index-T-lt5Bch.js:397 ✅ Scores WebSocket connected successfully for live admin updates
+index-T-lt5Bch.js:397 🔗 WebSocket state: 1
+index-T-lt5Bch.js:397 📤 Sending identify message: {type: 'identify', userId: 'scores_page_user', draftId: 'admin_updates', source: 'scores_page', connectionId: 'scores_1755118185497'}
+index-T-lt5Bch.js:397 Scores WebSocket received message: identified
+index-T-lt5Bch.js:397 ✅ Scores WebSocket connected successfully for live admin updates
+index-T-lt5Bch.js:397 🔗 WebSocket state: 1
+index-T-lt5Bch.js:397 📤 Sending identify message: {type: 'identify', userId: 'scores_page_user', draftId: 'admin_updates', source: 'scores_page', connectionId: 'scores_1755118185648'}
+index-T-lt5Bch.js:397 Scores WebSocket received message: identified
