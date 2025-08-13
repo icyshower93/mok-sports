@@ -39,11 +39,16 @@ export default function MorePage() {
 
   return (
     <div className="min-h-screen bg-background pb-20">
-      <div className="max-w-4xl mx-auto px-4 py-6 space-y-6">
-        <div className="flex items-center space-x-2">
-          <MoreHorizontal className="w-6 h-6 text-primary" />
-          <h1 className="text-2xl font-bold">More</h1>
+      <div className="max-w-4xl mx-auto">
+        {/* Sticky Header */}
+        <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm border-b border-border/50 px-6 py-4">
+          <div className="flex items-center space-x-2">
+            <MoreHorizontal className="w-6 h-6 text-primary" />
+            <h1 className="text-xl font-bold">More</h1>
+          </div>
         </div>
+
+        <div className="px-4 py-6 space-y-6">
         
         <div className="space-y-4">
           {/* Testing Section */}

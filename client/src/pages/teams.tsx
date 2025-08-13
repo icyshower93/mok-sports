@@ -308,12 +308,14 @@ export default function StablePage() {
 
   return (
     <div className="min-h-screen bg-background pb-20">
-      <div className="max-w-4xl mx-auto px-4 py-6 space-y-6">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <Shield className="w-6 h-6 text-primary" />
-            <h1 className="text-2xl font-bold">My Stable</h1>
-          </div>
+      <div className="max-w-4xl mx-auto">
+        {/* Sticky Header */}
+        <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm border-b border-border/50 px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <Shield className="w-6 h-6 text-primary" />
+              <h1 className="text-xl font-bold">My Stable</h1>
+            </div>
           
           {/* Reset Button - Available in all environments for testing */}
           <Button
@@ -337,7 +339,10 @@ export default function StablePage() {
               </>
             )}
           </Button>
+          </div>
         </div>
+
+        <div className="px-4 py-6 space-y-6">
 
         {/* Lock Selection Interface */}
         <div className="space-y-4">

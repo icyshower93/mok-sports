@@ -118,16 +118,16 @@ export default function LeaguePage() {
 
   return (
     <div className="min-h-screen bg-background pb-20">
-      <div className="max-w-4xl mx-auto px-4">
-        {/* Simple Header */}
-        <div className="py-6 pb-4">
-          <div className="flex items-center space-x-3">
-            <div className="p-2 bg-yellow-100 dark:bg-yellow-900/30 rounded-full">
-              <Trophy className="w-5 h-5 text-yellow-600 dark:text-yellow-400" />
-            </div>
-            <h1 className="text-2xl font-bold">{leagueInfo.name}</h1>
+      <div className="max-w-4xl mx-auto">
+        {/* Sticky Header */}
+        <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm border-b border-border/50 px-6 py-4">
+          <div className="flex items-center space-x-2">
+            <Trophy className="w-6 h-6 text-primary" />
+            <h1 className="text-xl font-bold">{leagueInfo.name}</h1>
           </div>
         </div>
+
+        <div className="px-4 py-6">
 
         {/* Professional Standings Card */}
         <Card className="overflow-hidden bg-gradient-to-br from-card to-card/50 border-border/50 shadow-lg rounded-2xl mb-6">

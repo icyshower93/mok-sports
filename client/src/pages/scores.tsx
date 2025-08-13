@@ -470,33 +470,38 @@ export default function ScoresPage() {
   return (
     <div className="flex flex-col min-h-screen">
       {/* Main Content */}
-      <div className="flex-1 container mx-auto px-4 py-6 max-w-4xl pb-24">
-        <div className="flex flex-col space-y-6">
-          {/* Header */}
-          <div className="flex flex-col gap-4">
-            <div className="flex items-center justify-between">
+      <div className="flex-1 max-w-4xl mx-auto pb-24">
+        {/* Sticky Header */}
+        <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm border-b border-border/50 px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <Trophy className="w-6 h-6 text-primary" />
               <div>
-                <h1 className="text-2xl font-bold">Scores</h1>
-                <p className="text-muted-foreground">{currentLeague.name}</p>
-              </div>
-
-              {/* Week Selector - Dropdown Style */}
-              <div className="flex items-center gap-2">
-                <select
-                  value={selectedWeek}
-                  onChange={(e) => setSelectedWeek(Number(e.target.value))}
-                  className="bg-background border border-border rounded-md px-3 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                >
-                  {/* Regular season options - Week 1 to Week 18 */}
-                  {Array.from({ length: 18 }, (_, i) => i + 1).map((week) => (
-                    <option key={week} value={week}>
-                      Week {week}
-                    </option>
-                  ))}
-                </select>
+                <h1 className="text-xl font-bold">Scores</h1>
+                <p className="text-sm text-muted-foreground">{currentLeague.name}</p>
               </div>
             </div>
+
+            {/* Week Selector - Dropdown Style */}
+            <div className="flex items-center gap-2">
+              <select
+                value={selectedWeek}
+                onChange={(e) => setSelectedWeek(Number(e.target.value))}
+                className="bg-background border border-border rounded-md px-3 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+              >
+                {/* Regular season options - Week 1 to Week 18 */}
+                {Array.from({ length: 18 }, (_, i) => i + 1).map((week) => (
+                  <option key={week} value={week}>
+                    Week {week}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
+        </div>
+
+        <div className="px-4 py-6">
+          <div className="flex flex-col space-y-6">
 
           {/* Weekly Rankings removed - now displayed only on main tab */}
 
