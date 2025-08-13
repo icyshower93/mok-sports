@@ -64,6 +64,30 @@ export default function LeaguePage() {
     enabled: !!user && !!targetLeagueId,
   });
 
+  // Process skins data to calculate skins won per user - MOVED BEFORE EARLY RETURNS
+  const userSkinsWon = useMemo(() => {
+    try {
+      if (!skinsData || !skinsData.skins || !Array.isArray(skinsData.skins)) {
+        console.log('[League] No skins data available, returning empty object');
+        return {};
+      }
+      
+      const skinsCount: Record<string, number> = {};
+      skinsData.skins.forEach((skin: any) => {
+        if (skin && skin.winnerName) {
+          skinsCount[skin.winnerName] = (skinsCount[skin.winnerName] || 0) + 1;
+        }
+      });
+      
+      console.log('[League] Skins won by user:', skinsCount);
+      return skinsCount;
+    } catch (error) {
+      console.error('[League] Error processing skins data:', error);
+      return {};
+    }
+  }, [skinsData]);
+
+  // EARLY RETURNS MOVED AFTER ALL HOOKS
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background pb-20">
@@ -92,21 +116,6 @@ export default function LeaguePage() {
   }
 
   const { league: leagueInfo, standings, seasonPrizes } = leagueData as any || { league: null, standings: [], seasonPrizes: [] };
-
-  // Process skins data to calculate skins won per user
-  const userSkinsWon = useMemo(() => {
-    if (!skinsData || !Array.isArray(skinsData.skins)) return {};
-    
-    const skinsCount: Record<string, number> = {};
-    skinsData.skins.forEach((skin: any) => {
-      if (skin.winnerName) {
-        skinsCount[skin.winnerName] = (skinsCount[skin.winnerName] || 0) + 1;
-      }
-    });
-    
-    console.log('[League] Skins won by user:', skinsCount);
-    return skinsCount;
-  }, [skinsData]);
 
   const toggleUserExpansion = (userName: string) => {
     setExpandedUsers(prev => {

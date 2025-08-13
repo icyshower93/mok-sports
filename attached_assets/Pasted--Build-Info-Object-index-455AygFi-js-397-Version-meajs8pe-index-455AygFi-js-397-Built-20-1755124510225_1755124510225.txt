@@ -1,0 +1,108 @@
+🏗️ Build Info: Object
+index-455AygFi.js:397 📦 Version: meajs8pe
+index-455AygFi.js:397 📅 Built: 2025-08-13T22:34:14.930Z
+index-455AygFi.js:397 🔧 Environment: production
+index-455AygFi.js:353 [Auth] Token check - Has token: true Has user: false Loading: true
+index-455AygFi.js:353 [SW Hook] EMERGENCY: Unregistering all existing service workers
+index-455AygFi.js:353 [SW Hook] Found 1 existing registrations
+index-455AygFi.js:353 [SW Hook] Unregistering existing service worker
+index-455AygFi.js:353 [SW Hook] Found 1 caches to delete
+index-455AygFi.js:353 [SW Hook] Deleting cache: mok-sports-dynamic-v1.7.0-nuclear-unregister-1755124451807
+index-455AygFi.js:353 [Auth] Token check - Has token: true Has user: true Loading: false
+index-455AygFi.js:353 [SubscriptionManager] 6:34:14 PM - Permission is granted and no active subscription - auto-creating subscription
+index-455AygFi.js:353 [AutoPushRefresh] Legacy hook delegating to SubscriptionManager
+index-455AygFi.js:353 [SW Hook] Registering fresh service worker: /sw.js?v=1755124455038&r=0.798065561393483
+league:1 Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner.
+sw.js?v=1755124455038&r=0.798065561393483:2 [SW] NUCLEAR OPTION - Emergency service worker loading
+sw.js?v=1755124455038&r=0.798065561393483:88 [SW] Service worker starting, version: v1.7.0-nuclear-unregister-1755124455095
+sw.js?v=1755124455038&r=0.798065561393483:305 [SW] Service worker script loaded successfully
+sw.js?v=1755124455038&r=0.798065561393483:19 [SW] EMERGENCY INSTALL - Clearing all caches and forcing activation
+sw.js?v=1755124455038&r=0.798065561393483:92 [SW] Installing service worker, version: v1.7.0-nuclear-unregister-1755124455095
+index-455AygFi.js:353 [SW Hook] Service worker registered successfully
+sw.js?v=1755124455038&r=0.798065561393483:22 [SW] Found caches to delete: Array(0)
+sw.js?v=1755124455038&r=0.798065561393483:30 [SW] All caches deleted - skipping waiting
+sw.js?v=1755124455038&r=0.798065561393483:96 [SW] Caching static files
+sw.js?v=1755124455038&r=0.798065561393483:99 [SW] Static files cached successfully
+index-455AygFi.js:353 [SubscriptionManager] 6:34:15 PM - Starting subscription refresh...
+index-455AygFi.js:353 [SubscriptionManager] 6:34:15 PM - Creating new push subscription...
+index-455AygFi.js:353 [SubscriptionManager] 6:34:15 PM - Sending subscription to server: https://fcm.googleapis.com/fcm/send/c7R_f1W6wKQ:AP...
+index-455AygFi.js:353 [SubscriptionManager] 6:34:16 PM - Server response: 201 
+index-455AygFi.js:353 [SubscriptionManager] 6:34:16 PM - Subscription registered successfully: Subscription registered successfully
+index-455AygFi.js:353 [ErrorBoundary] Error caught: Error Minified React error #310; visit https://reactjs.org/docs/error-decoder.html?invariant=310 for the full message or use the non-minified dev environment for full errors and additional helpful warnings.
+getDerivedStateFromError @ index-455AygFi.js:353Understand this error
+index-455AygFi.js:353 [ErrorBoundary] Stack trace: Error: Minified React error #310; visit https://reactjs.org/docs/error-decoder.html?invariant=310 for the full message or use the non-minified dev environment for full errors and additional helpful warnings.
+    at Ft (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-455AygFi.js:38:17593)
+    at Object.fx [as useMemo] (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-455AygFi.js:38:21282)
+    at le.useMemo (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-455AygFi.js:9:6223)
+    at zT (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-455AygFi.js:397:131824)
+    at ef (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-455AygFi.js:38:16998)
+    at Cu (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-455AygFi.js:40:3139)
+    at zx (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-455AygFi.js:40:44737)
+    at Fx (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-455AygFi.js:40:39727)
+    at pS (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-455AygFi.js:40:39655)
+    at al (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-455AygFi.js:40:39508)
+getDerivedStateFromError @ index-455AygFi.js:353Understand this error
+index-455AygFi.js:353 [ErrorBoundary] Error caught: Error Minified React error #310; visit https://reactjs.org/docs/error-decoder.html?invariant=310 for the full message or use the non-minified dev environment for full errors and additional helpful warnings.
+getDerivedStateFromError @ index-455AygFi.js:353Understand this error
+index-455AygFi.js:353 [ErrorBoundary] Stack trace: Error: Minified React error #310; visit https://reactjs.org/docs/error-decoder.html?invariant=310 for the full message or use the non-minified dev environment for full errors and additional helpful warnings.
+    at Ft (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-455AygFi.js:38:17593)
+    at Object.fx [as useMemo] (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-455AygFi.js:38:21282)
+    at le.useMemo (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-455AygFi.js:9:6223)
+    at zT (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-455AygFi.js:397:131824)
+    at ef (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-455AygFi.js:38:16998)
+    at Cu (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-455AygFi.js:40:3139)
+    at zx (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-455AygFi.js:40:44737)
+    at Fx (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-455AygFi.js:40:39727)
+    at pS (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-455AygFi.js:40:39655)
+    at al (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-455AygFi.js:40:39508)
+getDerivedStateFromError @ index-455AygFi.js:353Understand this error
+index-455AygFi.js:40 Error: Minified React error #310; visit https://reactjs.org/docs/error-decoder.html?invariant=310 for the full message or use the non-minified dev environment for full errors and additional helpful warnings.
+    at Ft (index-455AygFi.js:38:17593)
+    at Object.fx [as useMemo] (index-455AygFi.js:38:21282)
+    at le.useMemo (index-455AygFi.js:9:6223)
+    at zT (index-455AygFi.js:397:131824)
+    at ef (index-455AygFi.js:38:16998)
+    at Cu (index-455AygFi.js:40:3139)
+    at zx (index-455AygFi.js:40:44737)
+    at Fx (index-455AygFi.js:40:39727)
+    at pS (index-455AygFi.js:40:39655)
+    at al (index-455AygFi.js:40:39508)
+ku @ index-455AygFi.js:40Understand this error
+index-455AygFi.js:353 [ErrorBoundary] DETAILED ERROR - Name: Error
+componentDidCatch @ index-455AygFi.js:353Understand this error
+index-455AygFi.js:353 [ErrorBoundary] DETAILED ERROR - Message: Minified React error #310; visit https://reactjs.org/docs/error-decoder.html?invariant=310 for the full message or use the non-minified dev environment for full errors and additional helpful warnings.
+componentDidCatch @ index-455AygFi.js:353Understand this error
+index-455AygFi.js:353 [ErrorBoundary] DETAILED ERROR - Stack: Error: Minified React error #310; visit https://reactjs.org/docs/error-decoder.html?invariant=310 for the full message or use the non-minified dev environment for full errors and additional helpful warnings.
+    at Ft (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-455AygFi.js:38:17593)
+    at Object.fx [as useMemo] (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-455AygFi.js:38:21282)
+    at le.useMemo (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-455AygFi.js:9:6223)
+    at zT (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-455AygFi.js:397:131824)
+    at ef (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-455AygFi.js:38:16998)
+    at Cu (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-455AygFi.js:40:3139)
+    at zx (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-455AygFi.js:40:44737)
+    at Fx (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-455AygFi.js:40:39727)
+    at pS (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-455AygFi.js:40:39655)
+    at al (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-455AygFi.js:40:39508)
+componentDidCatch @ index-455AygFi.js:353Understand this error
+index-455AygFi.js:353 [ErrorBoundary] Component stack: 
+    at zT (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-455AygFi.js:397:130622)
+    at ot (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-455AygFi.js:48:3201)
+    at sN (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-455AygFi.js:48:4017)
+    at nR (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-455AygFi.js:397:233305)
+    at w2 (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-455AygFi.js:353:57509)
+    at u (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-455AygFi.js:48:45834)
+    at Ly (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-455AygFi.js:353:50483)
+    at y2 (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-455AygFi.js:353:56981)
+    at jN (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-455AygFi.js:48:40185)
+    at C2 (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-455AygFi.js:353:70962)
+    at rR
+componentDidCatch @ index-455AygFi.js:353Understand this error
+sw.js?v=1755124455038&r=0.798065561393483:41 [SW] EMERGENCY ACTIVATE - Taking control of all clients
+sw.js?v=1755124455038&r=0.798065561393483:110 [SW] Activating service worker, version: v1.7.0-nuclear-unregister-1755124455095
+sw.js?v=1755124455038&r=0.798065561393483:46 [SW] Deleting remaining cache: mok-sports-static-v1.7.0-nuclear-unregister-1755124455095
+sw.js?v=1755124455038&r=0.798065561393483:116 [SW] Found caches: Array(1)
+sw.js?v=1755124455038&r=0.798065561393483:129 [SW] Service worker activated and controlling all clients
+sw.js?v=1755124455038&r=0.798065561393483:51 [SW] Claiming all clients immediately
+sw.js?v=1755124455038&r=0.798065561393483:64 [SW] BYPASSING CACHE for JS file: https://mok-sports-draft-mokfantasysport.replit.app/manifest.json
+sw.js?v=1755124455038&r=0.798065561393483:164 [SW] Fetching /league from network
+sw.js?v=1755124455038&r=0.798065561393483:164 [SW] Fetching /assets/index-CbRrnplr.css from network
