@@ -53,16 +53,23 @@ async function setupProductionAssets(app: express.Application) {
       }
     }));
     
-    // Serve manifest.json, service worker, and other root files
+    // Serve manifest.json, service worker, and other root files including logos
     app.use(express.static(distPath, {
       index: false, // Don't serve index.html automatically
       maxAge: '1d', // Cache for 1 day
       setHeaders: (res, filePath) => {
+        console.log('[Static] Serving file:', filePath);
         if (filePath.endsWith('manifest.json')) {
           res.setHeader('Content-Type', 'application/manifest+json');
         } else if (filePath.endsWith('sw.js') || filePath.endsWith('service-worker.js')) {
           res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
           res.setHeader('Cache-Control', 'no-cache'); // Don't cache service worker
+        } else if (filePath.endsWith('.png')) {
+          res.setHeader('Content-Type', 'image/png');
+          console.log('[Static] PNG file served:', filePath);
+        } else if (filePath.endsWith('.svg')) {
+          res.setHeader('Content-Type', 'image/svg+xml');
+          console.log('[Static] SVG file served:', filePath);
         }
       }
     }));
