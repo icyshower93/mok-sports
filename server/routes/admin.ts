@@ -953,6 +953,9 @@ async function handleWeekProgression(oldWeek: number, newWeek: number, season: n
     // Initialize user weekly scores for the new week (all users start at 0)
     await initializeNewWeekScores(season, newWeek);
     
+    // Reset weekly points for all active leagues using endOfWeekProcessor
+    await resetWeeklyPointsForAllLeagues(season, newWeek);
+    
     console.log(`✅ Week progression complete: ${oldWeek} → ${newWeek}`);
   } catch (error) {
     console.error('Error handling week progression:', error);
@@ -1092,6 +1095,31 @@ async function initializeNewWeekScores(season: number, week: number) {
     console.log(`📊 Initialized Week ${week} scores for ${allLeagueMembers.length} league members`);
   } catch (error) {
     console.error('Error initializing new week scores:', error);
+  }
+}
+
+// Reset weekly points for all active leagues when new week starts
+async function resetWeeklyPointsForAllLeagues(season: number, newWeek: number) {
+  try {
+    console.log(`🔄 Resetting weekly points for all leagues - Week ${newWeek} starts fresh`);
+    
+    // Get all active leagues
+    const activeLeagues = await db.select({
+      id: leagues.id,
+      name: leagues.name
+    })
+    .from(leagues)
+    .where(eq(leagues.isActive, true));
+    
+    // Reset weekly points for each league using the endOfWeekProcessor
+    for (const league of activeLeagues) {
+      await endOfWeekProcessor.resetWeeklyPoints(season, newWeek, league.id);
+      console.log(`✅ Reset weekly points for league: ${league.name}`);
+    }
+    
+    console.log(`🎯 Weekly points reset complete for ${activeLeagues.length} active leagues`);
+  } catch (error) {
+    console.error('Error resetting weekly points for all leagues:', error);
   }
 }
 

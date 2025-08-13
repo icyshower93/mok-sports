@@ -352,14 +352,18 @@ export class EndOfWeekProcessor {
 
   // Reset weekly points when new week starts (first game of next week)
   async resetWeeklyPoints(season: number, newWeek: number, leagueId: string): Promise<void> {
-    console.log(`[EndOfWeek] Resetting weekly points for start of week ${newWeek}`);
+    console.log(`[EndOfWeek] Resetting weekly points for start of week ${newWeek} - clearing skins competition`);
 
     // Reset all users' weekly points to 0 for the new week
+    // This ensures that the weekly skins competition starts fresh
+    // Season totals are maintained by summing all previous weeks
     await db.update(userWeeklyScores)
       .set({
         basePoints: 0,
         lockBonusPoints: 0,
         lockAndLoadBonusPoints: 0,
+        weeklyHighBonusPoints: 0,
+        weeklyLowPenaltyPoints: 0,
         totalPoints: 0,
         updatedAt: new Date()
       })
@@ -371,7 +375,7 @@ export class EndOfWeekProcessor {
         )
       );
 
-    console.log(`[EndOfWeek] Weekly points reset completed for week ${newWeek}`);
+    console.log(`[EndOfWeek] ✅ Weekly skins reset completed for week ${newWeek} - all users start at 0 points`);
   }
 
   // Get end-of-week results for display purposes

@@ -96,6 +96,14 @@ Google OAuth2 is the primary authentication mechanism. JWT tokens are securely s
 - **Data Integration Working**: Real-time scoring, team highlighting, and skins tracking all functional
 - **Date**: August 13, 2025
 
+## Weekly Skins Reset System - IMPLEMENTED
+- **Enhanced Week Progression Logic**: Added `resetWeeklyPointsForAllLeagues()` function to properly clear weekly skins competition when new week starts
+- **Preserved Season Totals**: Weekly point reset only affects current week scores (for skins calculation), season totals remain intact by summing all previous weeks
+- **Automatic Reset Trigger**: Week progression automatically resets weekly points to 0 for all users, ensuring fresh skins competition each week
+- **Clear Documentation**: Added logging to distinguish between weekly skins reset and season total preservation
+- **Integration Point**: Reset functionality integrated into `handleWeekProgression()` for automatic execution
+- **Date**: August 13, 2025
+
 ## Bonus Calculation System - RESOLVED
 - **Fixed Critical Duplicate Processing Bug**: Eliminated bonus calculations happening multiple times causing inflated scores (Gamma Bot showing 8+ points instead of 7)
 - **Improved Deduplication Logic**: Added robust checks to prevent multiple bonus applications for the same week
