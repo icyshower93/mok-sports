@@ -390,6 +390,9 @@ export class DraftWebSocketManager {
   private handleAdminConnection(ws: WebSocket, request: any) {
     console.log('[WebSocket] 🎯 Setting up admin/scores connection');
     
+    // Track connection creation time for debugging
+    const connectionStartTime = Date.now();
+    
     // Store admin connection in special admin_updates draft group
     const adminConnection: DraftConnection = {
       userId: 'scores_page_user',
@@ -401,16 +404,29 @@ export class DraftWebSocketManager {
     // Create admin_updates group if it doesn't exist
     if (!this.connections.has('admin_updates')) {
       this.connections.set('admin_updates', []);
+      console.log('[WebSocket] 📦 Created new admin_updates group');
     }
     
     this.connections.get('admin_updates')!.push(adminConnection);
     console.log(`[WebSocket] ✅ Admin connection added to admin_updates group`);
     console.log(`[WebSocket] 📊 Admin connections now: ${this.connections.get('admin_updates')?.length}`);
+    console.log(`[WebSocket] 🔍 WebSocket ready state: ${ws.readyState} (1=OPEN, 2=CLOSING, 3=CLOSED)`);
     
     // FIX: Update connection stats for admin connections
     this.connectionStats.totalConnections++;
     this.connectionStats.activeConnections++;
     console.log(`[WebSocket] 📊 Stats updated - Total: ${this.connectionStats.totalConnections}, Active: ${this.connectionStats.activeConnections}`);
+    
+    // Add immediate connection verification
+    setTimeout(() => {
+      const currentConnections = this.connections.get('admin_updates')?.length || 0;
+      console.log(`[WebSocket] 🕐 Connection check after 1 second - Still connected: ${currentConnections} admin connections`);
+      if (ws.readyState === 1) {
+        console.log('[WebSocket] ✅ Admin WebSocket still OPEN after 1 second');
+      } else {
+        console.log(`[WebSocket] ❌ Admin WebSocket closed after 1 second - State: ${ws.readyState}`);
+      }
+    }, 1000);
     
     // Send immediate acknowledgment for scores page
     setTimeout(() => {
@@ -468,8 +484,22 @@ export class DraftWebSocketManager {
       }
     });
 
-    ws.on('close', () => {
-      console.log('[WebSocket] Admin connection closed');
+    ws.on('close', (code, reason) => {
+      const connectionDuration = Math.floor((Date.now() - connectionStartTime) / 1000);
+      console.log(`[WebSocket] ❌ ADMIN CONNECTION CLOSED - Duration: ${connectionDuration}s`);
+      console.log(`[WebSocket] Close Code: ${code}, Reason: ${reason?.toString() || 'none'}`);
+      
+      // Analyze close codes
+      if (code === 1000) {
+        console.log('[WebSocket] 🟢 Normal closure - Client closed connection');
+      } else if (code === 1001) {
+        console.log('[WebSocket] 🟡 Going away - Browser navigation or tab close');
+      } else if (code === 1006) {
+        console.log('[WebSocket] 🔴 Abnormal closure - Connection lost without close frame');
+      } else {
+        console.log(`[WebSocket] ⚠️  Unexpected close code: ${code}`);
+      }
+      
       // Remove from admin_updates group
       const adminConnections = this.connections.get('admin_updates');
       if (adminConnections) {
@@ -477,13 +507,15 @@ export class DraftWebSocketManager {
         if (index !== -1) {
           adminConnections.splice(index, 1);
           console.log('[WebSocket] Admin connection removed from admin_updates group');
+          console.log(`[WebSocket] Remaining admin connections: ${adminConnections.length}`);
         }
         if (adminConnections.length === 0) {
           this.connections.delete('admin_updates');
+          console.log('[WebSocket] admin_updates group deleted - no remaining connections');
         }
       }
       // Update connection stats
-      this.connectionStats.activeConnections--;
+      this.connectionStats.activeConnections = Math.max(0, this.connectionStats.activeConnections - 1);
       this.connectionStats.disconnections++;
       console.log(`[WebSocket] 📊 Admin disconnect - Active connections: ${this.connectionStats.activeConnections}`);
     });

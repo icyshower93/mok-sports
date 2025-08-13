@@ -171,6 +171,11 @@ export default function ScoresPage() {
     console.log("🔍 UserAgent check:", navigator.userAgent);
     console.log("🔍 Window location:", window.location.href);
     console.log("🔍 WebSocket support:", typeof WebSocket !== "undefined");
+    
+    // Add connection persistence test
+    let connectionTestInterval: NodeJS.Timeout;
+    let reconnectAttempts = 0;
+    const maxReconnectAttempts = 5;
 
     const connectWebSocket = () => {
       const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
@@ -235,6 +240,8 @@ export default function ScoresPage() {
             "✅ Scores WebSocket connected successfully for live admin updates",
           );
           console.log("🔗 WebSocket state:", ws.readyState);
+          reconnectAttempts = 0; // Reset counter on successful connection
+          
           // Send identification message with fake draft info to connect to the system
           const identifyMessage = {
             type: "identify",
@@ -245,19 +252,55 @@ export default function ScoresPage() {
           };
           console.log("📤 Sending identify message:", identifyMessage);
           ws.send(JSON.stringify(identifyMessage));
+          
+          // Start periodic connection test
+          connectionTestInterval = setInterval(() => {
+            if (ws.readyState === WebSocket.OPEN) {
+              try {
+                ws.send(JSON.stringify({
+                  type: "ping",
+                  timestamp: Date.now()
+                }));
+                console.log("🏓 Sent ping to maintain connection");
+              } catch (error) {
+                console.log("❌ Failed to send ping:", error);
+              }
+            }
+          }, 30000); // Ping every 30 seconds
         };
 
         ws.onclose = (event) => {
           console.log(
-            "Scores WebSocket disconnected:",
-            event.code,
-            event.reason,
+            `🔌 Scores WebSocket disconnected - Code: ${event.code}, Reason: ${event.reason}`,
           );
-          // Attempt to reconnect after 2 seconds
-          setTimeout(() => {
-            console.log("Attempting to reconnect WebSocket...");
-            connectWebSocket();
-          }, 2000);
+          
+          // Clear connection test interval
+          if (connectionTestInterval) {
+            clearInterval(connectionTestInterval);
+          }
+          
+          // Analyze close reason and attempt reconnection
+          if (event.code === 1000) {
+            console.log("🟢 Normal closure - likely intentional");
+          } else if (event.code === 1001) {
+            console.log("🟡 Going away - page navigation or tab close");
+          } else if (event.code === 1006) {
+            console.log("🔴 Abnormal closure - connection lost");
+          } else {
+            console.log(`⚠️ Unexpected close code: ${event.code}`);
+          }
+          
+          // Attempt to reconnect with exponential backoff
+          if (reconnectAttempts < maxReconnectAttempts) {
+            const delay = Math.pow(2, reconnectAttempts) * 1000; // 1s, 2s, 4s, 8s, 16s
+            console.log(`🔄 Attempting reconnect ${reconnectAttempts + 1}/${maxReconnectAttempts} in ${delay}ms`);
+            setTimeout(() => {
+              reconnectAttempts++;
+              connectWebSocket();
+            }, delay);
+          } else {
+            console.log("❌ Max reconnection attempts reached, giving up");
+          }
         };
 
         ws.onerror = (error) => {
