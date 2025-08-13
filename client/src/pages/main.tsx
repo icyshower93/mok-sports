@@ -162,10 +162,9 @@ export default function MainPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-muted/10 pb-20">
-      <div className="max-w-4xl mx-auto">
-        
-        {/* Fixed App Bar */}
-        <div className="fixed top-0 left-0 right-0 z-10 bg-background/95 backdrop-blur-sm border-b border-border/50 px-6 py-4">
+      {/* Fixed App Bar */}
+      <div className="fixed top-0 left-0 right-0 z-10 bg-background/95 backdrop-blur-sm border-b border-border/50">
+        <div className="max-w-4xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-xl font-bold text-foreground">Welcome, {user.name.split(' ')[0]}!</h1>
@@ -179,7 +178,9 @@ export default function MainPage() {
             </Avatar>
           </div>
         </div>
+      </div>
 
+      <div className="max-w-4xl mx-auto">
         <div className="px-4 space-y-6 pt-24">
           
           {/* Season Stats Card - Modern Professional Design */}
