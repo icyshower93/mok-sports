@@ -152,13 +152,16 @@ export default function ScoresPage() {
     staleTime: 0, // Always consider stale to check for updates
   });
 
-  // Update selected week when scores week data changes
+  // Set default week on initial load only, don't auto-switch after user selects
+  const [hasUserSelectedWeek, setHasUserSelectedWeek] = useState(false);
+  
   useEffect(() => {
-    if (scoresWeekData?.scoresDisplayWeek && scoresWeekData.scoresDisplayWeek !== selectedWeek) {
-      console.log(`📊 Auto-switching to Week ${scoresWeekData.scoresDisplayWeek} based on game completion status`);
+    // Only set default week on initial load, not when user has manually selected
+    if (!hasUserSelectedWeek && scoresWeekData?.scoresDisplayWeek) {
+      console.log(`📊 Setting default week to ${scoresWeekData.scoresDisplayWeek} based on current date`);
       setSelectedWeek(scoresWeekData.scoresDisplayWeek);
     }
-  }, [scoresWeekData?.scoresDisplayWeek, selectedWeek]);
+  }, [scoresWeekData?.scoresDisplayWeek, hasUserSelectedWeek]);
 
   // Listen for admin date advances to refresh scores automatically
   useEffect(() => {
@@ -189,8 +192,8 @@ export default function ScoresPage() {
               console.log("Admin date advanced, refreshing scores...");
               // Force invalidate ALL queries to trigger complete refresh
               queryClient.invalidateQueries();
-              // Also specifically refresh the scores week to check for auto-week-switching
-              queryClient.invalidateQueries({ queryKey: ['/api/admin/scores-week'] });
+              // Reset the user selection flag so default week can update after date changes
+              setHasUserSelectedWeek(false);
               console.log(
                 "📊 [WebSocket] Invalidated ALL queries after admin date advance",
               );
@@ -505,22 +508,19 @@ export default function ScoresPage() {
               <div className="flex items-center gap-2">
                 <select
                   value={selectedWeek}
-                  onChange={(e) => setSelectedWeek(Number(e.target.value))}
+                  onChange={(e) => {
+                    setSelectedWeek(Number(e.target.value));
+                    setHasUserSelectedWeek(true); // Mark that user has manually selected
+                  }}
                   className="bg-background border border-border rounded-md px-3 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
                 >
                   {/* Regular season options - Week 1 to Week 18 */}
                   {Array.from({ length: 18 }, (_, i) => i + 1).map((week) => (
                     <option key={week} value={week}>
                       Week {week}
-                      {scoresWeekData?.scoresDisplayWeek === week ? ' (Auto)' : ''}
                     </option>
                   ))}
                 </select>
-                {scoresWeekData?.scoresDisplayWeek === selectedWeek && (
-                  <Badge variant="secondary" className="text-xs px-2 py-1">
-                    Auto
-                  </Badge>
-                )}
               </div>
             </div>
           </div>
