@@ -20,7 +20,12 @@ import {
   ChevronUp,
   ChevronRight,
   Lock,
-  Gift
+  Gift,
+  Star,
+  Zap,
+  TrendingUp,
+  CheckCircle,
+  Coins
 } from "lucide-react";
 
 export default function LeaguePage() {
@@ -182,7 +187,7 @@ export default function LeaguePage() {
                         
                         {/* Skins Won */}
                         <div className="flex items-center space-x-1 text-muted-foreground">
-                          <Gift className="w-3 h-3" />
+                          <DollarSign className="w-3 h-3" />
                           <span className="text-sm font-medium">{member.skinsWon || 0}</span>
                         </div>
                         
