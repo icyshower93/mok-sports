@@ -41,70 +41,31 @@ import {
 import { BottomNav } from "@/components/layout/bottom-nav";
 import { TeamLogo } from "@/components/team-logo";
 import { useAuth } from "@/hooks/use-auth";
+import mokSportsLogoWhite from "@assets/MokSports_White_1755068930869.png";
+import mokSportsLogo from "@assets/moksports logo_1755069436420.png";
 
-// Industry-standard logo component for PWA/Mobile Apps with multiple fallbacks
+// Industry-standard logo component using imported assets (same pattern as team logos)
 const LogoDisplay = () => {
-  const [logoState, setLogoState] = useState<'loading' | 'png' | 'svg' | 'fallback'>('loading');
-
-  useEffect(() => {
-    // Try PNG first (original uploaded logo)
-    const pngImg = new Image();
-    pngImg.onload = () => {
-      console.log('✅ PNG logo loaded successfully');
-      setLogoState('png');
-    };
-    pngImg.onerror = (e) => {
-      console.log('❌ PNG logo failed to load:', e);
-      // PNG failed, try SVG fallback
-      const svgImg = new Image();
-      svgImg.onload = () => {
-        console.log('✅ SVG logo loaded successfully');
-        setLogoState('svg');
-      };
-      svgImg.onerror = (e) => {
-        console.log('❌ SVG logo failed to load:', e);
-        setLogoState('fallback');
-      };
-      svgImg.src = "/moksports-logo.svg";
-    };
-    pngImg.src = "/moksports-logo.png";
-    console.log('🔄 Attempting to load logo from:', pngImg.src);
-  }, []);
-
-  // Loading state
-  if (logoState === 'loading') {
-    return <div className="w-8 h-8 rounded-full bg-primary/20 animate-pulse" />;
-  }
-
-  // PNG logo (preferred)
-  if (logoState === 'png') {
-    return (
-      <img 
-        src="/moksports-logo.png" 
-        alt="Mok Sports"
-        className="w-8 h-8 object-contain filter invert dark:invert-0"
-        loading="eager"
-        decoding="async"
-        onError={() => setLogoState('svg')}
-      />
-    );
-  }
-
-  // SVG fallback
-  if (logoState === 'svg') {
-    return (
-      <img 
-        src="/moksports-logo.svg" 
-        alt="Mok Sports"
-        className="w-8 h-8 object-contain text-primary"
-        loading="eager"
-        onError={() => setLogoState('fallback')}
-      />
-    );
-  }
-
-  // Final fallback - Trophy icon
-  return <Trophy className="w-6 h-6 text-primary" />;
+  return (
+    <img 
+      src={mokSportsLogoWhite} 
+      alt="Mok Sports"
+      className="w-8 h-8 object-contain"
+      loading="eager"
+      decoding="async"
+      onError={(e) => {
+        // Fallback to regular logo if white version fails
+        (e.target as HTMLImageElement).src = mokSportsLogo;
+        (e.target as HTMLImageElement).onError = () => {
+          // Ultimate fallback: replace with Trophy icon
+          const fallback = document.createElement('div');
+          fallback.className = "w-8 h-8 rounded-full bg-gradient-to-br from-fantasy-green to-trust-blue flex items-center justify-center";
+          fallback.innerHTML = '<svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 0 0 0 5H6m0-5v5m0-5h12m-12 5h12m0-5H19.5a2.5 2.5 0 0 1 0 5H18m0-5v5m-6-9v9m0-9a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1z"/></svg>';
+          e.target.parentNode?.replaceChild(fallback, e.target);
+        };
+      }}
+    />
+  );
 };
 
 // Helper function to get news source icon
