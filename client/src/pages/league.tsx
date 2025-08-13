@@ -17,7 +17,10 @@ import {
   Target,
   Loader2,
   ChevronDown,
-  ChevronUp
+  ChevronUp,
+  ChevronRight,
+  Lock,
+  Gift
 } from "lucide-react";
 
 export default function LeaguePage() {
@@ -77,7 +80,7 @@ export default function LeaguePage() {
     );
   }
 
-  const { league: leagueInfo, standings, seasonPrizes } = leagueData || { league: null, standings: [], seasonPrizes: [] };
+  const { league: leagueInfo, standings, seasonPrizes } = leagueData as any || { league: null, standings: [], seasonPrizes: [] };
 
   const toggleUserExpansion = (userName: string) => {
     setExpandedUsers(prev => {
@@ -121,97 +124,115 @@ export default function LeaguePage() {
           </div>
         </div>
 
-        {/* Standings */}
-        <div className="pb-6">
-          <div className="mb-4">
-            <h2 className="text-xl font-bold">Standings</h2>
-            <p className="text-sm text-muted-foreground">Week {currentWeekData?.currentWeek || leagueInfo.week}</p>
-          </div>
-          
-          <div className="space-y-3">
-            {standings.map((member: any, index: number) => (
-              <div key={member.name}>
-                <Card 
-                  className={`${member.isCurrentUser ? 'ring-2 ring-primary/20 bg-primary/5' : ''}`}
-                >
-                  <CardContent className="p-4">
-                    <div className="flex items-center justify-between w-full">
-                      {/* Left Side: Rank + Full Name */}
-                      <div className="flex items-center space-x-3 min-w-0 flex-shrink">
-                        {/* Rank Badge */}
-                        <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 ${
-                          member.rank === 1 ? 'bg-yellow-500 text-white' :
-                          member.rank === 2 ? 'bg-gray-400 text-white' :
-                          member.rank === 3 ? 'bg-orange-500 text-white' :
+        {/* Professional Standings Card */}
+        <Card className="overflow-hidden bg-gradient-to-br from-card to-card/50 border-border/50 shadow-lg rounded-2xl mb-6">
+          <CardHeader className="pb-4 bg-gradient-to-r from-primary/5 to-primary/10">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <div className="p-2 bg-primary/10 rounded-full">
+                  <Trophy className="w-5 h-5 text-primary" />
+                </div>
+                <div>
+                  <CardTitle className="text-xl font-bold">Season Standings</CardTitle>
+                  <p className="text-sm text-muted-foreground">Week {(currentWeekData as any)?.currentWeek || leagueInfo?.week} • 6 players</p>
+                </div>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="p-0">
+            <div className="divide-y divide-border/30">
+              {standings.map((member: any, index: number) => (
+                <div key={member.name} className="group">
+                  {/* Main Player Row */}
+                  <div 
+                    className={`px-4 py-3 transition-all duration-200 cursor-pointer hover:bg-muted/20 ${
+                      member.isCurrentUser ? 'bg-primary/5 border-primary/20' : ''
+                    } ${expandedUsers.has(member.name) ? 'bg-muted/10' : ''}`}
+                    onClick={() => toggleUserExpansion(member.name)}
+                  >
+                    <div className="flex items-center justify-between">
+                      {/* Left: Place + Username */}
+                      <div className="flex items-center space-x-3 flex-1 min-w-0">
+                        {/* Place Number */}
+                        <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold shadow-sm flex-shrink-0 ${
+                          member.rank === 1 ? 'bg-gradient-to-br from-yellow-400 to-yellow-600 text-white' :
+                          member.rank === 2 ? 'bg-gradient-to-br from-gray-300 to-gray-500 text-white' :
+                          member.rank === 3 ? 'bg-gradient-to-br from-orange-400 to-orange-600 text-white' :
                           'bg-muted text-muted-foreground'
                         }`}>
-                          {member.rank}
+                          {member.rank === 1 ? <Crown className="w-4 h-4" /> : member.rank}
                         </div>
                         
-                        {/* Full Name */}
-                        <span className="font-semibold text-base text-foreground">{member.name}</span>
+                        {/* Username */}
+                        <div className="flex-1 min-w-0">
+                          <div className="font-bold text-base text-foreground truncate">{member.name}</div>
+                          {member.isCurrentUser && (
+                            <Badge variant="secondary" className="text-xs px-2 py-0.5 mt-0.5">You</Badge>
+                          )}
+                        </div>
                       </div>
                       
-                      {/* Large spacer to push stats far right */}
-                      <div className="flex-1"></div>
-                      
-                      {/* Far Right: Stats with wider spacing */}
-                      <div className="flex items-center space-x-6 flex-shrink-0">
-                        <div className="text-center min-w-[40px]">
-                          <div className="text-xs text-muted-foreground font-medium">LOCKS</div>
-                          <div className="font-semibold text-sm">{member.locks}</div>
+                      {/* Right: Stats */}
+                      <div className="flex items-center space-x-4">
+                        {/* Locks Correct */}
+                        <div className="flex items-center space-x-1 text-muted-foreground">
+                          <Lock className="w-3 h-3" />
+                          <span className="text-sm font-medium">{member.locks}</span>
                         </div>
-                        <div className="text-center min-w-[40px]">
-                          <div className="text-xs text-muted-foreground font-medium">SKINS</div>
-                          <div className="font-semibold text-sm">{member.skinsWon || 0}</div>
+                        
+                        {/* Skins Won */}
+                        <div className="flex items-center space-x-1 text-muted-foreground">
+                          <Gift className="w-3 h-3" />
+                          <span className="text-sm font-medium">{member.skinsWon || 0}</span>
                         </div>
-                        <div className="text-center min-w-[40px]">
+                        
+                        {/* Total Season Points - Most Prominent */}
+                        <div className="text-right min-w-[50px]">
+                          <div className="text-2xl font-black text-foreground">{member.points}</div>
                           <div className="text-xs text-muted-foreground font-medium">PTS</div>
-                          <div className="text-xl font-bold text-foreground">{member.points}</div>
                         </div>
-                        {/* Chevron for teams expansion */}
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="p-1.5 h-8 w-8 ml-2"
-                          onClick={() => toggleUserExpansion(member.name)}
-                        >
-                          {expandedUsers.has(member.name) ? (
-                            <ChevronUp className="w-4 h-4" />
-                          ) : (
-                            <ChevronDown className="w-4 h-4" />
-                          )}
-                        </Button>
+                        
+                        {/* Chevron */}
+                        <div className={`transition-transform duration-200 ${
+                          expandedUsers.has(member.name) ? 'rotate-90' : ''
+                        }`}>
+                          <ChevronRight className="w-4 h-4 text-muted-foreground" />
+                        </div>
                       </div>
                     </div>
-                  </CardContent>
-                </Card>
-                
-                {/* Expanded Teams Section */}
-                {expandedUsers.has(member.name) && member.teams && member.teams.length > 0 && (
-                  <Card className="mt-2 ml-8">
-                    <CardContent className="p-3">
-                      <div className="flex items-center space-x-1 flex-wrap">
-                        {member.teams.map((team: any) => (
-                          <img 
-                            key={team.code}
-                            src={`/images/nfl/team_logos/${team.code}.png`}
-                            alt={team.code}
-                            title={`${team.name} (${team.code})`}
-                            className="w-8 h-8 rounded object-contain"
-                            onError={(e) => {
-                              (e.target as HTMLImageElement).src = `https://a.espncdn.com/i/teamlogos/nfl/500/${team.code.toLowerCase()}.png`;
-                            }}
-                          />
-                        ))}
+                  </div>
+                  
+                  {/* Expanded Teams Section with Animation */}
+                  {expandedUsers.has(member.name) && member.teams && member.teams.length > 0 && (
+                    <div className="px-4 py-3 bg-muted/5 border-t border-border/20 animate-in slide-in-from-top-2 duration-200">
+                      <div className="flex items-center justify-center">
+                        <div className="flex items-center space-x-2 flex-wrap justify-center max-w-xs">
+                          {member.teams.map((team: any, teamIndex: number) => (
+                            <div 
+                              key={team.code} 
+                              className="animate-in fade-in-0 duration-300"
+                              style={{ animationDelay: `${teamIndex * 50}ms` }}
+                            >
+                              <img 
+                                src={`/images/nfl/team_logos/${team.code}.png`}
+                                alt={team.code}
+                                title={`${team.name} (${team.code})`}
+                                className="w-10 h-10 rounded-lg object-contain shadow-sm hover:scale-105 transition-transform duration-150"
+                                onError={(e) => {
+                                  (e.target as HTMLImageElement).src = `https://a.espncdn.com/i/teamlogos/nfl/500/${team.code.toLowerCase()}.png`;
+                                }}
+                              />
+                            </div>
+                          ))}
+                        </div>
                       </div>
-                    </CardContent>
-                  </Card>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Season Prizes */}
         <div className="pb-6">
