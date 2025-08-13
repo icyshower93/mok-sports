@@ -333,67 +333,6 @@ export default function MainPage() {
               </div>
             </CardContent>
           </Card>
-
-          {/* Activity Feed */}
-          <Card className="rounded-2xl border-border/50 bg-gradient-to-br from-card to-card/50 mb-8">
-            <CardHeader className="pb-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-2">
-                  <Activity className="w-5 h-5 text-purple-600" />
-                  <CardTitle className="text-lg font-bold">Recent Activity</CardTitle>
-                </div>
-                <Button variant="ghost" size="sm" className="text-primary hover:text-primary/80">
-                  View All <ChevronRight className="w-4 h-4 ml-1" />
-                </Button>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="space-y-3">
-                {/* Mock activity items with user avatars */}
-                <div className="flex items-start space-x-3 p-3 bg-muted/10 rounded-xl">
-                  <Avatar className="w-8 h-8 border border-border/50">
-                    <AvatarFallback className="bg-emerald-100 text-emerald-700 text-xs font-semibold">
-                      G
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm text-foreground">
-                      <span className="font-semibold">Gamma</span> is leading this week with 7 points
-                    </p>
-                    <p className="text-xs text-muted-foreground mt-1">3 hours ago</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-start space-x-3 p-3 bg-muted/10 rounded-xl">
-                  <Avatar className="w-8 h-8 border border-border/50">
-                    <AvatarFallback className="bg-blue-100 text-blue-700 text-xs font-semibold">
-                      MS
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm text-foreground">
-                      <span className="font-semibold">Mok Sports</span> received weekly low penalty (-1)
-                    </p>
-                    <p className="text-xs text-muted-foreground mt-1">1 day ago</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-start space-x-3 p-3 bg-muted/10 rounded-xl">
-                  <Avatar className="w-8 h-8 border border-border/50">
-                    <AvatarFallback className="bg-amber-100 text-amber-700 text-xs font-semibold">
-                      A
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm text-foreground">
-                      Week {currentWeek} skins prize pool is now <span className="font-semibold">$30</span>
-                    </p>
-                    <p className="text-xs text-muted-foreground mt-1">2 days ago</p>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
         </div>
       </div>
       <BottomNav />
