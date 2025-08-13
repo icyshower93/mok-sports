@@ -42,6 +42,60 @@ import { BottomNav } from "@/components/layout/bottom-nav";
 import { TeamLogo } from "@/components/team-logo";
 import { useAuth } from "@/hooks/use-auth";
 
+// Industry-standard logo component for PWA/Mobile Apps with multiple fallbacks
+const LogoDisplay = () => {
+  const [logoState, setLogoState] = useState<'loading' | 'png' | 'svg' | 'fallback'>('loading');
+
+  useEffect(() => {
+    // Try PNG first (original uploaded logo)
+    const pngImg = new Image();
+    pngImg.onload = () => setLogoState('png');
+    pngImg.onerror = () => {
+      // PNG failed, try SVG fallback
+      const svgImg = new Image();
+      svgImg.onload = () => setLogoState('svg');
+      svgImg.onerror = () => setLogoState('fallback');
+      svgImg.src = "/moksports-logo.svg";
+    };
+    pngImg.src = "/moksports-logo.png";
+  }, []);
+
+  // Loading state
+  if (logoState === 'loading') {
+    return <div className="w-8 h-8 rounded-full bg-primary/20 animate-pulse" />;
+  }
+
+  // PNG logo (preferred)
+  if (logoState === 'png') {
+    return (
+      <img 
+        src="/moksports-logo.png" 
+        alt="Mok Sports"
+        className="w-8 h-8 object-contain filter invert dark:invert-0"
+        loading="eager"
+        decoding="async"
+        onError={() => setLogoState('svg')}
+      />
+    );
+  }
+
+  // SVG fallback
+  if (logoState === 'svg') {
+    return (
+      <img 
+        src="/moksports-logo.svg" 
+        alt="Mok Sports"
+        className="w-8 h-8 object-contain text-primary"
+        loading="eager"
+        onError={() => setLogoState('fallback')}
+      />
+    );
+  }
+
+  // Final fallback - Trophy icon
+  return <Trophy className="w-6 h-6 text-primary" />;
+};
+
 // Helper function to get news source icon
 const getNewsSourceIcon = (source: string) => {
   const sourceLower = source.toLowerCase();
@@ -217,19 +271,7 @@ export default function MainPage() {
                   <p className="text-xs text-muted-foreground">Current standings</p>
                 </div>
                 <div className="p-3 bg-primary/10 rounded-full flex items-center justify-center">
-                  <img 
-                    src="/moksports-logo.png" 
-                    alt="Mok Sports"
-                    className="w-8 h-8 object-contain filter invert dark:invert-0"
-                    onLoad={() => console.log('Mok Sports logo loaded successfully')}
-                    onError={(e) => {
-                      console.log('Logo failed to load from public directory, using fallback');
-                      e.currentTarget.style.display = 'none';
-                      const trophy = document.createElement('div');
-                      trophy.innerHTML = '<svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>';
-                      e.currentTarget.parentElement?.appendChild(trophy);
-                    }}
-                  />
+                  <LogoDisplay />
                 </div>
               </div>
               
