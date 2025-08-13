@@ -255,7 +255,7 @@ async function processGamesForDate(targetDate: Date): Promise<number> {
             .where(eq(nflGames.id, game.id));
 
           // Calculate and update Mok points for this game
-          await calculateAndUpdateMokPoints(game.id.toString(), game.season, game.week, homeScore, awayScore, game.homeTeamId, game.awayTeamId, game.homeTeamCode, game.awayTeamCode);
+          await calculateAndUpdateMokPoints(game.id, game.season, game.week, homeScore, awayScore, game.homeTeamId, game.awayTeamId, game.homeTeamCode, game.awayTeamCode);
 
           processedCount++;
           console.log(`✅ Updated game: ${game.awayTeamCode} ${awayScore} - ${homeScore} ${game.homeTeamCode}`);
@@ -266,6 +266,16 @@ async function processGamesForDate(targetDate: Date): Promise<number> {
 
       } catch (error) {
         console.error(`❌ Error processing game ${game.awayTeamCode} @ ${game.homeTeamCode}:`, error);
+      }
+    }
+
+    // After processing all games for the day, check if any week is now complete and needs bonuses
+    if (processedCount > 0) {
+      console.log(`🏁 Checking for completed weeks after processing ${processedCount} games...`);
+      
+      // Check all weeks that might have completed with today's games
+      for (let week = 1; week <= 18; week++) {
+        await checkAndCalculateWeeklyBonuses(adminState.season, week, true);
       }
     }
 
@@ -280,7 +290,7 @@ async function processGamesForDate(targetDate: Date): Promise<number> {
 
 // Calculate and update Mok points for a completed game
 async function calculateAndUpdateMokPoints(
-  gameId: string, 
+  gameId: number, 
   season: number, 
   week: number, 
   homeScore: number, 
