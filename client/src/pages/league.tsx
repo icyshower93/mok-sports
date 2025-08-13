@@ -58,6 +58,12 @@ export default function LeaguePage() {
     enabled: !!user && !!targetLeagueId,
   });
 
+  // Get weekly skins data to show winners
+  const { data: skinsData } = useQuery({
+    queryKey: [`/api/scoring/skins/${targetLeagueId}/2024`],
+    enabled: !!user && !!targetLeagueId,
+  });
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background pb-20">
@@ -86,6 +92,21 @@ export default function LeaguePage() {
   }
 
   const { league: leagueInfo, standings, seasonPrizes } = leagueData as any || { league: null, standings: [], seasonPrizes: [] };
+
+  // Process skins data to calculate skins won per user
+  const userSkinsWon = React.useMemo(() => {
+    if (!skinsData?.skins) return {};
+    
+    const skinsCount: Record<string, number> = {};
+    skinsData.skins.forEach((skin: any) => {
+      if (skin.winnerName) {
+        skinsCount[skin.winnerName] = (skinsCount[skin.winnerName] || 0) + 1;
+      }
+    });
+    
+    console.log('[League] Skins won by user:', skinsCount);
+    return skinsCount;
+  }, [skinsData]);
 
   const toggleUserExpansion = (userName: string) => {
     setExpandedUsers(prev => {
@@ -187,7 +208,7 @@ export default function LeaguePage() {
                           {/* Skins Won */}
                           <div className="text-center min-w-[36px]">
                             <div className="text-xs text-muted-foreground font-medium">SKINS</div>
-                            <div className="text-sm font-bold text-foreground">{member.skinsWon || 0}</div>
+                            <div className="text-sm font-bold text-foreground">{userSkinsWon[member.name] || 0}</div>
                           </div>
                         </div>
                         

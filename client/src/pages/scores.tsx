@@ -548,6 +548,21 @@ export default function ScoresPage() {
     return { locked: false, lockAndLoad: false };
   };
 
+  // Helper functions to determine high/low score teams
+  const isHighScoreTeam = (teamCode: string): boolean => {
+    const weekEndResults = (nflGamesData as any)?.weekEndResults;
+    if (!weekEndResults?.weekComplete || !weekEndResults.highScoreTeams) return false;
+    
+    return weekEndResults.highScoreTeams.some((team: any) => team.teamCode === teamCode);
+  };
+
+  const isLowScoreTeam = (teamCode: string): boolean => {
+    const weekEndResults = (nflGamesData as any)?.weekEndResults;
+    if (!weekEndResults?.weekComplete || !weekEndResults.lowScoreTeams) return false;
+    
+    return weekEndResults.lowScoreTeams.some((team: any) => team.teamCode === teamCode);
+  };
+
   return (
     <div className="flex flex-col min-h-screen">
       {/* Main Content */}
@@ -625,6 +640,13 @@ export default function ScoresPage() {
                   game.awayScore !== null &&
                   game.homeScore !== null &&
                   game.awayScore > game.homeScore;
+                
+                // Check if teams have high/low score bonuses
+                const homeIsHighScore = isHighScoreTeam(game.homeTeam);
+                const awayIsHighScore = isHighScoreTeam(game.awayTeam);
+                const homeIsLowScore = isLowScoreTeam(game.homeTeam);
+                const awayIsLowScore = isLowScoreTeam(game.awayTeam);
+                
                 const scoreDiff =
                   game.homeScore !== null && game.awayScore !== null
                     ? Math.abs(game.homeScore - game.awayScore)
@@ -634,25 +656,6 @@ export default function ScoresPage() {
 
                 const homeLockStatus = isTeamLocked(game.homeTeam);
                 const awayLockStatus = isTeamLocked(game.awayTeam);
-
-                // Check if teams are high/low scorers when week is complete
-                const isWeekComplete = weeklyRankings?.weekEndResults?.weekComplete;
-                const homeIsHighScore = isWeekComplete && 
-                  weeklyRankings?.weekEndResults?.highScoreTeams?.some(
-                    (team: any) => team.teamCode === game.homeTeam
-                  );
-                const homeIsLowScore = isWeekComplete && 
-                  weeklyRankings?.weekEndResults?.lowScoreTeams?.some(
-                    (team: any) => team.teamCode === game.homeTeam
-                  );
-                const awayIsHighScore = isWeekComplete && 
-                  weeklyRankings?.weekEndResults?.highScoreTeams?.some(
-                    (team: any) => team.teamCode === game.awayTeam
-                  );
-                const awayIsLowScore = isWeekComplete && 
-                  weeklyRankings?.weekEndResults?.lowScoreTeams?.some(
-                    (team: any) => team.teamCode === game.awayTeam
-                  );
 
                 return (
                   <div

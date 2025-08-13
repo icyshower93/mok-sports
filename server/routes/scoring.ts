@@ -330,6 +330,52 @@ router.get("/week/:week", async (req, res) => {
     // Sort by weekly points
     userRankings.sort((a, b) => b.weeklyPoints - a.weeklyPoints);
 
+    // Check if week is complete and add weekEndResults for high/low score indicators
+    const isWeekComplete = games.every(g => g.isCompleted);
+    let weekEndResults = null;
+    
+    if (isWeekComplete) {
+      // Find highest and lowest scoring teams for this week
+      const teamScores = new Map<string, number>();
+      
+      games.forEach(game => {
+        if (game.isCompleted) {
+          // Add home team score
+          const homeScore = game.homeScore || 0;
+          teamScores.set(game.homeTeam, homeScore);
+          
+          // Add away team score  
+          const awayScore = game.awayScore || 0;
+          teamScores.set(game.awayTeam, awayScore);
+        }
+      });
+      
+      // Find highest and lowest scores
+      const sortedTeamScores = Array.from(teamScores.entries()).sort((a, b) => b[1] - a[1]);
+      const highestScore = sortedTeamScores[0]?.[1] || 0;
+      const lowestScore = sortedTeamScores[sortedTeamScores.length - 1]?.[1] || 0;
+      
+      // Get teams with highest and lowest scores (could be multiple ties)
+      const highScoreTeams = sortedTeamScores.filter(([_, score]) => score === highestScore).map(([team, score]) => ({
+        teamCode: team,
+        score
+      }));
+      
+      const lowScoreTeams = sortedTeamScores.filter(([_, score]) => score === lowestScore).map(([team, score]) => ({
+        teamCode: team,
+        score
+      }));
+      
+      weekEndResults = {
+        weekComplete: true,
+        highScoreTeams,
+        lowScoreTeams,
+        completedAt: new Date().toISOString()
+      };
+      
+      console.log(`[Scoring] Week ${week} complete - High: ${highestScore} (${highScoreTeams.length} teams), Low: ${lowestScore} (${lowScoreTeams.length} teams)`);
+    }
+
     res.json({
       week,
       season,
@@ -339,7 +385,9 @@ router.get("/week/:week", async (req, res) => {
       // Add production readiness indicator
       production: season >= 2025,
       message: season === 2024 ? 'Testing mode: All scores visible' : 'Production mode: Only completed game scores visible',
-      games: games // Frontend expects 'games', not 'results'
+      games: games, // Frontend expects 'games', not 'results'
+      userRankings,
+      weekEndResults
     });
     
   } catch (error) {
@@ -598,6 +646,56 @@ router.get("/leagues/:leagueId/teams-left-to-play/:season/:week", async (req, re
   } catch (error) {
     console.error('[Scoring] Error getting teams left to play:', error);
     res.status(500).json({ error: 'Failed to get teams left to play' });
+  }
+});
+
+// Get skins data for a league and season
+router.get("/skins/:leagueId/:season", authenticateUser, async (req, res) => {
+  try {
+    const { leagueId, season } = req.params;
+    
+    console.log(`[Scoring] Getting skins data for league ${leagueId}, season ${season}`);
+    
+    // Get all weekly skins for this league and season
+    const skinsResult = await db.execute(sql`
+      SELECT 
+        ws.week,
+        ws.winning_score,
+        ws.prize_amount,
+        ws.is_tied,
+        ws.awarded_at,
+        u.name as winner_name,
+        u.id as winner_id
+      FROM weekly_skins ws
+      LEFT JOIN users u ON ws.winner_id = u.id
+      WHERE ws.league_id = ${leagueId} 
+      AND ws.season = ${parseInt(season)}
+      ORDER BY ws.week ASC
+    `);
+    
+    const skinsData = skinsResult.rows.map((row: any) => ({
+      week: row.week,
+      winnerName: row.winner_name,
+      winnerId: row.winner_id,
+      winningScore: row.winning_score,
+      prizeAmount: row.prize_amount,
+      isTied: row.is_tied,
+      awardedAt: row.awarded_at
+    }));
+    
+    console.log(`[Scoring] Found ${skinsData.length} skins awards for league ${leagueId}`);
+    
+    res.json({
+      leagueId,
+      season: parseInt(season),
+      skins: skinsData,
+      totalSkinsAwarded: skinsData.length,
+      totalPrizeValue: skinsData.reduce((sum, skin) => sum + skin.prizeAmount, 0)
+    });
+    
+  } catch (error) {
+    console.error('[Scoring] Error getting skins data:', error);
+    res.status(500).json({ error: 'Failed to get skins data' });
   }
 });
 

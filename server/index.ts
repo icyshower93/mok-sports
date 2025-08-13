@@ -333,6 +333,11 @@ app.use((req, res, next) => {
     res.send(emergencyHTML);
   });
 
+  // Import and register scoring routes
+  const { scoringRouter } = await import("./routes/scoring.js");
+  app.use("/api/scoring", scoringRouter);
+  console.log("📊 Scoring routes registered successfully");
+  
   const server = await registerRoutes(app);
   
   // Initialize Redis and recover active timers after server restart
