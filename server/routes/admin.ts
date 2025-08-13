@@ -454,6 +454,24 @@ async function checkAndCalculateWeeklyBonuses(season: number, week: number, forc
 
     // Only calculate weekly bonuses if ALL games of the week are actually completed
     if (weekComplete && weekGames.length > 0) {
+      // Check if bonuses have already been calculated for this week to prevent duplicates
+      const existingBonuses = await db.select()
+        .from(userWeeklyScores)
+        .where(and(
+          eq(userWeeklyScores.season, season),
+          eq(userWeeklyScores.week, week),
+          or(
+            gt(userWeeklyScores.weeklyHighBonusPoints, 0),
+            lt(userWeeklyScores.weeklyLowPenaltyPoints, 0)
+          )
+        ))
+        .limit(1);
+
+      if (existingBonuses.length > 0) {
+        console.log(`⚠️  Week ${week} bonuses already calculated - skipping to prevent duplicates`);
+        return;
+      }
+
       console.log(`🏆 Week ${week} games all completed! Now calculating weekly high/low bonuses...`);
       
       // Find highest and lowest scoring NFL teams this week
@@ -924,7 +942,8 @@ async function handleWeekProgression(oldWeek: number, newWeek: number, season: n
   try {
     console.log(`🏁 Finalizing Week ${oldWeek} and starting Week ${newWeek}`);
     
-    // Force calculate final week bonuses (including skins) for completed week
+    // Force calculate final week bonuses (including skins) for completed week - but skip if already done
+    console.log(`🔄 Week progression: checking if Week ${oldWeek} bonuses already calculated...`);
     await checkAndCalculateWeeklyBonuses(season, oldWeek, true); // Force check for week progression
     
     // Initialize user weekly scores for the new week (all users start at 0)
