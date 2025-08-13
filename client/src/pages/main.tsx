@@ -158,6 +158,7 @@ export default function MainPage() {
               <p className="text-sm text-muted-foreground">Week {currentWeek} • 2024 Season</p>
             </div>
             <Avatar className="w-10 h-10 border-2 border-primary/20">
+              <AvatarImage src={user.profilePicture} alt={user.name} />
               <AvatarFallback className="bg-primary/10 text-primary font-semibold">
                 {user.name.split(' ').map(n => n[0]).join('').toUpperCase()}
               </AvatarFallback>
