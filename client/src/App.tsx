@@ -11,7 +11,7 @@ import { usePWADetection } from "@/hooks/use-pwa-detection";
 import { useServiceWorker } from "@/hooks/use-service-worker";
 import { useAutoPushRefresh } from "@/hooks/use-auto-push-refresh";
 import { PWAInstallPrompt } from "@/components/pwa-install-prompt";
-import { usePWARealtime } from "@/hooks/use-pwa-realtime";
+import { usePWARealtime } from "@/hooks/use-pwa-realtime.ts";
 
 import { ErrorBoundary } from "@/components/error-boundary";
 import { DesktopNotice } from "@/components/desktop-notice";
