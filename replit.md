@@ -84,6 +84,15 @@ Google OAuth2 is the primary authentication mechanism. JWT tokens are securely s
 
 # Recent Updates (August 2025)
 
+## Week 2+ Scoring System Fix - CRITICAL ISSUE RESOLVED
+- **Root Cause Identified**: Week 2+ games had authentic scores but weren't marked as `isCompleted = true` in database
+- **Fixed Database State**: Updated all Week 2 and 3 games with scores to be marked as completed
+- **Scoring System Verification**: The `getNFLGameResults` function only processes games where `isCompleted = true`
+- **Week Progression Working**: System now correctly advances from Week 1 to Week 2+ with proper scoring
+- **Complete Score Coverage**: Weeks 1-3 now have full authentic 2024 NFL scores and work correctly
+- **Testing Confirmed**: Week 2 scoring now populates properly when advancing past Week 1
+- **Date**: August 14, 2025
+
 ## Comprehensive Scoring System for All Weeks - IMPLEMENTED
 - **Fixed Point Allocation Pipeline**: Resolved critical bug where games were processed but points weren't allocated to users
 - **Enhanced API Integration**: Added multiple Tank01 API fallback methods (box score → weekly games → daily games) for robust data retrieval
