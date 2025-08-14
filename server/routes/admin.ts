@@ -1148,16 +1148,31 @@ async function handleWeekProgression(oldWeek: number, newWeek: number, season: n
     console.log(`🔄 Week progression: checking if Week ${oldWeek} bonuses already calculated...`);
     await checkAndCalculateWeeklyBonuses(season, oldWeek, true); // Force check for week progression
     
-    // DISABLED: Weekly score resets that were wiping out Mok points during game processing
-    // These functions were clearing points that had already been calculated by calculateAndUpdateMokPoints
-    // when games from the new week were processed before week progression completed
+    // SMART WEEKLY RESET: Only reset when transitioning to a week with NO games in progress
+    // This preserves Mok points for games currently being processed while still enabling weekly skins
     
-    console.log(`🎯 CRITICAL FIX: Weekly reset functions disabled to preserve Mok points during game processing`);
-    console.log(`🎯 Points calculated by calculateAndUpdateMokPoints will now persist through week transitions`);
+    console.log(`🎯 SMART RESET: Checking if Week ${newWeek} has games in progress before resetting...`);
     
-    // TODO: Implement proper week transition that doesn't interfere with ongoing game processing
-    // await initializeNewWeekScores(season, newWeek);  // DISABLED - was wiping Mok points
-    // await resetWeeklyPointsForAllLeagues(season, newWeek);  // DISABLED - was wiping Mok points
+    // Check if newWeek has any games already completed (indicating games are being processed)
+    const newWeekGamesInProgress = await db.select({ count: sql`count(*)` })
+      .from(nflGames)
+      .where(and(
+        eq(nflGames.season, season),
+        eq(nflGames.week, newWeek),
+        eq(nflGames.isCompleted, true)
+      ));
+    
+    const hasGamesInProgress = parseInt(newWeekGamesInProgress[0].count as string) > 0;
+    
+    if (hasGamesInProgress) {
+      console.log(`⚠️ Week ${newWeek} has games in progress - SKIPPING reset to preserve Mok points`);
+      console.log(`🎯 Weekly skins will be calculated with current points, no reset needed`);
+    } else {
+      console.log(`✅ Week ${newWeek} has no games in progress - SAFE to reset for fresh skins competition`);
+      await initializeNewWeekScores(season, newWeek);
+      await resetWeeklyPointsForAllLeagues(season, newWeek);
+      console.log(`🏁 Weekly reset complete - Week ${newWeek} ready for fresh skins competition`);
+    }
     
     console.log(`✅ Week progression complete: ${oldWeek} → ${newWeek}`);
   } catch (error) {

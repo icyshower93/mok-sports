@@ -10,12 +10,16 @@ Mok Sports is a fantasy sports application that redefines traditional fantasy le
 - **Lock system**: Pick 1 team to lock weekly for +1 bonus (up to 4 times per team per season).
 - **Lock and Load**: Once per team per season, +2 for win, -1 for loss
 - **Trading**: Team-to-team trading during a specific window (Monday night to Thursday 8:20 PM ET). Includes free agent pickups.
-- **Skins**: Weekly $30 cash prizes that stack when tied.
+- **Skins**: Weekly $30 cash prizes that stack when tied. **FIXED: Smart weekly reset system preserves Mok points during game processing while enabling proper skins competition.**
 - **Season prizes**: Most points ($50), Super Bowl winner ($10), most correct locks ($10).
 
 # User Preferences
 
 Preferred communication style: Simple, everyday language.
+
+## Recent Critical Fixes (August 2025)
+- **Mok Points Calculation Bug RESOLVED**: Fixed week progression logic that was wiping out freshly calculated points immediately after games completed. Implemented smart weekly reset system that preserves points during game processing while enabling proper weekly skins competition.
+- **Weekly Skins Architecture**: Weekly points stored in `user_weekly_scores.totalPoints` (reset each week), season totals calculated dynamically by summing all weeks. Skins awarded based on highest weekly points only.
 
 # System Architecture
 
@@ -31,8 +35,8 @@ The server is built with Express.js in TypeScript, following a modular architect
 
 - **Production Scaling**: Redis (with in-memory fallback) for draft state persistence. Enhanced JWT authentication with Bearer header support. PostgreSQL connections optimized with pooling and health monitoring.
 - **Real-Time Draft System**: WebSocket connections manage real-time draft synchronization, including snake draft logic, timer management, auto-pick, and division rule validation. Draft state persists across reconnections.
-- **Scoring System**: Hybrid scoring system leveraging Tank01 API for current season data and ESPN for historical data. Integrates Mok Sports specific scoring rules (blowout bonuses, weekly penalties, lock system).
-- **Weekly Skins System**: Automated weekly cash prize system where highest scorer wins 1 skin ($30). Ties automatically roll over skins to next week, creating accumulated prizes.
+- **Scoring System**: Hybrid scoring system leveraging Tank01 API for current season data and ESPN for historical data. Integrates Mok Sports specific scoring rules (blowout bonuses, weekly penalties, lock system). **CRITICAL BUG FIXED (Aug 2025): Smart weekly reset system prevents point loss during game processing.**
+- **Weekly Skins System**: Automated weekly cash prize system where highest scorer wins 1 skin ($30). Ties automatically roll over skins to next week, creating accumulated prizes. **ARCHITECTURE: Weekly points reset for skins competition, season totals calculated by summing all weeks.**
 - **Automatic Week Display**: Scores tab intelligently displays appropriate week based on current date and game completion status, and allows manual override.
 - **Admin Panel**: Simplified admin panel for season management and progression, including one-click season switching and real-time NFL season simulation with time acceleration.
 - **NFL Data Integration**: Comprehensive NFL schedule and point spread import system with RapidAPI integration and ESPN API fallbacks. Tank01 RapidAPI is the primary source.
