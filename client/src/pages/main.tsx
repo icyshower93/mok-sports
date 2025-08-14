@@ -106,10 +106,8 @@ export default function MainPage() {
   const [selectedLeague, setSelectedLeague] = useState<string>("");
   const [showAllWeeklyRankings, setShowAllWeeklyRankings] = useState(false);
   
-  // Enable real-time score updates for instant point visibility
+  // Enable real-time score updates using persistent WebSocket manager
   useRealtimeScores();
-  // Enable aggressive polling as fallback for PWA
-  useAggressivePolling();
 
   // Fetch user's leagues
   const { data: leagues = [], isLoading: leaguesLoading } = useQuery({

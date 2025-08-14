@@ -9,7 +9,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { useLocation } from "wouter";
 import { useState, useMemo } from "react";
 import { useRealtimeScores } from "@/hooks/use-realtime-scores";
-import { useAggressivePolling } from "@/hooks/use-aggressive-polling";
+// Removed useAggressivePolling - now using persistent WebSocket manager
 import { 
   Trophy, 
   DollarSign, 
@@ -35,10 +35,8 @@ export default function LeaguePage() {
   const [location] = useLocation();
   const [expandedUsers, setExpandedUsers] = useState<Set<string>>(new Set());
   
-  // Enable real-time score updates for instant point visibility
+  // Enable real-time score updates using persistent WebSocket manager
   useRealtimeScores();
-  // Enable aggressive polling as fallback for PWA
-  useAggressivePolling();
   
   // Get league ID from URL (assumes pattern /league?id=...)
   const searchParams = new URLSearchParams(location.split('?')[1] || '');

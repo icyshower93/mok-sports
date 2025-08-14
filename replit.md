@@ -93,16 +93,17 @@ Google OAuth2 is the primary authentication mechanism. JWT tokens are securely s
 - **Comprehensive Week Coverage**: System now works for all weeks 1-18 using authentic data sources
 - **Date**: August 14, 2025
 
-## Real-Time Score Updates System - COMPLETE HYBRID SOLUTION IMPLEMENTED
-- **Complete WebSocket Integration**: Added `useRealtimeScores` hook to both League page (season standings) and Home page (weekly skins) for instant point visibility
-- **Hybrid Real-Time System**: WebSocket for instant updates when connected + polling fallback (10s intervals) ensures updates regardless of connection stability
-- **Enhanced Connection Stability**: Added keep-alive ping mechanism (30s intervals) and improved error handling to maintain persistent WebSocket connections
-- **Parallel Cache Invalidation**: Uses Promise.all for simultaneous cache refresh of all scoring queries with fallback error handling
-- **Smart Reconnection Logic**: Exponential backoff reconnection system handles connection drops gracefully with 5 retry attempts
-- **Broadcast Timing Fix**: Added 1-second delay to admin broadcasts ensuring WebSocket connections are stable before sending updates
-- **Reliable Fallback System**: Polling every 10 seconds guarantees UI updates even when WebSocket messages are missed
-- **Multi-Event Support**: Handles admin_date_advanced, weekly_bonuses_calculated, game_completed, and admin_season_reset events
-- **Build Hash**: meap0d82 includes complete hybrid real-time system with WebSocket + polling fallback
+## Real-Time Score Updates System - PERSISTENT WEBSOCKET SOLUTION IMPLEMENTED
+- **Root Issue Identified**: Fixed WebSocket connection dropping immediately after establishment (code 1001 "Going away") caused by React component lifecycle management
+- **Singleton WebSocket Manager**: Created `websocket-manager.ts` service for persistent connections that survive React component lifecycles and PWA navigation  
+- **Enhanced Connection Persistence**: WebSocket connections no longer drop on component re-renders or page navigation
+- **Aggressive Keep-Alive System**: 15-second ping intervals with automatic reconnection detection and recovery
+- **Immediate Message Handling**: Direct cache invalidation with `refetchType: 'active'` on admin_date_advanced, admin_season_reset, weekly_bonuses_calculated events
+- **Smart Reconnection Logic**: Exponential backoff (up to 30s) with 5 retry attempts and automatic connection recovery
+- **PWA-Optimized Architecture**: Singleton pattern prevents multiple WebSocket instances and ensures stable connections in PWA environments
+- **Simplified Integration**: Removed aggressive polling fallback - now relies on stable WebSocket connections for real-time updates
+- **Multi-Event Support**: Handles all admin events with immediate data refresh using queryClient invalidation
+- **Build Hash**: meapo7wa includes persistent WebSocket manager addressing root connection stability issues
 - **Date**: August 14, 2025
 
 ## Season Reset with Skins Reset - IMPLEMENTED
