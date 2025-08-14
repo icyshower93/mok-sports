@@ -43,12 +43,22 @@ export function useRealtimeScores() {
               }
             }, 30000); // Ping every 30 seconds
             
-            // Start polling fallback for reliable updates (every 10 seconds)
-            pollingIntervalRef.current = setInterval(() => {
-              console.log('[RealtimeScores] 🔄 Polling fallback - refreshing cache');
-              queryClient.invalidateQueries({ queryKey: ['/api/leagues'], refetchType: 'none' });
-              queryClient.invalidateQueries({ queryKey: ['/api/scoring'], refetchType: 'none' });
-            }, 10000);
+            // Start polling fallback for reliable updates (every 5 seconds with active refetch)
+            pollingIntervalRef.current = setInterval(async () => {
+              console.log('[RealtimeScores] 🔄 Polling fallback - force refreshing all data');
+              try {
+                // Force refetch all critical queries to ensure fresh data
+                await Promise.all([
+                  queryClient.invalidateQueries({ queryKey: ['/api/leagues'], refetchType: 'active' }),
+                  queryClient.invalidateQueries({ queryKey: ['/api/scoring'], refetchType: 'active' }),
+                  queryClient.invalidateQueries({ queryKey: ['/api/user/stable'], refetchType: 'active' }),
+                  queryClient.invalidateQueries({ queryKey: ['/api/admin/current-week'], refetchType: 'active' }),
+                ]);
+                console.log('[RealtimeScores] ✅ Force refresh complete');
+              } catch (error) {
+                console.error('[RealtimeScores] ❌ Force refresh failed:', error);
+              }
+            }, 5000); // More frequent polling (5 seconds)
           }
         }, 100);
       };
@@ -80,26 +90,29 @@ export function useRealtimeScores() {
               break;
               
             case 'weekly_bonuses_calculated':
-              console.log('[RealtimeScores] Weekly bonuses calculated - refreshing score data');
-              // Specific refresh for bonus calculations
-              queryClient.invalidateQueries({ queryKey: ['/api/leagues'] });
-              queryClient.invalidateQueries({ queryKey: ['/api/scoring'] });
+              console.log('[RealtimeScores] Weekly bonuses calculated - force refreshing score data');
+              await Promise.all([
+                queryClient.invalidateQueries({ queryKey: ['/api/leagues'], refetchType: 'active' }),
+                queryClient.invalidateQueries({ queryKey: ['/api/scoring'], refetchType: 'active' }),
+              ]);
               break;
               
             case 'game_completed':
-              console.log('[RealtimeScores] Game completed - refreshing current data');
-              // Refresh current scores when individual games complete
-              queryClient.invalidateQueries({ queryKey: ['/api/leagues'] });
-              queryClient.invalidateQueries({ queryKey: ['/api/scoring'] });
+              console.log('[RealtimeScores] Game completed - force refreshing current data');
+              await Promise.all([
+                queryClient.invalidateQueries({ queryKey: ['/api/leagues'], refetchType: 'active' }),
+                queryClient.invalidateQueries({ queryKey: ['/api/scoring'], refetchType: 'active' }),
+              ]);
               break;
               
             case 'admin_season_reset':
-              console.log('[RealtimeScores] Season reset - refreshing all data');
-              // Comprehensive refresh when season is reset
-              queryClient.invalidateQueries({ queryKey: ['/api/leagues'] });
-              queryClient.invalidateQueries({ queryKey: ['/api/scoring'] });
-              queryClient.invalidateQueries({ queryKey: ['/api/user/stable'] });
-              queryClient.invalidateQueries({ queryKey: ['/api/admin'] });
+              console.log('[RealtimeScores] Season reset - force refreshing all data');
+              await Promise.all([
+                queryClient.invalidateQueries({ queryKey: ['/api/leagues'], refetchType: 'active' }),
+                queryClient.invalidateQueries({ queryKey: ['/api/scoring'], refetchType: 'active' }),
+                queryClient.invalidateQueries({ queryKey: ['/api/user/stable'], refetchType: 'active' }),
+                queryClient.invalidateQueries({ queryKey: ['/api/admin'], refetchType: 'active' }),
+              ]);
               break;
               
             default:

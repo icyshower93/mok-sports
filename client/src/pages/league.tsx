@@ -9,6 +9,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { useLocation } from "wouter";
 import { useState, useMemo } from "react";
 import { useRealtimeScores } from "@/hooks/use-realtime-scores";
+import { useAggressivePolling } from "@/hooks/use-aggressive-polling";
 import { 
   Trophy, 
   DollarSign, 
@@ -36,6 +37,8 @@ export default function LeaguePage() {
   
   // Enable real-time score updates for instant point visibility
   useRealtimeScores();
+  // Enable aggressive polling as fallback for PWA
+  useAggressivePolling();
   
   // Get league ID from URL (assumes pattern /league?id=...)
   const searchParams = new URLSearchParams(location.split('?')[1] || '');
