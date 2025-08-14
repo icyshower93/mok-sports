@@ -93,6 +93,9 @@ Google OAuth2 is the primary authentication mechanism. JWT tokens are securely s
 - **Production-Ready WebSocket**: All score updates, bonus calculations, and skins awards trigger instant UI refreshes across all tabs
 - **Eliminated Duplicate Bonus Systems**: Disabled old admin.ts bonus calculation, now only endOfWeekProcessor handles bonuses to prevent daily accumulation
 - **Perfect Bonus Points**: Gamma Bot correctly shows 7 points (not 8+ from duplicates), Mok Sports shows 2 points (not negative from duplicate penalties)
+- **Unified Skins Processing**: Integrated skins awards into endOfWeekProcessor for immediate real-time updates without refresh
+- **Weekly Points Reset**: Implemented automatic weekly points reset when new NFL weeks start (Thursday games) for fresh skins competition
+- **Purple Winner Highlighting**: Added visual indicator for weekly skins winner with purple card styling and dollar sign icon
 - **Date**: August 14, 2025
 
 ## Comprehensive Scoring System for All Weeks - IMPLEMENTED

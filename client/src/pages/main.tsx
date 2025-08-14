@@ -142,8 +142,18 @@ export default function MainPage() {
     enabled: !!selectedLeague,
   });
 
+  // Fetch skins data to identify winners
+  const { data: skinsData } = useQuery({
+    queryKey: [`/api/scoring/skins/${selectedLeague}/2024`],
+    enabled: !!selectedLeague,
+  });
+
   // Extract rankings and week-end results with proper fallbacks
   const weeklyRankings = Array.isArray((weeklyRankingsData as any)?.rankings) ? (weeklyRankingsData as any)?.rankings : [];
+  
+  // Find current week's skins winner (if any)
+  const currentWeekSkin = (skinsData as any)?.skins?.find((skin: any) => skin.week === currentWeek);
+  const weeklySkinsWinnerId = currentWeekSkin?.winnerId;
   const weekEndResults = (weeklyRankingsData as any)?.weekEndResults || null;
 
   // Fetch teams left to play for current week
@@ -313,25 +323,58 @@ export default function MainPage() {
             <div className="overflow-x-auto scrollbar-hide horizontal-scroll">
               <div className="flex space-x-3 pb-4 min-w-max">
                 {Array.isArray(weeklyRankings) && weeklyRankings.length > 0 ? (
-                  weeklyRankings.map((member: any, index: number) => (
-                    <Card key={member.name} className="flex-shrink-0 w-32 bg-gradient-to-br from-card to-card/50 border-border/50 rounded-2xl">
-                      <CardContent className="p-4 text-center">
-                        <div className="relative mb-3">
-                          <Avatar className="w-12 h-12 mx-auto border-2 border-primary/20">
-                            <AvatarFallback className="bg-primary/10 text-primary font-semibold text-sm">
-                              {member.name.split(' ').map((n: string) => n[0]).join('').toUpperCase()}
-                            </AvatarFallback>
-                          </Avatar>
-                          {index === 0 && (
-                            <Crown className="w-4 h-4 text-yellow-500 absolute -top-1 -right-1 bg-background rounded-full p-0.5" />
-                          )}
-                        </div>
-                        <p className="text-xs font-medium text-foreground truncate">{member.name}</p>
-                        <p className="text-lg font-bold text-primary">{member.weeklyPoints || 0}</p>
-                        <p className="text-xs text-muted-foreground">pts</p>
-                      </CardContent>
-                    </Card>
-                  ))
+                  weeklyRankings.map((member: any, index: number) => {
+                    // Check if this member is the weekly skins winner
+                    const isSkinsWinner = member.userId === weeklySkinsWinnerId;
+                    
+                    return (
+                      <Card 
+                        key={member.name} 
+                        className={`flex-shrink-0 w-32 rounded-2xl ${
+                          isSkinsWinner 
+                            ? 'bg-gradient-to-br from-purple-500/20 to-purple-600/30 border-purple-400/50 ring-2 ring-purple-400/30' 
+                            : 'bg-gradient-to-br from-card to-card/50 border-border/50'
+                        }`}
+                      >
+                        <CardContent className="p-4 text-center">
+                          <div className="relative mb-3">
+                            <Avatar className={`w-12 h-12 mx-auto border-2 ${
+                              isSkinsWinner ? 'border-purple-400/60' : 'border-primary/20'
+                            }`}>
+                              <AvatarFallback className={`font-semibold text-sm ${
+                                isSkinsWinner 
+                                  ? 'bg-purple-500/20 text-purple-700 dark:text-purple-300' 
+                                  : 'bg-primary/10 text-primary'
+                              }`}>
+                                {member.name.split(' ').map((n: string) => n[0]).join('').toUpperCase()}
+                              </AvatarFallback>
+                            </Avatar>
+                            {index === 0 && (
+                              <Crown className="w-4 h-4 text-yellow-500 absolute -top-1 -right-1 bg-background rounded-full p-0.5" />
+                            )}
+                            {isSkinsWinner && (
+                              <DollarSign className="w-4 h-4 text-purple-500 absolute -bottom-1 -right-1 bg-purple-100 dark:bg-purple-900 rounded-full p-0.5" />
+                            )}
+                          </div>
+                          <p className={`text-xs font-medium truncate ${
+                            isSkinsWinner ? 'text-purple-700 dark:text-purple-300' : 'text-foreground'
+                          }`}>
+                            {member.name}
+                          </p>
+                          <p className={`text-lg font-bold ${
+                            isSkinsWinner ? 'text-purple-600 dark:text-purple-400' : 'text-primary'
+                          }`}>
+                            {member.weeklyPoints || 0}
+                          </p>
+                          <p className={`text-xs ${
+                            isSkinsWinner ? 'text-purple-500 dark:text-purple-400' : 'text-muted-foreground'
+                          }`}>
+                            {isSkinsWinner ? 'WINNER!' : 'pts'}
+                          </p>
+                        </CardContent>
+                      </Card>
+                    );
+                  })
                 ) : (
                   <Card className="flex-shrink-0 w-full bg-muted/20 rounded-2xl">
                     <CardContent className="p-6 text-center">

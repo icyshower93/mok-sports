@@ -340,6 +340,25 @@ async function processGamesForDate(targetDate: Date): Promise<number> {
       
       // Only check weeks that had games completed today AND verify week is actually complete
       for (const week of Array.from(processedWeeks)) {
+        // First check if this is the start of a new week (first game of a new week)
+        // If so, reset weekly points for the fresh skins competition
+        const previousWeek = week - 1;
+        if (previousWeek > 0) {
+          const previousWeekComplete = await db.select()
+            .from(nflGames)
+            .where(and(
+              eq(nflGames.season, adminState.season),
+              eq(nflGames.week, previousWeek)
+            ));
+          
+          const allPreviousComplete = previousWeekComplete.every(g => g.isCompleted);
+          if (allPreviousComplete) {
+            // New week is starting - reset weekly points for fresh skins competition
+            const { endOfWeekProcessor } = await import("../utils/endOfWeekProcessor.js");
+            await endOfWeekProcessor.resetWeeklyPoints(adminState.season, week, '243d719b-92ce-4752-8689-5da93ee69213');
+          }
+        }
+        
         // Check if ALL games in this week are now completed before calculating bonuses
         const allWeekGames = await db.select({ isCompleted: nflGames.isCompleted })
           .from(nflGames)
