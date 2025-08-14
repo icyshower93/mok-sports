@@ -134,10 +134,12 @@ Google OAuth2 is the primary authentication mechanism. JWT tokens are securely s
 - **Integration Point**: Reset functionality integrated into `handleWeekProgression()` for automatic execution
 - **Date**: August 13, 2025
 
-## Bonus Calculation System - RESOLVED 
-- **Fixed Critical Duplicate Processing Bug**: Eliminated bonus calculations happening multiple times causing inflated scores (Gamma Bot was getting 7x high score bonuses instead of 1)
-- **Enhanced Race Condition Protection**: Added double-check logic with additional WHERE clause safety checks to prevent multiple bonus applications
-- **Database Integrity Restoration**: Corrected existing inflated bonuses by capping high score bonuses at +1 and low score penalties at -1 maximum per week
-- **Improved Deduplication Logic**: Added robust checks and row count validation to prevent bonus accumulation during date advancement
-- **Real-Time Bonus Verification**: Bonuses now apply correctly with proper logging and duplicate detection across multiple game processing cycles
+## Weekly Bonus Calculation Fix - CRITICAL BUG RESOLVED
+- **Root Cause Identified**: Weekly high/low score bonuses were calculating DAILY instead of only when entire week completes
+- **Fixed Duplicate Triggers**: Removed two problematic daily triggers: (1) Loop through all weeks 1-18 after any game processing, (2) Individual game completion bonus checks
+- **Optimized Week Completion Logic**: Now only checks weeks that had games completed today, not all weeks daily
+- **Database Integrity Restored**: Fixed corrupted Week 1 data - Gamma Bot (+1 high score bonus, was +8), Mok Sports (-1 low penalty, was -8)
+- **Prevented Future Duplicates**: Enhanced deduplication checks with clear logging when bonuses already exist for a week
+- **Smart Week Processing**: Only processes end-of-week bonuses when ALL games in that week are truly completed
+- **Eliminated Daily Bonus Spam**: Bonuses now calculate exactly once per week when complete, no more daily accumulation
 - **Date**: August 14, 2025

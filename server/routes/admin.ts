@@ -315,12 +315,31 @@ async function processGamesForDate(targetDate: Date): Promise<number> {
       }
     }
 
-    // After processing all games for the day, check if any week is now complete and needs bonuses
+    // After processing all games for the day, check ONLY if any specific weeks became complete with today's games
     if (processedCount > 0) {
-      console.log(`🏁 Checking for completed weeks after processing ${processedCount} games...`);
+      console.log(`🏁 Checking for newly completed weeks after processing ${processedCount} games...`);
       
-      // Check all weeks that might have completed with today's games
-      for (let week = 1; week <= 18; week++) {
+      // Only check weeks that had games processed today (much more efficient)
+      const processedWeeks = new Set<number>();
+      const dayStart = new Date(targetDate);
+      dayStart.setHours(0, 0, 0, 0);
+      const dayEnd = new Date(targetDate);
+      dayEnd.setHours(23, 59, 59, 999);
+      
+      const todaysGames = await db.select({ week: nflGames.week })
+        .from(nflGames)
+        .where(and(
+          eq(nflGames.season, adminState.season),
+          sql`DATE(${nflGames.gameDate}) = DATE(${dayStart})`,
+          eq(nflGames.isCompleted, true)
+        ));
+      
+      todaysGames.forEach(game => processedWeeks.add(game.week));
+      
+      console.log(`🎯 Checking only processed weeks: ${Array.from(processedWeeks).join(', ')}`);
+      
+      // Only check weeks that had games completed today
+      for (const week of processedWeeks) {
         await checkAndCalculateWeeklyBonuses(adminState.season, week, true);
       }
     }
@@ -462,8 +481,8 @@ async function calculateAndUpdateMokPoints(
         });
     }
 
-    // Check if this was the last game of the week to calculate high/low bonuses
-    await checkAndCalculateWeeklyBonuses(season, week, true);
+    // NOTE: Removed individual game bonus check - bonuses now only calculated when entire week completes
+    // This prevents duplicate daily bonus applications
 
   } catch (error) {
     console.error('Error calculating Mok points:', error);
@@ -518,7 +537,7 @@ async function checkAndCalculateWeeklyBonuses(season: number, week: number, forc
 
       if (existingBonuses.length > 0) {
         console.log(`⚠️  Week ${week} bonuses already calculated for ${existingBonuses.length} users - skipping to prevent duplicates`);
-        console.log(`⚠️  Existing bonuses:`, existingBonuses.map(b => `User ${b.userId}: +${b.highBonus || 0}/-${Math.abs(b.lowPenalty || 0)}`));
+        console.log(`⚠️  This is the fix for daily bonus duplication - bonuses should only be calculated ONCE per week when complete`);
         return;
       }
 
