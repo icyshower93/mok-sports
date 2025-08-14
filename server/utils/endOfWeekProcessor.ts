@@ -72,6 +72,29 @@ export class EndOfWeekProcessor {
   async processEndOfWeek(season: number, week: number, leagueId: string, currentSimulatedDate?: Date): Promise<WeekEndResults> {
     console.log(`[EndOfWeek] Processing end of week ${week} for season ${season}, league ${leagueId}`);
     
+    // CRITICAL: Check if bonuses have already been calculated for this week to prevent daily duplicates
+    const existingBonuses = await db.select({
+      userId: userWeeklyScores.userId,
+      highBonus: userWeeklyScores.weeklyHighBonusPoints,
+      lowPenalty: userWeeklyScores.weeklyLowPenaltyPoints
+    })
+      .from(userWeeklyScores)
+      .where(and(
+        eq(userWeeklyScores.season, season),
+        eq(userWeeklyScores.week, week),
+        sql`(${userWeeklyScores.weeklyHighBonusPoints} > 0 OR ${userWeeklyScores.weeklyLowPenaltyPoints} < 0)`
+      ));
+
+    if (existingBonuses.length > 0) {
+      console.log(`[EndOfWeek] ⚠️  Week ${week} bonuses already calculated for ${existingBonuses.length} users - skipping to prevent daily duplicates`);
+      console.log(`[EndOfWeek] This prevents the bug where high/low bonuses accumulate daily after week completion`);
+      return {
+        highScoreTeams: [],
+        lowScoreTeams: [],
+        weeklySkinsWinner: undefined
+      };
+    }
+    
     // First, verify week is actually complete
     const weekComplete = await this.isWeekComplete(season, week, currentSimulatedDate);
     if (!weekComplete) {

@@ -199,7 +199,10 @@ export default function MainPage() {
       skinsWon: userSkinsWon
     },
     weeklyRankings: weeklyRankings?.length || 0,
-    teamsLeftToPlay: teamsLeftToPlay?.length || 0
+    teamsLeftToPlay: teamsLeftToPlay?.length || 0,
+    skinsData: skinsData ? 'loaded' : 'null',
+    currentWeekSkin,
+    weeklySkinsWinnerId
   });
 
   if (!user) {
