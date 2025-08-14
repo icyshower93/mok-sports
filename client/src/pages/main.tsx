@@ -327,14 +327,19 @@ export default function MainPage() {
               <div className="flex space-x-3 pb-4 min-w-max">
                 {Array.isArray(weeklyRankings) && weeklyRankings.length > 0 ? (
                   weeklyRankings.map((member: any, index: number) => {
-                    // Check if this member is the weekly skins winner
-                    const isSkinsWinner = member.userId === weeklySkinsWinnerId;
+                    // FIXED: Only show winner styling if there's actually a skins winner AND it's this member
+                    // Don't show winner styling when everyone has 0 points or when there are no skins records
+                    const isSkinsWinner = weeklySkinsWinnerId && member.userId === weeklySkinsWinnerId;
+                    
+                    // Additional check: Don't show winner styling if everyone has 0 points (reset state)
+                    const hasActualPoints = weeklyRankings.some((m: any) => (m.weeklyPoints || 0) > 0);
+                    const shouldShowWinner = isSkinsWinner && hasActualPoints;
                     
                     return (
                       <Card 
                         key={member.name} 
                         className={`flex-shrink-0 w-32 rounded-2xl ${
-                          isSkinsWinner 
+                          shouldShowWinner 
                             ? 'bg-gradient-to-br from-purple-500/20 to-purple-600/30 border-purple-400/50 ring-2 ring-purple-400/30' 
                             : 'bg-gradient-to-br from-card to-card/50 border-border/50'
                         }`}
@@ -342,10 +347,10 @@ export default function MainPage() {
                         <CardContent className="p-4 text-center">
                           <div className="relative mb-3">
                             <Avatar className={`w-12 h-12 mx-auto border-2 ${
-                              isSkinsWinner ? 'border-purple-400/60' : 'border-primary/20'
+                              shouldShowWinner ? 'border-purple-400/60' : 'border-primary/20'
                             }`}>
                               <AvatarFallback className={`font-semibold text-sm ${
-                                isSkinsWinner 
+                                shouldShowWinner 
                                   ? 'bg-purple-500/20 text-purple-700 dark:text-purple-300' 
                                   : 'bg-primary/10 text-primary'
                               }`}>
@@ -355,24 +360,24 @@ export default function MainPage() {
                             {index === 0 && (
                               <Crown className="w-4 h-4 text-yellow-500 absolute -top-1 -right-1 bg-background rounded-full p-0.5" />
                             )}
-                            {isSkinsWinner && (
+                            {shouldShowWinner && (
                               <DollarSign className="w-4 h-4 text-purple-500 absolute -bottom-1 -right-1 bg-purple-100 dark:bg-purple-900 rounded-full p-0.5" />
                             )}
                           </div>
                           <p className={`text-xs font-medium truncate ${
-                            isSkinsWinner ? 'text-purple-700 dark:text-purple-300' : 'text-foreground'
+                            shouldShowWinner ? 'text-purple-700 dark:text-purple-300' : 'text-foreground'
                           }`}>
                             {member.name}
                           </p>
                           <p className={`text-lg font-bold ${
-                            isSkinsWinner ? 'text-purple-600 dark:text-purple-400' : 'text-primary'
+                            shouldShowWinner ? 'text-purple-600 dark:text-purple-400' : 'text-primary'
                           }`}>
                             {member.weeklyPoints || 0}
                           </p>
                           <p className={`text-xs ${
-                            isSkinsWinner ? 'text-purple-500 dark:text-purple-400' : 'text-muted-foreground'
+                            shouldShowWinner ? 'text-purple-500 dark:text-purple-400' : 'text-muted-foreground'
                           }`}>
-                            {isSkinsWinner ? 'WINNER!' : 'pts'}
+                            {shouldShowWinner ? 'WINNER!' : 'pts'}
                           </p>
                         </CardContent>
                       </Card>

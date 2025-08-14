@@ -7,7 +7,7 @@ Mok Sports is a fantasy sports application that redefines traditional fantasy le
 - **6-player leagues** with **5 NFL teams** each (30/32 teams drafted, 2 free agents)
 - **Snake draft** with **division restrictions** (max 1 team per division unless unavoidable)
 - **Weekly scoring**: Wins (+1), Ties (+0.5), Blowouts (+1), Shutouts (+1), Weekly high (+1), Weekly low (-1)
-- **Lock system**: Pick 1 team to lock weekly for +1 bonus (up to 4 times per team per season). Logic is tied to actual game completion status, not API cache.
+- **Lock system**: Pick 1 team to lock weekly for +1 bonus (up to 4 times per team per season).
 - **Lock and Load**: Once per team per season, +2 for win, -1 for loss
 - **Trading**: Team-to-team trading during a specific window (Monday night to Thursday 8:20 PM ET). Includes free agent pickups.
 - **Skins**: Weekly $30 cash prizes that stack when tied.
@@ -32,15 +32,15 @@ The server is built with Express.js in TypeScript, following a modular architect
 - **Production Scaling**: Redis (with in-memory fallback) for draft state persistence. Enhanced JWT authentication with Bearer header support. PostgreSQL connections optimized with pooling and health monitoring.
 - **Real-Time Draft System**: WebSocket connections manage real-time draft synchronization, including snake draft logic, timer management, auto-pick, and division rule validation. Draft state persists across reconnections.
 - **Scoring System**: Hybrid scoring system leveraging Tank01 API for current season data and ESPN for historical data. Integrates Mok Sports specific scoring rules (blowout bonuses, weekly penalties, lock system).
-- **Weekly Skins System**: Automated weekly cash prize system where highest scorer wins 1 skin ($30). Ties automatically roll over skins to next week, creating accumulated prizes (2, 3, or more skins). Complete database tracking with audit trail.
-- **Automatic Week Display**: Scores tab intelligently displays appropriate week based on current date and game completion status. Shows current week during games, automatically switches to next week when all games complete. Users can manually override selection.
-- **Admin Panel**: Simplified admin panel for season management and progression, including one-click season switching (e.g., 2024 testing vs. 2025 production). Real-time NFL season simulation with time acceleration controls and authentic game processing.
-- **NFL Data Integration**: Comprehensive NFL schedule and point spread import system with RapidAPI integration and ESPN API fallbacks. Tank01 RapidAPI is the primary source for 2024/2025 NFL season data, including game scores and betting odds.
-- **Mobile-First Design**: Implemented with a bottom navigation bar for core tabs (Home, Stable, League, Scores, More) and PWA design principles (touch targets, icon sizes).
+- **Weekly Skins System**: Automated weekly cash prize system where highest scorer wins 1 skin ($30). Ties automatically roll over skins to next week, creating accumulated prizes.
+- **Automatic Week Display**: Scores tab intelligently displays appropriate week based on current date and game completion status, and allows manual override.
+- **Admin Panel**: Simplified admin panel for season management and progression, including one-click season switching and real-time NFL season simulation with time acceleration.
+- **NFL Data Integration**: Comprehensive NFL schedule and point spread import system with RapidAPI integration and ESPN API fallbacks. Tank01 RapidAPI is the primary source.
+- **Mobile-First Design**: Implemented with a bottom navigation bar for core tabs and PWA design principles.
 
 ## Data Storage Solutions
 
-The primary database is PostgreSQL, hosted on Neon serverless. User sessions are managed via JWT tokens in HTTP-only cookies. The schema includes user data with Google OAuth integration, timestamps, and UUID primary keys.
+The primary database is PostgreSQL, hosted on Neon serverless. User sessions are managed via JWT tokens in HTTP-only cookies.
 
 ## Authentication and Authorization
 
@@ -81,82 +81,3 @@ Google OAuth2 is the primary authentication mechanism. JWT tokens are securely s
 ## Third-Party APIs
 - **Tank01 RapidAPI**: NFL game data, scores, and betting odds.
 - **ESPN API**: Fallback for historical NFL data.
-
-# Recent Updates (August 2025)
-
-## All Critical Scoring Issues Resolved - COMPREHENSIVE FIX COMPLETED
-- **Week 2+ Scoring System - FIXED**: Updated database completion flags for 32+ games, Week 2+ now processes authentic NFL scores correctly
-- **Daily Duplicate Bonus Bug - ELIMINATED**: Fixed logic to only calculate high/low bonuses when entire weeks complete, not daily
-- **Real-Time Skins Updates - IMPLEMENTED**: Added WebSocket broadcasts for immediate skins award/rollover updates without refresh
-- **Enhanced Bonus Validation**: System now validates ALL games completed before calculating weekly bonuses, preventing premature calculations
-- **Comprehensive Testing Verified**: Week 1→Week 2 progression works correctly with proper point allocation and real-time updates
-- **Production-Ready WebSocket**: All score updates, bonus calculations, and skins awards trigger instant UI refreshes across all tabs
-- **Eliminated Duplicate Bonus Systems**: Disabled old admin.ts bonus calculation, now only endOfWeekProcessor handles bonuses to prevent daily accumulation
-- **Perfect Bonus Points**: Gamma Bot correctly shows 7 points (not 8+ from duplicates), Mok Sports shows 2 points (not negative from duplicate penalties)
-- **Unified Skins Processing**: Integrated skins awards into endOfWeekProcessor for immediate real-time updates without refresh
-- **Weekly Points Reset**: Implemented automatic weekly points reset when new NFL weeks start (Thursday games) for fresh skins competition
-- **Purple Winner Highlighting**: Added visual indicator for weekly skins winner with purple card styling and dollar sign icon
-- **Final Game Bonus Logic**: Enhanced system to only calculate high/low bonuses after the LAST game of the week completes (typically Monday Night Football)
-- **Date**: August 14, 2025
-
-## Comprehensive Scoring System for All Weeks - IMPLEMENTED
-- **Fixed Point Allocation Pipeline**: Resolved critical bug where games were processed but points weren't allocated to users
-- **Enhanced API Integration**: Added multiple Tank01 API fallback methods (box score → weekly games → daily games) for robust data retrieval
-- **Authentic NFL Scores for Weeks 1-2**: Manually added real NFL scores for comprehensive testing capability
-- **Corrected Data Types**: Fixed ID parsing issues in point calculation function that prevented proper team owner lookup
-- **Real-Time Point Updates**: Points now calculate instantly when games complete and are immediately visible in season standings and weekly skins
-- **Comprehensive Week Coverage**: System now works for all weeks 1-18 using authentic data sources
-- **Date**: August 14, 2025
-
-## Production-Ready WebSocket System with Real-Time Score Updates - IMPLEMENTED
-- **Stable WebSocket Hook**: Created `useStableWebSocket` with safe close codes (1000, 4001-4003) preventing browser errors
-- **Auth-Aware Connection**: WebSocket only connects after user authentication completes (no more "Has token but no user" issues)
-- **Comprehensive Error Handling**: Catches and logs socket close errors without crashing the app state
-- **Service Worker Compatibility**: Graceful reconnection after SW updates with proper 2-second delay
-- **25-Second Keepalive**: Mobile/PWA optimized ping interval prevents idle timeouts on iOS background mode
-- **Exponential Backoff Reconnection**: Smart reconnection with 8 retry attempts, jitter, and connection state tracking
-- **Proper Cleanup**: Prevents multiple parallel connections with comprehensive timer and event listener management
-- **Real-Time Score Broadcasts**: Added WebSocket broadcasts to game processing and weekly bonus calculation
-- **Comprehensive Query Invalidation**: Uses TanStack Query predicates to invalidate all related data (scores, standings, leagues)
-- **Instant UI Updates**: All tabs (Scores, League, Main) update immediately when points change or admin actions occur
-- **Production Scaling**: Eliminates 30,000 requests/minute for 1,000 users - replaced with efficient WebSocket broadcasts
-- **Zero Manual Refresh**: Game results, bonus calculations, and admin actions trigger instant updates across all connected clients
-- **Date**: August 14, 2025
-
-## Season Reset with Skins Reset - IMPLEMENTED
-- **Enhanced Reset Season Button**: Added weekly skins table cleanup to `/api/admin/reset-season` endpoint  
-- **Complete Data Reset**: Now clears userWeeklyScores AND weeklySkins tables when season is reset
-- **Real-Time Broadcast**: Season reset triggers "admin_season_reset" WebSocket event for immediate UI refresh
-- **Comprehensive Cleanup**: Removes all skins winners, rollover data, and prize tracking for clean testing restart
-- **TypeScript Error Resolution**: Fixed all remaining LSP diagnostics in admin routes
-- **Date**: August 13, 2025
-
-## Page Loading & API Endpoint Fixes - RESOLVED
-- **Fixed League Page Loading**: Corrected API endpoints from non-existent `/api/leagues/{id}/members` to working `/api/leagues/{id}/standings`
-- **Fixed Scores Page User Teams**: Changed from missing `/api/user/teams` to working `/api/user/stable/{leagueId}` endpoint
-- **Verified API Functionality**: All core endpoints now operational:
-  - `/api/leagues/{id}/standings` - Complete league standings with all members
-  - `/api/scoring/leagues/{id}/week-scores/{season}/{week}` - Weekly scoring data
-  - `/api/scoring/skins/{leagueId}/{season}` - Weekly skins winners and prizes
-  - `/api/user/stable/{leagueId}` - User's teams for highlighting owned teams
-- **Page Navigation Fixed**: Both League and Scores tabs now load without "something is wrong" errors
-- **Data Integration Working**: Real-time scoring, team highlighting, and skins tracking all functional
-- **Date**: August 13, 2025
-
-## Weekly Skins Reset System - IMPLEMENTED
-- **Enhanced Week Progression Logic**: Added `resetWeeklyPointsForAllLeagues()` function to properly clear weekly skins competition when new week starts
-- **Preserved Season Totals**: Weekly point reset only affects current week scores (for skins calculation), season totals remain intact by summing all previous weeks
-- **Automatic Reset Trigger**: Week progression automatically resets weekly points to 0 for all users, ensuring fresh skins competition each week
-- **Clear Documentation**: Added logging to distinguish between weekly skins reset and season total preservation
-- **Integration Point**: Reset functionality integrated into `handleWeekProgression()` for automatic execution
-- **Date**: August 13, 2025
-
-## Weekly Bonus Calculation Fix - CRITICAL BUG RESOLVED
-- **Root Cause Identified**: Weekly high/low score bonuses were calculating DAILY instead of only when entire week completes
-- **Fixed Duplicate Triggers**: Removed two problematic daily triggers: (1) Loop through all weeks 1-18 after any game processing, (2) Individual game completion bonus checks
-- **Optimized Week Completion Logic**: Now only checks weeks that had games completed today, not all weeks daily
-- **Database Integrity Restored**: Fixed corrupted Week 1 data - Gamma Bot (+1 high score bonus, was +8), Mok Sports (-1 low penalty, was -8)
-- **Prevented Future Duplicates**: Enhanced deduplication checks with clear logging when bonuses already exist for a week
-- **Smart Week Processing**: Only processes end-of-week bonuses when ALL games in that week are truly completed
-- **Eliminated Daily Bonus Spam**: Bonuses now calculate exactly once per week when complete, no more daily accumulation
-- **Date**: August 14, 2025
