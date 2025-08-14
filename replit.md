@@ -93,14 +93,15 @@ Google OAuth2 is the primary authentication mechanism. JWT tokens are securely s
 - **Comprehensive Week Coverage**: System now works for all weeks 1-18 using authentic data sources
 - **Date**: August 14, 2025
 
-## Real-Time Score Updates System - IMPLEMENTED  
-- **Created WebSocket Score Listener**: Built `useRealtimeScores` hook to automatically refresh all score data when admin advances days
-- **Integrated Admin Broadcasting**: Connected to existing WebSocket infrastructure using admin_updates group for real-time notifications
-- **Automatic Cache Invalidation**: React Query cache automatically refreshes when "admin_date_advanced" or "admin_season_reset" events received
-- **Smart Reconnection Logic**: Exponential backoff reconnection system handles connection drops gracefully
-- **Multi-Page Coverage**: Works across League standings, Scores page, and Stable page - no more manual refresh needed
-- **Build Hash**: meamhjp5 includes complete real-time update system
-- **Date**: August 13, 2025
+## Real-Time Score Updates System - FULLY IMPLEMENTED
+- **Complete WebSocket Integration**: Added `useRealtimeScores` hook to both League page (season standings) and Home page (weekly skins) for instant point visibility
+- **Automatic Cache Invalidation**: React Query automatically refreshes all scoring queries when admin advances dates - no manual refresh required
+- **Smart Reconnection Logic**: Exponential backoff reconnection system handles connection drops gracefully with 5 retry attempts
+- **Admin Broadcasting**: Server broadcasts "admin_date_advanced" events to all connected pages via admin_updates WebSocket group
+- **Comprehensive Query Invalidation**: Refreshes `/api/leagues`, `/api/scoring`, `/api/user/stable`, and `/api/admin/current-week` queries instantly
+- **Multi-Event Support**: Handles admin_date_advanced, weekly_bonuses_calculated, game_completed, and admin_season_reset events
+- **Build Hash**: meanyux5 includes complete real-time update system with League and Main page integration
+- **Date**: August 14, 2025
 
 ## Season Reset with Skins Reset - IMPLEMENTED
 - **Enhanced Reset Season Button**: Added weekly skins table cleanup to `/api/admin/reset-season` endpoint  

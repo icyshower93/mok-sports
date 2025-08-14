@@ -41,6 +41,7 @@ import {
 import { BottomNav } from "@/components/layout/bottom-nav";
 import { TeamLogo } from "@/components/team-logo";
 import { useAuth } from "@/hooks/use-auth";
+import { useRealtimeScores } from "@/hooks/use-realtime-scores";
 import mokSportsLogoWhite from "@assets/MokSports_White_1755068930869.png";
 import mokSportsLogo from "@assets/moksports logo_1755069436420.png";
 
@@ -103,6 +104,9 @@ export default function MainPage() {
   const [, navigate] = useLocation();
   const [selectedLeague, setSelectedLeague] = useState<string>("");
   const [showAllWeeklyRankings, setShowAllWeeklyRankings] = useState(false);
+  
+  // Enable real-time score updates for instant point visibility
+  useRealtimeScores();
 
   // Fetch user's leagues
   const { data: leagues = [], isLoading: leaguesLoading } = useQuery({

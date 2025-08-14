@@ -8,6 +8,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/use-auth";
 import { useLocation } from "wouter";
 import { useState, useMemo } from "react";
+import { useRealtimeScores } from "@/hooks/use-realtime-scores";
 import { 
   Trophy, 
   DollarSign, 
@@ -32,6 +33,9 @@ export default function LeaguePage() {
   const { user } = useAuth();
   const [location] = useLocation();
   const [expandedUsers, setExpandedUsers] = useState<Set<string>>(new Set());
+  
+  // Enable real-time score updates for instant point visibility
+  useRealtimeScores();
   
   // Get league ID from URL (assumes pattern /league?id=...)
   const searchParams = new URLSearchParams(location.split('?')[1] || '');
@@ -67,13 +71,13 @@ export default function LeaguePage() {
   // Process skins data to calculate skins won per user - MOVED BEFORE EARLY RETURNS
   const userSkinsWon = useMemo(() => {
     try {
-      if (!skinsData || !skinsData.skins || !Array.isArray(skinsData.skins)) {
+      if (!skinsData || !(skinsData as any)?.skins || !Array.isArray((skinsData as any)?.skins)) {
         console.log('[League] No skins data available, returning empty object');
         return {};
       }
       
       const skinsCount: Record<string, number> = {};
-      skinsData.skins.forEach((skin: any) => {
+      (skinsData as any).skins.forEach((skin: any) => {
         if (skin && skin.winnerName) {
           skinsCount[skin.winnerName] = (skinsCount[skin.winnerName] || 0) + 1;
         }
