@@ -1,10 +1,11 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { webSocketManager } from '../services/websocket-manager';
 
 // Real-time score updates hook using persistent WebSocket manager
 export function useRealtimeScores() {
   const queryClient = useQueryClient();
+  const [connectionState, setConnectionState] = useState('connecting');
 
   useEffect(() => {
     console.log('[RealtimeScores] Setting up persistent WebSocket connection');
@@ -12,16 +13,37 @@ export function useRealtimeScores() {
     // Provide query client to the WebSocket manager
     webSocketManager.setQueryClient(queryClient);
     
+    // Add connection listeners to track state changes
+    const onConnect = () => {
+      console.log('[RealtimeScores] WebSocket connected');
+      setConnectionState('connected');
+    };
+    
+    const onDisconnect = () => {
+      console.log('[RealtimeScores] WebSocket disconnected');
+      setConnectionState('disconnected');
+    };
+    
+    webSocketManager.addConnectionListener(onConnect);
+    webSocketManager.addDisconnectionListener(onDisconnect);
+    
     // Connect to WebSocket (will be persistent across component lifecycles)
     webSocketManager.connect();
     
+    // Update initial state based on current connection
+    setConnectionState(webSocketManager.isConnected() ? 'connected' : 'connecting');
+    
     // Component cleanup - but DON'T disconnect the WebSocket
-    // This allows the connection to persist across component re-renders and page navigation
     return () => {
       console.log('[RealtimeScores] Component cleanup - keeping WebSocket connection active');
+      webSocketManager.removeConnectionListener(onConnect);
+      webSocketManager.removeDisconnectionListener(onDisconnect);
       // Note: We don't call webSocketManager.disconnect() here to maintain persistence
     };
   }, [queryClient]);
 
-  return null; // This hook doesn't return anything, just manages the connection
+  return {
+    connectionStatus: connectionState,
+    isConnected: connectionState === 'connected'
+  };
 }

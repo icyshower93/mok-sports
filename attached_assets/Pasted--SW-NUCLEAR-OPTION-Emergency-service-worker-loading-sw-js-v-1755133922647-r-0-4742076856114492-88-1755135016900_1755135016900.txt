@@ -1,0 +1,68 @@
+[SW] NUCLEAR OPTION - Emergency service worker loading
+sw.js?v=1755133922647&r=0.4742076856114492:88 [SW] Service worker starting, version: v1.7.0-nuclear-unregister-1755135000513
+sw.js?v=1755133922647&r=0.4742076856114492:305 [SW] Service worker script loaded successfully
+index-BNMvGwpa.js:353 [ErrorBoundary] Error caught: TypeError Cannot destructure property 'isConnected' of 'Hf(...)' as it is null.
+getDerivedStateFromError @ index-BNMvGwpa.js:353Understand this error
+index-BNMvGwpa.js:353 [ErrorBoundary] Stack trace: TypeError: Cannot destructure property 'isConnected' of 'Hf(...)' as it is null.
+    at oR (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BNMvGwpa.js:397:233671)
+    at ef (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BNMvGwpa.js:38:16998)
+    at Bx (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BNMvGwpa.js:40:43963)
+    at $x (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BNMvGwpa.js:40:39727)
+    at x1 (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BNMvGwpa.js:40:39655)
+    at al (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BNMvGwpa.js:40:39508)
+    at _x (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BNMvGwpa.js:40:34590)
+    at j (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BNMvGwpa.js:25:1565)
+    at MessagePort.I (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BNMvGwpa.js:25:1933)
+getDerivedStateFromError @ index-BNMvGwpa.js:353Understand this error
+index-BNMvGwpa.js:353 [ErrorBoundary] Error caught: TypeError Cannot destructure property 'isConnected' of 'Hf(...)' as it is null.
+getDerivedStateFromError @ index-BNMvGwpa.js:353Understand this error
+index-BNMvGwpa.js:353 [ErrorBoundary] Stack trace: TypeError: Cannot destructure property 'isConnected' of 'Hf(...)' as it is null.
+    at oR (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BNMvGwpa.js:397:233671)
+    at ef (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BNMvGwpa.js:38:16998)
+    at Bx (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BNMvGwpa.js:40:43963)
+    at $x (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BNMvGwpa.js:40:39727)
+    at x1 (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BNMvGwpa.js:40:39655)
+    at al (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BNMvGwpa.js:40:39508)
+    at _u (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BNMvGwpa.js:40:35875)
+    at _x (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BNMvGwpa.js:40:34826)
+    at j (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BNMvGwpa.js:25:1565)
+    at MessagePort.I (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BNMvGwpa.js:25:1933)
+getDerivedStateFromError @ index-BNMvGwpa.js:353Understand this error
+index-BNMvGwpa.js:40 TypeError: Cannot destructure property 'isConnected' of 'Hf(...)' as it is null.
+    at oR (index-BNMvGwpa.js:397:233671)
+    at ef (index-BNMvGwpa.js:38:16998)
+    at Bx (index-BNMvGwpa.js:40:43963)
+    at $x (index-BNMvGwpa.js:40:39727)
+    at x1 (index-BNMvGwpa.js:40:39655)
+    at al (index-BNMvGwpa.js:40:39508)
+    at _u (index-BNMvGwpa.js:40:35875)
+    at _x (index-BNMvGwpa.js:40:34826)
+    at j (index-BNMvGwpa.js:25:1565)
+    at MessagePort.I (index-BNMvGwpa.js:25:1933)
+ku @ index-BNMvGwpa.js:40Understand this error
+index-BNMvGwpa.js:353 [ErrorBoundary] DETAILED ERROR - Name: TypeError
+componentDidCatch @ index-BNMvGwpa.js:353Understand this error
+index-BNMvGwpa.js:353 [ErrorBoundary] DETAILED ERROR - Message: Cannot destructure property 'isConnected' of 'Hf(...)' as it is null.
+componentDidCatch @ index-BNMvGwpa.js:353Understand this error
+index-BNMvGwpa.js:353 [ErrorBoundary] DETAILED ERROR - Stack: TypeError: Cannot destructure property 'isConnected' of 'Hf(...)' as it is null.
+    at oR (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BNMvGwpa.js:397:233671)
+    at ef (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BNMvGwpa.js:38:16998)
+    at Bx (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BNMvGwpa.js:40:43963)
+    at $x (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BNMvGwpa.js:40:39727)
+    at x1 (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BNMvGwpa.js:40:39655)
+    at al (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BNMvGwpa.js:40:39508)
+    at _u (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BNMvGwpa.js:40:35875)
+    at _x (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BNMvGwpa.js:40:34826)
+    at j (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BNMvGwpa.js:25:1565)
+    at MessagePort.I (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BNMvGwpa.js:25:1933)
+componentDidCatch @ index-BNMvGwpa.js:353Understand this error
+index-BNMvGwpa.js:353 [ErrorBoundary] Component stack: 
+    at oR (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BNMvGwpa.js:397:233514)
+    at S2 (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BNMvGwpa.js:353:57509)
+    at u (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BNMvGwpa.js:48:45834)
+    at Oy (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BNMvGwpa.js:353:50483)
+    at b2 (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BNMvGwpa.js:353:56981)
+    at CN (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BNMvGwpa.js:48:40185)
+    at P2 (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BNMvGwpa.js:353:76364)
+    at iR
+componentDidCatch @ index-BNMvGwpa.js:353Understand this error
