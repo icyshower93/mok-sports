@@ -298,7 +298,7 @@ async function processGamesForDate(targetDate: Date): Promise<number> {
             .where(eq(nflGames.id, game.id));
 
           // Calculate and update Mok points for this game
-          await calculateAndUpdateMokPoints(parseInt(game.id), game.season, game.week, homeScore, awayScore, parseInt(game.homeTeamId), parseInt(game.awayTeamId), game.homeTeamCode, game.awayTeamCode);
+          await calculateAndUpdateMokPoints(game.id, game.season, game.week, homeScore, awayScore, game.homeTeamId, game.awayTeamId, game.homeTeamCode, game.awayTeamCode);
 
           processedCount++;
           console.log(`✅ Updated game: ${game.awayTeamCode} ${awayScore} - ${homeScore} ${game.homeTeamCode}`);
@@ -336,13 +336,13 @@ async function processGamesForDate(targetDate: Date): Promise<number> {
 
 // Calculate and update Mok points for a completed game
 async function calculateAndUpdateMokPoints(
-  gameId: number, 
+  gameId: string, 
   season: number, 
   week: number, 
   homeScore: number, 
   awayScore: number, 
-  homeTeamId: number, 
-  awayTeamId: number,
+  homeTeamId: string, 
+  awayTeamId: string,
   homeTeamCode: string,
   awayTeamCode: string
 ) {
@@ -366,7 +366,7 @@ async function calculateAndUpdateMokPoints(
 
     // Calculate points for each team owner
     for (const owner of teamOwners) {
-      const isHomeTeam = parseInt(owner.teamId) === homeTeamId;
+      const isHomeTeam = owner.teamId === homeTeamId;
       const teamScore = isHomeTeam ? homeScore : awayScore;
       const opponentScore = isHomeTeam ? awayScore : homeScore;
 
