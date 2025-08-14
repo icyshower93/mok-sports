@@ -8,8 +8,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/use-auth";
 import { useLocation } from "wouter";
 import { useState, useMemo } from "react";
-import { useRealtimeScores } from "@/hooks/use-realtime-scores";
-// Removed useAggressivePolling - now using persistent WebSocket manager
+import { usePWARealtime } from "@/hooks/use-pwa-realtime";
 import { 
   Trophy, 
   DollarSign, 
@@ -35,8 +34,8 @@ export default function LeaguePage() {
   const [location] = useLocation();
   const [expandedUsers, setExpandedUsers] = useState<Set<string>>(new Set());
   
-  // Enable real-time score updates using persistent WebSocket manager
-  useRealtimeScores();
+  // Enable PWA-optimized real-time updates using aggressive polling
+  usePWARealtime();
   
   // Get league ID from URL (assumes pattern /league?id=...)
   const searchParams = new URLSearchParams(location.split('?')[1] || '');

@@ -57,31 +57,43 @@ class WebSocketManager {
       const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
       const wsUrl = `${protocol}//${window.location.host}/draft-ws`;
       
-      console.log('[WebSocketManager] Connecting to:', wsUrl);
+      console.log('[WebSocketManager] PWA-optimized connection to:', wsUrl);
       
       this.ws = new WebSocket(wsUrl);
 
+      // Prevent browser/PWA from prematurely closing connection
+      this.ws.binaryType = 'arraybuffer';
+
       this.ws.onopen = () => {
-        console.log('[WebSocketManager] ✅ WebSocket connected successfully');
+        console.log('[WebSocketManager] ✅ PWA WebSocket connected successfully');
         this.isConnecting = false;
         this.reconnectAttempts = 0;
         
-        // Join admin updates group immediately
+        // Immediate and persistent setup for PWA environment
         if (this.ws && this.ws.readyState === WebSocket.OPEN) {
+          // Send join message immediately
           this.ws.send(JSON.stringify({
             type: 'join_admin_updates',
-            userId: 'persistent_score_listener_' + Date.now(),
+            userId: 'pwa_persistent_listener_' + Date.now(),
             timestamp: Date.now()
           }));
           
-          // Start aggressive keep-alive pings to prevent connection drops
+          // Start ultra-frequent keep-alive for PWA stability (10 seconds)
           this.pingInterval = setInterval(() => {
             if (this.ws && this.ws.readyState === WebSocket.OPEN) {
-              this.ws.send(JSON.stringify({ type: 'ping', timestamp: Date.now() }));
+              this.ws.send(JSON.stringify({ 
+                type: 'ping', 
+                timestamp: Date.now(),
+                pwaKeepAlive: true 
+              }));
             } else {
+              console.log('[WebSocketManager] Connection lost during ping, reconnecting...');
               this.reconnect();
             }
-          }, 15000); // More frequent pings (15 seconds)
+          }, 10000); // Very frequent pings for PWA (10 seconds)
+          
+          // Additional PWA-specific connection stability measures
+          this.setupPWAConnectionMaintenance();
           
           this.notifyConnectionListeners();
         }
@@ -241,6 +253,41 @@ class WebSocketManager {
       case WebSocket.CLOSING: return 'CLOSING';
       case WebSocket.CLOSED: return 'CLOSED';
       default: return 'UNKNOWN';
+    }
+  }
+
+  // PWA-specific connection maintenance
+  private setupPWAConnectionMaintenance() {
+    console.log('[WebSocketManager] Setting up PWA connection maintenance');
+    
+    // Listen for PWA visibility changes
+    if (typeof document !== 'undefined') {
+      const handleVisibilityChange = () => {
+        if (document.visibilityState === 'visible' && this.ws?.readyState !== WebSocket.OPEN) {
+          console.log('[WebSocketManager] PWA became visible, checking connection...');
+          this.reconnect();
+        }
+      };
+      
+      document.addEventListener('visibilitychange', handleVisibilityChange);
+    }
+    
+    // Listen for PWA lifecycle events
+    if (typeof window !== 'undefined') {
+      const handleFocus = () => {
+        if (this.ws?.readyState !== WebSocket.OPEN) {
+          console.log('[WebSocketManager] PWA focused, ensuring connection...');
+          this.reconnect();
+        }
+      };
+      
+      const handleOnline = () => {
+        console.log('[WebSocketManager] PWA back online, reconnecting...');
+        this.reconnect();
+      };
+      
+      window.addEventListener('focus', handleFocus);
+      window.addEventListener('online', handleOnline);
     }
   }
 }
