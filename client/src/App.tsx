@@ -11,7 +11,7 @@ import { usePWADetection } from "@/hooks/use-pwa-detection";
 import { useServiceWorker } from "@/hooks/use-service-worker";
 import { useAutoPushRefresh } from "@/hooks/use-auto-push-refresh";
 import { PWAInstallPrompt } from "@/components/pwa-install-prompt";
-import { useProductionRealtime } from "@/hooks/use-production-realtime.ts";
+import { useProductionRealtime } from "@/hooks/use-stable-websocket.js";
 
 import { ErrorBoundary } from "@/components/error-boundary";
 import { DesktopNotice } from "@/components/desktop-notice";
@@ -55,18 +55,20 @@ function AppContent() {
   // Initialize automatic push notification refresh for iOS PWA
   useAutoPushRefresh();
   
-  // Initialize production-optimized real-time updates via WebSocket broadcasts
+  // Initialize stable WebSocket connection for real-time updates
   const { isConnected: isRealtimeConnected, connectionStatus } = useProductionRealtime();
   
-  // Log production WebSocket connection status with auth awareness
+  // Log WebSocket connection status
   React.useEffect(() => {
-    console.log('[App] Production WebSocket status:', connectionStatus, 
+    console.log('[App] WebSocket status:', connectionStatus, 
       isRealtimeConnected ? '(Connected)' : '(Disconnected)');
     
     if (isRealtimeConnected) {
-      console.log('[App] ✅ Real-time broadcasts active - admin actions will update instantly');
+      console.log('[App] ✅ Real-time updates active - scores will update instantly');
     } else if (connectionStatus === 'waiting_auth') {
-      console.log('[App] ⏳ WebSocket waiting for authentication to complete');
+      console.log('[App] ⏳ Waiting for authentication to complete');
+    } else if (connectionStatus === 'reconnecting') {
+      console.log('[App] 🔄 Attempting to reconnect...');
     }
   }, [connectionStatus, isRealtimeConnected]);
 

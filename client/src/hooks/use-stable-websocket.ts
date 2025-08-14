@@ -1,186 +1,388 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
+import { useAuth } from './use-auth.js';
 
-// Stable WebSocket implementation that bypasses browser disconnect issues
-export function useStableWebSocket(draftId: string, userId: string) {
+interface WebSocketMessage {
+  type: string;
+  data?: any;
+  timestamp?: number;
+}
+
+type MessageCallback = (message: WebSocketMessage) => void;
+type ConnectionStatus = 'waiting_auth' | 'connecting' | 'connected' | 'disconnected' | 'reconnecting';
+
+// Safe WebSocket close codes (1000 or 3000-4999)
+const CLOSE_CODES = {
+  NORMAL: 1000,
+  SW_UPDATE: 4001,  // Custom code for service worker updates
+  AUTH_LOST: 4002,  // Custom code for authentication loss
+  MANUAL: 4003      // Custom code for manual disconnect
+} as const;
+
+/**
+ * Production-ready WebSocket hook for real-time updates
+ * 
+ * Features:
+ * - Waits for authentication before connecting
+ * - Uses safe browser close codes (1000, 3000-4999)
+ * - Handles service worker updates gracefully
+ * - 25-second keepalive pings to prevent timeouts
+ * - Exponential backoff reconnection (max 8 attempts)
+ * - Proper cleanup to prevent multiple parallel connections
+ * - Comprehensive error handling and logging
+ * 
+ * @param onMessage Optional callback for handling incoming messages
+ * @returns Connection status and utility functions
+ */
+export function useStableWebSocket(onMessage?: MessageCallback) {
+  const queryClient = useQueryClient();
+  const { user, isLoading: authLoading } = useAuth();
+  
+  // Refs for managing connection state
   const wsRef = useRef<WebSocket | null>(null);
-  const [status, setStatus] = useState<'connecting' | 'connected' | 'disconnected'>('disconnected');
-  const [lastMessage, setLastMessage] = useState<string>('');
-  const mountedRef = useRef(true);
-  const connectionIdRef = useRef(0);
+  const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const pingIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const cleanupTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const isConnectingRef = useRef(false);
+  
+  // State
+  const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>('waiting_auth');
+  const reconnectAttempts = useRef(0);
+  const maxReconnectAttempts = 8;
+  
+  // Keep callback ref updated
+  const messageCallbackRef = useRef<MessageCallback | undefined>(onMessage);
+  messageCallbackRef.current = onMessage;
 
-  const connectWebSocket = useCallback(() => {
-    if (!draftId || !userId || !mountedRef.current) {
-      console.log('[StableWS] Not connecting - missing params or unmounted');
+  /**
+   * Safely close WebSocket connection with proper error handling
+   */
+  const closeConnection = useCallback((code: number = CLOSE_CODES.NORMAL, reason: string = 'disconnect') => {
+    if (wsRef.current) {
+      const currentSocket = wsRef.current;
+      wsRef.current = null;
+      
+      try {
+        if (currentSocket.readyState === WebSocket.OPEN || currentSocket.readyState === WebSocket.CONNECTING) {
+          console.log(`[StableWebSocket] 🔌 Closing connection with code ${code}: ${reason}`);
+          currentSocket.close(code, reason);
+        }
+      } catch (error) {
+        console.warn('[StableWebSocket] ⚠️ Error closing WebSocket:', error);
+        // Don't throw - just log the error and continue cleanup
+      }
+    }
+  }, []);
+
+  /**
+   * Clean up all timers and intervals
+   */
+  const cleanup = useCallback(() => {
+    console.log('[StableWebSocket] 🧹 Cleaning up all timers and connections');
+    
+    // Clear all timers
+    if (reconnectTimeoutRef.current) {
+      clearTimeout(reconnectTimeoutRef.current);
+      reconnectTimeoutRef.current = null;
+    }
+    
+    if (pingIntervalRef.current) {
+      clearInterval(pingIntervalRef.current);
+      pingIntervalRef.current = null;
+    }
+    
+    if (cleanupTimeoutRef.current) {
+      clearTimeout(cleanupTimeoutRef.current);
+      cleanupTimeoutRef.current = null;
+    }
+    
+    isConnectingRef.current = false;
+  }, []);
+
+  /**
+   * Start keepalive ping interval (25 seconds)
+   */
+  const startKeepalive = useCallback(() => {
+    // Clear existing interval first
+    if (pingIntervalRef.current) {
+      clearInterval(pingIntervalRef.current);
+    }
+    
+    pingIntervalRef.current = setInterval(() => {
+      if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+        try {
+          console.log('[StableWebSocket] 💓 Sending keepalive ping');
+          wsRef.current.send(JSON.stringify({
+            type: 'ping',
+            timestamp: Date.now(),
+            connectionId: `keepalive_${Date.now()}`
+          }));
+        } catch (error) {
+          console.warn('[StableWebSocket] ⚠️ Failed to send keepalive ping:', error);
+        }
+      }
+    }, 25000); // 25 seconds - optimized for mobile/PWA
+    
+    console.log('[StableWebSocket] ⏰ Keepalive started (25s interval)');
+  }, []);
+
+  /**
+   * Handle incoming WebSocket messages
+   */
+  const handleMessage = useCallback((event: MessageEvent) => {
+    try {
+      const message: WebSocketMessage = JSON.parse(event.data);
+      console.log('[StableWebSocket] 📨 Message received:', message.type);
+      
+      // Handle system messages
+      switch (message.type) {
+        case 'pong':
+          console.log('[StableWebSocket] 💚 Keepalive pong received - connection healthy');
+          break;
+          
+        case 'admin_date_advanced':
+          console.log('[StableWebSocket] 📅 Admin date advanced - refreshing scores');
+          queryClient.invalidateQueries({ queryKey: ['/api/scoring'] });
+          queryClient.invalidateQueries({ queryKey: ['/api/leagues'] });
+          queryClient.invalidateQueries({ queryKey: ['/api/admin/current-week'] });
+          break;
+          
+        case 'admin_season_reset':
+          console.log('[StableWebSocket] 🔄 Season reset - refreshing all data');
+          queryClient.invalidateQueries({ queryKey: ['/api/leagues'] });
+          queryClient.invalidateQueries({ queryKey: ['/api/scoring'] });
+          queryClient.invalidateQueries({ queryKey: ['/api/admin/current-week'] });
+          break;
+          
+        case 'score_update':
+        case 'weekly_bonuses_calculated':
+          console.log('[StableWebSocket] 🏆 Score update - refreshing scores and skins');
+          queryClient.invalidateQueries({ queryKey: ['/api/scoring'] });
+          break;
+          
+        case 'admin_ready':
+        case 'connected':
+        case 'health_check':
+        case 'identified':
+          // Server confirmations - no action needed
+          console.log('[StableWebSocket] ✅ Server confirmation:', message.type);
+          break;
+          
+        default:
+          console.log('[StableWebSocket] ❓ Unknown message type:', message.type);
+      }
+      
+      // Call custom callback if provided
+      if (messageCallbackRef.current) {
+        messageCallbackRef.current(message);
+      }
+      
+    } catch (error) {
+      console.error('[StableWebSocket] ❌ Error parsing message:', error);
+    }
+  }, [queryClient]);
+
+  /**
+   * Calculate exponential backoff delay
+   */
+  const getReconnectDelay = useCallback(() => {
+    const baseDelay = 1000; // 1 second
+    const maxDelay = 30000; // 30 seconds max
+    const delay = Math.min(baseDelay * Math.pow(2, reconnectAttempts.current), maxDelay);
+    return delay + Math.random() * 1000; // Add jitter
+  }, []);
+
+  /**
+   * Establish WebSocket connection with comprehensive error handling
+   */
+  const connect = useCallback(() => {
+    // Prevent multiple simultaneous connections
+    if (isConnectingRef.current || !user || authLoading) {
+      if (!user && !authLoading) {
+        console.log('[StableWebSocket] 🚫 No authenticated user, skipping connection');
+        setConnectionStatus('waiting_auth');
+      } else if (isConnectingRef.current) {
+        console.log('[StableWebSocket] 🔄 Connection already in progress, skipping');
+      }
       return;
     }
-
-    // Close existing connection first
-    if (wsRef.current && wsRef.current.readyState !== WebSocket.CLOSED) {
-      console.log('[StableWS] Closing existing connection');
-      wsRef.current.close();
-    }
-
-    const currentConnectionId = ++connectionIdRef.current;
-    console.log(`[StableWS] Starting connection attempt #${currentConnectionId}`);
     
-    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const wsUrl = `${protocol}//${window.location.host}/draft-ws?userId=${userId}&draftId=${draftId}&connectionId=${currentConnectionId}`;
-
+    // Clean up any existing connection
+    cleanup();
+    closeConnection(CLOSE_CODES.MANUAL, 'new-connection');
+    
+    isConnectingRef.current = true;
+    setConnectionStatus('connecting');
+    
     try {
+      console.log('[StableWebSocket] 🚀 Establishing connection for user:', user.name);
+      
+      // Create WebSocket connection
+      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      const wsUrl = `${protocol}//${window.location.host}/draft-ws`;
+      
       const ws = new WebSocket(wsUrl);
       wsRef.current = ws;
-      setStatus('connecting');
-
-      // Prevent immediate garbage collection
-      (window as any).__stableWebSocket = ws;
-
-      let openTimeout: NodeJS.Timeout | null = null;
-      let messageTimeout: NodeJS.Timeout | null = null;
-
+      
+      // Connection opened successfully
       ws.onopen = () => {
-        if (connectionIdRef.current !== currentConnectionId || !mountedRef.current) {
-          console.log('[StableWS] Connection opened but outdated, closing');
-          ws.close();
-          return;
-        }
-
-        console.log(`[StableWS] ✅ Connection #${currentConnectionId} opened successfully`);
-        setStatus('connected');
+        console.log('[StableWebSocket] ✅ Connection established');
+        isConnectingRef.current = false;
+        setConnectionStatus('connected');
+        reconnectAttempts.current = 0;
         
-        // Send immediate identification
-        const identifyMessage = JSON.stringify({
-          type: 'identify',
-          userId,
-          draftId,
-          connectionId: currentConnectionId,
-          timestamp: Date.now(),
-          userAgent: navigator.userAgent
-        });
-        
-        ws.send(identifyMessage);
-        console.log('[StableWS] Identity message sent');
-
-        // Set up keep-alive ping
-        openTimeout = setInterval(() => {
-          if (ws.readyState === WebSocket.OPEN && mountedRef.current) {
-            ws.send(JSON.stringify({
-              type: 'keep_alive',
-              connectionId: currentConnectionId,
-              timestamp: Date.now()
-            }));
-            console.log('[StableWS] Keep-alive ping sent');
-          }
-        }, 15000);
-      };
-
-      ws.onmessage = (event) => {
-        if (connectionIdRef.current !== currentConnectionId || !mountedRef.current) {
-          console.log('[StableWS] Message received but connection outdated');
-          return;
-        }
-
-        console.log(`[StableWS] Message received on connection #${currentConnectionId}:`, event.data);
-        setLastMessage(event.data);
-        
-        // Auto-respond to server pings
+        // Subscribe to admin broadcasts
         try {
-          const message = JSON.parse(event.data);
-          if (message.type === 'ping') {
-            ws.send(JSON.stringify({
-              type: 'pong',
-              connectionId: currentConnectionId,
-              timestamp: Date.now()
-            }));
-          }
-        } catch (e) {
-          // Ignore JSON parsing errors
+          ws.send(JSON.stringify({
+            type: 'join_admin_updates',
+            userId: user.id,
+            userName: user.name,
+            timestamp: Date.now()
+          }));
+          console.log('[StableWebSocket] 📡 Subscribed to admin broadcasts');
+        } catch (error) {
+          console.warn('[StableWebSocket] ⚠️ Failed to subscribe:', error);
         }
+        
+        // Start keepalive
+        startKeepalive();
       };
-
+      
+      // Handle incoming messages
+      ws.onmessage = handleMessage;
+      
+      // Connection closed
       ws.onclose = (event) => {
-        console.log(`[StableWS] Connection #${currentConnectionId} closed`);
-        console.log(`[StableWS] Close code: ${event.code}, reason: "${event.reason}"`);
-        console.log(`[StableWS] Was clean: ${event.wasClean}`);
+        isConnectingRef.current = false;
+        wsRef.current = null;
         
-        // Clear timeouts
-        if (openTimeout) clearInterval(openTimeout);
-        if (messageTimeout) clearTimeout(messageTimeout);
+        console.log(`[StableWebSocket] 🔌 Connection closed - Code: ${event.code}, Reason: ${event.reason}`);
         
-        if (connectionIdRef.current === currentConnectionId && mountedRef.current) {
-          setStatus('disconnected');
-          wsRef.current = null;
+        // Clean up keepalive
+        if (pingIntervalRef.current) {
+          clearInterval(pingIntervalRef.current);
+          pingIntervalRef.current = null;
+        }
+        
+        // Determine if we should reconnect
+        const shouldReconnect = 
+          event.code !== CLOSE_CODES.MANUAL && 
+          event.code !== CLOSE_CODES.AUTH_LOST &&
+          reconnectAttempts.current < maxReconnectAttempts &&
+          user && !authLoading;
+        
+        if (shouldReconnect) {
+          const delay = getReconnectDelay();
+          reconnectAttempts.current++;
           
-          // Only reconnect if not a manual close (code 1000)
-          if (event.code !== 1000 && mountedRef.current) {
-            console.log('[StableWS] Unexpected close, scheduling reconnection...');
-            setTimeout(() => {
-              if (mountedRef.current) {
-                connectWebSocket();
-              }
-            }, 2000);
-          }
+          console.log(`[StableWebSocket] 🔄 Reconnecting in ${delay}ms (attempt ${reconnectAttempts.current}/${maxReconnectAttempts})`);
+          setConnectionStatus('reconnecting');
+          
+          reconnectTimeoutRef.current = setTimeout(() => {
+            connect();
+          }, delay);
+          
+        } else {
+          console.log('[StableWebSocket] ⛔ Not reconnecting - manual close or max attempts reached');
+          setConnectionStatus('disconnected');
+          reconnectAttempts.current = 0;
         }
       };
-
+      
+      // Connection error
       ws.onerror = (error) => {
-        console.error(`[StableWS] Connection #${currentConnectionId} error:`, error);
-        if (connectionIdRef.current === currentConnectionId && mountedRef.current) {
-          setStatus('disconnected');
-        }
+        console.error('[StableWebSocket] ❌ Connection error:', error);
+        isConnectingRef.current = false;
       };
-
+      
     } catch (error) {
-      console.error('[StableWS] Failed to create WebSocket:', error);
-      setStatus('disconnected');
+      console.error('[StableWebSocket] ❌ Failed to create WebSocket:', error);
+      isConnectingRef.current = false;
+      setConnectionStatus('disconnected');
     }
-  }, [draftId, userId]);
+  }, [user, authLoading, cleanup, closeConnection, handleMessage, startKeepalive, getReconnectDelay]);
 
-  useEffect(() => {
-    mountedRef.current = true;
-    console.log('[StableWS] Component mounted, initializing connection');
+  /**
+   * Handle service worker updates gracefully
+   */
+  const handleServiceWorkerUpdate = useCallback(() => {
+    console.log('[StableWebSocket] 🔄 Service worker updated, gracefully reconnecting');
     
-    if (draftId && userId) {
-      connectWebSocket();
-    }
-
-    // Cleanup on unmount
-    return () => {
-      console.log('[StableWS] Component unmounting, cleaning up');
-      mountedRef.current = false;
-      
-      if (wsRef.current && wsRef.current.readyState !== WebSocket.CLOSED) {
-        wsRef.current.close(1000, 'Component unmount');
+    closeConnection(CLOSE_CODES.SW_UPDATE, 'sw-update');
+    
+    // Brief delay before reconnecting to let SW settle
+    cleanupTimeoutRef.current = setTimeout(() => {
+      if (user && !authLoading) {
+        connect();
       }
-      
-      // Clean up global reference
-      if ((window as any).__stableWebSocket) {
-        delete (window as any).__stableWebSocket;
-      }
-    };
-  }, [connectWebSocket]);
+    }, 2000);
+  }, [user, authLoading, closeConnection, connect]);
 
-  // Handle page visibility changes
+  // Effect: Wait for auth then connect
   useEffect(() => {
-    const handleVisibilityChange = () => {
-      if (document.hidden) {
-        console.log('[StableWS] Page hidden');
-      } else {
-        console.log('[StableWS] Page visible, checking connection');
-        if (status === 'disconnected' && mountedRef.current) {
-          connectWebSocket();
-        }
-      }
-    };
+    if (authLoading) {
+      console.log('[StableWebSocket] ⏳ Waiting for authentication...');
+      setConnectionStatus('waiting_auth');
+      return;
+    }
+    
+    if (!user) {
+      console.log('[StableWebSocket] 🚫 No authenticated user');
+      setConnectionStatus('waiting_auth');
+      cleanup();
+      closeConnection(CLOSE_CODES.AUTH_LOST, 'auth-lost');
+      return;
+    }
+    
+    console.log('[StableWebSocket] 🔐 Auth confirmed, establishing connection');
+    connect();
+  }, [user, authLoading, connect, cleanup, closeConnection]);
 
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
-  }, [status, connectWebSocket]);
+  // Effect: Listen for service worker updates
+  useEffect(() => {
+    if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+      navigator.serviceWorker.addEventListener('controllerchange', handleServiceWorkerUpdate);
+      
+      return () => {
+        navigator.serviceWorker.removeEventListener('controllerchange', handleServiceWorkerUpdate);
+      };
+    }
+  }, [handleServiceWorkerUpdate]);
+
+  // Effect: Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      console.log('[StableWebSocket] 🧹 Component unmounting, cleaning up');
+      cleanup();
+      closeConnection(CLOSE_CODES.MANUAL, 'unmount');
+    };
+  }, [cleanup, closeConnection]);
+
+  // Public API
+  const disconnect = useCallback(() => {
+    console.log('[StableWebSocket] 🔌 Manual disconnect requested');
+    cleanup();
+    closeConnection(CLOSE_CODES.MANUAL, 'manual-disconnect');
+    setConnectionStatus('disconnected');
+    reconnectAttempts.current = 0;
+  }, [cleanup, closeConnection]);
+
+  const reconnect = useCallback(() => {
+    console.log('[StableWebSocket] 🔄 Manual reconnect requested');
+    reconnectAttempts.current = 0;
+    connect();
+  }, [connect]);
 
   return {
-    status,
-    lastMessage,
-    isConnected: status === 'connected',
-    reconnect: connectWebSocket,
-    connectionId: connectionIdRef.current
+    connectionStatus,
+    isConnected: connectionStatus === 'connected',
+    isConnecting: connectionStatus === 'connecting' || connectionStatus === 'reconnecting',
+    reconnectAttempts: reconnectAttempts.current,
+    maxReconnectAttempts,
+    disconnect,
+    reconnect
   };
 }
+
+// For backward compatibility, export as useProductionRealtime
+export const useProductionRealtime = useStableWebSocket;
