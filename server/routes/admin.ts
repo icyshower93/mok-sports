@@ -45,7 +45,7 @@ function get2024AuthenticScores(awayTeam: string, homeTeam: string, gameDate: Da
 
   // Week 2 2024 authentic NFL scores (Sept 12-16)
   const week2Scores: Record<string, { homeScore: number, awayScore: number }> = {
-    'MIA@BUF': { homeScore: 31, awayScore: 10 },
+    'BUF@MIA': { homeScore: 10, awayScore: 31 },
     'SF@MIN': { homeScore: 17, awayScore: 23 },
     'NYJ@TEN': { homeScore: 17, awayScore: 24 },
     'CAR@LAC': { homeScore: 26, awayScore: 3 },
