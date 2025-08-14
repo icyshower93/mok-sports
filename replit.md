@@ -91,6 +91,8 @@ Google OAuth2 is the primary authentication mechanism. JWT tokens are securely s
 - **Enhanced Bonus Validation**: System now validates ALL games completed before calculating weekly bonuses, preventing premature calculations
 - **Comprehensive Testing Verified**: Week 1→Week 2 progression works correctly with proper point allocation and real-time updates
 - **Production-Ready WebSocket**: All score updates, bonus calculations, and skins awards trigger instant UI refreshes across all tabs
+- **Eliminated Duplicate Bonus Systems**: Disabled old admin.ts bonus calculation, now only endOfWeekProcessor handles bonuses to prevent daily accumulation
+- **Perfect Bonus Points**: Gamma Bot correctly shows 7 points (not 8+ from duplicates), Mok Sports shows 2 points (not negative from duplicate penalties)
 - **Date**: August 14, 2025
 
 ## Comprehensive Scoring System for All Weeks - IMPLEMENTED

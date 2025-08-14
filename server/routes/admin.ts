@@ -593,6 +593,19 @@ async function checkAndCalculateWeeklyBonuses(season: number, week: number, forc
       );
 
       if (teamScores.length > 0) {
+        console.log(`📊 Week ${week} NFL team scores available - delegating to endOfWeekProcessor for bonus calculation`);
+        
+        // DISABLED OLD BONUS CALCULATION SYSTEM
+        // The endOfWeekProcessor now handles ALL weekly bonus calculations to prevent duplicates
+        // This old logic was causing daily duplicate bonuses and is replaced by the proper end-of-week system
+        
+        // Use the proper endOfWeekProcessor for weekly bonus calculations
+        const { endOfWeekProcessor } = await import("../utils/endOfWeekProcessor.js");
+        await endOfWeekProcessor.processEndOfWeek(season, week, '243d719b-92ce-4752-8689-5da93ee69213');
+        
+        console.log(`✅ Week ${week} bonus calculation delegated to endOfWeekProcessor - preventing duplicate calculations`);
+        
+        /* COMMENTED OUT OLD DUPLICATE BONUS LOGIC
         // Find highest and lowest team scores
         const sortedScores = teamScores.sort((a, b) => b.score! - a.score!);
         const highestScore = sortedScores[0].score!;
@@ -754,7 +767,7 @@ async function checkAndCalculateWeeklyBonuses(season: number, week: number, forc
           console.log(`📢 Broadcast weekly bonuses calculation for Week ${week}`);
         }
         
-        console.log(`✅ Applied NFL team-based weekly bonuses: High (${highestScore}) to ${highestTeams.length} teams, Low (${lowestScore}) to ${lowestTeams.length} teams`);
+        END OF COMMENTED OUT OLD BONUS LOGIC */
       }
     }
   } catch (error) {
