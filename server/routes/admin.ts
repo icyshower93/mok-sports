@@ -796,16 +796,16 @@ export function registerAdminRoutes(app: Express) {
       await updateAdminState();
       adminState.processingInProgress = false;
 
-      // Broadcast update to all connected clients to refresh scores
-      const draftManager = (global as any).draftManager;
+      // Broadcast update to all connected clients to refresh scores  
+      const { globalDraftManager } = await import("../draft/globalDraftManager.js");
       console.log('[Admin] Broadcasting admin_date_advanced to all connected clients');
-      console.log('[Admin] DraftManager available:', !!draftManager);
-      console.log('[Admin] DraftManager.broadcast available:', !!(draftManager && draftManager.broadcast));
+      console.log('[Admin] GlobalDraftManager available:', !!globalDraftManager);
+      console.log('[Admin] GlobalDraftManager.broadcast available:', !!(globalDraftManager && (globalDraftManager as any).broadcast));
       
-      if (draftManager && draftManager.broadcast) {
+      if (globalDraftManager && (globalDraftManager as any).broadcast) {
         // Add delay to ensure WebSocket connections are stable before broadcasting
         setTimeout(() => {
-          draftManager.broadcast({
+          (globalDraftManager as any).broadcast({
             type: 'admin_date_advanced',
             data: {
               newDate: adminState.currentDate.toISOString(),
@@ -816,7 +816,7 @@ export function registerAdminRoutes(app: Express) {
           console.log('[Admin] ✅ Delayed broadcast sent for admin_date_advanced');
         }, 1000); // 1 second delay to ensure connections are ready
       } else {
-        console.log('[Admin] ❌ Could not broadcast - draftManager or broadcast not available');
+        console.log('[Admin] ❌ Could not broadcast - globalDraftManager or broadcast not available');
       }
 
       res.json({
@@ -881,13 +881,13 @@ export function registerAdminRoutes(app: Express) {
       console.log('✅ Season reset completed');
 
       // Broadcast reset to all connected clients to refresh scores page
-      const draftManager = (global as any).draftManager;
+      const { globalDraftManager } = await import("../draft/globalDraftManager.js");
       console.log('[Admin] Broadcasting admin_season_reset to all connected clients');
-      console.log('[Admin] DraftManager available:', !!draftManager);
-      console.log('[Admin] DraftManager.broadcast available:', !!(draftManager && draftManager.broadcast));
+      console.log('[Admin] GlobalDraftManager available:', !!globalDraftManager);
+      console.log('[Admin] GlobalDraftManager.broadcast available:', !!(globalDraftManager && (globalDraftManager as any).broadcast));
       
-      if (draftManager && draftManager.broadcast) {
-        draftManager.broadcast({
+      if (globalDraftManager && (globalDraftManager as any).broadcast) {
+        (globalDraftManager as any).broadcast({
           type: 'admin_season_reset',
           data: {
             newDate: adminState.currentDate.toISOString(),
@@ -897,7 +897,7 @@ export function registerAdminRoutes(app: Express) {
         });
         console.log('[Admin] ✅ Broadcast sent for admin_season_reset');
       } else {
-        console.log('[Admin] ❌ Could not broadcast - draftManager or broadcast not available');
+        console.log('[Admin] ❌ Could not broadcast - globalDraftManager or broadcast not available');
       }
 
       res.json({

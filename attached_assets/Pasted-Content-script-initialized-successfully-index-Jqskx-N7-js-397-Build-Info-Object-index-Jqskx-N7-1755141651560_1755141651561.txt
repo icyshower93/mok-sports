@@ -1,0 +1,69 @@
+Content script initialized successfully.
+index-Jqskx-N7.js:397 🏗️ Build Info: Object
+index-Jqskx-N7.js:397 📦 Version: meatzwvg
+index-Jqskx-N7.js:397 📅 Built: 2025-08-14T03:20:09.004Z
+index-Jqskx-N7.js:397 🔧 Environment: production
+index-Jqskx-N7.js:353 [ProductionRealtime] 🚫 No authenticated user, skipping WebSocket connection
+index-Jqskx-N7.js:397 [App] Production WebSocket status: waiting_auth (Disconnected)
+index-Jqskx-N7.js:397 [App] ⏳ WebSocket waiting for authentication to complete
+index-Jqskx-N7.js:353 [Auth] Token check - Has token: true Has user: false Loading: true
+index-Jqskx-N7.js:397 [App] Production WebSocket status: disconnected (Disconnected)
+index-Jqskx-N7.js:353 [SW Hook] EMERGENCY: Unregistering all existing service workers
+index-Jqskx-N7.js:353 [SW Hook] Found 1 existing registrations
+index-Jqskx-N7.js:353 [SW Hook] Unregistering existing service worker
+index-Jqskx-N7.js:353 [SW Hook] Found 2 caches to delete
+index-Jqskx-N7.js:353 [SW Hook] Deleting cache: mok-sports-dynamic-v1.7.0-nuclear-unregister-1755133938309
+index-Jqskx-N7.js:353 [SW Hook] Deleting cache: mok-sports-dynamic-v1.7.0-nuclear-unregister-1755135045214
+league:1 Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner.
+index-Jqskx-N7.js:353 [ProductionRealtime] 🧹 Cleaning up WebSocket connection
+index-Jqskx-N7.js:353 [ProductionRealtime] 🔐 Auth ready, initiating WebSocket connection
+index-Jqskx-N7.js:353 [ProductionRealtime] 🚀 Auth confirmed, establishing WebSocket connection...
+index-Jqskx-N7.js:353 [ProductionRealtime] User: Sky Evans ID: 9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a
+index-Jqskx-N7.js:353 [Auth] Token check - Has token: true Has user: true Loading: false
+index-Jqskx-N7.js:353 [AutoPushRefresh] Legacy hook delegating to SubscriptionManager
+index-Jqskx-N7.js:397 [App] Production WebSocket status: connecting (Disconnected)
+index-Jqskx-N7.js:353 [SW Hook] Registering fresh service worker: /sw.js?v=1755141609131&r=0.056632603910905854
+index-Jqskx-N7.js:397 [League] No skins data available, returning empty object
+index-Jqskx-N7.js:353 [ProductionRealtime] 🔐 Auth ready, initiating WebSocket connection
+index-Jqskx-N7.js:353 [ProductionRealtime] 🚀 Auth confirmed, establishing WebSocket connection...
+index-Jqskx-N7.js:353 [ProductionRealtime] User: Sky Evans ID: 9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a
+sw.js?v=1755141609131&r=0.056632603910905854:2 [SW] NUCLEAR OPTION - Emergency service worker loading
+sw.js?v=1755141609131&r=0.056632603910905854:88 [SW] Service worker starting, version: v1.7.0-nuclear-unregister-1755141609196
+sw.js?v=1755141609131&r=0.056632603910905854:305 [SW] Service worker script loaded successfully
+index-Jqskx-N7.js:353 [SW Hook] Service worker registered successfully
+sw.js?v=1755141609131&r=0.056632603910905854:19 [SW] EMERGENCY INSTALL - Clearing all caches and forcing activation
+sw.js?v=1755141609131&r=0.056632603910905854:92 [SW] Installing service worker, version: v1.7.0-nuclear-unregister-1755141609196
+sw.js?v=1755141609131&r=0.056632603910905854:22 [SW] Found caches to delete: Array(0)
+sw.js?v=1755141609131&r=0.056632603910905854:30 [SW] All caches deleted - skipping waiting
+sw.js?v=1755141609131&r=0.056632603910905854:96 [SW] Caching static files
+index-Jqskx-N7.js:353 [ProductionRealtime] ✅ WebSocket connected successfully
+index-Jqskx-N7.js:353 [ProductionRealtime] 📡 Subscribed to admin broadcasts with keepalive active
+index-Jqskx-N7.js:397 [App] Production WebSocket status: connected (Connected)
+index-Jqskx-N7.js:397 [App] ✅ Real-time broadcasts active - admin actions will update instantly
+index-Jqskx-N7.js:397 [League] Skins won by user: Object
+index-Jqskx-N7.js:353 [ProductionRealtime] Received broadcast: admin_ready
+index-Jqskx-N7.js:353 [ProductionRealtime] Unknown broadcast type: admin_ready
+sw.js?v=1755141609131&r=0.056632603910905854:99 [SW] Static files cached successfully
+sw.js?v=1755141609131&r=0.056632603910905854:41 [SW] EMERGENCY ACTIVATE - Taking control of all clients
+sw.js?v=1755141609131&r=0.056632603910905854:110 [SW] Activating service worker, version: v1.7.0-nuclear-unregister-1755141609196
+sw.js?v=1755141609131&r=0.056632603910905854:46 [SW] Deleting remaining cache: mok-sports-static-v1.7.0-nuclear-unregister-1755141609196
+sw.js?v=1755141609131&r=0.056632603910905854:116 [SW] Found caches: Array(1)
+sw.js?v=1755141609131&r=0.056632603910905854:129 [SW] Service worker activated and controlling all clients
+index-Jqskx-N7.js:353 [ProductionRealtime] 🔄 Service worker updated, preparing for reconnection
+index-Jqskx-N7.js:353 Uncaught InvalidAccessError: Failed to execute 'close' on 'WebSocket': The close code must be either 1000, or between 3000 and 4999. 1001 is neither.
+    at ServiceWorkerContainer.g (index-Jqskx-N7.js:353:74555)Understand this error
+index-Jqskx-N7.js:353 [ProductionRealtime] 🔄 Service worker updated, preparing for reconnection
+index-Jqskx-N7.js:353 [ProductionRealtime] Received broadcast: connected
+index-Jqskx-N7.js:353 [ProductionRealtime] Unknown broadcast type: connected
+sw.js?v=1755141609131&r=0.056632603910905854:51 [SW] Claiming all clients immediately
+index-Jqskx-N7.js:353 [ProductionRealtime] ✅ WebSocket connected successfully
+index-Jqskx-N7.js:353 [ProductionRealtime] 📡 Subscribed to admin broadcasts with keepalive active
+index-Jqskx-N7.js:353 [ProductionRealtime] Received broadcast: admin_ready
+index-Jqskx-N7.js:353 [ProductionRealtime] Unknown broadcast type: admin_ready
+index-Jqskx-N7.js:353 [ProductionRealtime] Received broadcast: connected
+index-Jqskx-N7.js:353 [ProductionRealtime] Unknown broadcast type: connected
+2index-Jqskx-N7.js:353 [ProductionRealtime] Received broadcast: admin_season_reset
+2index-Jqskx-N7.js:353 [ProductionRealtime] Received broadcast: admin_date_advanced
+sw.js?v=1755141609131&r=0.056632603910905854:64 [SW] BYPASSING CACHE for JS file: https://mok-sports-draft-mokfantasysport.replit.app/manifest.json
+sw.js?v=1755141609131&r=0.056632603910905854:164 [SW] Fetching /league from network
+sw.js?v=1755141609131&r=0.056632603910905854:164 [SW] Fetching /assets/index-CbRrnplr.css from network

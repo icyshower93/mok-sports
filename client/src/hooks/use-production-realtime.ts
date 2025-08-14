@@ -7,7 +7,7 @@ import { useAuth } from '@/hooks/use-auth';
 // Implements keepalive, auth-aware connection, and resilient reconnection
 export function useProductionRealtime() {
   const queryClient = useQueryClient();
-  const { user, loading: authLoading } = useAuth();
+  const { user, isLoading: authLoading } = useAuth();
   const wsRef = useRef<WebSocket | null>(null);
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const pingIntervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -101,6 +101,12 @@ export function useProductionRealtime() {
               // Server keepalive response - connection is alive
               console.log('[ProductionRealtime] 💚 Keepalive pong received - connection healthy');
               break;
+            case 'admin_ready':
+            case 'connected':
+            case 'health_check':
+              // Server connection confirmations - no action needed
+              console.log('[ProductionRealtime] Server confirmation received:', message.type);
+              break;
             default:
               console.log('[ProductionRealtime] Unknown broadcast type:', message.type);
           }
@@ -180,7 +186,7 @@ export function useProductionRealtime() {
     const handleServiceWorkerUpdate = () => {
       console.log('[ProductionRealtime] 🔄 Service worker updated, preparing for reconnection');
       if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
-        wsRef.current.close(1001, 'sw-update');
+        wsRef.current.close(1000, 'sw-update');
       }
     };
 
