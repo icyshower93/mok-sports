@@ -530,6 +530,7 @@ router.get("/leagues/:leagueId/week-scores/:season/:week", authenticateUser, asy
 
       const fallbackRankings = leagueMembers.map(member => ({
         name: member.userName,
+        userId: member.userId,
         weeklyPoints: 0,
         gamesRemaining: 0,
         isCurrentUser: member.userId === (user as any).id
@@ -545,6 +546,7 @@ router.get("/leagues/:leagueId/week-scores/:season/:week", authenticateUser, asy
     // Add isCurrentUser flag and format for frontend
     const rankings = weeklyScores.map(score => ({
       name: score.userName,
+      userId: score.userId,
       weeklyPoints: score.weeklyPoints,
       gamesRemaining: score.gamesRemaining,
       isCurrentUser: score.userId === (user as any).id
