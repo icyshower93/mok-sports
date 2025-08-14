@@ -604,8 +604,9 @@ async function checkAndCalculateWeeklyBonuses(season: number, week: number, forc
         await endOfWeekProcessor.processEndOfWeek(season, week, '243d719b-92ce-4752-8689-5da93ee69213');
         
         console.log(`✅ Week ${week} bonus calculation delegated to endOfWeekProcessor - preventing duplicate calculations`);
+        console.log(`✅ Weekly skins processing also handled by endOfWeekProcessor for immediate UI updates`);
         
-        /* COMMENTED OUT OLD DUPLICATE BONUS LOGIC
+        /* COMMENTED OUT OLD DUPLICATE BONUS AND SKINS LOGIC
         // Find highest and lowest team scores
         const sortedScores = teamScores.sort((a, b) => b.score! - a.score!);
         const highestScore = sortedScores[0].score!;
