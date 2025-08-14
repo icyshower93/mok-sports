@@ -93,17 +93,17 @@ Google OAuth2 is the primary authentication mechanism. JWT tokens are securely s
 - **Comprehensive Week Coverage**: System now works for all weeks 1-18 using authentic data sources
 - **Date**: August 14, 2025
 
-## Production-Scale Real-Time Updates System - WEBSOCKET BROADCASTS IMPLEMENTED
-- **Production-Ready WebSocket**: Implemented `use-production-realtime.ts` hook with scalable WebSocket broadcasts for hundreds of users
-- **Efficient Scaling**: One admin action broadcasts to all connected users instantly - no polling overhead
-- **Selective Query Invalidation**: WebSocket messages trigger targeted cache updates only for affected data endpoints  
-- **Exponential Backoff Reconnection**: Robust connection management with automatic reconnection using exponential backoff strategy
-- **Heartbeat System**: 30-second ping/pong keepalive ensures stable connections and removes dead connections
-- **Broadcast Types**: Handles admin_date_advanced, admin_season_reset, weekly_bonuses_calculated, and score_update events
-- **Connection Management**: Proper cleanup, error handling, and connection state tracking for production reliability
-- **Build Deployment Fix**: Resolved missing .ts file extension imports across App.tsx, League.tsx, and Main.tsx
-- **Scalability**: Eliminates 30,000 requests/minute for 1,000 users - replaced with efficient WebSocket broadcasts
+## Production-Ready WebSocket System with Keepalive & Auth-Awareness - IMPLEMENTED
+- **Resilient WebSocket Connection**: Enhanced `use-production-realtime.ts` with keepalive pings every 25 seconds for mobile/proxy compatibility
+- **Auth-Aware Connection**: WebSocket only connects after user authentication completes (fixes "Has token: true but Has user: false" issue)
+- **Exponential Backoff Reconnection**: Robust reconnection with exponential backoff (max 8 attempts, capped at 30s delay)
+- **Service Worker Compatibility**: Graceful reconnection after SW updates, prevents forced disconnections during updates
+- **Connection Lifecycle Management**: Smart close code analysis (1001 navigation vs network issues) with appropriate reconnection logic
+- **Server Keepalive Support**: Enhanced server-side ping/pong handling with connection health tracking and stats
+- **Mobile & PWA Optimized**: 25-second keepalive interval optimized for iOS PWA background handling
+- **Production Scaling**: Eliminates 30,000 requests/minute for 1,000 users - replaced with efficient WebSocket broadcasts
 - **Zero Manual Refresh**: Admin actions trigger instant UI updates via WebSocket messages to all connected clients
+- **Connection Stability**: Addresses all identified issues: premature connection, missing keepalive, service worker conflicts
 - **Date**: August 14, 2025
 
 ## Season Reset with Skins Reset - IMPLEMENTED

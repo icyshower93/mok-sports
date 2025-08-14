@@ -484,9 +484,10 @@ export class DraftWebSocketManager {
       }
     }, 30000); // Ping every 30 seconds
     
-    // Handle admin messages
+    // Handle admin messages with enhanced keepalive support
     ws.on('message', (data) => {
       try {
+        this.connectionStats.messageCount++;
         const message = JSON.parse(data.toString());
         console.log('[WebSocket] Admin message received:', message.type);
         
@@ -498,15 +499,35 @@ export class DraftWebSocketManager {
             timestamp: Date.now(),
             message: 'Admin connection established'
           }));
+        } else if (message.type === 'join_admin_updates') {
+          // Handle auth-aware admin connection setup
+          if (message.userId) {
+            adminConnection.userId = message.userId;
+            console.log(`[WebSocket] Admin connection identified as user: ${message.userName || 'Unknown'} (${message.userId})`);
+          }
+          
+          ws.send(JSON.stringify({
+            type: 'admin_ready',
+            timestamp: Date.now(),
+            message: 'Admin broadcasts ready'
+          }));
+          console.log('[WebSocket] Admin broadcasts enabled for authenticated user');
         } else if (message.type === 'ping') {
-          console.log('[WebSocket] 🏓 Admin ping received');
+          // CRITICAL: Handle keepalive pings for connection stability
+          console.log('[WebSocket] 💓 Admin keepalive ping received, responding with pong');
+          adminConnection.isAlive = true; // Mark connection as alive
+          
           ws.send(JSON.stringify({
             type: 'pong',
-            timestamp: Date.now()
+            timestamp: Date.now(),
+            connectionHealthy: true
           }));
+          
+          console.log('[WebSocket] 💚 Keepalive pong sent - admin connection marked healthy');
         }
       } catch (error) {
         console.error('[WebSocket] Admin message error:', error);
+        this.connectionStats.errors++;
       }
     });
 

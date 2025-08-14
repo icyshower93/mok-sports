@@ -58,10 +58,17 @@ function AppContent() {
   // Initialize production-optimized real-time updates via WebSocket broadcasts
   const { isConnected: isRealtimeConnected, connectionStatus } = useProductionRealtime();
   
-  // Log production WebSocket connection status
+  // Log production WebSocket connection status with auth awareness
   React.useEffect(() => {
-    console.log('[App] Production real-time WebSocket status:', connectionStatus);
-  }, [connectionStatus]);
+    console.log('[App] Production WebSocket status:', connectionStatus, 
+      isRealtimeConnected ? '(Connected)' : '(Disconnected)');
+    
+    if (isRealtimeConnected) {
+      console.log('[App] ✅ Real-time broadcasts active - admin actions will update instantly');
+    } else if (connectionStatus === 'waiting_auth') {
+      console.log('[App] ⏳ WebSocket waiting for authentication to complete');
+    }
+  }, [connectionStatus, isRealtimeConnected]);
 
   // Show install prompt only on mobile devices when not in PWA mode
   // Allow desktop usage for testing/development
