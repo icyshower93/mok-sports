@@ -205,6 +205,19 @@ export default function MainPage() {
     weeklySkinsWinnerId
   });
 
+  // DETAILED SKINS DEBUG
+  console.log('🔍 SKINS WINNER DEBUG:', {
+    currentWeek,
+    skinsDataFull: skinsData,
+    currentWeekSkin,
+    weeklySkinsWinnerId,
+    rankingsWithUserIds: weeklyRankings?.map((r: any) => ({ 
+      name: r.name, 
+      userId: r.userId, 
+      weeklyPoints: r.weeklyPoints 
+    }))
+  });
+
   if (!user) {
     return <div className="min-h-screen bg-background pb-20 flex items-center justify-center">
       <div>Loading...</div>
@@ -334,6 +347,16 @@ export default function MainPage() {
                     // Additional check: Don't show winner styling if everyone has 0 points (reset state)
                     const hasActualPoints = weeklyRankings.some((m: any) => (m.weeklyPoints || 0) > 0);
                     const shouldShowWinner = isSkinsWinner && hasActualPoints;
+
+                    // DEBUG: Log matching logic for each member
+                    console.log(`🎯 Member matching debug for ${member.name}:`, {
+                      memberUserId: member.userId,
+                      weeklySkinsWinnerId,
+                      isSkinsWinner,
+                      hasActualPoints,
+                      shouldShowWinner,
+                      memberPoints: member.weeklyPoints
+                    });
                     
                     return (
                       <Card 
