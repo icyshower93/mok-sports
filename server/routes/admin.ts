@@ -361,24 +361,12 @@ async function processGamesForDate(targetDate: Date): Promise<number> {
       
       // Only check weeks that had games completed today AND verify week is actually complete
       for (const week of Array.from(processedWeeks)) {
-        // First check if this is the start of a new week (first game of a new week)
-        // If so, reset weekly points for the fresh skins competition
-        const previousWeek = week - 1;
-        if (previousWeek > 0) {
-          const previousWeekComplete = await db.select()
-            .from(nflGames)
-            .where(and(
-              eq(nflGames.season, adminState.season),
-              eq(nflGames.week, previousWeek)
-            ));
-          
-          const allPreviousComplete = previousWeekComplete.every(g => g.isCompleted);
-          if (allPreviousComplete) {
-            // New week is starting - reset weekly points for fresh skins competition
-            const { endOfWeekProcessor } = await import("../utils/endOfWeekProcessor.js");
-            await endOfWeekProcessor.resetWeeklyPoints(adminState.season, week, '243d719b-92ce-4752-8689-5da93ee69213');
-          }
-        }
+        // DISABLED AUTOMATIC WEEKLY RESET - This was wiping out Mok points immediately after calculation
+        // Weekly resets should only happen when transitioning between complete weeks, not during game processing
+        // The resetWeeklyPoints call was clearing points that were just calculated by calculateAndUpdateMokPoints
+        
+        // TODO: Move weekly reset logic to proper week transition handling
+        // For now, focus on preserving calculated Mok points during game processing
         
         // Check if ALL games in this week are now completed before calculating bonuses
         const allWeekGames = await db.select({ isCompleted: nflGames.isCompleted })
@@ -536,28 +524,37 @@ async function calculateAndUpdateMokPoints(
       const lockInfo = isLockAndLoad ? 'LOAD' : isLocked ? 'LOCK' : '';
       console.log(`${owner.userName} (${owner.teamCode}): ${totalPoints} points (${teamScore}-${opponentScore}) ${lockInfo} [Base: ${basePoints}, Lock: ${lockBonusPoints}, L&L: ${lockAndLoadBonusPoints}] - Locked=${isLocked}, Load=${isLockAndLoad}`);
 
-      // Update or insert weekly scores
-      await db.insert(userWeeklyScores)
-        .values({
-          userId: owner.userId,
-          leagueId: owner.leagueId,
-          season,
-          week,
-          basePoints: basePoints,
-          lockBonusPoints: lockBonusPoints,
-          lockAndLoadBonusPoints: lockAndLoadBonusPoints,
-          totalPoints: totalPoints
-        })
-        .onConflictDoUpdate({
-          target: [userWeeklyScores.userId, userWeeklyScores.leagueId, userWeeklyScores.season, userWeeklyScores.week],
-          set: {
-            basePoints: sql`${userWeeklyScores.basePoints} + ${basePoints}`,
-            lockBonusPoints: sql`${userWeeklyScores.lockBonusPoints} + ${lockBonusPoints}`,
-            lockAndLoadBonusPoints: sql`${userWeeklyScores.lockAndLoadBonusPoints} + ${lockAndLoadBonusPoints}`,
-            totalPoints: sql`${userWeeklyScores.totalPoints} + ${totalPoints}`,
-            updatedAt: new Date()
-          }
-        });
+      // DEBUG: Log the exact values being saved
+      console.log(`📝 [DEBUG] Saving points for ${owner.userName}: basePoints=${basePoints}, totalPoints=${totalPoints}, userId=${owner.userId}, week=${week}`);
+
+      try {
+        // Update or insert weekly scores - use COALESCE to handle nulls and proper addition
+        const result = await db.insert(userWeeklyScores)
+          .values({
+            userId: owner.userId,
+            leagueId: owner.leagueId,
+            season,
+            week,
+            basePoints: basePoints,
+            lockBonusPoints: lockBonusPoints,
+            lockAndLoadBonusPoints: lockAndLoadBonusPoints,
+            totalPoints: totalPoints
+          })
+          .onConflictDoUpdate({
+            target: [userWeeklyScores.userId, userWeeklyScores.leagueId, userWeeklyScores.season, userWeeklyScores.week],
+            set: {
+              basePoints: sql`COALESCE(${userWeeklyScores.basePoints}, 0) + ${basePoints}`,
+              lockBonusPoints: sql`COALESCE(${userWeeklyScores.lockBonusPoints}, 0) + ${lockBonusPoints}`,
+              lockAndLoadBonusPoints: sql`COALESCE(${userWeeklyScores.lockAndLoadBonusPoints}, 0) + ${lockAndLoadBonusPoints}`,
+              totalPoints: sql`COALESCE(${userWeeklyScores.totalPoints}, 0) + ${totalPoints}`,
+              updatedAt: new Date()
+            }
+          });
+
+        console.log(`✅ [DEBUG] Database upsert completed for ${owner.userName}`);
+      } catch (upsertError) {
+        console.error(`❌ [DEBUG] Database upsert FAILED for ${owner.userName}:`, upsertError);
+      }
     }
 
     // NOTE: Removed individual game bonus check - bonuses now only calculated when entire week completes
@@ -1151,11 +1148,16 @@ async function handleWeekProgression(oldWeek: number, newWeek: number, season: n
     console.log(`🔄 Week progression: checking if Week ${oldWeek} bonuses already calculated...`);
     await checkAndCalculateWeeklyBonuses(season, oldWeek, true); // Force check for week progression
     
-    // Initialize user weekly scores for the new week (all users start at 0)
-    await initializeNewWeekScores(season, newWeek);
+    // DISABLED: Weekly score resets that were wiping out Mok points during game processing
+    // These functions were clearing points that had already been calculated by calculateAndUpdateMokPoints
+    // when games from the new week were processed before week progression completed
     
-    // Reset weekly points for all active leagues using endOfWeekProcessor
-    await resetWeeklyPointsForAllLeagues(season, newWeek);
+    console.log(`🎯 CRITICAL FIX: Weekly reset functions disabled to preserve Mok points during game processing`);
+    console.log(`🎯 Points calculated by calculateAndUpdateMokPoints will now persist through week transitions`);
+    
+    // TODO: Implement proper week transition that doesn't interfere with ongoing game processing
+    // await initializeNewWeekScores(season, newWeek);  // DISABLED - was wiping Mok points
+    // await resetWeeklyPointsForAllLeagues(season, newWeek);  // DISABLED - was wiping Mok points
     
     console.log(`✅ Week progression complete: ${oldWeek} → ${newWeek}`);
   } catch (error) {
