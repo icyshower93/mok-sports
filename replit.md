@@ -130,9 +130,10 @@ Google OAuth2 is the primary authentication mechanism. JWT tokens are securely s
 - **Integration Point**: Reset functionality integrated into `handleWeekProgression()` for automatic execution
 - **Date**: August 13, 2025
 
-## Bonus Calculation System - RESOLVED
-- **Fixed Critical Duplicate Processing Bug**: Eliminated bonus calculations happening multiple times causing inflated scores (Gamma Bot showing 8+ points instead of 7)
-- **Improved Deduplication Logic**: Added robust checks to prevent multiple bonus applications for the same week
-- **Corrected Timing**: Bonuses now calculate immediately after Monday Night Football completion (Sep 9) instead of appearing one day late (Sep 10)
-- **Enhanced WebSocket Tracking**: Improved admin/scores page connection handling with better logging and statistics
-- **Date**: August 13, 2025
+## Bonus Calculation System - RESOLVED 
+- **Fixed Critical Duplicate Processing Bug**: Eliminated bonus calculations happening multiple times causing inflated scores (Gamma Bot was getting 7x high score bonuses instead of 1)
+- **Enhanced Race Condition Protection**: Added double-check logic with additional WHERE clause safety checks to prevent multiple bonus applications
+- **Database Integrity Restoration**: Corrected existing inflated bonuses by capping high score bonuses at +1 and low score penalties at -1 maximum per week
+- **Improved Deduplication Logic**: Added robust checks and row count validation to prevent bonus accumulation during date advancement
+- **Real-Time Bonus Verification**: Bonuses now apply correctly with proper logging and duplicate detection across multiple game processing cycles
+- **Date**: August 14, 2025

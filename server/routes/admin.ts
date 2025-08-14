@@ -587,9 +587,10 @@ async function checkAndCalculateWeeklyBonuses(season: number, week: number, forc
             ))
             .limit(1);
 
-            // Only award if not already given
+            // Only award if not already given - enhanced check
             if (existingScore.length > 0 && (existingScore[0].weeklyHighBonusPoints || 0) === 0) {
-              await db.update(userWeeklyScores)
+              // Double-check before applying to prevent race conditions
+              const recheckResult = await db.update(userWeeklyScores)
                 .set({
                   weeklyHighBonusPoints: 1,
                   totalPoints: sql`${userWeeklyScores.totalPoints} + 1`,
@@ -599,10 +600,17 @@ async function checkAndCalculateWeeklyBonuses(season: number, week: number, forc
                   eq(userWeeklyScores.userId, owner.userId),
                   eq(userWeeklyScores.leagueId, owner.leagueId),
                   eq(userWeeklyScores.season, season),
-                  eq(userWeeklyScores.week, week)
+                  eq(userWeeklyScores.week, week),
+                  eq(userWeeklyScores.weeklyHighBonusPoints, 0) // Additional safety check
                 ));
               
-              console.log(`🏆 +1 high score bonus for owning ${team.teamCode} (${highestScore} pts)`);
+              if (recheckResult.rowCount && recheckResult.rowCount > 0) {
+                console.log(`🏆 +1 high score bonus applied for owning ${team.teamCode} (${highestScore} pts)`);
+              } else {
+                console.log(`⚠️ High score bonus for ${team.teamCode} already applied by another process`);
+              }
+            } else {
+              console.log(`⚠️ High score bonus for ${team.teamCode} already exists (${(existingScore[0]?.weeklyHighBonusPoints || 0)} points)`);
             }
           }
         }
@@ -630,9 +638,10 @@ async function checkAndCalculateWeeklyBonuses(season: number, week: number, forc
             ))
             .limit(1);
 
-            // Only apply penalty if not already given
+            // Only apply penalty if not already given - enhanced check
             if (existingScore.length > 0 && (existingScore[0].weeklyLowPenaltyPoints || 0) === 0) {
-              await db.update(userWeeklyScores)
+              // Double-check before applying to prevent race conditions
+              const recheckResult = await db.update(userWeeklyScores)
                 .set({
                   weeklyLowPenaltyPoints: -1,
                   totalPoints: sql`${userWeeklyScores.totalPoints} - 1`,
@@ -642,10 +651,17 @@ async function checkAndCalculateWeeklyBonuses(season: number, week: number, forc
                   eq(userWeeklyScores.userId, owner.userId),
                   eq(userWeeklyScores.leagueId, owner.leagueId),
                   eq(userWeeklyScores.season, season),
-                  eq(userWeeklyScores.week, week)
+                  eq(userWeeklyScores.week, week),
+                  eq(userWeeklyScores.weeklyLowPenaltyPoints, 0) // Additional safety check
                 ));
               
-              console.log(`📉 -1 low score penalty for owning ${team.teamCode} (${lowestScore} pts)`);
+              if (recheckResult.rowCount && recheckResult.rowCount > 0) {
+                console.log(`📉 -1 low score penalty applied for owning ${team.teamCode} (${lowestScore} pts)`);
+              } else {
+                console.log(`⚠️ Low score penalty for ${team.teamCode} already applied by another process`);
+              }
+            } else {
+              console.log(`⚠️ Low score penalty for ${team.teamCode} already exists (${(existingScore[0]?.weeklyLowPenaltyPoints || 0)} points)`);
             }
           }
         }
