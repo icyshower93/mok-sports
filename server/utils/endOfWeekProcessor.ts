@@ -246,6 +246,23 @@ export class EndOfWeekProcessor {
 
       console.log(`[EndOfWeek] Applied ${bonusPoints} ${reason} bonus to user ${owner.userName}`);
     }
+    
+    // Broadcast weekly bonus update to all connected clients
+    const { globalDraftManager } = await import("../draft/globalDraftManager.js");
+    if (globalDraftManager && (globalDraftManager as any).broadcast) {
+      (globalDraftManager as any).broadcast({
+        type: 'weekly_bonuses_calculated',
+        data: {
+          leagueId,
+          week,
+          season,
+          bonusType: reason,
+          usersAffected: teamOwners.length,
+          timestamp: Date.now()
+        }
+      });
+      console.log(`📡 [EndOfWeek] Broadcast weekly_bonuses_calculated for ${reason}`);
+    }
   }
 
   // Process weekly skins award

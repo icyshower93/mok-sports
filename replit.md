@@ -93,17 +93,19 @@ Google OAuth2 is the primary authentication mechanism. JWT tokens are securely s
 - **Comprehensive Week Coverage**: System now works for all weeks 1-18 using authentic data sources
 - **Date**: August 14, 2025
 
-## Production-Ready WebSocket System with Keepalive & Auth-Awareness - IMPLEMENTED
-- **Resilient WebSocket Connection**: Enhanced `use-production-realtime.ts` with keepalive pings every 25 seconds for mobile/proxy compatibility
-- **Auth-Aware Connection**: WebSocket only connects after user authentication completes (fixes "Has token: true but Has user: false" issue)
-- **Exponential Backoff Reconnection**: Robust reconnection with exponential backoff (max 8 attempts, capped at 30s delay)
-- **Service Worker Compatibility**: Graceful reconnection after SW updates, prevents forced disconnections during updates
-- **Connection Lifecycle Management**: Smart close code analysis (1001 navigation vs network issues) with appropriate reconnection logic
-- **Server Keepalive Support**: Enhanced server-side ping/pong handling with connection health tracking and stats
-- **Mobile & PWA Optimized**: 25-second keepalive interval optimized for iOS PWA background handling
+## Production-Ready WebSocket System with Real-Time Score Updates - IMPLEMENTED
+- **Stable WebSocket Hook**: Created `useStableWebSocket` with safe close codes (1000, 4001-4003) preventing browser errors
+- **Auth-Aware Connection**: WebSocket only connects after user authentication completes (no more "Has token but no user" issues)
+- **Comprehensive Error Handling**: Catches and logs socket close errors without crashing the app state
+- **Service Worker Compatibility**: Graceful reconnection after SW updates with proper 2-second delay
+- **25-Second Keepalive**: Mobile/PWA optimized ping interval prevents idle timeouts on iOS background mode
+- **Exponential Backoff Reconnection**: Smart reconnection with 8 retry attempts, jitter, and connection state tracking
+- **Proper Cleanup**: Prevents multiple parallel connections with comprehensive timer and event listener management
+- **Real-Time Score Broadcasts**: Added WebSocket broadcasts to game processing and weekly bonus calculation
+- **Comprehensive Query Invalidation**: Uses TanStack Query predicates to invalidate all related data (scores, standings, leagues)
+- **Instant UI Updates**: All tabs (Scores, League, Main) update immediately when points change or admin actions occur
 - **Production Scaling**: Eliminates 30,000 requests/minute for 1,000 users - replaced with efficient WebSocket broadcasts
-- **Zero Manual Refresh**: Admin actions trigger instant UI updates via WebSocket messages to all connected clients
-- **Connection Stability**: Addresses all identified issues: premature connection, missing keepalive, service worker conflicts
+- **Zero Manual Refresh**: Game results, bonus calculations, and admin actions trigger instant updates across all connected clients
 - **Date**: August 14, 2025
 
 ## Season Reset with Skins Reset - IMPLEMENTED

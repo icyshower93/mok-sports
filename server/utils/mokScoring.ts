@@ -251,6 +251,9 @@ async function getNFLGameResults(week: number, season: number): Promise<TeamGame
 export async function calculateWeeklyScores(leagueId: string, week: number, season: number): Promise<UserWeeklyScore[]> {
   console.log(`📊 [MokScoring] Calculating scores for league ${leagueId}, Week ${week}, ${season}`);
   
+  // Get global draft manager for WebSocket broadcasts
+  const { globalDraftManager } = await import("../draft/globalDraftManager.js");
+  
   // Get all users in the league and their teams
   const userStables = await db
     .select({
@@ -350,6 +353,22 @@ export async function calculateWeeklyScores(leagueId: string, week: number, seas
     console.log(`📊 [MokScoring] User ${userId}: ${totalPoints} total points (${totalBaseMokPoints} base + ${lockBonusPoints} lock + ${lockAndLoadBonusPoints} L&L)`);
   }
   
-  console.log(`📊 [MokScoring] Calculated scores for ${userScores.length} users`);
+  console.log(`✅ [MokScoring] Calculated scores for ${userScores.length} users`);
+  
+  // Broadcast score update to all connected clients
+  if (globalDraftManager && (globalDraftManager as any).broadcast) {
+    (globalDraftManager as any).broadcast({
+      type: 'score_update',
+      data: {
+        leagueId,
+        week,
+        season,
+        usersUpdated: userScores.length,
+        timestamp: Date.now()
+      }
+    });
+    console.log(`📡 [MokScoring] Broadcast score_update for league ${leagueId}, week ${week}`);
+  }
+  
   return userScores;
 }

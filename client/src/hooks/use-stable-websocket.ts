@@ -141,23 +141,46 @@ export function useStableWebSocket(onMessage?: MessageCallback) {
           break;
           
         case 'admin_date_advanced':
-          console.log('[StableWebSocket] 📅 Admin date advanced - refreshing scores');
+          console.log('[StableWebSocket] 📅 Admin date advanced - refreshing all data');
+          // Invalidate all scoring-related queries
           queryClient.invalidateQueries({ queryKey: ['/api/scoring'] });
-          queryClient.invalidateQueries({ queryKey: ['/api/leagues'] });
+          // Invalidate all league queries (includes standings, members, etc)
+          queryClient.invalidateQueries({ 
+            predicate: (query) => {
+              const key = query.queryKey[0] as string;
+              return key?.startsWith('/api/leagues') || key?.startsWith('/api/user/leagues');
+            }
+          });
           queryClient.invalidateQueries({ queryKey: ['/api/admin/current-week'] });
           break;
           
         case 'admin_season_reset':
           console.log('[StableWebSocket] 🔄 Season reset - refreshing all data');
-          queryClient.invalidateQueries({ queryKey: ['/api/leagues'] });
-          queryClient.invalidateQueries({ queryKey: ['/api/scoring'] });
-          queryClient.invalidateQueries({ queryKey: ['/api/admin/current-week'] });
+          // Invalidate ALL queries to ensure complete refresh after reset
+          queryClient.invalidateQueries({ 
+            predicate: (query) => {
+              const key = query.queryKey[0] as string;
+              return key?.startsWith('/api/leagues') || 
+                     key?.startsWith('/api/scoring') || 
+                     key?.startsWith('/api/user/leagues') ||
+                     key?.startsWith('/api/admin');
+            }
+          });
+          console.log('[StableWebSocket] 🔄 All league, scoring, and user data invalidated');
           break;
           
         case 'score_update':
         case 'weekly_bonuses_calculated':
-          console.log('[StableWebSocket] 🏆 Score update - refreshing scores and skins');
+          console.log('[StableWebSocket] 🏆 Score update - refreshing scores and league standings');
+          // Invalidate scoring queries (includes weekly scores, skins, etc)
           queryClient.invalidateQueries({ queryKey: ['/api/scoring'] });
+          // Invalidate league standings since points changed
+          queryClient.invalidateQueries({ 
+            predicate: (query) => {
+              const key = query.queryKey[0] as string;
+              return key?.startsWith('/api/leagues') && key?.includes('/standings');
+            }
+          });
           break;
           
         case 'admin_ready':
