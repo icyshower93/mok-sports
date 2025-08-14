@@ -1,0 +1,89 @@
+🏗️ Build Info: Object
+index-BShu6-Lk.js:397 📦 Version: meao3tw8
+index-BShu6-Lk.js:397 📅 Built: 2025-08-14T00:35:14.072Z
+index-BShu6-Lk.js:397 🔧 Environment: production
+index-BShu6-Lk.js:353 [RealtimeScores] Connecting to WebSocket: wss://mok-sports-draft-mokfantasysport.replit.app/draft-ws
+index-BShu6-Lk.js:397 [App] Real-time scores WebSocket connected: false
+index-BShu6-Lk.js:353 [Auth] Token check - Has token: true Has user: false Loading: true
+index-BShu6-Lk.js:353 [SW Hook] EMERGENCY: Unregistering all existing service workers
+index-BShu6-Lk.js:353 [SW Hook] Found 1 existing registrations
+index-BShu6-Lk.js:353 [SW Hook] Unregistering existing service worker
+index-BShu6-Lk.js:353 [SW Hook] Found 0 caches to delete
+admin:1 Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner.
+index-BShu6-Lk.js:353 [Auth] Token check - Has token: true Has user: true Loading: false
+index-BShu6-Lk.js:353 [SubscriptionManager] 8:35:14 PM - Permission is granted and no active subscription - auto-creating subscription
+index-BShu6-Lk.js:353 [AutoPushRefresh] Legacy hook delegating to SubscriptionManager
+index-BShu6-Lk.js:353 [SW Hook] Registering fresh service worker: /sw.js?v=1755131714186&r=0.6947961844081573
+index-BShu6-Lk.js:353 [RealtimeScores] WebSocket connected successfully
+index-BShu6-Lk.js:397 [App] Real-time scores WebSocket connected: true
+sw.js?v=1755131714186&r=0.6947961844081573:2 [SW] NUCLEAR OPTION - Emergency service worker loading
+sw.js?v=1755131714186&r=0.6947961844081573:88 [SW] Service worker starting, version: v1.7.0-nuclear-unregister-1755131714243
+sw.js?v=1755131714186&r=0.6947961844081573:305 [SW] Service worker script loaded successfully
+index-BShu6-Lk.js:353 [SW Hook] Service worker registered successfully
+sw.js?v=1755131714186&r=0.6947961844081573:19 [SW] EMERGENCY INSTALL - Clearing all caches and forcing activation
+sw.js?v=1755131714186&r=0.6947961844081573:92 [SW] Installing service worker, version: v1.7.0-nuclear-unregister-1755131714243
+sw.js?v=1755131714186&r=0.6947961844081573:22 [SW] Found caches to delete: Array(0)
+sw.js?v=1755131714186&r=0.6947961844081573:30 [SW] All caches deleted - skipping waiting
+sw.js?v=1755131714186&r=0.6947961844081573:96 [SW] Caching static files
+index-BShu6-Lk.js:353 [RealtimeScores] Received message: connected
+sw.js?v=1755131714186&r=0.6947961844081573:99 [SW] Static files cached successfully
+sw.js?v=1755131714186&r=0.6947961844081573:41 [SW] EMERGENCY ACTIVATE - Taking control of all clients
+sw.js?v=1755131714186&r=0.6947961844081573:110 [SW] Activating service worker, version: v1.7.0-nuclear-unregister-1755131714243
+sw.js?v=1755131714186&r=0.6947961844081573:46 [SW] Deleting remaining cache: mok-sports-static-v1.7.0-nuclear-unregister-1755131714243
+sw.js?v=1755131714186&r=0.6947961844081573:116 [SW] Found caches: Array(1)
+sw.js?v=1755131714186&r=0.6947961844081573:129 [SW] Service worker activated and controlling all clients
+sw.js?v=1755131714186&r=0.6947961844081573:51 [SW] Claiming all clients immediately
+index-BShu6-Lk.js:353 [SubscriptionManager] 8:35:14 PM - Starting subscription refresh...
+index-BShu6-Lk.js:353 [SubscriptionManager] 8:35:14 PM - Creating new push subscription...
+index-BShu6-Lk.js:353 [SubscriptionManager] 8:35:15 PM - Sending subscription to server: https://fcm.googleapis.com/fcm/send/f4itPB_ezB4:AP...
+index-BShu6-Lk.js:353 [SubscriptionManager] 8:35:15 PM - Server response: 201 
+index-BShu6-Lk.js:353 [SubscriptionManager] 8:35:15 PM - Subscription registered successfully: Subscription registered successfully
+index-BShu6-Lk.js:353 [RealtimeScores] Received message: admin_season_reset
+index-BShu6-Lk.js:353 [RealtimeScores] Season reset - refreshing all data
+index-BShu6-Lk.js:353 [RealtimeScores] Received message: admin_season_reset
+index-BShu6-Lk.js:353 [RealtimeScores] Season reset - refreshing all data
+index-BShu6-Lk.js:353 [RealtimeScores] Received message: admin_season_reset
+index-BShu6-Lk.js:353 [RealtimeScores] Season reset - refreshing all data
+index-BShu6-Lk.js:353 [RealtimeScores] Received message: admin_season_reset
+index-BShu6-Lk.js:353 [RealtimeScores] Season reset - refreshing all data
+index-BShu6-Lk.js:353 [RealtimeScores] Received message: admin_season_reset
+index-BShu6-Lk.js:353 [RealtimeScores] Season reset - refreshing all data
+index-BShu6-Lk.js:353 [RealtimeScores] Received message: admin_date_advanced
+index-BShu6-Lk.js:353 [RealtimeScores] Admin advanced date - refreshing all score data
+index-BShu6-Lk.js:353 [RealtimeScores] WebSocket closed: 1006 
+index-BShu6-Lk.js:353 [RealtimeScores] Reconnecting in 1000ms (attempt 1/5)
+index-BShu6-Lk.js:397 Main page debug: Object
+index-BShu6-Lk.js:353 [RealtimeScores] Connecting to WebSocket: wss://mok-sports-draft-mokfantasysport.replit.app/draft-ws
+index-BShu6-Lk.js:397 Main page debug: Object
+sw.js?v=1755131714186&r=0.6947961844081573:164 [SW] Fetching /a/ACg8ocIlUYRsI8z4wKwDJjb1BBPBwCuyYSlVMcLHB5QAXs50P5Fbtg=s96-c from network
+sw.js?v=1755131714186&r=0.6947961844081573:164 [SW] Fetching /assets/moksports%20logo_1755069436420-CWcPioxH.png from network
+sw.js?v=1755131714186&r=0.6947961844081573:164 [SW] Fetching /favicon.ico from network
+index-BShu6-Lk.js:353 [RealtimeScores] Connecting to WebSocket: wss://mok-sports-draft-mokfantasysport.replit.app/draft-ws
+index-BShu6-Lk.js:397 Main page debug: Object
+index-BShu6-Lk.js:397 Main page debug: Object
+index-BShu6-Lk.js:353 [RealtimeScores] WebSocket connected successfully
+index-BShu6-Lk.js:353 [RealtimeScores] Received message: connected
+index-BShu6-Lk.js:353 [RealtimeScores] WebSocket connected successfully
+index-BShu6-Lk.js:397 Main page debug: Object
+index-BShu6-Lk.js:353 [RealtimeScores] Received message: connected
+index-BShu6-Lk.js:397 Main page debug: Object
+index-BShu6-Lk.js:397 [League] No skins data available, returning empty object
+index-BShu6-Lk.js:353 [RealtimeScores] Connecting to WebSocket: wss://mok-sports-draft-mokfantasysport.replit.app/draft-ws
+sw.js?v=1755131714186&r=0.6947961844081573:160 [SW] Serving /favicon.ico from cache
+index-BShu6-Lk.js:353 [RealtimeScores] WebSocket closed: 1006 
+index-BShu6-Lk.js:353 [RealtimeScores] Reconnecting in 1000ms (attempt 1/5)
+index-BShu6-Lk.js:397 [League] Skins won by user: Object
+index-BShu6-Lk.js:353 [RealtimeScores] WebSocket connected successfully
+index-BShu6-Lk.js:353 [RealtimeScores] Received message: connected
+index-BShu6-Lk.js:353 [RealtimeScores] Connecting to WebSocket: wss://mok-sports-draft-mokfantasysport.replit.app/draft-ws
+index-BShu6-Lk.js:353 [RealtimeScores] WebSocket connected successfully
+index-BShu6-Lk.js:353 [RealtimeScores] Received message: connected
+index-BShu6-Lk.js:353 [RealtimeScores] Received message: admin_date_advanced
+index-BShu6-Lk.js:353 [RealtimeScores] Admin advanced date - refreshing all score data
+index-BShu6-Lk.js:353 [RealtimeScores] Received message: admin_date_advanced
+index-BShu6-Lk.js:353 [RealtimeScores] Admin advanced date - refreshing all score data
+index-BShu6-Lk.js:353 [RealtimeScores] Received message: admin_date_advanced
+index-BShu6-Lk.js:353 [RealtimeScores] Admin advanced date - refreshing all score data
+sw.js?v=1755131714186&r=0.6947961844081573:64 [SW] BYPASSING CACHE for JS file: https://mok-sports-draft-mokfantasysport.replit.app/manifest.json
+sw.js?v=1755131714186&r=0.6947961844081573:164 [SW] Fetching /league from network
+sw.js?v=1755131714186&r=0.6947961844081573:164 [SW] Fetching /assets/index-CbRrnplr.css from network

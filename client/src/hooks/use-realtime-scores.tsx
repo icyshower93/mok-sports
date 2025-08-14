@@ -6,6 +6,7 @@ export function useRealtimeScores() {
   const queryClient = useQueryClient();
   const wsRef = useRef<WebSocket | null>(null);
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const pingIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const reconnectAttempts = useRef(0);
   const maxReconnectAttempts = 5;
 
@@ -24,28 +25,50 @@ export function useRealtimeScores() {
         console.log('[RealtimeScores] WebSocket connected successfully');
         reconnectAttempts.current = 0;
         
-        // Join the admin_updates group to receive score updates
-        ws.send(JSON.stringify({
-          type: 'join_admin_updates',
-          userId: 'score_listener_' + Date.now(),
-          timestamp: Date.now()
-        }));
+        // Small delay to ensure connection is stable before joining
+        setTimeout(() => {
+          if (ws.readyState === WebSocket.OPEN) {
+            console.log('[RealtimeScores] Joining admin_updates group for real-time score updates');
+            ws.send(JSON.stringify({
+              type: 'join_admin_updates',
+              userId: 'score_listener_' + Date.now(),
+              timestamp: Date.now()
+            }));
+            
+            // Start keep-alive ping to maintain connection
+            pingIntervalRef.current = setInterval(() => {
+              if (ws.readyState === WebSocket.OPEN) {
+                ws.send(JSON.stringify({ type: 'ping', timestamp: Date.now() }));
+              }
+            }, 30000); // Ping every 30 seconds
+          }
+        }, 100);
       };
 
-      ws.onmessage = (event) => {
+      ws.onmessage = async (event) => {
         try {
           const message = JSON.parse(event.data);
-          console.log('[RealtimeScores] Received message:', message.type);
+          console.log('[RealtimeScores] 📨 Received message:', message.type, 'at', new Date().toLocaleTimeString());
           
           // Handle different types of score updates
           switch (message.type) {
             case 'admin_date_advanced':
-              console.log('[RealtimeScores] Admin advanced date - refreshing all score data');
-              // Invalidate all scoring-related queries
-              queryClient.invalidateQueries({ queryKey: ['/api/leagues'] });
-              queryClient.invalidateQueries({ queryKey: ['/api/scoring'] });
-              queryClient.invalidateQueries({ queryKey: ['/api/user/stable'] });
-              queryClient.invalidateQueries({ queryKey: ['/api/admin/current-week'] });
+              console.log('[RealtimeScores] 🎯 Admin advanced date - triggering immediate cache refresh');
+              // Force immediate refresh of all scoring queries with error handling
+              try {
+                await Promise.all([
+                  queryClient.invalidateQueries({ queryKey: ['/api/leagues'], refetchType: 'active' }),
+                  queryClient.invalidateQueries({ queryKey: ['/api/scoring'], refetchType: 'active' }),
+                  queryClient.invalidateQueries({ queryKey: ['/api/user/stable'], refetchType: 'active' }),
+                  queryClient.invalidateQueries({ queryKey: ['/api/admin/current-week'], refetchType: 'active' })
+                ]);
+                console.log('[RealtimeScores] ✅ All caches refreshed successfully - points should now be visible immediately!');
+              } catch (error) {
+                console.error('[RealtimeScores] Error refreshing caches:', error);
+                // Fallback: trigger refetch anyway
+                queryClient.refetchQueries({ queryKey: ['/api/leagues'] });
+                queryClient.refetchQueries({ queryKey: ['/api/scoring'] });
+              }
               break;
               
             case 'weekly_bonuses_calculated':
@@ -88,6 +111,12 @@ export function useRealtimeScores() {
         console.log('[RealtimeScores] WebSocket closed:', event.code, event.reason);
         wsRef.current = null;
         
+        // Clear ping interval
+        if (pingIntervalRef.current) {
+          clearInterval(pingIntervalRef.current);
+          pingIntervalRef.current = null;
+        }
+        
         // Attempt to reconnect if not intentionally closed
         if (event.code !== 1000 && reconnectAttempts.current < maxReconnectAttempts) {
           const delay = Math.min(1000 * Math.pow(2, reconnectAttempts.current), 30000);
@@ -114,6 +143,10 @@ export function useRealtimeScores() {
       // Cleanup on unmount
       if (reconnectTimeoutRef.current) {
         clearTimeout(reconnectTimeoutRef.current);
+      }
+      
+      if (pingIntervalRef.current) {
+        clearInterval(pingIntervalRef.current);
       }
       
       if (wsRef.current) {
