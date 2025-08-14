@@ -1,12 +1,13 @@
 import { useEffect, useRef } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 
-// Real-time score updates hook using WebSocket
+// Real-time score updates hook using WebSocket with polling fallback
 export function useRealtimeScores() {
   const queryClient = useQueryClient();
   const wsRef = useRef<WebSocket | null>(null);
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const pingIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const reconnectAttempts = useRef(0);
   const maxReconnectAttempts = 5;
 
@@ -41,6 +42,13 @@ export function useRealtimeScores() {
                 ws.send(JSON.stringify({ type: 'ping', timestamp: Date.now() }));
               }
             }, 30000); // Ping every 30 seconds
+            
+            // Start polling fallback for reliable updates (every 10 seconds)
+            pollingIntervalRef.current = setInterval(() => {
+              console.log('[RealtimeScores] 🔄 Polling fallback - refreshing cache');
+              queryClient.invalidateQueries({ queryKey: ['/api/leagues'], refetchType: 'none' });
+              queryClient.invalidateQueries({ queryKey: ['/api/scoring'], refetchType: 'none' });
+            }, 10000);
           }
         }, 100);
       };
@@ -117,6 +125,12 @@ export function useRealtimeScores() {
           pingIntervalRef.current = null;
         }
         
+        // Clear polling interval
+        if (pollingIntervalRef.current) {
+          clearInterval(pollingIntervalRef.current);
+          pollingIntervalRef.current = null;
+        }
+        
         // Attempt to reconnect if not intentionally closed
         if (event.code !== 1000 && reconnectAttempts.current < maxReconnectAttempts) {
           const delay = Math.min(1000 * Math.pow(2, reconnectAttempts.current), 30000);
@@ -147,6 +161,10 @@ export function useRealtimeScores() {
       
       if (pingIntervalRef.current) {
         clearInterval(pingIntervalRef.current);
+      }
+      
+      if (pollingIntervalRef.current) {
+        clearInterval(pollingIntervalRef.current);
       }
       
       if (wsRef.current) {

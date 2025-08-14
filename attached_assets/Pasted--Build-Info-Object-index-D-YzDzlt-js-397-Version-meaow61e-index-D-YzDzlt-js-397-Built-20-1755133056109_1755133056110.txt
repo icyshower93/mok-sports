@@ -1,0 +1,52 @@
+🏗️ Build Info: Object
+index-D_YzDzlt.js:397 📦 Version: meaow61e
+index-D_YzDzlt.js:397 📅 Built: 2025-08-14T00:57:16.178Z
+index-D_YzDzlt.js:397 🔧 Environment: production
+index-D_YzDzlt.js:353 [RealtimeScores] Connecting to WebSocket: wss://mok-sports-draft-mokfantasysport.replit.app/draft-ws
+index-D_YzDzlt.js:397 [App] Real-time scores WebSocket connected: false
+index-D_YzDzlt.js:353 [Auth] Token check - Has token: true Has user: false Loading: true
+index-D_YzDzlt.js:353 [SW Hook] EMERGENCY: Unregistering all existing service workers
+index-D_YzDzlt.js:353 [SW Hook] Found 1 existing registrations
+index-D_YzDzlt.js:353 [SW Hook] Unregistering existing service worker
+index-D_YzDzlt.js:353 [SW Hook] Found 1 caches to delete
+index-D_YzDzlt.js:353 [SW Hook] Deleting cache: mok-sports-dynamic-v1.7.0-nuclear-unregister-1755133033525
+index-D_YzDzlt.js:353 [Auth] Token check - Has token: true Has user: true Loading: false
+index-D_YzDzlt.js:353 [SubscriptionManager] 8:57:16 PM - Permission is granted and no active subscription - auto-creating subscription
+index-D_YzDzlt.js:353 [AutoPushRefresh] Legacy hook delegating to SubscriptionManager
+league:1 Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner.
+index-D_YzDzlt.js:353 [SW Hook] Registering fresh service worker: /sw.js?v=1755133036296&r=0.8470766779252884
+index-D_YzDzlt.js:397 [League] No skins data available, returning empty object
+index-D_YzDzlt.js:353 [RealtimeScores] Connecting to WebSocket: wss://mok-sports-draft-mokfantasysport.replit.app/draft-ws
+sw.js?v=1755133036296&r=0.8470766779252884:2 [SW] NUCLEAR OPTION - Emergency service worker loading
+sw.js?v=1755133036296&r=0.8470766779252884:88 [SW] Service worker starting, version: v1.7.0-nuclear-unregister-1755133036354
+sw.js?v=1755133036296&r=0.8470766779252884:305 [SW] Service worker script loaded successfully
+sw.js?v=1755133036296&r=0.8470766779252884:19 [SW] EMERGENCY INSTALL - Clearing all caches and forcing activation
+index-D_YzDzlt.js:353 [SW Hook] Service worker registered successfully
+sw.js?v=1755133036296&r=0.8470766779252884:92 [SW] Installing service worker, version: v1.7.0-nuclear-unregister-1755133036354
+sw.js?v=1755133036296&r=0.8470766779252884:22 [SW] Found caches to delete: Array(1)
+sw.js?v=1755133036296&r=0.8470766779252884:25 [SW] Force deleting cache: mok-sports-dynamic-v1.7.0-nuclear-unregister-1755133033525
+sw.js?v=1755133036296&r=0.8470766779252884:96 [SW] Caching static files
+sw.js?v=1755133036296&r=0.8470766779252884:30 [SW] All caches deleted - skipping waiting
+index-D_YzDzlt.js:353 [RealtimeScores] WebSocket connected successfully
+index-D_YzDzlt.js:353 [RealtimeScores] 📨 Received message: connected at 8:57:16 PM
+index-D_YzDzlt.js:353 [RealtimeScores] Joining admin_updates group for real-time score updates
+sw.js?v=1755133036296&r=0.8470766779252884:99 [SW] Static files cached successfully
+index-D_YzDzlt.js:397 [App] Real-time scores WebSocket connected: true
+index-D_YzDzlt.js:397 [League] Skins won by user: Object
+index-D_YzDzlt.js:353 [RealtimeScores] WebSocket connected successfully
+index-D_YzDzlt.js:353 [RealtimeScores] Joining admin_updates group for real-time score updates
+index-D_YzDzlt.js:353 [RealtimeScores] 📨 Received message: connected at 8:57:16 PM
+index-D_YzDzlt.js:353 [SubscriptionManager] 8:57:16 PM - Starting subscription refresh...
+index-D_YzDzlt.js:353 [SubscriptionManager] 8:57:16 PM - Creating new push subscription...
+index-D_YzDzlt.js:353 [SubscriptionManager] 8:57:17 PM - Sending subscription to server: https://fcm.googleapis.com/fcm/send/e6aeTtcyGIE:AP...
+index-D_YzDzlt.js:353 [SubscriptionManager] 8:57:17 PM - Server response: 201 
+index-D_YzDzlt.js:353 [SubscriptionManager] 8:57:17 PM - Subscription registered successfully: Subscription registered successfully
+sw.js?v=1755133036296&r=0.8470766779252884:41 [SW] EMERGENCY ACTIVATE - Taking control of all clients
+sw.js?v=1755133036296&r=0.8470766779252884:110 [SW] Activating service worker, version: v1.7.0-nuclear-unregister-1755133036354
+sw.js?v=1755133036296&r=0.8470766779252884:46 [SW] Deleting remaining cache: mok-sports-static-v1.7.0-nuclear-unregister-1755133036354
+sw.js?v=1755133036296&r=0.8470766779252884:116 [SW] Found caches: Array(1)
+sw.js?v=1755133036296&r=0.8470766779252884:129 [SW] Service worker activated and controlling all clients
+sw.js?v=1755133036296&r=0.8470766779252884:51 [SW] Claiming all clients immediately
+sw.js?v=1755133036296&r=0.8470766779252884:64 [SW] BYPASSING CACHE for JS file: https://mok-sports-draft-mokfantasysport.replit.app/manifest.json
+sw.js?v=1755133036296&r=0.8470766779252884:164 [SW] Fetching /league from network
+sw.js?v=1755133036296&r=0.8470766779252884:164 [SW] Fetching /assets/index-CbRrnplr.css from network

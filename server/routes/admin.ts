@@ -784,15 +784,18 @@ export function registerAdminRoutes(app: Express) {
       console.log('[Admin] DraftManager.broadcast available:', !!(draftManager && draftManager.broadcast));
       
       if (draftManager && draftManager.broadcast) {
-        draftManager.broadcast({
-          type: 'admin_date_advanced',
-          data: {
-            newDate: adminState.currentDate.toISOString(),
-            gamesProcessed: processedCount,
-            currentWeek: adminState.currentWeek
-          }
-        });
-        console.log('[Admin] ✅ Broadcast sent for admin_date_advanced');
+        // Add delay to ensure WebSocket connections are stable before broadcasting
+        setTimeout(() => {
+          draftManager.broadcast({
+            type: 'admin_date_advanced',
+            data: {
+              newDate: adminState.currentDate.toISOString(),
+              gamesProcessed: processedCount,
+              currentWeek: adminState.currentWeek
+            }
+          });
+          console.log('[Admin] ✅ Delayed broadcast sent for admin_date_advanced');
+        }, 1000); // 1 second delay to ensure connections are ready
       } else {
         console.log('[Admin] ❌ Could not broadcast - draftManager or broadcast not available');
       }
