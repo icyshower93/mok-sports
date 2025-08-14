@@ -8,7 +8,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/use-auth";
 import { useLocation } from "wouter";
 import { useState, useMemo } from "react";
-import { usePWARealtime } from "@/hooks/use-pwa-realtime";
+import { usePWARealtime } from "@/hooks/use-pwa-realtime.ts";
 import { 
   Trophy, 
   DollarSign, 

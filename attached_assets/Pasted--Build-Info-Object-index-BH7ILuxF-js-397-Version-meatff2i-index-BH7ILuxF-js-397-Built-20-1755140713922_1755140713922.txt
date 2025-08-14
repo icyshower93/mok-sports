@@ -1,0 +1,70 @@
+🏗️ Build Info: Object
+index-BH7ILuxF.js:397 📦 Version: meatff2i
+index-BH7ILuxF.js:397 📅 Built: 2025-08-14T03:04:12.810Z
+index-BH7ILuxF.js:397 🔧 Environment: production
+index-BH7ILuxF.js:353 [PWARealtime] Starting PWA-optimized polling for real-time updates
+index-BH7ILuxF.js:397 [App] PWA real-time updates active: true
+index-BH7ILuxF.js:353 [Auth] Token check - Has token: true Has user: false Loading: true
+index-BH7ILuxF.js:353 [SW Hook] EMERGENCY: Unregistering all existing service workers
+index-BH7ILuxF.js:353 [SW Hook] Found 1 existing registrations
+index-BH7ILuxF.js:353 [SW Hook] Unregistering existing service worker
+index-BH7ILuxF.js:353 [SW Hook] Found 1 caches to delete
+index-BH7ILuxF.js:353 [SW Hook] Deleting cache: mok-sports-dynamic-v1.7.0-nuclear-unregister-1755140652068
+index-BH7ILuxF.js:353 [Auth] Token check - Has token: true Has user: true Loading: false
+index-BH7ILuxF.js:353 [SubscriptionManager] 11:04:12 PM - Permission is granted and no active subscription - auto-creating subscription
+index-BH7ILuxF.js:353 [AutoPushRefresh] Legacy hook delegating to SubscriptionManager
+index-BH7ILuxF.js:353 [SW Hook] Registering fresh service worker: /sw.js?v=1755140652928&r=0.012407830018042687
+index-BH7ILuxF.js:397 Main page debug: Object
+index-BH7ILuxF.js:353 [PWARealtime] Starting PWA-optimized polling for real-time updates
+index-BH7ILuxF.js:397 Main page debug: Object
+sw.js?v=1755140652928&r=0.012407830018042687:2 [SW] NUCLEAR OPTION - Emergency service worker loading
+sw.js?v=1755140652928&r=0.012407830018042687:88 [SW] Service worker starting, version: v1.7.0-nuclear-unregister-1755140652981
+sw.js?v=1755140652928&r=0.012407830018042687:305 [SW] Service worker script loaded successfully
+sw.js?v=1755140652928&r=0.012407830018042687:19 [SW] EMERGENCY INSTALL - Clearing all caches and forcing activation
+sw.js?v=1755140652928&r=0.012407830018042687:92 [SW] Installing service worker, version: v1.7.0-nuclear-unregister-1755140652981
+sw.js?v=1755140652928&r=0.012407830018042687:22 [SW] Found caches to delete: Array(1)
+sw.js?v=1755140652928&r=0.012407830018042687:25 [SW] Force deleting cache: mok-sports-dynamic-v1.7.0-nuclear-unregister-1755140652068
+index-BH7ILuxF.js:353 [SW Hook] Service worker registered successfully
+sw.js?v=1755140652928&r=0.012407830018042687:96 [SW] Caching static files
+index-BH7ILuxF.js:397 Main page debug: Object
+sw.js?v=1755140652928&r=0.012407830018042687:30 [SW] All caches deleted - skipping waiting
+index-BH7ILuxF.js:397 Main page debug: Object
+mok-sports-draft-mokfantasysport.replit.app/:1 Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner.
+index-BH7ILuxF.js:397 Main page debug: Object
+sw.js?v=1755140652928&r=0.012407830018042687:99 [SW] Static files cached successfully
+index-BH7ILuxF.js:397 Main page debug: Object
+index-BH7ILuxF.js:397 Main page debug: Object
+index-BH7ILuxF.js:397 Main page debug: Object
+index-BH7ILuxF.js:353 [SubscriptionManager] 11:04:13 PM - Starting subscription refresh...
+index-BH7ILuxF.js:397 Main page debug: Object
+index-BH7ILuxF.js:353 [SubscriptionManager] 11:04:13 PM - Found existing subscription - unsubscribing...
+index-BH7ILuxF.js:353 [SubscriptionManager] 11:04:13 PM - Existing subscription unsubscribed
+index-BH7ILuxF.js:353 [SubscriptionManager] 11:04:13 PM - Creating new push subscription...
+index-BH7ILuxF.js:397 Main page debug: Object
+index-BH7ILuxF.js:353 [SubscriptionManager] 11:04:13 PM - Sending subscription to server: https://fcm.googleapis.com/fcm/send/caqBRgMrxW0:AP...
+index-BH7ILuxF.js:353 [SubscriptionManager] 11:04:14 PM - Server response: 201 
+index-BH7ILuxF.js:353 [SubscriptionManager] 11:04:14 PM - Subscription registered successfully: Subscription registered successfully
+sw.js?v=1755140652928&r=0.012407830018042687:41 [SW] EMERGENCY ACTIVATE - Taking control of all clients
+sw.js?v=1755140652928&r=0.012407830018042687:110 [SW] Activating service worker, version: v1.7.0-nuclear-unregister-1755140652981
+sw.js?v=1755140652928&r=0.012407830018042687:46 [SW] Deleting remaining cache: mok-sports-static-v1.7.0-nuclear-unregister-1755140652981
+sw.js?v=1755140652928&r=0.012407830018042687:116 [SW] Found caches: Array(1)
+sw.js?v=1755140652928&r=0.012407830018042687:129 [SW] Service worker activated and controlling all clients
+index-BH7ILuxF.js:397 Main page debug: Object
+sw.js?v=1755140652928&r=0.012407830018042687:51 [SW] Claiming all clients immediately
+index-BH7ILuxF.js:353 [PWARealtime] Stopping PWA polling
+sw.js?v=1755140652928&r=0.012407830018042687:164 [SW] Fetching /favicon.ico from network
+sw.js?v=1755140652928&r=0.012407830018042687:160 [SW] Serving /favicon.ico from cache
+index-BH7ILuxF.js:397 Main page debug: Object
+index-BH7ILuxF.js:353 [PWARealtime] Starting PWA-optimized polling for real-time updates
+index-BH7ILuxF.js:397 Main page debug: Object
+sw.js?v=1755140652928&r=0.012407830018042687:164 [SW] Fetching /a/ACg8ocIlUYRsI8z4wKwDJjb1BBPBwCuyYSlVMcLHB5QAXs50P5Fbtg=s96-c from network
+sw.js?v=1755140652928&r=0.012407830018042687:164 [SW] Fetching /assets/moksports%20logo_1755069436420-CWcPioxH.png from network
+sw.js?v=1755140652928&r=0.012407830018042687:160 [SW] Serving /favicon.ico from cache
+index-BH7ILuxF.js:397 [League] No skins data available, returning empty object
+index-BH7ILuxF.js:353 [PWARealtime] Stopping PWA polling
+index-BH7ILuxF.js:353 [PWARealtime] Starting PWA-optimized polling for real-time updates
+sw.js?v=1755140652928&r=0.012407830018042687:160 [SW] Serving /favicon.ico from cache
+index-BH7ILuxF.js:397 [League] Skins won by user: Object
+sw.js?v=1755140652928&r=0.012407830018042687:64 [SW] BYPASSING CACHE for JS file: https://mok-sports-draft-mokfantasysport.replit.app/manifest.json
+sw.js?v=1755140652928&r=0.012407830018042687:164 [SW] Fetching /league from network
+sw.js?v=1755140652928&r=0.012407830018042687:164 [SW] Fetching /assets/index-CbRrnplr.css from network

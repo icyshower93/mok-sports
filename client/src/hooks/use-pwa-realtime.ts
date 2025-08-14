@@ -3,6 +3,7 @@ import { useQueryClient } from '@tanstack/react-query';
 
 // PWA-optimized real-time updates using aggressive polling
 // This eliminates WebSocket dependency issues in PWA environments
+// Replaces WebSocket broadcasts with comprehensive query invalidation
 export function usePWARealtime() {
   const queryClient = useQueryClient();
   const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -13,16 +14,11 @@ export function usePWARealtime() {
     // Start aggressive polling (every 2 seconds) for PWA reliability
     pollingIntervalRef.current = setInterval(async () => {
       try {
-        // Force refetch all critical queries using direct refetch (most reliable for PWA)
-        const refetchPromises = [
-          queryClient.refetchQueries({ queryKey: ['/api/leagues'] }),
-          queryClient.refetchQueries({ queryKey: ['/api/scoring'] }),
-          queryClient.refetchQueries({ queryKey: ['/api/user/stable'] }),
-          queryClient.refetchQueries({ queryKey: ['/api/admin/current-week'] }),
-        ];
+        // PWA-optimized comprehensive query invalidation (replaces WebSocket broadcasts)
+        // This ensures all data updates from admin actions are immediately visible
+        await queryClient.invalidateQueries();
         
-        await Promise.all(refetchPromises);
-        // Silent success - no console spam
+        // Silent success - no console spam for production reliability
       } catch (error) {
         // Only log actual errors, not normal polling
         console.error('[PWARealtime] Polling error:', error);
