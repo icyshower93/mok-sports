@@ -183,7 +183,7 @@ async function processGamesForDate(targetDate: Date): Promise<number> {
     const dayEnd = new Date(targetDate);
     dayEnd.setHours(23, 59, 59, 999);
 
-    // Get games scheduled for this specific date that aren't completed
+    // CRITICAL FIX: Get ALL games for this date (completed AND incomplete) to process authentic scores
     const games = await db
       .select({
         id: nflGames.id,
@@ -201,8 +201,8 @@ async function processGamesForDate(targetDate: Date): Promise<number> {
       .from(nflGames)
       .where(and(
         eq(nflGames.season, adminState.season),
-        sql`DATE(${nflGames.gameDate}) = DATE(${dayStart})`,
-        eq(nflGames.isCompleted, false)
+        sql`DATE(${nflGames.gameDate}) = DATE(${dayStart})`
+        // REMOVED: eq(nflGames.isCompleted, false) - now processes both completed and incomplete games
       ));
 
     console.log(`Found ${games.length} games to process for ${targetDate.toISOString().split('T')[0]}`);
@@ -283,25 +283,39 @@ async function processGamesForDate(targetDate: Date): Promise<number> {
           }
         }
 
-        // Only update game in database if we found actual scores
-        if (foundScores) {
-          await db
-            .update(nflGames)
-            .set({
-              homeScore,
-              awayScore,
-              isCompleted: true,
-              winnerTeamId: homeScore > awayScore ? game.homeTeamId : 
-                           awayScore > homeScore ? game.awayTeamId : null,
-              isTie: homeScore === awayScore && homeScore > 0
-            })
-            .where(eq(nflGames.id, game.id));
+        // CRITICAL FIX: Check if game already has scores in database (authentic data)
+        if (!foundScores && game.homeScore !== null && game.awayScore !== null && 
+            (game.homeScore > 0 || game.awayScore > 0) && game.isCompleted) {
+          homeScore = game.homeScore;
+          awayScore = game.awayScore;
+          foundScores = true;
+          console.log(`✅ Using existing database scores: ${game.awayTeamCode} ${awayScore} - ${homeScore} ${game.homeTeamCode}`);
+        }
 
-          // Calculate and update Mok points for this game
+        // Only update game in database if we found actual scores OR if game already has authentic scores
+        if (foundScores) {
+          // Only update if game isn't already marked as completed with these scores
+          if (!game.isCompleted || game.homeScore !== homeScore || game.awayScore !== awayScore) {
+            await db
+              .update(nflGames)
+              .set({
+                homeScore,
+                awayScore,
+                isCompleted: true,
+                winnerTeamId: homeScore > awayScore ? game.homeTeamId : 
+                             awayScore > homeScore ? game.awayTeamId : null,
+                isTie: homeScore === awayScore && homeScore > 0
+              })
+              .where(eq(nflGames.id, game.id));
+            
+            console.log(`✅ Updated game in database: ${game.awayTeamCode} ${awayScore} - ${homeScore} ${game.homeTeamCode}`);
+          }
+
+          // ALWAYS calculate and update Mok points when we have valid scores
           await calculateAndUpdateMokPoints(game.id, game.season, game.week, homeScore, awayScore, game.homeTeamId, game.awayTeamId, game.homeTeamCode, game.awayTeamCode);
 
           processedCount++;
-          console.log(`✅ Updated game: ${game.awayTeamCode} ${awayScore} - ${homeScore} ${game.homeTeamCode}`);
+          console.log(`✅ Processed game with points: ${game.awayTeamCode} ${awayScore} - ${homeScore} ${game.homeTeamCode}`);
         } else {
           console.log(`⚠️  No scores found for ${game.awayTeamCode} @ ${game.homeTeamCode} on ${targetDate.toISOString().split('T')[0]} (Week ${game.week})`);
           console.log(`    This game will remain unprocessed until scores become available`);
@@ -323,6 +337,13 @@ async function processGamesForDate(targetDate: Date): Promise<number> {
       const processedWeeks = new Set<number>();
       const dayStart = new Date(targetDate);
       dayStart.setHours(0, 0, 0, 0);
+      
+      // Get the weeks that had games processed today
+      for (const game of games) {
+        if (game.isCompleted || (game.homeScore !== null && game.awayScore !== null)) {
+          processedWeeks.add(game.week);
+        }
+      }
       const dayEnd = new Date(targetDate);
       dayEnd.setHours(23, 59, 59, 999);
       
