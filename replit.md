@@ -96,6 +96,7 @@ Google OAuth2 is the primary authentication mechanism. JWT tokens are securely s
 - **Unified Skins Processing**: Integrated skins awards into endOfWeekProcessor for immediate real-time updates without refresh
 - **Weekly Points Reset**: Implemented automatic weekly points reset when new NFL weeks start (Thursday games) for fresh skins competition
 - **Purple Winner Highlighting**: Added visual indicator for weekly skins winner with purple card styling and dollar sign icon
+- **Final Game Bonus Logic**: Enhanced system to only calculate high/low bonuses after the LAST game of the week completes (typically Monday Night Football)
 - **Date**: August 14, 2025
 
 ## Comprehensive Scoring System for All Weeks - IMPLEMENTED

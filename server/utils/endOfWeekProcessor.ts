@@ -87,7 +87,8 @@ export class EndOfWeekProcessor {
 
     if (existingBonuses.length > 0) {
       console.log(`[EndOfWeek] ⚠️  Week ${week} bonuses already calculated for ${existingBonuses.length} users - skipping to prevent daily duplicates`);
-      console.log(`[EndOfWeek] This prevents the bug where high/low bonuses accumulate daily after week completion`);
+      console.log(`[EndOfWeek] This prevents bonuses from being added multiple times after the last game completes`);
+      console.log(`[EndOfWeek] High/low bonuses should only be added ONCE after the final game of the week (typically Monday Night)`);
       return {
         highScoreTeams: [],
         lowScoreTeams: [],

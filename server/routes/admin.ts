@@ -374,10 +374,28 @@ async function processGamesForDate(targetDate: Date): Promise<number> {
         console.log(`🔧 Force check enabled - Week ${week} complete: ${weekComplete} (${completedGames}/${totalGames} games)`);
         console.log(`Week ${week}: ${totalGames} total games, ${completedGames} completed, week complete: ${weekComplete} (forced check)`);
         
-        // ONLY calculate bonuses if the ENTIRE week is complete
+        // ONLY calculate bonuses if the ENTIRE week is complete AND this is the LAST game of the week
         if (weekComplete) {
-          console.log(`🏆 Week ${week} games all completed! Now calculating weekly high/low bonuses...`);
-          await checkAndCalculateWeeklyBonuses(adminState.season, week, true);
+          // Additional check: Only calculate bonuses when processing the final game of the week
+          // This prevents bonuses from being calculated when we batch-process multiple completed games
+          const todaysCompletedGames = await db.select({ gameId: nflGames.id })
+            .from(nflGames)
+            .where(and(
+              eq(nflGames.season, adminState.season),
+              eq(nflGames.week, week),
+              sql`DATE(${nflGames.gameDate}) = DATE(${dayStart})`,
+              eq(nflGames.isCompleted, true)
+            ));
+          
+          // Only calculate bonuses if we just completed games today AND the week is now complete
+          // This ensures bonuses are only added when the final game of the week finishes
+          if (todaysCompletedGames.length > 0) {
+            console.log(`🏆 Week ${week} FINAL games completed today! Now calculating weekly high/low bonuses...`);
+            console.log(`🏈 This ensures bonuses are only added after the last game of the week (typically Monday Night Football)`);
+            await checkAndCalculateWeeklyBonuses(adminState.season, week, true);
+          } else {
+            console.log(`⏳ Week ${week} was already complete - bonuses should already be calculated`);
+          }
         } else {
           console.log(`⏳ Week ${week} still in progress (${completedGames}/${totalGames} games) - skipping bonus calculation`);
         }
