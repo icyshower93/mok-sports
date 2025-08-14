@@ -951,6 +951,23 @@ export function registerAdminRoutes(app: Express) {
 
       console.log(`🧹 Cleared all weekly skins for ${adminState.season} season`);
 
+      // Clear all weekly lock selections for current season
+      await db
+        .delete(weeklyLocks)
+        .where(eq(weeklyLocks.season, adminState.season));
+
+      console.log(`🧹 Cleared all weekly lock selections for ${adminState.season} season`);
+
+      // Reset lock usage counters in stables table for all teams in all leagues
+      await db
+        .update(stables)
+        .set({
+          locksUsed: 0,
+          lockAndLoadUsed: false
+        });
+
+      console.log(`🧹 Reset all team lock usage counters to 0`);
+
       // Reset all games to uncompleted with 0 scores for current season
       await db
         .update(nflGames)

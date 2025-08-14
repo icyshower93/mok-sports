@@ -89,13 +89,23 @@ export function useProductionRealtime() {
           // Handle specific broadcast types efficiently
           switch (message.type) {
             case 'admin_date_advanced':
-            case 'admin_season_reset':
             case 'weekly_bonuses_calculated':
             case 'score_update':
               // Efficient selective query invalidation for production
               queryClient.invalidateQueries({ queryKey: ['/api/leagues'] });
               queryClient.invalidateQueries({ queryKey: ['/api/scoring'] });
               queryClient.invalidateQueries({ queryKey: ['/api/admin/current-week'] });
+              break;
+            case 'admin_season_reset':
+              // Comprehensive cache invalidation for season reset including team lock data
+              queryClient.invalidateQueries({ queryKey: ['/api/leagues'] });
+              queryClient.invalidateQueries({ queryKey: ['/api/scoring'] });
+              queryClient.invalidateQueries({ queryKey: ['/api/admin/current-week'] });
+              queryClient.invalidateQueries({ predicate: (query) => {
+                const queryKey = query.queryKey?.[0] as string;
+                return queryKey?.includes('/api/user/stable/') || queryKey?.includes('/api/user/locks/');
+              }});
+              console.log('[ProductionRealtime] 🔄 Season reset detected - cleared team lock cache');
               break;
             case 'pong':
               // Server keepalive response - connection is alive
