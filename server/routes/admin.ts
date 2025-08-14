@@ -338,9 +338,30 @@ async function processGamesForDate(targetDate: Date): Promise<number> {
       
       console.log(`🎯 Checking only processed weeks: ${Array.from(processedWeeks).join(', ')}`);
       
-      // Only check weeks that had games completed today
-      for (const week of processedWeeks) {
-        await checkAndCalculateWeeklyBonuses(adminState.season, week, true);
+      // Only check weeks that had games completed today AND verify week is actually complete
+      for (const week of Array.from(processedWeeks)) {
+        // Check if ALL games in this week are now completed before calculating bonuses
+        const allWeekGames = await db.select({ isCompleted: nflGames.isCompleted })
+          .from(nflGames)
+          .where(and(
+            eq(nflGames.season, adminState.season),
+            eq(nflGames.week, week)
+          ));
+        
+        const totalGames = allWeekGames.length;
+        const completedGames = allWeekGames.filter(g => g.isCompleted).length;
+        const weekComplete = completedGames === totalGames;
+        
+        console.log(`🔧 Force check enabled - Week ${week} complete: ${weekComplete} (${completedGames}/${totalGames} games)`);
+        console.log(`Week ${week}: ${totalGames} total games, ${completedGames} completed, week complete: ${weekComplete} (forced check)`);
+        
+        // ONLY calculate bonuses if the ENTIRE week is complete
+        if (weekComplete) {
+          console.log(`🏆 Week ${week} games all completed! Now calculating weekly high/low bonuses...`);
+          await checkAndCalculateWeeklyBonuses(adminState.season, week, true);
+        } else {
+          console.log(`⏳ Week ${week} still in progress (${completedGames}/${totalGames} games) - skipping bonus calculation`);
+        }
       }
     }
 

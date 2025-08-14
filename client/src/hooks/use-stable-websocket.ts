@@ -171,7 +171,9 @@ export function useStableWebSocket(onMessage?: MessageCallback) {
           
         case 'score_update':
         case 'weekly_bonuses_calculated':
-          console.log('[StableWebSocket] 🏆 Score update - refreshing scores and league standings');
+        case 'weekly_skins_awarded':
+        case 'weekly_skins_rollover':
+          console.log('[StableWebSocket] 🏆 Score/skins update - refreshing scores and league standings');
           // Invalidate scoring queries (includes weekly scores, skins, etc)
           queryClient.invalidateQueries({ queryKey: ['/api/scoring'] });
           // Invalidate league standings since points changed

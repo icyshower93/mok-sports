@@ -332,6 +332,26 @@ export class EndOfWeekProcessor {
 
       console.log(`[EndOfWeek] 🏆 ${winner.userName} wins ${totalSkinsThisWeek} skin(s) with ${winner.totalPoints} points`);
 
+      // Broadcast skins award to all connected clients
+      const { globalDraftManager } = await import("../draft/globalDraftManager.js");
+      if (globalDraftManager && (globalDraftManager as any).broadcast) {
+        (globalDraftManager as any).broadcast({
+          type: 'weekly_skins_awarded',
+          data: {
+            leagueId,
+            week,
+            season,
+            winnerId: winner.userId,
+            winnerName: winner.userName,
+            winningScore: winner.totalPoints,
+            prizeAmount: totalSkinsThisWeek,
+            isTied: false,
+            timestamp: Date.now()
+          }
+        });
+        console.log(`📡 [EndOfWeek] Broadcast skins award: ${winner.userName} wins ${totalSkinsThisWeek} skins`);
+      }
+
       return {
         winner: {
           userId: winner.userId,
@@ -357,6 +377,25 @@ export class EndOfWeekProcessor {
         isRollover: true,
         awardedAt: null // No award given
       }).onConflictDoNothing();
+
+      // Broadcast skins rollover to all connected clients
+      const { globalDraftManager } = await import("../draft/globalDraftManager.js");
+      if (globalDraftManager && (globalDraftManager as any).broadcast) {
+        (globalDraftManager as any).broadcast({
+          type: 'weekly_skins_rollover',
+          data: {
+            leagueId,
+            week,
+            season,
+            tiedUsers: winners.length,
+            tiedScore: highestScore,
+            rolledOverAmount: totalSkinsThisWeek,
+            nextWeekPrize: totalSkinsThisWeek + 1,
+            timestamp: Date.now()
+          }
+        });
+        console.log(`📡 [EndOfWeek] Broadcast skins rollover: ${winners.length} tied, ${totalSkinsThisWeek} skins rolled over`);
+      }
 
       return {
         rollover: {
