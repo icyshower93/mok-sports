@@ -11,7 +11,7 @@ import { usePWADetection } from "@/hooks/use-pwa-detection";
 import { useServiceWorker } from "@/hooks/use-service-worker";
 import { useAutoPushRefresh } from "@/hooks/use-auto-push-refresh";
 import { PWAInstallPrompt } from "@/components/pwa-install-prompt";
-import { usePWARealtime } from "@/hooks/use-pwa-realtime.ts";
+import { useProductionRealtime } from "@/hooks/use-production-realtime.ts";
 
 import { ErrorBoundary } from "@/components/error-boundary";
 import { DesktopNotice } from "@/components/desktop-notice";
@@ -55,13 +55,13 @@ function AppContent() {
   // Initialize automatic push notification refresh for iOS PWA
   useAutoPushRefresh();
   
-  // Initialize PWA-optimized real-time updates
-  const { isConnected: isPWAConnected } = usePWARealtime();
+  // Initialize production-optimized real-time updates via WebSocket broadcasts
+  const { isConnected: isRealtimeConnected, connectionStatus } = useProductionRealtime();
   
-  // Log PWA connection status for debugging
+  // Log production WebSocket connection status
   React.useEffect(() => {
-    console.log('[App] PWA real-time updates active:', isPWAConnected);
-  }, [isPWAConnected]);
+    console.log('[App] Production real-time WebSocket status:', connectionStatus);
+  }, [connectionStatus]);
 
   // Show install prompt only on mobile devices when not in PWA mode
   // Allow desktop usage for testing/development

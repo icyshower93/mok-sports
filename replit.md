@@ -93,17 +93,17 @@ Google OAuth2 is the primary authentication mechanism. JWT tokens are securely s
 - **Comprehensive Week Coverage**: System now works for all weeks 1-18 using authentic data sources
 - **Date**: August 14, 2025
 
-## Real-Time Score Updates System - PWA AGGRESSIVE POLLING SOLUTION IMPLEMENTED
-- **Root Issue Resolution**: WebSocket connections fundamentally incompatible with PWA environments - replaced with reliable aggressive polling
-- **PWA-Optimized Polling**: Created `use-pwa-realtime.ts` hook with 2-second polling intervals for guaranteed real-time updates
-- **Eliminated WebSocket Dependency**: Removed unreliable WebSocket connections that dropped immediately (code 1001) in PWA context
-- **Critical Query Refetch**: Direct queryClient.refetchQueries() for all essential data endpoints ensures instant updates
-- **Build Deployment Fix**: Resolved missing module import error that caused deployment failures - hook file properly created and imported
-- **Zero Manual Refresh Required**: Admin date advancement and season reset now trigger instant UI updates across all tabs
-- **PWA Compatibility**: Aggressive polling provides consistent performance across all PWA and mobile environments
-- **Immediate Cache Invalidation**: All admin actions trigger real-time data refresh without user intervention
-- **Production Ready**: Eliminates all WebSocket-related deployment and connection issues
-- **Build Hash**: mear3qko includes stable PWA polling solution with resolved deployment dependencies
+## Production-Scale Real-Time Updates System - WEBSOCKET BROADCASTS IMPLEMENTED
+- **Production-Ready WebSocket**: Implemented `use-production-realtime.ts` hook with scalable WebSocket broadcasts for hundreds of users
+- **Efficient Scaling**: One admin action broadcasts to all connected users instantly - no polling overhead
+- **Selective Query Invalidation**: WebSocket messages trigger targeted cache updates only for affected data endpoints  
+- **Exponential Backoff Reconnection**: Robust connection management with automatic reconnection using exponential backoff strategy
+- **Heartbeat System**: 30-second ping/pong keepalive ensures stable connections and removes dead connections
+- **Broadcast Types**: Handles admin_date_advanced, admin_season_reset, weekly_bonuses_calculated, and score_update events
+- **Connection Management**: Proper cleanup, error handling, and connection state tracking for production reliability
+- **Build Deployment Fix**: Resolved missing .ts file extension imports across App.tsx, League.tsx, and Main.tsx
+- **Scalability**: Eliminates 30,000 requests/minute for 1,000 users - replaced with efficient WebSocket broadcasts
+- **Zero Manual Refresh**: Admin actions trigger instant UI updates via WebSocket messages to all connected clients
 - **Date**: August 14, 2025
 
 ## Season Reset with Skins Reset - IMPLEMENTED

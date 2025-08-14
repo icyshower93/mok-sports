@@ -8,7 +8,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/use-auth";
 import { useLocation } from "wouter";
 import { useState, useMemo } from "react";
-import { usePWARealtime } from "@/hooks/use-pwa-realtime.ts";
+import { useProductionRealtime } from "@/hooks/use-production-realtime.ts";
 import { 
   Trophy, 
   DollarSign, 
@@ -34,8 +34,8 @@ export default function LeaguePage() {
   const [location] = useLocation();
   const [expandedUsers, setExpandedUsers] = useState<Set<string>>(new Set());
   
-  // Enable PWA-optimized real-time updates using aggressive polling
-  usePWARealtime();
+  // Enable production-optimized WebSocket broadcasts for scalability
+  useProductionRealtime();
   
   // Get league ID from URL (assumes pattern /league?id=...)
   const searchParams = new URLSearchParams(location.split('?')[1] || '');
