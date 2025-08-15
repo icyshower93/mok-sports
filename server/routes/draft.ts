@@ -207,8 +207,16 @@ export default async function setupDraftRoutes(app: any, storage: IStorage, webS
       }
 
       if (robotManager) {
-        await robotManager.addRobotsToLeague(leagueId);
-        res.json({ message: "Robots added to league successfully" });
+        try {
+          const robotName = await robotManager.addOneRobotToLeague(leagueId);
+          res.json({ message: `${robotName} added to league successfully` });
+        } catch (error: any) {
+          if (error.message === 'All robots are already in the league') {
+            res.status(400).json({ message: "All robots are already in the league" });
+          } else {
+            throw error;
+          }
+        }
       } else {
         res.status(500).json({ message: "Robot manager not available" });
       }

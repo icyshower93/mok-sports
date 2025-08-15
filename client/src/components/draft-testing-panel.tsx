@@ -246,11 +246,11 @@ export function DraftTestingPanel({
                 className="w-full"
               >
                 <Users className="w-4 h-4 mr-2" />
-                {addRobotsMutation.isPending ? 'Adding...' : 'Add 4 Robot Users'}
+                {addRobotsMutation.isPending ? 'Adding...' : 'Add 1 Robot User'}
               </Button>
               
               <p className="text-xs text-muted-foreground">
-                Adds Alpha Bot, Beta Bot, Gamma Bot, and Delta Bot to the league for testing draft functionality.
+                Adds one robot user to the league for testing. Click multiple times to add more robots.
               </p>
             </div>
 

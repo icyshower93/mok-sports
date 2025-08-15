@@ -107,6 +107,35 @@ export class RobotManager {
   }
 
   /**
+   * Add one robot to a specific league for testing
+   */
+  async addOneRobotToLeague(leagueId: string): Promise<string> {
+    if (this.robotUsers.length === 0) {
+      await this.initializeRobots();
+    }
+
+    // Find the first robot that isn't already in the league
+    for (const robot of this.robotUsers) {
+      try {
+        const isAlreadyMember = await this.storage.isUserInLeague(robot.id, leagueId);
+        
+        if (!isAlreadyMember) {
+          await this.storage.joinLeague({
+            leagueId,
+            userId: robot.id
+          });
+          console.log(`[RobotManager] Added ${robot.name} to league ${leagueId}`);
+          return robot.name;
+        }
+      } catch (error) {
+        console.error(`[RobotManager] Error adding ${robot.name} to league:`, error);
+      }
+    }
+    
+    throw new Error('All robots are already in the league');
+  }
+
+  /**
    * Remove all robots from a league
    */
   async removeRobotsFromLeague(leagueId: string): Promise<void> {
