@@ -696,4 +696,37 @@ export default async function setupDraftRoutes(app: any, storage: IStorage, webS
       res.status(500).json({ message: "Failed to simulate bot pick" });
     }
   });
+
+  // Force timer expiration for testing autopick functionality
+  app.post("/api/drafts/:draftId/force-timer-expiration", async (req: any, res: any) => {
+    try {
+      const { draftId } = req.params;
+      const { userId } = req.body;
+
+      if (!userId) {
+        return res.status(400).json({ message: "User ID required" });
+      }
+
+      const draft = await storage.getDraft(draftId);
+      if (!draft) {
+        return res.status(404).json({ message: "Draft not found" });
+      }
+
+      console.log(`[TEST] Forcing timer expiration for user ${userId} in draft ${draftId}`);
+      
+      // Trigger the handleTimerExpired function directly
+      await draftManager.handleTimerExpired(draftId, userId);
+      
+      const newState = await draftManager.getDraftState(draftId);
+
+      res.json({
+        message: "Timer expiration forced - autopick triggered",
+        newState
+      });
+
+    } catch (error) {
+      console.error('Error forcing timer expiration:', error);
+      res.status(500).json({ message: "Failed to force timer expiration" });
+    }
+  });
 }
