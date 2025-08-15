@@ -1148,31 +1148,19 @@ async function handleWeekProgression(oldWeek: number, newWeek: number, season: n
     console.log(`🔄 Week progression: checking if Week ${oldWeek} bonuses already calculated...`);
     await checkAndCalculateWeeklyBonuses(season, oldWeek, true); // Force check for week progression
     
-    // SMART WEEKLY RESET: Only reset when transitioning to a week with NO games in progress
-    // This preserves Mok points for games currently being processed while still enabling weekly skins
+    // WEEKLY SKINS RESET: Always reset at the start of each new week for fresh competition
+    // The smart reset system should only prevent resets DURING active week processing,
+    // but when transitioning between weeks (oldWeek -> newWeek), we always want fresh skins competition
     
-    console.log(`🎯 SMART RESET: Checking if Week ${newWeek} has games in progress before resetting...`);
+    console.log(`🎯 WEEKLY TRANSITION: Starting Week ${newWeek} - resetting for fresh skins competition`);
+    console.log(`🏁 Note: Weekly skins reset at week transitions to ensure fair competition each week`);
     
-    // Check if newWeek has any games already completed (indicating games are being processed)
-    const newWeekGamesInProgress = await db.select({ count: sql`count(*)` })
-      .from(nflGames)
-      .where(and(
-        eq(nflGames.season, season),
-        eq(nflGames.week, newWeek),
-        eq(nflGames.isCompleted, true)
-      ));
+    await initializeNewWeekScores(season, newWeek);
+    await resetWeeklyPointsForAllLeagues(season, newWeek);
+    console.log(`✅ Weekly reset complete - Week ${newWeek} ready for fresh skins competition`);
     
-    const hasGamesInProgress = parseInt(newWeekGamesInProgress[0].count as string) > 0;
-    
-    if (hasGamesInProgress) {
-      console.log(`⚠️ Week ${newWeek} has games in progress - SKIPPING reset to preserve Mok points`);
-      console.log(`🎯 Weekly skins will be calculated with current points, no reset needed`);
-    } else {
-      console.log(`✅ Week ${newWeek} has no games in progress - SAFE to reset for fresh skins competition`);
-      await initializeNewWeekScores(season, newWeek);
-      await resetWeeklyPointsForAllLeagues(season, newWeek);
-      console.log(`🏁 Weekly reset complete - Week ${newWeek} ready for fresh skins competition`);
-    }
+    // The smart reset is now only applied during SAME-week processing to preserve Mok points
+    // but NOT during week transitions where fresh skins competition is required
     
     console.log(`✅ Week progression complete: ${oldWeek} → ${newWeek}`);
   } catch (error) {

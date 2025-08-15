@@ -21,6 +21,7 @@ Preferred communication style: Simple, everyday language.
 - **Mok Points Calculation Bug RESOLVED**: Fixed week progression logic that was wiping out freshly calculated points immediately after games completed. Implemented smart weekly reset system that preserves points during game processing while enabling proper weekly skins competition.
 - **Weekly Skins Architecture**: Weekly points stored in `user_weekly_scores.totalPoints` (reset each week), season totals calculated dynamically by summing all weeks. Skins awarded based on highest weekly points only.
 - **NFL Game Processing Bug RESOLVED**: Fixed incomplete September 15 game processing where 8 games failed due to missing API data. Extended authentic 2024 score coverage to include all Week 2 games with correct away@home format matching. All future weeks will fall back gracefully to Tank01 API or database scores.
+- **Weekly Skins Reset Bug RESOLVED**: Fixed smart reset system that was preventing weekly skins competition from resetting to 0 at the start of each new week. Weekly skins now properly reset during week transitions (Week 1→2, 2→3, etc.) to ensure fair competition, while still preserving Mok points during same-week game processing.
 
 # System Architecture
 
