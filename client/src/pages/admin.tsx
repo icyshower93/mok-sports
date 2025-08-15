@@ -2,9 +2,10 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Calendar, ChevronRight, RotateCcw } from "lucide-react";
+import { ArrowLeft, Calendar, ChevronRight, RotateCcw, LogOut } from "lucide-react";
 import { useLocation } from "wouter";
 import { queryClient } from "@/lib/queryClient";
+import { useAuth } from "@/hooks/use-auth";
 
 // Define simple admin state type
 interface AdminState {
@@ -19,6 +20,7 @@ interface AdminState {
 
 export default function AdminPanel() {
   const [, navigate] = useLocation();
+  const { logout } = useAuth();
 
   // Fetch admin state from server
   const { data: adminState, isLoading } = useQuery<AdminState>({
@@ -113,6 +115,17 @@ export default function AdminPanel() {
               <h1 className="text-2xl font-bold">{season} NFL Season Admin</h1>
             </div>
           </div>
+          
+          {/* Sign Out Button */}
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={() => logout()}
+            className="flex items-center space-x-2 text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-400 dark:hover:text-red-300 dark:hover:bg-red-900/20"
+          >
+            <LogOut className="w-4 h-4" />
+            <span>Sign Out</span>
+          </Button>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
