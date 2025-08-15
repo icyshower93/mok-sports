@@ -13,6 +13,23 @@ import { useAutoPushRefresh } from "@/hooks/use-auto-push-refresh";
 import { PWAInstallPrompt } from "@/components/pwa-install-prompt";
 import { useProductionRealtime } from "@/hooks/use-stable-websocket.js";
 
+// League type for draft status checking
+interface UserLeague {
+  id: string;
+  name: string;
+  joinCode: string;
+  maxTeams: number;
+  creatorId: string;
+  isActive: boolean;
+  draftScheduledAt?: string;
+  draftStarted: boolean;
+  createdAt: string;
+  memberCount: number;
+  isCreator: boolean;
+  draftId?: string;
+  draftStatus?: string;
+}
+
 import { ErrorBoundary } from "@/components/error-boundary";
 import { DesktopNotice } from "@/components/desktop-notice";
 import LoginPage from "@/pages/login";
@@ -39,10 +56,15 @@ function AppContent() {
   const { isPWA } = usePWADetection();
   
   // Check if user has any leagues once they're authenticated
-  const { data: userLeagues = [], isLoading: leaguesLoading } = useQuery({
+  const { data: userLeagues = [], isLoading: leaguesLoading } = useQuery<UserLeague[]>({
     queryKey: ['/api/user/leagues'],
     enabled: !!user,
   });
+
+  // Check if user has any leagues with completed drafts
+  const hasLeaguesWithCompletedDrafts = userLeagues.some(league => 
+    league.draftStatus === 'completed'
+  );
   
   // Log build info for debugging and cache verification
   React.useEffect(() => {
@@ -154,9 +176,18 @@ function AppContent() {
         </Route>
         <Route path="/main">
           {() => {
-            // If user has no leagues, show leagues page instead
+            // If user has no leagues, show leagues page
             const hasLeagues = Array.isArray(userLeagues) && userLeagues.length > 0;
-            return hasLeagues ? <MainPage /> : <LeaguesPage />;
+            if (!hasLeagues) return <LeaguesPage />;
+            
+            // If user has leagues but none with completed drafts, redirect to waiting room
+            if (!hasLeaguesWithCompletedDrafts) {
+              const firstLeague = userLeagues[0];
+              window.location.href = `/league/waiting?id=${firstLeague.id}`;
+              return null;
+            }
+            
+            return <MainPage />;
           }}
         </Route>
         <Route path="/stable" component={StablePage} />
@@ -166,9 +197,18 @@ function AppContent() {
         <Route path="/more/trades" component={TradesPage} />
         <Route path="/">
           {() => {
-            // If user has no leagues, show leagues page instead
+            // If user has no leagues, show leagues page
             const hasLeagues = Array.isArray(userLeagues) && userLeagues.length > 0;
-            return hasLeagues ? <MainPage /> : <LeaguesPage />;
+            if (!hasLeagues) return <LeaguesPage />;
+            
+            // If user has leagues but none with completed drafts, redirect to waiting room
+            if (!hasLeaguesWithCompletedDrafts) {
+              const firstLeague = userLeagues[0];
+              window.location.href = `/league/waiting?id=${firstLeague.id}`;
+              return null;
+            }
+            
+            return <MainPage />;
           }}
         </Route>
         <Route component={NotFound} />
