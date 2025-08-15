@@ -1173,6 +1173,52 @@ export default function DraftPage() {
           </div>
             )}
         </div>
+
+        {/* Draft Completion Navigation */}
+        {draftData?.state?.draft?.status === 'completed' && (
+          <div className="mt-8 mx-4 lg:mx-8">
+            <Card className="border-green-500 bg-green-50 dark:bg-green-950/30">
+              <CardContent className="pt-6">
+                <div className="text-center space-y-4">
+                  <div className="flex items-center justify-center space-x-2">
+                    <Trophy className="w-6 h-6 text-green-600" />
+                    <h3 className="text-xl font-bold text-green-700 dark:text-green-400">Draft Completed!</h3>
+                  </div>
+                  <p className="text-sm text-green-600 dark:text-green-300">
+                    All picks have been made. Your fantasy season is ready to begin!
+                  </p>
+                  <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                    <Button 
+                      onClick={() => {
+                        // Force refresh user leagues data and navigate to main
+                        queryClient.invalidateQueries({ queryKey: ['/api/user/leagues'] });
+                        navigate('/main');
+                      }}
+                      size="lg"
+                      className="bg-green-600 hover:bg-green-700"
+                    >
+                      <Trophy className="w-4 h-4 mr-2" />
+                      Go to Main App
+                    </Button>
+                    <Button 
+                      onClick={() => {
+                        const currentLeague = leagueData?.find((l: any) => l.draftId === draftData?.state?.draft?.id);
+                        if (currentLeague) {
+                          navigate(`/league/waiting?id=${currentLeague.id}`);
+                        }
+                      }}
+                      variant="outline"
+                      size="lg"
+                    >
+                      <ArrowLeft className="w-4 h-4 mr-2" />
+                      Back to League
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
       </div>
     </div>
   );
