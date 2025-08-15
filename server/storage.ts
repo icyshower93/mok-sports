@@ -64,6 +64,7 @@ export interface IStorage {
   deactivateAllDraftTimers(draftId: string): Promise<void>;
   getActiveDraftTimer(draftId: string): Promise<DraftTimer | undefined>;
   deactivateTimer(draftId: string, userId: string): Promise<void>;
+  getActiveTimers(): Promise<DraftTimer[]>;
   
   // Push notification methods
   getVapidKeys(): { publicKey: string; privateKey: string };
@@ -1020,6 +1021,17 @@ export class DatabaseStorage implements IStorage {
       nflTeamId,
       acquiredVia: 'free_agent'
     });
+  }
+
+  // Get all active timers for recovery after restart
+  async getActiveTimers(): Promise<Array<{ draftId: string; userId: string; timeRemaining: number }>> {
+    return await db.select({
+      draftId: draftTimers.draftId,
+      userId: draftTimers.userId,
+      timeRemaining: draftTimers.timeRemaining
+    })
+    .from(draftTimers)
+    .where(eq(draftTimers.isActive, true));
   }
 
   // Scoring methods - stub implementations

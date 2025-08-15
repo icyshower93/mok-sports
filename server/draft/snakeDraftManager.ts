@@ -75,8 +75,12 @@ export class SnakeDraftManager {
       const activeDrafts = await this.redisStateManager.getActiveDrafts();
       let recoveredCount = 0;
       
-      // Check for any active drafts from database as well
-      const allDraftIds = new Set([...activeDrafts]);
+      // CRITICAL FIX: Also check database directly for active drafts with timers
+      const dbActiveDrafts = await this.storage.getActiveTimers();
+      const allDraftIds = new Set([...activeDrafts, ...dbActiveDrafts.map(t => t.draftId)]);
+      
+      console.log(`🔍 Found ${activeDrafts.length} drafts in Redis, ${dbActiveDrafts.length} active timers in DB`);
+      console.log(`🔍 Processing ${allDraftIds.size} total drafts: [${Array.from(allDraftIds).join(', ')}]`);
       
       for (const draftId of Array.from(allDraftIds)) {
         const draft = await this.storage.getDraft(draftId);
