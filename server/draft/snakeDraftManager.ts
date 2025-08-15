@@ -149,10 +149,12 @@ export class SnakeDraftManager {
       const currentTimeRemaining = await this.redisStateManager.getTimeRemaining(draftId);
       
       if (currentTimeRemaining <= 0) {
-        console.log(`⏰ Recovered timer expired for user ${userId}`);
+        console.log(`⏰ Recovered timer expired for user ${userId} - triggering autopick`);
         clearInterval(interval);
         this.timerIntervals.delete(timerKey);
         await this.redisStateManager.deleteTimer(draftId);
+        
+        // CRITICAL FIX: Ensure timer expiration properly triggers robot autopick
         await this.handleTimerExpired(draftId, userId);
       } else {
         // Broadcast timer update
@@ -395,6 +397,16 @@ export class SnakeDraftManager {
         console.error(`Draft state: Round ${draft.currentRound}, Pick ${draft.currentPick}`);
         return;
       }
+      
+      // CRITICAL FIX: Check if this is a robot user and handle differently
+      if (this.robotManager?.isRobot(userId)) {
+        console.log(`🤖 Timer expired for robot user ${userId} - using robot autopick logic`);
+        await this.simulateBotPickPrivate(draftId, userId);
+        return;
+      }
+      
+      // Handle human user autopick (original logic)
+      console.log(`👤 Timer expired for human user ${userId} - using random autopick`);
       
       const availableTeams = await this.storage.getAvailableNflTeams(draftId);
       if (availableTeams.length === 0) {
@@ -788,10 +800,11 @@ export class SnakeDraftManager {
   private async simulateBotPickPrivate(draftId: string, userId: string): Promise<void> {
     try {
       if (!this.robotManager?.isRobot(userId)) {
+        console.log(`[SnakeDraftManager] User ${userId} is not a robot, skipping bot pick logic`);
         return;
       }
 
-      console.log(`[SnakeDraftManager] Simulating bot pick for ${userId}`);
+      console.log(`[SnakeDraftManager] Executing robot autopick for ${userId}`);
       
       // Get available teams
       const availableTeams = await this.storage.getAvailableNflTeams(draftId);
@@ -800,17 +813,35 @@ export class SnakeDraftManager {
         return;
       }
 
-      // Get robot's preferred team
-      const preferredTeams = this.robotManager.getRobotTeamPreference(userId, availableTeams);
+      // Apply division rule if enabled
+      let eligibleTeams = availableTeams;
+      
+      if (this.draftConfig.enableDivisionRule) {
+        eligibleTeams = await this.getDivisionEligibleTeams(draftId, userId, availableTeams);
+        if (eligibleTeams.length === 0) {
+          console.log(`[SnakeDraftManager] Division rule override for robot ${userId} - no eligible teams, using all available`);
+          eligibleTeams = availableTeams;
+        }
+      }
+
+      // Get robot's preferred team from eligible options
+      const preferredTeams = this.robotManager.getRobotTeamPreference(userId, eligibleTeams);
       const selectedTeam = preferredTeams[0];
 
       if (selectedTeam) {
-        await this.makePick(draftId, {
+        const pickResult = await this.makePick(draftId, {
           userId,
           nflTeamId: selectedTeam.id,
           isAutoPick: true
         });
-        console.log(`[SnakeDraftManager] Bot ${userId} auto-picked ${selectedTeam.name}`);
+        
+        if (pickResult.success) {
+          console.log(`[SnakeDraftManager] ✅ Robot ${userId} successfully auto-picked ${selectedTeam.name}`);
+        } else {
+          console.error(`[SnakeDraftManager] ❌ Failed to make robot pick: ${pickResult.error}`);
+        }
+      } else {
+        console.error(`[SnakeDraftManager] No preferred team found for robot ${userId}`);
       }
     } catch (error) {
       console.error('[SnakeDraftManager] Error in bot pick simulation:', error);

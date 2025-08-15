@@ -290,12 +290,6 @@ export default async function setupDraftRoutes(app: any, storage: IStorage, webS
       // FIX #2: SERVER MEMORY CLEANUP - Clear any stale timer/draft state
       console.log(`[VALIDATION] 🔍 SERVER CLEANUP: Clearing any stale server-side draft state`);
       
-      // Ensure clean server state before starting new draft
-      if (draftManager.activeDraftStates.has(leagueId)) {
-        console.log(`[VALIDATION] 🔄 SERVER CLEANUP: Removing stale draft state for league ${leagueId}`);
-        draftManager.activeDraftStates.delete(leagueId);
-      }
-      
       // Create draft but DON'T start it - wait for manual start button click
       console.log(`[Draft Reset] ✅ NEW DRAFT CREATED but NOT STARTED - waiting for manual start`);
 
