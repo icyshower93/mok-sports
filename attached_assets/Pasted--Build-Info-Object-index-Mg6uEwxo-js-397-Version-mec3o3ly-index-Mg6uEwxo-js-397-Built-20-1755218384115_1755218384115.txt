@@ -1,0 +1,230 @@
+🏗️ Build Info: Object
+index-Mg6uEwxo.js:397 📦 Version: mec3o3ly
+index-Mg6uEwxo.js:397 📅 Built: 2025-08-15T00:38:40.198Z
+index-Mg6uEwxo.js:397 🔧 Environment: production
+index-Mg6uEwxo.js:353 [StableWebSocket] ⏳ Waiting for authentication...
+index-Mg6uEwxo.js:397 [App] WebSocket status: waiting_auth (Disconnected)
+index-Mg6uEwxo.js:397 [App] ⏳ Waiting for authentication to complete
+index-Mg6uEwxo.js:353 [Auth] Token check - Has token: true Has user: false Loading: true
+index-Mg6uEwxo.js:353 [SW Hook] EMERGENCY: Unregistering all existing service workers
+index-Mg6uEwxo.js:353 [SW Hook] Found 1 existing registrations
+index-Mg6uEwxo.js:353 [SW Hook] Unregistering existing service worker
+index-Mg6uEwxo.js:353 [SW Hook] Found 0 caches to delete
+16565be8-cdf8-45ef-9533-bed8b91186af:1 Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner.
+index-Mg6uEwxo.js:353 [StableWebSocket] 🔐 Auth confirmed, establishing connection
+index-Mg6uEwxo.js:353 [StableWebSocket] 🧹 Cleaning up all timers and connections
+index-Mg6uEwxo.js:353 [StableWebSocket] 🚀 Establishing connection for user: Sky
+index-Mg6uEwxo.js:353 [Auth] Token check - Has token: true Has user: true Loading: false
+index-Mg6uEwxo.js:353 [AutoPushRefresh] Legacy hook delegating to SubscriptionManager
+index-Mg6uEwxo.js:397 [App] WebSocket status: connecting (Disconnected)
+index-Mg6uEwxo.js:353 [SW Hook] Registering fresh service worker: /sw.js?v=1755218320318&r=0.1456750438125154
+index-Mg6uEwxo.js:397 [App] Draft route matched with params: Object
+index-Mg6uEwxo.js:397 [App] Current location: https://mok-sports-draft-mokfantasysport.replit.app/draft/16565be8-cdf8-45ef-9533-bed8b91186af
+index-Mg6uEwxo.js:397 [SMOOTH TIMER] Display time: 0.0 isCountingDown: false localTime: 0.0
+index-Mg6uEwxo.js:397 [Draft] All hooks declared, starting conditional logic
+index-Mg6uEwxo.js:397 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1755218320356
+index-Mg6uEwxo.js:397 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-Mg6uEwxo.js:397 [WebSocket] MAIN useEffect trigger - draftId: 16565be8-cdf8-45ef-9533-bed8b91186af userId: true authLoading: false
+index-Mg6uEwxo.js:397 [WebSocket] ✅ Conditions met, validating draft exists before connection...
+index-Mg6uEwxo.js:397 [WebSocket] Draft ID to connect to: 16565be8-cdf8-45ef-9533-bed8b91186af
+index-Mg6uEwxo.js:397 [WebSocket] ==== EFFECT TRIGGERED ====
+index-Mg6uEwxo.js:397 [WebSocket] Dependencies - draftId: true userId: true
+index-Mg6uEwxo.js:397 [WebSocket] Current connection state: disconnected
+index-Mg6uEwxo.js:397 [WebSocket] wsRef exists: false
+index-Mg6uEwxo.js:397 [WebSocket] Previous draft ID: null
+index-Mg6uEwxo.js:397 [WebSocket] Current draft ID: 16565be8-cdf8-45ef-9533-bed8b91186af
+index-Mg6uEwxo.js:397 [WebSocket] ✅ Dependencies ready - initiating connection
+index-Mg6uEwxo.js:397 [WebSocket] 🔄 LIFECYCLE: Connect called with: Object
+index-Mg6uEwxo.js:397 [WebSocket] 🔍 LIFECYCLE CHECK: Validating single connection per session
+index-Mg6uEwxo.js:397 [WebSocket] ✅ LIFECYCLE: All requirements met, creating single WebSocket instance
+index-Mg6uEwxo.js:397 [WebSocket] 🔍 VALIDATION: Draft ID: 16565be8-cdf8-45ef-9533-bed8b91186af length: 36
+index-Mg6uEwxo.js:397 [WebSocket] 🔍 VALIDATION: User ID: d18b7016-970e-4da5-8523-f11f8888a8e0 length: 36
+index-Mg6uEwxo.js:397 [WebSocket] Connecting to draft immediately after reset/change...
+index-Mg6uEwxo.js:397 [SimpleWS] Starting connection attempt
+index-Mg6uEwxo.js:397 [SimpleWS] draftId: 16565be8-cdf8-45ef-9533-bed8b91186af
+index-Mg6uEwxo.js:397 [SimpleWS] userId: d18b7016-970e-4da5-8523-f11f8888a8e0
+index-Mg6uEwxo.js:397 [SimpleWS] Connecting to: wss://mok-sports-draft-mokfantasysport.replit.app/draft-ws?userId=d18b7016-970e-4da5-8523-f11f8888a8e0&draftId=16565be8-cdf8-45ef-9533-bed8b91186af
+index-Mg6uEwxo.js:397 [PersistentWS] Attempting connection # 1
+index-Mg6uEwxo.js:353 [StableWebSocket] 🔐 Auth confirmed, establishing connection
+index-Mg6uEwxo.js:353 [StableWebSocket] 🧹 Cleaning up all timers and connections
+index-Mg6uEwxo.js:353 [StableWebSocket] 🚀 Establishing connection for user: Sky
+index-Mg6uEwxo.js:397 [Draft] === STARTING DRAFT FETCH ===
+index-Mg6uEwxo.js:397 [Draft] Draft ID: 16565be8-cdf8-45ef-9533-bed8b91186af
+index-Mg6uEwxo.js:397 [Draft] Auth status - User: Sky Authenticated: true Loading: false
+index-Mg6uEwxo.js:397 [Draft] Token available: true
+index-Mg6uEwxo.js:397 [Draft] Current URL: https://mok-sports-draft-mokfantasysport.replit.app/draft/16565be8-cdf8-45ef-9533-bed8b91186af
+index-Mg6uEwxo.js:397 [Draft] Current pathname: /draft/16565be8-cdf8-45ef-9533-bed8b91186af
+index-Mg6uEwxo.js:397 [Draft] Making API request to: /api/drafts/16565be8-cdf8-45ef-9533-bed8b91186af
+index-Mg6uEwxo.js:397 [SMOOTH TIMER] Display time: 0.0 isCountingDown: false localTime: 0.0
+index-Mg6uEwxo.js:397 [Draft] All hooks declared, starting conditional logic
+index-Mg6uEwxo.js:397 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1755218320362
+index-Mg6uEwxo.js:397 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-Mg6uEwxo.js:353 [SW Hook] Service worker registered successfully
+index-Mg6uEwxo.js:353 [StableWebSocket] ✅ Connection established
+index-Mg6uEwxo.js:353 [StableWebSocket] 📡 Subscribed to admin broadcasts
+index-Mg6uEwxo.js:353 [StableWebSocket] ⏰ Keepalive started (25s interval)
+index-Mg6uEwxo.js:397 [App] Draft route matched with params: Object
+index-Mg6uEwxo.js:397 [App] Current location: https://mok-sports-draft-mokfantasysport.replit.app/draft/16565be8-cdf8-45ef-9533-bed8b91186af
+index-Mg6uEwxo.js:397 [SMOOTH TIMER] Display time: 0.0 isCountingDown: false localTime: 0.0
+index-Mg6uEwxo.js:397 [Draft] All hooks declared, starting conditional logic
+index-Mg6uEwxo.js:397 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1755218320415
+index-Mg6uEwxo.js:397 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-Mg6uEwxo.js:397 [App] WebSocket status: connected (Connected)
+index-Mg6uEwxo.js:397 [App] ✅ Real-time updates active - scores will update instantly
+index-Mg6uEwxo.js:397 [SMOOTH TIMER] Display time: 0.0 isCountingDown: false localTime: 0.0
+index-Mg6uEwxo.js:397 [Draft] All hooks declared, starting conditional logic
+index-Mg6uEwxo.js:397 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1755218320454
+index-Mg6uEwxo.js:397 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-Mg6uEwxo.js:397 [SMOOTH TIMER] Display time: 0.0 isCountingDown: false localTime: 0.0
+index-Mg6uEwxo.js:397 [Draft] All hooks declared, starting conditional logic
+index-Mg6uEwxo.js:397 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1755218320455
+index-Mg6uEwxo.js:397 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-Mg6uEwxo.js:353 [StableWebSocket] 📨 Message received: admin_ready
+index-Mg6uEwxo.js:353 [StableWebSocket] ✅ Server confirmation: admin_ready
+index-Mg6uEwxo.js:353 [StableWebSocket] 📨 Message received: connected
+index-Mg6uEwxo.js:353 [StableWebSocket] ✅ Server confirmation: connected
+index-Mg6uEwxo.js:397 [SimpleWS] ✅ Connected successfully
+index-Mg6uEwxo.js:397 [SimpleWS] Initial ping sent
+index-Mg6uEwxo.js:397 [SimpleWS] Message received: {"type":"connected","draftId":"16565be8-cdf8-45ef-9533-bed8b91186af","userId":"d18b7016-970e-4da5-8523-f11f8888a8e0","timestamp":1755218320095,"message":"WebSocket connection established successfully on Reserved VM"}
+index-Mg6uEwxo.js:397 [SMOOTH TIMER] Display time: 0.0 isCountingDown: false localTime: 0.0
+index-Mg6uEwxo.js:397 [Draft] All hooks declared, starting conditional logic
+index-Mg6uEwxo.js:397 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1755218320568
+index-Mg6uEwxo.js:397 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-Mg6uEwxo.js:397 [SimpleWS] Message received: {"type":"connected","draftId":"16565be8-cdf8-45ef-9533-bed8b91186af","timestamp":1755218320096}
+index-Mg6uEwxo.js:397 [SMOOTH TIMER] Display time: 0.0 isCountingDown: false localTime: 0.0
+index-Mg6uEwxo.js:397 [Draft] All hooks declared, starting conditional logic
+index-Mg6uEwxo.js:397 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1755218320569
+index-Mg6uEwxo.js:397 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-Mg6uEwxo.js:397 [SMOOTH TIMER] Display time: 0.0 isCountingDown: false localTime: 0.0
+index-Mg6uEwxo.js:397 [Draft] All hooks declared, starting conditional logic
+index-Mg6uEwxo.js:397 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1755218320574
+index-Mg6uEwxo.js:397 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-Mg6uEwxo.js:397 [SimpleWS] Message received: {"type":"pong","draftId":"16565be8-cdf8-45ef-9533-bed8b91186af","timestamp":1755218320143}
+index-Mg6uEwxo.js:397 [SMOOTH TIMER] Display time: 0.0 isCountingDown: false localTime: 0.0
+index-Mg6uEwxo.js:397 [Draft] All hooks declared, starting conditional logic
+index-Mg6uEwxo.js:397 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1755218320616
+index-Mg6uEwxo.js:397 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+index-Mg6uEwxo.js:397 [Draft] Response received: Object
+index-Mg6uEwxo.js:397 [Draft] Successfully fetched draft data: Object
+index-Mg6uEwxo.js:397 [Draft] === DRAFT FETCH SUCCESS ===
+index-Mg6uEwxo.js:397 [SMOOTH TIMER] Display time: 0.0 isCountingDown: false localTime: 0.0
+index-Mg6uEwxo.js:397 [Draft] All hooks declared, starting conditional logic
+index-Mg6uEwxo.js:397 [Draft] RENDER DEBUG - authLoading: false isLoading: false error: false draftData: true isAuthenticated: true Time: 1755218320644
+index-Mg6uEwxo.js:397 🔍 [TIMER DEBUG] Server Time: 0
+index-Mg6uEwxo.js:397 🔍 [TIMER DEBUG] Display Time: 0
+index-Mg6uEwxo.js:397 🔍 [TIMER DEBUG] Current Player: Gamma Bot
+index-Mg6uEwxo.js:397 [SimpleWS] Message received: {"type":"draft_state","draftId":"16565be8-cdf8-45ef-9533-bed8b91186af","data":{},"timestamp":1755218320196}
+index-Mg6uEwxo.js:397 [SMOOTH TIMER] Display time: 0.0 isCountingDown: false localTime: 0.0
+index-Mg6uEwxo.js:397 [Draft] All hooks declared, starting conditional logic
+index-Mg6uEwxo.js:397 [Draft] RENDER DEBUG - authLoading: false isLoading: false error: false draftData: true isAuthenticated: true Time: 1755218320673
+index-Mg6uEwxo.js:397 🔍 [TIMER DEBUG] Server Time: 0
+index-Mg6uEwxo.js:397 🔍 [TIMER DEBUG] Display Time: 0
+index-Mg6uEwxo.js:397 🔍 [TIMER DEBUG] Current Player: Gamma Bot
+svg:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+index-Mg6uEwxo.js:397 [PersistentWS] ✅ Connected successfully
+index-Mg6uEwxo.js:397 [PersistentWS] Message received: {"type":"connected","draftId":"16565be8-cdf8-45ef-9533-bed8b91186af","userId":"d18b7016-970e-4da5-8523-f11f8888a8e0","timestamp":1755218320253,"message":"WebSocket connection established successfully on Reserved VM"}
+index-Mg6uEwxo.js:397 [SMOOTH TIMER] Display time: 0.0 isCountingDown: false localTime: 0.0
+index-Mg6uEwxo.js:397 [Draft] All hooks declared, starting conditional logic
+index-Mg6uEwxo.js:397 [Draft] RENDER DEBUG - authLoading: false isLoading: false error: false draftData: true isAuthenticated: true Time: 1755218320728
+index-Mg6uEwxo.js:397 🔍 [TIMER DEBUG] Server Time: 0
+index-Mg6uEwxo.js:397 🔍 [TIMER DEBUG] Display Time: 0
+index-Mg6uEwxo.js:397 🔍 [TIMER DEBUG] Current Player: Gamma Bot
+index-Mg6uEwxo.js:397 [PersistentWS] Message received: {"type":"connected","draftId":"16565be8-cdf8-45ef-9533-bed8b91186af","timestamp":1755218320254}
+index-Mg6uEwxo.js:397 [SMOOTH TIMER] Display time: 0.0 isCountingDown: false localTime: 0.0
+index-Mg6uEwxo.js:397 [Draft] All hooks declared, starting conditional logic
+index-Mg6uEwxo.js:397 [Draft] RENDER DEBUG - authLoading: false isLoading: false error: false draftData: true isAuthenticated: true Time: 1755218320730
+index-Mg6uEwxo.js:397 🔍 [TIMER DEBUG] Server Time: 0
+index-Mg6uEwxo.js:397 🔍 [TIMER DEBUG] Display Time: 0
+index-Mg6uEwxo.js:397 🔍 [TIMER DEBUG] Current Player: Gamma Bot
+JAX.png:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+index-Mg6uEwxo.js:397 [PersistentWS] Message received: {"type":"pong","draftId":"16565be8-cdf8-45ef-9533-bed8b91186af","timestamp":1755218320305}
+index-Mg6uEwxo.js:397 [SMOOTH TIMER] Display time: 0.0 isCountingDown: false localTime: 0.0
+index-Mg6uEwxo.js:397 [Draft] All hooks declared, starting conditional logic
+index-Mg6uEwxo.js:397 [Draft] RENDER DEBUG - authLoading: false isLoading: false error: false draftData: true isAuthenticated: true Time: 1755218320776
+index-Mg6uEwxo.js:397 🔍 [TIMER DEBUG] Server Time: 0
+index-Mg6uEwxo.js:397 🔍 [TIMER DEBUG] Display Time: 0
+index-Mg6uEwxo.js:397 🔍 [TIMER DEBUG] Current Player: Gamma Bot
+index-Mg6uEwxo.js:397 [PersistentWS] Message received: {"type":"draft_state","draftId":"16565be8-cdf8-45ef-9533-bed8b91186af","data":{},"timestamp":1755218320354}
+index-Mg6uEwxo.js:397 [SMOOTH TIMER] Display time: 0.0 isCountingDown: false localTime: 0.0
+index-Mg6uEwxo.js:397 [Draft] All hooks declared, starting conditional logic
+index-Mg6uEwxo.js:397 [Draft] RENDER DEBUG - authLoading: false isLoading: false error: false draftData: true isAuthenticated: true Time: 1755218320826
+index-Mg6uEwxo.js:397 🔍 [TIMER DEBUG] Server Time: 0
+index-Mg6uEwxo.js:397 🔍 [TIMER DEBUG] Display Time: 0
+index-Mg6uEwxo.js:397 🔍 [TIMER DEBUG] Current Player: Gamma Bot
+index-Mg6uEwxo.js:353 [StableWebSocket] ✅ Connection established
+index-Mg6uEwxo.js:353 [StableWebSocket] 📡 Subscribed to admin broadcasts
+index-Mg6uEwxo.js:353 [StableWebSocket] ⏰ Keepalive started (25s interval)
+index-Mg6uEwxo.js:397 [SMOOTH TIMER] Display time: 0.0 isCountingDown: false localTime: 0.0
+index-Mg6uEwxo.js:397 [Draft] All hooks declared, starting conditional logic
+index-Mg6uEwxo.js:397 [Draft] RENDER DEBUG - authLoading: false isLoading: false error: false draftData: true isAuthenticated: true Time: 1755218320890
+index-Mg6uEwxo.js:397 🔍 [TIMER DEBUG] Server Time: 0
+index-Mg6uEwxo.js:397 🔍 [TIMER DEBUG] Display Time: 0
+index-Mg6uEwxo.js:397 🔍 [TIMER DEBUG] Current Player: Gamma Bot
+index-Mg6uEwxo.js:397 [WebSocket] ✅ Draft exists, proceeding with connection
+index-Mg6uEwxo.js:397 [WebSocket] 🔄 LIFECYCLE: Connect called with: Object
+index-Mg6uEwxo.js:397 [WebSocket] 🔍 LIFECYCLE CHECK: Validating single connection per session
+index-Mg6uEwxo.js:397 [WebSocket] ✅ LIFECYCLE: All requirements met, creating single WebSocket instance
+index-Mg6uEwxo.js:397 [WebSocket] 🔍 VALIDATION: Draft ID: 16565be8-cdf8-45ef-9533-bed8b91186af length: 36
+index-Mg6uEwxo.js:397 [WebSocket] 🔍 VALIDATION: User ID: d18b7016-970e-4da5-8523-f11f8888a8e0 length: 36
+index-Mg6uEwxo.js:397 [WebSocket] Connecting to draft immediately after reset/change...
+index-Mg6uEwxo.js:353 [StableWebSocket] 📨 Message received: admin_ready
+index-Mg6uEwxo.js:353 [StableWebSocket] ✅ Server confirmation: admin_ready
+index-Mg6uEwxo.js:353 [StableWebSocket] ❌ Error parsing message: TypeError: v.current is not a function
+    at WebSocket.<anonymous> (index-Mg6uEwxo.js:353:73945)
+(anonymous) @ index-Mg6uEwxo.js:353Understand this error
+index-Mg6uEwxo.js:353 [StableWebSocket] 📨 Message received: connected
+index-Mg6uEwxo.js:353 [StableWebSocket] ✅ Server confirmation: connected
+index-Mg6uEwxo.js:353 [StableWebSocket] ❌ Error parsing message: TypeError: v.current is not a function
+    at WebSocket.<anonymous> (index-Mg6uEwxo.js:353:73945)
+(anonymous) @ index-Mg6uEwxo.js:353Understand this error
+index-Mg6uEwxo.js:353 [StableWebSocket] 💓 Sending keepalive ping
+index-Mg6uEwxo.js:353 [StableWebSocket] 📨 Message received: pong
+index-Mg6uEwxo.js:353 [StableWebSocket] 💚 Keepalive pong received - connection healthy
+index-Mg6uEwxo.js:353 [StableWebSocket] 💓 Sending keepalive ping
+index-Mg6uEwxo.js:353 [StableWebSocket] 📨 Message received: pong
+index-Mg6uEwxo.js:353 [StableWebSocket] 💚 Keepalive pong received - connection healthy
+index-Mg6uEwxo.js:353 [StableWebSocket] ❌ Error parsing message: TypeError: v.current is not a function
+    at WebSocket.<anonymous> (index-Mg6uEwxo.js:353:73945)
+(anonymous) @ index-Mg6uEwxo.js:353Understand this error
+index-Mg6uEwxo.js:397 [PersistentWS] Message received: {"type":"draft_state","draftId":"16565be8-cdf8-45ef-9533-bed8b91186af","data":{},"timestamp":1755218353569}
+index-Mg6uEwxo.js:397 [SMOOTH TIMER] Display time: 0.0 isCountingDown: false localTime: 0.0
+index-Mg6uEwxo.js:397 [Draft] All hooks declared, starting conditional logic
+index-Mg6uEwxo.js:397 [Draft] RENDER DEBUG - authLoading: false isLoading: false error: false draftData: true isAuthenticated: true Time: 1755218354048
+index-Mg6uEwxo.js:397 🔍 [TIMER DEBUG] Server Time: 0
+index-Mg6uEwxo.js:397 🔍 [TIMER DEBUG] Display Time: 0
+index-Mg6uEwxo.js:397 🔍 [TIMER DEBUG] Current Player: Gamma Bot
+index-Mg6uEwxo.js:397 [Draft] === STARTING DRAFT FETCH ===
+index-Mg6uEwxo.js:397 [Draft] Draft ID: 16565be8-cdf8-45ef-9533-bed8b91186af
+index-Mg6uEwxo.js:397 [Draft] Auth status - User: Sky Authenticated: true Loading: false
+index-Mg6uEwxo.js:397 [Draft] Token available: true
+index-Mg6uEwxo.js:397 [Draft] Current URL: https://mok-sports-draft-mokfantasysport.replit.app/draft/16565be8-cdf8-45ef-9533-bed8b91186af
+index-Mg6uEwxo.js:397 [Draft] Current pathname: /draft/16565be8-cdf8-45ef-9533-bed8b91186af
+index-Mg6uEwxo.js:397 [Draft] Making API request to: /api/drafts/16565be8-cdf8-45ef-9533-bed8b91186af
+sw.js?v=1755218320318&r=0.1456750438125154:2 [SW] NUCLEAR OPTION - Emergency service worker loading
+sw.js?v=1755218320318&r=0.1456750438125154:88 [SW] Service worker starting, version: v1.7.0-nuclear-unregister-1755218365442
+sw.js?v=1755218320318&r=0.1456750438125154:305 [SW] Service worker script loaded successfully
+index-Mg6uEwxo.js:397 [Draft] Response received: Object
+index-Mg6uEwxo.js:397 [Draft] Successfully fetched draft data: Object
+index-Mg6uEwxo.js:397 [Draft] === DRAFT FETCH SUCCESS ===
+sw.js?v=1755218320318&r=0.1456750438125154:64 [SW] BYPASSING CACHE for JS file: https://mok-sports-draft-mokfantasysport.replit.app/manifest.json
+sw.js?v=1755218320318&r=0.1456750438125154:164 [SW] Fetching /draft/16565be8-cdf8-45ef-9533-bed8b91186af from network
+sw.js?v=1755218320318&r=0.1456750438125154:164 [SW] Fetching /assets/index-BzAkN2xq.css from network
+index-Mg6uEwxo.js:353 [StableWebSocket] 💓 Sending keepalive ping
+index-Mg6uEwxo.js:353 [StableWebSocket] 📨 Message received: pong
+index-Mg6uEwxo.js:353 [StableWebSocket] 💚 Keepalive pong received - connection healthy
+index-Mg6uEwxo.js:353 [StableWebSocket] 💓 Sending keepalive ping
+index-Mg6uEwxo.js:397 [Draft] === STARTING DRAFT FETCH ===
+index-Mg6uEwxo.js:397 [Draft] Draft ID: 16565be8-cdf8-45ef-9533-bed8b91186af
+index-Mg6uEwxo.js:397 [Draft] Auth status - User: Sky Authenticated: true Loading: false
+index-Mg6uEwxo.js:397 [Draft] Token available: true
+index-Mg6uEwxo.js:397 [Draft] Current URL: https://mok-sports-draft-mokfantasysport.replit.app/draft/16565be8-cdf8-45ef-9533-bed8b91186af
+index-Mg6uEwxo.js:397 [Draft] Current pathname: /draft/16565be8-cdf8-45ef-9533-bed8b91186af
+index-Mg6uEwxo.js:397 [Draft] Making API request to: /api/drafts/16565be8-cdf8-45ef-9533-bed8b91186af
+index-Mg6uEwxo.js:353 [StableWebSocket] 📨 Message received: pong
+index-Mg6uEwxo.js:353 [StableWebSocket] 💚 Keepalive pong received - connection healthy
+index-Mg6uEwxo.js:353 [StableWebSocket] ❌ Error parsing message: TypeError: v.current is not a function
+    at WebSocket.<anonymous> (index-Mg6uEwxo.js:353:73945)
+(anonymous) @ index-Mg6uEwxo.js:353Understand this error
+index-Mg6uEwxo.js:397 [Draft] Response received: {status: 200, statusText: '', ok: true, headers: {…}}
+index-Mg6uEwxo.js:397 [Draft] Successfully fetched draft data: {state: {…}, isCurrentUser: false, currentPlayer: {…}}
+index-Mg6uEwxo.js:397 [Draft] === DRAFT FETCH SUCCESS ===
