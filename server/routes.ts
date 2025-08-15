@@ -22,6 +22,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Initialize passport
   app.use(passport.initialize());
 
+  // Health check endpoint for deployment monitoring
+  app.get("/api/health", async (req, res) => {
+    try {
+      // Check database connection
+      const dbCheck = await db.select().from(sql`(SELECT 1 as test)`).limit(1);
+      
+      const healthStatus = {
+        status: "healthy",
+        timestamp: new Date().toISOString(),
+        version: process.env.npm_package_version || "unknown",
+        database: dbCheck.length > 0 ? "connected" : "disconnected",
+        environment: process.env.NODE_ENV || "unknown"
+      };
+      
+      res.status(200).json(healthStatus);
+    } catch (error) {
+      res.status(503).json({
+        status: "unhealthy", 
+        timestamp: new Date().toISOString(),
+        error: error instanceof Error ? error.message : "Unknown error"
+      });
+    }
+  });
+
   // Google OAuth routes - only if OAuth is configured
   if (isOAuthConfigured) {
     app.get("/api/auth/google", 
