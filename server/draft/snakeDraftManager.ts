@@ -398,15 +398,15 @@ export class SnakeDraftManager {
         return;
       }
       
-      // CRITICAL FIX: Check if this is a robot user and handle differently
+      // ENHANCED AUTOPICK: Handle both robot and human users when timer expires
       if (this.robotManager?.isRobot(userId)) {
-        console.log(`🤖 Timer expired for robot user ${userId} - using robot autopick logic`);
+        console.log(`🤖 Timer expired for robot user ${userId} - using intelligent robot autopick`);
         await this.simulateBotPickPrivate(draftId, userId);
         return;
       }
       
-      // Handle human user autopick (original logic)
-      console.log(`👤 Timer expired for human user ${userId} - using random autopick`);
+      // Handle human user autopick - they should also get autopicked when stuck at 0:00
+      console.log(`👤 Timer expired for human user ${userId} - triggering automatic pick`);
       
       const availableTeams = await this.storage.getAvailableNflTeams(draftId);
       if (availableTeams.length === 0) {
