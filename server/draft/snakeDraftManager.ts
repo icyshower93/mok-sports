@@ -776,21 +776,24 @@ export class SnakeDraftManager {
     selectedTeam: NflTeam
   ): Promise<{ isViolation: boolean; allowOverride: boolean; message: string }> {
     const userPicks = await this.storage.getUserDraftPicks(draftId, userId);
+    
+    // FIXED: Check for same conference + division combination (e.g., AFC East vs NFC East)
+    const fullDivision = `${selectedTeam.conference} ${selectedTeam.division}`;
     const divisionCount = userPicks.filter(
-      pick => pick.nflTeam.division === selectedTeam.division
+      pick => `${pick.nflTeam.conference} ${pick.nflTeam.division}` === fullDivision
     ).length;
 
     if (divisionCount >= this.draftConfig.maxTeamsPerDivision) {
       const availableOtherDivisions = await this.storage.getAvailableNflTeams(draftId);
       const hasOtherOptions = availableOtherDivisions.some(
-        team => team.division !== selectedTeam.division
+        team => `${team.conference} ${team.division}` !== fullDivision
       );
 
       return {
         isViolation: true,
         allowOverride: !hasOtherOptions,
         message: hasOtherOptions 
-          ? `Already have a team from ${selectedTeam.division} division`
+          ? `Already have a team from ${fullDivision} division`
           : `Division rule override: no other division options available`
       };
     }
@@ -859,13 +862,16 @@ export class SnakeDraftManager {
   ): Promise<NflTeam[]> {
     const userPicks = await this.storage.getUserDraftPicks(draftId, userId);
     
-    // Get all divisions the user already has teams from
-    const userDivisions = new Set(userPicks.map(p => p.nflTeam.division));
+    // FIXED: Get all conference + division combinations the user already has teams from
+    const userFullDivisions = new Set(
+      userPicks.map(p => `${p.nflTeam.conference} ${p.nflTeam.division}`)
+    );
 
     return availableTeams.filter(team => {
-      // If user already has a team from this division, they can't pick another
+      // If user already has a team from this conference+division, they can't pick another
       // unless the rule allows overrides (when no other options are available)
-      return !userDivisions.has(team.division);
+      const teamFullDivision = `${team.conference} ${team.division}`;
+      return !userFullDivisions.has(teamFullDivision);
     });
   }
 
