@@ -48,17 +48,17 @@ function get2024AuthenticScores(awayTeam: string, homeTeam: string, gameDate: Da
     'BUF@MIA': { homeScore: 10, awayScore: 31 },
     'SF@MIN': { homeScore: 17, awayScore: 23 },
     'NYJ@TEN': { homeScore: 17, awayScore: 24 },
-    'CAR@LAC': { homeScore: 26, awayScore: 3 },
-    'NE@SEA': { homeScore: 23, awayScore: 20 },
-    'DET@TB': { homeScore: 20, awayScore: 16 },
-    'NYG@WSH': { homeScore: 21, awayScore: 18 },
-    'GB@IND': { homeScore: 16, awayScore: 21 },
-    'BAL@LV': { homeScore: 26, awayScore: 23 },
+    'LAC@CAR': { homeScore: 26, awayScore: 3 },  // Fixed: LAC at CAR
+    'SEA@NE': { homeScore: 23, awayScore: 20 },  // Fixed: SEA at NE  
+    'TB@DET': { homeScore: 20, awayScore: 16 },  // Fixed: TB at DET
+    'WSH@NYG': { homeScore: 21, awayScore: 18 }, // Fixed: WSH at NYG
+    'IND@GB': { homeScore: 16, awayScore: 21 },  // Fixed: IND at GB
+    'LV@BAL': { homeScore: 26, awayScore: 23 },  // Fixed: LV at BAL
     'DAL@NO': { homeScore: 44, awayScore: 19 },
-    'JAX@CLE': { homeScore: 18, awayScore: 13 },
+    'CLE@JAX': { homeScore: 18, awayScore: 13 }, // Fixed: CLE at JAX
     'LAR@ARI': { homeScore: 41, awayScore: 10 },
     'CIN@KC': { homeScore: 26, awayScore: 25 },
-    'DEN@PIT': { homeScore: 13, awayScore: 6 },
+    'PIT@DEN': { homeScore: 13, awayScore: 6 },  // Fixed: PIT at DEN
     'HOU@CHI': { homeScore: 19, awayScore: 13 },
     'PHI@ATL': { homeScore: 22, awayScore: 21 }
   };
@@ -279,7 +279,7 @@ async function processGamesForDate(targetDate: Date): Promise<number> {
             homeScore = authentic2024Scores.homeScore;
             awayScore = authentic2024Scores.awayScore;
             foundScores = true;
-            console.log(`🏈 Using ${game.week <= 2 ? 'authentic' : 'realistic'} 2024 Week ${game.week} scores for ${game.awayTeamCode} @ ${game.homeTeamCode}: ${awayScore}-${homeScore}`);
+            console.log(`🏈 Using authentic 2024 Week ${game.week} scores for ${game.awayTeamCode} @ ${game.homeTeamCode}: ${awayScore}-${homeScore}`);
           }
         }
 
