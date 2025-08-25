@@ -300,10 +300,21 @@ export class SnakeDraftManager {
         return { success: false, error: 'Draft is not active' };
       }
 
+      // ENHANCED TURN VALIDATION
       const currentUserId = this.getCurrentPickUser(draft);
       if (!currentUserId || currentUserId !== pickRequest.userId) {
+        console.warn(`❌ Turn validation failed: Expected ${currentUserId}, got ${pickRequest.userId}`);
         return { success: false, error: 'Not your turn to pick' };
       }
+      
+      // ADDITIONAL VALIDATION: Check for consecutive picks by same user
+      const lastPick = await this.storage.getLastDraftPick(draftId);
+      if (lastPick && lastPick.userId === pickRequest.userId) {
+        console.error(`🚫 BLOCKED: User ${pickRequest.userId} attempted consecutive picks - last pick ${lastPick.pickNumber}`);
+        return { success: false, error: 'Cannot make consecutive picks - draft order violation' };
+      }
+      
+      console.log(`✅ Turn validation passed: User ${pickRequest.userId} for Round ${draft.currentRound}, Pick ${draft.currentPick}`);
 
       // Validate team is available
       const availableTeams = await this.storage.getAvailableNflTeams(draftId);
@@ -329,6 +340,10 @@ export class SnakeDraftManager {
         }
       }
 
+      // ENHANCED PICK VALIDATION: Log draft state before atomic operation
+      console.log(`🔄 Creating pick for user ${pickRequest.userId}: Round ${draft.currentRound}, Pick ${draft.currentPick}`);
+      console.log(`📊 Draft state: ${draft.draftOrder.length} users, ${draft.totalRounds} rounds total`);
+      
       // RACE CONDITION FIX: Use atomic pick creation to prevent duplicate picks
       const pickData = {
         draftId,
@@ -338,6 +353,13 @@ export class SnakeDraftManager {
         pickNumber: draft.currentPick,
         isAutoPick: pickRequest.isAutoPick || false
       };
+      
+      // Final validation before atomic operation
+      const expectedUser = this.getCurrentPickUser(draft);
+      if (expectedUser !== pickRequest.userId) {
+        console.error(`🚫 FINAL VALIDATION FAILED: Expected ${expectedUser}, got ${pickRequest.userId}`);
+        return { success: false, error: 'Turn validation failed - draft state changed' };
+      }
 
       // Stop current timer BEFORE atomic operation to prevent timer conflicts
       await this.stopPickTimer(draftId, pickRequest.userId);
@@ -646,9 +668,48 @@ export class SnakeDraftManager {
       console.log(`🔄 Advancing to Round ${nextRound}, Pick ${nextPick}`);
     }
     
-    // Check if draft is complete (all rounds finished)
+    // COMPREHENSIVE DRAFT COMPLETION VALIDATION
     if (nextRound > draft.totalRounds) {
+      console.log(`🔍 Draft potentially complete - validating pick distribution...`);
+      
+      // Get all picks for this draft to validate distribution
+      const allPicks = await this.storage.getDraftPicks(draftId);
+      const expectedTotalPicks = totalUsers * draft.totalRounds;
+      
+      console.log(`📊 Pick validation: ${allPicks.length}/${expectedTotalPicks} total picks`);
+      
+      // CRITICAL VALIDATION 1: Correct total number of picks
+      if (allPicks.length !== expectedTotalPicks) {
+        console.error(`❌ DRAFT COMPLETION BLOCKED: Expected ${expectedTotalPicks} picks, got ${allPicks.length}`);
+        throw new Error(`Draft completion blocked: Invalid pick count (${allPicks.length}/${expectedTotalPicks})`);
+      }
+      
+      // CRITICAL VALIDATION 2: Each user has exactly the right number of teams
+      const userPickCounts = new Map<string, number>();
+      for (const pick of allPicks) {
+        userPickCounts.set(pick.userId, (userPickCounts.get(pick.userId) || 0) + 1);
+      }
+      
+      let validationPassed = true;
+      const validationErrors: string[] = [];
+      
+      for (const userId of draft.draftOrder) {
+        const userPicks = userPickCounts.get(userId) || 0;
+        if (userPicks !== draft.totalRounds) {
+          validationPassed = false;
+          validationErrors.push(`User ${userId}: ${userPicks}/${draft.totalRounds} teams`);
+        }
+      }
+      
+      if (!validationPassed) {
+        console.error(`❌ DRAFT COMPLETION BLOCKED: Unbalanced team distribution:`);
+        validationErrors.forEach(error => console.error(`   ${error}`));
+        throw new Error(`Draft completion blocked: Unbalanced teams - ${validationErrors.join(', ')}`);
+      }
+      
+      console.log(`✅ Draft validation passed: ${totalUsers} users × ${draft.totalRounds} rounds = ${expectedTotalPicks} picks`);
       console.log(`🎉 Draft complete! All ${draft.totalRounds} rounds finished with ${totalPicks} total picks`);
+      
       await this.storage.completeDraft(draftId);
       
       // Initialize stable teams from draft picks
