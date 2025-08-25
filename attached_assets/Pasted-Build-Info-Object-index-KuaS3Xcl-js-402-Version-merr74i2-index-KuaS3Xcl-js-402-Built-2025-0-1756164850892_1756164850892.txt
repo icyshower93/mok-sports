@@ -1,0 +1,131 @@
+Build Info: Object
+index-KuaS3Xcl.js:402 📦 Version: merr74i2
+index-KuaS3Xcl.js:402 📅 Built: 2025-08-25T23:33:51.626Z
+index-KuaS3Xcl.js:402 🔧 Environment: production
+index-KuaS3Xcl.js:358 [StableWebSocket] ⏳ Waiting for authentication...
+index-KuaS3Xcl.js:402 [App] WebSocket status: waiting_auth (Disconnected)
+index-KuaS3Xcl.js:402 [App] ⏳ Waiting for authentication to complete
+index-KuaS3Xcl.js:358 [Auth] Token check - Has token: true Has user: false Loading: true
+index-KuaS3Xcl.js:358 [SW Hook] EMERGENCY: Unregistering all existing service workers
+index-KuaS3Xcl.js:358 [SW Hook] Found 1 existing registrations
+index-KuaS3Xcl.js:358 [SW Hook] Unregistering existing service worker
+index-KuaS3Xcl.js:358 [SW Hook] Found 1 caches to delete
+index-KuaS3Xcl.js:358 [SW Hook] Deleting cache: mok-sports-dynamic-v1.7.0-nuclear-unregister-1756164803026
+index-KuaS3Xcl.js:358 [SW Hook] Registering fresh service worker: /sw.js?v=1756164831744&r=0.027003175083639364
+index-KuaS3Xcl.js:358 [StableWebSocket] 🔐 Auth confirmed, establishing connection
+index-KuaS3Xcl.js:358 [StableWebSocket] 🧹 Cleaning up all timers and connections
+index-KuaS3Xcl.js:358 [StableWebSocket] 🚀 Establishing connection for user: Mok Sports
+index-KuaS3Xcl.js:358 [Auth] Token check - Has token: true Has user: true Loading: false
+index-KuaS3Xcl.js:358 [AutoPushRefresh] Legacy hook delegating to SubscriptionManager
+index-KuaS3Xcl.js:402 [App] WebSocket status: connecting (Disconnected)
+a800b90a-0131-4239-8cee-02c420193628:1 Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner.
+sw.js?v=1756164831744&r=0.027003175083639364:2 [SW] NUCLEAR OPTION - Emergency service worker loading
+sw.js?v=1756164831744&r=0.027003175083639364:88 [SW] Service worker starting, version: v1.7.0-nuclear-unregister-1756164831897
+sw.js?v=1756164831744&r=0.027003175083639364:305 [SW] Service worker script loaded successfully
+index-KuaS3Xcl.js:358 [SW Hook] Service worker registered successfully
+sw.js?v=1756164831744&r=0.027003175083639364:19 [SW] EMERGENCY INSTALL - Clearing all caches and forcing activation
+sw.js?v=1756164831744&r=0.027003175083639364:92 [SW] Installing service worker, version: v1.7.0-nuclear-unregister-1756164831897
+sw.js?v=1756164831744&r=0.027003175083639364:22 [SW] Found caches to delete: Array(0)
+sw.js?v=1756164831744&r=0.027003175083639364:30 [SW] All caches deleted - skipping waiting
+sw.js?v=1756164831744&r=0.027003175083639364:96 [SW] Caching static files
+index-KuaS3Xcl.js:402 [App] Draft route matched with params: Object
+index-KuaS3Xcl.js:402 [App] Current location: https://mok-sports-draft-mokfantasysport.replit.app/draft/a800b90a-0131-4239-8cee-02c420193628
+index-KuaS3Xcl.js:358 [ErrorBoundary] Error caught: ReferenceError Cannot access 'j' before initialization
+getDerivedStateFromError @ index-KuaS3Xcl.js:358Understand this error
+index-KuaS3Xcl.js:358 [ErrorBoundary] Stack trace: ReferenceError: Cannot access 'j' before initialization
+    at CP (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-KuaS3Xcl.js:402:50762)
+    at EP (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-KuaS3Xcl.js:402:63022)
+    at Sf (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-KuaS3Xcl.js:38:16998)
+    at Jv (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-KuaS3Xcl.js:40:43963)
+    at Gv (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-KuaS3Xcl.js:40:39727)
+    at LN (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-KuaS3Xcl.js:40:39655)
+    at wl (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-KuaS3Xcl.js:40:39508)
+    at Rp (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-KuaS3Xcl.js:40:36623)
+    at Or (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-KuaS3Xcl.js:38:3274)
+    at https://mok-sports-draft-mokfantasysport.replit.app/assets/index-KuaS3Xcl.js:40:34207
+getDerivedStateFromError @ index-KuaS3Xcl.js:358Understand this error
+index-KuaS3Xcl.js:402 [App] Draft route matched with params: Object
+index-KuaS3Xcl.js:402 [App] Current location: https://mok-sports-draft-mokfantasysport.replit.app/draft/a800b90a-0131-4239-8cee-02c420193628
+index-KuaS3Xcl.js:358 [ErrorBoundary] Error caught: ReferenceError Cannot access 'j' before initialization
+getDerivedStateFromError @ index-KuaS3Xcl.js:358Understand this error
+index-KuaS3Xcl.js:358 [ErrorBoundary] Stack trace: ReferenceError: Cannot access 'j' before initialization
+    at CP (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-KuaS3Xcl.js:402:50762)
+    at EP (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-KuaS3Xcl.js:402:63022)
+    at Sf (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-KuaS3Xcl.js:38:16998)
+    at Jv (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-KuaS3Xcl.js:40:43963)
+    at Gv (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-KuaS3Xcl.js:40:39727)
+    at LN (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-KuaS3Xcl.js:40:39655)
+    at wl (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-KuaS3Xcl.js:40:39508)
+    at td (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-KuaS3Xcl.js:40:35875)
+    at Rp (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-KuaS3Xcl.js:40:36678)
+    at Or (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-KuaS3Xcl.js:38:3274)
+getDerivedStateFromError @ index-KuaS3Xcl.js:358Understand this error
+index-KuaS3Xcl.js:40 ReferenceError: Cannot access 'j' before initialization
+    at CP (index-KuaS3Xcl.js:402:50762)
+    at EP (index-KuaS3Xcl.js:402:63022)
+    at Sf (index-KuaS3Xcl.js:38:16998)
+    at Jv (index-KuaS3Xcl.js:40:43963)
+    at Gv (index-KuaS3Xcl.js:40:39727)
+    at LN (index-KuaS3Xcl.js:40:39655)
+    at wl (index-KuaS3Xcl.js:40:39508)
+    at td (index-KuaS3Xcl.js:40:35875)
+    at Rp (index-KuaS3Xcl.js:40:36678)
+    at Or (index-KuaS3Xcl.js:38:3274)
+Bu @ index-KuaS3Xcl.js:40Understand this error
+index-KuaS3Xcl.js:358 [ErrorBoundary] DETAILED ERROR - Name: ReferenceError
+componentDidCatch @ index-KuaS3Xcl.js:358Understand this error
+index-KuaS3Xcl.js:358 [ErrorBoundary] DETAILED ERROR - Message: Cannot access 'j' before initialization
+componentDidCatch @ index-KuaS3Xcl.js:358Understand this error
+index-KuaS3Xcl.js:358 [ErrorBoundary] DETAILED ERROR - Stack: ReferenceError: Cannot access 'j' before initialization
+    at CP (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-KuaS3Xcl.js:402:50762)
+    at EP (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-KuaS3Xcl.js:402:63022)
+    at Sf (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-KuaS3Xcl.js:38:16998)
+    at Jv (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-KuaS3Xcl.js:40:43963)
+    at Gv (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-KuaS3Xcl.js:40:39727)
+    at LN (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-KuaS3Xcl.js:40:39655)
+    at wl (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-KuaS3Xcl.js:40:39508)
+    at td (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-KuaS3Xcl.js:40:35875)
+    at Rp (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-KuaS3Xcl.js:40:36678)
+    at Or (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-KuaS3Xcl.js:38:3274)
+componentDidCatch @ index-KuaS3Xcl.js:358Understand this error
+index-KuaS3Xcl.js:358 [ErrorBoundary] Component stack: 
+    at EP (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-KuaS3Xcl.js:402:61583)
+    at ct (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-KuaS3Xcl.js:48:3201)
+    at bj (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-KuaS3Xcl.js:48:4017)
+    at gA (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-KuaS3Xcl.js:402:245582)
+    at OE (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-KuaS3Xcl.js:358:57512)
+    at u (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-KuaS3Xcl.js:48:45884)
+    at V0 (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-KuaS3Xcl.js:358:50486)
+    at IE (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-KuaS3Xcl.js:358:56984)
+    at Uj (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-KuaS3Xcl.js:48:40235)
+    at zE (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-KuaS3Xcl.js:358:77161)
+    at xA
+componentDidCatch @ index-KuaS3Xcl.js:358Understand this error
+index-KuaS3Xcl.js:358 [StableWebSocket] 🧹 Component unmounting, cleaning up
+index-KuaS3Xcl.js:358 [StableWebSocket] 🧹 Cleaning up all timers and connections
+index-KuaS3Xcl.js:358 [StableWebSocket] 🔌 Closing connection with code 4003: unmount
+index-KuaS3Xcl.js:358 WebSocket connection to 'wss://mok-sports-draft-mokfantasysport.replit.app/draft-ws' failed: WebSocket is closed before the connection is established.
+(anonymous) @ index-KuaS3Xcl.js:358Understand this warning
+index-KuaS3Xcl.js:358 [StableWebSocket] ❌ Connection error: Event
+k.onerror @ index-KuaS3Xcl.js:358Understand this error
+index-KuaS3Xcl.js:358 [StableWebSocket] 🔌 Connection closed - Code: 1006, Reason: 
+index-KuaS3Xcl.js:358 [StableWebSocket] 🔄 Reconnecting in 1217.141481799099ms (attempt 1/8)
+sw.js?v=1756164831744&r=0.027003175083639364:99 [SW] Static files cached successfully
+index-KuaS3Xcl.js:358 [StableWebSocket] 🧹 Cleaning up all timers and connections
+index-KuaS3Xcl.js:358 [StableWebSocket] 🚀 Establishing connection for user: Mok Sports
+sw.js?v=1756164831744&r=0.027003175083639364:41 [SW] EMERGENCY ACTIVATE - Taking control of all clients
+sw.js?v=1756164831744&r=0.027003175083639364:110 [SW] Activating service worker, version: v1.7.0-nuclear-unregister-1756164831897
+sw.js?v=1756164831744&r=0.027003175083639364:46 [SW] Deleting remaining cache: mok-sports-static-v1.7.0-nuclear-unregister-1756164831897
+sw.js?v=1756164831744&r=0.027003175083639364:116 [SW] Found caches: Array(1)
+sw.js?v=1756164831744&r=0.027003175083639364:129 [SW] Service worker activated and controlling all clients
+sw.js?v=1756164831744&r=0.027003175083639364:51 [SW] Claiming all clients immediately
+index-KuaS3Xcl.js:358 [StableWebSocket] ✅ Connection established
+index-KuaS3Xcl.js:358 [StableWebSocket] 📡 Subscribed to admin broadcasts
+index-KuaS3Xcl.js:358 [StableWebSocket] ⏰ Keepalive started (25s interval)
+index-KuaS3Xcl.js:358 [StableWebSocket] 📨 Message received: connected
+index-KuaS3Xcl.js:358 [StableWebSocket] ✅ Server confirmation: connected
+index-KuaS3Xcl.js:358 [StableWebSocket] 📨 Message received: admin_ready
+index-KuaS3Xcl.js:358 [StableWebSocket] ✅ Server confirmation: admin_ready
+sw.js?v=1756164831744&r=0.027003175083639364:64 [SW] BYPASSING CACHE for JS file: https://mok-sports-draft-mokfantasysport.replit.app/manifest.json
+sw.js?v=1756164831744&r=0.027003175083639364:164 [SW] Fetching /draft/a800b90a-0131-4239-8cee-02c420193628 from network
+sw.js?v=1756164831744&r=0.027003175083639364:164 [SW] Fetching /assets/index-1SQiDaG8.css from network

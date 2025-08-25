@@ -311,14 +311,13 @@ export default function DraftPage() {
     console.error('Draft fetch error:', error);
   }
 
-  // CRITICAL: Safely declare variables with proper guards
-  const state: DraftState = draftData?.state || {} as DraftState;
-  const isCurrentUser = draftData?.isCurrentUser || false;
+  // CRITICAL FIX: Remove state extraction completely to prevent temporal dead zone
+  // Do NOT extract state - always use draftData?.state with guards
   
   // Early return if essential data is not available to prevent temporal dead zone errors
   const hasEssentialData = draftData && draftData.state;
   
-  console.log('[Draft] Essential data check:', { hasEssentialData, draftData: !!draftData, state: !!state });
+  console.log('[Draft] Essential data check:', { hasEssentialData, draftData: !!draftData, state: !!draftData?.state });
 
   // SMOOTH TIMER SYSTEM: Combines server updates with local countdown
   
@@ -641,7 +640,6 @@ export default function DraftPage() {
   // The timer sync is already handled in the main timer useEffect hook
 
   // Variables moved earlier to prevent temporal dead zone errors
-  // const state and isCurrentUser are now declared above
   const currentPlayer = draftData?.currentPlayer || null;
   const teams = teamsData?.teams || {};
 
@@ -961,7 +959,7 @@ export default function DraftPage() {
                         🎉 Draft Complete!
                       </div>
                       <div className="text-sm text-green-600 dark:text-green-400">
-                        All {draftData?.state?.picks?.length || 0} picks completed across {Math.max(...(draftData?.state?.picks?.map(p => p.round) || [0]))} rounds
+                        All {draftData?.state?.picks?.length || 0} picks completed across {Math.max(...(draftData?.state?.picks?.map((p: any) => p.round) || [0]))} rounds
                       </div>
                     </div>
                     
@@ -997,8 +995,8 @@ export default function DraftPage() {
                 <CardContent className="p-4">
                   {/* League Members and Their Teams - Mobile Layout */}
                   <div className="space-y-4">
-                    {hasEssentialData && draftData.state.draft.draftOrder?.map((userId) => {
-                      const userPicks = draftData.state.picks?.filter(p => p.user.id === userId) || [];
+                    {hasEssentialData && draftData.state.draft.draftOrder?.map((userId: any) => {
+                      const userPicks = draftData.state.picks?.filter((p: any) => p.user.id === userId) || [];
                       const user = userPicks[0]?.user;
                       
                       if (!user) return null;
@@ -1017,7 +1015,7 @@ export default function DraftPage() {
                           </div>
                           {/* Mobile-Friendly Team Grid */}
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                            {userPicks.map((pick) => (
+                            {userPicks.map((pick: any) => (
                               <div 
                                 key={pick.id} 
                                 className="flex items-center space-x-2 p-2 bg-background/60 rounded-lg border text-sm"
@@ -1051,7 +1049,7 @@ export default function DraftPage() {
                   </CardHeader>
                   <CardContent className="p-4">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      {draftData.state.availableTeams.slice(0, 4).map((team) => (
+                      {draftData.state.availableTeams.slice(0, 4).map((team: any) => (
                         <div 
                           key={team.id} 
                           className="flex items-center space-x-3 p-3 bg-muted/30 rounded-lg border"
@@ -1077,11 +1075,11 @@ export default function DraftPage() {
                 <CardContent className="p-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div className="text-center p-4 bg-secondary/30 rounded-lg">
-                      <div className="text-2xl font-bold">{draftData?.state?.picks?.filter(p => !p.isAutoPick).length || 0}</div>
+                      <div className="text-2xl font-bold">{draftData?.state?.picks?.filter((p: any) => !p.isAutoPick).length || 0}</div>
                       <div className="text-xs text-muted-foreground">Manual Picks</div>
                     </div>
                     <div className="text-center p-4 bg-secondary/30 rounded-lg">
-                      <div className="text-2xl font-bold">{draftData?.state?.picks?.filter(p => p.isAutoPick).length || 0}</div>
+                      <div className="text-2xl font-bold">{draftData?.state?.picks?.filter((p: any) => p.isAutoPick).length || 0}</div>
                       <div className="text-xs text-muted-foreground">Auto Picks</div>
                     </div>
                   </div>
@@ -1310,8 +1308,8 @@ export default function DraftPage() {
 
                         {/* Draft Positions */}
                         <div className="space-y-1">
-                          {currentRoundOrder.map((userId, index) => {
-                            const userPicks = draftData?.state?.picks?.filter(p => p.user.id === userId) || [];
+                          {currentRoundOrder.map((userId: any, index: any) => {
+                            const userPicks = draftData?.state?.picks?.filter((p: any) => p.user.id === userId) || [];
                             const isCurrentPick = userId === draftData?.state?.currentUserId;
                             const isUpNext = index === currentPickIndex + 1;
                             const isJustPicked = index === currentPickIndex - 1;
@@ -1442,7 +1440,7 @@ export default function DraftPage() {
                 <CardContent>
                   <ScrollArea className="h-48">
                     <div className="space-y-2">
-                      {hasEssentialData && draftData.state.picks.slice(-8).reverse().map((pick) => (
+                      {hasEssentialData && draftData.state.picks.slice(-8).reverse().map((pick: any) => (
                         <div key={pick.id} className="flex items-center space-x-3 p-2 rounded-lg bg-secondary/50">
                           <TeamLogo 
                             logoUrl={pick.nflTeam.logoUrl}
@@ -1561,7 +1559,7 @@ export default function DraftPage() {
                               : 'text-muted-foreground hover:text-foreground'
                           }`}
                         >
-                          AFC ({hasEssentialData ? (filterTeams(draftData.state.availableTeams?.filter(team => team.conference === 'AFC') || [])?.length || 0) : 0} available)
+                          AFC ({hasEssentialData ? (filterTeams(draftData.state.availableTeams?.filter((team: any) => team.conference === 'AFC') || [])?.length || 0) : 0} available)
                         </button>
                         <button
                           onClick={() => setCurrentConference('NFC')}
@@ -1571,7 +1569,7 @@ export default function DraftPage() {
                               : 'text-muted-foreground hover:text-foreground'
                           }`}
                         >
-                          NFC ({hasEssentialData ? (filterTeams(draftData.state.availableTeams?.filter(team => team.conference === 'NFC') || [])?.length || 0) : 0} available)
+                          NFC ({hasEssentialData ? (filterTeams(draftData.state.availableTeams?.filter((team: any) => team.conference === 'NFC') || [])?.length || 0) : 0} available)
                         </button>
                       </div>
                       
