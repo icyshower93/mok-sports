@@ -488,8 +488,12 @@ export default function DraftPage() {
     }
   }, [displayTime, isCurrentUser]);
 
-  // Calculate progress percentage for timer
-  const progressPercentage = displayTime > 0 ? displayTime / 60 : 0;
+  // TIMER FIX: Use actual draft timer limit instead of hardcoded 60
+  const draftTimerLimit = draftData?.state?.draft?.pickTimeLimit || 120; // Default to 120s if not available
+  const progressPercentage = displayTime > 0 ? Math.min(1.0, displayTime / draftTimerLimit) : 0;
+  
+  // Debug logging for timer sync
+  console.log(`[TIMER SYNC] Display: ${displayTime.toFixed(1)}s, Limit: ${draftTimerLimit}s, Progress: ${(progressPercentage * 100).toFixed(1)}%`);
 
   // Fetch available teams
   const { data: teamsData } = useQuery({
