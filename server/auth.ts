@@ -150,13 +150,13 @@ export function authenticateJWT(req: Request, res: Response, next: NextFunction)
     console.log('[Auth] Available cookies:', Object.keys(req.cookies || {}));
     console.log('[Auth] Authorization header:', req.headers.authorization);
     
-    // Only use development fallback for specific test endpoints
-    if (process.env.NODE_ENV === "development" && req.path.includes('/api/test/')) {
-      console.log('[Auth] Development mode test endpoint - returning Sky Evans');
+    // RESTRICTED: Only use development fallback for very specific test endpoints
+    if (process.env.NODE_ENV === "development" && req.path.includes('/api/debug/test-only')) {
+      console.log('[Auth] Development mode DEBUG endpoint - returning test user (not Sky Evans)');
       (req as any).user = {
-        id: "9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a",
-        name: "Sky Evans",
-        email: "sky@example.com"
+        id: "debug-test-user-12345",
+        name: "Debug Test User",
+        email: "debug@test-only.local"
       };
       return next();
     }

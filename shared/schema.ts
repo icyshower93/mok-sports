@@ -67,7 +67,14 @@ export const draftPicks = pgTable("draft_picks", {
   pickTime: timestamp("pick_time").defaultNow().notNull(),
   isAutoPick: boolean("is_auto_pick").notNull().default(false),
   createdAt: timestamp("created_at").defaultNow().notNull(),
-});
+}, (table) => ({
+  // CRITICAL: Prevent duplicate pick numbers in same draft
+  uniquePickNumber: unique().on(table.draftId, table.pickNumber),
+  // Prevent same user picking multiple times in same round
+  uniqueUserRound: unique().on(table.draftId, table.userId, table.round),
+  // Prevent same team being picked multiple times in same draft
+  uniqueTeamDraft: unique().on(table.draftId, table.nflTeamId),
+}));
 
 export const draftTimers = pgTable("draft_timers", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),

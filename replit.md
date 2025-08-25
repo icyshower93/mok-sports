@@ -18,10 +18,12 @@ Mok Sports is a fantasy sports application that redefines traditional fantasy le
 Preferred communication style: Simple, everyday language.
 
 ## Recent Critical Fixes (August 2025)
-- **Mok Points Calculation Bug RESOLVED**: Fixed week progression logic that was wiping out freshly calculated points immediately after games completed. Implemented smart weekly reset system that preserves points during game processing while enabling proper weekly skins competition.
-- **Weekly Skins Architecture**: Weekly points stored in `user_weekly_scores.totalPoints` (reset each week), season totals calculated dynamically by summing all weeks. Skins awarded based on highest weekly points only.
-- **NFL Game Processing Bug RESOLVED**: Fixed incomplete September 15 game processing where 8 games failed due to missing API data. Extended authentic 2024 score coverage to include all Week 2 games with correct away@home format matching. All future weeks will fall back gracefully to Tank01 API or database scores.
-- **Weekly Skins Reset Bug RESOLVED**: Fixed smart reset system that was preventing weekly skins competition from resetting to 0 at the start of each new week. Weekly skins now properly reset during week transitions (Week 1→2, 2→3, etc.) to ensure fair competition, while still preserving Mok points during same-week game processing.
+- **PRODUCTION RACE CONDITION BUGS FIXED**: Implemented atomic transaction system for draft picks with database constraints preventing duplicate pick numbers, resolving the issue where users received multiple teams instead of single picks.
+- **AUTHENTICATION CONFLICTS RESOLVED**: Separated Sky Evans development fallback from real user authentication, eliminating PWA constant refreshing and notification loops caused by authentication conflicts.
+- **TIMER RECOVERY LOGIC IMPROVED**: Enhanced draft timer startup sequence with 1.5-second transition delays to prevent race conditions during timer initialization and recovery between pick transitions.
+- **DATABASE SCHEMA HARDENED**: Added unique constraints on draft_picks table (draft_id, pick_number), (draft_id, user_id, round), and (draft_id, nfl_team_id) to ensure data integrity and prevent impossible draft states.
+- **ATOMIC PICK CREATION IMPLEMENTED**: New createDraftPickAtomic method ensures pick creation and draft advancement happen in single database transaction with row-level locking to prevent concurrent access conflicts.
+- **PWA AUTHENTICATION FIXES**: Removed broad development fallbacks to Sky Evans that were causing authentication loops in PWA environments, restricting development overrides to debug-only endpoints.
 
 # System Architecture
 

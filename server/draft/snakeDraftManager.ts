@@ -329,7 +329,7 @@ export class SnakeDraftManager {
         }
       }
 
-      // Create the pick
+      // RACE CONDITION FIX: Use atomic pick creation to prevent duplicate picks
       const pickData = {
         draftId,
         userId: pickRequest.userId,
@@ -339,17 +339,54 @@ export class SnakeDraftManager {
         isAutoPick: pickRequest.isAutoPick || false
       };
 
-      const newPick = await this.storage.createDraftPick(pickData);
-
-      // Stop current timer
+      // Stop current timer BEFORE atomic operation to prevent timer conflicts
       await this.stopPickTimer(draftId, pickRequest.userId);
 
-      // Move to next pick
-      const nextState = await this.advanceDraft(draftId);
+      // Atomic pick creation and draft advancement
+      const { pick: newPick, nextRound, nextPick } = await this.storage.createDraftPickAtomic(pickData);
+      
+      console.log(`🔄 Atomic pick created: Round ${newPick.round}, Pick ${newPick.pickNumber} → Next: Round ${nextRound}, Pick ${nextPick}`);
+
+      // Get updated draft state (skip advanceDraft since we already did it atomically)
+      const updatedDraft = await this.storage.getDraft(draftId);
+      if (!updatedDraft) throw new Error('Draft not found after pick');
+
+      // Calculate next state manually since we skipped advanceDraft
+      const nextState = await this.getDraftState(draftId);
 
       // Get the pick with user and team data
       const picks = await this.storage.getDraftPicks(draftId);
       const pickWithData = picks.find(p => p.id === newPick.id);
+
+      // TIMER FIX: Start timer for next pick if draft is still active
+      if (updatedDraft.status === 'active' && nextRound <= updatedDraft.totalRounds) {
+        const nextUserId = this.getCurrentPickUser(updatedDraft);
+        if (nextUserId) {
+          console.log(`⏳ Starting 1.5-second transition before timer for user ${nextUserId}`);
+          
+          // Brief transition period for smooth UI flow
+          setTimeout(async () => {
+            try {
+              // Double-check draft is still active
+              const latestDraft = await this.storage.getDraft(draftId);
+              if (!latestDraft || latestDraft.status !== 'active') return;
+              
+              console.log(`✅ Transition complete, starting timer for user ${nextUserId}`);
+              await this.startPickTimer(draftId, nextUserId, nextRound, nextPick);
+              
+              // If next user is a robot, trigger auto-pick after delay
+              if (this.robotManager?.isRobot(nextUserId)) {
+                const delay = this.robotManager.simulateRobotPickDelay();
+                setTimeout(() => {
+                  this.simulateBotPick(draftId, nextUserId);
+                }, delay);
+              }
+            } catch (error) {
+              console.error('Error starting next timer:', error);
+            }
+          }, 1500);
+        }
+      }
 
       // Broadcast pick to all connected users via WebSocket
       if (this.webSocketManager) {

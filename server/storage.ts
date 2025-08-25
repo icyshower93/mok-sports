@@ -50,6 +50,7 @@ export interface IStorage {
   
   // Draft picks methods
   createDraftPick(pick: InsertDraftPick): Promise<DraftPick>;
+  createDraftPickAtomic(pick: InsertDraftPick): Promise<{ pick: DraftPick; nextRound: number; nextPick: number }>;
   getDraftPicks(draftId: string): Promise<Array<DraftPick & { user: User; nflTeam: NflTeam }>>;
   getUserDraftPicks(draftId: string, userId: string): Promise<Array<DraftPick & { nflTeam: NflTeam }>>;
   
@@ -410,6 +411,78 @@ export class DatabaseStorage implements IStorage {
       .values(pick)
       .returning();
     return newPick;
+  }
+
+  /**
+   * RACE CONDITION FIX: Atomic pick creation with draft advancement
+   * This prevents multiple picks from being created with the same pick number
+   */
+  async createDraftPickAtomic(insertPick: InsertDraftPick): Promise<{ pick: DraftPick; nextRound: number; nextPick: number }> {
+    return await db.transaction(async (tx) => {
+      // Step 1: Get current draft state FOR UPDATE (locks the row)
+      const [currentDraft] = await tx
+        .select()
+        .from(drafts)
+        .where(eq(drafts.id, insertPick.draftId))
+        .for('update'); // CRITICAL: Locks draft row to prevent concurrent access
+      
+      if (!currentDraft) {
+        throw new Error('Draft not found');
+      }
+
+      if (currentDraft.status !== 'active') {
+        throw new Error('Draft is not active');
+      }
+
+      // Step 2: Update pick data with CURRENT draft state (not stale state)
+      const atomicPickData = {
+        ...insertPick,
+        round: currentDraft.currentRound,
+        pickNumber: currentDraft.currentPick,
+      };
+
+      // Step 3: Create the pick (will fail if duplicate due to unique constraint)
+      const [newPick] = await tx
+        .insert(draftPicks)
+        .values(atomicPickData)
+        .returning();
+
+      // Step 4: Calculate next draft state
+      const totalUsers = currentDraft.draftOrder.length;
+      const totalPicks = totalUsers * currentDraft.totalRounds;
+      
+      let nextRound = currentDraft.currentRound;
+      let nextPick = currentDraft.currentPick + 1;
+      
+      // Check if we need to advance to next round
+      const currentRoundEndPick = currentDraft.currentRound * totalUsers;
+      
+      if (nextPick > currentRoundEndPick) {
+        nextRound++;
+      }
+      
+      // Step 5: Update draft progress atomically
+      if (nextRound <= currentDraft.totalRounds) {
+        await tx
+          .update(drafts)
+          .set({ 
+            currentRound: nextRound, 
+            currentPick: nextPick 
+          })
+          .where(eq(drafts.id, insertPick.draftId));
+      } else {
+        // Draft is complete
+        await tx
+          .update(drafts)
+          .set({ 
+            status: 'completed',
+            completedAt: new Date()
+          })
+          .where(eq(drafts.id, insertPick.draftId));
+      }
+
+      return { pick: newPick, nextRound, nextPick };
+    });
   }
 
   async getDraftPicks(draftId: string): Promise<Array<DraftPick & { user: User; nflTeam: NflTeam }>> {

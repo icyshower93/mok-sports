@@ -128,8 +128,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         if (userId) {
           user = await storage.getUser(userId);
         } else {
-          // Default to Sky Evans for testing
-          user = await storage.getUserByEmail("skyevans04@gmail.com");
+          // REMOVED: No automatic Sky Evans defaults (causes PWA conflicts)
+          return res.status(400).json({ message: "User ID required for team stable lookup" });
         }
         
         if (!user) {
@@ -189,15 +189,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log("[Auth] Available cookies:", Object.keys(req.cookies || {}));
       console.log("[Auth] Authorization header:", authHeader);
       
-      // For development: Return Sky Evans as authenticated user if no token but request seems valid
-      if (process.env.NODE_ENV === 'development') {
-        console.log("[Auth] Development mode - returning Sky Evans");
-        return {
-          id: "9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a",
-          name: "Sky Evans", 
-          email: "skyevans04@gmail.com"
-        };
-      }
+      // REMOVED: No more automatic fallback to Sky Evans (causes PWA conflicts)
+      console.log("[Auth] No token found - authentication required");
       
       return null;
     }
@@ -209,15 +202,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!user || typeof user === 'string') {
         console.log("[Auth] Invalid token or wrong format");
         
-        // For development: Fall back to Sky Evans on token verification failure
-        if (process.env.NODE_ENV === 'development') {
-          console.log("[Auth] Development mode - falling back to Sky Evans for invalid token");
-          return {
-            id: "9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a",
-            name: "Sky Evans", 
-            email: "skyevans04@gmail.com"
-          };
-        }
+        // REMOVED: No more automatic fallback to Sky Evans (causes PWA conflicts)
+        console.log("[Auth] Invalid token - authentication required");
         return null;
       }
 
@@ -226,15 +212,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("[Auth] Token verification error:", error);
       
-      // For development: Fall back to Sky Evans on token verification error
-      if (process.env.NODE_ENV === 'development') {
-        console.log("[Auth] Development mode - falling back to Sky Evans for token error");
-        return {
-          id: "9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a",
-          name: "Sky Evans", 
-          email: "skyevans04@gmail.com"
-        };
-      }
+      // REMOVED: No more automatic fallback to Sky Evans (causes PWA conflicts)
+      console.log("[Auth] Token verification error - authentication required");
       return null;
     }
   }
