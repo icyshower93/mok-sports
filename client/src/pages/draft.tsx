@@ -689,9 +689,9 @@ export default function DraftPage() {
     
     // Combine available and drafted teams for complete view
     let conferenceTeams = [...allTeams, ...draftedTeams]
-      .filter(team => team.conference === conference)
-      .reduce((acc, team) => {
-        if (!acc.some(t => t.id === team.id)) {
+      .filter((team: NflTeam) => team.conference === conference)
+      .reduce((acc: NflTeam[], team: NflTeam) => {
+        if (!acc.some((t: NflTeam) => t.id === team.id)) {
           acc.push(team);
         }
         return acc;
@@ -701,7 +701,7 @@ export default function DraftPage() {
     conferenceTeams = filterTeams(conferenceTeams);
 
     // Group by division
-    const divisions = conferenceTeams.reduce((acc, team) => {
+    const divisions = conferenceTeams.reduce((acc: Record<string, NflTeam[]>, team: NflTeam) => {
       if (!acc[team.division]) acc[team.division] = [];
       acc[team.division].push(team);
       return acc;
@@ -713,7 +713,7 @@ export default function DraftPage() {
           {division}
         </h4>
         <div className="grid grid-cols-1 gap-2">
-          {divisionTeams.map((team) => {
+          {divisionTeams.map((team: NflTeam) => {
             const isDrafted = currentState.picks?.some((p: any) => p.nflTeam.id === team.id);
             const draftedBy = isDrafted ? currentState.picks?.find((p: any) => p.nflTeam.id === team.id) : null;
             const isAvailable = currentState.availableTeams?.some((t: any) => t.id === team.id);
