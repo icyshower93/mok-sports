@@ -646,8 +646,8 @@ export default function DraftPage() {
   const teams = teamsData?.teams || {};
 
   // DEBUG LOGGING AND CRITICAL TIMER SYNC FIX
-  if (draftData?.state) {
-    console.log('🔍 [TIMER DEBUG] Server Time:', state.timeRemaining);
+  if (hasEssentialData && draftData?.state) {
+    console.log('🔍 [TIMER DEBUG] Server Time:', draftData.state.timeRemaining);
     console.log('🔍 [TIMER DEBUG] Display Time:', displayTime);
     console.log('🔍 [TIMER DEBUG] Current Player:', currentPlayer?.name);
   }
@@ -707,7 +707,7 @@ export default function DraftPage() {
       return acc;
     }, {} as Record<string, NflTeam[]>);
 
-    return Object.entries(divisions).map(([division, divisionTeams]) => (
+    return Object.entries(divisions).map(([division, divisionTeams]: [string, NflTeam[]]) => (
       <div key={division} className="mb-6">
         <h4 className="text-xs font-medium text-muted-foreground mb-3 uppercase tracking-wider">
           {division}
@@ -833,7 +833,7 @@ export default function DraftPage() {
                     src={currentPlayer.avatar} 
                     alt={currentPlayer.name}
                     className={`w-6 h-6 rounded-full transition-all duration-300 ${
-                      isCurrentUser ? 'ring-2 ring-green-400 animate-pulse' : ''
+                      draftData?.isCurrentUser ? 'ring-2 ring-green-400 animate-pulse' : ''
                     }`}
                   />
                 )}
@@ -950,7 +950,7 @@ export default function DraftPage() {
           </div>
 
           {/* Completed Draft - Mobile Optimized Layout */}
-          {state.draft.status === 'completed' ? (
+          {hasEssentialData && draftData.state.draft.status === 'completed' ? (
             <div className="space-y-4">
               {/* Header - Mobile Optimized */}
               <Card className="w-full">
@@ -961,7 +961,7 @@ export default function DraftPage() {
                         🎉 Draft Complete!
                       </div>
                       <div className="text-sm text-green-600 dark:text-green-400">
-                        All {state.picks?.length || 0} picks completed across {Math.max(...(state.picks?.map(p => p.round) || [0]))} rounds
+                        All {draftData?.state?.picks?.length || 0} picks completed across {Math.max(...(draftData?.state?.picks?.map(p => p.round) || [0]))} rounds
                       </div>
                     </div>
                     
@@ -997,8 +997,8 @@ export default function DraftPage() {
                 <CardContent className="p-4">
                   {/* League Members and Their Teams - Mobile Layout */}
                   <div className="space-y-4">
-                    {state.draft.draftOrder?.map((userId) => {
-                      const userPicks = state.picks?.filter(p => p.user.id === userId) || [];
+                    {hasEssentialData && draftData.state.draft.draftOrder?.map((userId) => {
+                      const userPicks = draftData.state.picks?.filter(p => p.user.id === userId) || [];
                       const user = userPicks[0]?.user;
                       
                       if (!user) return null;
@@ -1044,14 +1044,14 @@ export default function DraftPage() {
               </Card>
                     
               {/* Free Agent Teams - Mobile Optimized */}
-              {state.availableTeams && state.availableTeams.length > 0 && (
+              {hasEssentialData && draftData.state.availableTeams && draftData.state.availableTeams.length > 0 && (
                 <Card className="w-full">
                   <CardHeader className="pb-3">
                     <CardTitle className="text-lg text-center">Free Agent Teams</CardTitle>
                   </CardHeader>
                   <CardContent className="p-4">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      {state.availableTeams.slice(0, 4).map((team) => (
+                      {draftData.state.availableTeams.slice(0, 4).map((team) => (
                         <div 
                           key={team.id} 
                           className="flex items-center space-x-3 p-3 bg-muted/30 rounded-lg border"
@@ -1077,11 +1077,11 @@ export default function DraftPage() {
                 <CardContent className="p-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div className="text-center p-4 bg-secondary/30 rounded-lg">
-                      <div className="text-2xl font-bold">{state.picks?.filter(p => !p.isAutoPick).length || 0}</div>
+                      <div className="text-2xl font-bold">{draftData?.state?.picks?.filter(p => !p.isAutoPick).length || 0}</div>
                       <div className="text-xs text-muted-foreground">Manual Picks</div>
                     </div>
                     <div className="text-center p-4 bg-secondary/30 rounded-lg">
-                      <div className="text-2xl font-bold">{state.picks?.filter(p => p.isAutoPick).length || 0}</div>
+                      <div className="text-2xl font-bold">{draftData?.state?.picks?.filter(p => p.isAutoPick).length || 0}</div>
                       <div className="text-xs text-muted-foreground">Auto Picks</div>
                     </div>
                   </div>
@@ -1102,7 +1102,7 @@ export default function DraftPage() {
                     </CardTitle>
                   </CardHeader>
                 <CardContent>
-                  {state.draft.status === 'not_started' ? (
+                  {hasEssentialData && draftData.state.draft.status === 'not_started' ? (
                     <div className="text-center space-y-3">
                       <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
                         <div className="text-blue-700 dark:text-blue-300 font-medium mb-2">
@@ -1116,7 +1116,7 @@ export default function DraftPage() {
                           <span>Connected - real-time updates enabled</span>
                         </div>
                       </div>
-                  ) : state.draft.status === 'starting' ? (
+                  ) : hasEssentialData && draftData.state.draft.status === 'starting' ? (
                     <div className="text-center space-y-3">
                       <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
                         <div className="text-green-700 dark:text-green-300 font-medium mb-2">
@@ -1168,7 +1168,7 @@ export default function DraftPage() {
                         </Button>
                       )}
                     </div>
-                  ) : state.currentUserId ? (
+                  ) : hasEssentialData && draftData.state.currentUserId ? (
                     <div className="text-center space-y-3">
                       {/* Current Player - Modern Style */}
                       <div className="flex items-center justify-center space-x-3 mb-4">
@@ -1194,7 +1194,7 @@ export default function DraftPage() {
                           displayTime <= 10 ? 'text-red-500 animate-pulse' : 
                           displayTime <= 30 ? 'text-orange-500' : 'text-foreground'
                         }`}>
-                          {state.draft.status === 'completed' ? (
+                          {hasEssentialData && draftData.state.draft.status === 'completed' ? (
                             <span className="text-green-600 font-medium">
                               Draft Complete
                             </span>
@@ -1217,7 +1217,7 @@ export default function DraftPage() {
                                 'bg-primary'
                               }`}
                               style={{
-                                width: `${Math.max(0, (displayTime / (state.draft.pickTimeLimit || 60)) * 100)}%`
+                                width: `${Math.max(0, (displayTime / (draftData?.state?.draft?.pickTimeLimit || 60)) * 100)}%`
                               }}
                             />
                           </div>
@@ -1232,10 +1232,10 @@ export default function DraftPage() {
                             }`}>
                               {displayTime <= 10 ? 'Time running out' : 'Time remaining'}
                             </span>
-                            <span>{formatTime(state.draft.pickTimeLimit || 60)}</span>
+                            <span>{formatTime(draftData?.state?.draft?.pickTimeLimit || 60)}</span>
                           </div>
                         </div>
-                        {isCurrentUser ? (
+                        {hasEssentialData && draftData?.isCurrentUser ? (
                           <Badge className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100 border-green-200 dark:border-green-800">
                             <Clock className="w-3 h-3 mr-1" />
                             Your pick
@@ -1263,7 +1263,7 @@ export default function DraftPage() {
                 <CardHeader className="pb-3">
                   <CardTitle className="text-lg flex items-center space-x-2">
                     <span>Snake Draft Order</span>
-                    <Badge variant="outline" className="text-xs">Round {state.draft.currentRound}</Badge>
+                    <Badge variant="outline" className="text-xs">Round {draftData?.state?.draft?.currentRound || 1}</Badge>
                   </CardTitle>
                   <div className="text-xs text-muted-foreground">
                     Direction changes each round
@@ -1272,12 +1272,12 @@ export default function DraftPage() {
                 <CardContent>
                   {(() => {
                     // Calculate snake draft order for current round
-                    const baseOrder = state.draft.draftOrder || [];
-                    const isOddRound = state.draft.currentRound % 2 === 1;
+                    const baseOrder = draftData?.state?.draft?.draftOrder || [];
+                    const isOddRound = (draftData?.state?.draft?.currentRound || 1) % 2 === 1;
                     const currentRoundOrder = isOddRound ? baseOrder : [...baseOrder].reverse();
                     
                     // Find current pick index and calculate upcoming picks
-                    const currentPickIndex = currentRoundOrder.findIndex(userId => userId === state.currentUserId);
+                    const currentPickIndex = currentRoundOrder.findIndex(userId => userId === draftData?.state?.currentUserId);
                     const totalPicks = currentRoundOrder.length;
                     
                     return (
@@ -1285,7 +1285,7 @@ export default function DraftPage() {
                         {/* Round Direction Indicator */}
                         <div className="flex items-center justify-center space-x-2 p-2 bg-secondary/30 rounded-lg">
                           <div className="text-xs font-medium">
-                            Round {state.draft.currentRound} Direction:
+                            Round {draftData?.state?.draft?.currentRound || 1} Direction:
                           </div>
                           <div className="flex items-center space-x-1">
                             {isOddRound ? (
@@ -1311,14 +1311,14 @@ export default function DraftPage() {
                         {/* Draft Positions */}
                         <div className="space-y-1">
                           {currentRoundOrder.map((userId, index) => {
-                            const userPicks = state.picks.filter(p => p.user.id === userId);
-                            const isCurrentPick = userId === state.currentUserId;
+                            const userPicks = draftData?.state?.picks?.filter(p => p.user.id === userId) || [];
+                            const isCurrentPick = userId === draftData?.state?.currentUserId;
                             const isUpNext = index === currentPickIndex + 1;
                             const isJustPicked = index === currentPickIndex - 1;
                             const pickPosition = index + 1;
                             
                             // Calculate actual pick number in the draft
-                            const pickNumber = ((state.draft.currentRound - 1) * totalPicks) + pickPosition;
+                            const pickNumber = (((draftData?.state?.draft?.currentRound || 1) - 1) * totalPicks) + pickPosition;
                             
                             // Get user name - try multiple sources
                             let userName = 'Loading...';
@@ -1413,14 +1413,14 @@ export default function DraftPage() {
                         </div>
 
                         {/* Next Round Preview */}
-                        {state.draft.currentRound < state.draft.totalRounds && (
+                        {hasEssentialData && (draftData.state.draft.currentRound < draftData.state.draft.totalRounds) && (
                           <div className="mt-4 p-3 bg-secondary/20 rounded-lg border border-dashed border-secondary">
                             <div className="text-xs font-medium text-muted-foreground mb-2">
-                              Round {state.draft.currentRound + 1} Preview:
+                              Round {(draftData?.state?.draft?.currentRound || 1) + 1} Preview:
                             </div>
                             <div className="flex items-center space-x-2 text-xs text-muted-foreground">
                               <span>Direction will be:</span>
-                              {(state.draft.currentRound + 1) % 2 === 1 ? (
+                              {((draftData?.state?.draft?.currentRound || 1) + 1) % 2 === 1 ? (
                                 <span className="text-blue-600 font-medium">Forward →</span>
                               ) : (
                                 <span className="text-red-600 font-medium">← Reverse</span>
@@ -1442,7 +1442,7 @@ export default function DraftPage() {
                 <CardContent>
                   <ScrollArea className="h-48">
                     <div className="space-y-2">
-                      {state.picks.slice(-8).reverse().map((pick) => (
+                      {hasEssentialData && draftData.state.picks.slice(-8).reverse().map((pick) => (
                         <div key={pick.id} className="flex items-center space-x-3 p-2 rounded-lg bg-secondary/50">
                           <TeamLogo 
                             logoUrl={pick.nflTeam.logoUrl}
@@ -1475,12 +1475,12 @@ export default function DraftPage() {
                   <div className="flex items-center justify-between">
                     <CardTitle className="text-lg">NFL Teams</CardTitle>
                     <div className="text-sm text-muted-foreground">
-                      {state.availableTeams?.length || 0} available • {state.picks?.length || 0} drafted
+                      {draftData?.state?.availableTeams?.length || 0} available • {draftData?.state?.picks?.length || 0} drafted
                     </div>
                   </div>
                 </CardHeader>
                 <CardContent>
-                  {isCurrentUser && state?.canMakePick && (
+                  {hasEssentialData && draftData?.isCurrentUser && draftData.state?.canMakePick && (
                     <div className="mb-4 p-3 bg-fantasy-purple/10 rounded-lg border border-fantasy-purple/20">
                       <div className="flex items-center justify-between">
                         <span className="text-sm font-medium">
@@ -1561,7 +1561,7 @@ export default function DraftPage() {
                               : 'text-muted-foreground hover:text-foreground'
                           }`}
                         >
-                          AFC ({(filterTeams(state.availableTeams?.filter(team => team.conference === 'AFC') || [])?.length || 0)} available)
+                          AFC ({hasEssentialData ? (filterTeams(draftData.state.availableTeams?.filter(team => team.conference === 'AFC') || [])?.length || 0) : 0} available)
                         </button>
                         <button
                           onClick={() => setCurrentConference('NFC')}
@@ -1571,7 +1571,7 @@ export default function DraftPage() {
                               : 'text-muted-foreground hover:text-foreground'
                           }`}
                         >
-                          NFC ({(filterTeams(state.availableTeams?.filter(team => team.conference === 'NFC') || [])?.length || 0)} available)
+                          NFC ({hasEssentialData ? (filterTeams(draftData.state.availableTeams?.filter(team => team.conference === 'NFC') || [])?.length || 0) : 0} available)
                         </button>
                       </div>
                       
