@@ -129,8 +129,9 @@ export function useDraftWebSocket(draftId: string | null, leagueId: string | nul
       if (wsRef.current) {
         console.log('[WebSocket] 🔄 TRANSITION: Closing old connection cleanly for new draft');
         try {
-          if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
-            wsRef.current.close(1000, 'Draft changed - clean transition');
+          const ws = wsRef.current;
+          if (ws && ws.readyState === WebSocket.OPEN) {
+            ws.close(1000, 'Draft changed - clean transition');
           }
         } catch (e) {
           console.log('[WebSocket] Error closing connection:', e);
@@ -185,9 +186,6 @@ export function useDraftWebSocket(draftId: string | null, leagueId: string | nul
     // PERMANENT FIX: Always connect immediately after draft reset/changes
     console.log('[WebSocket] Connecting to draft immediately after reset/change...');
     setConnectionStatus('connecting');
-    
-    // Connect immediately - don't wait for validation
-    // REMOVED: connectToWebSocket() - Let the main useEffect handle it to avoid conflicts
   }, [draftId, user?.id, queryClient]);
   
   // CRITICAL: Trigger connection when both draft ID and user are available
@@ -205,7 +203,8 @@ export function useDraftWebSocket(draftId: string | null, leagueId: string | nul
           .then(response => {
             if (response.ok) {
               console.log('[WebSocket] ✅ Draft exists, proceeding with connection');
-              connect();
+              // WEBSOCKET FIX: Actually establish the connection after validation
+              connectToWebSocket();
             } else {
               console.log('[WebSocket] ❌ Draft not found, skipping connection');
               console.log('[WebSocket] Response status:', response.status);
@@ -226,7 +225,23 @@ export function useDraftWebSocket(draftId: string | null, leagueId: string | nul
       });
       setConnectionStatus('disconnected');
     }
-  }, [draftId, user?.id, connect]);
+  }, [draftId, user?.id]);
+
+  // WEBSOCKET CONNECTION EFFECT - Connects when status changes to 'connecting'
+  useEffect(() => {
+    if (connectionStatus === 'connecting' && draftId && user?.id) {
+      console.log('[WebSocket] Connection status is connecting, establishing WebSocket...');
+      
+      // Small delay to prevent race conditions
+      const timeout = setTimeout(() => {
+        if (connectionStatus === 'connecting') {
+          connectToWebSocket();
+        }
+      }, 100);
+      
+      return () => clearTimeout(timeout);
+    }
+  }, [connectionStatus, draftId, user?.id, connectToWebSocket]);
 
   const connectToWebSocket = useCallback(() => {
     console.log('[WebSocket] === STARTING NEW CONNECTION ATTEMPT ===');
