@@ -654,9 +654,23 @@ async function checkAndCalculateWeeklyBonuses(season: number, week: number, forc
         // The endOfWeekProcessor now handles ALL weekly bonus calculations to prevent duplicates
         // This old logic was causing daily duplicate bonuses and is replaced by the proper end-of-week system
         
-        // Use the proper endOfWeekProcessor for weekly bonus calculations
+        // Use the proper endOfWeekProcessor for weekly bonus calculations for ALL active leagues
         const { endOfWeekProcessor } = await import("../utils/endOfWeekProcessor.js");
-        await endOfWeekProcessor.processEndOfWeek(season, week, '243d719b-92ce-4752-8689-5da93ee69213');
+        
+        // Process end-of-week for ALL active leagues, not just one hardcoded league
+        const activeLeagues = await db.select({
+          id: leagues.id,
+          name: leagues.name
+        })
+        .from(leagues)
+        .where(eq(leagues.isActive, true));
+        
+        console.log(`🏆 Processing end-of-week bonuses and skins for ${activeLeagues.length} active leagues`);
+        
+        for (const league of activeLeagues) {
+          console.log(`🎯 Processing Week ${week} end-of-week for league: ${league.name} (${league.id})`);
+          await endOfWeekProcessor.processEndOfWeek(season, week, league.id);
+        }
         
         console.log(`✅ Week ${week} bonus calculation delegated to endOfWeekProcessor - preventing duplicate calculations`);
         console.log(`✅ Weekly skins processing also handled by endOfWeekProcessor for immediate UI updates`);
