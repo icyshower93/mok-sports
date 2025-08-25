@@ -668,8 +668,8 @@ export class DraftWebSocketManager {
     const connections = this.connections.get(draftId);
     console.log(`[WebSocket] Active connections for draft ${draftId}: ${connections?.length || 0}`);
     
-    // PERMANENT FIX: Enhanced timer broadcasting for Reserved VM with validation
-    if (timeRemaining >= 0 && timeRemaining <= 60) {
+    // PERMANENT FIX: Enhanced timer broadcasting for Reserved VM with validation (support full 120s timer)
+    if (timeRemaining >= 0 && timeRemaining <= 120) {
       const timerMessage = {
         type: 'timer_update',
         draftId,
