@@ -153,8 +153,8 @@ export class RobotManager {
    * Simulate robot decision-making for picks
    */
   simulateRobotPickDelay(): number {
-    // Random delay between 1-4 seconds to simulate thinking
-    return Math.random() * 3000 + 1000;
+    // Fixed 15 second delay for robot picks
+    return 15000;
   }
 
   /**
