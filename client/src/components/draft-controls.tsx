@@ -33,7 +33,7 @@ export default function DraftControls({
   const [, setLocation] = useLocation();
   
   const [showSettings, setShowSettings] = useState(false);
-  const [pickTimeLimit, setPickTimeLimit] = useState(60);
+  const [pickTimeLimit, setPickTimeLimit] = useState(120); // Default 2 minutes to match server
   const totalRounds = 5; // Fixed to 5 rounds for 6-person leagues
 
   // Combined create and start draft mutation

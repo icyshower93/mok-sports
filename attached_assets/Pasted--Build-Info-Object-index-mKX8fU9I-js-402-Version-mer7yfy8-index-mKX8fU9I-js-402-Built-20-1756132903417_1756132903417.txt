@@ -1,0 +1,272 @@
+🏗️ Build Info: Object
+index-mKX8fU9I.js:402 📦 Version: mer7yfy8
+index-mKX8fU9I.js:402 📅 Built: 2025-08-25T14:35:13.856Z
+index-mKX8fU9I.js:402 🔧 Environment: production
+index-mKX8fU9I.js:358 [StableWebSocket] ⏳ Waiting for authentication...
+index-mKX8fU9I.js:402 [App] WebSocket status: waiting_auth (Disconnected)
+index-mKX8fU9I.js:402 [App] ⏳ Waiting for authentication to complete
+index-mKX8fU9I.js:358 [Auth] Token check - Has token: true Has user: false Loading: true
+index-mKX8fU9I.js:358 [SW Hook] EMERGENCY: Unregistering all existing service workers
+index-mKX8fU9I.js:358 [SW Hook] Found 1 existing registrations
+index-mKX8fU9I.js:358 [SW Hook] Unregistering existing service worker
+index-mKX8fU9I.js:358 [SW Hook] Found 1 caches to delete
+index-mKX8fU9I.js:358 [SW Hook] Deleting cache: mok-sports-dynamic-v1.7.0-nuclear-unregister-1756132506883
+index-mKX8fU9I.js:358 [SW Hook] Registering fresh service worker: /sw.js?v=1756132513969&r=0.5092375123653499
+/league/waiting?id=abeadbaf-1731-4ec9-a5e5-d3e063cd545d:1 Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner.
+index-mKX8fU9I.js:358 [StableWebSocket] 🔐 Auth confirmed, establishing connection
+index-mKX8fU9I.js:358 [StableWebSocket] 🧹 Cleaning up all timers and connections
+index-mKX8fU9I.js:358 [StableWebSocket] 🚀 Establishing connection for user: Mok Sports
+index-mKX8fU9I.js:358 [Auth] Token check - Has token: true Has user: true Loading: false
+index-mKX8fU9I.js:358 [AutoPushRefresh] Legacy hook delegating to SubscriptionManager
+index-mKX8fU9I.js:402 [App] WebSocket status: connecting (Disconnected)
+index-mKX8fU9I.js:358 [SW Hook] Service worker registered successfully
+index-mKX8fU9I.js:402 [LeagueWaiting] EMERGENCY DEBUG - ABOUT TO CALL useDraftWebSocket with: Object
+index-mKX8fU9I.js:402 [WebSocket] Hook called with: Object
+index-mKX8fU9I.js:402 [LeagueWaiting] EMERGENCY DEBUG - WebSocket hook returned: Object
+index-mKX8fU9I.js:402 [WebSocket] MAIN useEffect trigger - draftId: null userId: true
+index-mKX8fU9I.js:402 [WebSocket] ❌ Connection requirements not met: Object
+index-mKX8fU9I.js:402 [LeagueWaiting] EMERGENCY DEBUG - ABOUT TO CALL useDraftWebSocket with: Object
+index-mKX8fU9I.js:402 [WebSocket] Hook called with: Object
+index-mKX8fU9I.js:402 [LeagueWaiting] EMERGENCY DEBUG - WebSocket hook returned: Object
+index-mKX8fU9I.js:358 [StableWebSocket] ✅ Connection established
+index-mKX8fU9I.js:358 [StableWebSocket] 📡 Subscribed to admin broadcasts
+index-mKX8fU9I.js:358 [StableWebSocket] ⏰ Keepalive started (25s interval)
+index-mKX8fU9I.js:402 [LeagueWaiting] EMERGENCY DEBUG - ABOUT TO CALL useDraftWebSocket with: Object
+index-mKX8fU9I.js:402 [WebSocket] Hook called with: Object
+index-mKX8fU9I.js:402 [LeagueWaiting] EMERGENCY DEBUG - WebSocket hook returned: Object
+index-mKX8fU9I.js:402 [App] WebSocket status: connected (Connected)
+index-mKX8fU9I.js:402 [App] ✅ Real-time updates active - scores will update instantly
+index-mKX8fU9I.js:358 [StableWebSocket] 📨 Message received: connected
+index-mKX8fU9I.js:358 [StableWebSocket] ✅ Server confirmation: connected
+index-mKX8fU9I.js:358 [StableWebSocket] 📨 Message received: admin_ready
+index-mKX8fU9I.js:358 [StableWebSocket] ✅ Server confirmation: admin_ready
+index-mKX8fU9I.js:402 [LeagueWaiting] EMERGENCY DEBUG - ABOUT TO CALL useDraftWebSocket with: Object
+index-mKX8fU9I.js:402 [WebSocket] Hook called with: Object
+index-mKX8fU9I.js:402 [LeagueWaiting] EMERGENCY DEBUG - WebSocket hook returned: Object
+index-mKX8fU9I.js:358 [StableWebSocket] 🔄 Service worker updated, gracefully reconnecting
+index-mKX8fU9I.js:358 [StableWebSocket] 🔌 Closing connection with code 4001: sw-update
+index-mKX8fU9I.js:402 [LeagueWaiting] EMERGENCY DEBUG - ABOUT TO CALL useDraftWebSocket with: Object
+index-mKX8fU9I.js:402 [WebSocket] Hook called with: Object
+index-mKX8fU9I.js:402 [LeagueWaiting] EMERGENCY DEBUG - WebSocket hook returned: Object
+index-mKX8fU9I.js:402 [LeagueWaiting] League data updated: Object
+index-mKX8fU9I.js:402 [LeagueWaiting] EMERGENCY DEBUG - ABOUT TO CALL useDraftWebSocket with: Object
+index-mKX8fU9I.js:402 [WebSocket] Hook called with: Object
+index-mKX8fU9I.js:402 [LeagueWaiting] EMERGENCY DEBUG - WebSocket hook returned: Object
+svg:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+svg:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+svg:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+svg:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+index-mKX8fU9I.js:358 [StableWebSocket] 🔌 Connection closed - Code: 4001, Reason: sw-update
+index-mKX8fU9I.js:358 [StableWebSocket] 🔄 Reconnecting in 1572.624738983734ms (attempt 1/8)
+index-mKX8fU9I.js:402 [LeagueWaiting] EMERGENCY DEBUG - ABOUT TO CALL useDraftWebSocket with: Object
+index-mKX8fU9I.js:402 [WebSocket] Hook called with: Object
+index-mKX8fU9I.js:402 [LeagueWaiting] EMERGENCY DEBUG - WebSocket hook returned: Object
+index-mKX8fU9I.js:402 [App] WebSocket status: reconnecting (Disconnected)
+index-mKX8fU9I.js:402 [App] 🔄 Attempting to reconnect...
+index-mKX8fU9I.js:358 [StableWebSocket] 🧹 Cleaning up all timers and connections
+index-mKX8fU9I.js:358 [StableWebSocket] 🚀 Establishing connection for user: Mok Sports
+index-mKX8fU9I.js:402 [LeagueWaiting] EMERGENCY DEBUG - ABOUT TO CALL useDraftWebSocket with: Object
+index-mKX8fU9I.js:402 [WebSocket] Hook called with: Object
+index-mKX8fU9I.js:402 [LeagueWaiting] EMERGENCY DEBUG - WebSocket hook returned: Object
+index-mKX8fU9I.js:402 [App] WebSocket status: connecting (Disconnected)
+index-mKX8fU9I.js:358 [StableWebSocket] ✅ Connection established
+index-mKX8fU9I.js:358 [StableWebSocket] 📡 Subscribed to admin broadcasts
+index-mKX8fU9I.js:358 [StableWebSocket] ⏰ Keepalive started (25s interval)
+index-mKX8fU9I.js:402 [LeagueWaiting] EMERGENCY DEBUG - ABOUT TO CALL useDraftWebSocket with: Object
+index-mKX8fU9I.js:402 [WebSocket] Hook called with: Object
+index-mKX8fU9I.js:402 [LeagueWaiting] EMERGENCY DEBUG - WebSocket hook returned: Object
+index-mKX8fU9I.js:402 [App] WebSocket status: connected (Connected)
+index-mKX8fU9I.js:402 [App] ✅ Real-time updates active - scores will update instantly
+index-mKX8fU9I.js:358 [StableWebSocket] 📨 Message received: connected
+index-mKX8fU9I.js:358 [StableWebSocket] ✅ Server confirmation: connected
+index-mKX8fU9I.js:358 [StableWebSocket] 📨 Message received: admin_ready
+index-mKX8fU9I.js:358 [StableWebSocket] ✅ Server confirmation: admin_ready
+index-mKX8fU9I.js:358 [StableWebSocket] 💓 Sending keepalive ping
+index-mKX8fU9I.js:358 [StableWebSocket] 📨 Message received: pong
+index-mKX8fU9I.js:358 [StableWebSocket] 💚 Keepalive pong received - connection healthy
+index-mKX8fU9I.js:358 [StableWebSocket] 🔌 Connection closed - Code: 1006, Reason: 
+index-mKX8fU9I.js:358 [StableWebSocket] 🔄 Reconnecting in 1086.2965615768524ms (attempt 1/8)
+index-mKX8fU9I.js:402 [LeagueWaiting] EMERGENCY DEBUG - ABOUT TO CALL useDraftWebSocket with: Object
+index-mKX8fU9I.js:402 [WebSocket] Hook called with: Object
+index-mKX8fU9I.js:402 [LeagueWaiting] EMERGENCY DEBUG - WebSocket hook returned: Object
+index-mKX8fU9I.js:402 [App] WebSocket status: reconnecting (Disconnected)
+index-mKX8fU9I.js:402 [App] 🔄 Attempting to reconnect...
+index-mKX8fU9I.js:358 [StableWebSocket] 🧹 Cleaning up all timers and connections
+index-mKX8fU9I.js:358 [StableWebSocket] 🚀 Establishing connection for user: Mok Sports
+index-mKX8fU9I.js:402 [LeagueWaiting] EMERGENCY DEBUG - ABOUT TO CALL useDraftWebSocket with: Object
+index-mKX8fU9I.js:402 [WebSocket] Hook called with: Object
+index-mKX8fU9I.js:402 [LeagueWaiting] EMERGENCY DEBUG - WebSocket hook returned: Object
+index-mKX8fU9I.js:402 [App] WebSocket status: connecting (Disconnected)
+index-mKX8fU9I.js:358 [StableWebSocket] ✅ Connection established
+index-mKX8fU9I.js:358 [StableWebSocket] 📡 Subscribed to admin broadcasts
+index-mKX8fU9I.js:358 [StableWebSocket] ⏰ Keepalive started (25s interval)
+index-mKX8fU9I.js:402 [LeagueWaiting] EMERGENCY DEBUG - ABOUT TO CALL useDraftWebSocket with: Object
+index-mKX8fU9I.js:402 [WebSocket] Hook called with: Object
+index-mKX8fU9I.js:402 [LeagueWaiting] EMERGENCY DEBUG - WebSocket hook returned: Object
+index-mKX8fU9I.js:402 [App] WebSocket status: connected (Connected)
+index-mKX8fU9I.js:402 [App] ✅ Real-time updates active - scores will update instantly
+index-mKX8fU9I.js:358 [StableWebSocket] 📨 Message received: connected
+index-mKX8fU9I.js:358 [StableWebSocket] ✅ Server confirmation: connected
+index-mKX8fU9I.js:358 [StableWebSocket] 📨 Message received: admin_ready
+index-mKX8fU9I.js:358 [StableWebSocket] ✅ Server confirmation: admin_ready
+index-mKX8fU9I.js:358 [StableWebSocket] 💓 Sending keepalive ping
+index-mKX8fU9I.js:358 [StableWebSocket] 📨 Message received: pong
+index-mKX8fU9I.js:358 [StableWebSocket] 💚 Keepalive pong received - connection healthy
+index-mKX8fU9I.js:358 [StableWebSocket] 💓 Sending keepalive ping
+index-mKX8fU9I.js:358 [StableWebSocket] 📨 Message received: pong
+index-mKX8fU9I.js:358 [StableWebSocket] 💚 Keepalive pong received - connection healthy
+index-mKX8fU9I.js:358 [StableWebSocket] 💓 Sending keepalive ping
+index-mKX8fU9I.js:358 [StableWebSocket] 📨 Message received: pong
+index-mKX8fU9I.js:358 [StableWebSocket] 💚 Keepalive pong received - connection healthy
+index-mKX8fU9I.js:358 [StableWebSocket] 🔌 Connection closed - Code: 1006, Reason: 
+index-mKX8fU9I.js:358 [StableWebSocket] 🔄 Reconnecting in 1003.594936999176ms (attempt 1/8)
+index-mKX8fU9I.js:402 [LeagueWaiting] EMERGENCY DEBUG - ABOUT TO CALL useDraftWebSocket with: Object
+index-mKX8fU9I.js:402 [WebSocket] Hook called with: Object
+index-mKX8fU9I.js:402 [LeagueWaiting] EMERGENCY DEBUG - WebSocket hook returned: Object
+index-mKX8fU9I.js:402 [App] WebSocket status: reconnecting (Disconnected)
+index-mKX8fU9I.js:402 [App] 🔄 Attempting to reconnect...
+index-mKX8fU9I.js:358 [StableWebSocket] 🧹 Cleaning up all timers and connections
+index-mKX8fU9I.js:358 [StableWebSocket] 🚀 Establishing connection for user: Mok Sports
+index-mKX8fU9I.js:402 [LeagueWaiting] EMERGENCY DEBUG - ABOUT TO CALL useDraftWebSocket with: Object
+index-mKX8fU9I.js:402 [WebSocket] Hook called with: Object
+index-mKX8fU9I.js:402 [LeagueWaiting] EMERGENCY DEBUG - WebSocket hook returned: Object
+index-mKX8fU9I.js:402 [App] WebSocket status: connecting (Disconnected)
+index-mKX8fU9I.js:358 [StableWebSocket] ✅ Connection established
+index-mKX8fU9I.js:358 [StableWebSocket] 📡 Subscribed to admin broadcasts
+index-mKX8fU9I.js:358 [StableWebSocket] ⏰ Keepalive started (25s interval)
+index-mKX8fU9I.js:402 [LeagueWaiting] EMERGENCY DEBUG - ABOUT TO CALL useDraftWebSocket with: Object
+index-mKX8fU9I.js:402 [WebSocket] Hook called with: Object
+index-mKX8fU9I.js:402 [LeagueWaiting] EMERGENCY DEBUG - WebSocket hook returned: Object
+index-mKX8fU9I.js:402 [App] WebSocket status: connected (Connected)
+index-mKX8fU9I.js:402 [App] ✅ Real-time updates active - scores will update instantly
+index-mKX8fU9I.js:358 [StableWebSocket] 📨 Message received: connected
+index-mKX8fU9I.js:358 [StableWebSocket] ✅ Server confirmation: connected
+index-mKX8fU9I.js:358 [StableWebSocket] 📨 Message received: admin_ready
+index-mKX8fU9I.js:358 [StableWebSocket] ✅ Server confirmation: admin_ready
+index-mKX8fU9I.js:358 [StableWebSocket] 💓 Sending keepalive ping
+index-mKX8fU9I.js:358 [StableWebSocket] 📨 Message received: pong
+index-mKX8fU9I.js:358 [StableWebSocket] 💚 Keepalive pong received - connection healthy
+index-mKX8fU9I.js:358 [StableWebSocket] 💓 Sending keepalive ping
+index-mKX8fU9I.js:358 [StableWebSocket] 📨 Message received: pong
+index-mKX8fU9I.js:358 [StableWebSocket] 💚 Keepalive pong received - connection healthy
+index-mKX8fU9I.js:358 [StableWebSocket] 💓 Sending keepalive ping
+index-mKX8fU9I.js:358 [StableWebSocket] 📨 Message received: pong
+index-mKX8fU9I.js:358 [StableWebSocket] 💚 Keepalive pong received - connection healthy
+4index-mKX8fU9I.js:358 [StableWebSocket] 💓 Sending keepalive ping
+sw.js?v=1756132513969&r=0.5092375123653499:2 [SW] NUCLEAR OPTION - Emergency service worker loading
+sw.js?v=1756132513969&r=0.5092375123653499:88 [SW] Service worker starting, version: v1.7.0-nuclear-unregister-1756132885662
+sw.js?v=1756132513969&r=0.5092375123653499:305 [SW] Service worker script loaded successfully
+index-mKX8fU9I.js:402 [LeagueWaiting] EMERGENCY DEBUG - ABOUT TO CALL useDraftWebSocket with: Object
+index-mKX8fU9I.js:402 [WebSocket] Hook called with: Object
+index-mKX8fU9I.js:402 [LeagueWaiting] EMERGENCY DEBUG - WebSocket hook returned: Object
+index-mKX8fU9I.js:402 [LeagueWaiting] EMERGENCY DEBUG - ABOUT TO CALL useDraftWebSocket with: Object
+index-mKX8fU9I.js:402 [WebSocket] Hook called with: Object
+index-mKX8fU9I.js:402 [LeagueWaiting] EMERGENCY DEBUG - WebSocket hook returned: Object
+index-mKX8fU9I.js:402 [WebSocket] MAIN useEffect trigger - draftId: fd785b00-a89b-453b-98ff-54063e92c717 userId: true
+index-mKX8fU9I.js:402 [WebSocket] ✅ Conditions met, validating draft exists before connection...
+index-mKX8fU9I.js:402 [LeagueWaiting] League data updated: Object
+index-mKX8fU9I.js:402 [League] Draft ID changed, WebSocket should reconnect to: fd785b00-a89b-453b-98ff-54063e92c717
+index-mKX8fU9I.js:402 [WebSocket] ✅ Draft exists, proceeding with connection
+index-mKX8fU9I.js:402 [WebSocket] === STARTING NEW CONNECTION ATTEMPT ===
+index-mKX8fU9I.js:402 [WebSocket] Draft ID: fd785b00-a89b-453b-98ff-54063e92c717 User ID: d8873675-274c-46f9-ab48-00955c81d875
+index-mKX8fU9I.js:402 [WebSocket] Creating connection to: wss://mok-sports-draft-mokfantasysport.replit.app/draft-ws?userId=d8873675-274c-46f9-ab48-00955c81d875&draftId=fd785b00-a89b-453b-98ff-54063e92c717
+index-mKX8fU9I.js:402 [LeagueWaiting] EMERGENCY DEBUG - ABOUT TO CALL useDraftWebSocket with: Object
+index-mKX8fU9I.js:402 [WebSocket] Hook called with: Object
+index-mKX8fU9I.js:402 [LeagueWaiting] EMERGENCY DEBUG - WebSocket hook returned: Object
+index-mKX8fU9I.js:402 [WebSocket] ✅ CONNECTION ESTABLISHED
+index-mKX8fU9I.js:402 [WebSocket] Message received: connected
+index-mKX8fU9I.js:402 [WebSocket] Connected confirmation received
+index-mKX8fU9I.js:402 [LeagueWaiting] EMERGENCY DEBUG - ABOUT TO CALL useDraftWebSocket with: Object
+index-mKX8fU9I.js:402 [WebSocket] Hook called with: Object
+index-mKX8fU9I.js:402 [LeagueWaiting] EMERGENCY DEBUG - WebSocket hook returned: Object
+index-mKX8fU9I.js:402 [WebSocket] Message received: connected
+index-mKX8fU9I.js:402 [WebSocket] Connected confirmation received
+index-mKX8fU9I.js:402 [LeagueWaiting] EMERGENCY DEBUG - ABOUT TO CALL useDraftWebSocket with: Object
+index-mKX8fU9I.js:402 [WebSocket] Hook called with: Object
+index-mKX8fU9I.js:402 [LeagueWaiting] EMERGENCY DEBUG - WebSocket hook returned: Object
+index-mKX8fU9I.js:402 [WebSocket] Message received: draft_state
+index-mKX8fU9I.js:402 [LeagueWaiting] EMERGENCY DEBUG - ABOUT TO CALL useDraftWebSocket with: Object
+index-mKX8fU9I.js:402 [WebSocket] Hook called with: Object
+index-mKX8fU9I.js:402 [LeagueWaiting] EMERGENCY DEBUG - WebSocket hook returned: Object
+index-mKX8fU9I.js:402 [App] Draft route matched with params: Object
+index-mKX8fU9I.js:402 [App] Current location: https://mok-sports-draft-mokfantasysport.replit.app/draft/fd785b00-a89b-453b-98ff-54063e92c717
+index-mKX8fU9I.js:402 [SMOOTH TIMER] Display time: 0.0 isCountingDown: false localTime: 0.0
+index-mKX8fU9I.js:358 [ErrorBoundary] Error caught: ReferenceError Cannot access 'Ve' before initialization
+getDerivedStateFromError @ index-mKX8fU9I.js:358Understand this error
+index-mKX8fU9I.js:358 [ErrorBoundary] Stack trace: ReferenceError: Cannot access 'Ve' before initialization
+    at WT (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-mKX8fU9I.js:402:67490)
+    at mf (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-mKX8fU9I.js:38:16998)
+    at dv (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-mKX8fU9I.js:40:43963)
+    at lv (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-mKX8fU9I.js:40:39727)
+    at HS (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-mKX8fU9I.js:40:39655)
+    at hl (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-mKX8fU9I.js:40:39508)
+    at Bh (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-mKX8fU9I.js:40:36623)
+    at Or (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-mKX8fU9I.js:38:3274)
+    at https://mok-sports-draft-mokfantasysport.replit.app/assets/index-mKX8fU9I.js:40:34207
+getDerivedStateFromError @ index-mKX8fU9I.js:358Understand this error
+index-mKX8fU9I.js:402 [App] Draft route matched with params: Object
+index-mKX8fU9I.js:402 [App] Current location: https://mok-sports-draft-mokfantasysport.replit.app/draft/fd785b00-a89b-453b-98ff-54063e92c717
+index-mKX8fU9I.js:402 [SMOOTH TIMER] Display time: 0.0 isCountingDown: false localTime: 0.0
+index-mKX8fU9I.js:358 [ErrorBoundary] Error caught: ReferenceError Cannot access 'Ve' before initialization
+getDerivedStateFromError @ index-mKX8fU9I.js:358Understand this error
+index-mKX8fU9I.js:358 [ErrorBoundary] Stack trace: ReferenceError: Cannot access 'Ve' before initialization
+    at WT (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-mKX8fU9I.js:402:67490)
+    at mf (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-mKX8fU9I.js:38:16998)
+    at dv (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-mKX8fU9I.js:40:43963)
+    at lv (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-mKX8fU9I.js:40:39727)
+    at HS (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-mKX8fU9I.js:40:39655)
+    at hl (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-mKX8fU9I.js:40:39508)
+    at Ku (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-mKX8fU9I.js:40:35875)
+    at Bh (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-mKX8fU9I.js:40:36678)
+    at Or (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-mKX8fU9I.js:38:3274)
+    at https://mok-sports-draft-mokfantasysport.replit.app/assets/index-mKX8fU9I.js:40:34207
+getDerivedStateFromError @ index-mKX8fU9I.js:358Understand this error
+index-mKX8fU9I.js:40 ReferenceError: Cannot access 'Ve' before initialization
+    at WT (index-mKX8fU9I.js:402:67490)
+    at mf (index-mKX8fU9I.js:38:16998)
+    at dv (index-mKX8fU9I.js:40:43963)
+    at lv (index-mKX8fU9I.js:40:39727)
+    at HS (index-mKX8fU9I.js:40:39655)
+    at hl (index-mKX8fU9I.js:40:39508)
+    at Ku (index-mKX8fU9I.js:40:35875)
+    at Bh (index-mKX8fU9I.js:40:36678)
+    at Or (index-mKX8fU9I.js:38:3274)
+    at index-mKX8fU9I.js:40:34207
+Iu @ index-mKX8fU9I.js:40Understand this error
+index-mKX8fU9I.js:358 [ErrorBoundary] DETAILED ERROR - Name: ReferenceError
+componentDidCatch @ index-mKX8fU9I.js:358Understand this error
+index-mKX8fU9I.js:358 [ErrorBoundary] DETAILED ERROR - Message: Cannot access 'Ve' before initialization
+componentDidCatch @ index-mKX8fU9I.js:358Understand this error
+index-mKX8fU9I.js:358 [ErrorBoundary] DETAILED ERROR - Stack: ReferenceError: Cannot access 'Ve' before initialization
+    at WT (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-mKX8fU9I.js:402:67490)
+    at mf (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-mKX8fU9I.js:38:16998)
+    at dv (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-mKX8fU9I.js:40:43963)
+    at lv (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-mKX8fU9I.js:40:39727)
+    at HS (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-mKX8fU9I.js:40:39655)
+    at hl (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-mKX8fU9I.js:40:39508)
+    at Ku (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-mKX8fU9I.js:40:35875)
+    at Bh (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-mKX8fU9I.js:40:36678)
+    at Or (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-mKX8fU9I.js:38:3274)
+    at https://mok-sports-draft-mokfantasysport.replit.app/assets/index-mKX8fU9I.js:40:34207
+componentDidCatch @ index-mKX8fU9I.js:358Understand this error
+index-mKX8fU9I.js:358 [ErrorBoundary] Component stack: 
+    at WT (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-mKX8fU9I.js:402:61288)
+    at lt (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-mKX8fU9I.js:48:3201)
+    at DN (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-mKX8fU9I.js:48:4017)
+    at TR (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-mKX8fU9I.js:402:242551)
+    at K2 (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-mKX8fU9I.js:358:57496)
+    at u (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-mKX8fU9I.js:48:45884)
+    at s0 (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-mKX8fU9I.js:358:50470)
+    at V2 (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-mKX8fU9I.js:358:56968)
+    at ZN (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-mKX8fU9I.js:48:40235)
+    at eE (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-mKX8fU9I.js:358:77151)
+    at PR
+componentDidCatch @ index-mKX8fU9I.js:358Understand this error
+index-mKX8fU9I.js:358 [StableWebSocket] 🧹 Component unmounting, cleaning up
+index-mKX8fU9I.js:358 [StableWebSocket] 🧹 Cleaning up all timers and connections
+index-mKX8fU9I.js:358 [StableWebSocket] 🔌 Closing connection with code 4003: unmount
+sw.js?v=1756132513969&r=0.5092375123653499:164 [SW] Fetching /favicon.ico from network
+index-mKX8fU9I.js:402 [WebSocket] Connection closed: 1000 Component cleanup
+sw.js?v=1756132513969&r=0.5092375123653499:64 [SW] BYPASSING CACHE for JS file: https://mok-sports-draft-mokfantasysport.replit.app/manifest.json
+sw.js?v=1756132513969&r=0.5092375123653499:164 [SW] Fetching /draft/fd785b00-a89b-453b-98ff-54063e92c717 from network
+sw.js?v=1756132513969&r=0.5092375123653499:164 [SW] Fetching /assets/index-1SQiDaG8.css from network
