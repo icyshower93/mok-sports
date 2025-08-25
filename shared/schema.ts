@@ -50,7 +50,7 @@ export const drafts = pgTable("drafts", {
   currentRound: integer("current_round").notNull().default(1),
   currentPick: integer("current_pick").notNull().default(1),
   totalRounds: integer("total_rounds").notNull().default(5),
-  pickTimeLimit: integer("pick_time_limit").notNull().default(60), // seconds
+  pickTimeLimit: integer("pick_time_limit").notNull().default(180), // seconds
   draftOrder: text("draft_order").array().notNull(), // array of user IDs in draft order
   startedAt: timestamp("started_at"),
   completedAt: timestamp("completed_at"),
