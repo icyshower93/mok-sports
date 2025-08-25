@@ -58,7 +58,7 @@ export class SnakeDraftManager {
     this.redisStateManager = new RedisStateManager();
     this.draftConfig = {
       totalRounds: 5,
-      pickTimeLimit: 60,
+      pickTimeLimit: 120, // Default 2 minutes (120 seconds) per pick
       enableDivisionRule: true,
       maxTeamsPerDivision: 1, // No more than 1 team from same division unless unavoidable
       ...config
