@@ -399,6 +399,20 @@ export class SnakeDraftManager {
       if (currentPickUser !== userId) {
         console.error(`Timer mismatch: expected ${userId} but current pick user is ${currentPickUser}`);
         console.error(`Draft state: Round ${draft.currentRound}, Pick ${draft.currentPick}`);
+        
+        // ENHANCED FIX: Start correct timer instead of failing
+        if (currentPickUser && draft.status === 'active') {
+          console.log(`🔄 Fixing timer mismatch: starting timer for correct user ${currentPickUser}`);
+          await this.startPickTimer(draftId, currentPickUser, draft.currentRound, draft.currentPick);
+          
+          // If the correct user is a robot, trigger their pick
+          if (this.robotManager?.isRobot(currentPickUser)) {
+            const delay = this.robotManager.simulateRobotPickDelay();
+            setTimeout(() => {
+              this.simulateBotPick(draftId, currentPickUser);
+            }, delay);
+          }
+        }
         return;
       }
       
@@ -681,6 +695,19 @@ export class SnakeDraftManager {
     await this.redisStateManager.deleteTimer(draftId);
     await this.storage.deactivateAllDraftTimers(draftId);
 
+    // ENHANCED VALIDATION: Double-check this user should be picking before starting timer
+    const currentDraft = await this.storage.getDraft(draftId);
+    if (!currentDraft || currentDraft.status !== 'active') {
+      console.warn(`⚠️ Draft ${draftId} not active, skipping timer start`);
+      return;
+    }
+    
+    const expectedPickUser = this.getCurrentPickUser(currentDraft);
+    if (expectedPickUser !== userId) {
+      console.warn(`⚠️ Timer start blocked: expected ${expectedPickUser}, got ${userId}`);
+      return;
+    }
+    
     // Store timer in Redis
     const redisTimer = {
       draftId,
@@ -710,16 +737,24 @@ export class SnakeDraftManager {
     // Set up local interval for broadcasting updates
     const timerKey = `${draftId}-${userId}`;
     
-    // Initialize local timer counter
-    let localTimeRemaining = this.draftConfig.pickTimeLimit;
+    // OPTIMIZED TIMER: Authoritative server timer with efficient broadcast frequency
+    const timerStartTime = Date.now();
+    const timerDuration = this.draftConfig.pickTimeLimit * 1000; // Convert to milliseconds
+    let lastBroadcastTime = 0;
+    let tickCount = 0;
+    const BROADCAST_INTERVAL = 200; // Broadcast every 200ms (5Hz) for efficiency
     
     const interval = setInterval(async () => {
-      // Decrement local timer
-      localTimeRemaining--;
+      tickCount++;
+      const elapsed = Date.now() - timerStartTime;
+      const remaining = Math.max(0, Math.ceil((timerDuration - elapsed) / 1000)); // Convert back to seconds
       
-      console.log(`🕐 Timer tick for user ${userId}: ${localTimeRemaining}s remaining`);
+      // Only log every second to reduce console noise
+      if (tickCount % 10 === 0) { // Every 10 ticks = every second
+        console.log(`🕐 Timer tick for user ${userId}: ${remaining}s remaining`);
+      }
       
-      if (localTimeRemaining <= 0) {
+      if (remaining <= 0) {
         console.log(`⏰ Timer expired for user ${userId}, triggering expiration handler`);
         clearInterval(interval);
         this.timerIntervals.delete(timerKey);
@@ -736,22 +771,30 @@ export class SnakeDraftManager {
           console.error(`❌ Timer expiration handler failed for ${userId}:`, error);
         }
       } else {
-        // Update Redis with current time remaining
-        await this.redisStateManager.updateTimeRemaining(draftId, localTimeRemaining);
-        
-        // Broadcast timer update
-        if (this.webSocketManager) {
-          this.webSocketManager.broadcastTimerUpdate(draftId, localTimeRemaining);
-        }
-        
-        // Update database timer for persistence
-        try {
-          await this.storage.updateDraftTimer(draftId, userId, localTimeRemaining);
-        } catch (error) {
-          console.error(`Failed to update timer: ${error}`);
+        // Only broadcast and update periodically to reduce network/DB load
+        const now = Date.now();
+        if (now - lastBroadcastTime >= BROADCAST_INTERVAL) {
+          lastBroadcastTime = now;
+          
+          // Update Redis with current time remaining
+          await this.redisStateManager.updateTimeRemaining(draftId, remaining);
+          
+          // Broadcast timer update with server timestamp for client sync
+          if (this.webSocketManager) {
+            this.webSocketManager.broadcastTimerUpdate(draftId, remaining, now);
+          }
+          
+          // Update database timer less frequently to reduce DB load
+          if (remaining % 5 === 0) { // Only update DB every 5 seconds
+            try {
+              await this.storage.updateDraftTimer(draftId, userId, remaining);
+            } catch (error) {
+              console.error(`Failed to update timer: ${error}`);
+            }
+          }
         }
       }
-    }, 1000);
+    }, 100); // Run every 100ms for precise timing
     
     this.timerIntervals.set(timerKey, interval);
   }

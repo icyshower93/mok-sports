@@ -13,10 +13,12 @@ import { useAuth } from './use-auth';
 import { useToast } from './use-toast';
 
 export interface DraftWebSocketMessage {
-  type: 'pick_made' | 'timer_update' | 'draft_state' | 'auto_pick' | 'draft_completed' | 'connected' | 'pong';
+  type: 'pick_made' | 'timer_update' | 'draft_state' | 'auto_pick' | 'draft_completed' | 'connected' | 'pong' | 'time_sync_response';
   draftId: string;
   data?: any;
   timestamp: number;
+  clientTime?: number;
+  serverTime?: number;
 }
 
 export function useDraftWebSocket(draftId: string | null, leagueId: string | null = null) {
@@ -28,6 +30,62 @@ export function useDraftWebSocket(draftId: string | null, leagueId: string | nul
   const [connectionStatus, setConnectionStatus] = useState<'connecting' | 'connected' | 'disconnected' | 'draft_not_found'>('disconnected');
   const [lastMessage, setLastMessage] = useState<DraftWebSocketMessage | null>(null);
   const previousDraftIdRef = useRef<string | null>(null);
+
+  // ENHANCED TIMER SYNCHRONIZATION STATE
+  const [serverTimeOffset, setServerTimeOffset] = useState<number>(0);
+  const [lastTimerUpdate, setLastTimerUpdate] = useState<{time: number, remaining: number} | null>(null);
+  const [displayTime, setDisplayTime] = useState<number>(0);
+  const syncSamplesRef = useRef<number[]>([]);
+  const timerIntervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  // TIMER SYNCHRONIZATION FUNCTIONS
+  const performTimeSync = useCallback(() => {
+    if (wsRef.current?.readyState === WebSocket.OPEN) {
+      const clientTime = Date.now();
+      wsRef.current.send(JSON.stringify({
+        type: 'time_sync_request',
+        clientTime,
+        draftId
+      }));
+    }
+  }, [draftId]);
+
+  const processTimeSyncResponse = useCallback((clientTime: number, serverTime: number) => {
+    const roundTripTime = Date.now() - clientTime;
+    const latency = roundTripTime / 2;
+    const offsetSample = serverTime + latency - Date.now();
+    
+    // Collect sync samples and filter outliers
+    syncSamplesRef.current.push(offsetSample);
+    if (syncSamplesRef.current.length > 10) {
+      syncSamplesRef.current.shift();
+    }
+    
+    // Calculate running average, excluding outliers
+    const sortedSamples = [...syncSamplesRef.current].sort((a, b) => a - b);
+    const median = sortedSamples[Math.floor(sortedSamples.length / 2)];
+    const stdDev = Math.sqrt(sortedSamples.reduce((acc, val) => acc + Math.pow(val - median, 2), 0) / sortedSamples.length);
+    
+    const filteredSamples = sortedSamples.filter(sample => Math.abs(sample - median) <= stdDev);
+    const avgOffset = filteredSamples.reduce((acc, val) => acc + val, 0) / filteredSamples.length;
+    
+    setServerTimeOffset(avgOffset);
+    console.log('[WebSocket] ⏰ Clock sync completed - offset:', avgOffset.toFixed(2), 'ms');
+  }, []);
+
+  const startTimerInterpolation = useCallback(() => {
+    if (timerIntervalRef.current) {
+      clearInterval(timerIntervalRef.current);
+    }
+    
+    timerIntervalRef.current = setInterval(() => {
+      if (!lastTimerUpdate) return;
+      
+      const elapsed = Date.now() - lastTimerUpdate.time;
+      const interpolatedTime = Math.max(0, lastTimerUpdate.remaining - Math.floor(elapsed / 1000));
+      setDisplayTime(interpolatedTime);
+    }, 100); // Update display every 100ms for smooth countdown
+  }, [lastTimerUpdate]);
 
   const connect = useCallback(() => {
     console.log('[WebSocket] 🔄 LIFECYCLE: Connect called with:', { 

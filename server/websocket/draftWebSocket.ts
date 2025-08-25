@@ -379,6 +379,17 @@ export class DraftWebSocketManager {
         });
         break;
 
+      case 'time_sync_request':
+        // Handle client clock synchronization request
+        this.sendToConnection(connection, {
+          type: 'time_sync_response',
+          draftId: connection.draftId,
+          clientTime: message.clientTime,
+          serverTime: Date.now(),
+          timestamp: Date.now()
+        });
+        break;
+
       case 'request_state':
         // Client requesting current draft state
         this.broadcastToDraft(connection.draftId, {
@@ -652,7 +663,7 @@ export class DraftWebSocketManager {
     });
   }
 
-  public broadcastTimerUpdate(draftId: string, timeRemaining: number) {
+  public broadcastTimerUpdate(draftId: string, timeRemaining: number, serverTimestamp?: number) {
     console.log(`[WebSocket] Broadcasting timer update: ${timeRemaining}s remaining to draft ${draftId} (Reserved VM)`);
     const connections = this.connections.get(draftId);
     console.log(`[WebSocket] Active connections for draft ${draftId}: ${connections?.length || 0}`);
@@ -664,7 +675,7 @@ export class DraftWebSocketManager {
         draftId,
         data: { 
           timeRemaining,
-          serverTimestamp: Date.now() // Add server timestamp for sync validation
+          serverTimestamp: serverTimestamp || Date.now() // Use provided timestamp or current time
         },
         timestamp: Date.now()
       };
