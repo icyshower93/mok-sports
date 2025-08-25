@@ -6,24 +6,24 @@ import { nflDataService } from '../services/nflDataService';
 import { calculateBaseMokPoints } from '../utils/mokScoring';
 import { endOfWeekProcessor } from '../utils/endOfWeekProcessor';
 
-// Production admin state - 2025 NFL season
+// Simple admin state management - 2024 season for testing
 let adminState = {
-  currentDate: new Date('2025-09-04'), // Production: Start from September 4, 2025 (NFL season launch)
+  currentDate: new Date('2024-09-04'), // Testing: Start from September 4, 2024
   gamesProcessedToday: 0,
   totalGamesProcessed: 0,
   totalGames: 272,
   currentWeek: 1,
   processingInProgress: false,
-  season: 2025 // 2025 season for production launch
+  season: 2024 // 2024 season for testing with authentic NFL data
 };
 
 
 
-// Legacy 2024 NFL scores for testing fallback - will be replaced by 2025 live data
+// Comprehensive 2024 NFL authentic scores for all weeks
 function get2024AuthenticScores(awayTeam: string, homeTeam: string, gameDate: Date, week: number): { homeScore: number, awayScore: number } | null {
   const gameKey = `${awayTeam}@${homeTeam}`;
   
-  // Week 1 2024 authentic NFL scores (Sept 5-9) - legacy fallback only
+  // Week 1 2024 authentic NFL scores (Sept 5-9)
   const week1Scores: Record<string, { homeScore: number, awayScore: number }> = {
     'BAL@KC': { homeScore: 27, awayScore: 20 },
     'PHI@GB': { homeScore: 29, awayScore: 34 },
@@ -877,7 +877,8 @@ export function registerAdminRoutes(app: Express) {
       // Check if week has changed and handle week progression
       const newWeek = await calculateWeekFromDate(adminState.currentDate);
       if (newWeek !== adminState.currentWeek) {
-        console.log(`📈 Week progression: ${adminState.currentWeek} → ${newWeek}`);
+        console.log(`📈 Week progression detected: ${adminState.currentWeek} → ${newWeek}`);
+        console.log(`🔍 Just processed ${processedCount} games on ${adminState.currentDate.toISOString().split('T')[0]}`);
         await handleWeekProgression(adminState.currentWeek, newWeek, adminState.season);
         adminState.currentWeek = newWeek;
       }
@@ -1148,19 +1149,29 @@ async function handleWeekProgression(oldWeek: number, newWeek: number, season: n
     console.log(`🔄 Week progression: checking if Week ${oldWeek} bonuses already calculated...`);
     await checkAndCalculateWeeklyBonuses(season, oldWeek, true); // Force check for week progression
     
-    // WEEKLY SKINS RESET: Always reset at the start of each new week for fresh competition
-    // The smart reset system should only prevent resets DURING active week processing,
-    // but when transitioning between weeks (oldWeek -> newWeek), we always want fresh skins competition
+    // CRITICAL FIX: Only reset weekly points if we haven't processed any games for the new week yet
+    // This prevents wiping out points immediately after they're calculated
+    const newWeekGamesProcessed = await db.select({ count: sql`count(*)` })
+      .from(nflGames)
+      .where(and(
+        eq(nflGames.season, season),
+        eq(nflGames.week, newWeek),
+        eq(nflGames.isCompleted, true)
+      ));
     
-    console.log(`🎯 WEEKLY TRANSITION: Starting Week ${newWeek} - resetting for fresh skins competition`);
-    console.log(`🏁 Note: Weekly skins reset at week transitions to ensure fair competition each week`);
+    const processedCount = Number(newWeekGamesProcessed[0]?.count) || 0;
     
-    await initializeNewWeekScores(season, newWeek);
-    await resetWeeklyPointsForAllLeagues(season, newWeek);
-    console.log(`✅ Weekly reset complete - Week ${newWeek} ready for fresh skins competition`);
-    
-    // The smart reset is now only applied during SAME-week processing to preserve Mok points
-    // but NOT during week transitions where fresh skins competition is required
+    if (processedCount === 0) {
+      // Safe to reset - no games processed yet for new week
+      console.log(`🎯 SAFE WEEKLY RESET: Starting Week ${newWeek} fresh - no games processed yet`);
+      await initializeNewWeekScores(season, newWeek);
+      await resetWeeklyPointsForAllLeagues(season, newWeek);
+      console.log(`✅ Weekly reset complete - Week ${newWeek} ready for fresh skins competition`);
+    } else {
+      // Games already processed for new week - skip reset to preserve calculated points
+      console.log(`⚠️  SKIP RESET: Week ${newWeek} already has ${processedCount} processed games - preserving calculated points`);
+      console.log(`🔒 This prevents wiping out Mok points that were just calculated`);
+    }
     
     console.log(`✅ Week progression complete: ${oldWeek} → ${newWeek}`);
   } catch (error) {
