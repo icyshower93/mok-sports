@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 // import { Progress } from "@/components/ui/progress"; // Using custom progress bar
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Clock, Users, Trophy, Zap, Shield, Star, Wifi, WifiOff, Play, ArrowLeft, CheckCircle, Circle } from "lucide-react";
+import { Clock, Users, Trophy, Zap, Shield, Star, Wifi, WifiOff, Play, ArrowLeft, CheckCircle, Circle, Search, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { TeamLogo } from "@/components/team-logo";
 import { apiRequest, AuthTokenManager } from "@/lib/queryClient";
@@ -71,6 +71,7 @@ export default function DraftPage() {
   const urlDraftId = (params as any).draftId;
   const [actualDraftId, setActualDraftId] = useState<string | null>(urlDraftId);
   const [selectedTeam, setSelectedTeam] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState<string>('');
   
   // Fetch user's leagues to get the current draft ID
   const { data: leagueData } = useQuery({
@@ -89,7 +90,37 @@ export default function DraftPage() {
   const [lastServerUpdate, setLastServerUpdate] = useState<number>(0);
   const [isCountingDown, setIsCountingDown] = useState<boolean>(false);
 
+  // Mobile UX utilities
+  const vibrate = (pattern: number | number[]) => {
+    if ('vibrate' in navigator && navigator.vibrate) {
+      navigator.vibrate(pattern);
+    }
+  };
 
+  const requestNotificationPermission = async () => {
+    if ('Notification' in window && 'serviceWorker' in navigator) {
+      if (Notification.permission === 'default') {
+        await Notification.requestPermission();
+      }
+    }
+  };
+
+  const sendNotification = (title: string, options?: NotificationOptions) => {
+    if ('Notification' in window && Notification.permission === 'granted') {
+      new Notification(title, {
+        icon: '/icon-192x192.png',
+        badge: '/icon-192x192.png',
+        ...options
+      });
+    }
+  };
+
+
+
+  // Request notification permission on mount
+  useEffect(() => {
+    requestNotificationPermission();
+  }, []);
 
   // Auto-redirect to correct draft if URL has wrong draft ID
   useEffect(() => {
@@ -134,7 +165,7 @@ export default function DraftPage() {
   // Keep diagnostic implementations for comparison (can be removed later)  
   const { status: simpleStatus } = useSimpleWebSocket(draftId || '', user?.id || '');
   const { status: persistentStatus, connectionAttempts } = usePersistentWebSocket(draftId || '', user?.id || '');
-  const { status: stableStatus, connectionId } = useStableWebSocket(draftId || '', user?.id || '');
+  const { status: stableStatus } = useStableWebSocket(draftId || '', user?.id || '');
 
   // Redirect if no draft ID
   useEffect(() => {
@@ -267,7 +298,7 @@ export default function DraftPage() {
 
   // SMOOTH TIMER SYSTEM: Combines server updates with local countdown
   
-  // Handle server timer updates (WebSocket or API)
+  // Handle server timer updates (WebSocket or API) with mobile alerts
   useEffect(() => {
     const newServerTime = lastMessage?.type === 'timer_update' ? 
       lastMessage.data?.timeRemaining : 
@@ -276,11 +307,31 @@ export default function DraftPage() {
     if (newServerTime !== undefined && newServerTime !== serverTime) {
       console.log('[SMOOTH TIMER] Server update received:', newServerTime);
       
+      // Mobile UX: Vibration alerts for timer warnings
+      if (isCurrentUser) {
+        if (newServerTime <= 30 && newServerTime > 25 && serverTime > 30) {
+          vibrate(100); // Short vibration at 30s
+        } else if (newServerTime <= 10 && newServerTime > 5 && serverTime > 10) {
+          vibrate([100, 50, 100]); // Double vibration at 10s
+        } else if (newServerTime <= 5 && newServerTime > 0 && serverTime > 5) {
+          vibrate([200, 100, 200, 100, 200]); // Urgent pattern at 5s
+        }
+      }
+      
       // PREDICTIVE TIMER FIX: If we receive a "fresh" timer (55+ seconds), immediately switch
       const isFreshTimer = newServerTime >= 55 && serverTime < 10;
       
       if (isFreshTimer) {
         console.log('[SMOOTH TIMER] 🎯 Fresh timer detected - immediate transition');
+        // Mobile UX: Notify user it's their turn
+        if (isCurrentUser) {
+          vibrate([300, 100, 300]); // Strong "your turn" vibration
+          sendNotification('Your Draft Pick!', {
+            body: 'It\'s your turn to draft a team',
+            tag: 'draft-turn',
+            requireInteraction: true
+          });
+        }
         // Immediate transition to new timer
         setServerTime(newServerTime);
         setLocalTime(newServerTime);
@@ -335,6 +386,22 @@ export default function DraftPage() {
   })();
   
   console.log('[SMOOTH TIMER] Display time:', displayTime.toFixed(1), 'isCountingDown:', isCountingDown, 'localTime:', localTime.toFixed(1));
+
+  // Mobile UX helper functions
+  const getTimerRingColor = () => {
+    if (displayTime <= 5) return 'stroke-red-500 animate-pulse';
+    if (displayTime <= 10) return 'stroke-orange-500';
+    if (displayTime <= 30) return 'stroke-yellow-500';
+    return 'stroke-green-500';
+  };
+
+  const getBackgroundColor = () => {
+    if (!isCurrentUser) return '';
+    if (displayTime <= 5) return 'bg-red-50 dark:bg-red-950/20 animate-pulse';
+    if (displayTime <= 10) return 'bg-orange-50 dark:bg-orange-950/20';
+    if (displayTime <= 30) return 'bg-yellow-50 dark:bg-yellow-950/20';
+    return 'bg-green-50 dark:bg-green-950/20';
+  };
 
   // Fetch available teams
   const { data: teamsData } = useQuery({
@@ -472,14 +539,26 @@ export default function DraftPage() {
     return conference === 'AFC' ? 'bg-blue-500' : 'bg-red-500';
   };
 
-  // Create stable conference team renderer (FIXED: prevent re-render loops)
+  // Filter teams by search term
+  const filterTeams = (teams: NflTeam[]) => {
+    if (!searchTerm) return teams;
+    const term = searchTerm.toLowerCase();
+    return teams.filter(team => 
+      team.city.toLowerCase().includes(term) ||
+      team.name.toLowerCase().includes(term) ||
+      team.code.toLowerCase().includes(term) ||
+      team.division.toLowerCase().includes(term)
+    );
+  };
+
+  // Create stable conference team renderer with search (FIXED: prevent re-render loops)
   const renderConferenceTeams = (conference: 'AFC' | 'NFC') => {
     // Get all teams from available teams and picks to create comprehensive list
     const allTeams = [...(state.availableTeams || [])];
     const draftedTeams = state.picks?.map(p => p.nflTeam) || [];
     
     // Combine available and drafted teams for complete view
-    const conferenceTeams = [...allTeams, ...draftedTeams]
+    let conferenceTeams = [...allTeams, ...draftedTeams]
       .filter(team => team.conference === conference)
       .reduce((acc, team) => {
         if (!acc.some(t => t.id === team.id)) {
@@ -487,6 +566,9 @@ export default function DraftPage() {
         }
         return acc;
       }, [] as NflTeam[]);
+
+    // Apply search filter
+    conferenceTeams = filterTeams(conferenceTeams);
 
     // Group by division
     const divisions = conferenceTeams.reduce((acc, team) => {
@@ -1119,14 +1201,36 @@ export default function DraftPage() {
                     </div>
                   )}
 
+                  {/* Quick Team Search */}
+                  <div className="relative mb-4">
+                    <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                    <input
+                      type="text"
+                      placeholder="Search teams, cities, divisions..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="w-full pl-9 pr-10 py-2 border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
+                      data-testid="input-team-search"
+                    />
+                    {searchTerm && (
+                      <button
+                        onClick={() => setSearchTerm('')}
+                        className="absolute right-3 top-3 text-muted-foreground hover:text-foreground"
+                        data-testid="button-clear-search"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    )}
+                  </div>
+
                   <ScrollArea className="h-96">
                     <Tabs defaultValue="afc" className="w-full">
                       <TabsList className="grid w-full grid-cols-2 mb-4">
                         <TabsTrigger value="afc">
-                          AFC ({(state.availableTeams?.filter(team => team.conference === 'AFC')?.length || 0)} available)
+                          AFC ({(filterTeams(state.availableTeams?.filter(team => team.conference === 'AFC') || [])?.length || 0)} available)
                         </TabsTrigger>
                         <TabsTrigger value="nfc">
-                          NFC ({(state.availableTeams?.filter(team => team.conference === 'NFC')?.length || 0)} available)
+                          NFC ({(filterTeams(state.availableTeams?.filter(team => team.conference === 'NFC') || [])?.length || 0)} available)
                         </TabsTrigger>
                       </TabsList>
                       
