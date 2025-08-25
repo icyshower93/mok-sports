@@ -311,9 +311,14 @@ export default function DraftPage() {
     console.error('Draft fetch error:', error);
   }
 
-  // CRITICAL: Declare variables after query but BEFORE any functions that use them
+  // CRITICAL: Safely declare variables with proper guards
   const state: DraftState = draftData?.state || {} as DraftState;
   const isCurrentUser = draftData?.isCurrentUser || false;
+  
+  // Early return if essential data is not available to prevent temporal dead zone errors
+  const hasEssentialData = draftData && draftData.state;
+  
+  console.log('[Draft] Essential data check:', { hasEssentialData, draftData: !!draftData, state: !!state });
 
   // SMOOTH TIMER SYSTEM: Combines server updates with local countdown
   
@@ -442,17 +447,20 @@ export default function DraftPage() {
     return 'bg-green-50 dark:bg-green-950/20';
   };
 
-  // Team availability status helper
+  // Team availability status helper with proper safety guards
   const getTeamStatus = (team: NflTeam) => {
-    const currentState = draftData?.state || {} as DraftState;
-    const currentIsCurrentUser = draftData?.isCurrentUser || false;
-    const isDrafted = currentState.picks?.some(p => p.nflTeam.id === team.id);
+    // Always use fresh references to avoid temporal dead zone issues
+    if (!draftData?.state) return 'available';
+    
+    const currentState = draftData.state;
+    const currentIsCurrentUser = draftData.isCurrentUser || false;
+    const isDrafted = currentState.picks?.some((p: any) => p.nflTeam.id === team.id);
     if (isDrafted) return 'taken';
     
     // Check division conflict for current user
-    if (currentIsCurrentUser && currentState?.canMakePick) {
-      const userPicks = currentState.picks?.filter(p => p.user.id === user?.id) || [];
-      const hasDivisionConflict = userPicks.some(p => p.nflTeam.division === team.division);
+    if (currentIsCurrentUser && currentState?.canMakePick && user?.id) {
+      const userPicks = currentState.picks?.filter((p: any) => p.user.id === user.id) || [];
+      const hasDivisionConflict = userPicks.some((p: any) => p.nflTeam.division === team.division);
       if (hasDivisionConflict) return 'conflict';
     }
     
@@ -669,9 +677,15 @@ export default function DraftPage() {
 
   // Create stable conference team renderer with search (FIXED: prevent re-render loops)
   const renderConferenceTeams = (conference: 'AFC' | 'NFC') => {
+    // SAFETY: Always check if essential data is available first
+    if (!hasEssentialData || !draftData?.state) {
+      return <div className="text-center p-4">Loading teams...</div>;
+    }
+    
     // Get all teams from available teams and picks to create comprehensive list
-    const allTeams = [...(state.availableTeams || [])];
-    const draftedTeams = state.picks?.map(p => p.nflTeam) || [];
+    const currentState = draftData.state;
+    const allTeams = [...(currentState.availableTeams || [])];
+    const draftedTeams = currentState.picks?.map((p: any) => p.nflTeam) || [];
     
     // Combine available and drafted teams for complete view
     let conferenceTeams = [...allTeams, ...draftedTeams]
@@ -700,9 +714,9 @@ export default function DraftPage() {
         </h4>
         <div className="grid grid-cols-1 gap-2">
           {divisionTeams.map((team) => {
-            const isDrafted = state.picks?.some(p => p.nflTeam.id === team.id);
-            const draftedBy = isDrafted ? state.picks?.find(p => p.nflTeam.id === team.id) : null;
-            const isAvailable = state.availableTeams?.some(t => t.id === team.id);
+            const isDrafted = currentState.picks?.some((p: any) => p.nflTeam.id === team.id);
+            const draftedBy = isDrafted ? currentState.picks?.find((p: any) => p.nflTeam.id === team.id) : null;
+            const isAvailable = currentState.availableTeams?.some((t: any) => t.id === team.id);
             
             return (
               <button
@@ -713,9 +727,9 @@ export default function DraftPage() {
                     : isDrafted 
                     ? 'border-border bg-muted/30 opacity-60 cursor-not-allowed'
                     : 'border-border hover:border-primary/50 hover:bg-muted/50'
-                } ${!state?.canMakePick || !isCurrentUser || isDrafted ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+                } ${!currentState?.canMakePick || !draftData?.isCurrentUser || isDrafted ? 'cursor-not-allowed' : 'cursor-pointer'}`}
                 onClick={() => isAvailable && !isDrafted && setSelectedTeam(team.id)}
-                disabled={!state?.canMakePick || !isCurrentUser || isDrafted}
+                disabled={!currentState?.canMakePick || !draftData?.isCurrentUser || isDrafted}
               >
                 <div className="flex items-center space-x-3">
                   <div className="relative">
@@ -738,12 +752,12 @@ export default function DraftPage() {
                   <div className="flex-1">
                     <div className="font-medium text-sm flex items-center space-x-2">
                       <span>{team.city} {team.name}</span>
-                      {getTeamStatus(team) === 'conflict' && isCurrentUser && (
+                      {getTeamStatus(team) === 'conflict' && draftData?.isCurrentUser && (
                         <Target className="w-3 h-3 text-orange-500" />
                       )}
                     </div>
                     <div className="text-xs text-muted-foreground">{team.division}</div>
-                    {getTeamStatus(team) === 'conflict' && isCurrentUser && (
+                    {getTeamStatus(team) === 'conflict' && draftData?.isCurrentUser && (
                       <div className="text-xs text-orange-600 mt-1">
                         Division limit reached
                       </div>
@@ -812,7 +826,7 @@ export default function DraftPage() {
           {/* Enhanced Timer & Status Bar */}
           <div className="flex items-center space-x-4">
             {/* Current Picker Info */}
-            {state.currentUserId && currentPlayer && (
+            {hasEssentialData && draftData.state.currentUserId && currentPlayer && (
               <div className="hidden sm:flex items-center space-x-2 px-3 py-1.5 bg-secondary/30 rounded-full">
                 {currentPlayer.avatar && (
                   <img 
@@ -824,15 +838,15 @@ export default function DraftPage() {
                   />
                 )}
                 <div className="text-xs">
-                  <div className={`font-medium ${isCurrentUser ? 'text-green-600' : 'text-foreground'}`}>
-                    {isCurrentUser ? 'Your turn!' : currentPlayer.name}
+                  <div className={`font-medium ${draftData?.isCurrentUser ? 'text-green-600' : 'text-foreground'}`}>
+                    {draftData?.isCurrentUser ? 'Your turn!' : currentPlayer.name}
                   </div>
                 </div>
               </div>
             )}
 
             {/* Enhanced Timer Circle */}
-            {state.draft.status === 'active' && (
+            {hasEssentialData && draftData.state.draft.status === 'active' && (
               <div className="relative">
                 <svg className="w-12 h-12 transform -rotate-90">
                   <circle
@@ -893,7 +907,7 @@ export default function DraftPage() {
         </div>
 
         {/* Progress Bar for Mobile */}
-        {state.draft.status === 'active' && (
+        {hasEssentialData && draftData.state.draft.status === 'active' && (
           <div className="sm:hidden mt-3 w-full bg-secondary/30 rounded-full h-2 overflow-hidden">
             <div 
               className={`h-full rounded-full transition-all duration-500 ${
@@ -908,7 +922,7 @@ export default function DraftPage() {
       </div>
 
       {/* Screen Flash Effect for Urgency */}
-      {isCurrentUser && displayTime <= 10 && (
+      {hasEssentialData && draftData?.isCurrentUser && displayTime <= 10 && (
         <div className={`fixed inset-0 pointer-events-none z-30 border-4 transition-all duration-300 ${
           displayTime <= 5 ? 'border-red-500 animate-pulse' :
           displayTime <= 10 ? 'border-orange-500' :
@@ -925,11 +939,11 @@ export default function DraftPage() {
               <h1 className="text-2xl font-semibold text-foreground mb-1">Draft Room</h1>
               <div className="flex items-center justify-center space-x-6 text-sm text-muted-foreground">
                 <div className="flex items-center space-x-1">
-                  <span>Round {state.draft.currentRound} of {state.draft.totalRounds}</span>
+                  <span>Round {draftData?.state?.draft?.currentRound || 1} of {draftData?.state?.draft?.totalRounds || 5}</span>
                 </div>
                 <div className="h-1 w-1 bg-muted-foreground rounded-full" />
                 <div className="flex items-center space-x-1">
-                  <span>Pick {state.draft.currentPick}</span>
+                  <span>Pick {draftData?.state?.draft?.currentPick || 1}</span>
                 </div>
               </div>
             </div>
