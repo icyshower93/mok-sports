@@ -289,7 +289,7 @@ export class SnakeDraftManager {
   /**
    * Makes a draft pick for a user
    */
-  async makePick(draftId: string, pickRequest: PickRequest): Promise<PickResult> {
+  async makePick(draftId: string, pickRequest: PickRequest, overrideDivisionRule = false): Promise<PickResult> {
     try {
       const draft = await this.storage.getDraft(draftId);
       if (!draft) {
@@ -313,8 +313,8 @@ export class SnakeDraftManager {
         return { success: false, error: 'Team is not available' };
       }
 
-      // Check division rule if enabled
-      if (this.draftConfig.enableDivisionRule) {
+      // Check division rule if enabled (unless overridden)
+      if (this.draftConfig.enableDivisionRule && !overrideDivisionRule) {
         const divisionViolation = await this.checkDivisionRule(
           draftId,
           pickRequest.userId,
@@ -440,8 +440,10 @@ export class SnakeDraftManager {
       }
 
       // If no eligible teams due to division rule, pick from any available
+      let needsOverride = false;
       if (eligibleTeams.length === 0) {
         eligibleTeams = availableTeams;
+        needsOverride = true;
         console.log(`⚠️ Division rule forced override for user ${userId}`);
       }
 
@@ -454,7 +456,7 @@ export class SnakeDraftManager {
         userId,
         nflTeamId: randomTeam.id,
         isAutoPick: true
-      });
+      }, needsOverride);
 
       if (autoPickResult.success) {
         console.log(`✅ Auto-picked ${randomTeam.name} for user ${userId} - draft advanced`);
@@ -534,10 +536,12 @@ export class SnakeDraftManager {
 
     let eligibleTeams = availableTeams;
     
+    let needsBotOverride = false;
     if (this.draftConfig.enableDivisionRule) {
       eligibleTeams = await this.getDivisionEligibleTeams(draftId, userId, availableTeams);
       if (eligibleTeams.length === 0) {
         eligibleTeams = availableTeams; // Override rule if necessary
+        needsBotOverride = true;
       }
     }
 
@@ -548,7 +552,7 @@ export class SnakeDraftManager {
       userId,
       nflTeamId: randomTeam.id,
       isAutoPick: false // Bot picks are not auto-picks
-    });
+    }, needsBotOverride);
 
     console.log(`🤖 Bot picked ${randomTeam.name}`);
   }

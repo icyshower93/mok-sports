@@ -6,24 +6,24 @@ import { nflDataService } from '../services/nflDataService';
 import { calculateBaseMokPoints } from '../utils/mokScoring';
 import { endOfWeekProcessor } from '../utils/endOfWeekProcessor';
 
-// Simple admin state management - 2024 season for testing
+// Production admin state - 2025 NFL season
 let adminState = {
-  currentDate: new Date('2024-09-04'), // Testing: Start from September 4, 2024
+  currentDate: new Date('2025-09-04'), // Production: Start from September 4, 2025 (NFL season launch)
   gamesProcessedToday: 0,
   totalGamesProcessed: 0,
   totalGames: 272,
   currentWeek: 1,
   processingInProgress: false,
-  season: 2024 // 2024 season for testing with authentic NFL data
+  season: 2025 // 2025 season for production launch
 };
 
 
 
-// Comprehensive 2024 NFL authentic scores for all weeks
+// Legacy 2024 NFL scores for testing fallback - will be replaced by 2025 live data
 function get2024AuthenticScores(awayTeam: string, homeTeam: string, gameDate: Date, week: number): { homeScore: number, awayScore: number } | null {
   const gameKey = `${awayTeam}@${homeTeam}`;
   
-  // Week 1 2024 authentic NFL scores (Sept 5-9)
+  // Week 1 2024 authentic NFL scores (Sept 5-9) - legacy fallback only
   const week1Scores: Record<string, { homeScore: number, awayScore: number }> = {
     'BAL@KC': { homeScore: 27, awayScore: 20 },
     'PHI@GB': { homeScore: 29, awayScore: 34 },

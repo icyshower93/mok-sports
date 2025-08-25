@@ -1,8 +1,8 @@
 #!/usr/bin/env tsx
 
 /**
- * Import complete 2024 NFL season from Tank01 API
- * This provides authentic completed games with real scores for testing
+ * Import complete 2025 NFL season from Tank01 API
+ * This provides live NFL season data for production
  */
 
 import { db } from '../db.js';
@@ -51,12 +51,12 @@ async function getTeamIdByCode(code: string): Promise<number | null> {
   }
 }
 
-async function import2024Season() {
-  console.log('🏈 Starting 2024 NFL season import from Tank01 API...');
+async function import2025Season() {
+  console.log('🏈 Starting 2025 NFL season import from Tank01 API...');
   
-  // Clear existing 2024 games
-  console.log('🧹 Clearing existing 2024 games...');
-  await db.delete(nflGames).where(eq(nflGames.season, 2024));
+  // Clear existing 2025 games
+  console.log('🧹 Clearing existing 2025 games...');
+  await db.delete(nflGames).where(eq(nflGames.season, 2025));
   
   let totalGames = 0;
   let importedGames = 0;
@@ -66,7 +66,7 @@ async function import2024Season() {
     console.log(`📅 Importing Week ${week}...`);
     
     try {
-      const weekData = await makeAPIRequest(`/getNFLGamesForWeek?seasonType=reg&season=2024&week=${week}`);
+      const weekData = await makeAPIRequest(`/getNFLGamesForWeek?seasonType=reg&season=2025&week=${week}`);
       
       if (!weekData.body || !Array.isArray(weekData.body)) {
         console.warn(`⚠️  No games found for Week ${week}`);

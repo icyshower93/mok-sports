@@ -31,7 +31,7 @@ export class WeekLockRestrictions {
     try {
       console.log(`[WeekLockRestrictions] Checking lock status for Week ${week} of ${season}`);
 
-      // For testing environment (2024 season), use different logic
+      // For legacy testing (2024 season), use simulation logic
       if (season === 2024) {
         return this.checkTestingWeekLockStatus(season, week);
       }
@@ -54,11 +54,11 @@ export class WeekLockRestrictions {
   }
 
   /**
-   * Testing environment logic (2024 season)
+   * Legacy testing logic (2024 season fallback)
    * Uses admin simulation state to determine if week is active
    */
   private async checkTestingWeekLockStatus(season: number, week: number): Promise<WeekLockStatus> {
-    console.log(`[WeekLockRestrictions] Using testing logic for ${season} Week ${week}`);
+    console.log(`[WeekLockRestrictions] Using legacy testing logic for ${season} Week ${week}`);
     
     try {
       // Get admin simulation state
