@@ -75,25 +75,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
     }
     
-    // For development: If no token and no user, try development login
-    if (!storedToken && !user && !isLoading && process.env.NODE_ENV === 'development') {
-      console.log('[Auth] Development mode - attempting automatic login for Sky Evans');
-      // Auto-login for development mode
-      fetch('/api/auth/testing/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({})
-      })
-      .then(res => res.json())
-      .then(data => {
-        if (data.success && data.token) {
-          console.log('[Auth] Development auto-login successful');
-          AuthTokenManager.setToken(data.token);
-          queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
-        }
-      })
-      .catch(err => console.log('[Auth] Development auto-login failed:', err));
-    }
+    // REMOVED: Development auto-login for Sky Evans (causes PWA refresh conflicts when Sky Evans is current picker)
   }, [user, isLoading, queryClient]);
 
   // Check URL params for auth success/error and extract token

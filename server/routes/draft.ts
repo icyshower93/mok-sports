@@ -35,15 +35,7 @@ async function getAuthenticatedUser(req: any) {
   if (!token) {
     console.log("[Draft Auth] No token found in header or cookies");
     
-    // For development: Return Sky Evans if no token (PWA cookie issue workaround)
-    if (process.env.NODE_ENV === 'development') {
-      console.log("[Draft Auth] Development mode - returning Sky Evans for draft access");
-      return {
-        id: "9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a",
-        name: "Sky Evans", 
-        email: "skyevans04@gmail.com"
-      };
-    }
+    // REMOVED: Sky Evans fallback (causes PWA refresh conflicts when Sky Evans is current picker)
     return null;
   }
 
@@ -55,15 +47,7 @@ async function getAuthenticatedUser(req: any) {
     if (!user || typeof user === 'string') {
       console.log("[Draft Auth] Invalid token or wrong format");
       
-      // For development: Fall back to Sky Evans on token verification failure
-      if (process.env.NODE_ENV === 'development') {
-        console.log("[Draft Auth] Development mode - falling back to Sky Evans for invalid token");
-        return {
-          id: "9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a",
-          name: "Sky Evans", 
-          email: "skyevans04@gmail.com"
-        };
-      }
+      // REMOVED: Sky Evans fallback (causes PWA refresh conflicts when Sky Evans is current picker)
       return null;
     }
 
@@ -72,15 +56,7 @@ async function getAuthenticatedUser(req: any) {
   } catch (error) {
     console.error("[Draft Auth] Token verification error:", error);
     
-    // For development: Fall back to Sky Evans on token verification error
-    if (process.env.NODE_ENV === 'development') {
-      console.log("[Draft Auth] Development mode - falling back to Sky Evans for token error");
-      return {
-        id: "9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a",
-        name: "Sky Evans", 
-        email: "skyevans04@gmail.com"
-      };
-    }
+    // REMOVED: Sky Evans fallback (causes PWA refresh conflicts when Sky Evans is current picker)
     return null;
   }
 }
