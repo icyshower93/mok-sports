@@ -1460,7 +1460,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         currentRound: 1,
         currentPick: 1,
         totalRounds: 5,
-        pickTimeLimit: 60,
+        pickTimeLimit: 120, // Default 2 minutes (120 seconds) per pick
         draftOrder
       });
 
