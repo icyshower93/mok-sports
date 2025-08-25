@@ -90,10 +90,20 @@ export default function DraftPage() {
   const [lastServerUpdate, setLastServerUpdate] = useState<number>(0);
   const [isCountingDown, setIsCountingDown] = useState<boolean>(false);
 
-  // Mobile UX utilities
+  // Mobile UX utilities with better error handling
   const vibrate = (pattern: number | number[]) => {
-    if ('vibrate' in navigator && navigator.vibrate) {
-      navigator.vibrate(pattern);
+    try {
+      if ('vibrate' in navigator && navigator.vibrate) {
+        const result = navigator.vibrate(pattern);
+        console.log('[VIBRATION]', result ? 'Success' : 'Failed', pattern);
+        return result;
+      } else {
+        console.log('[VIBRATION] API not supported on this device');
+        return false;
+      }
+    } catch (error) {
+      console.error('[VIBRATION] Error:', error);
+      return false;
     }
   };
 
@@ -163,9 +173,9 @@ export default function DraftPage() {
   }, []);
   
   // Keep diagnostic implementations for comparison (can be removed later)  
-  const { status: simpleStatus } = useSimpleWebSocket(draftId || '', user?.id || '');
-  const { status: persistentStatus, connectionAttempts } = usePersistentWebSocket(draftId || '', user?.id || '');
-  const { status: stableStatus } = useStableWebSocket(draftId || '', user?.id || '');
+  const { status: simpleStatus } = useSimpleWebSocket(draftId || '');
+  const { status: persistentStatus, connectionAttempts } = usePersistentWebSocket(draftId || '');
+  const { connectionStatus: stableStatus } = useStableWebSocket(draftId || '');
 
   // Redirect if no draft ID
   useEffect(() => {
@@ -310,10 +320,13 @@ export default function DraftPage() {
       // Mobile UX: Vibration alerts for timer warnings
       if (isCurrentUser) {
         if (newServerTime <= 30 && newServerTime > 25 && serverTime > 30) {
+          console.log('[VIBRATION] 30s warning triggered');
           vibrate(100); // Short vibration at 30s
         } else if (newServerTime <= 10 && newServerTime > 5 && serverTime > 10) {
+          console.log('[VIBRATION] 10s warning triggered');
           vibrate([100, 50, 100]); // Double vibration at 10s
         } else if (newServerTime <= 5 && newServerTime > 0 && serverTime > 5) {
+          console.log('[VIBRATION] 5s urgent warning triggered');
           vibrate([200, 100, 200, 100, 200]); // Urgent pattern at 5s
         }
       }
@@ -827,7 +840,7 @@ export default function DraftPage() {
                           🚀 Draft Starting!
                         </div>
                         <div className="text-sm text-green-600 dark:text-green-400 mb-3">
-                          Get ready, draft begins in...
+                          Draft starts in
                         </div>
                         
                         {/* Countdown Display */}
@@ -837,7 +850,7 @@ export default function DraftPage() {
                         
                         <div className="flex items-center justify-center space-x-2 text-xs text-green-500 dark:text-green-400">
                           <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                          <span>Prepare your picks!</span>
+                          <span>Draft starting soon</span>
                         </div>
                       </div>
                     </div>
@@ -904,7 +917,7 @@ export default function DraftPage() {
                             </span>
                           ) : displayTime <= 0 && localTime === 0 && !isCountingDown ? (
                             <span className="text-muted-foreground">
-                              Preparing next pick...
+                              —
                             </span>
                           ) : (
                             formatTime(displayTime)
@@ -1188,7 +1201,7 @@ export default function DraftPage() {
                     <div className="mb-4 p-3 bg-fantasy-purple/10 rounded-lg border border-fantasy-purple/20">
                       <div className="flex items-center justify-between">
                         <span className="text-sm font-medium">
-                          {selectedTeam ? 'Team selected - ready to draft!' : 'Select a team to draft'}
+                          {selectedTeam ? 'Team selected' : 'Select a team to draft'}
                         </span>
                         <Button 
                           onClick={handleMakePick}
@@ -1196,6 +1209,31 @@ export default function DraftPage() {
                           size="sm"
                         >
                           {makePickMutation.isPending ? 'Drafting...' : 'Draft Team'}
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Vibration Test Button (Development) */}
+                  {import.meta.env.DEV && (
+                    <div className="mb-4 p-2 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs text-yellow-800 dark:text-yellow-200">Vibration Test</span>
+                        <Button 
+                          size="sm"
+                          variant="outline"
+                          onClick={() => {
+                            console.log('[VIBRATION TEST] Testing vibration...');
+                            const result = vibrate([200, 100, 200]);
+                            console.log('[VIBRATION TEST] Result:', result);
+                            
+                            // Also test if HTTPS is the issue
+                            console.log('[VIBRATION TEST] Protocol:', window.location.protocol);
+                            console.log('[VIBRATION TEST] Navigator vibrate:', 'vibrate' in navigator);
+                            console.log('[VIBRATION TEST] User agent:', navigator.userAgent);
+                          }}
+                        >
+                          Test Vibration
                         </Button>
                       </div>
                     </div>
