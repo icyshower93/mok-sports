@@ -1,0 +1,130 @@
+Build Info: Object
+index-BTXIu1k1.js:402 📦 Version: merk5oe1
+index-BTXIu1k1.js:402 📅 Built: 2025-08-25T20:16:46.777Z
+index-BTXIu1k1.js:402 🔧 Environment: production
+index-BTXIu1k1.js:358 [StableWebSocket] ⏳ Waiting for authentication...
+index-BTXIu1k1.js:402 [App] WebSocket status: waiting_auth (Disconnected)
+index-BTXIu1k1.js:402 [App] ⏳ Waiting for authentication to complete
+index-BTXIu1k1.js:358 [Auth] Token check - Has token: true Has user: false Loading: true
+index-BTXIu1k1.js:358 [SW Hook] EMERGENCY: Unregistering all existing service workers
+index-BTXIu1k1.js:358 [SW Hook] Found 1 existing registrations
+index-BTXIu1k1.js:358 [SW Hook] Unregistering existing service worker
+171e21da-e5e6-4728-a153-eb5a7657e46e:1 Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner.
+index-BTXIu1k1.js:358 [SW Hook] Found 0 caches to delete
+index-BTXIu1k1.js:358 [SW Hook] Registering fresh service worker: /sw.js?v=1756153006905&r=0.043131150230170334
+index-BTXIu1k1.js:358 [StableWebSocket] 🔐 Auth confirmed, establishing connection
+index-BTXIu1k1.js:358 [StableWebSocket] 🧹 Cleaning up all timers and connections
+index-BTXIu1k1.js:358 [StableWebSocket] 🚀 Establishing connection for user: Mok Sports
+index-BTXIu1k1.js:358 [Auth] Token check - Has token: true Has user: true Loading: false
+index-BTXIu1k1.js:358 [AutoPushRefresh] Legacy hook delegating to SubscriptionManager
+index-BTXIu1k1.js:402 [App] WebSocket status: connecting (Disconnected)
+sw.js?v=1756153006905&r=0.043131150230170334:2 [SW] NUCLEAR OPTION - Emergency service worker loading
+sw.js?v=1756153006905&r=0.043131150230170334:88 [SW] Service worker starting, version: v1.7.0-nuclear-unregister-1756153007062
+sw.js?v=1756153006905&r=0.043131150230170334:305 [SW] Service worker script loaded successfully
+index-BTXIu1k1.js:358 [SW Hook] Service worker registered successfully
+sw.js?v=1756153006905&r=0.043131150230170334:19 [SW] EMERGENCY INSTALL - Clearing all caches and forcing activation
+sw.js?v=1756153006905&r=0.043131150230170334:92 [SW] Installing service worker, version: v1.7.0-nuclear-unregister-1756153007062
+sw.js?v=1756153006905&r=0.043131150230170334:22 [SW] Found caches to delete: Array(0)
+sw.js?v=1756153006905&r=0.043131150230170334:30 [SW] All caches deleted - skipping waiting
+sw.js?v=1756153006905&r=0.043131150230170334:96 [SW] Caching static files
+index-BTXIu1k1.js:402 [App] Draft route matched with params: Object
+index-BTXIu1k1.js:402 [App] Current location: https://mok-sports-draft-mokfantasysport.replit.app/draft/171e21da-e5e6-4728-a153-eb5a7657e46e
+index-BTXIu1k1.js:358 [ErrorBoundary] Error caught: ReferenceError Cannot access 'j' before initialization
+getDerivedStateFromError @ index-BTXIu1k1.js:358Understand this error
+index-BTXIu1k1.js:358 [ErrorBoundary] Stack trace: ReferenceError: Cannot access 'j' before initialization
+    at VT (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BTXIu1k1.js:402:50770)
+    at KT (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BTXIu1k1.js:402:62970)
+    at xf (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BTXIu1k1.js:38:16998)
+    at vv (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BTXIu1k1.js:40:43963)
+    at pv (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BTXIu1k1.js:40:39727)
+    at XS (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BTXIu1k1.js:40:39655)
+    at pl (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BTXIu1k1.js:40:39508)
+    at Yh (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BTXIu1k1.js:40:36623)
+    at Lr (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BTXIu1k1.js:38:3274)
+    at https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BTXIu1k1.js:40:34207
+getDerivedStateFromError @ index-BTXIu1k1.js:358Understand this error
+index-BTXIu1k1.js:402 [App] Draft route matched with params: Object
+index-BTXIu1k1.js:402 [App] Current location: https://mok-sports-draft-mokfantasysport.replit.app/draft/171e21da-e5e6-4728-a153-eb5a7657e46e
+index-BTXIu1k1.js:358 [ErrorBoundary] Error caught: ReferenceError Cannot access 'j' before initialization
+getDerivedStateFromError @ index-BTXIu1k1.js:358Understand this error
+index-BTXIu1k1.js:358 [ErrorBoundary] Stack trace: ReferenceError: Cannot access 'j' before initialization
+    at VT (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BTXIu1k1.js:402:50770)
+    at KT (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BTXIu1k1.js:402:62970)
+    at xf (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BTXIu1k1.js:38:16998)
+    at vv (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BTXIu1k1.js:40:43963)
+    at pv (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BTXIu1k1.js:40:39727)
+    at XS (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BTXIu1k1.js:40:39655)
+    at pl (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BTXIu1k1.js:40:39508)
+    at Yu (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BTXIu1k1.js:40:35875)
+    at Yh (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BTXIu1k1.js:40:36678)
+    at Lr (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BTXIu1k1.js:38:3274)
+getDerivedStateFromError @ index-BTXIu1k1.js:358Understand this error
+index-BTXIu1k1.js:40 ReferenceError: Cannot access 'j' before initialization
+    at VT (index-BTXIu1k1.js:402:50770)
+    at KT (index-BTXIu1k1.js:402:62970)
+    at xf (index-BTXIu1k1.js:38:16998)
+    at vv (index-BTXIu1k1.js:40:43963)
+    at pv (index-BTXIu1k1.js:40:39727)
+    at XS (index-BTXIu1k1.js:40:39655)
+    at pl (index-BTXIu1k1.js:40:39508)
+    at Yu (index-BTXIu1k1.js:40:35875)
+    at Yh (index-BTXIu1k1.js:40:36678)
+    at Lr (index-BTXIu1k1.js:38:3274)
+Fu @ index-BTXIu1k1.js:40Understand this error
+index-BTXIu1k1.js:358 [ErrorBoundary] DETAILED ERROR - Name: ReferenceError
+componentDidCatch @ index-BTXIu1k1.js:358Understand this error
+index-BTXIu1k1.js:358 [ErrorBoundary] DETAILED ERROR - Message: Cannot access 'j' before initialization
+componentDidCatch @ index-BTXIu1k1.js:358Understand this error
+index-BTXIu1k1.js:358 [ErrorBoundary] DETAILED ERROR - Stack: ReferenceError: Cannot access 'j' before initialization
+    at VT (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BTXIu1k1.js:402:50770)
+    at KT (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BTXIu1k1.js:402:62970)
+    at xf (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BTXIu1k1.js:38:16998)
+    at vv (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BTXIu1k1.js:40:43963)
+    at pv (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BTXIu1k1.js:40:39727)
+    at XS (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BTXIu1k1.js:40:39655)
+    at pl (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BTXIu1k1.js:40:39508)
+    at Yu (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BTXIu1k1.js:40:35875)
+    at Yh (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BTXIu1k1.js:40:36678)
+    at Lr (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BTXIu1k1.js:38:3274)
+componentDidCatch @ index-BTXIu1k1.js:358Understand this error
+index-BTXIu1k1.js:358 [ErrorBoundary] Component stack: 
+    at KT (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BTXIu1k1.js:402:61531)
+    at at (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BTXIu1k1.js:48:3201)
+    at $N (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BTXIu1k1.js:48:4017)
+    at OR (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BTXIu1k1.js:402:243171)
+    at Z2 (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BTXIu1k1.js:358:57509)
+    at u (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BTXIu1k1.js:48:45884)
+    at d0 (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BTXIu1k1.js:358:50483)
+    at J2 (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BTXIu1k1.js:358:56981)
+    at ij (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BTXIu1k1.js:48:40235)
+    at aE (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BTXIu1k1.js:358:77161)
+    at MR
+componentDidCatch @ index-BTXIu1k1.js:358Understand this error
+index-BTXIu1k1.js:358 [StableWebSocket] 🧹 Component unmounting, cleaning up
+index-BTXIu1k1.js:358 [StableWebSocket] 🧹 Cleaning up all timers and connections
+index-BTXIu1k1.js:358 [StableWebSocket] 🔌 Closing connection with code 4003: unmount
+index-BTXIu1k1.js:358 WebSocket connection to 'wss://mok-sports-draft-mokfantasysport.replit.app/draft-ws' failed: WebSocket is closed before the connection is established.
+(anonymous) @ index-BTXIu1k1.js:358Understand this warning
+index-BTXIu1k1.js:358 [StableWebSocket] ❌ Connection error: Event
+k.onerror @ index-BTXIu1k1.js:358Understand this error
+index-BTXIu1k1.js:358 [StableWebSocket] 🔌 Connection closed - Code: 1006, Reason: 
+index-BTXIu1k1.js:358 [StableWebSocket] 🔄 Reconnecting in 1790.44234819654ms (attempt 1/8)
+sw.js?v=1756153006905&r=0.043131150230170334:99 [SW] Static files cached successfully
+sw.js?v=1756153006905&r=0.043131150230170334:41 [SW] EMERGENCY ACTIVATE - Taking control of all clients
+sw.js?v=1756153006905&r=0.043131150230170334:110 [SW] Activating service worker, version: v1.7.0-nuclear-unregister-1756153007062
+sw.js?v=1756153006905&r=0.043131150230170334:46 [SW] Deleting remaining cache: mok-sports-static-v1.7.0-nuclear-unregister-1756153007062
+sw.js?v=1756153006905&r=0.043131150230170334:116 [SW] Found caches: Array(1)
+sw.js?v=1756153006905&r=0.043131150230170334:129 [SW] Service worker activated and controlling all clients
+sw.js?v=1756153006905&r=0.043131150230170334:51 [SW] Claiming all clients immediately
+index-BTXIu1k1.js:358 [StableWebSocket] 🧹 Cleaning up all timers and connections
+index-BTXIu1k1.js:358 [StableWebSocket] 🚀 Establishing connection for user: Mok Sports
+index-BTXIu1k1.js:358 [StableWebSocket] ✅ Connection established
+index-BTXIu1k1.js:358 [StableWebSocket] 📡 Subscribed to admin broadcasts
+index-BTXIu1k1.js:358 [StableWebSocket] ⏰ Keepalive started (25s interval)
+index-BTXIu1k1.js:358 [StableWebSocket] 📨 Message received: connected
+index-BTXIu1k1.js:358 [StableWebSocket] ✅ Server confirmation: connected
+index-BTXIu1k1.js:358 [StableWebSocket] 📨 Message received: admin_ready
+index-BTXIu1k1.js:358 [StableWebSocket] ✅ Server confirmation: admin_ready
+sw.js?v=1756153006905&r=0.043131150230170334:64 [SW] BYPASSING CACHE for JS file: https://mok-sports-draft-mokfantasysport.replit.app/manifest.json
+sw.js?v=1756153006905&r=0.043131150230170334:164 [SW] Fetching /draft/171e21da-e5e6-4728-a153-eb5a7657e46e from network
+sw.js?v=1756153006905&r=0.043131150230170334:164 [SW] Fetching /assets/index-1SQiDaG8.css from network
