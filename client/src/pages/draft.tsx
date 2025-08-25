@@ -497,7 +497,7 @@ export default function DraftPage() {
 
     return Object.entries(divisions).map(([division, divisionTeams]) => (
       <div key={division} className="mb-6">
-        <h4 className="text-sm font-semibold text-muted-foreground mb-3 uppercase tracking-wide">
+        <h4 className="text-xs font-medium text-muted-foreground mb-3 uppercase tracking-wider">
           {division}
         </h4>
         <div className="grid grid-cols-1 gap-2">
@@ -507,43 +507,42 @@ export default function DraftPage() {
             const isAvailable = state.availableTeams?.some(t => t.id === team.id);
             
             return (
-              <Button
+              <button
                 key={team.id}
-                variant={selectedTeam === team.id ? "default" : "outline"}
-                className={`p-3 h-auto justify-start relative ${
-                  selectedTeam === team.id ? 'ring-2 ring-fantasy-purple' : ''
-                } ${isDrafted ? 'opacity-60' : ''}`}
-                onClick={() => isAvailable && setSelectedTeam(team.id)}
+                className={`w-full p-3 rounded-lg border transition-all duration-150 text-left ${
+                  selectedTeam === team.id 
+                    ? 'border-primary bg-primary/5 shadow-sm' 
+                    : isDrafted 
+                    ? 'border-border bg-muted/30 opacity-60 cursor-not-allowed'
+                    : 'border-border hover:border-primary/50 hover:bg-muted/50'
+                } ${!state?.canMakePick || !isCurrentUser || isDrafted ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+                onClick={() => isAvailable && !isDrafted && setSelectedTeam(team.id)}
                 disabled={!state?.canMakePick || !isCurrentUser || isDrafted}
               >
-                <div className="flex items-center space-x-3 w-full">
+                <div className="flex items-center space-x-3">
                   <TeamLogo 
                     logoUrl={team.logoUrl}
                     teamCode={team.code}
                     teamName={`${team.city} ${team.name}`}
                     size="lg"
                   />
-                  <div className="text-left flex-1">
-                    <div className="font-semibold text-sm">{team.city}</div>
-                    <div className="text-xs text-muted-foreground">{team.name}</div>
+                  <div className="flex-1">
+                    <div className="font-medium text-sm">{team.city} {team.name}</div>
+                    <div className="text-xs text-muted-foreground">{team.division}</div>
                   </div>
                   
-                  {isDrafted && draftedBy && (
+                  {isDrafted && draftedBy ? (
                     <div className="text-right">
-                      <div className="text-xs font-medium text-red-600">DRAFTED</div>
+                      <div className="text-xs font-medium text-muted-foreground">Taken</div>
                       <div className="text-xs text-muted-foreground">
-                        R{draftedBy.round} - {draftedBy.user.name}
+                        {draftedBy.user.name} (R{draftedBy.round})
                       </div>
                     </div>
-                  )}
-                  
-                  {isAvailable && !isDrafted && (
-                    <div className="text-xs text-green-600 font-medium">
-                      Available
-                    </div>
-                  )}
+                  ) : selectedTeam === team.id ? (
+                    <div className="w-2 h-2 bg-primary rounded-full" />
+                  ) : null}
                 </div>
-              </Button>
+              </button>
             );
           })}
         </div>
@@ -556,23 +555,19 @@ export default function DraftPage() {
       <div className="container mx-auto px-4 py-6">
         <div className="max-w-7xl mx-auto">
           
-          {/* Header */}
-          <div className="text-center mb-6">
-            <h1 className="text-3xl font-bold text-foreground mb-2">Draft Room</h1>
-            <div className="flex items-center justify-center space-x-4 text-sm text-muted-foreground">
-              <div className="flex items-center space-x-1">
-                <Trophy className="w-4 h-4" />
-                <span>Round {state.draft.currentRound}/{state.draft.totalRounds}</span>
+          {/* Modern Header */}
+          <div className="mb-8">
+            <div className="text-center mb-4">
+              <h1 className="text-2xl font-semibold text-foreground mb-1">Draft Room</h1>
+              <div className="flex items-center justify-center space-x-6 text-sm text-muted-foreground">
+                <div className="flex items-center space-x-1">
+                  <span>Round {state.draft.currentRound} of {state.draft.totalRounds}</span>
+                </div>
+                <div className="h-1 w-1 bg-muted-foreground rounded-full" />
+                <div className="flex items-center space-x-1">
+                  <span>Pick {state.draft.currentPick}</span>
+                </div>
               </div>
-              <div className="flex items-center space-x-1">
-                <Users className="w-4 h-4" />
-                <span>Pick {state.draft.currentPick}</span>
-              </div>
-              <Badge variant={state.draft.status === 'active' ? 'default' : 'secondary'}>
-                {state.draft.status.toUpperCase()}
-              </Badge>
-              
-
             </div>
           </div>
 
@@ -797,19 +792,19 @@ export default function DraftPage() {
                     </div>
                   ) : state.currentUserId ? (
                     <div className="text-center space-y-3">
-                      {/* Current Player */}
-                      <div className="p-3 bg-secondary/50 rounded-lg">
-                        <div className="text-sm text-muted-foreground mb-1">Currently Drafting</div>
-                        <div className="flex items-center justify-center space-x-2">
-                          {currentPlayer?.avatar && (
-                            <img 
-                              src={currentPlayer.avatar} 
-                              alt={currentPlayer.name} 
-                              className="w-6 h-6 rounded-full"
-                            />
-                          )}
-                          <div className="font-semibold">
-                            {currentPlayer?.name || 'Finding player...'}
+                      {/* Current Player - Modern Style */}
+                      <div className="flex items-center justify-center space-x-3 mb-4">
+                        {currentPlayer?.avatar && (
+                          <img 
+                            src={currentPlayer.avatar} 
+                            alt={currentPlayer.name} 
+                            className="w-8 h-8 rounded-full border-2 border-background shadow-sm"
+                          />
+                        )}
+                        <div className="text-center">
+                          <div className="text-sm text-muted-foreground">On the clock</div>
+                          <div className="font-medium text-foreground">
+                            {currentPlayer?.name || 'Loading...'}
                           </div>
                         </div>
                       </div>
@@ -822,77 +817,55 @@ export default function DraftPage() {
                           displayTime <= 30 ? 'text-orange-500' : 'text-foreground'
                         }`}>
                           {state.draft.status === 'completed' ? (
-                            <span className="text-green-500">
-                              ✅ Complete
+                            <span className="text-green-600 font-medium">
+                              Draft Complete
                             </span>
                           ) : displayTime <= 0 && localTime === 0 && !isCountingDown ? (
-                            <span className="text-blue-500 animate-pulse">
-                              🔄 Switching...
+                            <span className="text-muted-foreground">
+                              Preparing next pick...
                             </span>
                           ) : (
                             formatTime(displayTime)
                           )}
                         </div>
                         
-                        {/* Enhanced Progress Bar */}
+                        {/* Clean Progress Bar */}
                         <div className="w-full max-w-md mx-auto mb-4">
-                          <div 
-                            className="relative h-4 bg-gray-200 dark:bg-gray-700 rounded-full shadow-inner overflow-hidden border border-gray-300 dark:border-gray-600"
-                          >
+                          <div className="relative h-2 bg-muted rounded-full overflow-hidden">
                             <div 
-                              className={`h-full rounded-full relative overflow-hidden ${
-                                displayTime <= 0 ? 'bg-red-500 animate-pulse shadow-lg' :
-                                displayTime <= 10 ? 'bg-gradient-to-r from-red-500 to-red-600 shadow-red-500/50' : 
-                                displayTime <= 30 ? 'bg-gradient-to-r from-orange-400 to-orange-500 shadow-orange-500/40' : 
-                                displayTime <= 45 ? 'bg-gradient-to-r from-yellow-400 to-orange-400 shadow-yellow-500/40' :
-                                'bg-gradient-to-r from-green-400 to-green-500 shadow-green-500/40'
-                              } ${
-                                displayTime <= 10 ? 'shadow-lg' : 'shadow-md'
+                              className={`h-full rounded-full transition-all duration-1000 ease-linear ${
+                                displayTime <= 10 ? 'bg-red-500' : 
+                                displayTime <= 30 ? 'bg-orange-500' : 
+                                'bg-primary'
                               }`}
                               style={{
-                                width: `${Math.max(0, (displayTime / (state.draft.pickTimeLimit || 60)) * 100)}%`,
-                                transition: 'width 1s linear, background-color 0.5s ease, box-shadow 0.3s ease',
-                                boxShadow: displayTime <= 10 ? 
-                                  `0 0 15px ${displayTime <= 5 ? 'rgba(239, 68, 68, 0.8)' : 'rgba(239, 68, 68, 0.5)'}` :
-                                  displayTime <= 30 ? '0 0 8px rgba(251, 146, 60, 0.4)' : 
-                                  '0 0 5px rgba(34, 197, 94, 0.3)'
+                                width: `${Math.max(0, (displayTime / (state.draft.pickTimeLimit || 60)) * 100)}%`
                               }}
-                            >
-                              {/* Animated shimmer effect */}
-                              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-30 animate-pulse"></div>
-                              
-                              {/* Extra urgent pulsing overlay */}
-                              {displayTime <= 5 && displayTime > 0 && (
-                                <div className="absolute inset-0 bg-red-300 opacity-40 animate-ping"></div>
-                              )}
-                            </div>
+                            />
                           </div>
                           
-                          {/* Time indicators */}
-                          <div className="flex justify-between items-center mt-2 text-xs">
-                            <span className="text-muted-foreground">0:00</span>
-                            <span className={`font-bold text-sm ${
-                              displayTime <= 10 ? 'text-red-500 animate-pulse' : 
+                          {/* Clean time display */}
+                          <div className="flex justify-between items-center mt-2 text-xs text-muted-foreground">
+                            <span>0:00</span>
+                            <span className={`font-medium ${
+                              displayTime <= 10 ? 'text-red-500' : 
                               displayTime <= 30 ? 'text-orange-500' : 
-                              'text-muted-foreground'
+                              'text-foreground'
                             }`}>
-                              {displayTime <= 5 ? '⚡ CRITICAL' :
-                               displayTime <= 10 ? '🚨 URGENT' : 
-                               displayTime <= 30 ? '⏰ Hurry!' : 
-                               '⏱️ Time remaining'}
+                              {displayTime <= 10 ? 'Time running out' : 'Time remaining'}
                             </span>
-                            <span className="text-muted-foreground">{formatTime(state.draft.pickTimeLimit || 60)}</span>
+                            <span>{formatTime(state.draft.pickTimeLimit || 60)}</span>
                           </div>
                         </div>
                         {isCurrentUser ? (
-                          <Badge variant="default" className="text-sm">
-                            <Star className="w-3 h-3 mr-1" />
-                            Your Turn!
+                          <Badge className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100 border-green-200 dark:border-green-800">
+                            <Clock className="w-3 h-3 mr-1" />
+                            Your pick
                           </Badge>
                         ) : (
-                          <Badge variant="outline" className="text-sm">
+                          <Badge variant="secondary" className="text-sm">
                             <Clock className="w-3 h-3 mr-1" />
-                            Waiting for {currentPlayer?.name || 'player'}...
+                            {currentPlayer?.name || 'Player'} is picking
                           </Badge>
                         )}
                       </div>
