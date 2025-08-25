@@ -326,8 +326,9 @@ export default function DraftPage() {
     if (newServerTime !== undefined && newServerTime !== serverTime) {
       console.log('[SMOOTH TIMER] Server update received:', newServerTime);
       
-      // Mobile UX: Vibration alerts for timer warnings
-      if (isCurrentUser) {
+      // Mobile UX: Vibration alerts for timer warnings - get isCurrentUser from draftData directly
+      const currentIsCurrentUser = draftData?.isCurrentUser || false;
+      if (currentIsCurrentUser) {
         if (newServerTime <= 30 && newServerTime > 25 && serverTime > 30) {
           console.log('[VIBRATION] 30s warning triggered');
           vibrate(100); // Short vibration at 30s
@@ -346,7 +347,7 @@ export default function DraftPage() {
       if (isFreshTimer) {
         console.log('[SMOOTH TIMER] 🎯 Fresh timer detected - immediate transition');
         // Mobile UX: Notify user it's their turn (ONLY ONCE)
-        if (isCurrentUser && !hasNotifiedForThisTurn) {
+        if (currentIsCurrentUser && !hasNotifiedForThisTurn) {
           const now = Date.now();
           // Prevent duplicate notifications within 30 seconds
           if (now - lastNotificationTime > 30000) {
@@ -373,14 +374,15 @@ export default function DraftPage() {
         setIsCountingDown(newServerTime > 0 && draftData?.state?.draft?.status === 'active');
       }
     }
-  }, [lastMessage, draftData, serverTime, isCurrentUser, hasNotifiedForThisTurn, lastNotificationTime]);
+  }, [lastMessage, draftData, serverTime, hasNotifiedForThisTurn, lastNotificationTime]);
   
   // Reset notification flag when it's no longer user's turn
   useEffect(() => {
-    if (!isCurrentUser && hasNotifiedForThisTurn) {
+    const currentIsCurrentUser = draftData?.isCurrentUser || false;
+    if (!currentIsCurrentUser && hasNotifiedForThisTurn) {
       setHasNotifiedForThisTurn(false);
     }
-  }, [isCurrentUser, hasNotifiedForThisTurn]);
+  }, [draftData?.isCurrentUser, hasNotifiedForThisTurn]);
 
   // Smooth local countdown between server updates
   useEffect(() => {
@@ -432,7 +434,8 @@ export default function DraftPage() {
   };
 
   const getBackgroundColor = () => {
-    if (!isCurrentUser) return '';
+    const currentIsCurrentUser = draftData?.isCurrentUser || false;
+    if (!currentIsCurrentUser) return '';
     if (displayTime <= 5) return 'bg-red-50 dark:bg-red-950/20 animate-pulse';
     if (displayTime <= 10) return 'bg-orange-50 dark:bg-orange-950/20';
     if (displayTime <= 30) return 'bg-yellow-50 dark:bg-yellow-950/20';
@@ -441,12 +444,14 @@ export default function DraftPage() {
 
   // Team availability status helper
   const getTeamStatus = (team: NflTeam) => {
-    const isDrafted = state.picks?.some(p => p.nflTeam.id === team.id);
+    const currentState = draftData?.state || {} as DraftState;
+    const currentIsCurrentUser = draftData?.isCurrentUser || false;
+    const isDrafted = currentState.picks?.some(p => p.nflTeam.id === team.id);
     if (isDrafted) return 'taken';
     
     // Check division conflict for current user
-    if (isCurrentUser && state?.canMakePick) {
-      const userPicks = state.picks?.filter(p => p.user.id === user?.id) || [];
+    if (currentIsCurrentUser && currentState?.canMakePick) {
+      const userPicks = currentState.picks?.filter(p => p.user.id === user?.id) || [];
       const hasDivisionConflict = userPicks.some(p => p.nflTeam.division === team.division);
       if (hasDivisionConflict) return 'conflict';
     }
@@ -474,15 +479,18 @@ export default function DraftPage() {
 
   // Show FAB when it's user's turn
   useEffect(() => {
-    setShowFAB(isCurrentUser && state?.canMakePick && !!selectedTeam);
-  }, [isCurrentUser, state?.canMakePick, selectedTeam]);
+    const currentIsCurrentUser = draftData?.isCurrentUser || false;
+    const currentState = draftData?.state || {} as DraftState;
+    setShowFAB(currentIsCurrentUser && currentState?.canMakePick && !!selectedTeam);
+  }, [draftData?.isCurrentUser, draftData?.state?.canMakePick, selectedTeam]);
 
   // Auto-expand panels when user's turn approaches
   useEffect(() => {
-    if (displayTime <= 30 && isCurrentUser) {
+    const currentIsCurrentUser = draftData?.isCurrentUser || false;
+    if (displayTime <= 30 && currentIsCurrentUser) {
       setPanelsCollapsed(false);
     }
-  }, [displayTime, isCurrentUser]);
+  }, [displayTime, draftData?.isCurrentUser]);
 
   // TIMER FIX: Use actual draft timer limit instead of hardcoded 60
   const draftTimerLimit = draftData?.state?.draft?.pickTimeLimit || 120; // Default to 120s if not available
