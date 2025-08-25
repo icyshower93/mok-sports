@@ -468,6 +468,9 @@ export default function DraftPage() {
     }
   }, [displayTime, isCurrentUser]);
 
+  // Calculate progress percentage for timer
+  const progressPercentage = displayTime > 0 ? displayTime / 60 : 0;
+
   // Fetch available teams
   const { data: teamsData } = useQuery({
     queryKey: ['draft-teams', draftId],
@@ -755,7 +758,7 @@ export default function DraftPage() {
           <div className="text-6xl animate-bounce">
             <Sparkles className="w-24 h-24 text-yellow-500" />
           </div>
-          <div className="absolute inset-0 bg-confetti opacity-50 animate-pulse" />
+          <div className="absolute inset-0 bg-gradient-to-r from-yellow-400 via-red-500 to-pink-500 opacity-20 animate-pulse" />
         </div>
       )}
 
@@ -766,7 +769,7 @@ export default function DraftPage() {
             <Button 
               variant="ghost" 
               size="sm" 
-              onClick={() => navigate(-1)}
+              onClick={() => navigate('/league/waiting')}
               className="p-2 hover:bg-secondary/50 transition-all duration-200"
             >
               <ArrowLeft className="w-5 h-5" />
@@ -828,7 +831,7 @@ export default function DraftPage() {
                     } ${displayTime <= 5 ? 'drop-shadow-lg' : ''}`}
                     strokeLinecap="round"
                     style={{
-                      animation: displayTime <= 30 ? `breathe ${Math.max(0.5, displayTime / 60)}s ease-in-out infinite` : undefined
+                      animation: displayTime <= 30 ? 'pulse 2s ease-in-out infinite' : undefined
                     }}
                   />
                 </svg>
@@ -886,7 +889,6 @@ export default function DraftPage() {
         }`} />
       )}
 
-    <div className="min-h-screen bg-gradient-to-br from-background to-secondary/20">
       <div className="container mx-auto px-4 py-6">
         <div className="max-w-7xl mx-auto">
           
@@ -1628,37 +1630,5 @@ export default function DraftPage() {
 
       </div>
     </div>
-
-    {/* Custom CSS for Animations */}
-    <style jsx>{`
-      @keyframes breathe {
-        0%, 100% {
-          transform: scale(1);
-        }
-        50% {
-          transform: scale(1.05);
-        }
-      }
-      
-      @keyframes confetti {
-        0% {
-          background-image: 
-            radial-gradient(circle, #ff0080 20%, transparent 20%),
-            radial-gradient(circle, #ff8000 20%, transparent 20%),
-            radial-gradient(circle, #ffff00 20%, transparent 20%);
-          background-position: 0% 0%, 50% 50%, 100% 0%;
-        }
-        50% {
-          background-position: 10% 90%, 60% 10%, 90% 90%;
-        }
-        100% {
-          background-position: 20% 80%, 70% 20%, 80% 80%;
-        }
-      }
-      
-      .bg-confetti {
-        animation: confetti 2s ease-in-out;
-      }
-    `}</style>
   );
 }
