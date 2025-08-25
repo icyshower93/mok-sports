@@ -96,6 +96,10 @@ export default function DraftPage() {
   const [localTime, setLocalTime] = useState<number>(0);
   const [lastServerUpdate, setLastServerUpdate] = useState<number>(0);
   const [isCountingDown, setIsCountingDown] = useState<boolean>(false);
+  
+  // Prevent notification spam
+  const [lastNotificationTime, setLastNotificationTime] = useState<number>(0);
+  const [hasNotifiedForThisTurn, setHasNotifiedForThisTurn] = useState<boolean>(false);
 
   // Mobile UX utilities with better error handling
   const vibrate = (pattern: number | number[]) => {
@@ -176,6 +180,10 @@ export default function DraftPage() {
   // const { status: simpleStatus } = useSimpleWebSocket(draftId || '', () => {});
   // const { status: persistentStatus, connectionAttempts } = usePersistentWebSocket(draftId || '', () => {});
   // const { connectionStatus: stableStatus } = useStableWebSocket(draftId || '', () => {});
+
+  // CRITICAL: Declare variables BEFORE any useEffect that uses them
+  // Move these after draftData is available from the query
+  // Variables will be defined below after the query is declared
 
   // Redirect if no draft ID
   useEffect(() => {
@@ -301,6 +309,10 @@ export default function DraftPage() {
     }
   });
 
+  // CRITICAL: Declare variables after query is defined to prevent temporal dead zone errors  
+  const state: DraftState = draftData?.state || {} as DraftState;
+  const isCurrentUser = draftData?.isCurrentUser || false;
+
   // Log errors for debugging
   if (error) {
     console.error('Draft fetch error:', error);
@@ -336,14 +348,20 @@ export default function DraftPage() {
       
       if (isFreshTimer) {
         console.log('[SMOOTH TIMER] 🎯 Fresh timer detected - immediate transition');
-        // Mobile UX: Notify user it's their turn
-        if (isCurrentUser) {
-          vibrate([300, 100, 300]); // Strong "your turn" vibration
-          sendNotification('Your Draft Pick!', {
-            body: 'It\'s your turn to draft a team',
-            tag: 'draft-turn',
-            requireInteraction: true
-          });
+        // Mobile UX: Notify user it's their turn (ONLY ONCE)
+        if (isCurrentUser && !hasNotifiedForThisTurn) {
+          const now = Date.now();
+          // Prevent duplicate notifications within 30 seconds
+          if (now - lastNotificationTime > 30000) {
+            vibrate([300, 100, 300]); // Strong "your turn" vibration
+            sendNotification('Your Draft Pick!', {
+              body: 'It\'s your turn to draft a team',
+              tag: 'draft-turn',
+              requireInteraction: true
+            });
+            setLastNotificationTime(now);
+            setHasNotifiedForThisTurn(true);
+          }
         }
         // Immediate transition to new timer
         setServerTime(newServerTime);
@@ -358,7 +376,14 @@ export default function DraftPage() {
         setIsCountingDown(newServerTime > 0 && draftData?.state?.draft?.status === 'active');
       }
     }
-  }, [lastMessage, draftData, serverTime]);
+  }, [lastMessage, draftData, serverTime, isCurrentUser, hasNotifiedForThisTurn, lastNotificationTime]);
+  
+  // Reset notification flag when it's no longer user's turn
+  useEffect(() => {
+    if (!isCurrentUser && hasNotifiedForThisTurn) {
+      setHasNotifiedForThisTurn(false);
+    }
+  }, [isCurrentUser, hasNotifiedForThisTurn]);
 
   // Smooth local countdown between server updates
   useEffect(() => {
@@ -400,9 +425,7 @@ export default function DraftPage() {
   
   console.log('[SMOOTH TIMER] Display time:', displayTime.toFixed(1), 'isCountingDown:', isCountingDown, 'localTime:', localTime.toFixed(1));
 
-  // CRITICAL: Declare variables before they're used in useEffect hooks
-  const state: DraftState = draftData?.state || {} as DraftState;
-  const isCurrentUser = draftData?.isCurrentUser || false;
+  // Variables moved earlier in the file to prevent compilation errors
 
   // Mobile UX helper functions
   const getTimerRingColor = () => {
