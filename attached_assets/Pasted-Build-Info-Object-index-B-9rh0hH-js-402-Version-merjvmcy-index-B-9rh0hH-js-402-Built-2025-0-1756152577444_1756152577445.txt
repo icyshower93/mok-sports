@@ -1,0 +1,214 @@
+Build Info: Object
+index-B-9rh0hH.js:402 📦 Version: merjvmcy
+index-B-9rh0hH.js:402 📅 Built: 2025-08-25T20:08:57.586Z
+index-B-9rh0hH.js:402 🔧 Environment: production
+index-B-9rh0hH.js:358 [StableWebSocket] ⏳ Waiting for authentication...
+index-B-9rh0hH.js:402 [App] WebSocket status: waiting_auth (Disconnected)
+index-B-9rh0hH.js:402 [App] ⏳ Waiting for authentication to complete
+index-B-9rh0hH.js:358 [Auth] Token check - Has token: true Has user: false Loading: true
+index-B-9rh0hH.js:358 [SW Hook] EMERGENCY: Unregistering all existing service workers
+index-B-9rh0hH.js:358 [SW Hook] Found 1 existing registrations
+index-B-9rh0hH.js:358 [SW Hook] Unregistering existing service worker
+index-B-9rh0hH.js:358 [SW Hook] Found 1 caches to delete
+index-B-9rh0hH.js:358 [SW Hook] Deleting cache: mok-sports-dynamic-v1.7.0-nuclear-unregister-1756152535706
+index-B-9rh0hH.js:358 [SW Hook] Registering fresh service worker: /sw.js?v=1756152537703&r=0.8561263749927684
+index-B-9rh0hH.js:358 [StableWebSocket] 🔐 Auth confirmed, establishing connection
+index-B-9rh0hH.js:358 [StableWebSocket] 🧹 Cleaning up all timers and connections
+index-B-9rh0hH.js:358 [StableWebSocket] 🚀 Establishing connection for user: Mok Sports
+index-B-9rh0hH.js:358 [Auth] Token check - Has token: true Has user: true Loading: false
+index-B-9rh0hH.js:358 [AutoPushRefresh] Legacy hook delegating to SubscriptionManager
+index-B-9rh0hH.js:402 [App] WebSocket status: connecting (Disconnected)
+/league/waiting?id=1cfa631a-c0fe-465b-ba12-c80397aa46a4:1 Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner.
+sw.js?v=1756152537703&r=0.8561263749927684:2 [SW] NUCLEAR OPTION - Emergency service worker loading
+sw.js?v=1756152537703&r=0.8561263749927684:88 [SW] Service worker starting, version: v1.7.0-nuclear-unregister-1756152537861
+sw.js?v=1756152537703&r=0.8561263749927684:305 [SW] Service worker script loaded successfully
+sw.js?v=1756152537703&r=0.8561263749927684:19 [SW] EMERGENCY INSTALL - Clearing all caches and forcing activation
+index-B-9rh0hH.js:358 [SW Hook] Service worker registered successfully
+sw.js?v=1756152537703&r=0.8561263749927684:92 [SW] Installing service worker, version: v1.7.0-nuclear-unregister-1756152537861
+sw.js?v=1756152537703&r=0.8561263749927684:22 [SW] Found caches to delete: Array(0)
+sw.js?v=1756152537703&r=0.8561263749927684:30 [SW] All caches deleted - skipping waiting
+sw.js?v=1756152537703&r=0.8561263749927684:96 [SW] Caching static files
+index-B-9rh0hH.js:402 [LeagueWaiting] EMERGENCY DEBUG - ABOUT TO CALL useDraftWebSocket with: Object
+index-B-9rh0hH.js:402 [WebSocket] Hook called with: Object
+index-B-9rh0hH.js:402 [LeagueWaiting] EMERGENCY DEBUG - WebSocket hook returned: Object
+index-B-9rh0hH.js:402 [WebSocket] MAIN useEffect trigger - draftId: null userId: true
+index-B-9rh0hH.js:402 [WebSocket] ❌ Connection requirements not met: Object
+index-B-9rh0hH.js:402 [LeagueWaiting] EMERGENCY DEBUG - ABOUT TO CALL useDraftWebSocket with: Object
+index-B-9rh0hH.js:402 [WebSocket] Hook called with: Object
+index-B-9rh0hH.js:402 [LeagueWaiting] EMERGENCY DEBUG - WebSocket hook returned: Object
+index-B-9rh0hH.js:358 [StableWebSocket] ✅ Connection established
+index-B-9rh0hH.js:358 [StableWebSocket] 📡 Subscribed to admin broadcasts
+index-B-9rh0hH.js:358 [StableWebSocket] ⏰ Keepalive started (25s interval)
+index-B-9rh0hH.js:402 [LeagueWaiting] EMERGENCY DEBUG - ABOUT TO CALL useDraftWebSocket with: Object
+index-B-9rh0hH.js:402 [WebSocket] Hook called with: Object
+index-B-9rh0hH.js:402 [LeagueWaiting] EMERGENCY DEBUG - WebSocket hook returned: Object
+index-B-9rh0hH.js:402 [App] WebSocket status: connected (Connected)
+index-B-9rh0hH.js:402 [App] ✅ Real-time updates active - scores will update instantly
+index-B-9rh0hH.js:358 [StableWebSocket] 📨 Message received: connected
+index-B-9rh0hH.js:358 [StableWebSocket] ✅ Server confirmation: connected
+index-B-9rh0hH.js:358 [StableWebSocket] 📨 Message received: admin_ready
+index-B-9rh0hH.js:358 [StableWebSocket] ✅ Server confirmation: admin_ready
+sw.js?v=1756152537703&r=0.8561263749927684:99 [SW] Static files cached successfully
+index-B-9rh0hH.js:402 [LeagueWaiting] EMERGENCY DEBUG - ABOUT TO CALL useDraftWebSocket with: Object
+index-B-9rh0hH.js:402 [WebSocket] Hook called with: Object
+index-B-9rh0hH.js:402 [LeagueWaiting] EMERGENCY DEBUG - WebSocket hook returned: Object
+index-B-9rh0hH.js:358 [StableWebSocket] 🔄 Service worker updated, gracefully reconnecting
+index-B-9rh0hH.js:358 [StableWebSocket] 🔌 Closing connection with code 4001: sw-update
+index-B-9rh0hH.js:402 [LeagueWaiting] EMERGENCY DEBUG - ABOUT TO CALL useDraftWebSocket with: Object
+index-B-9rh0hH.js:402 [WebSocket] Hook called with: Object
+index-B-9rh0hH.js:402 [LeagueWaiting] EMERGENCY DEBUG - WebSocket hook returned: Object
+index-B-9rh0hH.js:402 [LeagueWaiting] League data updated: Object
+sw.js?v=1756152537703&r=0.8561263749927684:164 [SW] Fetching /a/ACg8ocJEMs5AzNtfS8vv7POiR-CJvE5EdtZVt27CT0tdYJA64x6-BQyy_Q=s96-c from network
+sw.js?v=1756152537703&r=0.8561263749927684:164 [SW] Fetching /a/ACg8ocIlUYRsI8z4wKwDJjb1BBPBwCuyYSlVMcLHB5QAXs50P5Fbtg=s96-c from network
+sw.js?v=1756152537703&r=0.8561263749927684:164 [SW] Fetching /7.x/robots/svg from network
+index-B-9rh0hH.js:402 [LeagueWaiting] EMERGENCY DEBUG - ABOUT TO CALL useDraftWebSocket with: Object
+index-B-9rh0hH.js:402 [WebSocket] Hook called with: Object
+index-B-9rh0hH.js:402 [LeagueWaiting] EMERGENCY DEBUG - WebSocket hook returned: Object
+3sw.js?v=1756152537703&r=0.8561263749927684:164 [SW] Fetching /7.x/robots/svg from network
+svg:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+svg:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+svg:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+index-B-9rh0hH.js:358 [StableWebSocket] 🔌 Connection closed - Code: 4001, Reason: sw-update
+index-B-9rh0hH.js:358 [StableWebSocket] 🔄 Reconnecting in 1001.1222919038373ms (attempt 1/8)
+index-B-9rh0hH.js:402 [LeagueWaiting] EMERGENCY DEBUG - ABOUT TO CALL useDraftWebSocket with: Object
+index-B-9rh0hH.js:402 [WebSocket] Hook called with: Object
+index-B-9rh0hH.js:402 [LeagueWaiting] EMERGENCY DEBUG - WebSocket hook returned: Object
+index-B-9rh0hH.js:402 [App] WebSocket status: reconnecting (Disconnected)
+index-B-9rh0hH.js:402 [App] 🔄 Attempting to reconnect...
+svg:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+sw.js?v=1756152537703&r=0.8561263749927684:41 [SW] EMERGENCY ACTIVATE - Taking control of all clients
+sw.js?v=1756152537703&r=0.8561263749927684:110 [SW] Activating service worker, version: v1.7.0-nuclear-unregister-1756152537861
+sw.js?v=1756152537703&r=0.8561263749927684:46 [SW] Deleting remaining cache: mok-sports-static-v1.7.0-nuclear-unregister-1756152537861
+sw.js?v=1756152537703&r=0.8561263749927684:116 [SW] Found caches: Array(1)
+sw.js?v=1756152537703&r=0.8561263749927684:129 [SW] Service worker activated and controlling all clients
+sw.js?v=1756152537703&r=0.8561263749927684:51 [SW] Claiming all clients immediately
+index-B-9rh0hH.js:358 [StableWebSocket] 🧹 Cleaning up all timers and connections
+index-B-9rh0hH.js:358 [StableWebSocket] 🚀 Establishing connection for user: Mok Sports
+index-B-9rh0hH.js:402 [LeagueWaiting] EMERGENCY DEBUG - ABOUT TO CALL useDraftWebSocket with: Object
+index-B-9rh0hH.js:402 [WebSocket] Hook called with: Object
+index-B-9rh0hH.js:402 [LeagueWaiting] EMERGENCY DEBUG - WebSocket hook returned: Object
+index-B-9rh0hH.js:402 [App] WebSocket status: connecting (Disconnected)
+index-B-9rh0hH.js:358 [StableWebSocket] ✅ Connection established
+index-B-9rh0hH.js:358 [StableWebSocket] 📡 Subscribed to admin broadcasts
+index-B-9rh0hH.js:358 [StableWebSocket] ⏰ Keepalive started (25s interval)
+index-B-9rh0hH.js:402 [LeagueWaiting] EMERGENCY DEBUG - ABOUT TO CALL useDraftWebSocket with: Object
+index-B-9rh0hH.js:402 [WebSocket] Hook called with: Object
+index-B-9rh0hH.js:402 [LeagueWaiting] EMERGENCY DEBUG - WebSocket hook returned: Object
+index-B-9rh0hH.js:402 [App] WebSocket status: connected (Connected)
+index-B-9rh0hH.js:402 [App] ✅ Real-time updates active - scores will update instantly
+index-B-9rh0hH.js:358 [StableWebSocket] 📨 Message received: connected
+index-B-9rh0hH.js:358 [StableWebSocket] ✅ Server confirmation: connected
+index-B-9rh0hH.js:358 [StableWebSocket] 📨 Message received: admin_ready
+index-B-9rh0hH.js:358 [StableWebSocket] ✅ Server confirmation: admin_ready
+index-B-9rh0hH.js:402 [LeagueWaiting] EMERGENCY DEBUG - ABOUT TO CALL useDraftWebSocket with: Object
+index-B-9rh0hH.js:402 [WebSocket] Hook called with: Object
+index-B-9rh0hH.js:402 [LeagueWaiting] EMERGENCY DEBUG - WebSocket hook returned: Object
+index-B-9rh0hH.js:402 [WebSocket] MAIN useEffect trigger - draftId: 171e21da-e5e6-4728-a153-eb5a7657e46e userId: true
+index-B-9rh0hH.js:402 [WebSocket] ✅ Conditions met, validating draft exists before connection...
+index-B-9rh0hH.js:402 [LeagueWaiting] League data updated: Object
+index-B-9rh0hH.js:402 [League] Draft ID changed, WebSocket should reconnect to: 171e21da-e5e6-4728-a153-eb5a7657e46e
+index-B-9rh0hH.js:402 [WebSocket] ✅ Draft exists, proceeding with connection
+index-B-9rh0hH.js:402 [WebSocket] === STARTING NEW CONNECTION ATTEMPT ===
+index-B-9rh0hH.js:402 [WebSocket] Draft ID: 171e21da-e5e6-4728-a153-eb5a7657e46e User ID: d8873675-274c-46f9-ab48-00955c81d875
+index-B-9rh0hH.js:402 [WebSocket] Creating connection to: wss://mok-sports-draft-mokfantasysport.replit.app/draft-ws?userId=d8873675-274c-46f9-ab48-00955c81d875&draftId=171e21da-e5e6-4728-a153-eb5a7657e46e
+index-B-9rh0hH.js:402 [LeagueWaiting] EMERGENCY DEBUG - ABOUT TO CALL useDraftWebSocket with: Object
+index-B-9rh0hH.js:402 [WebSocket] Hook called with: Object
+index-B-9rh0hH.js:402 [LeagueWaiting] EMERGENCY DEBUG - WebSocket hook returned: Object
+index-B-9rh0hH.js:402 [WebSocket] ✅ CONNECTION ESTABLISHED
+index-B-9rh0hH.js:402 [WebSocket] Message received: connected
+index-B-9rh0hH.js:402 [WebSocket] Connected confirmation received
+index-B-9rh0hH.js:402 [LeagueWaiting] EMERGENCY DEBUG - ABOUT TO CALL useDraftWebSocket with: Object
+index-B-9rh0hH.js:402 [WebSocket] Hook called with: Object
+index-B-9rh0hH.js:402 [LeagueWaiting] EMERGENCY DEBUG - WebSocket hook returned: Object
+index-B-9rh0hH.js:402 [WebSocket] Message received: connected
+index-B-9rh0hH.js:402 [WebSocket] Connected confirmation received
+index-B-9rh0hH.js:402 [LeagueWaiting] EMERGENCY DEBUG - ABOUT TO CALL useDraftWebSocket with: Object
+index-B-9rh0hH.js:402 [WebSocket] Hook called with: Object
+index-B-9rh0hH.js:402 [LeagueWaiting] EMERGENCY DEBUG - WebSocket hook returned: Object
+index-B-9rh0hH.js:402 [WebSocket] Message received: draft_state
+index-B-9rh0hH.js:402 [LeagueWaiting] EMERGENCY DEBUG - ABOUT TO CALL useDraftWebSocket with: Object
+index-B-9rh0hH.js:402 [WebSocket] Hook called with: Object
+index-B-9rh0hH.js:402 [LeagueWaiting] EMERGENCY DEBUG - WebSocket hook returned: Object
+index-B-9rh0hH.js:402 [App] Draft route matched with params: Object
+index-B-9rh0hH.js:402 [App] Current location: https://mok-sports-draft-mokfantasysport.replit.app/draft/171e21da-e5e6-4728-a153-eb5a7657e46e
+index-B-9rh0hH.js:358 [ErrorBoundary] Error caught: ReferenceError Cannot access 'j' before initialization
+getDerivedStateFromError @ index-B-9rh0hH.js:358Understand this error
+index-B-9rh0hH.js:358 [ErrorBoundary] Stack trace: ReferenceError: Cannot access 'j' before initialization
+    at VT (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-B-9rh0hH.js:402:50770)
+    at KT (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-B-9rh0hH.js:402:62970)
+    at xf (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-B-9rh0hH.js:38:16998)
+    at vv (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-B-9rh0hH.js:40:43963)
+    at pv (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-B-9rh0hH.js:40:39727)
+    at XS (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-B-9rh0hH.js:40:39655)
+    at pl (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-B-9rh0hH.js:40:39508)
+    at Yh (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-B-9rh0hH.js:40:36623)
+    at Lr (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-B-9rh0hH.js:38:3274)
+    at https://mok-sports-draft-mokfantasysport.replit.app/assets/index-B-9rh0hH.js:40:34207
+getDerivedStateFromError @ index-B-9rh0hH.js:358Understand this error
+index-B-9rh0hH.js:402 [App] Draft route matched with params: Object
+index-B-9rh0hH.js:402 [App] Current location: https://mok-sports-draft-mokfantasysport.replit.app/draft/171e21da-e5e6-4728-a153-eb5a7657e46e
+index-B-9rh0hH.js:358 [ErrorBoundary] Error caught: ReferenceError Cannot access 'j' before initialization
+getDerivedStateFromError @ index-B-9rh0hH.js:358Understand this error
+index-B-9rh0hH.js:358 [ErrorBoundary] Stack trace: ReferenceError: Cannot access 'j' before initialization
+    at VT (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-B-9rh0hH.js:402:50770)
+    at KT (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-B-9rh0hH.js:402:62970)
+    at xf (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-B-9rh0hH.js:38:16998)
+    at vv (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-B-9rh0hH.js:40:43963)
+    at pv (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-B-9rh0hH.js:40:39727)
+    at XS (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-B-9rh0hH.js:40:39655)
+    at pl (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-B-9rh0hH.js:40:39508)
+    at Yu (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-B-9rh0hH.js:40:35875)
+    at Yh (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-B-9rh0hH.js:40:36678)
+    at Lr (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-B-9rh0hH.js:38:3274)
+getDerivedStateFromError @ index-B-9rh0hH.js:358Understand this error
+index-B-9rh0hH.js:40 ReferenceError: Cannot access 'j' before initialization
+    at VT (index-B-9rh0hH.js:402:50770)
+    at KT (index-B-9rh0hH.js:402:62970)
+    at xf (index-B-9rh0hH.js:38:16998)
+    at vv (index-B-9rh0hH.js:40:43963)
+    at pv (index-B-9rh0hH.js:40:39727)
+    at XS (index-B-9rh0hH.js:40:39655)
+    at pl (index-B-9rh0hH.js:40:39508)
+    at Yu (index-B-9rh0hH.js:40:35875)
+    at Yh (index-B-9rh0hH.js:40:36678)
+    at Lr (index-B-9rh0hH.js:38:3274)
+Fu @ index-B-9rh0hH.js:40Understand this error
+index-B-9rh0hH.js:358 [ErrorBoundary] DETAILED ERROR - Name: ReferenceError
+componentDidCatch @ index-B-9rh0hH.js:358Understand this error
+index-B-9rh0hH.js:358 [ErrorBoundary] DETAILED ERROR - Message: Cannot access 'j' before initialization
+componentDidCatch @ index-B-9rh0hH.js:358Understand this error
+index-B-9rh0hH.js:358 [ErrorBoundary] DETAILED ERROR - Stack: ReferenceError: Cannot access 'j' before initialization
+    at VT (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-B-9rh0hH.js:402:50770)
+    at KT (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-B-9rh0hH.js:402:62970)
+    at xf (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-B-9rh0hH.js:38:16998)
+    at vv (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-B-9rh0hH.js:40:43963)
+    at pv (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-B-9rh0hH.js:40:39727)
+    at XS (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-B-9rh0hH.js:40:39655)
+    at pl (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-B-9rh0hH.js:40:39508)
+    at Yu (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-B-9rh0hH.js:40:35875)
+    at Yh (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-B-9rh0hH.js:40:36678)
+    at Lr (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-B-9rh0hH.js:38:3274)
+componentDidCatch @ index-B-9rh0hH.js:358Understand this error
+index-B-9rh0hH.js:358 [ErrorBoundary] Component stack: 
+    at KT (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-B-9rh0hH.js:402:61531)
+    at at (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-B-9rh0hH.js:48:3201)
+    at $N (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-B-9rh0hH.js:48:4017)
+    at OR (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-B-9rh0hH.js:402:243165)
+    at Z2 (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-B-9rh0hH.js:358:57509)
+    at u (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-B-9rh0hH.js:48:45884)
+    at d0 (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-B-9rh0hH.js:358:50483)
+    at J2 (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-B-9rh0hH.js:358:56981)
+    at ij (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-B-9rh0hH.js:48:40235)
+    at aE (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-B-9rh0hH.js:358:77161)
+    at MR
+componentDidCatch @ index-B-9rh0hH.js:358Understand this error
+index-B-9rh0hH.js:358 [StableWebSocket] 🧹 Component unmounting, cleaning up
+index-B-9rh0hH.js:358 [StableWebSocket] 🧹 Cleaning up all timers and connections
+index-B-9rh0hH.js:358 [StableWebSocket] 🔌 Closing connection with code 4003: unmount
+sw.js?v=1756152537703&r=0.8561263749927684:164 [SW] Fetching /favicon.ico from network
+index-B-9rh0hH.js:402 [WebSocket] Connection closed: 1000 Component cleanup
+index-B-9rh0hH.js:358 [StableWebSocket] 🔌 Connection closed - Code: 4003, Reason: unmount
+index-B-9rh0hH.js:358 [StableWebSocket] ⛔ Not reconnecting - manual close or max attempts reached
+sw.js?v=1756152537703&r=0.8561263749927684:64 [SW] BYPASSING CACHE for JS file: https://mok-sports-draft-mokfantasysport.replit.app/manifest.json
+sw.js?v=1756152537703&r=0.8561263749927684:164 [SW] Fetching /draft/171e21da-e5e6-4728-a153-eb5a7657e46e from network
+sw.js?v=1756152537703&r=0.8561263749927684:164 [SW] Fetching /assets/index-1SQiDaG8.css from network

@@ -181,9 +181,6 @@ export default function DraftPage() {
   // const { status: persistentStatus, connectionAttempts } = usePersistentWebSocket(draftId || '', () => {});
   // const { connectionStatus: stableStatus } = useStableWebSocket(draftId || '', () => {});
 
-  // CRITICAL: Declare variables BEFORE any useEffect that uses them
-  // Move these after draftData is available from the query
-  // Variables will be defined below after the query is declared
 
   // Redirect if no draft ID
   useEffect(() => {
@@ -309,14 +306,14 @@ export default function DraftPage() {
     }
   });
 
-  // CRITICAL: Declare variables after query is defined to prevent temporal dead zone errors  
-  const state: DraftState = draftData?.state || {} as DraftState;
-  const isCurrentUser = draftData?.isCurrentUser || false;
-
   // Log errors for debugging
   if (error) {
     console.error('Draft fetch error:', error);
   }
+
+  // CRITICAL: Declare variables after query but BEFORE any functions that use them
+  const state: DraftState = draftData?.state || {} as DraftState;
+  const isCurrentUser = draftData?.isCurrentUser || false;
 
   // SMOOTH TIMER SYSTEM: Combines server updates with local countdown
   
@@ -425,7 +422,6 @@ export default function DraftPage() {
   
   console.log('[SMOOTH TIMER] Display time:', displayTime.toFixed(1), 'isCountingDown:', isCountingDown, 'localTime:', localTime.toFixed(1));
 
-  // Variables moved earlier in the file to prevent compilation errors
 
   // Mobile UX helper functions
   const getTimerRingColor = () => {
