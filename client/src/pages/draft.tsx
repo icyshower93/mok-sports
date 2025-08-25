@@ -143,25 +143,18 @@ export default function DraftPage() {
   useEffect(() => {
     if (!leagueData || !urlDraftId || authLoading) return;
     
-
-    
     // Find the league that contains this user and has an active draft
     const activeLeague = leagueData.find((league: any) => 
       league.draftId && league.draftStatus === 'active'
     );
     
     if (activeLeague?.draftId && activeLeague.draftId !== urlDraftId) {
-
-      
       // Clear cache and redirect to the correct draft
       queryClient.clear();
       navigate(`/draft/${activeLeague.draftId}`, { replace: true });
       return;
     } else if (activeLeague?.draftId) {
-
       setActualDraftId(activeLeague.draftId);
-    } else {
-
     }
   }, [leagueData, urlDraftId, user?.id, navigate, queryClient, authLoading]);
 
@@ -407,6 +400,10 @@ export default function DraftPage() {
   
   console.log('[SMOOTH TIMER] Display time:', displayTime.toFixed(1), 'isCountingDown:', isCountingDown, 'localTime:', localTime.toFixed(1));
 
+  // CRITICAL: Declare variables before they're used in useEffect hooks
+  const state: DraftState = draftData?.state || {} as DraftState;
+  const isCurrentUser = draftData?.isCurrentUser || false;
+
   // Mobile UX helper functions
   const getTimerRingColor = () => {
     if (displayTime <= 5) return 'stroke-red-500 animate-pulse';
@@ -604,9 +601,8 @@ export default function DraftPage() {
   // REMOVED: Duplicate timer sync that was causing infinite re-render loop
   // The timer sync is already handled in the main timer useEffect hook
 
-  // Handle component data after all hooks are declared
-  const state: DraftState = draftData?.state || {} as DraftState;
-  const isCurrentUser = draftData?.isCurrentUser || false;
+  // Variables moved earlier to prevent temporal dead zone errors
+  // const state and isCurrentUser are now declared above
   const currentPlayer = draftData?.currentPlayer || null;
   const teams = teamsData?.teams || {};
 
