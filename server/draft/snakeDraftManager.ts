@@ -307,14 +307,23 @@ export class SnakeDraftManager {
         return { success: false, error: 'Not your turn to pick' };
       }
       
-      // ADDITIONAL VALIDATION: Check for consecutive picks by same user
-      const lastPick = await this.storage.getLastDraftPick(draftId);
-      if (lastPick && lastPick.userId === pickRequest.userId) {
-        console.error(`🚫 BLOCKED: User ${pickRequest.userId} attempted consecutive picks - last pick ${lastPick.pickNumber}`);
-        return { success: false, error: 'Cannot make consecutive picks - draft order violation' };
+      console.log(`✅ Turn validation passed: User ${pickRequest.userId} for Round ${draft.currentRound}, Pick ${draft.currentPick}`);
+      
+      // LOG SNAKE DRAFT CONTEXT for debugging
+      const { currentRound, currentPick, draftOrder } = draft;
+      const totalUsers = draftOrder.length;
+      let expectedUserIndex: number;
+      
+      if (currentRound % 2 === 1) {
+        // Odd rounds: forward order
+        expectedUserIndex = (currentPick - 1) % totalUsers;
+      } else {
+        // Even rounds: reverse order  
+        expectedUserIndex = totalUsers - 1 - ((currentPick - 1) % totalUsers);
       }
       
-      console.log(`✅ Turn validation passed: User ${pickRequest.userId} for Round ${draft.currentRound}, Pick ${draft.currentPick}`);
+      const expectedUserId = draftOrder[expectedUserIndex];
+      console.log(`🐍 Snake draft context: Round ${currentRound}, Pick ${currentPick}, Expected user index ${expectedUserIndex} → ${expectedUserId}`);
 
       // Validate team is available
       const availableTeams = await this.storage.getAvailableNflTeams(draftId);
