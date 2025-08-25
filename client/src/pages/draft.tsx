@@ -173,9 +173,9 @@ export default function DraftPage() {
   }, []);
   
   // Keep diagnostic implementations for comparison (can be removed later)  
-  const { status: simpleStatus } = useSimpleWebSocket(draftId || '');
-  const { status: persistentStatus, connectionAttempts } = usePersistentWebSocket(draftId || '');
-  const { connectionStatus: stableStatus } = useStableWebSocket(draftId || '');
+  const { status: simpleStatus } = useSimpleWebSocket(draftId || '', () => {});
+  const { status: persistentStatus, connectionAttempts } = usePersistentWebSocket(draftId || '', () => {});
+  const { connectionStatus: stableStatus } = useStableWebSocket(draftId || '', () => {});
 
   // Redirect if no draft ID
   useEffect(() => {
