@@ -321,16 +321,22 @@ export default function DraftPage() {
 
   // SMOOTH TIMER SYSTEM: Combines server updates with local countdown
   
-  // Handle server timer updates (WebSocket or API) with mobile alerts
+  // Handle server timer updates (WebSocket or API) with mobile alerts - FIXED FOR TEMPORAL DEAD ZONE
   useEffect(() => {
-    const newServerTime = lastMessage?.type === 'timer_update' ? 
-      lastMessage.data?.timeRemaining : 
-      draftData?.state?.timeRemaining;
+    // SAFE: Check for essential data first to prevent temporal dead zone
+    if (!hasEssentialData) {
+      return;
+    }
+    
+    // SAFE: Extract values with proper null checks
+    const messageTime = lastMessage?.type === 'timer_update' ? lastMessage.data?.timeRemaining : undefined;
+    const stateTime = draftData?.state?.timeRemaining;
+    const newServerTime = messageTime !== undefined ? messageTime : stateTime;
 
     if (newServerTime !== undefined && newServerTime !== serverTime) {
       console.log('[SMOOTH TIMER] Server update received:', newServerTime);
       
-      // Mobile UX: Vibration alerts for timer warnings - get isCurrentUser from draftData directly
+      // SAFE: Get user status with proper null check
       const currentIsCurrentUser = draftData?.isCurrentUser || false;
       if (currentIsCurrentUser) {
         if (newServerTime <= 30 && newServerTime > 25 && serverTime > 30) {
@@ -371,22 +377,29 @@ export default function DraftPage() {
         setLastServerUpdate(Date.now());
         setIsCountingDown(true);
       } else {
+        // SAFE: Check draft status with proper null checks
+        const isDraftActive = draftData?.state?.draft?.status === 'active';
         // Normal server update
         setServerTime(newServerTime);
         setLocalTime(newServerTime);
         setLastServerUpdate(Date.now());
-        setIsCountingDown(newServerTime > 0 && draftData?.state?.draft?.status === 'active');
+        setIsCountingDown(newServerTime > 0 && isDraftActive);
       }
     }
-  }, [lastMessage, draftData, serverTime, hasNotifiedForThisTurn, lastNotificationTime]);
+  }, [hasEssentialData, lastMessage, serverTime, hasNotifiedForThisTurn, lastNotificationTime]);
   
-  // Reset notification flag when it's no longer user's turn
+  // Reset notification flag when it's no longer user's turn - FIXED FOR TEMPORAL DEAD ZONE
   useEffect(() => {
+    // SAFE: Check for essential data first
+    if (!hasEssentialData) {
+      return;
+    }
+    
     const currentIsCurrentUser = draftData?.isCurrentUser || false;
     if (!currentIsCurrentUser && hasNotifiedForThisTurn) {
       setHasNotifiedForThisTurn(false);
     }
-  }, [draftData?.isCurrentUser, hasNotifiedForThisTurn]);
+  }, [hasEssentialData, hasNotifiedForThisTurn]);
 
   // Smooth local countdown between server updates
   useEffect(() => {
