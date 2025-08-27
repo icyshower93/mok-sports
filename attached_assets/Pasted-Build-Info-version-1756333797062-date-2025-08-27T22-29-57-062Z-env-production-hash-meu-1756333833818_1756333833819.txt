@@ -1,0 +1,710 @@
+Build Info: {version: 1756333797062, date: '2025-08-27T22:29:57.062Z', env: 'production', hash: 'meujsn2e'}
+index-CZq0xzK2.js:392 📦 Version: meujsn2e
+index-CZq0xzK2.js:392 📅 Built: 2025-08-27T22:29:57.062Z
+index-CZq0xzK2.js:392 🔧 Environment: production
+index-CZq0xzK2.js:348 [StableWebSocket] ⏳ Waiting for authentication...
+index-CZq0xzK2.js:392 [App] WebSocket status: waiting_auth (Disconnected)
+index-CZq0xzK2.js:392 [App] ⏳ Waiting for authentication to complete
+index-CZq0xzK2.js:348 [Auth] Token check - Has token: true Has user: false Loading: true
+index-CZq0xzK2.js:348 [SW Hook] EMERGENCY: Unregistering all existing service workers
+index-CZq0xzK2.js:348 [SW Hook] Found 1 existing registrations
+index-CZq0xzK2.js:348 [SW Hook] Unregistering existing service worker
+index-CZq0xzK2.js:348 [SW Hook] Found 1 caches to delete
+index-CZq0xzK2.js:348 [SW Hook] Deleting cache: mok-sports-dynamic-v1.7.0-nuclear-unregister-1756333782387
+index-CZq0xzK2.js:348 [SW Hook] Registering fresh service worker: /sw.js?v=1756333797190&r=0.0659683586002906
+index-CZq0xzK2.js:348 [StableWebSocket] 🔐 Auth confirmed, establishing connection
+index-CZq0xzK2.js:348 [StableWebSocket] 🧹 Cleaning up all timers and connections
+index-CZq0xzK2.js:348 [StableWebSocket] 🚀 Establishing connection for user: Mok Sports
+index-CZq0xzK2.js:348 [Auth] Token check - Has token: true Has user: true Loading: false
+index-CZq0xzK2.js:348 [AutoPushRefresh] Legacy hook delegating to SubscriptionManager
+index-CZq0xzK2.js:392 [App] WebSocket status: connecting (Disconnected)
+cf31de61-6f39-44d4-831c-fead87f20570:1 Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner.
+sw.js?v=1756333797190&r=0.0659683586002906:2 [SW] NUCLEAR OPTION - Emergency service worker loading
+sw.js?v=1756333797190&r=0.0659683586002906:88 [SW] Service worker starting, version: v1.7.0-nuclear-unregister-1756333797863
+sw.js?v=1756333797190&r=0.0659683586002906:305 [SW] Service worker script loaded successfully
+index-CZq0xzK2.js:348 [SW Hook] Service worker registered successfully
+sw.js?v=1756333797190&r=0.0659683586002906:19 [SW] EMERGENCY INSTALL - Clearing all caches and forcing activation
+sw.js?v=1756333797190&r=0.0659683586002906:92 [SW] Installing service worker, version: v1.7.0-nuclear-unregister-1756333797863
+sw.js?v=1756333797190&r=0.0659683586002906:22 [SW] Found caches to delete: []
+sw.js?v=1756333797190&r=0.0659683586002906:30 [SW] All caches deleted - skipping waiting
+sw.js?v=1756333797190&r=0.0659683586002906:96 [SW] Caching static files
+index-CZq0xzK2.js:392 [App] Draft route matched with params: {0: 'cf31de61-6f39-44d4-831c-fead87f20570', draftId: 'cf31de61-6f39-44d4-831c-fead87f20570'}
+index-CZq0xzK2.js:392 [App] Current location: https://mok-sports-draft-mokfantasysport.replit.app/draft/cf31de61-6f39-44d4-831c-fead87f20570
+index-CZq0xzK2.js:348 [ErrorBoundary] Error caught: ReferenceError Cannot access 'k' before initialization
+getDerivedStateFromError @ index-CZq0xzK2.js:348
+Kg.n.payload @ index-CZq0xzK2.js:40
+_a @ index-CZq0xzK2.js:38
+Im @ index-CZq0xzK2.js:40
+mx @ index-CZq0xzK2.js:40
+ux @ index-CZq0xzK2.js:40
+Pb @ index-CZq0xzK2.js:40
+Ha @ index-CZq0xzK2.js:40
+Hm @ index-CZq0xzK2.js:40
+hr @ index-CZq0xzK2.js:38
+(anonymous) @ index-CZq0xzK2.js:40
+setTimeout
+s @ index-CZq0xzK2.js:48
+a @ index-CZq0xzK2.js:48
+batch @ index-CZq0xzK2.js:48
+dn @ index-CZq0xzK2.js:48
+setData @ index-CZq0xzK2.js:48
+onSuccess @ index-CZq0xzK2.js:48
+m @ index-CZq0xzK2.js:48
+Promise.then
+b @ index-CZq0xzK2.js:48
+start @ index-CZq0xzK2.js:48
+fetch @ index-CZq0xzK2.js:48
+Eo @ index-CZq0xzK2.js:48
+setOptions @ index-CZq0xzK2.js:48
+(anonymous) @ index-CZq0xzK2.js:48
+ml @ index-CZq0xzK2.js:40
+bs @ index-CZq0xzK2.js:40
+Ab @ index-CZq0xzK2.js:40
+yr @ index-CZq0xzK2.js:40
+Hm @ index-CZq0xzK2.js:40
+hr @ index-CZq0xzK2.js:38
+(anonymous) @ index-CZq0xzK2.js:40
+setTimeout
+s @ index-CZq0xzK2.js:48
+a @ index-CZq0xzK2.js:48
+batch @ index-CZq0xzK2.js:48
+dn @ index-CZq0xzK2.js:48
+setData @ index-CZq0xzK2.js:48
+onSuccess @ index-CZq0xzK2.js:48
+m @ index-CZq0xzK2.js:48
+Promise.then
+b @ index-CZq0xzK2.js:48
+start @ index-CZq0xzK2.js:48
+fetch @ index-CZq0xzK2.js:48
+Eo @ index-CZq0xzK2.js:48
+onSubscribe @ index-CZq0xzK2.js:48
+subscribe @ index-CZq0xzK2.js:48
+(anonymous) @ index-CZq0xzK2.js:48
+Pg @ index-CZq0xzK2.js:38
+ml @ index-CZq0xzK2.js:40
+bs @ index-CZq0xzK2.js:40
+Hm @ index-CZq0xzK2.js:40
+hr @ index-CZq0xzK2.js:38
+Ab @ index-CZq0xzK2.js:40
+yr @ index-CZq0xzK2.js:40
+ax @ index-CZq0xzK2.js:40
+k @ index-CZq0xzK2.js:25
+D @ index-CZq0xzK2.js:25Understand this error
+index-CZq0xzK2.js:348 [ErrorBoundary] Stack trace: ReferenceError: Cannot access 'k' before initialization
+    at lE (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CZq0xzK2.js:392:37566)
+    at uE (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CZq0xzK2.js:392:49938)
+    at Ld (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CZq0xzK2.js:38:16998)
+    at mx (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CZq0xzK2.js:40:43963)
+    at ux (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CZq0xzK2.js:40:39727)
+    at Pb (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CZq0xzK2.js:40:39655)
+    at Ha (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CZq0xzK2.js:40:39508)
+    at Hm (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CZq0xzK2.js:40:36623)
+    at hr (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CZq0xzK2.js:38:3274)
+    at https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CZq0xzK2.js:40:34207
+getDerivedStateFromError @ index-CZq0xzK2.js:348
+Kg.n.payload @ index-CZq0xzK2.js:40
+_a @ index-CZq0xzK2.js:38
+Im @ index-CZq0xzK2.js:40
+mx @ index-CZq0xzK2.js:40
+ux @ index-CZq0xzK2.js:40
+Pb @ index-CZq0xzK2.js:40
+Ha @ index-CZq0xzK2.js:40
+Hm @ index-CZq0xzK2.js:40
+hr @ index-CZq0xzK2.js:38
+(anonymous) @ index-CZq0xzK2.js:40
+setTimeout
+s @ index-CZq0xzK2.js:48
+a @ index-CZq0xzK2.js:48
+batch @ index-CZq0xzK2.js:48
+dn @ index-CZq0xzK2.js:48
+setData @ index-CZq0xzK2.js:48
+onSuccess @ index-CZq0xzK2.js:48
+m @ index-CZq0xzK2.js:48
+Promise.then
+b @ index-CZq0xzK2.js:48
+start @ index-CZq0xzK2.js:48
+fetch @ index-CZq0xzK2.js:48
+Eo @ index-CZq0xzK2.js:48
+setOptions @ index-CZq0xzK2.js:48
+(anonymous) @ index-CZq0xzK2.js:48
+ml @ index-CZq0xzK2.js:40
+bs @ index-CZq0xzK2.js:40
+Ab @ index-CZq0xzK2.js:40
+yr @ index-CZq0xzK2.js:40
+Hm @ index-CZq0xzK2.js:40
+hr @ index-CZq0xzK2.js:38
+(anonymous) @ index-CZq0xzK2.js:40
+setTimeout
+s @ index-CZq0xzK2.js:48
+a @ index-CZq0xzK2.js:48
+batch @ index-CZq0xzK2.js:48
+dn @ index-CZq0xzK2.js:48
+setData @ index-CZq0xzK2.js:48
+onSuccess @ index-CZq0xzK2.js:48
+m @ index-CZq0xzK2.js:48
+Promise.then
+b @ index-CZq0xzK2.js:48
+start @ index-CZq0xzK2.js:48
+fetch @ index-CZq0xzK2.js:48
+Eo @ index-CZq0xzK2.js:48
+onSubscribe @ index-CZq0xzK2.js:48
+subscribe @ index-CZq0xzK2.js:48
+(anonymous) @ index-CZq0xzK2.js:48
+Pg @ index-CZq0xzK2.js:38
+ml @ index-CZq0xzK2.js:40
+bs @ index-CZq0xzK2.js:40
+Hm @ index-CZq0xzK2.js:40
+hr @ index-CZq0xzK2.js:38
+Ab @ index-CZq0xzK2.js:40
+yr @ index-CZq0xzK2.js:40
+ax @ index-CZq0xzK2.js:40
+k @ index-CZq0xzK2.js:25
+D @ index-CZq0xzK2.js:25Understand this error
+index-CZq0xzK2.js:392 [App] Draft route matched with params: {0: 'cf31de61-6f39-44d4-831c-fead87f20570', draftId: 'cf31de61-6f39-44d4-831c-fead87f20570'}
+index-CZq0xzK2.js:392 [App] Current location: https://mok-sports-draft-mokfantasysport.replit.app/draft/cf31de61-6f39-44d4-831c-fead87f20570
+index-CZq0xzK2.js:348 [ErrorBoundary] Error caught: ReferenceError Cannot access 'k' before initialization
+getDerivedStateFromError @ index-CZq0xzK2.js:348
+Kg.n.payload @ index-CZq0xzK2.js:40
+_a @ index-CZq0xzK2.js:38
+Im @ index-CZq0xzK2.js:40
+mx @ index-CZq0xzK2.js:40
+ux @ index-CZq0xzK2.js:40
+Pb @ index-CZq0xzK2.js:40
+Ha @ index-CZq0xzK2.js:40
+xu @ index-CZq0xzK2.js:40
+Hm @ index-CZq0xzK2.js:40
+hr @ index-CZq0xzK2.js:38
+(anonymous) @ index-CZq0xzK2.js:40
+setTimeout
+s @ index-CZq0xzK2.js:48
+a @ index-CZq0xzK2.js:48
+batch @ index-CZq0xzK2.js:48
+dn @ index-CZq0xzK2.js:48
+setData @ index-CZq0xzK2.js:48
+onSuccess @ index-CZq0xzK2.js:48
+m @ index-CZq0xzK2.js:48
+Promise.then
+b @ index-CZq0xzK2.js:48
+start @ index-CZq0xzK2.js:48
+fetch @ index-CZq0xzK2.js:48
+Eo @ index-CZq0xzK2.js:48
+setOptions @ index-CZq0xzK2.js:48
+(anonymous) @ index-CZq0xzK2.js:48
+ml @ index-CZq0xzK2.js:40
+bs @ index-CZq0xzK2.js:40
+Ab @ index-CZq0xzK2.js:40
+yr @ index-CZq0xzK2.js:40
+Hm @ index-CZq0xzK2.js:40
+hr @ index-CZq0xzK2.js:38
+(anonymous) @ index-CZq0xzK2.js:40
+setTimeout
+s @ index-CZq0xzK2.js:48
+a @ index-CZq0xzK2.js:48
+batch @ index-CZq0xzK2.js:48
+dn @ index-CZq0xzK2.js:48
+setData @ index-CZq0xzK2.js:48
+onSuccess @ index-CZq0xzK2.js:48
+m @ index-CZq0xzK2.js:48
+Promise.then
+b @ index-CZq0xzK2.js:48
+start @ index-CZq0xzK2.js:48
+fetch @ index-CZq0xzK2.js:48
+Eo @ index-CZq0xzK2.js:48
+onSubscribe @ index-CZq0xzK2.js:48
+subscribe @ index-CZq0xzK2.js:48
+(anonymous) @ index-CZq0xzK2.js:48
+Pg @ index-CZq0xzK2.js:38
+ml @ index-CZq0xzK2.js:40
+bs @ index-CZq0xzK2.js:40
+Hm @ index-CZq0xzK2.js:40
+hr @ index-CZq0xzK2.js:38
+Ab @ index-CZq0xzK2.js:40
+yr @ index-CZq0xzK2.js:40
+ax @ index-CZq0xzK2.js:40
+k @ index-CZq0xzK2.js:25
+D @ index-CZq0xzK2.js:25Understand this error
+index-CZq0xzK2.js:348 [ErrorBoundary] Stack trace: ReferenceError: Cannot access 'k' before initialization
+    at lE (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CZq0xzK2.js:392:37566)
+    at uE (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CZq0xzK2.js:392:49938)
+    at Ld (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CZq0xzK2.js:38:16998)
+    at mx (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CZq0xzK2.js:40:43963)
+    at ux (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CZq0xzK2.js:40:39727)
+    at Pb (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CZq0xzK2.js:40:39655)
+    at Ha (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CZq0xzK2.js:40:39508)
+    at xu (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CZq0xzK2.js:40:35875)
+    at Hm (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CZq0xzK2.js:40:36678)
+    at hr (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CZq0xzK2.js:38:3274)
+getDerivedStateFromError @ index-CZq0xzK2.js:348
+Kg.n.payload @ index-CZq0xzK2.js:40
+_a @ index-CZq0xzK2.js:38
+Im @ index-CZq0xzK2.js:40
+mx @ index-CZq0xzK2.js:40
+ux @ index-CZq0xzK2.js:40
+Pb @ index-CZq0xzK2.js:40
+Ha @ index-CZq0xzK2.js:40
+xu @ index-CZq0xzK2.js:40
+Hm @ index-CZq0xzK2.js:40
+hr @ index-CZq0xzK2.js:38
+(anonymous) @ index-CZq0xzK2.js:40
+setTimeout
+s @ index-CZq0xzK2.js:48
+a @ index-CZq0xzK2.js:48
+batch @ index-CZq0xzK2.js:48
+dn @ index-CZq0xzK2.js:48
+setData @ index-CZq0xzK2.js:48
+onSuccess @ index-CZq0xzK2.js:48
+m @ index-CZq0xzK2.js:48
+Promise.then
+b @ index-CZq0xzK2.js:48
+start @ index-CZq0xzK2.js:48
+fetch @ index-CZq0xzK2.js:48
+Eo @ index-CZq0xzK2.js:48
+setOptions @ index-CZq0xzK2.js:48
+(anonymous) @ index-CZq0xzK2.js:48
+ml @ index-CZq0xzK2.js:40
+bs @ index-CZq0xzK2.js:40
+Ab @ index-CZq0xzK2.js:40
+yr @ index-CZq0xzK2.js:40
+Hm @ index-CZq0xzK2.js:40
+hr @ index-CZq0xzK2.js:38
+(anonymous) @ index-CZq0xzK2.js:40
+setTimeout
+s @ index-CZq0xzK2.js:48
+a @ index-CZq0xzK2.js:48
+batch @ index-CZq0xzK2.js:48
+dn @ index-CZq0xzK2.js:48
+setData @ index-CZq0xzK2.js:48
+onSuccess @ index-CZq0xzK2.js:48
+m @ index-CZq0xzK2.js:48
+Promise.then
+b @ index-CZq0xzK2.js:48
+start @ index-CZq0xzK2.js:48
+fetch @ index-CZq0xzK2.js:48
+Eo @ index-CZq0xzK2.js:48
+onSubscribe @ index-CZq0xzK2.js:48
+subscribe @ index-CZq0xzK2.js:48
+(anonymous) @ index-CZq0xzK2.js:48
+Pg @ index-CZq0xzK2.js:38
+ml @ index-CZq0xzK2.js:40
+bs @ index-CZq0xzK2.js:40
+Hm @ index-CZq0xzK2.js:40
+hr @ index-CZq0xzK2.js:38
+Ab @ index-CZq0xzK2.js:40
+yr @ index-CZq0xzK2.js:40
+ax @ index-CZq0xzK2.js:40
+k @ index-CZq0xzK2.js:25
+D @ index-CZq0xzK2.js:25Understand this error
+index-CZq0xzK2.js:40 ReferenceError: Cannot access 'k' before initialization
+    at lE (index-CZq0xzK2.js:392:37566)
+    at uE (index-CZq0xzK2.js:392:49938)
+    at Ld (index-CZq0xzK2.js:38:16998)
+    at mx (index-CZq0xzK2.js:40:43963)
+    at ux (index-CZq0xzK2.js:40:39727)
+    at Pb (index-CZq0xzK2.js:40:39655)
+    at Ha (index-CZq0xzK2.js:40:39508)
+    at xu (index-CZq0xzK2.js:40:35875)
+    at Hm (index-CZq0xzK2.js:40:36678)
+    at hr (index-CZq0xzK2.js:38:3274)
+ou @ index-CZq0xzK2.js:40
+Kg.i.componentDidCatch.n.callback @ index-CZq0xzK2.js:40
+jm @ index-CZq0xzK2.js:38
+zm @ index-CZq0xzK2.js:40
+ix @ index-CZq0xzK2.js:40
+Cb @ index-CZq0xzK2.js:40
+Ab @ index-CZq0xzK2.js:40
+yr @ index-CZq0xzK2.js:40
+Hm @ index-CZq0xzK2.js:40
+hr @ index-CZq0xzK2.js:38
+(anonymous) @ index-CZq0xzK2.js:40
+setTimeout
+s @ index-CZq0xzK2.js:48
+a @ index-CZq0xzK2.js:48
+batch @ index-CZq0xzK2.js:48
+dn @ index-CZq0xzK2.js:48
+setData @ index-CZq0xzK2.js:48
+onSuccess @ index-CZq0xzK2.js:48
+m @ index-CZq0xzK2.js:48
+Promise.then
+b @ index-CZq0xzK2.js:48
+start @ index-CZq0xzK2.js:48
+fetch @ index-CZq0xzK2.js:48
+Eo @ index-CZq0xzK2.js:48
+setOptions @ index-CZq0xzK2.js:48
+(anonymous) @ index-CZq0xzK2.js:48
+ml @ index-CZq0xzK2.js:40
+bs @ index-CZq0xzK2.js:40
+Ab @ index-CZq0xzK2.js:40
+yr @ index-CZq0xzK2.js:40
+Hm @ index-CZq0xzK2.js:40
+hr @ index-CZq0xzK2.js:38
+(anonymous) @ index-CZq0xzK2.js:40
+setTimeout
+s @ index-CZq0xzK2.js:48
+a @ index-CZq0xzK2.js:48
+batch @ index-CZq0xzK2.js:48
+dn @ index-CZq0xzK2.js:48
+setData @ index-CZq0xzK2.js:48
+onSuccess @ index-CZq0xzK2.js:48
+m @ index-CZq0xzK2.js:48
+Promise.then
+b @ index-CZq0xzK2.js:48
+start @ index-CZq0xzK2.js:48
+fetch @ index-CZq0xzK2.js:48
+Eo @ index-CZq0xzK2.js:48
+onSubscribe @ index-CZq0xzK2.js:48
+subscribe @ index-CZq0xzK2.js:48
+(anonymous) @ index-CZq0xzK2.js:48
+Pg @ index-CZq0xzK2.js:38
+ml @ index-CZq0xzK2.js:40
+bs @ index-CZq0xzK2.js:40
+Hm @ index-CZq0xzK2.js:40
+hr @ index-CZq0xzK2.js:38
+Ab @ index-CZq0xzK2.js:40
+yr @ index-CZq0xzK2.js:40
+ax @ index-CZq0xzK2.js:40
+k @ index-CZq0xzK2.js:25
+D @ index-CZq0xzK2.js:25Understand this error
+index-CZq0xzK2.js:348 [ErrorBoundary] DETAILED ERROR - Name: ReferenceError
+componentDidCatch @ index-CZq0xzK2.js:348
+Kg.i.componentDidCatch.n.callback @ index-CZq0xzK2.js:40
+jm @ index-CZq0xzK2.js:38
+zm @ index-CZq0xzK2.js:40
+ix @ index-CZq0xzK2.js:40
+Cb @ index-CZq0xzK2.js:40
+Ab @ index-CZq0xzK2.js:40
+yr @ index-CZq0xzK2.js:40
+Hm @ index-CZq0xzK2.js:40
+hr @ index-CZq0xzK2.js:38
+(anonymous) @ index-CZq0xzK2.js:40
+setTimeout
+s @ index-CZq0xzK2.js:48
+a @ index-CZq0xzK2.js:48
+batch @ index-CZq0xzK2.js:48
+dn @ index-CZq0xzK2.js:48
+setData @ index-CZq0xzK2.js:48
+onSuccess @ index-CZq0xzK2.js:48
+m @ index-CZq0xzK2.js:48
+Promise.then
+b @ index-CZq0xzK2.js:48
+start @ index-CZq0xzK2.js:48
+fetch @ index-CZq0xzK2.js:48
+Eo @ index-CZq0xzK2.js:48
+setOptions @ index-CZq0xzK2.js:48
+(anonymous) @ index-CZq0xzK2.js:48
+ml @ index-CZq0xzK2.js:40
+bs @ index-CZq0xzK2.js:40
+Ab @ index-CZq0xzK2.js:40
+yr @ index-CZq0xzK2.js:40
+Hm @ index-CZq0xzK2.js:40
+hr @ index-CZq0xzK2.js:38
+(anonymous) @ index-CZq0xzK2.js:40
+setTimeout
+s @ index-CZq0xzK2.js:48
+a @ index-CZq0xzK2.js:48
+batch @ index-CZq0xzK2.js:48
+dn @ index-CZq0xzK2.js:48
+setData @ index-CZq0xzK2.js:48
+onSuccess @ index-CZq0xzK2.js:48
+m @ index-CZq0xzK2.js:48
+Promise.then
+b @ index-CZq0xzK2.js:48
+start @ index-CZq0xzK2.js:48
+fetch @ index-CZq0xzK2.js:48
+Eo @ index-CZq0xzK2.js:48
+onSubscribe @ index-CZq0xzK2.js:48
+subscribe @ index-CZq0xzK2.js:48
+(anonymous) @ index-CZq0xzK2.js:48
+Pg @ index-CZq0xzK2.js:38
+ml @ index-CZq0xzK2.js:40
+bs @ index-CZq0xzK2.js:40
+Hm @ index-CZq0xzK2.js:40
+hr @ index-CZq0xzK2.js:38
+Ab @ index-CZq0xzK2.js:40
+yr @ index-CZq0xzK2.js:40
+ax @ index-CZq0xzK2.js:40
+k @ index-CZq0xzK2.js:25
+D @ index-CZq0xzK2.js:25Understand this error
+index-CZq0xzK2.js:348 [ErrorBoundary] DETAILED ERROR - Message: Cannot access 'k' before initialization
+componentDidCatch @ index-CZq0xzK2.js:348
+Kg.i.componentDidCatch.n.callback @ index-CZq0xzK2.js:40
+jm @ index-CZq0xzK2.js:38
+zm @ index-CZq0xzK2.js:40
+ix @ index-CZq0xzK2.js:40
+Cb @ index-CZq0xzK2.js:40
+Ab @ index-CZq0xzK2.js:40
+yr @ index-CZq0xzK2.js:40
+Hm @ index-CZq0xzK2.js:40
+hr @ index-CZq0xzK2.js:38
+(anonymous) @ index-CZq0xzK2.js:40
+setTimeout
+s @ index-CZq0xzK2.js:48
+a @ index-CZq0xzK2.js:48
+batch @ index-CZq0xzK2.js:48
+dn @ index-CZq0xzK2.js:48
+setData @ index-CZq0xzK2.js:48
+onSuccess @ index-CZq0xzK2.js:48
+m @ index-CZq0xzK2.js:48
+Promise.then
+b @ index-CZq0xzK2.js:48
+start @ index-CZq0xzK2.js:48
+fetch @ index-CZq0xzK2.js:48
+Eo @ index-CZq0xzK2.js:48
+setOptions @ index-CZq0xzK2.js:48
+(anonymous) @ index-CZq0xzK2.js:48
+ml @ index-CZq0xzK2.js:40
+bs @ index-CZq0xzK2.js:40
+Ab @ index-CZq0xzK2.js:40
+yr @ index-CZq0xzK2.js:40
+Hm @ index-CZq0xzK2.js:40
+hr @ index-CZq0xzK2.js:38
+(anonymous) @ index-CZq0xzK2.js:40
+setTimeout
+s @ index-CZq0xzK2.js:48
+a @ index-CZq0xzK2.js:48
+batch @ index-CZq0xzK2.js:48
+dn @ index-CZq0xzK2.js:48
+setData @ index-CZq0xzK2.js:48
+onSuccess @ index-CZq0xzK2.js:48
+m @ index-CZq0xzK2.js:48
+Promise.then
+b @ index-CZq0xzK2.js:48
+start @ index-CZq0xzK2.js:48
+fetch @ index-CZq0xzK2.js:48
+Eo @ index-CZq0xzK2.js:48
+onSubscribe @ index-CZq0xzK2.js:48
+subscribe @ index-CZq0xzK2.js:48
+(anonymous) @ index-CZq0xzK2.js:48
+Pg @ index-CZq0xzK2.js:38
+ml @ index-CZq0xzK2.js:40
+bs @ index-CZq0xzK2.js:40
+Hm @ index-CZq0xzK2.js:40
+hr @ index-CZq0xzK2.js:38
+Ab @ index-CZq0xzK2.js:40
+yr @ index-CZq0xzK2.js:40
+ax @ index-CZq0xzK2.js:40
+k @ index-CZq0xzK2.js:25
+D @ index-CZq0xzK2.js:25Understand this error
+index-CZq0xzK2.js:348 [ErrorBoundary] DETAILED ERROR - Stack: ReferenceError: Cannot access 'k' before initialization
+    at lE (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CZq0xzK2.js:392:37566)
+    at uE (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CZq0xzK2.js:392:49938)
+    at Ld (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CZq0xzK2.js:38:16998)
+    at mx (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CZq0xzK2.js:40:43963)
+    at ux (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CZq0xzK2.js:40:39727)
+    at Pb (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CZq0xzK2.js:40:39655)
+    at Ha (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CZq0xzK2.js:40:39508)
+    at xu (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CZq0xzK2.js:40:35875)
+    at Hm (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CZq0xzK2.js:40:36678)
+    at hr (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CZq0xzK2.js:38:3274)
+componentDidCatch @ index-CZq0xzK2.js:348
+Kg.i.componentDidCatch.n.callback @ index-CZq0xzK2.js:40
+jm @ index-CZq0xzK2.js:38
+zm @ index-CZq0xzK2.js:40
+ix @ index-CZq0xzK2.js:40
+Cb @ index-CZq0xzK2.js:40
+Ab @ index-CZq0xzK2.js:40
+yr @ index-CZq0xzK2.js:40
+Hm @ index-CZq0xzK2.js:40
+hr @ index-CZq0xzK2.js:38
+(anonymous) @ index-CZq0xzK2.js:40
+setTimeout
+s @ index-CZq0xzK2.js:48
+a @ index-CZq0xzK2.js:48
+batch @ index-CZq0xzK2.js:48
+dn @ index-CZq0xzK2.js:48
+setData @ index-CZq0xzK2.js:48
+onSuccess @ index-CZq0xzK2.js:48
+m @ index-CZq0xzK2.js:48
+Promise.then
+b @ index-CZq0xzK2.js:48
+start @ index-CZq0xzK2.js:48
+fetch @ index-CZq0xzK2.js:48
+Eo @ index-CZq0xzK2.js:48
+setOptions @ index-CZq0xzK2.js:48
+(anonymous) @ index-CZq0xzK2.js:48
+ml @ index-CZq0xzK2.js:40
+bs @ index-CZq0xzK2.js:40
+Ab @ index-CZq0xzK2.js:40
+yr @ index-CZq0xzK2.js:40
+Hm @ index-CZq0xzK2.js:40
+hr @ index-CZq0xzK2.js:38
+(anonymous) @ index-CZq0xzK2.js:40
+setTimeout
+s @ index-CZq0xzK2.js:48
+a @ index-CZq0xzK2.js:48
+batch @ index-CZq0xzK2.js:48
+dn @ index-CZq0xzK2.js:48
+setData @ index-CZq0xzK2.js:48
+onSuccess @ index-CZq0xzK2.js:48
+m @ index-CZq0xzK2.js:48
+Promise.then
+b @ index-CZq0xzK2.js:48
+start @ index-CZq0xzK2.js:48
+fetch @ index-CZq0xzK2.js:48
+Eo @ index-CZq0xzK2.js:48
+onSubscribe @ index-CZq0xzK2.js:48
+subscribe @ index-CZq0xzK2.js:48
+(anonymous) @ index-CZq0xzK2.js:48
+Pg @ index-CZq0xzK2.js:38
+ml @ index-CZq0xzK2.js:40
+bs @ index-CZq0xzK2.js:40
+Hm @ index-CZq0xzK2.js:40
+hr @ index-CZq0xzK2.js:38
+Ab @ index-CZq0xzK2.js:40
+yr @ index-CZq0xzK2.js:40
+ax @ index-CZq0xzK2.js:40
+k @ index-CZq0xzK2.js:25
+D @ index-CZq0xzK2.js:25Understand this error
+index-CZq0xzK2.js:348 [ErrorBoundary] Component stack: 
+    at uE (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CZq0xzK2.js:392:49400)
+    at cE (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CZq0xzK2.js:392:47552)
+    at Qe (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CZq0xzK2.js:48:3201)
+    at vS (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CZq0xzK2.js:48:4017)
+    at nP (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CZq0xzK2.js:392:201089)
+    at LC (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CZq0xzK2.js:348:57491)
+    at u (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CZq0xzK2.js:48:45834)
+    at sy (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CZq0xzK2.js:348:50466)
+    at AC (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CZq0xzK2.js:348:56963)
+    at FS (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CZq0xzK2.js:48:40185)
+    at $C (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CZq0xzK2.js:348:77136)
+    at rP
+componentDidCatch @ index-CZq0xzK2.js:348
+Kg.i.componentDidCatch.n.callback @ index-CZq0xzK2.js:40
+jm @ index-CZq0xzK2.js:38
+zm @ index-CZq0xzK2.js:40
+ix @ index-CZq0xzK2.js:40
+Cb @ index-CZq0xzK2.js:40
+Ab @ index-CZq0xzK2.js:40
+yr @ index-CZq0xzK2.js:40
+Hm @ index-CZq0xzK2.js:40
+hr @ index-CZq0xzK2.js:38
+(anonymous) @ index-CZq0xzK2.js:40
+setTimeout
+s @ index-CZq0xzK2.js:48
+a @ index-CZq0xzK2.js:48
+batch @ index-CZq0xzK2.js:48
+dn @ index-CZq0xzK2.js:48
+setData @ index-CZq0xzK2.js:48
+onSuccess @ index-CZq0xzK2.js:48
+m @ index-CZq0xzK2.js:48
+Promise.then
+b @ index-CZq0xzK2.js:48
+start @ index-CZq0xzK2.js:48
+fetch @ index-CZq0xzK2.js:48
+Eo @ index-CZq0xzK2.js:48
+setOptions @ index-CZq0xzK2.js:48
+(anonymous) @ index-CZq0xzK2.js:48
+ml @ index-CZq0xzK2.js:40
+bs @ index-CZq0xzK2.js:40
+Ab @ index-CZq0xzK2.js:40
+yr @ index-CZq0xzK2.js:40
+Hm @ index-CZq0xzK2.js:40
+hr @ index-CZq0xzK2.js:38
+(anonymous) @ index-CZq0xzK2.js:40
+setTimeout
+s @ index-CZq0xzK2.js:48
+a @ index-CZq0xzK2.js:48
+batch @ index-CZq0xzK2.js:48
+dn @ index-CZq0xzK2.js:48
+setData @ index-CZq0xzK2.js:48
+onSuccess @ index-CZq0xzK2.js:48
+m @ index-CZq0xzK2.js:48
+Promise.then
+b @ index-CZq0xzK2.js:48
+start @ index-CZq0xzK2.js:48
+fetch @ index-CZq0xzK2.js:48
+Eo @ index-CZq0xzK2.js:48
+onSubscribe @ index-CZq0xzK2.js:48
+subscribe @ index-CZq0xzK2.js:48
+(anonymous) @ index-CZq0xzK2.js:48
+Pg @ index-CZq0xzK2.js:38
+ml @ index-CZq0xzK2.js:40
+bs @ index-CZq0xzK2.js:40
+Hm @ index-CZq0xzK2.js:40
+hr @ index-CZq0xzK2.js:38
+Ab @ index-CZq0xzK2.js:40
+yr @ index-CZq0xzK2.js:40
+ax @ index-CZq0xzK2.js:40
+k @ index-CZq0xzK2.js:25
+D @ index-CZq0xzK2.js:25Understand this error
+index-CZq0xzK2.js:348 [StableWebSocket] 🧹 Component unmounting, cleaning up
+index-CZq0xzK2.js:348 [StableWebSocket] 🧹 Cleaning up all timers and connections
+index-CZq0xzK2.js:348 [StableWebSocket] 🔌 Closing connection with code 4003: unmount
+index-CZq0xzK2.js:348 WebSocket connection to 'wss://mok-sports-draft-mokfantasysport.replit.app/draft-ws' failed: WebSocket is closed before the connection is established.
+(anonymous) @ index-CZq0xzK2.js:348
+(anonymous) @ index-CZq0xzK2.js:348
+du @ index-CZq0xzK2.js:40
+_o @ index-CZq0xzK2.js:40
+bs @ index-CZq0xzK2.js:40
+Ab @ index-CZq0xzK2.js:40
+yr @ index-CZq0xzK2.js:40
+Hm @ index-CZq0xzK2.js:40
+hr @ index-CZq0xzK2.js:38
+(anonymous) @ index-CZq0xzK2.js:40
+setTimeout
+s @ index-CZq0xzK2.js:48
+a @ index-CZq0xzK2.js:48
+batch @ index-CZq0xzK2.js:48
+dn @ index-CZq0xzK2.js:48
+setData @ index-CZq0xzK2.js:48
+onSuccess @ index-CZq0xzK2.js:48
+m @ index-CZq0xzK2.js:48
+Promise.then
+b @ index-CZq0xzK2.js:48
+start @ index-CZq0xzK2.js:48
+fetch @ index-CZq0xzK2.js:48
+Eo @ index-CZq0xzK2.js:48
+setOptions @ index-CZq0xzK2.js:48
+(anonymous) @ index-CZq0xzK2.js:48
+ml @ index-CZq0xzK2.js:40
+bs @ index-CZq0xzK2.js:40
+Ab @ index-CZq0xzK2.js:40
+yr @ index-CZq0xzK2.js:40
+Hm @ index-CZq0xzK2.js:40
+hr @ index-CZq0xzK2.js:38
+(anonymous) @ index-CZq0xzK2.js:40
+setTimeout
+s @ index-CZq0xzK2.js:48
+a @ index-CZq0xzK2.js:48
+batch @ index-CZq0xzK2.js:48
+dn @ index-CZq0xzK2.js:48
+setData @ index-CZq0xzK2.js:48
+onSuccess @ index-CZq0xzK2.js:48
+m @ index-CZq0xzK2.js:48
+Promise.then
+b @ index-CZq0xzK2.js:48
+start @ index-CZq0xzK2.js:48
+fetch @ index-CZq0xzK2.js:48
+Eo @ index-CZq0xzK2.js:48
+onSubscribe @ index-CZq0xzK2.js:48
+subscribe @ index-CZq0xzK2.js:48
+(anonymous) @ index-CZq0xzK2.js:48
+Pg @ index-CZq0xzK2.js:38
+ml @ index-CZq0xzK2.js:40
+bs @ index-CZq0xzK2.js:40
+Hm @ index-CZq0xzK2.js:40
+hr @ index-CZq0xzK2.js:38
+Ab @ index-CZq0xzK2.js:40
+yr @ index-CZq0xzK2.js:40
+ax @ index-CZq0xzK2.js:40
+k @ index-CZq0xzK2.js:25
+D @ index-CZq0xzK2.js:25Understand this warning
+index-CZq0xzK2.js:348 [StableWebSocket] ❌ Connection error: Event {isTrusted: true, type: 'error', target: WebSocket, currentTarget: WebSocket, eventPhase: 2, …}
+j.onerror @ index-CZq0xzK2.js:348Understand this error
+index-CZq0xzK2.js:348 [StableWebSocket] 🔌 Connection closed - Code: 1006, Reason: 
+index-CZq0xzK2.js:348 [StableWebSocket] 🔄 Reconnecting in 1053.3666342276597ms (attempt 1/8)
+sw.js?v=1756333797190&r=0.0659683586002906:99 [SW] Static files cached successfully
+sw.js?v=1756333797190&r=0.0659683586002906:41 [SW] EMERGENCY ACTIVATE - Taking control of all clients
+sw.js?v=1756333797190&r=0.0659683586002906:110 [SW] Activating service worker, version: v1.7.0-nuclear-unregister-1756333797863
+sw.js?v=1756333797190&r=0.0659683586002906:46 [SW] Deleting remaining cache: mok-sports-static-v1.7.0-nuclear-unregister-1756333797863
+sw.js?v=1756333797190&r=0.0659683586002906:116 [SW] Found caches: ['mok-sports-static-v1.7.0-nuclear-unregister-1756333797863']
+sw.js?v=1756333797190&r=0.0659683586002906:129 [SW] Service worker activated and controlling all clients
+sw.js?v=1756333797190&r=0.0659683586002906:51 [SW] Claiming all clients immediately
+index-CZq0xzK2.js:348 [StableWebSocket] 🧹 Cleaning up all timers and connections
+index-CZq0xzK2.js:348 [StableWebSocket] 🚀 Establishing connection for user: Mok Sports
+index-CZq0xzK2.js:348 [StableWebSocket] ✅ Connection established
+index-CZq0xzK2.js:348 [StableWebSocket] 📡 Subscribed to admin broadcasts
+index-CZq0xzK2.js:348 [StableWebSocket] ⏰ Keepalive started (25s interval)
+index-CZq0xzK2.js:348 [StableWebSocket] 📨 Message received: connected
+index-CZq0xzK2.js:348 [StableWebSocket] ✅ Server confirmation: connected
+index-CZq0xzK2.js:348 [StableWebSocket] 📨 Message received: admin_ready
+index-CZq0xzK2.js:348 [StableWebSocket] ✅ Server confirmation: admin_ready
