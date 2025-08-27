@@ -160,43 +160,11 @@ export class RobotManager {
 
   /**
    * Get robot preference for team selection
-   * Robots have slight preferences for certain divisions/conferences
+   * All robots use random selection while obeying draft rules
    */
   getRobotTeamPreference(robotId: string, availableTeams: any[]): any[] {
-    const robot = this.robotUsers.find(r => r.id === robotId);
-    if (!robot) return availableTeams;
-
-    // Each robot has different preferences
-    switch (robot.name) {
-      case 'Alpha Bot':
-        // Prefers AFC teams
-        return availableTeams.sort((a, b) => 
-          a.conference === 'AFC' ? -1 : (b.conference === 'AFC' ? 1 : 0)
-        );
-      
-      case 'Beta Bot':
-        // Prefers NFC teams
-        return availableTeams.sort((a, b) => 
-          a.conference === 'NFC' ? -1 : (b.conference === 'NFC' ? 1 : 0)
-        );
-      
-      case 'Gamma Bot':
-        // Prefers teams alphabetically
-        return availableTeams.sort((a, b) => a.name.localeCompare(b.name));
-      
-      case 'Delta Bot':
-        // Random preference (no sorting)
-        return this.shuffleArray([...availableTeams]);
-      
-      case 'Epsilon Bot':
-        // Prefers East division teams
-        return availableTeams.sort((a, b) => 
-          a.division.includes('East') ? -1 : (b.division.includes('East') ? 1 : 0)
-        );
-      
-      default:
-        return availableTeams;
-    }
+    // All robots now use random selection
+    return this.shuffleArray([...availableTeams]);
   }
 
   private shuffleArray<T>(array: T[]): T[] {
