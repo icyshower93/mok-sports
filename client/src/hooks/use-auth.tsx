@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { apiRequest, AuthTokenManager } from "@/lib/queryClient";
+import { apiRequest } from "@/lib/queryClient";
+import { AuthToken } from "@/lib/auth-token";
 
 interface User {
   id: string;
@@ -50,7 +51,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     mutationFn: () => apiRequest("POST", "/api/auth/logout"),
     onSuccess: () => {
       setIsAuthenticated(false);
-      AuthTokenManager.removeToken(); // Clear stored token
+      AuthToken.clear(); // Clear stored token
       queryClient.clear();
       window.location.href = "/";
     },
@@ -67,7 +68,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // PWA Token Recovery - check localStorage on app startup
   useEffect(() => {
-    const storedToken = AuthTokenManager.getToken();
+    const storedToken = AuthToken.get();
     console.log('[Auth] Token check - Has token:', !!storedToken, 'Has user:', !!user, 'Loading:', isLoading);
     
     if (storedToken && !user && !isLoading) {
@@ -87,7 +88,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     if (authStatus === "success" && token) {
       // Store the token for PWA compatibility
-      AuthTokenManager.setToken(token);
+      AuthToken.set(token);
       setIsAuthenticated(true);
       sessionStorage.setItem('login-time', Date.now().toString());
       queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
@@ -100,7 +101,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       window.history.replaceState({}, document.title, "/");
     } else if (error) {
       setIsAuthenticated(false);
-      AuthTokenManager.removeToken();
+      AuthToken.clear();
       window.history.replaceState({}, document.title, "/");
     }
   }, [queryClient]);

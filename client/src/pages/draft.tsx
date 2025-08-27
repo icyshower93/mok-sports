@@ -321,7 +321,7 @@ export default function DraftPage() {
   const availableTeamsSafe = state?.availableTeams ?? [];
   const draftOrderSafe = draft?.draftOrder ?? [];
   const currentRoundSafe = draft?.currentRound ?? 1;
-  const totalRoundsSafe = draft?.totalRounds ?? draftOrderSafe.length || 1;
+  const totalRoundsSafe = draft?.totalRounds ?? (draftOrderSafe.length || 1);
   const pickTimeLimitSafe = draft?.pickTimeLimit ?? 120;
 
   // Log errors for debugging
@@ -1269,7 +1269,7 @@ export default function DraftPage() {
                     const currentRoundOrder = isOddRound ? baseOrder : [...baseOrder].reverse();
                     
                     // Find current pick index and calculate upcoming picks
-                    const currentPickIndex = currentRoundOrder.findIndex(userId => userId === state.currentUserId);
+                    const currentPickIndex = currentRoundOrder.findIndex((userId: string) => userId === state.currentUserId);
                     const totalPicks = currentRoundOrder.length;
                     
                     return (

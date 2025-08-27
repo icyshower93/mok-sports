@@ -1,35 +1,13 @@
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
+import { AuthToken } from './auth-token';
 
-// Auth token management for PWA compatibility
-export class AuthTokenManager {
-  private static readonly TOKEN_KEY = 'mok_sports_auth_token';
-  
-  static getToken(): string | null {
-    if (typeof window === 'undefined') return null;
-    return localStorage.getItem(this.TOKEN_KEY);
-  }
-  
-  static setToken(token: string): void {
-    if (typeof window === 'undefined') return;
-    localStorage.setItem(this.TOKEN_KEY, token);
-  }
-  
-  static removeToken(): void {
-    if (typeof window === 'undefined') return;
-    localStorage.removeItem(this.TOKEN_KEY);
-  }
-  
-  static getAuthHeaders(): Record<string, string> {
-    const token = this.getToken();
-    const headers: Record<string, string> = {};
-    
-    if (token) {
-      headers["Authorization"] = `Bearer ${token}`;
-    }
-    
-    return headers;
-  }
-}
+// Maintain backward compatibility while using new AuthToken utility
+export const AuthTokenManager = {
+  getToken: () => AuthToken.get(),
+  setToken: (token: string) => AuthToken.set(token),
+  removeToken: () => AuthToken.clear(),
+  getAuthHeaders: () => AuthToken.headers()
+};
 
 async function throwIfResNotOk(res: Response) {
   if (!res.ok) {
@@ -44,7 +22,8 @@ export async function apiRequest(
   data?: unknown | undefined,
 ): Promise<Response> {
   const headers = {
-    ...AuthTokenManager.getAuthHeaders(),
+    'Accept': 'application/json',
+    ...AuthToken.headers(),
     ...(data ? { "Content-Type": "application/json" } : {}),
   };
 
@@ -65,7 +44,7 @@ export const unauthorizedBehaviorToQueryFunction = (
 ): QueryFunction<any> =>
   async ({ queryKey }) => {
     const res = await fetch(queryKey.join("/") as string, {
-      headers: AuthTokenManager.getAuthHeaders(),
+      headers: AuthToken.headers(),
       credentials: "include", // Keep cookies as fallback
     });
 

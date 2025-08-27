@@ -1,0 +1,236 @@
+1) New leaf auth util (break cycles)
+
+Create: client/src/lib/auth-token.ts
+
+// No React imports. No barrels. Pure util.
+const TOKEN_KEY = 'mok_auth_token';
+
+export const AuthToken = {
+  get(): string | null {
+    try { return localStorage.getItem(TOKEN_KEY); } catch { return null; }
+  },
+  set(token: string) {
+    try { localStorage.setItem(TOKEN_KEY, token); } catch {}
+  },
+  clear() {
+    try { localStorage.removeItem(TOKEN_KEY); } catch {}
+  },
+  headers(): Record<string, string> {
+    const t = AuthToken.get();
+    return t ? { Authorization: `Bearer ${t}` } : {};
+  }
+};
+
+2) Make your API client “pure”
+
+Edit: client/src/lib/queryClient.ts
+
+import { QueryClient } from '@tanstack/react-query';
+import { AuthToken } from './auth-token';
+
+export const queryClient = new QueryClient({
+  defaultOptions: { queries: { refetchOnWindowFocus: false } }
+});
+
+export async function apiRequest(
+  method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE',
+  url: string,
+  body?: unknown,
+  extraHeaders: Record<string, string> = {}
+) {
+  const res = await fetch(url, {
+    method,
+    credentials: 'include',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+      ...AuthToken.headers(),
+      ...extraHeaders
+    },
+    body: body ? JSON.stringify(body) : undefined
+  });
+
+  if (!res.ok) {
+    const text = await res.text().catch(() => '');
+    throw new Error(`HTTP ${res.status} ${res.statusText}${text ? ` - ${text}` : ''}`);
+  }
+  return res;
+}
+
+
+Ensure this file does not import any React code or your use-auth hook.
+
+3) Keep use-auth light and one-way
+
+Top of: client/src/hooks/use-auth.tsx
+
+import { useEffect, useState } from 'react';
+import { AuthToken } from '@/lib/auth-token'; // ✅ leaf util only
+// (If you import queryClient here, import ONLY the exported instance—no hooks.)
+
+
+Don’t import queryClient.ts if it (directly or via barrels) ever imports use-auth back. If you must, only import the queryClient symbol—never hooks/components.
+
+4) WebSocket hook must not pull in pages
+
+In: client/src/hooks/use-draft-websocket.ts
+
+Avoid importing any page/component or a barrel that re-exports pages.
+
+If you need auth headers, use:
+
+import { AuthToken } from '@/lib/auth-token';
+// ...
+const headers = AuthToken.headers();
+
+5) Draft page: remove AuthTokenManager and add null-safe deriveds
+
+Edit imports at top of client/src/pages/draft.tsx
+
+- import { apiRequest, AuthTokenManager } from "@/lib/queryClient";
++ import { apiRequest } from "@/lib/queryClient";
+
+
+Remove token logs:
+
+- console.log('[Draft] Token available:', !!AuthTokenManager.getToken());
+...
+- hasToken: !!AuthTokenManager.getToken(),
+- tokenPreview: AuthTokenManager.getToken()?.substring(0, 20) + '...',
++ // token details omitted to avoid auth-cycle
+
+
+Right after:
+
+const state: DraftState = draftData?.state || {} as DraftState;
+const isCurrentUser = draftData?.isCurrentUser || false;
+
+
+Add these deriveds (paste exactly):
+
+// Null-safe deriveds (prevents TDZ/undefined reads)
+const draft = draftData?.state?.draft ?? null;
+const draftStatus = draft?.status ?? 'not_started';
+const timeRemainingSafe = draftData?.state?.timeRemaining ?? 0;
+const picksSafe = state?.picks ?? [];
+const availableTeamsSafe = state?.availableTeams ?? [];
+const draftOrderSafe = draft?.draftOrder ?? [];
+const currentRoundSafe = draft?.currentRound ?? 1;
+const totalRoundsSafe = draft?.totalRounds ?? (draftOrderSafe.length || 1);
+const pickTimeLimitSafe = draft?.pickTimeLimit ?? 120;
+
+
+Replace usages throughout the file (search/replace):
+
+state.draft.status → draftStatus
+
+state.draft.currentRound → currentRoundSafe
+
+state.draft.totalRounds → totalRoundsSafe
+
+state.draft.pickTimeLimit → pickTimeLimitSafe
+
+state.draft.draftOrder → draftOrderSafe
+
+state.picks → picksSafe
+
+state.availableTeams → availableTeamsSafe
+
+Timer vars:
+
+- const draftTimerLimit = draftData?.state?.draft?.pickTimeLimit || 120;
++ const draftTimerLimit = pickTimeLimitSafe;
+
+- const progressPercentage = displayTime > 0 ? Math.min(1.0, displayTime / draftTimerLimit) : 0;
++ const progressPercentage = displayTime > 0 ? Math.min(1, displayTime / draftTimerLimit) : 0;
+
+
+Width computations:
+
+- style={{ width: `${Math.max(0, (displayTime / (state.draft.pickTimeLimit || 60)) * 100)}%` }}
++ style={{ width: `${Math.max(0, (displayTime / pickTimeLimitSafe) * 100)}%` }}
+
+
+Conditional render checks:
+
+- {state.draft.status === 'active' && (...)}
++ {draftStatus === 'active' && (...)}
+
+- {state.draft.status === 'completed' ? (...) : (...)}
++ {draftStatus === 'completed' ? (...) : (...)}
+
+
+Header numbers:
+
+- <span>Round {state.draft.currentRound} of {state.draft.totalRounds}</span>
++ <span>Round {currentRoundSafe} of {totalRoundsSafe}</span>
+
+- <span>Pick {state.draft.currentPick}</span>
++ <span>Pick {draft?.currentPick ?? 1}</span>
+
+
+Recent picks list:
+
+- {state.picks.slice(-8).reverse().map((pick) => (
++ {picksSafe.slice(-8).reverse().map((pick) => (
+
+
+Snake draft order block:
+
+- const baseOrder = state.draft.draftOrder || [];
+- const isOddRound = state.draft.currentRound % 2 === 1;
++ const baseOrder = draftOrderSafe;
++ const isOddRound = currentRoundSafe % 2 === 1;
+
+- const pickNumber = ((state.draft.currentRound - 1) * totalPicks) + pickPosition;
++ const pickNumber = ((currentRoundSafe - 1) * totalPicks) + pickPosition;
+
+
+Next round preview:
+
+- {state.draft.currentRound < state.draft.totalRounds && (
++ {currentRoundSafe < totalRoundsSafe && (
+
+
+Conference toggle counts:
+
+- AFC ({(filterTeams(state.availableTeams?.filter(team => team.conference === 'AFC') || [])?.length || 0)} available)
++ AFC ({filterTeams(availableTeamsSafe.filter(t => t.conference === 'AFC')).length} available)
+
+- NFC ({(filterTeams(state.availableTeams?.filter(team => team.conference === 'NFC') || [])?.length || 0)} available)
++ NFC ({filterTeams(availableTeamsSafe.filter(t => t.conference === 'NFC')).length} available)
+
+
+Inside renderConferenceTeams switch to the safe arrays:
+
+- const allTeams = [...(state.availableTeams || [])];
+- const draftedTeams = state.picks?.map(p => p.nflTeam) || [];
++ const allTeams = [...availableTeamsSafe];
++ const draftedTeams = picksSafe.map(p => p.nflTeam);
+
+- const isDrafted = state.picks?.some(p => p.nflTeam.id === team.id);
+- const draftedBy = isDrafted ? state.picks?.find(p => p.nflTeam.id === team.id) : null;
+- const isAvailable = state.availableTeams?.some(t => t.id === team.id);
++ const isDrafted = picksSafe.some(p => p.nflTeam.id === team.id);
++ const draftedBy = isDrafted ? picksSafe.find(p => p.nflTeam.id === team.id) : null;
++ const isAvailable = availableTeamsSafe.some(t => t.id === team.id);
+
+- ${!state?.canMakePick || !isCurrentUser || isDrafted ? 'cursor-not-allowed' : 'cursor-pointer'}
++ ${!state?.canMakePick || !isCurrentUser || isDrafted ? 'cursor-not-allowed' : 'cursor-pointer'}
+  // (this one stays, 'state.canMakePick' is fine)
+
+
+Places referencing state.draft.status in JSX (timer bar, etc.) → draftStatus.
+
+Completed state banner at bottom:
+
+- {draftData?.state?.draft?.status === 'completed' && (
++ {draftStatus === 'completed' && (
+
+6) Avoid barrels that mix pages + hooks
+
+If you have features/draft/index.ts re-exporting both the page and hooks, split or stop using it.
+
+Keep using direct imports like you already do:
+
+import { useDraftWebSocket } from "@/hooks/use-draft-websocket";
