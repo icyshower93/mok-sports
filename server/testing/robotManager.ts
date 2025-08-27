@@ -2,7 +2,7 @@
  * Robot Manager for Draft Testing
  * 
  * Creates and manages robot users for testing draft functionality:
- * - Creates 4 robot accounts automatically
+ * - Creates 5 robot accounts automatically
  * - Handles auto-drafting for robots
  * - Simulates realistic pick timing
  */
@@ -33,7 +33,8 @@ export class RobotManager {
       'Alpha Bot',
       'Beta Bot', 
       'Gamma Bot',
-      'Delta Bot'
+      'Delta Bot',
+      'Epsilon Bot'
     ];
 
     this.robotUsers = [];
@@ -186,6 +187,12 @@ export class RobotManager {
       case 'Delta Bot':
         // Random preference (no sorting)
         return this.shuffleArray([...availableTeams]);
+      
+      case 'Epsilon Bot':
+        // Prefers East division teams
+        return availableTeams.sort((a, b) => 
+          a.division.includes('East') ? -1 : (b.division.includes('East') ? 1 : 0)
+        );
       
       default:
         return availableTeams;
