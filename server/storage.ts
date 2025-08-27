@@ -52,7 +52,6 @@ export interface IStorage {
   createDraftPick(pick: InsertDraftPick): Promise<DraftPick>;
   createDraftPickAtomic(pick: InsertDraftPick): Promise<{ pick: DraftPick; nextRound: number; nextPick: number }>;
   getDraftPicks(draftId: string): Promise<Array<DraftPick & { user: User; nflTeam: NflTeam }>>;
-  getLastDraftPick(draftId: string): Promise<DraftPick | null>;
   getUserDraftPicks(draftId: string, userId: string): Promise<Array<DraftPick & { nflTeam: NflTeam }>>;
   
   // User statistics methods
@@ -522,16 +521,6 @@ export class DatabaseStorage implements IStorage {
     .innerJoin(nflTeams, eq(draftPicks.nflTeamId, nflTeams.id))
     .where(eq(draftPicks.draftId, draftId))
     .orderBy(draftPicks.pickNumber);
-  }
-
-  async getLastDraftPick(draftId: string): Promise<DraftPick | null> {
-    const [lastPick] = await db
-      .select()
-      .from(draftPicks)
-      .where(eq(draftPicks.draftId, draftId))
-      .orderBy(desc(draftPicks.pickNumber))
-      .limit(1);
-    return lastPick || null;
   }
 
   async getUserDraftPicks(draftId: string, userId: string): Promise<Array<DraftPick & { nflTeam: NflTeam }>> {

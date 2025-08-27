@@ -35,7 +35,7 @@ import { DesktopNotice } from "@/components/desktop-notice";
 import LoginPage from "@/pages/login";
 import DashboardPage from "@/pages/dashboard";
 import LeaguesPage from "@/pages/leagues";
-import DraftPageSafe from "@/pages/draft-safe";
+import DraftPage from "@/pages/draft";
 import MainPage from "@/pages/main";
 import ProfilePage from "@/pages/profile";
 import StablePage from "@/pages/teams";
@@ -171,7 +171,7 @@ function AppContent() {
           {(params) => {
             console.log('[App] Draft route matched with params:', params);
             console.log('[App] Current location:', window.location.href);
-            return <DraftPageSafe />;
+            return <DraftPage />;
           }}
         </Route>
         <Route path="/main">

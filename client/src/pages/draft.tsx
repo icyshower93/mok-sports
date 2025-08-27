@@ -181,6 +181,9 @@ export default function DraftPage() {
   // const { status: persistentStatus, connectionAttempts } = usePersistentWebSocket(draftId || '', () => {});
   // const { connectionStatus: stableStatus } = useStableWebSocket(draftId || '', () => {});
 
+  // CRITICAL: Declare variables BEFORE any useEffect that uses them
+  // Move these after draftData is available from the query
+  // Variables will be defined below after the query is declared
 
   // Redirect if no draft ID
   useEffect(() => {
@@ -189,67 +192,145 @@ export default function DraftPage() {
     }
   }, [draftId, navigate]);
 
-  // Fetch draft state with polling for real-time updates - SIMPLIFIED TO FIX TEMPORAL DEAD ZONE
+  // Fetch draft state with polling for real-time updates
   const { data: draftData, isLoading, error } = useQuery({
-    queryKey: ['draft', draftId],
+    queryKey: ['draft', draftId], // Remove timestamp to allow proper caching
     queryFn: async () => {
-      if (!draftId) throw new Error('No draft ID');
+      console.log('[Draft] === STARTING DRAFT FETCH ===');
+      console.log('[Draft] Draft ID:', draftId);
+      console.log('[Draft] Auth status - User:', user?.name, 'Authenticated:', isAuthenticated, 'Loading:', authLoading);
+      console.log('[Draft] Token available:', !!AuthTokenManager.getToken());
+      console.log('[Draft] Current URL:', window.location.href);
+      console.log('[Draft] Current pathname:', window.location.pathname);
       
-      const response = await fetch(`/api/drafts/${draftId}`, {
-        method: 'GET',
-        credentials: 'include',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
+      try {
+        console.log('[Draft] Making API request to:', `/api/drafts/${draftId}`);
+        
+        // Use direct fetch with credentials instead of apiRequest to avoid token issues
+        const response = await fetch(`/api/drafts/${draftId}`, {
+          method: 'GET',
+          credentials: 'include', // Use cookies for auth instead of Bearer token
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        console.log('[Draft] Response received:', {
+          status: response.status,
+          statusText: response.statusText,
+          ok: response.ok,
+          headers: Object.fromEntries(response.headers.entries())
+        });
+        
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error('[Draft] API Error Response:', errorText);
+          throw new Error(`HTTP ${response.status}: ${errorText}`);
         }
-      });
-      
-      if (!response.ok) {
-        throw new Error(`Failed to fetch draft: ${response.status}`);
+        
+        const data = await response.json();
+        console.log('[Draft] Successfully fetched draft data:', data);
+        console.log('[Draft] === DRAFT FETCH SUCCESS ===');
+        return data;
+      } catch (error) {
+        console.error('[Draft] === DRAFT FETCH ERROR ===');
+        console.error('[Draft] Error fetching draft data:', error);
+        console.error('[Draft] Error type:', typeof error);
+        console.error('[Draft] Error constructor:', error?.constructor?.name);
+        
+        // Track the error for PWA debugging
+        trackModuleError(error, 'draft-fetch');
+        
+        console.error('[Draft] Full error details:', {
+          message: error instanceof Error ? error.message : 'Unknown error',
+          stack: error instanceof Error ? error.stack : 'No stack trace',
+          user: user?.name,
+          hasToken: !!AuthTokenManager.getToken(),
+          isAuthenticated,
+          authLoading,
+          draftId,
+          currentUrl: window.location.href
+        });
+        
+        // Try to make a direct fetch to see what's happening
+        try {
+          console.log('[Draft] Attempting direct fetch for debugging...');
+          const directResponse = await fetch(`/api/drafts/${draftId}`, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              ...AuthTokenManager.getAuthHeaders()
+            },
+            credentials: 'include'
+          });
+          
+          console.log('[Draft] Direct fetch response:', {
+            status: directResponse.status,
+            statusText: directResponse.statusText,
+            headers: Object.fromEntries(directResponse.headers.entries())
+          });
+          
+          const directText = await directResponse.text();
+          console.log('[Draft] Direct fetch response body:', directText);
+          
+          // Store the response for PWA debugging
+          try {
+            sessionStorage.setItem('mok-last-direct-fetch', JSON.stringify({
+              status: directResponse.status,
+              statusText: directResponse.statusText,
+              headers: Object.fromEntries(directResponse.headers.entries()),
+              body: directText,
+              timestamp: new Date().toISOString()
+            }));
+          } catch (e) {
+            console.warn('[Draft] Could not store direct fetch result');
+          }
+        } catch (directError) {
+          console.error('[Draft] Direct fetch also failed:', directError);
+          trackModuleError(directError, 'direct-fetch');
+        }
+        
+        throw error;
       }
-      
-      return response.json();
     },
-    enabled: !!draftId && !authLoading,
-    refetchInterval: 5000,
-    staleTime: 0,
-    gcTime: 0,
-    retry: 3
+    enabled: !!draftId && !authLoading, // Wait for auth to load before making requests
+    refetchInterval: 5000, // Reduced polling - WebSocket handles timer updates
+    staleTime: 0, // Never trust cached data - always stale
+    gcTime: 0, // React Query v5: disable caching completely
+    retry: (failureCount, error) => {
+      // Don't retry on authentication errors
+      if (error instanceof Error && error.message.includes('401')) {
+        console.log('[Draft] Authentication error, not retrying');
+        return false;
+      }
+      console.log(`[Draft] Retrying fetch, attempt ${failureCount + 1}`);
+      return failureCount < 3;
+    }
   });
+
+  // CRITICAL: Declare variables after query is defined to prevent temporal dead zone errors  
+  const state: DraftState = draftData?.state || {} as DraftState;
+  const isCurrentUser = draftData?.isCurrentUser || false;
 
   // Log errors for debugging
   if (error) {
     console.error('Draft fetch error:', error);
   }
 
-  // CRITICAL FIX: Remove state extraction completely to prevent temporal dead zone
-  // Do NOT extract state - always use draftData?.state with guards
-  
-  // Early return if essential data is not available to prevent temporal dead zone errors
-  const hasEssentialData = draftData && draftData.state;
-  
-  console.log('[Draft] Essential data check:', { hasEssentialData, draftData: !!draftData, state: !!draftData?.state });
-
   // SMOOTH TIMER SYSTEM: Combines server updates with local countdown
   
-  // Handle server timer updates (WebSocket or API) with mobile alerts - FIXED FOR TEMPORAL DEAD ZONE
+  // Handle server timer updates (WebSocket or API) with mobile alerts
   useEffect(() => {
-    // SAFE: Check for essential data first to prevent temporal dead zone
-    if (!hasEssentialData) {
-      return;
-    }
-    
-    // SAFE: Extract values with proper null checks
-    const messageTime = lastMessage?.type === 'timer_update' ? lastMessage.data?.timeRemaining : undefined;
-    const stateTime = draftData?.state?.timeRemaining;
-    const newServerTime = messageTime !== undefined ? messageTime : stateTime;
+    const newServerTime = lastMessage?.type === 'timer_update' ? 
+      lastMessage.data?.timeRemaining : 
+      draftData?.state?.timeRemaining;
 
     if (newServerTime !== undefined && newServerTime !== serverTime) {
       console.log('[SMOOTH TIMER] Server update received:', newServerTime);
       
-      // SAFE: Get user status with proper null check
-      const currentIsCurrentUser = draftData?.isCurrentUser || false;
-      if (currentIsCurrentUser) {
+      // Mobile UX: Vibration alerts for timer warnings
+      if (isCurrentUser) {
         if (newServerTime <= 30 && newServerTime > 25 && serverTime > 30) {
           console.log('[VIBRATION] 30s warning triggered');
           vibrate(100); // Short vibration at 30s
@@ -268,7 +349,7 @@ export default function DraftPage() {
       if (isFreshTimer) {
         console.log('[SMOOTH TIMER] 🎯 Fresh timer detected - immediate transition');
         // Mobile UX: Notify user it's their turn (ONLY ONCE)
-        if (currentIsCurrentUser && !hasNotifiedForThisTurn) {
+        if (isCurrentUser && !hasNotifiedForThisTurn) {
           const now = Date.now();
           // Prevent duplicate notifications within 30 seconds
           if (now - lastNotificationTime > 30000) {
@@ -288,29 +369,21 @@ export default function DraftPage() {
         setLastServerUpdate(Date.now());
         setIsCountingDown(true);
       } else {
-        // SAFE: Check draft status with proper null checks
-        const isDraftActive = draftData?.state?.draft?.status === 'active';
         // Normal server update
         setServerTime(newServerTime);
         setLocalTime(newServerTime);
         setLastServerUpdate(Date.now());
-        setIsCountingDown(newServerTime > 0 && isDraftActive);
+        setIsCountingDown(newServerTime > 0 && draftData?.state?.draft?.status === 'active');
       }
     }
-  }, [hasEssentialData, lastMessage, serverTime, hasNotifiedForThisTurn, lastNotificationTime]);
+  }, [lastMessage, draftData, serverTime, isCurrentUser, hasNotifiedForThisTurn, lastNotificationTime]);
   
-  // Reset notification flag when it's no longer user's turn - FIXED FOR TEMPORAL DEAD ZONE
+  // Reset notification flag when it's no longer user's turn
   useEffect(() => {
-    // SAFE: Check for essential data first
-    if (!hasEssentialData) {
-      return;
-    }
-    
-    const currentIsCurrentUser = draftData?.isCurrentUser || false;
-    if (!currentIsCurrentUser && hasNotifiedForThisTurn) {
+    if (!isCurrentUser && hasNotifiedForThisTurn) {
       setHasNotifiedForThisTurn(false);
     }
-  }, [hasEssentialData, hasNotifiedForThisTurn]);
+  }, [isCurrentUser, hasNotifiedForThisTurn]);
 
   // Smooth local countdown between server updates
   useEffect(() => {
@@ -352,6 +425,7 @@ export default function DraftPage() {
   
   console.log('[SMOOTH TIMER] Display time:', displayTime.toFixed(1), 'isCountingDown:', isCountingDown, 'localTime:', localTime.toFixed(1));
 
+  // Variables moved earlier in the file to prevent compilation errors
 
   // Mobile UX helper functions
   const getTimerRingColor = () => {
@@ -362,28 +436,22 @@ export default function DraftPage() {
   };
 
   const getBackgroundColor = () => {
-    const currentIsCurrentUser = draftData?.isCurrentUser || false;
-    if (!currentIsCurrentUser) return '';
+    if (!isCurrentUser) return '';
     if (displayTime <= 5) return 'bg-red-50 dark:bg-red-950/20 animate-pulse';
     if (displayTime <= 10) return 'bg-orange-50 dark:bg-orange-950/20';
     if (displayTime <= 30) return 'bg-yellow-50 dark:bg-yellow-950/20';
     return 'bg-green-50 dark:bg-green-950/20';
   };
 
-  // Team availability status helper with proper safety guards
+  // Team availability status helper
   const getTeamStatus = (team: NflTeam) => {
-    // Always use fresh references to avoid temporal dead zone issues
-    if (!draftData?.state) return 'available';
-    
-    const currentState = draftData.state;
-    const currentIsCurrentUser = draftData.isCurrentUser || false;
-    const isDrafted = currentState.picks?.some((p: any) => p.nflTeam.id === team.id);
+    const isDrafted = state.picks?.some(p => p.nflTeam.id === team.id);
     if (isDrafted) return 'taken';
     
     // Check division conflict for current user
-    if (currentIsCurrentUser && currentState?.canMakePick && user?.id) {
-      const userPicks = currentState.picks?.filter((p: any) => p.user.id === user.id) || [];
-      const hasDivisionConflict = userPicks.some((p: any) => p.nflTeam.division === team.division);
+    if (isCurrentUser && state?.canMakePick) {
+      const userPicks = state.picks?.filter(p => p.user.id === user?.id) || [];
+      const hasDivisionConflict = userPicks.some(p => p.nflTeam.division === team.division);
       if (hasDivisionConflict) return 'conflict';
     }
     
@@ -410,18 +478,15 @@ export default function DraftPage() {
 
   // Show FAB when it's user's turn
   useEffect(() => {
-    const currentIsCurrentUser = draftData?.isCurrentUser || false;
-    const currentState = draftData?.state || {} as DraftState;
-    setShowFAB(currentIsCurrentUser && currentState?.canMakePick && !!selectedTeam);
-  }, [draftData?.isCurrentUser, draftData?.state?.canMakePick, selectedTeam]);
+    setShowFAB(isCurrentUser && state?.canMakePick && !!selectedTeam);
+  }, [isCurrentUser, state?.canMakePick, selectedTeam]);
 
   // Auto-expand panels when user's turn approaches
   useEffect(() => {
-    const currentIsCurrentUser = draftData?.isCurrentUser || false;
-    if (displayTime <= 30 && currentIsCurrentUser) {
+    if (displayTime <= 30 && isCurrentUser) {
       setPanelsCollapsed(false);
     }
-  }, [displayTime, draftData?.isCurrentUser]);
+  }, [displayTime, isCurrentUser]);
 
   // TIMER FIX: Use actual draft timer limit instead of hardcoded 60
   const draftTimerLimit = draftData?.state?.draft?.pickTimeLimit || 120; // Default to 120s if not available
@@ -564,12 +629,13 @@ export default function DraftPage() {
   // The timer sync is already handled in the main timer useEffect hook
 
   // Variables moved earlier to prevent temporal dead zone errors
+  // const state and isCurrentUser are now declared above
   const currentPlayer = draftData?.currentPlayer || null;
   const teams = teamsData?.teams || {};
 
   // DEBUG LOGGING AND CRITICAL TIMER SYNC FIX
-  if (hasEssentialData && draftData?.state) {
-    console.log('🔍 [TIMER DEBUG] Server Time:', draftData.state.timeRemaining);
+  if (draftData?.state) {
+    console.log('🔍 [TIMER DEBUG] Server Time:', state.timeRemaining);
     console.log('🔍 [TIMER DEBUG] Display Time:', displayTime);
     console.log('🔍 [TIMER DEBUG] Current Player:', currentPlayer?.name);
   }
@@ -599,21 +665,15 @@ export default function DraftPage() {
 
   // Create stable conference team renderer with search (FIXED: prevent re-render loops)
   const renderConferenceTeams = (conference: 'AFC' | 'NFC') => {
-    // SAFETY: Always check if essential data is available first
-    if (!hasEssentialData || !draftData?.state) {
-      return <div className="text-center p-4">Loading teams...</div>;
-    }
-    
     // Get all teams from available teams and picks to create comprehensive list
-    const currentState = draftData.state;
-    const allTeams = [...(currentState.availableTeams || [])];
-    const draftedTeams = currentState.picks?.map((p: any) => p.nflTeam) || [];
+    const allTeams = [...(state.availableTeams || [])];
+    const draftedTeams = state.picks?.map(p => p.nflTeam) || [];
     
     // Combine available and drafted teams for complete view
     let conferenceTeams = [...allTeams, ...draftedTeams]
-      .filter((team: NflTeam) => team.conference === conference)
-      .reduce((acc: NflTeam[], team: NflTeam) => {
-        if (!acc.some((t: NflTeam) => t.id === team.id)) {
+      .filter(team => team.conference === conference)
+      .reduce((acc, team) => {
+        if (!acc.some(t => t.id === team.id)) {
           acc.push(team);
         }
         return acc;
@@ -623,22 +683,22 @@ export default function DraftPage() {
     conferenceTeams = filterTeams(conferenceTeams);
 
     // Group by division
-    const divisions = conferenceTeams.reduce((acc: Record<string, NflTeam[]>, team: NflTeam) => {
+    const divisions = conferenceTeams.reduce((acc, team) => {
       if (!acc[team.division]) acc[team.division] = [];
       acc[team.division].push(team);
       return acc;
     }, {} as Record<string, NflTeam[]>);
 
-    return Object.entries(divisions).map(([division, divisionTeams]: [string, NflTeam[]]) => (
+    return Object.entries(divisions).map(([division, divisionTeams]) => (
       <div key={division} className="mb-6">
         <h4 className="text-xs font-medium text-muted-foreground mb-3 uppercase tracking-wider">
           {division}
         </h4>
         <div className="grid grid-cols-1 gap-2">
-          {divisionTeams.map((team: NflTeam) => {
-            const isDrafted = currentState.picks?.some((p: any) => p.nflTeam.id === team.id);
-            const draftedBy = isDrafted ? currentState.picks?.find((p: any) => p.nflTeam.id === team.id) : null;
-            const isAvailable = currentState.availableTeams?.some((t: any) => t.id === team.id);
+          {divisionTeams.map((team) => {
+            const isDrafted = state.picks?.some(p => p.nflTeam.id === team.id);
+            const draftedBy = isDrafted ? state.picks?.find(p => p.nflTeam.id === team.id) : null;
+            const isAvailable = state.availableTeams?.some(t => t.id === team.id);
             
             return (
               <button
@@ -649,9 +709,9 @@ export default function DraftPage() {
                     : isDrafted 
                     ? 'border-border bg-muted/30 opacity-60 cursor-not-allowed'
                     : 'border-border hover:border-primary/50 hover:bg-muted/50'
-                } ${!currentState?.canMakePick || !draftData?.isCurrentUser || isDrafted ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+                } ${!state?.canMakePick || !isCurrentUser || isDrafted ? 'cursor-not-allowed' : 'cursor-pointer'}`}
                 onClick={() => isAvailable && !isDrafted && setSelectedTeam(team.id)}
-                disabled={!currentState?.canMakePick || !draftData?.isCurrentUser || isDrafted}
+                disabled={!state?.canMakePick || !isCurrentUser || isDrafted}
               >
                 <div className="flex items-center space-x-3">
                   <div className="relative">
@@ -674,12 +734,12 @@ export default function DraftPage() {
                   <div className="flex-1">
                     <div className="font-medium text-sm flex items-center space-x-2">
                       <span>{team.city} {team.name}</span>
-                      {getTeamStatus(team) === 'conflict' && draftData?.isCurrentUser && (
+                      {getTeamStatus(team) === 'conflict' && isCurrentUser && (
                         <Target className="w-3 h-3 text-orange-500" />
                       )}
                     </div>
                     <div className="text-xs text-muted-foreground">{team.division}</div>
-                    {getTeamStatus(team) === 'conflict' && draftData?.isCurrentUser && (
+                    {getTeamStatus(team) === 'conflict' && isCurrentUser && (
                       <div className="text-xs text-orange-600 mt-1">
                         Division limit reached
                       </div>
@@ -748,27 +808,27 @@ export default function DraftPage() {
           {/* Enhanced Timer & Status Bar */}
           <div className="flex items-center space-x-4">
             {/* Current Picker Info */}
-            {hasEssentialData && draftData.state.currentUserId && currentPlayer && (
+            {state.currentUserId && currentPlayer && (
               <div className="hidden sm:flex items-center space-x-2 px-3 py-1.5 bg-secondary/30 rounded-full">
                 {currentPlayer.avatar && (
                   <img 
                     src={currentPlayer.avatar} 
                     alt={currentPlayer.name}
                     className={`w-6 h-6 rounded-full transition-all duration-300 ${
-                      draftData?.isCurrentUser ? 'ring-2 ring-green-400 animate-pulse' : ''
+                      isCurrentUser ? 'ring-2 ring-green-400 animate-pulse' : ''
                     }`}
                   />
                 )}
                 <div className="text-xs">
-                  <div className={`font-medium ${draftData?.isCurrentUser ? 'text-green-600' : 'text-foreground'}`}>
-                    {draftData?.isCurrentUser ? 'Your turn!' : currentPlayer.name}
+                  <div className={`font-medium ${isCurrentUser ? 'text-green-600' : 'text-foreground'}`}>
+                    {isCurrentUser ? 'Your turn!' : currentPlayer.name}
                   </div>
                 </div>
               </div>
             )}
 
             {/* Enhanced Timer Circle */}
-            {hasEssentialData && draftData.state.draft.status === 'active' && (
+            {state.draft.status === 'active' && (
               <div className="relative">
                 <svg className="w-12 h-12 transform -rotate-90">
                   <circle
@@ -829,7 +889,7 @@ export default function DraftPage() {
         </div>
 
         {/* Progress Bar for Mobile */}
-        {hasEssentialData && draftData.state.draft.status === 'active' && (
+        {state.draft.status === 'active' && (
           <div className="sm:hidden mt-3 w-full bg-secondary/30 rounded-full h-2 overflow-hidden">
             <div 
               className={`h-full rounded-full transition-all duration-500 ${
@@ -844,7 +904,7 @@ export default function DraftPage() {
       </div>
 
       {/* Screen Flash Effect for Urgency */}
-      {hasEssentialData && draftData?.isCurrentUser && displayTime <= 10 && (
+      {isCurrentUser && displayTime <= 10 && (
         <div className={`fixed inset-0 pointer-events-none z-30 border-4 transition-all duration-300 ${
           displayTime <= 5 ? 'border-red-500 animate-pulse' :
           displayTime <= 10 ? 'border-orange-500' :
@@ -861,18 +921,18 @@ export default function DraftPage() {
               <h1 className="text-2xl font-semibold text-foreground mb-1">Draft Room</h1>
               <div className="flex items-center justify-center space-x-6 text-sm text-muted-foreground">
                 <div className="flex items-center space-x-1">
-                  <span>Round {draftData?.state?.draft?.currentRound || 1} of {draftData?.state?.draft?.totalRounds || 5}</span>
+                  <span>Round {state.draft.currentRound} of {state.draft.totalRounds}</span>
                 </div>
                 <div className="h-1 w-1 bg-muted-foreground rounded-full" />
                 <div className="flex items-center space-x-1">
-                  <span>Pick {draftData?.state?.draft?.currentPick || 1}</span>
+                  <span>Pick {state.draft.currentPick}</span>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Completed Draft - Mobile Optimized Layout */}
-          {hasEssentialData && draftData.state.draft.status === 'completed' ? (
+          {state.draft.status === 'completed' ? (
             <div className="space-y-4">
               {/* Header - Mobile Optimized */}
               <Card className="w-full">
@@ -883,7 +943,7 @@ export default function DraftPage() {
                         🎉 Draft Complete!
                       </div>
                       <div className="text-sm text-green-600 dark:text-green-400">
-                        All {draftData?.state?.picks?.length || 0} picks completed across {Math.max(...(draftData?.state?.picks?.map((p: any) => p.round) || [0]))} rounds
+                        All {state.picks?.length || 0} picks completed across {Math.max(...(state.picks?.map(p => p.round) || [0]))} rounds
                       </div>
                     </div>
                     
@@ -919,8 +979,8 @@ export default function DraftPage() {
                 <CardContent className="p-4">
                   {/* League Members and Their Teams - Mobile Layout */}
                   <div className="space-y-4">
-                    {hasEssentialData && draftData.state.draft.draftOrder?.map((userId: any) => {
-                      const userPicks = draftData.state.picks?.filter((p: any) => p.user.id === userId) || [];
+                    {state.draft.draftOrder?.map((userId) => {
+                      const userPicks = state.picks?.filter(p => p.user.id === userId) || [];
                       const user = userPicks[0]?.user;
                       
                       if (!user) return null;
@@ -939,7 +999,7 @@ export default function DraftPage() {
                           </div>
                           {/* Mobile-Friendly Team Grid */}
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                            {userPicks.map((pick: any) => (
+                            {userPicks.map((pick) => (
                               <div 
                                 key={pick.id} 
                                 className="flex items-center space-x-2 p-2 bg-background/60 rounded-lg border text-sm"
@@ -966,14 +1026,14 @@ export default function DraftPage() {
               </Card>
                     
               {/* Free Agent Teams - Mobile Optimized */}
-              {hasEssentialData && draftData.state.availableTeams && draftData.state.availableTeams.length > 0 && (
+              {state.availableTeams && state.availableTeams.length > 0 && (
                 <Card className="w-full">
                   <CardHeader className="pb-3">
                     <CardTitle className="text-lg text-center">Free Agent Teams</CardTitle>
                   </CardHeader>
                   <CardContent className="p-4">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      {draftData.state.availableTeams.slice(0, 4).map((team: any) => (
+                      {state.availableTeams.slice(0, 4).map((team) => (
                         <div 
                           key={team.id} 
                           className="flex items-center space-x-3 p-3 bg-muted/30 rounded-lg border"
@@ -999,11 +1059,11 @@ export default function DraftPage() {
                 <CardContent className="p-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div className="text-center p-4 bg-secondary/30 rounded-lg">
-                      <div className="text-2xl font-bold">{draftData?.state?.picks?.filter((p: any) => !p.isAutoPick).length || 0}</div>
+                      <div className="text-2xl font-bold">{state.picks?.filter(p => !p.isAutoPick).length || 0}</div>
                       <div className="text-xs text-muted-foreground">Manual Picks</div>
                     </div>
                     <div className="text-center p-4 bg-secondary/30 rounded-lg">
-                      <div className="text-2xl font-bold">{draftData?.state?.picks?.filter((p: any) => p.isAutoPick).length || 0}</div>
+                      <div className="text-2xl font-bold">{state.picks?.filter(p => p.isAutoPick).length || 0}</div>
                       <div className="text-xs text-muted-foreground">Auto Picks</div>
                     </div>
                   </div>
@@ -1024,7 +1084,7 @@ export default function DraftPage() {
                     </CardTitle>
                   </CardHeader>
                 <CardContent>
-                  {hasEssentialData && draftData.state.draft.status === 'not_started' ? (
+                  {state.draft.status === 'not_started' ? (
                     <div className="text-center space-y-3">
                       <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
                         <div className="text-blue-700 dark:text-blue-300 font-medium mb-2">
@@ -1038,7 +1098,7 @@ export default function DraftPage() {
                           <span>Connected - real-time updates enabled</span>
                         </div>
                       </div>
-                  ) : hasEssentialData && draftData.state.draft.status === 'starting' ? (
+                  ) : state.draft.status === 'starting' ? (
                     <div className="text-center space-y-3">
                       <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
                         <div className="text-green-700 dark:text-green-300 font-medium mb-2">
@@ -1090,7 +1150,7 @@ export default function DraftPage() {
                         </Button>
                       )}
                     </div>
-                  ) : hasEssentialData && draftData.state.currentUserId ? (
+                  ) : state.currentUserId ? (
                     <div className="text-center space-y-3">
                       {/* Current Player - Modern Style */}
                       <div className="flex items-center justify-center space-x-3 mb-4">
@@ -1116,7 +1176,7 @@ export default function DraftPage() {
                           displayTime <= 10 ? 'text-red-500 animate-pulse' : 
                           displayTime <= 30 ? 'text-orange-500' : 'text-foreground'
                         }`}>
-                          {hasEssentialData && draftData.state.draft.status === 'completed' ? (
+                          {state.draft.status === 'completed' ? (
                             <span className="text-green-600 font-medium">
                               Draft Complete
                             </span>
@@ -1139,7 +1199,7 @@ export default function DraftPage() {
                                 'bg-primary'
                               }`}
                               style={{
-                                width: `${Math.max(0, (displayTime / (draftData?.state?.draft?.pickTimeLimit || 60)) * 100)}%`
+                                width: `${Math.max(0, (displayTime / (state.draft.pickTimeLimit || 60)) * 100)}%`
                               }}
                             />
                           </div>
@@ -1154,10 +1214,10 @@ export default function DraftPage() {
                             }`}>
                               {displayTime <= 10 ? 'Time running out' : 'Time remaining'}
                             </span>
-                            <span>{formatTime(draftData?.state?.draft?.pickTimeLimit || 60)}</span>
+                            <span>{formatTime(state.draft.pickTimeLimit || 60)}</span>
                           </div>
                         </div>
-                        {hasEssentialData && draftData?.isCurrentUser ? (
+                        {isCurrentUser ? (
                           <Badge className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100 border-green-200 dark:border-green-800">
                             <Clock className="w-3 h-3 mr-1" />
                             Your pick
@@ -1185,7 +1245,7 @@ export default function DraftPage() {
                 <CardHeader className="pb-3">
                   <CardTitle className="text-lg flex items-center space-x-2">
                     <span>Snake Draft Order</span>
-                    <Badge variant="outline" className="text-xs">Round {draftData?.state?.draft?.currentRound || 1}</Badge>
+                    <Badge variant="outline" className="text-xs">Round {state.draft.currentRound}</Badge>
                   </CardTitle>
                   <div className="text-xs text-muted-foreground">
                     Direction changes each round
@@ -1194,12 +1254,12 @@ export default function DraftPage() {
                 <CardContent>
                   {(() => {
                     // Calculate snake draft order for current round
-                    const baseOrder = draftData?.state?.draft?.draftOrder || [];
-                    const isOddRound = (draftData?.state?.draft?.currentRound || 1) % 2 === 1;
+                    const baseOrder = state.draft.draftOrder || [];
+                    const isOddRound = state.draft.currentRound % 2 === 1;
                     const currentRoundOrder = isOddRound ? baseOrder : [...baseOrder].reverse();
                     
                     // Find current pick index and calculate upcoming picks
-                    const currentPickIndex = currentRoundOrder.findIndex(userId => userId === draftData?.state?.currentUserId);
+                    const currentPickIndex = currentRoundOrder.findIndex(userId => userId === state.currentUserId);
                     const totalPicks = currentRoundOrder.length;
                     
                     return (
@@ -1207,7 +1267,7 @@ export default function DraftPage() {
                         {/* Round Direction Indicator */}
                         <div className="flex items-center justify-center space-x-2 p-2 bg-secondary/30 rounded-lg">
                           <div className="text-xs font-medium">
-                            Round {draftData?.state?.draft?.currentRound || 1} Direction:
+                            Round {state.draft.currentRound} Direction:
                           </div>
                           <div className="flex items-center space-x-1">
                             {isOddRound ? (
@@ -1232,15 +1292,15 @@ export default function DraftPage() {
 
                         {/* Draft Positions */}
                         <div className="space-y-1">
-                          {currentRoundOrder.map((userId: any, index: any) => {
-                            const userPicks = draftData?.state?.picks?.filter((p: any) => p.user.id === userId) || [];
-                            const isCurrentPick = userId === draftData?.state?.currentUserId;
+                          {currentRoundOrder.map((userId, index) => {
+                            const userPicks = state.picks.filter(p => p.user.id === userId);
+                            const isCurrentPick = userId === state.currentUserId;
                             const isUpNext = index === currentPickIndex + 1;
                             const isJustPicked = index === currentPickIndex - 1;
                             const pickPosition = index + 1;
                             
                             // Calculate actual pick number in the draft
-                            const pickNumber = (((draftData?.state?.draft?.currentRound || 1) - 1) * totalPicks) + pickPosition;
+                            const pickNumber = ((state.draft.currentRound - 1) * totalPicks) + pickPosition;
                             
                             // Get user name - try multiple sources
                             let userName = 'Loading...';
@@ -1335,14 +1395,14 @@ export default function DraftPage() {
                         </div>
 
                         {/* Next Round Preview */}
-                        {hasEssentialData && (draftData.state.draft.currentRound < draftData.state.draft.totalRounds) && (
+                        {state.draft.currentRound < state.draft.totalRounds && (
                           <div className="mt-4 p-3 bg-secondary/20 rounded-lg border border-dashed border-secondary">
                             <div className="text-xs font-medium text-muted-foreground mb-2">
-                              Round {(draftData?.state?.draft?.currentRound || 1) + 1} Preview:
+                              Round {state.draft.currentRound + 1} Preview:
                             </div>
                             <div className="flex items-center space-x-2 text-xs text-muted-foreground">
                               <span>Direction will be:</span>
-                              {((draftData?.state?.draft?.currentRound || 1) + 1) % 2 === 1 ? (
+                              {(state.draft.currentRound + 1) % 2 === 1 ? (
                                 <span className="text-blue-600 font-medium">Forward →</span>
                               ) : (
                                 <span className="text-red-600 font-medium">← Reverse</span>
@@ -1364,7 +1424,7 @@ export default function DraftPage() {
                 <CardContent>
                   <ScrollArea className="h-48">
                     <div className="space-y-2">
-                      {hasEssentialData && draftData.state.picks.slice(-8).reverse().map((pick: any) => (
+                      {state.picks.slice(-8).reverse().map((pick) => (
                         <div key={pick.id} className="flex items-center space-x-3 p-2 rounded-lg bg-secondary/50">
                           <TeamLogo 
                             logoUrl={pick.nflTeam.logoUrl}
@@ -1397,12 +1457,12 @@ export default function DraftPage() {
                   <div className="flex items-center justify-between">
                     <CardTitle className="text-lg">NFL Teams</CardTitle>
                     <div className="text-sm text-muted-foreground">
-                      {draftData?.state?.availableTeams?.length || 0} available • {draftData?.state?.picks?.length || 0} drafted
+                      {state.availableTeams?.length || 0} available • {state.picks?.length || 0} drafted
                     </div>
                   </div>
                 </CardHeader>
                 <CardContent>
-                  {hasEssentialData && draftData?.isCurrentUser && draftData.state?.canMakePick && (
+                  {isCurrentUser && state?.canMakePick && (
                     <div className="mb-4 p-3 bg-fantasy-purple/10 rounded-lg border border-fantasy-purple/20">
                       <div className="flex items-center justify-between">
                         <span className="text-sm font-medium">
@@ -1483,7 +1543,7 @@ export default function DraftPage() {
                               : 'text-muted-foreground hover:text-foreground'
                           }`}
                         >
-                          AFC ({hasEssentialData ? (filterTeams(draftData.state.availableTeams?.filter((team: any) => team.conference === 'AFC') || [])?.length || 0) : 0} available)
+                          AFC ({(filterTeams(state.availableTeams?.filter(team => team.conference === 'AFC') || [])?.length || 0)} available)
                         </button>
                         <button
                           onClick={() => setCurrentConference('NFC')}
@@ -1493,7 +1553,7 @@ export default function DraftPage() {
                               : 'text-muted-foreground hover:text-foreground'
                           }`}
                         >
-                          NFC ({hasEssentialData ? (filterTeams(draftData.state.availableTeams?.filter((team: any) => team.conference === 'NFC') || [])?.length || 0) : 0} available)
+                          NFC ({(filterTeams(state.availableTeams?.filter(team => team.conference === 'NFC') || [])?.length || 0)} available)
                         </button>
                       </div>
                       

@@ -300,30 +300,10 @@ export class SnakeDraftManager {
         return { success: false, error: 'Draft is not active' };
       }
 
-      // ENHANCED TURN VALIDATION
       const currentUserId = this.getCurrentPickUser(draft);
       if (!currentUserId || currentUserId !== pickRequest.userId) {
-        console.warn(`❌ Turn validation failed: Expected ${currentUserId}, got ${pickRequest.userId}`);
         return { success: false, error: 'Not your turn to pick' };
       }
-      
-      console.log(`✅ Turn validation passed: User ${pickRequest.userId} for Round ${draft.currentRound}, Pick ${draft.currentPick}`);
-      
-      // LOG SNAKE DRAFT CONTEXT for debugging
-      const { currentRound, currentPick, draftOrder } = draft;
-      const totalUsers = draftOrder.length;
-      let expectedUserIndex: number;
-      
-      if (currentRound % 2 === 1) {
-        // Odd rounds: forward order
-        expectedUserIndex = (currentPick - 1) % totalUsers;
-      } else {
-        // Even rounds: reverse order  
-        expectedUserIndex = totalUsers - 1 - ((currentPick - 1) % totalUsers);
-      }
-      
-      const expectedUserId = draftOrder[expectedUserIndex];
-      console.log(`🐍 Snake draft context: Round ${currentRound}, Pick ${currentPick}, Expected user index ${expectedUserIndex} → ${expectedUserId}`);
 
       // Validate team is available
       const availableTeams = await this.storage.getAvailableNflTeams(draftId);
@@ -349,10 +329,6 @@ export class SnakeDraftManager {
         }
       }
 
-      // ENHANCED PICK VALIDATION: Log draft state before atomic operation
-      console.log(`🔄 Creating pick for user ${pickRequest.userId}: Round ${draft.currentRound}, Pick ${draft.currentPick}`);
-      console.log(`📊 Draft state: ${draft.draftOrder.length} users, ${draft.totalRounds} rounds total`);
-      
       // RACE CONDITION FIX: Use atomic pick creation to prevent duplicate picks
       const pickData = {
         draftId,
@@ -362,22 +338,12 @@ export class SnakeDraftManager {
         pickNumber: draft.currentPick,
         isAutoPick: pickRequest.isAutoPick || false
       };
-      
-      // Final validation before atomic operation
-      const expectedUser = this.getCurrentPickUser(draft);
-      if (expectedUser !== pickRequest.userId) {
-        console.error(`🚫 FINAL VALIDATION FAILED: Expected ${expectedUser}, got ${pickRequest.userId}`);
-        return { success: false, error: 'Turn validation failed - draft state changed' };
-      }
 
       // Stop current timer BEFORE atomic operation to prevent timer conflicts
       await this.stopPickTimer(draftId, pickRequest.userId);
 
-      // Atomic pick creation and draft advancement - SIMPLIFIED TO FIX TEMPORAL DEAD ZONE
-      const atomicResult = await this.storage.createDraftPickAtomic(pickData);
-      const newPick = atomicResult.pick;
-      const nextRound = atomicResult.nextRound; 
-      const nextPick = atomicResult.nextPick;
+      // Atomic pick creation and draft advancement
+      const { pick: newPick, nextRound, nextPick } = await this.storage.createDraftPickAtomic(pickData);
       
       console.log(`🔄 Atomic pick created: Round ${newPick.round}, Pick ${newPick.pickNumber} → Next: Round ${nextRound}, Pick ${nextPick}`);
 
@@ -680,27 +646,9 @@ export class SnakeDraftManager {
       console.log(`🔄 Advancing to Round ${nextRound}, Pick ${nextPick}`);
     }
     
-    // COMPREHENSIVE DRAFT COMPLETION VALIDATION
+    // Check if draft is complete (all rounds finished)
     if (nextRound > draft.totalRounds) {
-      console.log(`🔍 Draft potentially complete - validating pick distribution...`);
-      
-      // Get all picks for this draft to validate distribution
-      const allPicks = await this.storage.getDraftPicks(draftId);
-      const expectedTotalPicks = totalUsers * draft.totalRounds;
-      
-      console.log(`📊 Pick validation: ${allPicks.length}/${expectedTotalPicks} total picks`);
-      
-      // CRITICAL VALIDATION 1: Correct total number of picks
-      if (allPicks.length !== expectedTotalPicks) {
-        console.error(`❌ DRAFT COMPLETION BLOCKED: Expected ${expectedTotalPicks} picks, got ${allPicks.length}`);
-        throw new Error(`Draft completion blocked: Invalid pick count (${allPicks.length}/${expectedTotalPicks})`);
-      }
-      
-      // SIMPLIFIED VALIDATION: Basic check without complex Map operations to fix temporal dead zone
-      // Just verify total picks match expected count - the database constraints handle the rest
-      console.log(`✅ Draft validation passed: ${totalUsers} users × ${draft.totalRounds} rounds = ${expectedTotalPicks} picks`);
       console.log(`🎉 Draft complete! All ${draft.totalRounds} rounds finished with ${totalPicks} total picks`);
-      
       await this.storage.completeDraft(draftId);
       
       // Initialize stable teams from draft picks

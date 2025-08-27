@@ -2,7 +2,7 @@
  * Robot Manager for Draft Testing
  * 
  * Creates and manages robot users for testing draft functionality:
- * - Creates 5 robot accounts automatically
+ * - Creates 4 robot accounts automatically
  * - Handles auto-drafting for robots
  * - Simulates realistic pick timing
  */
@@ -33,8 +33,7 @@ export class RobotManager {
       'Alpha Bot',
       'Beta Bot', 
       'Gamma Bot',
-      'Delta Bot',
-      'Epsilon Bot'
+      'Delta Bot'
     ];
 
     this.robotUsers = [];
@@ -160,11 +159,37 @@ export class RobotManager {
 
   /**
    * Get robot preference for team selection
-   * All robots use random selection while obeying draft rules
+   * Robots have slight preferences for certain divisions/conferences
    */
   getRobotTeamPreference(robotId: string, availableTeams: any[]): any[] {
-    // All robots now use random selection
-    return this.shuffleArray([...availableTeams]);
+    const robot = this.robotUsers.find(r => r.id === robotId);
+    if (!robot) return availableTeams;
+
+    // Each robot has different preferences
+    switch (robot.name) {
+      case 'Alpha Bot':
+        // Prefers AFC teams
+        return availableTeams.sort((a, b) => 
+          a.conference === 'AFC' ? -1 : (b.conference === 'AFC' ? 1 : 0)
+        );
+      
+      case 'Beta Bot':
+        // Prefers NFC teams
+        return availableTeams.sort((a, b) => 
+          a.conference === 'NFC' ? -1 : (b.conference === 'NFC' ? 1 : 0)
+        );
+      
+      case 'Gamma Bot':
+        // Prefers teams alphabetically
+        return availableTeams.sort((a, b) => a.name.localeCompare(b.name));
+      
+      case 'Delta Bot':
+        // Random preference (no sorting)
+        return this.shuffleArray([...availableTeams]);
+      
+      default:
+        return availableTeams;
+    }
   }
 
   private shuffleArray<T>(array: T[]): T[] {
