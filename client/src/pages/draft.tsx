@@ -189,121 +189,32 @@ export default function DraftPage() {
     }
   }, [draftId, navigate]);
 
-  // Fetch draft state with polling for real-time updates
+  // Fetch draft state with polling for real-time updates - SIMPLIFIED TO FIX TEMPORAL DEAD ZONE
   const { data: draftData, isLoading, error } = useQuery({
-    queryKey: ['draft', draftId], // Remove timestamp to allow proper caching
+    queryKey: ['draft', draftId],
     queryFn: async () => {
-      console.log('[Draft] === STARTING DRAFT FETCH ===');
-      console.log('[Draft] Draft ID:', draftId);
-      console.log('[Draft] Auth status - User:', user?.name, 'Authenticated:', isAuthenticated, 'Loading:', authLoading);
-      console.log('[Draft] Token available:', !!AuthTokenManager.getToken());
-      console.log('[Draft] Current URL:', window.location.href);
-      console.log('[Draft] Current pathname:', window.location.pathname);
+      if (!draftId) throw new Error('No draft ID');
       
-      try {
-        console.log('[Draft] Making API request to:', `/api/drafts/${draftId}`);
-        
-        // Use direct fetch with credentials instead of apiRequest to avoid token issues
-        const response = await fetch(`/api/drafts/${draftId}`, {
-          method: 'GET',
-          credentials: 'include', // Use cookies for auth instead of Bearer token
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-          }
-        });
-        
-        console.log('[Draft] Response received:', {
-          status: response.status,
-          statusText: response.statusText,
-          ok: response.ok,
-          headers: Object.fromEntries(response.headers.entries())
-        });
-        
-        if (!response.ok) {
-          const errorText = await response.text();
-          console.error('[Draft] API Error Response:', errorText);
-          throw new Error(`HTTP ${response.status}: ${errorText}`);
+      const response = await fetch(`/api/drafts/${draftId}`, {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
         }
-        
-        const data = await response.json();
-        console.log('[Draft] Successfully fetched draft data:', data);
-        console.log('[Draft] === DRAFT FETCH SUCCESS ===');
-        return data;
-      } catch (error) {
-        console.error('[Draft] === DRAFT FETCH ERROR ===');
-        console.error('[Draft] Error fetching draft data:', error);
-        console.error('[Draft] Error type:', typeof error);
-        console.error('[Draft] Error constructor:', error?.constructor?.name);
-        
-        // Track the error for PWA debugging
-        trackModuleError(error, 'draft-fetch');
-        
-        console.error('[Draft] Full error details:', {
-          message: error instanceof Error ? error.message : 'Unknown error',
-          stack: error instanceof Error ? error.stack : 'No stack trace',
-          user: user?.name,
-          hasToken: !!AuthTokenManager.getToken(),
-          isAuthenticated,
-          authLoading,
-          draftId,
-          currentUrl: window.location.href
-        });
-        
-        // Try to make a direct fetch to see what's happening
-        try {
-          console.log('[Draft] Attempting direct fetch for debugging...');
-          const directResponse = await fetch(`/api/drafts/${draftId}`, {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-              ...AuthTokenManager.getAuthHeaders()
-            },
-            credentials: 'include'
-          });
-          
-          console.log('[Draft] Direct fetch response:', {
-            status: directResponse.status,
-            statusText: directResponse.statusText,
-            headers: Object.fromEntries(directResponse.headers.entries())
-          });
-          
-          const directText = await directResponse.text();
-          console.log('[Draft] Direct fetch response body:', directText);
-          
-          // Store the response for PWA debugging
-          try {
-            sessionStorage.setItem('mok-last-direct-fetch', JSON.stringify({
-              status: directResponse.status,
-              statusText: directResponse.statusText,
-              headers: Object.fromEntries(directResponse.headers.entries()),
-              body: directText,
-              timestamp: new Date().toISOString()
-            }));
-          } catch (e) {
-            console.warn('[Draft] Could not store direct fetch result');
-          }
-        } catch (directError) {
-          console.error('[Draft] Direct fetch also failed:', directError);
-          trackModuleError(directError, 'direct-fetch');
-        }
-        
-        throw error;
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Failed to fetch draft: ${response.status}`);
       }
+      
+      return response.json();
     },
-    enabled: !!draftId && !authLoading, // Wait for auth to load before making requests
-    refetchInterval: 5000, // Reduced polling - WebSocket handles timer updates
-    staleTime: 0, // Never trust cached data - always stale
-    gcTime: 0, // React Query v5: disable caching completely
-    retry: (failureCount, error) => {
-      // Don't retry on authentication errors
-      if (error instanceof Error && error.message.includes('401')) {
-        console.log('[Draft] Authentication error, not retrying');
-        return false;
-      }
-      console.log(`[Draft] Retrying fetch, attempt ${failureCount + 1}`);
-      return failureCount < 3;
-    }
+    enabled: !!draftId && !authLoading,
+    refetchInterval: 5000,
+    staleTime: 0,
+    gcTime: 0,
+    retry: 3
   });
 
   // Log errors for debugging
