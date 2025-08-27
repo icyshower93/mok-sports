@@ -10,7 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Clock, Users, Trophy, Zap, Shield, Star, Wifi, WifiOff, Play, ArrowLeft, CheckCircle, Circle, Search, X, Sparkles, Target, ChevronUp, ChevronDown, RotateCcw, Plus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { TeamLogo } from "@/components/team-logo";
-import { apiRequest, AuthTokenManager } from "@/lib/queryClient";
+import { apiRequest } from "@/lib/queryClient";
 import { useDraftWebSocket } from "@/hooks/use-draft-websocket";
 import { useSimpleWebSocket } from "@/hooks/use-simple-websocket";
 import { usePersistentWebSocket } from "@/hooks/use-persistent-websocket";
@@ -199,7 +199,7 @@ export default function DraftPage() {
       console.log('[Draft] === STARTING DRAFT FETCH ===');
       console.log('[Draft] Draft ID:', draftId);
       console.log('[Draft] Auth status - User:', user?.name, 'Authenticated:', isAuthenticated, 'Loading:', authLoading);
-      console.log('[Draft] Token available:', !!AuthTokenManager.getToken());
+      // Token logging removed to avoid circular imports
       console.log('[Draft] Current URL:', window.location.href);
       console.log('[Draft] Current pathname:', window.location.pathname);
       
@@ -246,7 +246,7 @@ export default function DraftPage() {
           message: error instanceof Error ? error.message : 'Unknown error',
           stack: error instanceof Error ? error.stack : 'No stack trace',
           user: user?.name,
-          hasToken: !!AuthTokenManager.getToken(),
+          // hasToken: omitted to avoid circular imports
           isAuthenticated,
           authLoading,
           draftId,
@@ -260,7 +260,7 @@ export default function DraftPage() {
             method: 'GET',
             headers: {
               'Content-Type': 'application/json',
-              ...AuthTokenManager.getAuthHeaders()
+              'Authorization': `Bearer ${document.cookie.split('token=')[1]?.split(';')[0] || ''}` // Fallback auth
             },
             credentials: 'include'
           });
@@ -310,8 +310,19 @@ export default function DraftPage() {
   });
 
   // CRITICAL: Declare variables after query is defined to prevent temporal dead zone errors  
-  const state: DraftState = draftData?.state || {} as DraftState;
+  const state: DraftState = (draftData?.state ?? {}) as DraftState;
   const isCurrentUser = draftData?.isCurrentUser || false;
+
+  // Derived, null-safe handles
+  const draft = draftData?.state?.draft ?? null;
+  const draftStatus = draft?.status ?? 'not_started';
+  const timeRemainingSafe = draftData?.state?.timeRemaining ?? 0;
+  const picksSafe = state?.picks ?? [];
+  const availableTeamsSafe = state?.availableTeams ?? [];
+  const draftOrderSafe = draft?.draftOrder ?? [];
+  const currentRoundSafe = draft?.currentRound ?? 1;
+  const totalRoundsSafe = draft?.totalRounds ?? draftOrderSafe.length || 1;
+  const pickTimeLimitSafe = draft?.pickTimeLimit ?? 120;
 
   // Log errors for debugging
   if (error) {
@@ -445,12 +456,12 @@ export default function DraftPage() {
 
   // Team availability status helper
   const getTeamStatus = (team: NflTeam) => {
-    const isDrafted = state.picks?.some(p => p.nflTeam.id === team.id);
+    const isDrafted = picksSafe.some(p => p.nflTeam.id === team.id);
     if (isDrafted) return 'taken';
     
     // Check division conflict for current user
     if (isCurrentUser && state?.canMakePick) {
-      const userPicks = state.picks?.filter(p => p.user.id === user?.id) || [];
+      const userPicks = picksSafe.filter(p => p.user.id === user?.id) || [];
       const hasDivisionConflict = userPicks.some(p => p.nflTeam.division === team.division);
       if (hasDivisionConflict) return 'conflict';
     }
@@ -489,7 +500,7 @@ export default function DraftPage() {
   }, [displayTime, isCurrentUser]);
 
   // TIMER FIX: Use actual draft timer limit instead of hardcoded 60
-  const draftTimerLimit = draftData?.state?.draft?.pickTimeLimit || 120; // Default to 120s if not available
+  const draftTimerLimit = pickTimeLimitSafe
   const progressPercentage = displayTime > 0 ? Math.min(1.0, displayTime / draftTimerLimit) : 0;
   
   // Debug logging for timer sync
@@ -590,8 +601,7 @@ export default function DraftPage() {
       errorMessage,
       draftId,
       connectionStatus,
-      hasToken: !!AuthTokenManager.getToken(),
-      tokenPreview: AuthTokenManager.getToken()?.substring(0, 20) + '...',
+      // Auth token details omitted to avoid circular imports
     });
     
     return (
@@ -666,8 +676,8 @@ export default function DraftPage() {
   // Create stable conference team renderer with search (FIXED: prevent re-render loops)
   const renderConferenceTeams = (conference: 'AFC' | 'NFC') => {
     // Get all teams from available teams and picks to create comprehensive list
-    const allTeams = [...(state.availableTeams || [])];
-    const draftedTeams = state.picks?.map(p => p.nflTeam) || [];
+    const allTeams = [...(availableTeamsSafe || [])];
+    const draftedTeams = picksSafe?.map(p => p.nflTeam) || [];
     
     // Combine available and drafted teams for complete view
     let conferenceTeams = [...allTeams, ...draftedTeams]
@@ -696,9 +706,9 @@ export default function DraftPage() {
         </h4>
         <div className="grid grid-cols-1 gap-2">
           {divisionTeams.map((team) => {
-            const isDrafted = state.picks?.some(p => p.nflTeam.id === team.id);
-            const draftedBy = isDrafted ? state.picks?.find(p => p.nflTeam.id === team.id) : null;
-            const isAvailable = state.availableTeams?.some(t => t.id === team.id);
+            const isDrafted = picksSafe?.some(p => p.nflTeam.id === team.id);
+            const draftedBy = isDrafted ? picksSafe?.find(p => p.nflTeam.id === team.id) : null;
+            const isAvailable = availableTeamsSafe?.some(t => t.id === team.id);
             
             return (
               <button
@@ -828,7 +838,7 @@ export default function DraftPage() {
             )}
 
             {/* Enhanced Timer Circle */}
-            {state.draft.status === 'active' && (
+            {draftStatus === 'active' && (
               <div className="relative">
                 <svg className="w-12 h-12 transform -rotate-90">
                   <circle
@@ -889,7 +899,7 @@ export default function DraftPage() {
         </div>
 
         {/* Progress Bar for Mobile */}
-        {state.draft.status === 'active' && (
+        {draftStatus === 'active' && (
           <div className="sm:hidden mt-3 w-full bg-secondary/30 rounded-full h-2 overflow-hidden">
             <div 
               className={`h-full rounded-full transition-all duration-500 ${
@@ -921,18 +931,18 @@ export default function DraftPage() {
               <h1 className="text-2xl font-semibold text-foreground mb-1">Draft Room</h1>
               <div className="flex items-center justify-center space-x-6 text-sm text-muted-foreground">
                 <div className="flex items-center space-x-1">
-                  <span>Round {state.draft.currentRound} of {state.draft.totalRounds}</span>
+                  <span>Round {currentRoundSafe} of {totalRoundsSafe}</span>
                 </div>
                 <div className="h-1 w-1 bg-muted-foreground rounded-full" />
                 <div className="flex items-center space-x-1">
-                  <span>Pick {state.draft.currentPick}</span>
+                  <span>Pick {draft?.currentPick ?? 1}</span>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Completed Draft - Mobile Optimized Layout */}
-          {state.draft.status === 'completed' ? (
+          {draftStatus === 'completed' ? (
             <div className="space-y-4">
               {/* Header - Mobile Optimized */}
               <Card className="w-full">
@@ -943,7 +953,7 @@ export default function DraftPage() {
                         🎉 Draft Complete!
                       </div>
                       <div className="text-sm text-green-600 dark:text-green-400">
-                        All {state.picks?.length || 0} picks completed across {Math.max(...(state.picks?.map(p => p.round) || [0]))} rounds
+                        All {picksSafe?.length || 0} picks completed across {Math.max(...(picksSafe?.map(p => p.round) || [0]))} rounds
                       </div>
                     </div>
                     
@@ -979,8 +989,8 @@ export default function DraftPage() {
                 <CardContent className="p-4">
                   {/* League Members and Their Teams - Mobile Layout */}
                   <div className="space-y-4">
-                    {state.draft.draftOrder?.map((userId) => {
-                      const userPicks = state.picks?.filter(p => p.user.id === userId) || [];
+                    {draftOrderSafe?.map((userId: string) => {
+                      const userPicks = picksSafe?.filter(p => p.user.id === userId) || [];
                       const user = userPicks[0]?.user;
                       
                       if (!user) return null;
@@ -1026,14 +1036,14 @@ export default function DraftPage() {
               </Card>
                     
               {/* Free Agent Teams - Mobile Optimized */}
-              {state.availableTeams && state.availableTeams.length > 0 && (
+              {availableTeamsSafe && availableTeamsSafe.length > 0 && (
                 <Card className="w-full">
                   <CardHeader className="pb-3">
                     <CardTitle className="text-lg text-center">Free Agent Teams</CardTitle>
                   </CardHeader>
                   <CardContent className="p-4">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      {state.availableTeams.slice(0, 4).map((team) => (
+                      {availableTeamsSafe.slice(0, 4).map((team) => (
                         <div 
                           key={team.id} 
                           className="flex items-center space-x-3 p-3 bg-muted/30 rounded-lg border"
@@ -1059,11 +1069,11 @@ export default function DraftPage() {
                 <CardContent className="p-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div className="text-center p-4 bg-secondary/30 rounded-lg">
-                      <div className="text-2xl font-bold">{state.picks?.filter(p => !p.isAutoPick).length || 0}</div>
+                      <div className="text-2xl font-bold">{picksSafe?.filter(p => !p.isAutoPick).length || 0}</div>
                       <div className="text-xs text-muted-foreground">Manual Picks</div>
                     </div>
                     <div className="text-center p-4 bg-secondary/30 rounded-lg">
-                      <div className="text-2xl font-bold">{state.picks?.filter(p => p.isAutoPick).length || 0}</div>
+                      <div className="text-2xl font-bold">{picksSafe?.filter(p => p.isAutoPick).length || 0}</div>
                       <div className="text-xs text-muted-foreground">Auto Picks</div>
                     </div>
                   </div>
@@ -1084,7 +1094,7 @@ export default function DraftPage() {
                     </CardTitle>
                   </CardHeader>
                 <CardContent>
-                  {state.draft.status === 'not_started' ? (
+                  {draftStatus === 'not_started' ? (
                     <div className="text-center space-y-3">
                       <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
                         <div className="text-blue-700 dark:text-blue-300 font-medium mb-2">
@@ -1098,7 +1108,7 @@ export default function DraftPage() {
                           <span>Connected - real-time updates enabled</span>
                         </div>
                       </div>
-                  ) : state.draft.status === 'starting' ? (
+                  ) : draftStatus === 'starting' ? (
                     <div className="text-center space-y-3">
                       <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
                         <div className="text-green-700 dark:text-green-300 font-medium mb-2">
@@ -1176,7 +1186,7 @@ export default function DraftPage() {
                           displayTime <= 10 ? 'text-red-500 animate-pulse' : 
                           displayTime <= 30 ? 'text-orange-500' : 'text-foreground'
                         }`}>
-                          {state.draft.status === 'completed' ? (
+                          {draftStatus === 'completed' ? (
                             <span className="text-green-600 font-medium">
                               Draft Complete
                             </span>
@@ -1199,7 +1209,7 @@ export default function DraftPage() {
                                 'bg-primary'
                               }`}
                               style={{
-                                width: `${Math.max(0, (displayTime / (state.draft.pickTimeLimit || 60)) * 100)}%`
+                                width: `${Math.max(0, (displayTime / pickTimeLimitSafe) * 100)}%`
                               }}
                             />
                           </div>
@@ -1214,7 +1224,7 @@ export default function DraftPage() {
                             }`}>
                               {displayTime <= 10 ? 'Time running out' : 'Time remaining'}
                             </span>
-                            <span>{formatTime(state.draft.pickTimeLimit || 60)}</span>
+                            <span>{formatTime(pickTimeLimitSafe)}</span>
                           </div>
                         </div>
                         {isCurrentUser ? (
@@ -1245,7 +1255,7 @@ export default function DraftPage() {
                 <CardHeader className="pb-3">
                   <CardTitle className="text-lg flex items-center space-x-2">
                     <span>Snake Draft Order</span>
-                    <Badge variant="outline" className="text-xs">Round {state.draft.currentRound}</Badge>
+                    <Badge variant="outline" className="text-xs">Round {currentRoundSafe}</Badge>
                   </CardTitle>
                   <div className="text-xs text-muted-foreground">
                     Direction changes each round
@@ -1254,8 +1264,8 @@ export default function DraftPage() {
                 <CardContent>
                   {(() => {
                     // Calculate snake draft order for current round
-                    const baseOrder = state.draft.draftOrder || [];
-                    const isOddRound = state.draft.currentRound % 2 === 1;
+                    const baseOrder = draftOrderSafe || [];
+                    const isOddRound = currentRoundSafe % 2 === 1;
                     const currentRoundOrder = isOddRound ? baseOrder : [...baseOrder].reverse();
                     
                     // Find current pick index and calculate upcoming picks
@@ -1267,7 +1277,7 @@ export default function DraftPage() {
                         {/* Round Direction Indicator */}
                         <div className="flex items-center justify-center space-x-2 p-2 bg-secondary/30 rounded-lg">
                           <div className="text-xs font-medium">
-                            Round {state.draft.currentRound} Direction:
+                            Round {currentRoundSafe} Direction:
                           </div>
                           <div className="flex items-center space-x-1">
                             {isOddRound ? (
@@ -1292,15 +1302,15 @@ export default function DraftPage() {
 
                         {/* Draft Positions */}
                         <div className="space-y-1">
-                          {currentRoundOrder.map((userId, index) => {
-                            const userPicks = state.picks.filter(p => p.user.id === userId);
+                          {currentRoundOrder.map((userId: string, index: number) => {
+                            const userPicks = picksSafe.filter(p => p.user.id === userId);
                             const isCurrentPick = userId === state.currentUserId;
                             const isUpNext = index === currentPickIndex + 1;
                             const isJustPicked = index === currentPickIndex - 1;
                             const pickPosition = index + 1;
                             
                             // Calculate actual pick number in the draft
-                            const pickNumber = ((state.draft.currentRound - 1) * totalPicks) + pickPosition;
+                            const pickNumber = ((currentRoundSafe - 1) * totalPicks) + pickPosition;
                             
                             // Get user name - try multiple sources
                             let userName = 'Loading...';
@@ -1395,14 +1405,14 @@ export default function DraftPage() {
                         </div>
 
                         {/* Next Round Preview */}
-                        {state.draft.currentRound < state.draft.totalRounds && (
+                        {currentRoundSafe < totalRoundsSafe && (
                           <div className="mt-4 p-3 bg-secondary/20 rounded-lg border border-dashed border-secondary">
                             <div className="text-xs font-medium text-muted-foreground mb-2">
-                              Round {state.draft.currentRound + 1} Preview:
+                              Round {currentRoundSafe + 1} Preview:
                             </div>
                             <div className="flex items-center space-x-2 text-xs text-muted-foreground">
                               <span>Direction will be:</span>
-                              {(state.draft.currentRound + 1) % 2 === 1 ? (
+                              {(currentRoundSafe + 1) % 2 === 1 ? (
                                 <span className="text-blue-600 font-medium">Forward →</span>
                               ) : (
                                 <span className="text-red-600 font-medium">← Reverse</span>
@@ -1424,7 +1434,7 @@ export default function DraftPage() {
                 <CardContent>
                   <ScrollArea className="h-48">
                     <div className="space-y-2">
-                      {state.picks.slice(-8).reverse().map((pick) => (
+                      {picksSafe.slice(-8).reverse().map((pick) => (
                         <div key={pick.id} className="flex items-center space-x-3 p-2 rounded-lg bg-secondary/50">
                           <TeamLogo 
                             logoUrl={pick.nflTeam.logoUrl}
@@ -1457,7 +1467,7 @@ export default function DraftPage() {
                   <div className="flex items-center justify-between">
                     <CardTitle className="text-lg">NFL Teams</CardTitle>
                     <div className="text-sm text-muted-foreground">
-                      {state.availableTeams?.length || 0} available • {state.picks?.length || 0} drafted
+                      {availableTeamsSafe?.length || 0} available • {picksSafe?.length || 0} drafted
                     </div>
                   </div>
                 </CardHeader>
@@ -1543,7 +1553,7 @@ export default function DraftPage() {
                               : 'text-muted-foreground hover:text-foreground'
                           }`}
                         >
-                          AFC ({(filterTeams(state.availableTeams?.filter(team => team.conference === 'AFC') || [])?.length || 0)} available)
+                          AFC ({(filterTeams(availableTeamsSafe?.filter(team => team.conference === 'AFC') || [])?.length || 0)} available)
                         </button>
                         <button
                           onClick={() => setCurrentConference('NFC')}
@@ -1553,7 +1563,7 @@ export default function DraftPage() {
                               : 'text-muted-foreground hover:text-foreground'
                           }`}
                         >
-                          NFC ({(filterTeams(state.availableTeams?.filter(team => team.conference === 'NFC') || [])?.length || 0)} available)
+                          NFC ({(filterTeams(availableTeamsSafe?.filter(team => team.conference === 'NFC') || [])?.length || 0)} available)
                         </button>
                       </div>
                       

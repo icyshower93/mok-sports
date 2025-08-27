@@ -1,0 +1,122 @@
+The crash signature (ReferenceError: Cannot access 'j' before initialization) is classic circular import / TDZ. In your file, candidates are the combo of:
+
+useAuth, apiRequest, and AuthTokenManager (auth stack often imports each other through a barrel).
+
+useDraftWebSocket (websocket hooks sometimes import auth/util → which import back via a barrel).
+
+Separately, the JSX dereferences state.draft.* in many places without null guards. If draftData hasn’t landed yet for a single render pass, you’ll get a TypeError (which can be optimized/minified into confusing output).
+
+Below is a surgical fix set you can apply now, plus the structural changes that usually break the circular edge.
+
+Do these code changes now (safe + minimal)
+A) Guard everything that reads state.draft.*
+
+Add these deriveds near the top (right after const state / isCurrentUser):
+
+// derived, null-safe handles
+const draft = draftData?.state?.draft ?? null;
+const draftStatus = draft?.status ?? 'not_started';
+const timeRemainingSafe = draftData?.state?.timeRemaining ?? 0;
+const picksSafe = state?.picks ?? [];
+const availableTeamsSafe = state?.availableTeams ?? [];
+const draftOrderSafe = draft?.draftOrder ?? [];
+const currentRoundSafe = draft?.currentRound ?? 1;
+const totalRoundsSafe = draft?.totalRounds ?? draftOrderSafe.length || 1;
+const pickTimeLimitSafe = draft?.pickTimeLimit ?? 120;
+
+
+Then replace occurrences like:
+
+state.draft.status → draftStatus
+
+state.draft.currentRound → currentRoundSafe
+
+state.draft.totalRounds → totalRoundsSafe
+
+state.draft.pickTimeLimit → pickTimeLimitSafe
+
+state.draft.draftOrder → draftOrderSafe
+
+state.picks → picksSafe
+
+state.availableTeams → availableTeamsSafe
+
+Also update:
+
+const draftTimerLimit = pickTimeLimitSafe;
+const progressPercentage =
+  displayTime > 0 ? Math.min(1, displayTime / draftTimerLimit) : 0;
+
+
+and places that compute widths:
+
+style={{ width: `${Math.max(0, (displayTime / pickTimeLimitSafe) * 100)}%` }}
+
+
+and any conditions like:
+
+{draftStatus === 'active' && (...)}
+{draftStatus === 'completed' ? (...) : (...)}
+
+B) Defensive access in a few hot spots
+
+Recent Picks:
+
+{picksSafe.slice(-8).reverse().map(...)}
+
+
+Snake Draft Order:
+
+const baseOrder = draftOrderSafe;
+const isOddRound = currentRoundSafe % 2 === 1;
+const currentRoundOrder = isOddRound ? baseOrder : [...baseOrder].reverse();
+
+
+Header count text:
+
+<span>Round {currentRoundSafe} of {totalRoundsSafe}</span>
+<span>Pick {draft?.currentPick ?? 1}</span>
+
+
+Conference toggle counts:
+
+AFC ({filterTeams(availableTeamsSafe.filter(t => t.conference === 'AFC')).length})
+NFC ({filterTeams(availableTeamsSafe.filter(t => t.conference === 'NFC')).length})
+
+
+In renderConferenceTeams use availableTeamsSafe and picksSafe instead of state.*.
+
+That eliminates all null/undefined reads that could cascade after a module init hiccup.
+
+Break the likely circular import
+
+Right now this file imports both apiRequest and AuthTokenManager. You don’t actually need AuthTokenManager here.
+
+Change your imports at the top:
+
+- import { apiRequest, AuthTokenManager } from "@/lib/queryClient";
++ import { apiRequest } from "@/lib/queryClient";
+
+
+Then remove usages of AuthTokenManager in logs:
+
+- console.log('[Draft] Token available:', !!AuthTokenManager.getToken());
++ // (optional) keep this log out to avoid importing auth manager here
+
+- hasToken: !!AuthTokenManager.getToken(),
+- tokenPreview: AuthTokenManager.getToken()?.substring(0, 20) + '...',
++ // omit token logs here
+
+
+Rationale: auth stacks frequently form cycles:
+use-auth → queryClient → AuthTokenManager → (barrel) → something that imports the draft route/hooks → back to use-auth.
+
+Removing AuthTokenManager from this component breaks one edge and often resolves the TDZ crash outright.
+
+Also ensure useDraftWebSocket does not import the Draft page (directly or via a barrel). If you have a features/draft/index.ts that re-exports both hooks and pages, import the hook directly:
+
+- import { useDraftWebSocket } from "@/features/draft";
++ import { useDraftWebSocket } from "@/hooks/use-draft-websocket";
+
+
+(You’re already doing the direct path — keep it that way and avoid any draft barrels.)
