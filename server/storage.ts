@@ -1097,7 +1097,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   // Get all active timers for recovery after restart
-  async getActiveTimers(): Promise<Array<{ draftId: string; userId: string; timeRemaining: number }>> {
+  async getActiveTimersForRecovery(): Promise<Array<{ draftId: string; userId: string; timeRemaining: number }>> {
     return await db.select({
       draftId: draftTimers.draftId,
       userId: draftTimers.userId,
