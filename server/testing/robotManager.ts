@@ -33,7 +33,8 @@ export class RobotManager {
       'Alpha Bot',
       'Beta Bot', 
       'Gamma Bot',
-      'Delta Bot'
+      'Delta Bot',
+      'Echo Bot'
     ];
 
     this.robotUsers = [];
@@ -186,6 +187,10 @@ export class RobotManager {
       case 'Delta Bot':
         // Random preference (no sorting)
         return this.shuffleArray([...availableTeams]);
+      
+      case 'Echo Bot':
+        // Prefers teams by reverse alphabetical order
+        return availableTeams.sort((a, b) => b.name.localeCompare(a.name));
       
       default:
         return availableTeams;

@@ -705,12 +705,11 @@ export class SnakeDraftManager {
         console.log(`✅ Transition complete, starting timer for user ${nextUserId}`);
         await this.startPickTimer(draftId, nextUserId, nextRound, nextPick);
         
-        // If next user is a robot, trigger auto-pick after delay
+        // If next user is a robot, trigger auto-pick 15 seconds into their timer
         if (this.robotManager?.isRobot(nextUserId)) {
-          const delay = this.robotManager.simulateRobotPickDelay();
           setTimeout(() => {
-            this.simulateBotPick(draftId, nextUserId);
-          }, delay);
+            this.simulateBotPickPrivate(draftId, nextUserId);
+          }, 15000); // 15 seconds delay
         }
       }, 1500); // 1.5-second smooth transition
     }

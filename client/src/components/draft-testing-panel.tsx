@@ -68,7 +68,7 @@ export function DraftTestingPanel({
     onSuccess: () => {
       toast({
         title: "Robots Added",
-        description: "4 robot users have been added to the league for testing.",
+        description: "5 robot users have been added to the league for testing.",
       });
       queryClient.invalidateQueries({ queryKey: [`/api/leagues/${leagueId}`] });
     },
@@ -246,11 +246,11 @@ export function DraftTestingPanel({
                 className="w-full"
               >
                 <Users className="w-4 h-4 mr-2" />
-                {addRobotsMutation.isPending ? 'Adding...' : 'Add 1 Robot User'}
+                {addRobotsMutation.isPending ? 'Adding...' : 'Add 5 Robot Users'}
               </Button>
               
               <p className="text-xs text-muted-foreground">
-                Adds one robot user to the league for testing. Click multiple times to add more robots.
+                Adds all 5 robot users to the league for testing. They will auto-draft 15 seconds into their timer.
               </p>
             </div>
 
