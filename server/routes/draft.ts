@@ -536,11 +536,15 @@ export default async function setupDraftRoutes(app: any, storage: IStorage, webS
       console.error('Error making draft pick:', error);
       if (error instanceof z.ZodError) {
         return res.status(400).json({ 
-          message: "Validation error", 
-          errors: error.errors 
+          error: "Validation error", 
+          code: "VALIDATION_ERROR",
+          details: error.errors 
         });
       }
-      res.status(500).json({ message: "Failed to make pick" });
+      res.status(500).json({ 
+        error: "Failed to make pick",
+        code: "PICK_FAILED"
+      });
     }
   });
 

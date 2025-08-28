@@ -11,54 +11,10 @@ import { Clock, Users, Trophy, Zap, Shield, Star, Wifi, WifiOff, Play, ArrowLeft
 import { useToast } from "@/hooks/use-toast";
 import { TeamLogo } from "@/components/team-logo";
 import { apiRequest } from "@/lib/queryClient";
-import { useDraftWebSocket } from "@/hooks/use-draft-websocket";
-import { useSimpleWebSocket } from "@/hooks/use-simple-websocket";
-import { usePersistentWebSocket } from "@/hooks/use-persistent-websocket";
-import { useStableWebSocket } from "@/hooks/use-stable-websocket";
-import { useReplitWebSocket } from "@/hooks/use-replit-websocket";
+import { useResilientWebSocket } from "@/hooks/use-resilient-websocket";
 import { useAuth } from "@/hooks/use-auth";
 import { trackModuleError } from "@/debug-tracker";
-
-interface NflTeam {
-  id: string;
-  code: string;
-  name: string;
-  city: string;
-  conference: 'AFC' | 'NFC';
-  division: string;
-  logoUrl: string;
-}
-
-interface DraftPick {
-  id: string;
-  round: number;
-  pickNumber: number;
-  user: {
-    id: string;
-    name: string;
-    avatar: string | null;
-  };
-  nflTeam: NflTeam;
-  isAutoPick: boolean;
-}
-
-interface DraftState {
-  draft: {
-    id: string;
-    status: string;
-    currentRound: number;
-    currentPick: number;
-    totalRounds: number;
-    pickTimeLimit: number;
-    draftOrder: string[];
-  };
-  currentUserId: string | null;
-  timeRemaining: number;
-  picks: DraftPick[];
-  availableTeams: NflTeam[];
-  isUserTurn: boolean;
-  canMakePick: boolean;
-}
+import type { DraftState, NflTeam, DraftPick } from '@shared/types';
 
 export default function DraftPage() {
   const [location, navigate] = useLocation();
@@ -165,21 +121,10 @@ export default function DraftPage() {
   // Use the actual draft ID for all operations
   const draftId = actualDraftId;
 
-  // FIX #1: WEBSOCKET LIFECYCLE - Single instance per draft with clean unmount
-  const { connectionStatus, isConnected, lastMessage } = useDraftWebSocket(draftId || '');
-  
-  // FIX #1: Ensure clean WebSocket closure on page unmount
-  useEffect(() => {
-    return () => {
-
-      // The useDraftWebSocket hook handles cleanup automatically
-    };
-  }, []);
-  
-  // Keep diagnostic implementations for comparison (can be removed later)  
-  // const { status: simpleStatus } = useSimpleWebSocket(draftId || '', () => {});
-  // const { status: persistentStatus, connectionAttempts } = usePersistentWebSocket(draftId || '', () => {});
-  // const { connectionStatus: stableStatus } = useStableWebSocket(draftId || '', () => {});
+  // WebSocket connection with resilient retry and backoff logic
+  const wsUrl = draftId ? `${window.location.protocol === 'https:' ? 'wss:' : 'ws:'}//${window.location.host}/api/drafts/ws/${draftId}` : null;
+  const { status: connectionStatus, message: lastMessage } = useResilientWebSocket(wsUrl);
+  const isConnected = connectionStatus === 'open';
 
   // CRITICAL: Declare variables BEFORE any useEffect that uses them
   // Move these after draftData is available from the query

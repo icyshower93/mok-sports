@@ -1,0 +1,585 @@
+full recommendations list, end-to-end. I’ll start with high-level architecture, then drill down into concrete file-level fixes and ready-to-paste snippets. Skim the summary, then use the sections as a checklist.
+
+Executive summary (top priorities)
+
+Kill circular imports / TDZ for good
+
+Keep token logic as a leaf util.
+
+Make apiRequest “pure” (no hooks).
+
+Stop using barrels that re-export both pages and hooks.
+
+Harden the Draft page
+
+Add null-safe deriveds everywhere state.draft.*/picks/availableTeams are used.
+
+Break the page into 3–5 focused components + 2 tiny hooks (timer + team filtering).
+
+Unify WebSocket lifecycle
+
+One hook to manage connect/backoff/visibility/cleanup; throttle reconnection when tab is hidden; add heartbeat.
+
+Shared contracts
+
+Create shared/types/ with zod schemas (DraftState, DraftPick, NflTeam, WS messages).
+
+Validate server responses and client inputs.
+
+Service Worker sanity
+
+Fence “nuclear” cache wipes to dev only; keep API network-first, static cache-first; predictable update flow.
+
+Atomic server ops
+
+Redis transactions for picks/timers; heartbeat and rate-limits for WS; idempotency for picks.
+
+React Query hygiene
+
+Sensible defaults in one place; override per query. Use staleTime tuned to WS cadence.
+
+Tooling & CI
+
+ESLint (with import/no-cycle), Prettier, madge cycle checks, unit/e2e tests, and minimal GitHub Actions.
+
+Architecture & layout
+Current shape (good bones)
+
+client/ (Vite + React + shadcn/ui + React Query)
+
+server/ (Express + Redis + WS + draft managers)
+
+public/ PWA assets + SW
+
+(Optionally) shared/—let’s make this a real home for types/schemas.
+
+Target layout (feature-first, leaf utils)
+client/
+  src/
+    app/               # App shell, router, providers
+    features/
+      draft/
+        pages/DraftPage.tsx
+        components/   # DraftHeader, SnakeOrder, TeamList, etc.
+        hooks/        # useDraftTimer, useTeamFilter
+        api/          # fetchers/mutations (thin)
+    hooks/            # cross-feature hooks (useAuth, useWebSocket)
+    lib/              # queryClient, auth-token, env, logger
+    components/       # shared UI (TeamLogo, etc.)
+    styles/
+server/
+  src/
+    routes/
+    websocket/
+    draft/
+    services/
+    lib/              # redis, logger, env
+shared/
+  types/              # zod + types (draft, team, league, ws)
+public/
+
+
+Rules of engagement
+
+Leaf modules (no imports): auth-token, constants/enums, shared/types/*.
+
+Hooks must not import pages (no cycles).
+
+Barrels are fine only if they don’t cross layers (never mix pages + hooks + lib in one barrel).
+
+Shared contracts (schemas & typing)
+
+Create zod schemas & TS types once and reuse everywhere.
+
+shared/types/draft.ts
+
+import { z } from 'zod';
+
+export const NflTeamSchema = z.object({
+  id: z.string(),
+  code: z.string(),
+  name: z.string(),
+  city: z.string(),
+  conference: z.union([z.literal('AFC'), z.literal('NFC')]),
+  division: z.string(),
+  logoUrl: z.string().url()
+});
+export type NflTeam = z.infer<typeof NflTeamSchema>;
+
+export const DraftPickSchema = z.object({
+  id: z.string(),
+  round: z.number().int().positive(),
+  pickNumber: z.number().int().positive(),
+  user: z.object({
+    id: z.string(),
+    name: z.string(),
+    avatar: z.string().nullable(),
+  }),
+  nflTeam: NflTeamSchema,
+  isAutoPick: z.boolean()
+});
+export type DraftPick = z.infer<typeof DraftPickSchema>;
+
+export const DraftStatusSchema = z.union([
+  z.literal('not_started'),
+  z.literal('starting'),
+  z.literal('active'),
+  z.literal('completed'),
+]);
+
+export const DraftCoreSchema = z.object({
+  id: z.string(),
+  status: DraftStatusSchema,
+  currentRound: z.number().int().nonnegative(),
+  currentPick: z.number().int().nonnegative(),
+  totalRounds: z.number().int().positive(),
+  pickTimeLimit: z.number().int().positive(),
+  draftOrder: z.array(z.string())
+});
+
+export const DraftStateSchema = z.object({
+  draft: DraftCoreSchema,
+  currentUserId: z.string().nullable(),
+  timeRemaining: z.number().int().nonnegative(),
+  picks: z.array(DraftPickSchema),
+  availableTeams: z.array(NflTeamSchema),
+  isUserTurn: z.boolean(),
+  canMakePick: z.boolean(),
+});
+export type DraftState = z.infer<typeof DraftStateSchema>;
+
+
+Wire it up
+
+Server: validate before sending (DraftStateSchema.parseAsync(state)).
+
+Client: validate after fetch (DraftStateSchema.parse(await res.json())).
+
+WS: type WS messages (DraftMessageSchema) so both ends agree.
+
+Frontend recommendations
+1) Kill circular imports / TDZ (project-wide)
+
+Keep leaf token util only:
+
+client/src/lib/auth-token.ts:
+
+const KEY = 'mok_auth_token';
+export const AuthToken = {
+  get: () => { try { return localStorage.getItem(KEY); } catch { return null; } },
+  set: (t: string) => { try { localStorage.setItem(KEY, t); } catch {} },
+  clear: () => { try { localStorage.removeItem(KEY); } catch {} },
+  headers: () => (AuthToken.get() ? { Authorization: `Bearer ${AuthToken.get()}` } : {})
+};
+
+
+client/src/lib/queryClient.ts stays pure:
+
+import { QueryClient } from '@tanstack/react-query';
+import { AuthToken } from './auth-token';
+
+export const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+      retry: 2,
+      staleTime: 0,
+      gcTime: 5 * 60_000,
+    },
+    mutations: { retry: 0 },
+  },
+});
+
+export async function apiRequest(method: 'GET'|'POST'|'PUT'|'PATCH'|'DELETE', url: string, body?: unknown, extraHeaders: Record<string,string> = {}) {
+  const res = await fetch(url, {
+    method,
+    credentials: 'include',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+      ...AuthToken.headers(),
+      ...extraHeaders,
+    },
+    body: body ? JSON.stringify(body) : undefined,
+  });
+  if (!res.ok) {
+    const text = await res.text().catch(()=>'');
+    throw new Error(`HTTP ${res.status} ${res.statusText}${text ? ` - ${text}` : ''}`);
+  }
+  return res;
+}
+
+
+Never import useAuth or components into queryClient.ts or WS hooks.
+
+Avoid barrels that re-export pages & hooks together. Use direct imports.
+
+Add a cycle guard:
+
+// package.json
+"scripts": {
+  "check:cycles": "madge client/src --circular && madge server --circular"
+},
+"devDependencies": { "madge": "^6.1.0" }
+
+2) Draft page hardening (null safety + structure)
+
+Add null-safe deriveds (you already have the list). Replace all state.draft.*, state.picks, state.availableTeams with deriveds.
+
+Split into components:
+
+<DraftHeader/> (title, round, pick, connection status)
+
+<CurrentPick/> (timer, “on the clock”)
+
+<SnakeOrder/> (for the round; memoize inputs)
+
+<RecentPicks/>
+
+<TeamSelector/> (search, filter, list; memoize render)
+
+Extract logic hooks:
+
+useDraftTimer({ wsMessage, serverState, pickTimeLimit })
+
+useTeamFilter({ availableTeams, picks, search, conference })
+
+Use useMemo for:
+
+Filtered teams
+
+Division groups
+
+Current round order (snake)
+
+Consider virtualization for team list if it grows (react-virtualized / react-window).
+
+Tiny UX polish
+
+Debounce search input (150–200ms).
+
+Announce timer changes with aria-live="polite" for a11y.
+
+Only vibrate/notify when document.visibilityState === 'hidden'.
+
+3) WebSocket: one hook, solid lifecycle
+
+Client hook essentials
+
+Exponential backoff (cap at ~10s).
+
+Pause reconnection while tab is hidden; fast-path reconnect on visibility.
+
+Clean unmount (close with code 4003).
+
+Optional keepalive ping every 25–30s.
+
+Message schema validation if you can (zod for WS).
+
+const BASE = 750, MAX = 10_000;
+const backoff = (n: number) => Math.min(MAX, BASE * 2 ** n);
+
+export function useDraftWebSocket(url: string) {
+  const [status, setStatus] = useState<'idle'|'connecting'|'open'|'closed'>('idle');
+  const [message, setMessage] = useState<any>(null);
+
+  useEffect(() => {
+    if (!url) return;
+    let stop = false, attempt = 0, ws: WebSocket | null = null, timer: any;
+
+    const open = () => {
+      if (stop) return;
+      setStatus('connecting');
+      ws = new WebSocket(url);
+      ws.onopen = () => { attempt = 0; setStatus('open'); };
+      ws.onmessage = (ev) => setMessage(JSON.parse(ev.data));
+      ws.onerror = () => { /* let onclose schedule retry */ };
+      ws.onclose = () => {
+        setStatus('closed');
+        if (stop) return;
+        const delay = document.visibilityState === 'hidden' ? MAX : backoff(++attempt);
+        timer = setTimeout(open, delay);
+      };
+    };
+    open();
+
+    const onVisibility = () => {
+      if (document.visibilityState === 'visible' && status === 'closed') {
+        clearTimeout(timer);
+        timer = setTimeout(open, 200);
+      }
+    };
+    document.addEventListener('visibilitychange', onVisibility);
+
+    return () => {
+      stop = true;
+      document.removeEventListener('visibilitychange', onVisibility);
+      clearTimeout(timer);
+      ws?.close(4003, 'unmount');
+    };
+  }, [url]);
+
+  return { status, message };
+}
+
+4) React Query defaults & per-query tuning
+
+Defaults already shown in queryClient. For live draft state via WS:
+
+staleTime: 0 (always stale)
+
+refetchInterval: 5000 (only as a fallback)
+
+retry: (count, err) => !String(err?.message).includes('401') && count < 2
+
+For “available teams”:
+
+staleTime: 5_000 and refetchOnWindowFocus: false, since picks invalidate it.
+
+5) Service Worker (SW) & PWA
+
+Fence “nuclear” logic to dev:
+
+const DEV = self.location.hostname.includes('localhost') || self.location.host.includes('replit');
+if (DEV) { /* allow emergency unregister/cache wipes */ }
+
+
+Cache strategy:
+
+Static: cache-first with revisioned filenames (Vite handles hashes).
+
+API: network-first (do not cache unless you add specific stale-while-revalidate logic for read-only endpoints).
+
+Update flow:
+
+Call skipWaiting() only after a client confirms update intent to avoid surprise reloads.
+
+Post a NEW_VERSION_AVAILABLE message to clients → let app show a toast → user clicks “Update now” → we post SKIP_WAITING.
+
+Install prompt: Only call beforeinstallprompt.prompt() in response to a clear user gesture.
+
+Backend recommendations
+1) Redis operations must be atomic
+
+For picks:
+
+Ensure the pick only applies if:
+
+It’s still the same currentUserId
+
+timeRemaining > 0
+
+The nflTeamId is still available
+
+Option A: WATCH/MULTI/EXEC (simpler)
+
+WATCH keys (draft:{id}), read, validate; if valid, MULTI set new state + publish; EXEC.
+
+Option B: Lua script (fast & atomic)
+
+A single script that validates & updates state, returns success/failure code.
+
+(If you want, I can sketch the exact Redis JSON/Lua once I see your state shape in Redis.)
+
+2) WebSocket server hardening
+
+Heartbeat:
+
+wss.on('connection', (ws) => {
+  (ws as any).isAlive = true;
+  ws.on('pong', () => (ws as any).isAlive = true);
+});
+setInterval(() => {
+  wss.clients.forEach((ws: any) => {
+    if (!ws.isAlive) return ws.terminate();
+    ws.isAlive = false; ws.ping();
+  });
+}, 30_000);
+
+
+Backpressure: if ws.bufferedAmount keeps growing, drop the client (or pause sending).
+
+Rate limit incoming client messages (e.g., picks) per connection (token bucket / timestamp checks).
+
+Message schemas: validate inbound WS messages against zod schemas.
+
+3) Draft timer recovery
+
+Persist lastTickAt or turnStartAt per draft in Redis. Derive timeRemaining = pickTimeLimit - (now - turnStartAt).
+
+On restart:
+
+If status starting|active, recompute timeRemaining.
+
+If <= 0, trigger server-side autopick/advance logic once (use a “recovery lock” key to avoid double fire on multi-instance).
+
+4) HTTP routes consistency
+
+Return typed errors:
+
+401 auth missing/invalid
+
+403 valid user but not allowed
+
+404 draft not found
+
+Always return JSON { error: string, code?: string } for failures (client UI can branch).
+
+5) Logging & observability
+
+Use pino (server) with child loggers that add draftId, requestId, userId.
+
+Add a simple /health endpoint and (optionally) OpenTelemetry/Prometheus counters (picks, WS connections, dropped frames, recovery triggers).
+
+Security & configuration
+
+Prefer HttpOnly cookies over localStorage tokens (prevents XSS token theft). If you must use localStorage, add a robust Content-Security-Policy and avoid dangerouslySetInnerHTML.
+
+Set CORS carefully (origins), and use SameSite=Lax for cookies.
+
+Gate push notifications/permissions behind user gesture, and give a “why you’re asking” UI.
+
+Keep secrets out of repo. Use env-vars. Add a ripgrep secret scanner pre-commit.
+
+Testing strategy (right-sized)
+
+Unit (Vitest):
+
+snakeDraftManager (order correctness, odd/even rounds).
+
+Timer utils.
+
+Team filter/search utils.
+
+Integration (supertest):
+
+/api/drafts/:id returns DraftStateSchema.
+
+/pick enforces atomics (two concurrent picks → only one wins).
+
+WS:
+
+Connect, subscribe, receive timer updates, simulate reconnects and ensure state resync.
+
+Component tests (RTL):
+
+Draft timer falls back to 0 and displays “—” while switching turns.
+
+Search filters divisions/teams correctly.
+
+E2E (Cypress/Playwright):
+
+Join draft room, make picks, auto-advance, reconnect behavior.
+
+DevEx & CI
+
+ESLint + TypeScript strict mode; add:
+
+import/no-cycle
+
+no-restricted-imports (ban importing pages from hooks)
+
+@typescript-eslint/no-floating-promises
+
+Prettier with a format script.
+
+GitHub Actions:
+
+pnpm i / npm ci
+
+tsc -b
+
+eslint .
+
+npm run check:cycles
+
+vitest run
+
+build client + server
+
+Bundle size guard (size-limit) for client.
+
+Concrete diffs you can drop in now
+A) client/src/lib/auth-token.ts (new)
+const KEY = 'mok_auth_token';
+export const AuthToken = {
+  get: () => { try { return localStorage.getItem(KEY); } catch { return null; } },
+  set: (t: string) => { try { localStorage.setItem(KEY, t); } catch {} },
+  clear: () => { try { localStorage.removeItem(KEY); } catch {} },
+  headers: () => (AuthToken.get() ? { Authorization: `Bearer ${AuthToken.get()}` } : {}),
+};
+
+B) client/src/lib/queryClient.ts (pure)
+import { QueryClient } from '@tanstack/react-query';
+import { AuthToken } from './auth-token';
+
+export const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: { refetchOnMount: false, refetchOnWindowFocus: false, retry: 2, staleTime: 0, gcTime: 5 * 60_000 },
+    mutations: { retry: 0 },
+  },
+});
+
+export async function apiRequest(method: 'GET'|'POST'|'PUT'|'PATCH'|'DELETE', url: string, body?: unknown, extraHeaders: Record<string,string> = {}) {
+  const res = await fetch(url, {
+    method, credentials: 'include',
+    headers: { 'Accept':'application/json','Content-Type':'application/json', ...AuthToken.headers(), ...extraHeaders },
+    body: body ? JSON.stringify(body) : undefined
+  });
+  if (!res.ok) {
+    const text = await res.text().catch(()=> '');
+    throw new Error(`HTTP ${res.status} ${res.statusText}${text ? ` - ${text}` : ''}`);
+  }
+  return res;
+}
+
+C) Draft page null-safe deriveds (mechanical replacements)
+
+Add:
+
+const draft = draftData?.state?.draft ?? null;
+const draftStatus = draft?.status ?? 'not_started';
+const timeRemainingSafe = draftData?.state?.timeRemaining ?? 0;
+const picksSafe = state?.picks ?? [];
+const availableTeamsSafe = state?.availableTeams ?? [];
+const draftOrderSafe = draft?.draftOrder ?? [];
+const currentRoundSafe = draft?.currentRound ?? 1;
+const totalRoundsSafe = draft?.totalRounds ?? (draftOrderSafe.length || 1);
+const pickTimeLimitSafe = draft?.pickTimeLimit ?? 120;
+
+
+Replace usages as outlined earlier (state.draft.* → derived vars, etc.), and set:
+
+const draftTimerLimit = pickTimeLimitSafe;
+
+D) WebSocket hook backoff/visibility (client)
+
+Drop the “one hook” template from the section above into your use-draft-websocket.ts (or keep your naming) and ensure the Draft page only uses this one.
+
+E) Service worker (dev fence)
+
+At the top of your client/public/sw.js:
+
+const DEV = self.location.hostname.includes('localhost') || self.location.host.includes('replit');
+
+
+Then wrap “emergency unregister/clear caches” and any aggressive skipWaiting() calls in if (DEV) { ... }.
+
+Migration plan (safe sequence)
+
+Introduce auth-token.ts + pure queryClient.ts.
+
+Refactor draft.tsx: null-safe deriveds + replace all usages; remove AuthTokenManager imports.
+
+Unify WS hook with backoff/visibility; ensure Draft page uses that single hook.
+
+Fence SW dev logic, adopt cache strategy.
+
+Add shared/types with zod; validate server responses on key endpoints; validate client fetches.
+
+Enable ESLint rules + madge; fix any flagged cycles.
+
+Add tests for snake order, timer utils, and a few REST/WS paths.
+
+Wire CI (lint/type/test/build).

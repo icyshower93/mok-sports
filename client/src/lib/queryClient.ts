@@ -9,32 +9,28 @@ export const AuthTokenManager = {
   getAuthHeaders: () => AuthToken.headers()
 };
 
-async function throwIfResNotOk(res: Response) {
-  if (!res.ok) {
-    const text = (await res.text()) || res.statusText;
-    throw new Error(`${res.status}: ${text}`);
-  }
-}
-
 export async function apiRequest(
-  method: string,
+  method: 'GET'|'POST'|'PUT'|'PATCH'|'DELETE',
   url: string,
-  data?: unknown | undefined,
+  body?: unknown,
+  extraHeaders: Record<string,string> = {}
 ): Promise<Response> {
-  const headers = {
-    'Accept': 'application/json',
-    ...AuthToken.headers(),
-    ...(data ? { "Content-Type": "application/json" } : {}),
-  };
-
   const res = await fetch(url, {
     method,
-    headers,
-    body: data ? JSON.stringify(data) : undefined,
-    credentials: "include", // Keep cookies as fallback
+    credentials: 'include',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+      ...AuthToken.headers(),
+      ...extraHeaders,
+    },
+    body: body ? JSON.stringify(body) : undefined,
   });
-
-  await throwIfResNotOk(res);
+  
+  if (!res.ok) {
+    const text = await res.text().catch(() => '');
+    throw new Error(`HTTP ${res.status} ${res.statusText}${text ? ` - ${text}` : ''}`);
+  }
   return res;
 }
 
@@ -52,7 +48,10 @@ export const unauthorizedBehaviorToQueryFunction = (
       return null;
     }
 
-    await throwIfResNotOk(res);
+    if (!res.ok) {
+      const text = await res.text().catch(() => '');
+      throw new Error(`HTTP ${res.status} ${res.statusText}${text ? ` - ${text}` : ''}`);
+    }
     return await res.json();
   };
 
@@ -60,14 +59,19 @@ export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       queryFn: unauthorizedBehaviorToQueryFunction("returnNull"),
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
       retry: (failureCount, error) => {
         if (error instanceof Error && error.message.includes("401")) {
           return false;
         }
-        return failureCount < 3;
+        return failureCount < 2;
       },
-      staleTime: 1000 * 60 * 5, // 5 minutes
-      gcTime: 1000 * 60 * 30, // 30 minutes (renamed from cacheTime in v5)
+      staleTime: 0, // Always stale for live data (draft state)
+      gcTime: 5 * 60 * 1000, // 5 minutes
+    },
+    mutations: {
+      retry: 0,
     },
   },
 });
