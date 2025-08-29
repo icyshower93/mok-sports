@@ -41,10 +41,17 @@ export function useDraftWebSocket(draftId: string) {
     ws.onopen = () => { attemptsRef.current = 0; setConnectionStatus('connected'); };
     ws.onmessage = (ev) => { try { setLastMessage(JSON.parse(ev.data)); } catch {} };
     ws.onerror = () => { /* let onclose schedule reconnect */ };
-    ws.onclose = () => {
+    ws.onclose = (ev) => {
       setConnectionStatus('closed');
       wsRef.current = null;
       if (stoppedRef.current) return;
+
+      // Fast reconnect on policy codes from server, no long backoff
+      if (ev.code === 4008 /* timeout/policy */) {
+        clearTimer();
+        timerRef.current = setTimeout(connect, 200);
+        return;
+      }
 
       // Slow down reconnects when hidden; speed up when visible
       const delay = document.visibilityState === 'hidden' ? MAX : backoff(++attemptsRef.current);

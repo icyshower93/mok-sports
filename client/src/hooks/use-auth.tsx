@@ -29,6 +29,8 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [lastKnownAuthState, setLastKnownAuthState] = useState<boolean | null>(null);
+  const [authGraceTimer, setAuthGraceTimer] = useState<NodeJS.Timeout | null>(null);
   const queryClient = useQueryClient();
 
   const { data: user, isLoading, error } = useQuery({
@@ -59,12 +61,40 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const hasUser = !!user;
-    setIsAuthenticated(hasUser && !isLoading);
+    const currentlyAuthenticated = hasUser && !isLoading;
     
-    if (error && !isLoading) {
+    // Add grace period before flipping from true → false during reconnects
+    if (currentlyAuthenticated) {
+      // User is authenticated, clear any grace timer and update state
+      if (authGraceTimer) {
+        clearTimeout(authGraceTimer);
+        setAuthGraceTimer(null);
+      }
+      setIsAuthenticated(true);
+      setLastKnownAuthState(true);
+    } else if (lastKnownAuthState === true && !isLoading) {
+      // User was authenticated but now isn't - add grace period
+      if (!authGraceTimer) {
+        const timer = setTimeout(() => {
+          // After grace period, check if we still don't have auth
+          if (!user && !isLoading) {
+            setIsAuthenticated(false);
+            setLastKnownAuthState(false);
+          }
+          setAuthGraceTimer(null);
+        }, 5000); // 5 second grace period
+        setAuthGraceTimer(timer);
+      }
+    } else if (!hasUser && !isLoading && error) {
+      // Definitive error - no grace period needed
+      if (authGraceTimer) {
+        clearTimeout(authGraceTimer);
+        setAuthGraceTimer(null);
+      }
       setIsAuthenticated(false);
+      setLastKnownAuthState(false);
     }
-  }, [user, error, isLoading]);
+  }, [user, error, isLoading, lastKnownAuthState, authGraceTimer]);
 
   // PWA Token Recovery - check localStorage on app startup
   useEffect(() => {

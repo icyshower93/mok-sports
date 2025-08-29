@@ -56,24 +56,10 @@ export function useServiceWorker(enableInPWAOnly: boolean = true) {
     }
 
     try {
-      // EMERGENCY: Unregister ALL existing service workers first
-      console.log('[SW Hook] EMERGENCY: Unregistering all existing service workers');
-      const existingRegistrations = await navigator.serviceWorker.getRegistrations();
-      console.log('[SW Hook] Found', existingRegistrations.length, 'existing registrations');
-      
-      for (const registration of existingRegistrations) {
-        console.log('[SW Hook] Unregistering existing service worker');
-        await registration.unregister();
-      }
-      
-      // Clear all caches manually
-      if ('caches' in window) {
-        const cacheNames = await caches.keys();
-        console.log('[SW Hook] Found', cacheNames.length, 'caches to delete');
-        for (const cacheName of cacheNames) {
-          console.log('[SW Hook] Deleting cache:', cacheName);
-          await caches.delete(cacheName);
-        }
+      // DEV-only, first render only - no runtime unregistration
+      if (import.meta.env.DEV) {
+        console.log('[SW Hook] DEV: Service worker registration in development mode');
+        // Only clear on explicit request, not during normal runtime
       }
       
       // Wait a moment for cleanup

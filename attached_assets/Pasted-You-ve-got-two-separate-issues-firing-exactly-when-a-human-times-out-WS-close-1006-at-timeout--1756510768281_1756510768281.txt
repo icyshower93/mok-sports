@@ -1,0 +1,143 @@
+You’ve got two separate issues firing exactly when a human times out:
+
+WS close (1006) at timeout → your server (or a proxy) closes the socket when a user’s clock hits 0.
+
+React DOM NotFoundError (removeChild) → the UI is trying to unmount/morph multiple animated/conditional subtrees at once (and you still have an “emergency SW unregister” running), which can cause a DOM mismatch during React’s commit phase.
+
+Here’s exactly how to direct Replit (and what to change).
+
+A) Stop the “emergency SW unregister” from running at runtime
+
+That log line is in your page code, not the worker:
+
+[SW Hook] EMERGENCY: Unregistering all existing service workers
+
+
+This can force reload/teardown in the middle of React’s reconciliation and produce the NotFoundError: removeChild you’re seeing.
+
+Action (client code hook):
+
+Locate the hook/module that logs [SW Hook] EMERGENCY... (often something like useServiceWorker or similar).
+
+Wrap all “unregister everything” logic so it only runs in DEV and only on first boot, not during normal runtime or state transitions.
+
+// client/src/hooks/use-service-worker.ts (example)
+useEffect(() => {
+  if (!('serviceWorker' in navigator)) return;
+
+  // DEV-only, first render only
+  if (import.meta.env.DEV) {
+    let done = false;
+    (async () => {
+      if (done) return;
+      done = true;
+      console.log('[SW Hook] DEV: not unregistering at runtime anymore');
+      // If you insist on nuking, do it once on app boot, not during route/timer changes.
+      // const regs = await navigator.serviceWorker.getRegistrations();
+      // regs.forEach(r => r.unregister());
+    })();
+  }
+}, []);
+
+
+You already fixed the worker (sw.js). The lingering client-side “nuke SW” is what’s still firing; disable it.
+
+B) Don’t let the server close WS on human timeout
+
+The 1006 (abnormal closure) happens right when the user clock hits 0:
+
+[StableWebSocket] 🔌 Connection closed - Code: 1006
+
+
+Action (server):
+
+Keep the user’s WS open through timeout → autodraft → next turn.
+
+If you must close, send a normal close code with reason (e.g., 4008 policy/timeout) and ensure clients treat it as recoverable. But best: don’t close on timeout—just broadcast pick_missed/auto_pick and advance.
+
+Client (defensive):
+
+Your WS hook is already backoff+visibility-aware (good). Add a short-circuit: if the server closes with a specific “policy” code (e.g., 4008), reconnect immediately instead of exponential backoff.
+
+ws.onclose = (ev) => {
+  setConnectionStatus('closed');
+  wsRef.current = null;
+  if (stoppedRef.current) return;
+
+  // Fast reconnect on policy codes from server, no long backoff
+  if (ev.code === 4008 /* timeout/policy */) {
+    clearTimer();
+    timerRef.current = setTimeout(connect, 200);
+    return;
+  }
+
+  const delay = document.visibilityState === 'hidden' ? MAX : backoff(++attemptsRef.current);
+  clearTimer();
+  timerRef.current = setTimeout(connect, delay);
+};
+
+
+Replit: confirm the server does not close the WS on a human timeout. It should just move to the next pick and keep all clients connected.
+
+C) Make React’s timer subtree “boring” at the 0s boundary
+
+When displayTime hits 0, you flip multiple states (countdown off, overlay off, role branch may change, FAB hide, etc.). That can make React try to reconcile across very different DOM shapes. Combined with animations/portals/toasts, it risks the removeChild mismatch in React’s commit.
+
+Actions to stabilize the tree:
+
+Key the timer subtree by “phase”
+Force a remount when switching from countdown → transition → next-turn, so React doesn’t diff across incompatible structures.
+
+// draft.tsx
+const timerPhase =
+  draftStatus !== 'active' ? draftStatus :
+  displayTime > 0 ? 'countdown' : 'transition';
+
+// In JSX: wrap the entire timer UI in a keyed container.
+<div key={timerPhase}>
+  {/* all the timer ring, digits, progress bar, FAB enable/disable, etc. */}
+</div>
+
+
+Keep the urgency overlay mounted; toggle only classes
+Instead of conditionally adding/removing the full-screen border overlay, always render it and toggle visibility:
+
+{/* Always mounted overlay */}
+<div
+  aria-hidden
+  className={cn(
+    'fixed inset-0 pointer-events-none z-30 border-4 transition-all duration-300',
+    isCurrentUser && displayTime <= 10
+      ? displayTime <= 5
+        ? 'border-red-500 animate-pulse opacity-100'
+        : 'border-orange-500 opacity-100'
+      : 'opacity-0 border-transparent'
+  )}
+/>
+
+
+Stable keys everywhere lists change
+You’re already using stable keys (team.id, pick.id, userId). Double-check no index keys remain in any conditional lists that appear/disappear at timeout.
+
+Avoid setState storms at 0s
+When your local countdown hits 0, you flip multiple states immediately. Add a tiny “transition” hold to let the server catch up so the subtree change happens once:
+
+// when estimatedTime <= 0
+setIsCountingDown(false);
+setLocalTime(0);
+// delay any other UI flips by ~100–200ms if they depend on server state
+
+D) Don’t flicker auth to false on transient reconnect
+
+Your log shows this right after the error:
+
+[Draft] ... isAuthenticated: false
+
+
+If your useAuth reflects WS reconnection or an /api blip, it can force router/guards to flip the page subtree while React is removing nodes → contributing to the mismatch.
+
+Action (auth hook):
+
+Add a grace period (e.g., 5–10s) before flipping from true → false unless you have a definitive 401 from /api/me or token invalidation.
+
+Treat network errors as unknown (keep last known true) until proven otherwise.

@@ -599,6 +599,11 @@ export default function DraftPage() {
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
+  // Timer phase stability to prevent React DOM mismatches
+  const timerPhase =
+    draftStatus !== 'active' ? draftStatus :
+    displayTime > 0 ? 'countdown' : 'transition';
+
   const getConferenceColor = (conference: string) => {
     return conference === 'AFC' ? 'bg-blue-500' : 'bg-red-500';
   };
@@ -1121,8 +1126,8 @@ export default function DraftPage() {
                         </div>
                       </div>
                       
-                      {/* Timer */}
-                      <div>
+                      {/* Timer - Keyed by phase to prevent React DOM mismatches */}
+                      <div key={timerPhase}>
                         <div className={`text-3xl font-bold mb-3 font-mono transition-colors duration-300 ${
                           displayTime <= 0 ? 'text-red-500 animate-pulse' : 
                           displayTime <= 10 ? 'text-red-500 animate-pulse' : 
