@@ -40,8 +40,7 @@ export default function DraftPage() {
   const { data: leagueData } = useQuery({
     queryKey: ['/api/leagues/user'],
     queryFn: async () => {
-      const response = await apiRequest('GET', '/api/leagues/user');
-      return response.json();
+      return await apiRequest('GET', '/api/leagues/user');
     },
     enabled: !!user && !authLoading,
     staleTime: 1000 * 10, // Cache for 10 seconds
@@ -456,8 +455,7 @@ export default function DraftPage() {
     queryKey: ['draft-teams', draftId],
     queryFn: async () => {
       // Use the apiRequest function to include authentication headers
-      const response = await apiRequest('GET', `/api/drafts/${draftId}/available-teams`);
-      return response.json();
+      return await apiRequest('GET', `/api/drafts/${draftId}/available-teams`);
     },
     enabled: !!draftId,
     refetchInterval: 5000,
@@ -467,8 +465,7 @@ export default function DraftPage() {
   const makePickMutation = useMutation({
     mutationFn: async (nflTeamId: string) => {
       // Use the apiRequest function to include authentication headers
-      const response = await apiRequest('POST', `/api/drafts/${draftId}/pick`, { nflTeamId });
-      return response.json();
+      return await apiRequest('POST', `/api/drafts/${draftId}/pick`, { nflTeamId });
     },
     onSuccess: () => {
       toast({

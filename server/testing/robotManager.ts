@@ -154,7 +154,7 @@ export class RobotManager {
    * Simulate robot decision-making for picks
    */
   simulateRobotPickDelay(): number {
-    // Fixed 15 second delay for robot picks
+    // Fixed 15 second delay for robot picks as requested
     return 15000;
   }
 

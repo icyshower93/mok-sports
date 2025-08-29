@@ -14,7 +14,7 @@ export async function apiRequest(
   url: string,
   body?: unknown,
   extraHeaders: Record<string,string> = {}
-): Promise<Response> {
+): Promise<any> {
   const res = await fetch(url, {
     method,
     credentials: 'include',
@@ -31,7 +31,7 @@ export async function apiRequest(
     const text = await res.text().catch(() => '');
     throw new Error(`HTTP ${res.status} ${res.statusText}${text ? ` - ${text}` : ''}`);
   }
-  return res;
+  return await res.json();
 }
 
 type UnauthorizedBehavior = "returnNull" | "throw";

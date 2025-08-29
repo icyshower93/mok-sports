@@ -72,7 +72,9 @@ function AppContent() {
   }, []);
   
   // Initialize service worker for PWA functionality
-  useServiceWorker(false); // Enable service worker for both PWA and web browsers for testing
+  // Only enable service worker in production or when explicitly testing PWA
+  const shouldEnableServiceWorker = import.meta.env.PROD || import.meta.env.VITE_ENABLE_SW === 'true';
+  useServiceWorker(shouldEnableServiceWorker ? false : true); // Skip in dev unless explicitly enabled
   
   // Initialize automatic push notification refresh for iOS PWA
   useAutoPushRefresh();

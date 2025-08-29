@@ -11,6 +11,7 @@
 
 import { IStorage } from "../storage.js";
 import type { Draft, DraftPick, NflTeam, User } from "@shared/schema";
+import type { DraftState as SharedDraftState } from "@shared/types/draft";
 import { RedisStateManager } from "./redisStateManager.js";
 
 export interface DraftState {
@@ -77,7 +78,7 @@ export class SnakeDraftManager {
       
       // CRITICAL FIX: Also check database directly for active drafts with timers
       const dbActiveDrafts = await this.storage.getActiveTimersForRecovery();
-      const allDraftIds = new Set([...activeDrafts, ...dbActiveDrafts.map(t => t.draftId)]);
+      const allDraftIds = new Set([...activeDrafts, ...dbActiveDrafts.map((t: any) => t.draftId)]);
       
       console.log(`🔍 Found ${activeDrafts.length} drafts in Redis, ${dbActiveDrafts.length} active timers in DB`);
       console.log(`🔍 Processing ${allDraftIds.size} total drafts: [${Array.from(allDraftIds).join(', ')}]`);

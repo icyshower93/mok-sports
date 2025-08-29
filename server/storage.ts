@@ -66,6 +66,7 @@ export interface IStorage {
   getActiveDraftTimer(draftId: string): Promise<DraftTimer | undefined>;
   deactivateTimer(draftId: string, userId: string): Promise<void>;
   getActiveTimers(): Promise<DraftTimer[]>;
+  getActiveTimersForRecovery(): Promise<Array<{ draftId: string; userId: string; timeRemaining: number }>>
   
   // Push notification methods
   getVapidKeys(): { publicKey: string; privateKey: string };

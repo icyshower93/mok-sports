@@ -1,0 +1,289 @@
+What’s already fixed ✅
+
+client/src/lib/auth-token.ts exists and is a pure, leaf util. ✅
+
+client/src/lib/queryClient.ts is “pure” (no React/useAuth imports). ✅
+
+client/src/pages/draft.tsx:
+
+Removed AuthTokenManager imports/logs. ✅
+
+Added the null-safe deriveds (draftStatus, picksSafe, availableTeamsSafe, etc.). ✅
+
+What still needs changes ⚠️
+
+apiRequest return shape vs. callers
+Your apiRequest now returns parsed JSON, but draft.tsx still does response.json(). That will crash (response.json is not a function). Fix the 3 call sites in draft.tsx.
+
+WebSocket hook lifecycle
+client/src/hooks/use-draft-websocket.ts currently:
+
+has reconnection setTimeouts but no visibility backoff, and
+
+disabled unmount cleanup (commented out).
+This can leave orphaned sockets and create weird reconnect storms.
+
+Service Worker
+client/public/sw.js is still the “nuclear” variant without a DEV fence, and it calls navigator.serviceWorker.* inside the SW script (that’s window-only; the SW global is self). Wrap “nuclear” bits behind a DEV check and remove window-only APIs from the worker code.
+
+1) Fix the 3 apiRequest call sites in draft.tsx
+
+File: client/src/pages/draft.tsx
+Replace the three places that do return response.json() with direct returns.
+
+Before:
+
+const response = await apiRequest('GET', '/api/leagues/user');
+return response.json();
+
+
+After:
+
+return apiRequest('GET', '/api/leagues/user');
+
+
+Before:
+
+const response = await apiRequest('GET', `/api/drafts/${draftId}/available-teams`);
+return response.json();
+
+
+After:
+
+return apiRequest('GET', `/api/drafts/${draftId}/available-teams`);
+
+
+Before (mutation):
+
+const response = await apiRequest('POST', `/api/drafts/${draftId}/pick`, { nflTeamId });
+return response.json();
+
+
+After:
+
+return apiRequest('POST', `/api/drafts/${draftId}/pick`, { nflTeamId });
+
+
+(Alternative path if you prefer): change apiRequest back to returning a Response and keep all callers as-is—but then you’ll need to audit other files (e.g. leagues.tsx) that now assume parsed JSON.
+
+2) Drop-in WebSocket hook with cleanup + visibility backoff
+
+File: client/src/hooks/use-draft-websocket.ts
+Replace the internals with this single-socket, visibility-aware version. It keeps your API ({ connectionStatus, lastMessage, sendMessage, isConnected }) but adds:
+
+exponential backoff (capped),
+
+pause reconnect while tab is hidden,
+
+proper unmount cleanup,
+
+quick reconnect on visibility regain.
+
+import { useEffect, useRef, useState, useCallback } from 'react';
+
+type WSStatus = 'idle' | 'connecting' | 'connected' | 'closed';
+
+export interface DraftWebSocketMessage {
+  type:
+    | 'connected'
+    | 'pong'
+    | 'pick_made'
+    | 'timer_update'
+    | 'draft_state'
+    | 'auto_pick'
+    | 'draft_completed'
+    | 'time_sync_response';
+  [k: string]: any;
+}
+
+const BASE = 750;
+const MAX  = 10_000;
+const backoff = (n: number) => Math.min(MAX, BASE * Math.pow(2, n));
+
+export function useDraftWebSocket(draftId: string) {
+  const [connectionStatus, setConnectionStatus] = useState<WSStatus>('idle');
+  const [lastMessage, setLastMessage] = useState<DraftWebSocketMessage | null>(null);
+
+  const wsRef = useRef<WebSocket | null>(null);
+  const attemptsRef = useRef(0);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const stoppedRef = useRef(false);
+
+  const clearTimer = () => { if (timerRef.current) { clearTimeout(timerRef.current); timerRef.current = null; } };
+
+  const connect = useCallback(() => {
+    if (!draftId || stoppedRef.current) return;
+
+    setConnectionStatus('connecting');
+    const url = `${location.origin.replace(/^http/, 'ws')}/draft-ws?draftId=${encodeURIComponent(draftId)}`;
+    const ws = new WebSocket(url);
+    wsRef.current = ws;
+
+    ws.onopen = () => {
+      attemptsRef.current = 0;
+      setConnectionStatus('connected');
+    };
+
+    ws.onmessage = (ev) => {
+      try {
+        const msg: DraftWebSocketMessage = JSON.parse(ev.data);
+        setLastMessage(msg);
+      } catch (e) {
+        console.warn('[WS] Bad message', e);
+      }
+    };
+
+    ws.onerror = () => {
+      // allow onclose to schedule reconnect
+    };
+
+    ws.onclose = () => {
+      setConnectionStatus('closed');
+      wsRef.current = null;
+      if (stoppedRef.current) return;
+
+      // Pause reconnects if page hidden (saves CPU/bandwidth)
+      if (document.visibilityState === 'hidden') {
+        clearTimer();
+        timerRef.current = setTimeout(connect, MAX);
+        return;
+      }
+
+      const delay = backoff(++attemptsRef.current);
+      clearTimer();
+      timerRef.current = setTimeout(connect, delay);
+    };
+  }, [draftId]);
+
+  // (Re)connect when draftId available or when page becomes visible
+  useEffect(() => {
+    if (!draftId) return;
+
+    stoppedRef.current = false;
+    connect();
+
+    const onVisibility = () => {
+      if (document.visibilityState === 'visible' && connectionStatus === 'closed') {
+        attemptsRef.current = 0;
+        clearTimer();
+        timerRef.current = setTimeout(connect, 200);
+      }
+    };
+    document.addEventListener('visibilitychange', onVisibility);
+
+    return () => {
+      stoppedRef.current = true;
+      document.removeEventListener('visibilitychange', onVisibility);
+      clearTimer();
+      wsRef.current?.close(4003, 'unmount');
+      wsRef.current = null;
+      setConnectionStatus('closed');
+    };
+  }, [draftId, connect, connectionStatus]);
+
+  const sendMessage = useCallback((msg: unknown) => {
+    const json = JSON.stringify(msg);
+    if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+      wsRef.current.send(json);
+      return true;
+    }
+    return false;
+  }, []);
+
+  return {
+    connectionStatus,
+    lastMessage,
+    sendMessage,
+    isConnected: connectionStatus === 'connected',
+  };
+}
+
+
+What to delete from your current file: any custom timers that keep the socket open after unmount, the commented unmount cleanup, and the “validate draft exists first” pre-fetch (it’s okay, but not required; your HTTP layer already handles 404/403 when the page loads).
+
+3) Service Worker: DEV fence + SW-proper API usage
+
+File: client/public/sw.js
+
+Define DEV and guard all “nuclear” actions behind it.
+
+Do not call navigator.serviceWorker.* in the SW.
+
+If you need to unregister from the page, do that in the app (window context), not in sw.js.
+
+Minimal patch (top of file + guards):
+
+// Guard "nuclear" flow to development environments only
+const DEV =
+  self.location.hostname.includes('localhost') ||
+  self.location.host.includes('replit');
+
+const CACHE_VERSION = 'v1.7.0-nuclear-unregister-' + Date.now();
+
+// ❌ Remove this (window-only):
+// if ('serviceWorker' in navigator) { navigator.serviceWorker.getRegistrations()... }
+
+// ✅ If you truly want a self-unregister path (SW-side), do:
+if (DEV && self.registration && self.registration.unregister) {
+  // OPTIONAL: don’t auto-unregister; wait for a client signal instead.
+  // self.registration.unregister(); // only if you absolutely must
+}
+
+self.addEventListener('install', (event) => {
+  if (!DEV) {
+    // normal install flow (precache your revisioned assets as needed)
+  }
+  // In DEV you can skipWaiting if you want fast iteration:
+  if (DEV && self.skipWaiting) self.skipWaiting();
+});
+
+self.addEventListener('activate', (event) => {
+  event.waitUntil((async () => {
+    // Delete caches only in DEV for the nuclear path
+    if (DEV) {
+      const names = await caches.keys();
+      await Promise.all(names.map((n) => caches.delete(n)));
+    }
+    await self.clients.claim();
+  })());
+});
+
+// Fetch strategy suggestion:
+// - Static hashed assets: cache-first
+// - API calls: network-first (no caching) unless explicitly SWR
+self.addEventListener('fetch', (event) => {
+  const req = event.request;
+  const url = new URL(req.url);
+
+  // Example: don’t cache API
+  if (url.pathname.startsWith('/api/')) {
+    event.respondWith(fetch(req));
+    return;
+  }
+
+  // Example: cache-first for same-origin hashed assets
+  if (url.origin === self.location.origin && /\.(?:js|css|png|svg|ico)$/.test(url.pathname)) {
+    event.respondWith((async () => {
+      const cached = await caches.match(req);
+      if (cached) return cached;
+      const res = await fetch(req);
+      const cache = await caches.open('static-' + CACHE_VERSION);
+      cache.put(req, res.clone());
+      return res;
+    })());
+  }
+});
+
+Quick status checklist
+
+auth-token.ts leaf util: present ✅
+
+queryClient.ts pure: yes ✅ (but returns parsed JSON; fix callers)
+
+draft.tsx null-guards + no AuthTokenManager: yes ✅
+
+draft.tsx .json() misuse on apiRequest: fix needed ⚠️ (3 spots)
+
+use-draft-websocket.ts lifecycle: improve ⚠️ (add cleanup, backoff, visibility)
+
+sw.js DEV fence + SW-safe API usage: add ⚠️
