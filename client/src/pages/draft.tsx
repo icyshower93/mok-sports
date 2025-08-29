@@ -1061,7 +1061,7 @@ export default function DraftPage() {
                         </div>
                         
                         {/* Countdown Display */}
-                        <div className="text-4xl font-bold text-green-600 dark:text-green-400 mb-2 font-mono">
+                        <div className="text-4xl font-bold text-green-600 dark:text-green-400 mb-2 font-mono" aria-live="polite">
                           {formatTime(displayTime)}
                         </div>
                         
@@ -1127,7 +1127,7 @@ export default function DraftPage() {
                           displayTime <= 0 ? 'text-red-500 animate-pulse' : 
                           displayTime <= 10 ? 'text-red-500 animate-pulse' : 
                           displayTime <= 30 ? 'text-orange-500' : 'text-foreground'
-                        }`}>
+                        }`} aria-live="polite">
                           {draftStatus === 'completed' ? (
                             <span className="text-green-600 font-medium">
                               Draft Complete

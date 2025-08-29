@@ -3,7 +3,7 @@ const DEV =
   self.location.hostname.includes('localhost') ||
   self.location.host.includes('replit');
 
-const CACHE_VERSION = 'static-' + (DEV ? 'dev' : 'prod') + '-' + Date.now();
+const CACHE_VERSION = 'static-' + (DEV ? 'dev-' + Date.now() : 'prod-v1.0.0');
 
 self.addEventListener('install', (event) => {
   // In DEV it's fine to activate immediately
