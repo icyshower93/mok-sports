@@ -409,5 +409,3 @@ export function useStableWebSocket(onMessage?: MessageCallback) {
   };
 }
 
-// For backward compatibility, export as useProductionRealtime
-export const useProductionRealtime = useStableWebSocket;

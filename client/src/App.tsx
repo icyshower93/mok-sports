@@ -11,7 +11,7 @@ import { usePWADetection } from "@/hooks/use-pwa-detection";
 import { useServiceWorker } from "@/hooks/use-service-worker";
 import { useAutoPushRefresh } from "@/hooks/use-auto-push-refresh";
 import { PWAInstallPrompt } from "@/components/pwa-install-prompt";
-import { useProductionRealtime } from "@/hooks/use-stable-websocket";
+import { useProductionRealtime } from "@/hooks/use-production-realtime";
 
 // League type for draft status checking
 interface UserLeague {

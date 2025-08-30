@@ -1,0 +1,82 @@
+I dug through the code you zipped and traced what can still cause that exact “ReferenceError: Cannot access 'c' before initialization” in your production bundle.
+
+Here’s the thorough diagnosis + the concrete fixes.
+
+What the error means (in this context)
+
+That message almost always happens when ES modules create a temporal dead zone because of inter-module init order (often due to circular/duplicated imports or exporting a binding that isn’t ready yet once minified). In production, symbols are renamed (hence the mysterious c), so you don’t see the original identifier.
+
+Your console timeline shows:
+
+App mounts → auth resolves
+
+Service worker registers ✅
+
+WebSocket connects → [App] WebSocket status: connected (Connected) ✅
+
+Immediately after first “connected” render, ErrorBoundary catches the ReferenceError ❌ and unmounts your WS component once.
+
+So the crash happens when the first “connected” render triggers deeper components to load.
+
+What I verified in your uploaded repo
+1) Client imports with “.js” extensions
+
+I scanned every client file for import ... from "… .js".
+Result: ✅ 0 offenders left in client/src/** (good!).
+
+(Plenty of .js imports remain on the server/scripts side, which is normal for Node ESM.)
+
+2) Realtime hooks are imported from two different modules
+
+client/src/App.tsx does:
+
+import { useProductionRealtime } from "@/hooks/use-stable-websocket";
+
+
+client/src/pages/main.tsx does:
+
+import { useProductionRealtime } from "@/hooks/use-production-realtime";
+
+
+And inside client/src/hooks/use-stable-websocket.ts you have this compat alias:
+
+// For backward compatibility, export as useProductionRealtime
+export const useProductionRealtime = useStableWebSocket;
+
+
+That means you’re shipping two separate modules that both define a “production realtime hook”: one is the new use-production-realtime.ts, the other is use-stable-websocket.ts re-exporting the name.
+
+In development this can be fine; in production minification + module graph order can bite you: the alias export in use-stable-websocket.ts is a live binding that’s initialized after the module’s own top-level evaluation. If any component mounts in an order where the alias is resolved before the module’s init completes (especially together with React Query + auth hooks), you can hit the exact TDZ error you’re seeing.
+
+This matches your timeline: once WS flips to connected, components that import the other copy of the hook (or values produced by it) render, producing the TDZ at minified symbol c.
+
+3) No obvious client-side circular imports
+
+I built an import graph across client/src/** and shared/** and couldn’t find syntactic cycles, which reinforces that the remaining offender is the dual module for the same hook name (and its init timing), not a classic A↔B cycle.
+
+Fixes (make these exact changes)
+✅ Fix 1 — Use one realtime hook module everywhere
+
+Prefer the dedicated one: use-production-realtime.ts
+
+App.tsx
+
+import { useProductionRealtime } from "@/hooks/use-stable-websocket";
+
+import { useProductionRealtime } from "@/hooks/use-production-realtime";
+
+use-stable-websocket.ts (remove the compat alias entirely)
+
+// For backward compatibility, export as useProductionRealtime
+
+export const useProductionRealtime = useStableWebSocket;
+
+Rationale: this eliminates duplicate modules + a late-initialized alias export, removing the TDZ risk after minification.
+
+✅ Fix 2 — Keep all client imports extensionless (you’re already good)
+
+You’ve fixed the .js path endings in the client. Keep it that way.
+
+✅ Fix 3 — Bust SW caches after you rebuild
+
+You’re already appending ?v=... (I see v=1756577604182). After applying the changes, build once more so the SW version changes, then hard refresh once to ensure the page isn’t running stale chunks.
