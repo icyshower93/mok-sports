@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useAuth } from '@/hooks/use-auth';
+import { useAuth } from '@/features/auth';
 import { usePWADetection } from '@/hooks/use-pwa-detection';
 
 interface PostLoginNotificationState {
