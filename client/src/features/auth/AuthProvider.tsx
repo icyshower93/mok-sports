@@ -1,8 +1,10 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { AuthContext, type AuthValue, type User } from "./AuthContext";
-import { apiRequest } from "@/features/query/api";
 import { AuthToken } from "@/lib/auth-token";
+import { markModule } from '@/lib/dup-guard';
+
+markModule('features/auth/AuthProvider');
 
 interface OAuthConfig {
   oauthConfigured: boolean;
@@ -32,7 +34,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   });
 
   const logoutMutation = useMutation({
-    mutationFn: () => apiRequest("POST", "/api/auth/logout"),
+    mutationFn: async () => {
+      const { apiRequest } = await import("@/features/query/api");
+      return apiRequest("POST", "/api/auth/logout");
+    },
     onSuccess: () => {
       setIsAuthenticated(false);
       AuthToken.clear(); // Clear stored token

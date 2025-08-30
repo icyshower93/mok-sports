@@ -1,5 +1,8 @@
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
 import { AuthToken } from '@/lib/auth-token';
+import { markModule } from '@/lib/dup-guard';
+
+markModule('features/query/queryClient');
 
 // Query function with auth handling
 export const unauthorizedBehaviorToQueryFunction = (
@@ -22,29 +25,33 @@ export const unauthorizedBehaviorToQueryFunction = (
     return await res.json();
   };
 
-// Singleton guard to prevent multiple QueryClient instances in case of import duplication
-const g = globalThis as any;
-export const queryClient: QueryClient =
-  g.__MOK_QUERY_CLIENT__ ?? (g.__MOK_QUERY_CLIENT__ = new QueryClient({
+// LAZY SINGLETON - eliminates TDZ and init-order hazards
+let _qc: QueryClient | null = null;
+export function getQueryClient(): QueryClient {
+  // also survives duplicate module instances
+  const g = globalThis as any;
+  if (g.__MOK_QUERY_CLIENT__) return g.__MOK_QUERY_CLIENT__;
+  if (_qc) return _qc;
+  _qc = new QueryClient({
     defaultOptions: {
       queries: {
         queryFn: unauthorizedBehaviorToQueryFunction("returnNull"),
         refetchOnMount: false,
         refetchOnWindowFocus: false,
-        retry: (failureCount, error) => {
-          if (error instanceof Error && error.message.includes("401")) {
-            return false;
-          }
-          return failureCount < 2;
-        },
-        staleTime: 0, // Always stale for live data (draft state)
-        gcTime: 5 * 60 * 1000, // 5 minutes
+        retry: (failureCount, error: any) =>
+          error?.message?.includes("401") ? false : failureCount < 2,
+        staleTime: 0,
+        gcTime: 5 * 60 * 1000,
       },
-      mutations: {
-        retry: 0,
-      },
+      mutations: { retry: 0 },
     },
-  }));
+  });
+  g.__MOK_QUERY_CLIENT__ = _qc;
+  return _qc;
+}
+
+// Keep compatibility - will be removed after migration
+export const queryClient = getQueryClient();
 
 // Maintain backward compatibility while using new AuthToken utility
 export const AuthTokenManager = {

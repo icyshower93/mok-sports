@@ -1,6 +1,9 @@
 import { QueryClientProvider } from "@tanstack/react-query";
-import { queryClient } from "@/features/query/queryClient";
+import { getQueryClient } from "@/features/query/queryClient";
+import { markModule } from '@/lib/dup-guard';
+
+markModule('features/query/QueryProvider');
 
 export function QueryProvider({ children }: { children: React.ReactNode }) {
-  return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
+  return <QueryClientProvider client={getQueryClient()}>{children}</QueryClientProvider>;
 }

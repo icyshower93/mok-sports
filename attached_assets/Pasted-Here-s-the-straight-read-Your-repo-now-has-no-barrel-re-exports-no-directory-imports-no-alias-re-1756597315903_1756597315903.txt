@@ -1,0 +1,142 @@
+Here’s the straight read:
+
+Your repo now has no barrel re-exports, no directory imports, no alias/relative mixing, and no static import cycles. I re-scanned every file in the zip you sent and confirmed all of that.
+
+The crash still says ReferenceError: Cannot access 'c' before initialization and every stack you pasted passes through React Query internals (setData → onSuccess → fetch, etc.). That pattern screams “a value imported across a runtime cycle (or duplicated module) is being dereferenced while it’s still in its TDZ.”
+
+When static scans can’t see it but runtime still hits TDZ, it’s usually one of these:
+
+Evaluation order: a value is imported across two modules that (indirectly) touch each other at runtime, not a classic static cycle.
+
+Duplicate module instance: one file ends up bundled twice under different paths (SW cache, case or path variant, or resolver quirk).
+
+Let’s fix both angles decisively.
+
+1) Make the QueryClient truly lazy (eliminate init-order hazards)
+
+Right now queryClient is a top-level const in queryClient.ts. Even with the global guard, that still defines it at module evaluation time. If anything in its dependency graph touches back into something that imports it, you can trip TDZ. Switch to a lazy getter so nothing is created until React renders the provider.
+
+client/src/features/query/queryClient.ts
+
+import { QueryClient, QueryFunction } from "@tanstack/react-query";
+import { AuthToken } from "@/lib/auth-token";
+
+// Keep your query function as-is
+export const unauthorizedBehaviorToQueryFunction = (
+  unauthorizedBehavior: "returnNull" | "throw" = "throw",
+): QueryFunction<any> =>
+  async ({ queryKey }) => {
+    const res = await fetch(queryKey.join("/") as string, {
+      headers: AuthToken.headers(),
+      credentials: "include",
+    });
+    if (unauthorizedBehavior === "returnNull" && res.status === 401) return null;
+    if (!res.ok) {
+      const text = await res.text().catch(() => "");
+      throw new Error(`HTTP ${res.status} ${res.statusText}${text ? ` - ${text}` : ""}`);
+    }
+    return await res.json();
+  };
+
+// LAZY SINGLETON
+let _qc: QueryClient | null = null;
+export function getQueryClient(): QueryClient {
+  // also survives duplicate module instances
+  const g = globalThis as any;
+  if (g.__MOK_QUERY_CLIENT__) return g.__MOK_QUERY_CLIENT__;
+  if (_qc) return _qc;
+  _qc = new QueryClient({
+    defaultOptions: {
+      queries: {
+        queryFn: unauthorizedBehaviorToQueryFunction("returnNull"),
+        refetchOnMount: false,
+        refetchOnWindowFocus: false,
+        retry: (failureCount, error: any) =>
+          error?.message?.includes("401") ? false : failureCount < 2,
+        staleTime: 0,
+        gcTime: 5 * 60 * 1000,
+      },
+      mutations: { retry: 0 },
+    },
+  });
+  g.__MOK_QUERY_CLIENT__ = _qc;
+  return _qc;
+}
+
+// keep the compatibility helper if you want
+export const AuthTokenManager = {
+  getToken: () => AuthToken.get(),
+  setToken: (t: string) => AuthToken.set(t),
+  removeToken: () => AuthToken.clear(),
+  getAuthHeaders: () => AuthToken.headers(),
+};
+
+
+client/src/features/query/QueryProvider.tsx
+
+import { QueryClientProvider } from "@tanstack/react-query";
+import { getQueryClient } from "@/features/query/queryClient";
+
+export function QueryProvider({ children }: { children: React.ReactNode }) {
+  return <QueryClientProvider client={getQueryClient()}>{children}</QueryClientProvider>;
+}
+
+
+Why this helps: it removes any chance that creating the client (and its default options chain) runs before some other module has finished initializing.
+
+2) Break the only suspicious dependency edge
+
+Your AuthProvider imports @/features/query/api at the top of the file. It’s perfectly reasonable code, but it creates the only “auth → query” edge I can see. If any query file ever imports back into auth (now or later), that’s a runtime loop.
+
+Make the import on demand:
+
+client/src/features/auth/AuthProvider.tsx
+
+// remove: import { apiRequest } from "@/features/query/api";
+
+const apiRequest = async (...args: Parameters<typeof import("@/features/query/api").then> extends never ? any[] : never) => {
+  const { apiRequest } = await import("@/features/query/api");
+  // @ts-expect-error – satisfy TS for the quick wrapper call signature
+  return apiRequest.apply(null, args as any);
+};
+
+
+Or more simply, wherever you call apiRequest, replace with:
+
+const { apiRequest } = await import("@/features/query/api");
+await apiRequest("GET", "/api/something");
+
+
+This breaks the auth→query top-level import path and removes a whole class of TDZs.
+
+3) Force the browser to show you the exact source line
+
+Right now the stack is minified (hx, Im, …). Do one debuggable build and reload with SW bypass:
+
+node scripts/inject-build-env.mjs && npm run build -- --minify=false --sourcemap
+
+
+Then open your app with ?nosw=1&cachebust= + Date.now(). Click the first stack frame in DevTools — it will jump to the original .ts(x) file and line. If anything still errors after steps 1–2, paste the exact source filename + line from that top frame and we’ll kill it.
+
+(If your SW register is in a hook, keep the ?nosw=1 gate you added earlier; it’s perfect for this.)
+
+4) Optional: runtime duplication detector (quick sanity)
+
+Drop this tiny helper and import it once at the top of the “hot” modules (AuthProvider, AuthContext, useAuth, QueryProvider, queryClient.ts, features/query/api.ts). If it logs a duplicate, you’ve found a loader quirk immediately.
+
+client/src/lib/dup-guard.ts
+
+export function markModule(id: string) {
+  const g = globalThis as any;
+  g.__MOK_LOADED__ ??= new Set<string>();
+  if (g.__MOK_LOADED__.has(id)) {
+    console.warn("[DupModule]", id, "loaded again");
+  }
+  g.__MOK_LOADED__.add(id);
+}
+
+
+Then:
+
+import { markModule } from "@/lib/dup-guard";
+markModule("features/query/queryClient");
