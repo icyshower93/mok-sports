@@ -1,0 +1,91 @@
+What I verified in your repo (✅)
+
+Only one WebSocket hook is used (useProductionRealtime) and it’s only called from App.tsx.
+
+No file-level circular imports surfaced in a dependency scan (including export * from and export { … } from barrels).
+
+The SPA fallback reuses the same clientDist.
+
+index.html is served with no-store; assets with long-cache.
+
+SW route /sw.js is no-store.
+
+What still points to a bundling/init problem (and how to fix)
+1) Path alias resolution isn’t pinned in Vite (⚠️ real culprit candidate)
+
+You’re using @/… and @shared/… everywhere, but your vite.config.ts does not set resolve.alias nor include vite-tsconfig-paths. Depending on the Replit plugins, Vite can end up resolving the same module via two different internal paths during build (especially with root: "client"), which does cause TDZ crashes at runtime when ESM evaluation order gets tangled.
+
+Fix (safe & minimal)
+
+Add both vite-tsconfig-paths and explicit aliases. Also turn on sourcemaps so you can see the exact source if anything else pops.
+
+// vite.config.ts
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import path from "path";
+import runtimeErrorOverlay from "@replit/vite-plugin-runtime-error-modal";
+import tsconfigPaths from "vite-tsconfig-paths";
+
+export default defineConfig({
+  plugins: [
+    react(),
+    runtimeErrorOverlay(),
+    tsconfigPaths(), // <-- ensure @/* and @shared/* match tsconfig.json
+    ...(process.env.NODE_ENV !== "production" && process.env.REPL_ID
+      ? [await import("@replit/vite-plugin-cartographer").then((m) => m.cartographer())]
+      : []),
+  ],
+  resolve: {
+    alias: {
+      "@": path.resolve(import.meta.dirname, "client", "src"),
+      "@shared": path.resolve(import.meta.dirname, "shared"),
+    },
+  },
+  root: path.resolve(import.meta.dirname, "client"),
+  build: {
+    outDir: path.resolve(import.meta.dirname, "dist/public"),
+    emptyOutDir: true,
+    sourcemap: true,               // <— turn on for clear stacks while we debug
+    // minify: false,               // <— optional one-off to pinpoint the exact line
+  },
+  server: {
+    fs: { strict: true, deny: ["**/.*"] },
+  },
+});
+
+
+Why this matters: if one module is pulled once as @/hooks/use-auth and somewhere else as a slightly different resolved path (because Vite isn’t honoring your tsconfig aliases uniformly), you’ll get two module instances. If either instance references the other’s const export during evaluation, you get the exact TDZ error you’re seeing.
+
+2) SW query param still uses randomness
+
+Your useServiceWorker hook still logs:
+
+[SW Hook] Registering fresh service worker: /sw.js?v=1756586391210&r=0.509...
+
+
+That r= random seed makes the browser consider a “new” SW often, which increases churn and can mask other issues.
+
+Fix
+
+Use the build hash instead of randomness:
+
+// wherever you register SW
+import { BUILD_INFO } from "@/lib/buildInfo";
+
+const v = BUILD_INFO.hash;
+navigator.serviceWorker?.register(`/sw.js?v=${v}`);
+
+
+This won’t fix the TDZ, but it will make behavior deterministic.
+
+3) Tiny type nit in use-production-realtime.ts
+
+I saw the union type looks truncated:
+
+const [connectionStatus, setConnectionStatus] = useState<'w... | 'connecting' | 'connected' | 'disconnected'>('waiting_auth');
+
+
+This is just types (erased at runtime), but clean it to avoid confusion:
+
+type Status = 'waiting_auth' | 'connecting' | 'connected' | 'disconnected';
+const [connectionStatus, setConnectionStatus] = useState<Status>('waiting_auth');

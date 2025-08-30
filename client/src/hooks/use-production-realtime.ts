@@ -11,7 +11,8 @@ export function useProductionRealtime() {
   const wsRef = useRef<WebSocket | null>(null);
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const pingIntervalRef = useRef<NodeJS.Timeout | null>(null);
-  const [connectionStatus, setConnectionStatus] = useState<'waiting_auth' | 'connecting' | 'connected' | 'disconnected'>('waiting_auth');
+  type ConnectionStatus = 'waiting_auth' | 'connecting' | 'connected' | 'disconnected';
+  const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>('waiting_auth');
   const [reconnectAttempts, setReconnectAttempts] = useState(0);
   const maxReconnectAttempts = 8; // Increased for better resilience
   const baseReconnectDelay = 1000; // 1 second
