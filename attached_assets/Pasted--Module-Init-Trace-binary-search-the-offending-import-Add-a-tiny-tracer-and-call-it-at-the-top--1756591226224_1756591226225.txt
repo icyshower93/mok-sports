@@ -1,0 +1,112 @@
+“Module Init Trace” (binary search the offending import)
+
+Add a tiny tracer and call it at the top (module scope) of each authed page and a few shared files (stores, “routes/registry”, component libraries you suspect):
+
+// client/src/debug/trace.ts
+export function trace(mod: string) {
+  console.log(`[MOD-EVAL] ${mod} @`, new Date().toISOString());
+}
+
+
+At top of file, before any other code (not inside a component):
+
+import { trace } from "@/debug/trace";
+trace("pages/dashboard");
+
+
+Do this for the authed pages, AppShell, RequireAuth, any “routes.ts/routes.tsx”, “registry”, global store, or UI setup modules.
+Reload, log will show the last [MOD-EVAL] printed right before the crash — that’s the module whose top-level triggers the TDZ chain (or it imports the one that does). Now you know exactly where to look.
+
+What to fix (common culprits & precise remedies)
+1) Top-level work that indirectly imports a page (or itself)
+
+Patterns:
+
+A routes/registry file that imports page modules at top-level (even just for metadata) while a page imports the registry back (e.g., for breadcrumbs).
+
+A global store/config that imports UI constants from a page (or a “components barrel” that re-exports pages).
+
+A theme/variants setup file that imports component modules that import theme again.
+
+Fix: make the dependency one-way and defer work:
+
+Keep route metadata in a pure data module (no page imports). Router imports meta + lazy pages; pages import only meta, never router.
+
+If a registry must point at components, use lazy getters instead of top-level evaluation:
+
+// BAD (top-level)
+export const routes = [{ path: "dash", element: <Dashboard/> }];
+
+// GOOD (defer)
+export function getRoutes() {
+  const Dashboard = lazy(() => import("@/pages/dashboard"));
+  return [{ path: "dash", element: <Dashboard/> }];
+}
+
+
+Or keep the array but ensure it doesn’t import anything that imports back.
+
+2) Barrels that hide cycles (even after you removed the big ones)
+
+Search for any index.ts with re-exports in shared areas:
+
+rg -n "export \* from " client/src
+rg -n "export {[^}]+} from " client/src
+
+
+If a barrel re-exports both core primitives (hooks/stores) and UI/pages, split it. Barrels per feature only, never cross-layers.
+
+3) Top-level computed constants
+
+If a module exports a computed const that reads from another module which (directly/indirectly) imports the first module, you’ll get TDZ.
+
+Fix: turn it into a function or compute inside a hook/component (runtime after modules are initialized):
+
+// BAD
+export const appConfig = computeConfig(plugins); // plugins imported from module that imports appConfig
+
+// GOOD
+export function getAppConfig() { return computeConfig(plugins); }
+// or compute in useEffect/useMemo inside the component that needs it
+
+4) Duplicated package instances (“two copies” problem)
+
+Two copies of certain libs (e.g., state libs, class-variance-authority/tailwind-merge) can cause weird init order.
+
+Add dedupe to vite.config.ts:
+
+resolve: {
+  dedupe: [
+    "react",
+    "react-dom",
+    "clsx",
+    "tailwind-merge",
+    "class-variance-authority",
+    // add any state libs you use: "zustand", "jotai", etc.
+  ],
+}
+
+
+Also make sure tsconfig.json paths match your Vite alias exactly, and that every import uses the alias (no mixed ../../features/auth and @/features/auth pointing to the same file).
+
+5) Dynamic imports hidden in helpers
+
+Sometimes a helper like loadFeature("x") does import('./pages/' + name) and the page imports the helper back.
+
+Fix: centralize dynamic imports only in the router, and make helpers depend downstream (no page → helper → page triangles).
+
+Extra guardrails (so it doesn’t regress)
+
+Add a build check:
+
+"scripts": { "check:cycles": "madge client/src --circular" }
+
+
+ESLint:
+
+"rules": {
+  "import/no-cycle": ["error", { "ignoreExternal": true }]
+}
+
+
+Keep build.sourcemap: true for a few releases.

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { AuthTokenManager } from "@/lib/queryClient";
 import { useAuth } from "@/features/auth";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { MainLayout } from "@/components/layout/main-layout";
@@ -30,7 +31,7 @@ const testLogin = async (userId?: string) => {
     const result = await response.json();
     if (result.success && result.token) {
       // Store token for PWA compatibility
-      const { AuthTokenManager } = await import('@/lib/queryClient');
+      // FIXED: Use static import instead of dynamic to prevent TDZ race condition
       AuthTokenManager.setToken(result.token);
       window.location.reload();
     } else if (result.success) {
