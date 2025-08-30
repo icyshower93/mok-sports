@@ -529,6 +529,41 @@ router.get("/leagues/:leagueId/week-scores/:season/:week", authenticateUser, aut
 
     console.log(`[Scoring] Found ${weeklyScores.length} weekly scores`);
 
+    // If nothing persisted yet, compute now, persist (via Patch 1), and re-query
+    if (weeklyScores.length === 0) {
+      console.log('[Scoring] No persisted weekly scores; computing now…');
+      const seasonNum = parseInt(season, 10);
+      const weekNum = parseInt(week, 10);
+
+      // Compute & persist (Patch 1 handles the upsert)
+      const { calculateWeeklyScores } = await import("../utils/mokScoring.js");
+      await calculateWeeklyScores(leagueId, weekNum, seasonNum);
+
+      // Re-query with the same select/join as above
+      const recomputed = await db.select({
+        userId: userWeeklyScores.userId,
+        userName: users.name,
+        weeklyPoints: userWeeklyScores.totalPoints,
+        gamesRemaining: sql<number>`0`,
+      })
+      .from(userWeeklyScores)
+      .innerJoin(users, eq(userWeeklyScores.userId, users.id))
+      .where(and(
+        eq(userWeeklyScores.leagueId, leagueId),
+        eq(userWeeklyScores.season, seasonNum),
+        eq(userWeeklyScores.week, weekNum),
+      ))
+      .orderBy(sql`${userWeeklyScores.totalPoints} DESC`);
+
+      if (recomputed.length > 0) {
+        console.log(`[Scoring] Computed & persisted ${recomputed.length} weekly scores`);
+        // fall through – let the existing response shape use this list
+        (weeklyScores as any) = recomputed;
+      } else {
+        console.log('[Scoring] Still no scores after compute (likely no completed NFL games for this week)');
+      }
+    }
+
     // Check if week is complete and get high/low score teams
     const { endOfWeekProcessor } = await import("../utils/endOfWeekProcessor.js");
     
