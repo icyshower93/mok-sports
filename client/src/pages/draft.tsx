@@ -22,7 +22,7 @@ export default function DraftPage() {
   const queryClient = useQueryClient();
   const { user, isLoading: authLoading, isAuthenticated } = useAuth();
   
-  // Extract draft ID from URL params using wouter
+  // Extract draft ID from URL params using wouter - SINGLE SOURCE OF TRUTH
   const params = useParams();
   const urlDraftId = (params as any).draftId;
   const [actualDraftId, setActualDraftId] = useState<string | null>(urlDraftId);
@@ -117,10 +117,31 @@ export default function DraftPage() {
     }
   }, [leagueData, urlDraftId, user?.id, navigate, queryClient, authLoading]);
 
-  // Use the actual draft ID for all operations
+  // Use the actual draft ID for all operations - SINGLE SOURCE OF TRUTH
   const draftId = actualDraftId;
+  
+  // Cancel any queries when draftId changes to prevent race conditions
+  useEffect(() => {
+    if (draftId) {
+      // Cancel any in-flight queries for other draft IDs
+      queryClient.cancelQueries({ 
+        predicate: (query) => {
+          const key = query.queryKey;
+          return Array.isArray(key) && key.some(k => 
+            typeof k === 'string' && k.includes('/api/drafts/') && !k.includes(draftId)
+          );
+        }
+      });
+      
+      // Reset draft-related state when ID changes
+      setSelectedTeam(null);
+      setShowCelebration(false);
+      setHasNotifiedForThisTurn(false);
+      setLastNotificationTime(0);
+    }
+  }, [draftId, queryClient]);
 
-  // WebSocket connection with resilient retry and backoff logic
+  // WebSocket connection - keyed by draftId for proper cleanup on route changes
   const wsUrl = draftId ? `${window.location.protocol === 'https:' ? 'wss:' : 'ws:'}//${window.location.host}/api/drafts/ws/${draftId}` : null;
   const { status: connectionStatus, message: lastMessage } = useResilientWebSocket(wsUrl);
   const isConnected = connectionStatus === 'open';
@@ -138,8 +159,8 @@ export default function DraftPage() {
 
   // Fetch draft state with polling for real-time updates
   const { data: draftData, isLoading, error } = useQuery({
-    queryKey: ['draft', draftId], // Remove timestamp to allow proper caching
-    queryFn: async () => {
+    queryKey: ['draft', draftId, 'state'], // Include 'state' for specificity
+    queryFn: async ({ signal }) => {
       console.log('[Draft] === STARTING DRAFT FETCH ===');
       console.log('[Draft] Draft ID:', draftId);
       console.log('[Draft] Auth status - User:', user?.name, 'Authenticated:', isAuthenticated, 'Loading:', authLoading);
@@ -150,10 +171,11 @@ export default function DraftPage() {
       try {
         console.log('[Draft] Making API request to:', `/api/drafts/${draftId}`);
         
-        // Use direct fetch with credentials instead of apiRequest to avoid token issues
+        // Use direct fetch with credentials and signal for cancellation
         const response = await fetch(`/api/drafts/${draftId}`, {
           method: 'GET',
           credentials: 'include', // Use cookies for auth instead of Bearer token
+          signal, // Add signal for query cancellation
           headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json'
@@ -452,13 +474,15 @@ export default function DraftPage() {
 
   // Fetch available teams
   const { data: teamsData } = useQuery({
-    queryKey: ['draft-teams', draftId],
-    queryFn: async () => {
+    queryKey: ['draft', draftId, 'teams'],
+    queryFn: async ({ signal }) => {
       // Use the apiRequest function to include authentication headers
       return await apiRequest('GET', `/api/drafts/${draftId}/available-teams`);
     },
     enabled: !!draftId,
     refetchInterval: 5000,
+    staleTime: 0,
+    gcTime: 0,
   });
 
   // Make pick mutation
@@ -474,7 +498,7 @@ export default function DraftPage() {
       });
       setSelectedTeam(null);
       queryClient.invalidateQueries({ queryKey: ['draft', draftId] });
-      queryClient.invalidateQueries({ queryKey: ['draft-teams', draftId] });
+      queryClient.invalidateQueries({ queryKey: ['draft', draftId, 'teams'] });
     },
     onError: (error: Error) => {
       toast({
