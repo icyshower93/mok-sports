@@ -1,7 +1,7 @@
 import { createRoot } from "react-dom/client";
-import App from "./App";
-import "./index.css";
-import "./utils/cache-manager"; // Initialize global error handlers
+import App from "@/App";
+import "@/index.css";
+import "@/utils/cache-manager"; // Initialize global error handlers
 
 // Enhanced iOS swipe prevention
 if (navigator.userAgent.includes('iPhone') || navigator.userAgent.includes('iPad')) {
@@ -30,3 +30,4 @@ if (navigator.userAgent.includes('iPhone') || navigator.userAgent.includes('iPad
 // Service worker is now handled by the useServiceWorker hook in PWA mode only
 
 createRoot(document.getElementById("root")!).render(<App />);
+// Build marker: Sat Aug 30 07:42:21 PM UTC 2025
