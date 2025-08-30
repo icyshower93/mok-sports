@@ -96,12 +96,8 @@ function AppContent() {
     }
   }, [connectionStatus, isRealtimeConnected]);
 
-  // Show install prompt only on mobile devices when not in PWA mode
-  // Allow desktop usage for testing/development
-  const isDesktop = window.innerWidth >= 768; // Tailwind 'md' breakpoint
-  if (!isPWA && !isDesktop) {
-    return <PWAInstallPrompt />;
-  }
+  // PWA install prompt removed - app now accessible on all devices
+  // Users can still install manually via browser menu if desired
 
   if (isLoading && !user) {
     return (
