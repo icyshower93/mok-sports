@@ -1,0 +1,108 @@
+Build Info: Object
+index-D8UtExjO.js:402 📦 Version: 92ffc405-08e6-4ad1-b9df-e636cad26194
+index-D8UtExjO.js:402 📅 Built: 2025-08-30T22:07:07.423Z
+index-D8UtExjO.js:402 🔧 Environment: production
+index-D8UtExjO.js:402 [App] WebSocket status: waiting_auth (Disconnected)
+index-D8UtExjO.js:402 [App] ⏳ Waiting for authentication to complete
+index-D8UtExjO.js:358 [Auth] Token check - Has token: false Has user: false Loading: true
+index-D8UtExjO.js:358 [SW Hook] Registering service worker with build hash: /sw.js?v=92ffc405-08e6-4ad1-b9df-e636cad26194
+index-D8UtExjO.js:358 [SW Hook] Service worker registered successfully
+index-D8UtExjO.js:358 [ProductionRealtime] 🧹 Cleaning up WebSocket connection
+index-D8UtExjO.js:358 [AutoPushRefresh] Legacy hook delegating to SubscriptionManager
+index-D8UtExjO.js:358 [ProductionRealtime] 🔐 Auth ready, initiating WebSocket connection
+index-D8UtExjO.js:358 [ProductionRealtime] 🚀 Auth confirmed, establishing WebSocket connection...
+index-D8UtExjO.js:358 [ProductionRealtime] User: Mok Sports ID: d8873675-274c-46f9-ab48-00955c81d875
+index-D8UtExjO.js:358 [Auth] Token check - Has token: true Has user: true Loading: false
+index-D8UtExjO.js:402 [App] WebSocket status: connecting (Disconnected)
+index-D8UtExjO.js:402 [App] 🔄 Attempting to connect...
+(index):1 Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner.
+index-D8UtExjO.js:358 [ErrorBoundary] Error caught: ReferenceError Cannot access 'c' before initialization
+getDerivedStateFromError @ index-D8UtExjO.js:358Understand this error
+index-D8UtExjO.js:358 [ErrorBoundary] Stack trace: ReferenceError: Cannot access 'c' before initialization
+    at hx (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-D8UtExjO.js:402:152411)
+    at Im (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-D8UtExjO.js:38:16998)
+    at Iy (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-D8UtExjO.js:40:43963)
+    at Ry (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-D8UtExjO.js:40:39727)
+    at PS (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-D8UtExjO.js:40:39655)
+    at gc (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-D8UtExjO.js:40:39508)
+    at cg (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-D8UtExjO.js:40:36623)
+    at ls (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-D8UtExjO.js:38:3274)
+    at https://mok-sports-draft-mokfantasysport.replit.app/assets/index-D8UtExjO.js:40:34207
+getDerivedStateFromError @ index-D8UtExjO.js:358Understand this error
+index-D8UtExjO.js:358 [ErrorBoundary] Error caught: ReferenceError Cannot access 'c' before initialization
+getDerivedStateFromError @ index-D8UtExjO.js:358Understand this error
+index-D8UtExjO.js:358 [ErrorBoundary] Stack trace: ReferenceError: Cannot access 'c' before initialization
+    at hx (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-D8UtExjO.js:402:152411)
+    at Im (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-D8UtExjO.js:38:16998)
+    at Iy (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-D8UtExjO.js:40:43963)
+    at Ry (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-D8UtExjO.js:40:39727)
+    at PS (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-D8UtExjO.js:40:39655)
+    at gc (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-D8UtExjO.js:40:39508)
+    at df (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-D8UtExjO.js:40:35875)
+    at cg (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-D8UtExjO.js:40:36678)
+    at ls (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-D8UtExjO.js:38:3274)
+    at https://mok-sports-draft-mokfantasysport.replit.app/assets/index-D8UtExjO.js:40:34207
+getDerivedStateFromError @ index-D8UtExjO.js:358Understand this error
+index-D8UtExjO.js:40 ReferenceError: Cannot access 'c' before initialization
+    at hx (index-D8UtExjO.js:402:152411)
+    at Im (index-D8UtExjO.js:38:16998)
+    at Iy (index-D8UtExjO.js:40:43963)
+    at Ry (index-D8UtExjO.js:40:39727)
+    at PS (index-D8UtExjO.js:40:39655)
+    at gc (index-D8UtExjO.js:40:39508)
+    at df (index-D8UtExjO.js:40:35875)
+    at cg (index-D8UtExjO.js:40:36678)
+    at ls (index-D8UtExjO.js:38:3274)
+    at index-D8UtExjO.js:40:34207
+Xd @ index-D8UtExjO.js:40Understand this error
+index-D8UtExjO.js:358 [ErrorBoundary] DETAILED ERROR - Name: ReferenceError
+componentDidCatch @ index-D8UtExjO.js:358Understand this error
+index-D8UtExjO.js:358 [ErrorBoundary] DETAILED ERROR - Message: Cannot access 'c' before initialization
+componentDidCatch @ index-D8UtExjO.js:358Understand this error
+index-D8UtExjO.js:358 [ErrorBoundary] DETAILED ERROR - Stack: ReferenceError: Cannot access 'c' before initialization
+    at hx (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-D8UtExjO.js:402:152411)
+    at Im (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-D8UtExjO.js:38:16998)
+    at Iy (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-D8UtExjO.js:40:43963)
+    at Ry (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-D8UtExjO.js:40:39727)
+    at PS (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-D8UtExjO.js:40:39655)
+    at gc (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-D8UtExjO.js:40:39508)
+    at df (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-D8UtExjO.js:40:35875)
+    at cg (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-D8UtExjO.js:40:36678)
+    at ls (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-D8UtExjO.js:38:3274)
+    at https://mok-sports-draft-mokfantasysport.replit.app/assets/index-D8UtExjO.js:40:34207
+componentDidCatch @ index-D8UtExjO.js:358Understand this error
+index-D8UtExjO.js:358 [ErrorBoundary] Component stack: 
+    at hx (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-D8UtExjO.js:402:152352)
+    at jt (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-D8UtExjO.js:48:3201)
+    at vk (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-D8UtExjO.js:48:4017)
+    at R4 (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-D8UtExjO.js:402:292606)
+    at LT (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-D8UtExjO.js:358:58073)
+    at c (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-D8UtExjO.js:48:45728)
+    at Cw (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-D8UtExjO.js:358:50462)
+    at AT (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-D8UtExjO.js:358:56966)
+    at Fk (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-D8UtExjO.js:48:40235)
+    at Xk (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-D8UtExjO.js:48:43553)
+    at WT (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-D8UtExjO.js:358:76557)
+    at A4
+componentDidCatch @ index-D8UtExjO.js:358Understand this error
+index-D8UtExjO.js:358 [ProductionRealtime] 🧹 Cleaning up WebSocket connection
+index-D8UtExjO.js:358 WebSocket connection to 'wss://mok-sports-draft-mokfantasysport.replit.app/draft-ws' failed: WebSocket is closed before the connection is established.
+(anonymous) @ index-D8UtExjO.js:358Understand this warning
+index-D8UtExjO.js:358 [ProductionRealtime] WebSocket error: Event
+w.onerror @ index-D8UtExjO.js:358Understand this error
+index-D8UtExjO.js:358 [ProductionRealtime] 🔌 WebSocket closed: 1006 (No close frame (network issue)) - 
+index-D8UtExjO.js:358 [ProductionRealtime] 🔄 Reconnecting in 1000ms (attempt 1/8)
+index-D8UtExjO.js:358 [ProductionRealtime] 🚀 Auth confirmed, establishing WebSocket connection...
+index-D8UtExjO.js:358 [ProductionRealtime] User: Mok Sports ID: d8873675-274c-46f9-ab48-00955c81d875
+index-D8UtExjO.js:358 [ProductionRealtime] ✅ WebSocket connected successfully
+index-D8UtExjO.js:358 [ProductionRealtime] 📡 Subscribed to admin broadcasts with keepalive active
+index-D8UtExjO.js:358 [ProductionRealtime] Received broadcast: admin_ready
+index-D8UtExjO.js:358 [ProductionRealtime] Server confirmation received: admin_ready
+index-D8UtExjO.js:358 [ProductionRealtime] Received broadcast: connected
+index-D8UtExjO.js:358 [ProductionRealtime] Server confirmation received: connected
+index-D8UtExjO.js:358 [ProductionRealtime] 💓 Sending keepalive ping
+index-D8UtExjO.js:358 [ProductionRealtime] Received broadcast: pong
+index-D8UtExjO.js:358 [ProductionRealtime] 💚 Keepalive pong received - connection healthy
+index-D8UtExjO.js:358 [ProductionRealtime] 💓 Sending keepalive ping
+index-D8UtExjO.js:358 [ProductionRealtime] Received broadcast: pong
+index-D8UtExjO.js:358 [ProductionRealtime] 💚 Keepalive pong received - connection healthy
