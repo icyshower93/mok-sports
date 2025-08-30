@@ -1,11 +1,11 @@
 // Build version information for debugging and cache verification
-// Using compile-time constants injected by Vite
-declare const __BUILD_TIME__: string;
-declare const __BUILD_HASH__: string;
+// Using stable compile-time values since Vite defines aren't available
+const BUILD_TIMESTAMP = '2025-08-30T20:12:26.213Z';
+const BUILD_HASH = 'meyp7co5';
 
 export const BUILD_INFO = {
-  hash: typeof __BUILD_HASH__ !== 'undefined' ? __BUILD_HASH__ : Date.now().toString(36),
-  date: typeof __BUILD_TIME__ !== 'undefined' ? __BUILD_TIME__ : new Date().toISOString(),
+  hash: BUILD_HASH,
+  date: BUILD_TIMESTAMP,
   env: import.meta.env.MODE,
 };
 
