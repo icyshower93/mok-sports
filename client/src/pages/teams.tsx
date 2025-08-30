@@ -67,10 +67,34 @@ export default function StablePage() {
     }
   }, [selectedLeague]);
 
-  const { data: userTeams = [], isLoading: teamsLoading } = useQuery({
+  const { data: userTeams = [], isLoading: teamsLoading, error: teamsError } = useQuery({
     queryKey: [`/api/user/stable/${selectedLeague}`],
+    queryFn: async () => {
+      try {
+        return await apiRequest('GET', `/api/user/stable/${selectedLeague}`);
+      } catch (error: any) {
+        // Preserve status code for error handling
+        const enhancedError = new Error(error.message || 'Failed to fetch teams');
+        (enhancedError as any).status = error.status || 500;
+        throw enhancedError;
+      }
+    },
     enabled: !!user && !!selectedLeague,
   });
+  
+  // Auto-heal stale league IDs (user left league or league deleted)
+  useEffect(() => {
+    if (teamsError && (teamsError as any).status === 403 && Array.isArray(leagues) && leagues.length) {
+      console.log('[Teams] Detected stale league ID, switching to valid league');
+      // Clear bad localStorage and switch to a league the user actually belongs to
+      localStorage.removeItem('selectedLeague');
+      const leaguesList = leagues as any[];
+      const fallback = leaguesList[0]?.id;
+      if (fallback && fallback !== selectedLeague) {
+        setSelectedLeague(fallback);
+      }
+    }
+  }, [teamsError, leagues, selectedLeague]);
 
   // Fetch week lock status to check if locks are allowed
   const { data: weekLockStatus, isLoading: lockStatusLoading } = useQuery({
@@ -357,6 +381,26 @@ export default function StablePage() {
                 <div className="py-8 text-center text-muted-foreground">
                   <Shield className="w-8 h-8 mx-auto mb-2 text-muted-foreground/50" />
                   <div>Loading teams…</div>
+                </div>
+              ) : teamsError ? (
+                <div className="text-center py-8">
+                  <div className="w-12 h-12 mx-auto mb-3 bg-red-50 dark:bg-red-900/20 rounded-full flex items-center justify-center">
+                    <AlertTriangle className="w-6 h-6 text-red-500" />
+                  </div>
+                  <h3 className="text-base font-semibold mb-2 text-red-600 dark:text-red-400">League Access Error</h3>
+                  <p className="text-sm text-muted-foreground mb-4 max-w-sm mx-auto">
+                    You don't have access to this league. Please select a different league.
+                  </p>
+                  <Button 
+                    size="sm" 
+                    variant="outline"
+                    onClick={() => {
+                      localStorage.removeItem('selectedLeague');
+                      setSelectedLeague('');
+                    }}
+                  >
+                    Choose League
+                  </Button>
                 </div>
               ) : (userTeams as any[]).length === 0 ? (
                 <div className="text-center py-8">

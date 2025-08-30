@@ -1,0 +1,122 @@
+You’re looking at the wrong league (stale selectedLeague)
+
+In client/src/pages/teams.tsx, the page bootstraps selectedLeague from localStorage:
+
+const [selectedLeague, setSelectedLeague] = useState<string>(() =>
+  localStorage.getItem('selectedLeague') || localStorage.getItem('lastDraftLeagueId') || ''
+);
+
+
+If that ID is stale (e.g., you left that league or it was deleted), the fetch
+
+useQuery({ queryKey: [`/api/user/stable/${selectedLeague}`], enabled: !!user && !!selectedLeague })
+
+
+will 403 in server/routes.ts because of:
+
+const isMember = await storage.isUserInLeague(user.id, leagueId);
+if (!isMember) return res.status(403).json({ message: "Not authorized..." });
+
+
+React Query then gives you data = [], and your UI falls into the “No Teams Yet / Join a League” empty-state path. That’s why you see it even though the user does have teams (in a different league).
+
+The league finished a draft, but the stable table was never backfilled
+
+If a draft finished before the new “stable init on completion” code landed (or if the server crashed between completeDraft and the init), the stables rows for that league/user never got created. The Teams page will legitimately get an empty list.
+
+The happy path today: when the final pick completes, server/draft/snakeDraftManager.ts calls:
+
+await this.storage.completeDraft(draftId);
+await this.storage.initializeStableFromDraft(draftId);
+
+
+If that didn’t run for an older league, there is a manual backfill route:
+
+POST /api/stable/initialize  { draftId }
+
+
+(see server/routes.ts). That will insert any missing stables rows from the draft picks.
+
+How to fix (both sides)
+A) Frontend: heal stale league IDs & show the right message
+
+File: client/src/pages/teams.tsx
+
+Handle 403/404 and auto-switch to a valid league (or at least show a clear error rather than the “No Teams Yet” empty state).
+
+Add error handling to the useQuery:
+
+const { data: userTeams = [], isLoading: teamsLoading, error: teamsError } = useQuery({
+  queryKey: ["/api/user/stable", selectedLeague, user?.id],
+  queryFn: async () => {
+    const res = await apiRequest("GET", `/api/user/stable/${selectedLeague}`);
+    if (!res.ok) throw Object.assign(new Error("Failed to fetch teams"), { status: res.status });
+    return res.json();
+  },
+  enabled: !!user && !!selectedLeague,
+});
+
+
+Then, right after your leagues query loads, repair an invalid selectedLeague:
+
+useEffect(() => {
+  if (teamsError && (teamsError as any).status === 403 && Array.isArray(leagues) && leagues.length) {
+    // Clear bad localStorage and switch to a league the user actually belongs to
+    localStorage.removeItem("selectedLeague");
+    const leaguesList = leagues as any[];
+    const fallback = leaguesList[0]?.id;
+    if (fallback) setSelectedLeague(fallback);
+  }
+}, [teamsError, leagues]);
+
+
+Don’t show the empty-state when it’s actually an access error.
+Change the render condition from:
+
+{(!selectedLeague || teamsLoading) ? (...) : (userTeams as any[]).length === 0 ? (/* empty */) : (/* grid */)}
+
+
+to something like:
+
+{(!selectedLeague || teamsLoading) ? (
+  /* loading */
+) : teamsError ? (
+  <div className="text-center py-8">
+    <p className="text-sm text-muted-foreground">
+      You don’t have access to this league. Please select a different league.
+    </p>
+    <Button size="sm" onClick={() => setSelectedLeague("")}>Choose League</Button>
+  </div>
+) : (userTeams as any[]).length === 0 ? (
+  /* true empty (draft never initialized) */
+) : (
+  /* teams grid */
+)}
+
+
+(Optional, nice UX) If you store selectedLeague in localStorage, also store a checksum of the user’s league list or last-updated timestamp, and clear the stored value when the list changes. That prevents stale IDs from lingering.
+
+B) Backend: backfill stables for older drafts (one-time)
+
+If you suspect the league in question drafted before the fix, call:
+
+POST /api/stable/initialize
+Body: { "draftId": "<the completed draft id>" }
+
+
+This runs storage.initializeStableFromDraft(draftId), which inserts any missing (userId, leagueId, nflTeamId) rows into stables without duplicating existing ones.
+
+You can also add a light auto-heal inside /api/user/stable/:leagueId:
+
+// After you compute `stable`:
+if (stable.length === 0) {
+  const draft = await storage.getLeagueDraft(leagueId);
+  if (draft?.status === "completed") {
+    await storage.initializeStableFromDraft(draft.id);
+    // re-read stable
+    stable = await storage.getUserStable(user.id, leagueId);
+  }
+}
+
+
+That way, old leagues self-repair on first visit.

@@ -1012,7 +1012,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(403).json({ message: "Not authorized to view this league" });
       }
 
-      const stable = await storage.getUserStable(user.id, leagueId);
+      let stable = await storage.getUserStable(user.id, leagueId);
+      
+      // Auto-heal: if stable is empty but league has completed draft, backfill from draft
+      if (stable.length === 0) {
+        try {
+          const draft = await storage.getLeagueDraft(leagueId);
+          if (draft?.status === "completed") {
+            console.log(`[Auto-heal] Backfilling stable for user ${user.id} in league ${leagueId} from completed draft ${draft.id}`);
+            await storage.initializeStableFromDraft(draft.id);
+            // Re-read stable after backfill
+            stable = await storage.getUserStable(user.id, leagueId);
+            console.log(`[Auto-heal] Backfill complete, found ${stable.length} teams`);
+          }
+        } catch (healError) {
+          console.warn(`[Auto-heal] Failed to backfill stable for user ${user.id} in league ${leagueId}:`, healError);
+          // Continue with empty stable rather than crashing
+        }
+      }
       
       // Get current admin timer state to determine which week we're in
       const timerState = await storage.getTimerState();
