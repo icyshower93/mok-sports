@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
 import { usePersistentPushSubscription } from '@/hooks/use-persistent-push-subscription';
-import { useAuth } from '@/hooks/use-auth';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -8,10 +7,10 @@ import { Bell, BellOff, RefreshCw, AlertTriangle } from 'lucide-react';
 
 interface PersistentPushManagerProps {
   showManualControls?: boolean;
+  user?: any; // User object passed from parent
 }
 
-export function PersistentPushManager({ showManualControls = false }: PersistentPushManagerProps) {
-  const { user } = useAuth();
+export function PersistentPushManager({ showManualControls = false, user }: PersistentPushManagerProps) {
   const { state, requestPermissionAndSubscribe, unsubscribe, refreshSubscription } = usePersistentPushSubscription();
 
   const {

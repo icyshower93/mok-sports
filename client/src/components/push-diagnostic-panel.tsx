@@ -4,7 +4,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { AlertTriangle, CheckCircle2, XCircle, Wifi, WifiOff, Bug, Send } from 'lucide-react';
-import { useAuth } from '@/hooks/use-auth';
 import { Textarea } from '@/components/ui/textarea';
 
 interface DiagnosticResult {
@@ -61,8 +60,11 @@ interface TestResult {
   notification: any;
 }
 
-export function PushDiagnosticPanel() {
-  const { user } = useAuth();
+interface PushDiagnosticPanelProps {
+  user?: any; // User object passed from parent
+}
+
+export function PushDiagnosticPanel({ user }: PushDiagnosticPanelProps) {
   const [isRunning, setIsRunning] = useState(false);
   const [isTesting, setIsTesting] = useState(false);
   const [diagnostics, setDiagnostics] = useState<DiagnosticResult | null>(null);
