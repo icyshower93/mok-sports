@@ -8,7 +8,6 @@ import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/use-auth";
 import { useLocation } from "wouter";
 import { useState, useMemo } from "react";
-import { useProductionRealtime } from "@/hooks/use-production-realtime";
 import { 
   Trophy, 
   DollarSign, 
@@ -34,8 +33,7 @@ export default function LeaguePage() {
   const [location] = useLocation();
   const [expandedUsers, setExpandedUsers] = useState<Set<string>>(new Set());
   
-  // Enable production-optimized WebSocket broadcasts for scalability
-  useProductionRealtime();
+  // WebSocket connection managed at app level (App.tsx)
   
   // Get league ID from URL (assumes pattern /league?id=...)
   const searchParams = new URLSearchParams(location.split('?')[1] || '');
