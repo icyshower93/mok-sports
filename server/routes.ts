@@ -587,8 +587,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         id: league.id,
         name: league.name,
         joinCode: league.joinCode,
-        season: "2025",
-        week: 1, // This would come from admin state
+        season: String(seasonNum),
+        week: weekNum,
         totalWeeks: 18,
         memberCount: standings.length,
         weeklyPot: 30, // Skins prize per week

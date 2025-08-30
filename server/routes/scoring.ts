@@ -532,34 +532,36 @@ router.get("/leagues/:leagueId/week-scores/:season/:week", authenticateUser, aut
     const seasonNum = parseInt(season, 10);
     const weekNum = parseInt(week, 10);
 
-    // NEW: decide if we should recompute
-    let shouldRecompute = weeklyScores.length === 0;
+    // If the week has been finalized (skins awarded), don't recompute
+    const finalized = await db.execute(sql`
+      SELECT 1 FROM weekly_skins
+      WHERE league_id = ${leagueId}
+        AND season = ${seasonNum}
+        AND week = ${weekNum}
+      LIMIT 1
+    `);
+    
+    if (finalized.rowCount > 0) {
+      // Week is finalized - refresh from DB (no compute), then continue to build response
+      console.log('[Scoring] Week is finalized, using existing scores without recomputation');
+    } else {
+      // NEW: decide if we should recompute
+      let shouldRecompute = weeklyScores.length === 0;
 
-    if (!shouldRecompute) {
-      // If all totals are 0 but there are completed NFL games, recompute
-      const allZero = weeklyScores.every(s => Number(s.weeklyPoints) === 0);
-      if (allZero) {
-        const completedGames = await db.execute(sql`
-          SELECT 1 FROM nfl_games 
-          WHERE season = ${seasonNum} AND week = ${weekNum} AND is_completed = true
-          LIMIT 1
-        `);
-        shouldRecompute = completedGames.rowCount > 0;
+      if (!shouldRecompute) {
+        // If all totals are 0 but there are completed NFL games, recompute
+        const allZero = weeklyScores.every(s => Number(s.weeklyPoints) === 0);
+        if (allZero) {
+          const completedGames = await db.execute(sql`
+            SELECT 1 FROM nfl_games 
+            WHERE season = ${seasonNum} AND week = ${weekNum} AND is_completed = true
+            LIMIT 1
+          `);
+          shouldRecompute = completedGames.rowCount > 0;
+        }
       }
-    }
 
-    if (shouldRecompute) {
-      console.log('[Scoring] Checking if week is finalized before recomputing...');
-      
-      // Don't recompute finalized weeks to prevent data drift
-      const isFinalized = await db.execute(sql`
-        SELECT 1
-        FROM weekly_skins
-        WHERE league_id = ${leagueId} AND season = ${seasonNum} AND week = ${weekNum}
-        LIMIT 1
-      `);
-
-      if (isFinalized.rowCount === 0) {
+      if (shouldRecompute) {
         console.log('[Scoring] Recomputing weekly scores (empty table or all zeros with completed games)');
         const { calculateWeeklyScores } = await import("../utils/mokScoring.js");
         await calculateWeeklyScores(leagueId, weekNum, seasonNum);
@@ -581,8 +583,6 @@ router.get("/leagues/:leagueId/week-scores/:season/:week", authenticateUser, aut
         .orderBy(sql`${userWeeklyScores.totalPoints} DESC`);
         
         console.log(`[Scoring] Recomputed & persisted ${weeklyScores.length} weekly scores`);
-      } else {
-        console.log('[Scoring] Week is finalized, preserving existing weekly scores');
       }
     }
 

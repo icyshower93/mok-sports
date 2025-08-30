@@ -56,9 +56,14 @@ export default function LeaguePage() {
     enabled: !!user,
   });
   
+  // Get current week and season for proper cache keys
+  const currentWeek = (currentWeekData as any)?.week || 1;
+  const currentSeason = 2024;
+  
   // Get league standings data
   const { data: leagueData, isLoading } = useQuery({
-    queryKey: [`/api/leagues/${targetLeagueId}/standings`],
+    queryKey: [`/api/leagues/${targetLeagueId}/standings`, currentSeason, currentWeek],
+    queryFn: () => fetch(`/api/leagues/${targetLeagueId}/standings`).then(res => res.json()),
     enabled: !!user && !!targetLeagueId,
   });
 

@@ -1,0 +1,116 @@
+fixed the “read-only week-end results” piece, but three blockers remain:
+
+Back end — standings still uses a hard-coded week and recomputes finalized weeks
+
+File: server/routes.ts → GET /api/leagues/:leagueId/standings
+
+It still has const weekNum = 1 and season: "2025" in the response.
+
+It calls calculateWeeklyScores(...) unconditionally, even after the week has been finalized (skins awarded), which can cause drift.
+
+Patch
+
+Replace the “derive week + recompute” block with:
+
+// Derive current week from schedule (prefer completed, else scheduled)
+const seasonNum = 2024; // or pull from league/config if you support multi-season
+const [{ week: maxCompletedWeek } = { week: 0 }] = await db.execute(sql`
+  SELECT COALESCE(MAX(week), 0) AS week
+  FROM nfl_games
+  WHERE season = ${seasonNum} AND is_completed = true
+`);
+const [{ week: maxAnyWeek } = { week: 1 }] = await db.execute(sql`
+  SELECT COALESCE(MAX(week), 1) AS week
+  FROM nfl_games
+  WHERE season = ${seasonNum}
+`);
+const weekNum = Math.max(maxCompletedWeek, maxAnyWeek);
+
+// Only recompute if NOT finalized
+const isFinalized = await db.execute(sql`
+  SELECT 1 FROM weekly_skins
+  WHERE league_id = ${leagueId} AND season = ${seasonNum} AND week = ${weekNum}
+  LIMIT 1
+`);
+if (isFinalized.rowCount === 0) {
+  const { calculateWeeklyScores } = await import("./utils/mokScoring.js");
+  await calculateWeeklyScores(leagueId, weekNum, seasonNum);
+}
+
+
+And ensure your response uses these values:
+
+const leagueInfo = {
+  id: league.id,
+  name: league.name,
+  joinCode: league.joinCode,
+  season: String(seasonNum),
+  week: weekNum,
+  totalWeeks: 18,
+  memberCount: standings.length,
+  weeklyPot: 30,
+  seasonPot: 80
+};
+
+Back end — week-scores endpoint recomputes without “finalized” guard
+
+File: server/routes/scoring.ts → GET /api/scoring/leagues/:leagueId/week-scores/:season/:week
+You added the “all-zeros + completed game” recompute (great), but there’s no skip if finalized check. Add this before setting shouldRecompute:
+
+// If the week has been finalized (skins awarded), don't recompute
+const finalized = await db.execute(sql`
+  SELECT 1 FROM weekly_skins
+  WHERE league_id = ${leagueId}
+    AND season = ${seasonNum}
+    AND week = ${weekNum}
+  LIMIT 1
+`);
+if (finalized.rowCount > 0) {
+  // refresh from DB (no compute), then continue to build response
+} else {
+  // your existing shouldRecompute logic (zeros + completed games) and recompute branch
+}
+
+
+This keeps mid-week numbers fresh but treats a completed week as immutable.
+
+Front end — cache keys don’t include week/season (causes stale UI)
+
+Files:
+
+client/src/pages/league.tsx
+
+client/src/pages/main.tsx
+
+Both pages query standings with a cache key that lacks season/week, so navigating between weeks or crossing a week boundary can show stale high/low and winner highlights.
+
+Patch
+
+In both files, change:
+
+useQuery({
+  queryKey: [`/api/leagues/${targetLeagueId}/standings`],
+  ...
+})
+
+
+to:
+
+useQuery({
+  queryKey: [`/api/leagues/${targetLeagueId}/standings`, seasonNum, currentWeek],
+  ...
+})
+
+
+(Use your existing currentWeekData/season source in each file. In main.tsx you already have currentWeek; in league.tsx you’re fetching /api/admin/current-week—include that value.)
+
+Optionally, when your admin “end of week” action runs, also invalidate:
+
+queryClient.invalidateQueries({ queryKey: [`/api/leagues/${leagueId}/standings`, seasonNum, currentWeek] });
+queryClient.invalidateQueries({ queryKey: [`/api/scoring/leagues/${leagueId}/week-scores/${seasonNum}/${currentWeek}`] });
+
+What’s already good in your repo
+
+EndOfWeekProcessor.getWeekEndResults(...) is now read-only (no hidden award). ✅
+
+week-scores response already includes weekEndResults, and main.tsx uses weekComplete to suppress premature high/low and winner highlight mid-week. ✅
