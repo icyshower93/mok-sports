@@ -87,20 +87,32 @@ export function useProductionRealtime() {
           console.log('[ProductionRealtime] Received broadcast:', message.type);
           
           // Handle specific broadcast types efficiently
+          const invalidateScoring = () => {
+            queryClient.invalidateQueries({
+              predicate: (q) => {
+                const k = String(q.queryKey?.[0] ?? '');
+                return (
+                  k.startsWith('/api/scoring') ||
+                  k.includes('/week-scores') ||
+                  k.includes('/season-standings') ||
+                  k.startsWith('/api/leagues') ||
+                  k.startsWith('/api/admin/current-week')
+                );
+              }
+            });
+          };
+
           switch (message.type) {
             case 'admin_date_advanced':
             case 'weekly_bonuses_calculated':
             case 'score_update':
-              // Efficient selective query invalidation for production
-              queryClient.invalidateQueries({ queryKey: ['/api/leagues'] });
-              queryClient.invalidateQueries({ queryKey: ['/api/scoring'] });
-              queryClient.invalidateQueries({ queryKey: ['/api/admin/current-week'] });
+            case 'week_closed':
+            case 'skins_updated':
+              invalidateScoring();
               break;
             case 'admin_season_reset':
               // Comprehensive cache invalidation for season reset including team lock data
-              queryClient.invalidateQueries({ queryKey: ['/api/leagues'] });
-              queryClient.invalidateQueries({ queryKey: ['/api/scoring'] });
-              queryClient.invalidateQueries({ queryKey: ['/api/admin/current-week'] });
+              invalidateScoring();
               queryClient.invalidateQueries({ predicate: (query) => {
                 const queryKey = query.queryKey?.[0] as string;
                 return queryKey?.includes('/api/user/stable/') || queryKey?.includes('/api/user/locks/');

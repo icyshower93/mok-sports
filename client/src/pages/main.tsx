@@ -107,6 +107,15 @@ export default function MainPage() {
   
   // Enable production-optimized WebSocket broadcasts for scalability
   useProductionRealtime();
+  
+  // Extract current week and season data
+  const currentWeek = (weekData as any)?.week || 1;
+  const currentSeason = (weekData as any)?.season || 2024;
+  
+  // Reset week-scoped UI on week flip
+  useEffect(() => {
+    setShowAllWeeklyRankings(false);
+  }, [currentWeek, selectedLeague]);
 
   // Fetch user's leagues
   const { data: leagues = [], isLoading: leaguesLoading } = useQuery({
@@ -120,8 +129,6 @@ export default function MainPage() {
     enabled: !!user,
   });
 
-  // Use current week or fallback to week 1
-  const currentWeek = (currentWeekData as any)?.currentWeek || 1;
 
   // Set first league as default selection
   useEffect(() => {
@@ -146,7 +153,7 @@ export default function MainPage() {
 
   // Fetch skins data to identify winners
   const { data: skinsData } = useQuery({
-    queryKey: [`/api/scoring/skins/${selectedLeague}/2024`],
+    queryKey: [`/api/scoring/skins/${selectedLeague}/2024`, currentWeek],
     enabled: !!selectedLeague,
   });
 
@@ -368,20 +375,15 @@ export default function MainPage() {
               <div className="flex space-x-3 pb-4 min-w-max">
                 {Array.isArray(displayWeeklyRankings) && displayWeeklyRankings.length > 0 ? (
                   displayWeeklyRankings.map((member: any, index: number) => {
-                    // FIXED: Only show winner styling if there's actually a skins winner AND it's this member
-                    // Don't show winner styling when everyone has 0 points or when there are no skins records
-                    const isSkinsWinner = weeklySkinsWinnerId && member.userId === weeklySkinsWinnerId;
-                    
-                    // Additional check: Don't show winner styling if everyone has 0 points (reset state)
-                    const hasActualPoints = displayWeeklyRankings.some((m: any) => (m.weeklyPoints || 0) > 0);
-                    const shouldShowWinner = isSkinsWinner && hasActualPoints;
+                    // If there is an explicit weekly_skins winner for the current week, trust it
+                    const isSkinsWinner = !!weeklySkinsWinnerId && member.userId === weeklySkinsWinnerId;
+                    const shouldShowWinner = isSkinsWinner; // don't gate on hasActualPoints
 
                     // DEBUG: Log matching logic for each member
                     console.log(`🎯 Member matching debug for ${member.name}:`, {
                       memberUserId: member.userId,
                       weeklySkinsWinnerId,
                       isSkinsWinner,
-                      hasActualPoints,
                       shouldShowWinner,
                       memberPoints: member.weeklyPoints
                     });

@@ -73,25 +73,20 @@ export default function LeaguePage() {
     enabled: !!user && !!targetLeagueId,
   });
 
-  // Process skins data to calculate skins won per user - MOVED BEFORE EARLY RETURNS
+  // Process skins data to calculate skins won per user (by ID, not by name)
   const userSkinsWon = useMemo(() => {
     try {
-      if (!skinsData || !(skinsData as any)?.skins || !Array.isArray((skinsData as any)?.skins)) {
-        console.log('[League] No skins data available, returning empty object');
-        return {};
+      const list = (skinsData as any)?.skins;
+      if (!Array.isArray(list)) return {};
+
+      const countsById: Record<string, number> = {};
+      for (const skin of list) {
+        const winnerId = skin?.winnerId;
+        if (winnerId) countsById[winnerId] = (countsById[winnerId] || 0) + 1;
       }
-      
-      const skinsCount: Record<string, number> = {};
-      (skinsData as any).skins.forEach((skin: any) => {
-        if (skin && skin.winnerName) {
-          skinsCount[skin.winnerName] = (skinsCount[skin.winnerName] || 0) + 1;
-        }
-      });
-      
-      console.log('[League] Skins won by user:', skinsCount);
-      return skinsCount;
-    } catch (error) {
-      console.error('[League] Error processing skins data:', error);
+      return countsById;
+    } catch (e) {
+      console.error('[League] Error processing skins data:', e);
       return {};
     }
   }, [skinsData]);
@@ -226,7 +221,7 @@ export default function LeaguePage() {
                           {/* Skins Won */}
                           <div className="text-center min-w-[36px]">
                             <div className="text-xs text-muted-foreground font-medium">SKINS</div>
-                            <div className="text-sm font-bold text-foreground">{userSkinsWon[member.name] || 0}</div>
+                            <div className="text-sm font-bold text-foreground">{userSkinsWon[member.userId] || 0}</div>
                           </div>
                         </div>
                         

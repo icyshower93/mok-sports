@@ -1,0 +1,189 @@
+1) Season standings never show “Skins Won”
+
+Root cause: on the League page you tally skins by winnerName, but some API rows don’t have a name yet (or names can drift). You should count by winnerId and then map that to members by userId.
+
+Patch — client/src/pages/league.tsx
+
+Replace the userSkinsWon memo with this version (count by winnerId and render by member.userId):
+
+// Process skins data to calculate skins won per user (by ID, not by name)
+const userSkinsWon = useMemo(() => {
+  try {
+    const list = (skinsData as any)?.skins;
+    if (!Array.isArray(list)) return {};
+
+    const countsById: Record<string, number> = {};
+    for (const skin of list) {
+      const winnerId = skin?.winnerId;
+      if (winnerId) countsById[winnerId] = (countsById[winnerId] || 0) + 1;
+    }
+    return countsById;
+  } catch (e) {
+    console.error('[League] Error processing skins data:', e);
+    return {};
+  }
+}, [skinsData]);
+
+
+…and when you render each member row, change wherever you show “Skins Won” to read:
+
+const skinsWonForMember = userSkinsWon[member.userId] ?? 0;
+
+
+Why this fixes it: the /api/scoring/skins/:leagueId/:season route always includes winnerId, so counting by ID is robust even if winnerName is null or ever changes.
+
+2) Home → “Weekly Skins Game” never highlights a winner & doesn’t reset for Week 2
+
+Root causes:
+
+The “winner” badge relies on weeklySkinsWinnerId but you only highlight if this week’s rankings also show >0 points (“hasActualPoints”), which blocks highlighting when the weekly_skins row exists.
+
+The card never “resets” because you only do an optimistic reset when there’s no skins row and the week isn’t complete; when the week flips, some local state sticks around.
+
+Patch A — make winner highlighting depend on the weekly_skins record
+
+In client/src/pages/main.tsx, look for this block in “Weekly Skins Game” list:
+
+// existing
+const isSkinsWinner = weeklySkinsWinnerId && member.userId === weeklySkinsWinnerId;
+const shouldShowWinner = isSkinsWinner && hasActualPoints;
+
+
+Change it to:
+
+// If there is an explicit weekly_skins winner for the current week, trust it
+const isSkinsWinner = !!weeklySkinsWinnerId && member.userId === weeklySkinsWinnerId;
+const shouldShowWinner = isSkinsWinner; // don't gate on hasActualPoints
+
+Patch B — force a visual reset when the NFL week changes
+
+Still in main.tsx, add currentWeek to your weekly query keys (you already do for week-scores; do the same for skins), and flush any week-scoped UI state when the week changes:
+
+const { data: skinsData } = useQuery({
+  queryKey: [`/api/scoring/skins/${selectedLeague}/2024`, currentWeek],
+  enabled: !!selectedLeague,
+});
+
+// Reset week-scoped UI on week flip
+useEffect(() => {
+  setShowAllWeeklyRankings(false);
+}, [currentWeek, selectedLeague]);
+
+
+Why this fixes it: highlighting now keys directly off the authoritative weekly_skins row; and when the week advances, the card visually clears to zeros again instead of carrying week-1 state.
+
+3) “Week 1 rankings coming soon” after the week ends
+
+Root cause: if the week ends before you’ve persisted final weekly scores/skins, your dashboard shows “coming soon” even though all games are complete.
+
+Make the server opportunistic: when the client asks for the dashboard (or week scores) and the week is complete, backfill the weekly_skins row on-demand if it doesn’t exist yet.
+
+Patch — server/routes/scoring.ts
+
+Right after you compute weekly completion and before sending the dashboard (search for the section that prepares weekEndResults), insert:
+
+// Ensure weekly_skins exists when the week is complete
+if (weekComplete) {
+  const existing = await db.select().from(weeklySkins)
+    .where(and(
+      eq(weeklySkins.leagueId, leagueId),
+      eq(weeklySkins.season, seasonNum),
+      eq(weeklySkins.week, weekNum)
+    ));
+
+  if (existing.length === 0) {
+    // compute winner (highest totalPoints for the week; tie => isTied + rollover)
+    const rows = await db.select({
+      userId: userWeeklyScores.userId,
+      totalPoints: userWeeklyScores.totalPoints
+    })
+    .from(userWeeklyScores)
+    .where(and(
+      eq(userWeeklyScores.leagueId, leagueId),
+      eq(userWeeklyScores.season, seasonNum),
+      eq(userWeeklyScores.week, weekNum)
+    ));
+
+    if (rows.length > 0) {
+      const max = Math.max(...rows.map(r => r.totalPoints ?? 0));
+      const leaders = rows.filter(r => (r.totalPoints ?? 0) === max);
+      const isTied = leaders.length !== 1;
+      const winnerId = isTied ? null : leaders[0].userId;
+
+      // Calculate rollover pot = 1 + count of consecutive previous rollovers
+      const prev = await db.select().from(weeklySkins)
+        .where(and(
+          eq(weeklySkins.leagueId, leagueId),
+          eq(weeklySkins.season, seasonNum)
+        ))
+        .orderBy(desc(weeklySkins.week));
+
+      const priorPrize = prev.length > 0 ? (prev[0].prizeAmount ?? 1) : 1;
+      const prizeAmount = isTied ? priorPrize + 1 : priorPrize;
+
+      await db.insert(weeklySkins).values({
+        leagueId,
+        season: seasonNum,
+        week: weekNum,
+        winnerId,
+        winningScore: isTied ? null : max,
+        prizeAmount,
+        isTied,
+        isRollover: isTied,
+        awardedAt: new Date(),
+      }).onConflictDoNothing();
+
+      // Broadcast so clients refresh immediately
+      req.app.get('wss')?.broadcast?.({ type: 'skins_updated', leagueId, season: seasonNum, week: weekNum });
+    }
+  }
+}
+
+
+Why this fixes it: even if the background end-of-week job hasn’t run yet, the first dashboard/week request after all games finish will materialize the skins row so the UI stops saying “coming soon”.
+
+4) Season standings don’t auto-refresh (you have to hard-refresh)
+
+Root cause: your WebSocket hook only invalidates exact keys like ['/api/scoring'], but most of your queries use longer keys (e.g. ['/api/scoring/skins/…', currentWeek]). Those won’t be invalidated.
+
+Patch — client/src/hooks/use-production-realtime.ts
+
+Inside the onmessage switch, replace the three specific invalidations with a predicate that invalidates all scoring- and league-related queries:
+
+const invalidateScoring = () => {
+  queryClient.invalidateQueries({
+    predicate: (q) => {
+      const k = String(q.queryKey?.[0] ?? '');
+      return (
+        k.startsWith('/api/scoring') ||
+        k.includes('/week-scores') ||
+        k.includes('/season-standings') ||
+        k.startsWith('/api/leagues') ||
+        k.startsWith('/api/admin/current-week')
+      );
+    }
+  });
+};
+
+switch (message.type) {
+  case 'admin_date_advanced':
+  case 'weekly_bonuses_calculated':
+  case 'score_update':
+  case 'week_closed':
+  case 'skins_updated':
+    invalidateScoring();
+    break;
+  ...
+}
+
+
+Why this fixes it: any scoreboard/skins/standings query (no matter how specific the key) will refetch the moment the server broadcasts a scoring/skins event.
+
+Optional but recommended (server): broadcast week_closed
+
+When your end-of-week job (or the opportunistic backfill above) finalizes a week, also broadcast:
+
+req.app.get('wss')?.broadcast?.({ type: 'week_closed', leagueId, season: seasonNum, week: weekNum });
+
+
+This pairs nicely with the client’s broader invalidation to keep everything live.

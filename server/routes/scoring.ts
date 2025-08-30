@@ -3,7 +3,7 @@ import express from "express";
 import { z } from "zod";
 import { storage } from "../storage.js";
 import { db } from "../db";
-import { eq, and, sql, asc } from "drizzle-orm";
+import { eq, and, sql, asc, desc } from "drizzle-orm";
 import { nflGames, nflTeams, weeklyLocks, userWeeklyScores, draftPicks, drafts, leagues, users, weeklySkins } from "@shared/schema";
 import {
   calculateWeeklyScores,
@@ -599,6 +599,63 @@ router.get("/leagues/:leagueId/week-scores/:season/:week", authenticateUser, aut
     }
     
     const weekEndResults = await endOfWeekProcessor.getWeekEndResults(parseInt(season), parseInt(week), leagueId, currentSimulatedDate);
+
+    // Ensure weekly_skins exists when the week is complete
+    if (weekEndResults?.weekComplete) {
+      const existing = await db.select().from(weeklySkins)
+        .where(and(
+          eq(weeklySkins.leagueId, leagueId),
+          eq(weeklySkins.season, seasonNum),
+          eq(weeklySkins.week, weekNum)
+        ));
+
+      if (existing.length === 0) {
+        // compute winner (highest totalPoints for the week; tie => isTied + rollover)
+        const rows = await db.select({
+          userId: userWeeklyScores.userId,
+          totalPoints: userWeeklyScores.totalPoints
+        })
+        .from(userWeeklyScores)
+        .where(and(
+          eq(userWeeklyScores.leagueId, leagueId),
+          eq(userWeeklyScores.season, seasonNum),
+          eq(userWeeklyScores.week, weekNum)
+        ));
+
+        if (rows.length > 0) {
+          const max = Math.max(...rows.map(r => r.totalPoints ?? 0));
+          const leaders = rows.filter(r => (r.totalPoints ?? 0) === max);
+          const isTied = leaders.length !== 1;
+          const winnerId = isTied ? null : leaders[0].userId;
+
+          // Calculate rollover pot = 1 + count of consecutive previous rollovers
+          const prev = await db.select().from(weeklySkins)
+            .where(and(
+              eq(weeklySkins.leagueId, leagueId),
+              eq(weeklySkins.season, seasonNum)
+            ))
+            .orderBy(desc(weeklySkins.week));
+
+          const priorPrize = prev.length > 0 ? (prev[0].prizeAmount ?? 1) : 1;
+          const prizeAmount = isTied ? priorPrize + 1 : priorPrize;
+
+          await db.insert(weeklySkins).values({
+            leagueId,
+            season: seasonNum,
+            week: weekNum,
+            winnerId,
+            winningScore: isTied ? null : max,
+            prizeAmount,
+            isTied,
+            isRollover: isTied,
+            awardedAt: new Date(),
+          }).onConflictDoNothing();
+
+          // Broadcast so clients refresh immediately
+          req.app.get('wss')?.broadcast?.({ type: 'skins_updated', leagueId, season: seasonNum, week: weekNum });
+        }
+      }
+    }
 
     // If no weekly scores exist yet, get league members and show them with 0 points
     if (weeklyScores.length === 0) {
