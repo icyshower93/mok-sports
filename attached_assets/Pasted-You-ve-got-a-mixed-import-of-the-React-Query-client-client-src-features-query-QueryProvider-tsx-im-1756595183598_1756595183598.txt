@@ -1,0 +1,79 @@
+You’ve got a mixed import of the React Query client:
+
+client/src/features/query/QueryProvider.tsx imports relative: ./queryClient
+
+client/src/pages/dashboard.tsx imports alias: @/features/query/queryClient
+
+I confirmed it in your repo (see the table I generated showing both importers). This loads two copies of the same module, which can cause the TDZ crash: ReferenceError: Cannot access 'c' before initialization.
+
+Also, your queryClient.ts still doesn’t have the singleton guard, so any accidental duplication will keep being dangerous.
+
+Fix it (precisely)
+1) Normalize the import path
+
+Edit client/src/features/query/QueryProvider.tsx:
+
+Change:
+
+import { queryClient } from "./queryClient";
+
+
+to:
+
+import { queryClient } from "@/features/query/queryClient";
+
+2) Make the QueryClient a guaranteed singleton
+
+Edit client/src/features/query/queryClient.ts:
+
+Right after the imports, add:
+
+const g = globalThis as any;
+
+
+Then replace your current export const queryClient = new QueryClient({ ... }) with:
+
+export const queryClient: QueryClient =
+  g.__MOK_QUERY_CLIENT__ ?? (g.__MOK_QUERY_CLIENT__ = new QueryClient({
+    // keep your existing options here unchanged
+  }));
+
+
+(Keep your current options object intact; just wrap the new QueryClient({...}) in the guard.)
+
+3) Quick verification
+
+Search for any stray relative imports of the same module:
+
+grep -n "from './queryClient'" client/src -R
+
+grep -n "@/features/query/queryClient" client/src -R
+
+You should see only the alias version used everywhere.
+
+Rebuild:
+
+node scripts/inject-build-env.mjs && npm run build
+
+Optional guardrails (to prevent regressions)
+
+Add an ESLint config at repo root (.eslintrc.js):
+
+module.exports = {
+  extends: ['react-app', 'plugin:import/recommended', 'plugin:import/typescript'],
+  rules: {
+    'import/no-relative-parent-imports': 'error',
+    'import/no-useless-path-segments': ['warn', { noUselessIndex: true }],
+    // Disallow the relative queryClient import specifically
+    'no-restricted-imports': ['error', { patterns: ['./queryClient'] }],
+  },
+  settings: {
+    'import/resolver': { typescript: {} },
+  },
+};
+
+Why your log looks like this
+
+The PWA banner line is cosmetic.
+
+The WS “closed 1006 → reconnect → connected” sequence is likely a side-effect of the crash interrupting the first attempt. Once the app recovers, it connects fine (as your log shows).
