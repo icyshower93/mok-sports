@@ -1,0 +1,142 @@
+What’s causing the jank
+
+You recreate the interval every time serverTime changes
+Your countdown effect is:
+
+useEffect(() => {
+  if (!isCountingDown) return;
+  const interval = setInterval(() => {
+    const timeSinceLastUpdate = (Date.now() - lastServerUpdate) / 1000;
+    const estimatedTime = Math.max(0, serverTime - timeSinceLastUpdate);
+    setLocalTime(estimatedTime);
+  }, 100);
+  return () => clearInterval(interval);
+}, [isCountingDown, serverTime, lastServerUpdate]);
+
+
+Because serverTime (and lastServerUpdate) change on each WS tick, the effect tears down and re-creates the interval constantly. That “resets the metronome” many times a second and you get visible micro-stutters and drift.
+
+Date.now() + setInterval ≠ smooth
+
+setInterval is clamped (especially when the tab is backgrounded or the main thread is busy).
+
+Date.now() isn’t monotonic: it can jump if the system clock adjusts.
+Both lead to step-y, inconsistent decrements.
+
+Timer hits zero → you stop counting, then you wait for the next server update
+When estimatedTime <= 0 you set isCountingDown(false) and set localTime(0). If the server’s next “fresh timer” arrives a moment later, the UI freezes briefly at 0 before jumping to ~60/120, which feels wrong.
+
+Occasional “snap-backs” on new server ticks
+You reset localTime = newServerTime on every WS update. If your local estimate is 14.2 but the server sends 15 (integer seconds + latency variance), the display jumps backward. That looks like a glitch.
+
+Quick, targeted fixes
+A) Use one stable animation loop (RAF) with refs, not an interval that restarts
+
+Store the last server update’s payload in refs (serverTimeAtUpdateRef, clientTsAtUpdateRef).
+
+Use performance.now() for a monotonic clock.
+
+Run a single requestAnimationFrame loop while counting down.
+
+// at top of component
+const serverTimeAtUpdateRef = useRef(0);      // seconds remaining at last server tick
+const clientTsAtUpdateRef = useRef(0);        // performance.now() at last server tick
+const rafRef = useRef<number | null>(null);
+
+// when a new server time arrives:
+useEffect(() => {
+  const newServerTime = lastMessage?.type === 'timer_update'
+    ? lastMessage.data?.timeRemaining
+    : draftData?.state?.timeRemaining;
+
+  if (newServerTime == null) return;
+
+  // Update refs immediately (no re-renders needed)
+  serverTimeAtUpdateRef.value = newServerTime;
+  clientTsAtUpdateRef.value  = performance.now();
+
+  // For display state, set once so UI snaps to the new second
+  setServerTime(newServerTime);
+  setLocalTime(newServerTime);
+  setIsCountingDown(newServerTime > 0 && draftData?.state?.draft?.status === 'active');
+}, [lastMessage, draftData]);
+
+// single RAF loop
+useEffect(() => {
+  if (!isCountingDown) {
+    if (rafRef.current != null) cancelAnimationFrame(rafRef.current);
+    rafRef.current = null;
+    return;
+  }
+
+  const tick = () => {
+    const elapsed = (performance.now() - clientTsAtUpdateRef.value) / 1000;
+    // Non-increasing, no snap-backs
+    const raw = serverTimeAtUpdateRef.value - elapsed;
+    const est = raw > 0 ? raw : 0;
+
+    setLocalTime(prev => est > prev ? prev : est); // clamp to avoid jumping up
+    rafRef.current = requestAnimationFrame(tick);
+  };
+
+  rafRef.current = requestAnimationFrame(tick);
+  return () => {
+    if (rafRef.current != null) cancelAnimationFrame(rafRef.current);
+    rafRef.current = null;
+  };
+}, [isCountingDown]);
+
+B) Don’t stop the loop at 0 until you’ve confirmed the turn advanced
+
+Replace your current “hit zero → stop” with a short grace period where you keep showing 0 while waiting for state to flip, so there’s no freeze:
+
+const [zeroSince, setZeroSince] = useState<number | null>(null);
+
+useEffect(() => {
+  if (localTime > 0) {
+    if (zeroSince !== null) setZeroSince(null);
+    return;
+  }
+  if (zeroSince === null) setZeroSince(performance.now());
+  // If we’ve shown 0 for > 1.5s and draft state didn’t advance, keep counting disabled
+  // otherwise let the next server tick flip us.
+}, [localTime, zeroSince]);
+
+
+And only setIsCountingDown(false) if both:
+
+localTime === 0 and
+
+the server says draft status is not your turn anymore (or pick advanced).
+
+C) Make incoming ticks monotonic non-increasing on the UI
+
+Avoid snap-backs when a server tick comes in slightly larger than your local estimate:
+
+// when a new server time arrives (same effect as A):
+const newUiTime = Math.min(newServerTime, localTime);
+setLocalTime(newUiTime);
+serverTimeAtUpdateRef.value = newUiTime;
+clientTsAtUpdateRef.value = performance.now();
+
+D) Handle tab visibility + background clamps
+
+When document.hidden, browsers throttle timers. Pause the RAF (to save CPU) but recompute correctly on resume:
+
+useEffect(() => {
+  const onVis = () => {
+    // On resume, just reset the clientTs so drift is corrected immediately
+    clientTsAtUpdateRef.value = performance.now();
+  };
+  document.addEventListener('visibilitychange', onVis);
+  return () => document.removeEventListener('visibilitychange', onVis);
+}, []);
+
+E) (Optional) Smooth to integer if you only show whole seconds
+
+If your UI displays “76s”, update the label once per animation frame but round down:
+
+const displayTime = Math.floor(localTime + 1e-6); // avoid 59.999 → 59 flicker
+
+
+This removes the tiny “59.9 → 60 → 59” oscillation that can happen with float rounding.
