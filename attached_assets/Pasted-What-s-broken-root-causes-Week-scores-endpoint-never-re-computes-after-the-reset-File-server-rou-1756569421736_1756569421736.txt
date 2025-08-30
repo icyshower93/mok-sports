@@ -1,0 +1,159 @@
+What’s broken (root causes)
+Week scores endpoint never re-computes after the reset
+
+File: server/routes/scoring.ts (endpoint: GET /api/scoring/leagues/:leagueId/week-scores/:season/:week)
+Bug: It only calls calculateWeeklyScores(...) when weeklyScores.length === 0. But your “start new week” flow pre-creates user_weekly_scores rows set to 0 for the new week. That means the endpoint “sees rows” and skips recompute, so everyone shows 0 all week, until something else forces a recompute at the very end.
+
+Fix (minimal + safe): Recompute when rows exist but are all zeros and there are completed games — or just always recompute.
+Suggested patch (inside that endpoint, after you fetch weeklyScores):
+
+// existing query...
+const weeklyScores = await db.select({ /* ... */ }).from(userWeeklyScores) /* ... */;
+
+const seasonNum = parseInt(season, 10);
+const weekNum = parseInt(week, 10);
+
+// NEW: decide if we should recompute
+let shouldRecompute = weeklyScores.length === 0;
+
+if (!shouldRecompute) {
+  // If all totals are 0 but there are completed NFL games, recompute
+  const allZero = weeklyScores.every(s => Number(s.totalPoints) === 0);
+  if (allZero) {
+    const completedGames = await db.execute(sql`
+      SELECT 1 FROM nfl_games 
+      WHERE season = ${seasonNum} AND week = ${weekNum} AND is_completed = true
+      LIMIT 1
+    `);
+    shouldRecompute = completedGames.rowCount > 0;
+  }
+}
+
+if (shouldRecompute) {
+  await calculateWeeklyScores(leagueId, weekNum, seasonNum);
+  // refresh
+  weeklyScores = await db.select({ /* ...same as above... */ }).from(userWeeklyScores) /* ... */;
+}
+
+
+If you want the simplest option: always call await calculateWeeklyScores(...) before returning this endpoint. It’s idempotent and easiest to reason about.
+
+League “standings” API never triggers weekly recomputation
+
+File: server/routes.ts (endpoint: GET /api/leagues/:leagueId/standings)
+Bug: The Home tab uses this endpoint to display “Weekly Skins Game” members. This handler reads user_weekly_scores but doesn’t call calculateWeeklyScores(...), so it inherits the “all zeros” state from bug #1 unless the user has hit the week-scores endpoint first.
+
+Fix: Before you aggregate/return standings, run:
+
+// at top of /standings handler after you have leagueId and weekNum
+const { calculateWeeklyScores } = await import("./utils/mokScoring.js");
+await calculateWeeklyScores(leagueId, weekNum, 2024);
+
+
+Then proceed to read userWeeklyScores. That ensures the “Weekly Skins Game” list shows live numbers during the week instead of zeros.
+
+Read-only “weekEndResults” accidentally mutates and timing is brittle
+
+File: server/utils/endOfWeekProcessor.ts
+Bug A: getWeekEndResults(...) calls processEndOfWeek(...), which writes (awards skins / resets) from a supposedly read-only call. Depending on the order your UI hits endpoints, skins can be awarded only when a specific screen loads — or not at all — and winner highlighting becomes unreliable.
+Bug B (side-effect of #1/#2): Even when a winner exists, the Home card suppresses the highlight if weeklyPoints is still zero (because the recompute never happened earlier).
+
+Fix A (make it truly read-only): Refactor getWeekEndResults(...) to not call processEndOfWeek. It should:
+
+Check isWeekComplete(...).
+
+Compute highScoreTeams/lowScoreTeams read-only.
+
+Read skins winner from weekly_skins if one already exists for (leagueId, season, week); do not insert/award here.
+
+Sketch:
+
+async getWeekEndResults(season: number, week: number, leagueId: string, currentSimulatedDate?: Date) {
+  const weekComplete = await this.isWeekComplete(season, week, currentSimulatedDate);
+  if (!weekComplete) return { weekComplete: false };
+
+  const teamScores = await this.calculateTeamScores(/* week games */);
+  const { highScoreTeams, lowScoreTeams } = this.findHighLowScoreTeams(teamScores);
+
+  const record = await db.select().from(weeklySkins).where(and(
+    eq(weeklySkins.leagueId, leagueId),
+    eq(weeklySkins.season, season),
+    eq(weeklySkins.week, week)
+  )).limit(1);
+
+  return {
+    weekComplete: true,
+    highScoreTeams,
+    lowScoreTeams,
+    weeklySkinsWinner: record[0]?.winnerId ? {
+      winnerId: record[0].winnerId,
+      winnerName: /* join to users to get name if you need it */,
+      totalWeeklyPoints: record[0].winningScore,
+      prizeAmount: record[0].prizeAmount,
+      isTied: record[0].isTied
+    } : undefined,
+    skinsRollover: record[0]?.isRollover ? {
+      reason: 'tied / rollover',
+      nextWeekPrize: (record[0].prizeAmount ?? 1) + 1
+    } : undefined
+  };
+}
+
+
+Fix B (where award actually happens): Keep actual awarding in one place (already good in admin.ts: endOfWeekProcessor.processEndOfWeek(season, week, league.id) when the week completes). That makes awarding deterministic and UI can safely read from /api/scoring/skins/:league/:season.
+
+Why the highlight didn’t show
+
+The Home card only adds the winner badge if two conditions are met:
+
+weeklySkinsWinnerId matches that user, and
+
+hasActualPoints (your code checks weekly points > 0).
+
+Because bug #1/#2 left everyone at 0, the badge was suppressed even if a winner existed. Once you make the recompute reliable, the highlight logic you already have will work (and it correctly stays off in tie/rollover weeks).
+
+One-liners you can paste (quick edits)
+
+Always recompute week scores in week-scores endpoint
+server/routes/scoring.ts inside the week-scores handler:
+
+const seasonNum = parseInt(season, 10);
+const weekNum = parseInt(week, 10);
+await calculateWeeklyScores(leagueId, weekNum, seasonNum); // <— add this unconditionally before reading
+
+
+Also recompute in standings endpoint
+server/routes.ts inside GET /api/leagues/:leagueId/standings:
+
+const weekNum = /* however you derive current week here */;
+const { calculateWeeklyScores } = await import("./utils/mokScoring.js");
+await calculateWeeklyScores(leagueId, weekNum, 2024);
+
+
+Make getWeekEndResults read-only
+server/utils/endOfWeekProcessor.ts: replace the current body so it does not call processEndOfWeek; only read and summarize as shown above.
+
+(If you prefer incremental change: at minimum, change the last line of getWeekEndResults from return this.processEndOfWeek(...) to simply return the computed read-only structure.)
+
+Sanity checks after changes
+
+Start a week, ensure user_weekly_scores rows get created at 0.
+
+After any game is flagged is_completed = true, hitting either:
+
+/api/scoring/leagues/:leagueId/week-scores/:season/:week, or
+
+/api/leagues/:leagueId/standings
+should show non-zero week totals for users with winning/bonus outcomes.
+
+When the last game of the week completes, the admin progression path calls processEndOfWeek(...) once.
+
+Verify a row in weekly_skins for that (leagueId, season, week) with winner_id or is_tied + is_rollover.
+
+Home tab should show the crown + dollar badge on the winner; in tie/rollover weeks no winner badge (correct).
+
+(Optional) Defensive improvements
+
+In scoring.ts week-scores endpoint, include max_updated_at of user_weekly_scores and the most recent completed nfl_games.game_date. If max_updated_at < last_completed_game_date, recompute again. That keeps things fresh without always recomputing.
+
+Add a unique index you already have on weekly_skins (league_id, season, week) — good! Keep onConflictDoNothing where appropriate to prevent dupes.

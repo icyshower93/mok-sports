@@ -429,6 +429,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "League not found" });
       }
 
+      // Ensure weekly scores are computed before reading standings
+      const weekNum = 1; // TODO: derive current week properly
+      const { calculateWeeklyScores } = await import("./utils/mokScoring.js");
+      await calculateWeeklyScores(leagueId, weekNum, 2024);
+
       // Get all league members
       const members = await storage.getLeagueMembers(leagueId);
       

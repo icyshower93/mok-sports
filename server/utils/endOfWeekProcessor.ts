@@ -495,16 +495,40 @@ export class EndOfWeekProcessor {
     console.log(`[EndOfWeek] ✅ Weekly skins reset completed for week ${newWeek} - all users start at 0 points`);
   }
 
-  // Get end-of-week results for display purposes
+  // Get end-of-week results for display purposes (read-only)
   async getWeekEndResults(season: number, week: number, leagueId: string, currentSimulatedDate?: Date): Promise<WeekEndResults | null> {
     const weekComplete = await this.isWeekComplete(season, week, currentSimulatedDate);
     if (!weekComplete) {
-      return null;
+      return { weekComplete: false };
     }
 
-    // This would return the same data as processEndOfWeek but without making changes
-    // Implementation would be similar but read-only
-    return this.processEndOfWeek(season, week, leagueId, currentSimulatedDate);
+    // Read-only computation of team scores
+    const teamScores = await this.calculateTeamScores(season, week, leagueId, currentSimulatedDate);
+    const { highScoreTeams, lowScoreTeams } = this.findHighLowScoreTeams(teamScores);
+
+    // Read existing skins winner (if any) without creating/awarding
+    const record = await db.select().from(weeklySkins).where(and(
+      eq(weeklySkins.leagueId, leagueId),
+      eq(weeklySkins.season, season),
+      eq(weeklySkins.week, week)
+    )).limit(1);
+
+    return {
+      weekComplete: true,
+      highScoreTeams,
+      lowScoreTeams,
+      weeklySkinsWinner: record[0]?.winnerId ? {
+        winnerId: record[0].winnerId,
+        winnerName: record[0].winnerId, // Will need to join to users if name needed
+        totalWeeklyPoints: record[0].winningScore,
+        prizeAmount: record[0].prizeAmount,
+        isTied: record[0].isTied
+      } : undefined,
+      skinsRollover: record[0]?.isRollover ? {
+        reason: 'tied / rollover',
+        nextWeekPrize: (record[0].prizeAmount ?? 1) + 1
+      } : undefined
+    };
   }
 }
 

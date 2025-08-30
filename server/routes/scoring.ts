@@ -529,18 +529,32 @@ router.get("/leagues/:leagueId/week-scores/:season/:week", authenticateUser, aut
 
     console.log(`[Scoring] Found ${weeklyScores.length} weekly scores`);
 
-    // If nothing persisted yet, compute now, persist (via Patch 1), and re-query
-    if (weeklyScores.length === 0) {
-      console.log('[Scoring] No persisted weekly scores; computing now…');
-      const seasonNum = parseInt(season, 10);
-      const weekNum = parseInt(week, 10);
+    const seasonNum = parseInt(season, 10);
+    const weekNum = parseInt(week, 10);
 
-      // Compute & persist (Patch 1 handles the upsert)
+    // NEW: decide if we should recompute
+    let shouldRecompute = weeklyScores.length === 0;
+
+    if (!shouldRecompute) {
+      // If all totals are 0 but there are completed NFL games, recompute
+      const allZero = weeklyScores.every(s => Number(s.weeklyPoints) === 0);
+      if (allZero) {
+        const completedGames = await db.execute(sql`
+          SELECT 1 FROM nfl_games 
+          WHERE season = ${seasonNum} AND week = ${weekNum} AND is_completed = true
+          LIMIT 1
+        `);
+        shouldRecompute = completedGames.rowCount > 0;
+      }
+    }
+
+    if (shouldRecompute) {
+      console.log('[Scoring] Recomputing weekly scores (empty table or all zeros with completed games)');
       const { calculateWeeklyScores } = await import("../utils/mokScoring.js");
       await calculateWeeklyScores(leagueId, weekNum, seasonNum);
-
-      // Re-query with the same select/join as above
-      const recomputed = await db.select({
+      
+      // refresh
+      weeklyScores = await db.select({
         userId: userWeeklyScores.userId,
         userName: users.name,
         weeklyPoints: userWeeklyScores.totalPoints,
@@ -554,14 +568,8 @@ router.get("/leagues/:leagueId/week-scores/:season/:week", authenticateUser, aut
         eq(userWeeklyScores.week, weekNum),
       ))
       .orderBy(sql`${userWeeklyScores.totalPoints} DESC`);
-
-      if (recomputed.length > 0) {
-        console.log(`[Scoring] Computed & persisted ${recomputed.length} weekly scores`);
-        // fall through – let the existing response shape use this list
-        weeklyScores = recomputed;
-      } else {
-        console.log('[Scoring] Still no scores after compute (likely no completed NFL games for this week)');
-      }
+      
+      console.log(`[Scoring] Recomputed & persisted ${weeklyScores.length} weekly scores`);
     }
 
     // Check if week is complete and get high/low score teams
