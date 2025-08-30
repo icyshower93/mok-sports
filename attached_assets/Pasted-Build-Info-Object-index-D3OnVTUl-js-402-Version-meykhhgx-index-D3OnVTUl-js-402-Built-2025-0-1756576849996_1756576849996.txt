@@ -1,0 +1,103 @@
+Build Info: Object
+index-D3OnVTUl.js:402 📦 Version: meykhhgx
+index-D3OnVTUl.js:402 📅 Built: 2025-08-30T18:00:20.912Z
+index-D3OnVTUl.js:402 🔧 Environment: production
+index-D3OnVTUl.js:358 [StableWebSocket] ⏳ Waiting for authentication...
+index-D3OnVTUl.js:402 [App] WebSocket status: waiting_auth (Disconnected)
+index-D3OnVTUl.js:402 [App] ⏳ Waiting for authentication to complete
+index-D3OnVTUl.js:358 [Auth] Token check - Has token: true Has user: false Loading: true
+(index):1 Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner.
+index-D3OnVTUl.js:358 [StableWebSocket] 🔐 Auth confirmed, establishing connection
+index-D3OnVTUl.js:358 [StableWebSocket] 🧹 Cleaning up all timers and connections
+index-D3OnVTUl.js:358 [StableWebSocket] 🚀 Establishing connection for user: Mok Sports
+index-D3OnVTUl.js:358 [Auth] Token check - Has token: true Has user: true Loading: false
+index-D3OnVTUl.js:358 [AutoPushRefresh] Legacy hook delegating to SubscriptionManager
+index-D3OnVTUl.js:402 [App] WebSocket status: connecting (Disconnected)
+index-D3OnVTUl.js:358 [SW Hook] Registering fresh service worker: /sw.js?v=1756576821030&r=0.4261494523666659
+index-D3OnVTUl.js:358 [SW Hook] Service worker registered successfully
+index-D3OnVTUl.js:358 [ErrorBoundary] Error caught: ReferenceError Cannot access 'c' before initialization
+getDerivedStateFromError @ index-D3OnVTUl.js:358Understand this error
+index-D3OnVTUl.js:358 [ErrorBoundary] Stack trace: ReferenceError: Cannot access 'c' before initialization
+    at px (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-D3OnVTUl.js:402:157147)
+    at Mm (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-D3OnVTUl.js:38:16998)
+    at Iy (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-D3OnVTUl.js:40:43963)
+    at Ry (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-D3OnVTUl.js:40:39727)
+    at _j (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-D3OnVTUl.js:40:39655)
+    at vc (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-D3OnVTUl.js:40:39508)
+    at cg (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-D3OnVTUl.js:40:36623)
+    at cs (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-D3OnVTUl.js:38:3274)
+    at https://mok-sports-draft-mokfantasysport.replit.app/assets/index-D3OnVTUl.js:40:34207
+getDerivedStateFromError @ index-D3OnVTUl.js:358Understand this error
+index-D3OnVTUl.js:358 [ErrorBoundary] Error caught: ReferenceError Cannot access 'c' before initialization
+getDerivedStateFromError @ index-D3OnVTUl.js:358Understand this error
+index-D3OnVTUl.js:358 [ErrorBoundary] Stack trace: ReferenceError: Cannot access 'c' before initialization
+    at px (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-D3OnVTUl.js:402:157147)
+    at Mm (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-D3OnVTUl.js:38:16998)
+    at Iy (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-D3OnVTUl.js:40:43963)
+    at Ry (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-D3OnVTUl.js:40:39727)
+    at _j (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-D3OnVTUl.js:40:39655)
+    at vc (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-D3OnVTUl.js:40:39508)
+    at mf (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-D3OnVTUl.js:40:35875)
+    at cg (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-D3OnVTUl.js:40:36678)
+    at cs (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-D3OnVTUl.js:38:3274)
+    at https://mok-sports-draft-mokfantasysport.replit.app/assets/index-D3OnVTUl.js:40:34207
+getDerivedStateFromError @ index-D3OnVTUl.js:358Understand this error
+index-D3OnVTUl.js:40 ReferenceError: Cannot access 'c' before initialization
+    at px (index-D3OnVTUl.js:402:157147)
+    at Mm (index-D3OnVTUl.js:38:16998)
+    at Iy (index-D3OnVTUl.js:40:43963)
+    at Ry (index-D3OnVTUl.js:40:39727)
+    at _j (index-D3OnVTUl.js:40:39655)
+    at vc (index-D3OnVTUl.js:40:39508)
+    at mf (index-D3OnVTUl.js:40:35875)
+    at cg (index-D3OnVTUl.js:40:36678)
+    at cs (index-D3OnVTUl.js:38:3274)
+    at index-D3OnVTUl.js:40:34207
+ef @ index-D3OnVTUl.js:40Understand this error
+index-D3OnVTUl.js:358 [ErrorBoundary] DETAILED ERROR - Name: ReferenceError
+componentDidCatch @ index-D3OnVTUl.js:358Understand this error
+index-D3OnVTUl.js:358 [ErrorBoundary] DETAILED ERROR - Message: Cannot access 'c' before initialization
+componentDidCatch @ index-D3OnVTUl.js:358Understand this error
+index-D3OnVTUl.js:358 [ErrorBoundary] DETAILED ERROR - Stack: ReferenceError: Cannot access 'c' before initialization
+    at px (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-D3OnVTUl.js:402:157147)
+    at Mm (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-D3OnVTUl.js:38:16998)
+    at Iy (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-D3OnVTUl.js:40:43963)
+    at Ry (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-D3OnVTUl.js:40:39727)
+    at _j (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-D3OnVTUl.js:40:39655)
+    at vc (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-D3OnVTUl.js:40:39508)
+    at mf (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-D3OnVTUl.js:40:35875)
+    at cg (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-D3OnVTUl.js:40:36678)
+    at cs (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-D3OnVTUl.js:38:3274)
+    at https://mok-sports-draft-mokfantasysport.replit.app/assets/index-D3OnVTUl.js:40:34207
+componentDidCatch @ index-D3OnVTUl.js:358Understand this error
+index-D3OnVTUl.js:358 [ErrorBoundary] Component stack: 
+    at px (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-D3OnVTUl.js:402:157077)
+    at St (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-D3OnVTUl.js:48:3201)
+    at yk (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-D3OnVTUl.js:48:4017)
+    at E4 (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-D3OnVTUl.js:402:296066)
+    at AT (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-D3OnVTUl.js:358:57494)
+    at c (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-D3OnVTUl.js:48:46009)
+    at Cw (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-D3OnVTUl.js:358:50462)
+    at RT (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-D3OnVTUl.js:358:56966)
+    at $k (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-D3OnVTUl.js:48:40235)
+    at WT (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-D3OnVTUl.js:358:76872)
+    at T4
+componentDidCatch @ index-D3OnVTUl.js:358Understand this error
+index-D3OnVTUl.js:358 [StableWebSocket] 🧹 Component unmounting, cleaning up
+index-D3OnVTUl.js:358 [StableWebSocket] 🧹 Cleaning up all timers and connections
+index-D3OnVTUl.js:358 [StableWebSocket] 🔌 Closing connection with code 4003: unmount
+index-D3OnVTUl.js:358 WebSocket connection to 'wss://mok-sports-draft-mokfantasysport.replit.app/draft-ws' failed: WebSocket is closed before the connection is established.
+(anonymous) @ index-D3OnVTUl.js:358Understand this warning
+index-D3OnVTUl.js:358 [StableWebSocket] ❌ Connection error: Event
+T.onerror @ index-D3OnVTUl.js:358Understand this error
+index-D3OnVTUl.js:358 [StableWebSocket] 🔌 Connection closed - Code: 1006, Reason: 
+index-D3OnVTUl.js:358 [StableWebSocket] 🔄 Reconnecting in 1037.2926900460573ms (attempt 1/8)
+index-D3OnVTUl.js:358 [StableWebSocket] 🧹 Cleaning up all timers and connections
+index-D3OnVTUl.js:358 [StableWebSocket] 🚀 Establishing connection for user: Mok Sports
+index-D3OnVTUl.js:358 [StableWebSocket] ✅ Connection established
+index-D3OnVTUl.js:358 [StableWebSocket] 📡 Subscribed to admin broadcasts
+index-D3OnVTUl.js:358 [StableWebSocket] ⏰ Keepalive started (25s interval)
+index-D3OnVTUl.js:358 [StableWebSocket] 📨 Message received: admin_ready
+index-D3OnVTUl.js:358 [StableWebSocket] ✅ Server confirmation: admin_ready
+index-D3OnVTUl.js:358 [StableWebSocket] 📨 Message received: connected
+index-D3OnVTUl.js:358 [StableWebSocket] ✅ Server confirmation: connected

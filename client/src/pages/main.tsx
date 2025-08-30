@@ -41,7 +41,7 @@ import {
 import { BottomNav } from "@/components/layout/bottom-nav";
 import { TeamLogo } from "@/components/team-logo";
 import { useAuth } from "@/hooks/use-auth";
-import { useProductionRealtime } from "@/hooks/use-production-realtime.ts";
+import { useProductionRealtime } from "@/hooks/use-production-realtime";
 import mokSportsLogoWhite from "@assets/MokSports_White_1755068930869.png";
 import mokSportsLogo from "@assets/moksports logo_1755069436420.png";
 
