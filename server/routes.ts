@@ -449,9 +449,46 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // If no games completed yet this week, still compute for the current scheduled week
       const weekNum = Math.max(maxCompletedWeek, maxAnyWeek);
 
-      // Ensure weekly scores are up to date for the derived week
+      // keep weekly scores fresh for UI (OK during the week)
       const { calculateWeeklyScores } = await import("./utils/mokScoring.js");
       await calculateWeeklyScores(leagueId, weekNum, seasonNum);
+
+      // NEW: block high/low until week is complete
+      const { isWeekComplete } = await import("./utils/week.js");
+      const weekComplete = await isWeekComplete(seasonNum, weekNum);
+
+      let highScoreTeams = null;
+      let lowScoreTeams = null;
+      let weeklySkins = null;
+
+      if (weekComplete) {
+        // read-only: fetch the already-awarded winner & high/low snapshot
+        const weeklySkinsResult = await db.execute(sql`
+          SELECT winner_id, winning_score, is_tied, prize_amount
+          FROM weekly_skins
+          WHERE league_id = ${leagueId} AND season = ${seasonNum} AND week = ${weekNum}
+          LIMIT 1
+        `);
+        weeklySkins = weeklySkinsResult.rows[0] as any;
+
+        // Get user weekly scores for computing high/low
+        const userWeekScores = await db.select()
+          .from(userWeeklyScores)
+          .where(and(
+            eq(userWeeklyScores.leagueId, leagueId),
+            eq(userWeeklyScores.season, seasonNum),
+            eq(userWeeklyScores.week, weekNum)
+          ));
+
+        if (userWeekScores.length > 0) {
+          const scores = userWeekScores.map(s => ({ userId: s.userId, totalPoints: s.totalPoints }));
+          const maxPoints = Math.max(...scores.map(s => s.totalPoints));
+          const minPoints = Math.min(...scores.map(s => s.totalPoints));
+
+          highScoreTeams = scores.filter(s => s.totalPoints === maxPoints);
+          lowScoreTeams = scores.filter(s => s.totalPoints === minPoints);
+        }
+      }
 
       // Get all league members
       const members = await storage.getLeagueMembers(leagueId);
@@ -550,6 +587,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json({
         league: leagueInfo,
         standings,
+        week: weekNum,
+        season: seasonNum,
+        weekComplete,
+        weeklySkins: weeklySkins || null,
+        highScoreTeams,      // null until complete
+        lowScoreTeams,       // null until complete
         seasonPrizes: [
           { name: "Most Points", prize: "$50", leader: standings[0]?.name || "TBD", points: standings[0]?.points?.toString() || "-" },
           { name: "Super Bowl Winner", prize: "$10", leader: "TBD", points: "-" },

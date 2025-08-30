@@ -1,0 +1,84 @@
+Your standings are computing “high/low score” from partial week data. Those should only appear once the week is complete (last game played) and the end-of-week award has been finalized.
+
+Here’s the tight fix (backend + tiny frontend guard).
+
+Backend: gate high/low to “week complete” only
+1) Add a canonical week-complete check
+
+If you already have EndOfWeekProcessor.isWeekComplete, reuse it. Otherwise, drop this helper in server/utils/week.ts:
+
+// server/utils/week.ts
+import { db, sql } from "../db";
+
+export async function isWeekComplete(season: number, week: number): Promise<boolean> {
+  const [row] = await db.execute(sql`
+    SELECT
+      SUM(CASE WHEN is_completed THEN 1 ELSE 0 END)::int AS completed,
+      COUNT(*)::int AS total
+    FROM nfl_games
+    WHERE season = ${season} AND week = ${week}
+  `);
+  const completed = Number(row?.completed ?? 0);
+  const total = Number(row?.total ?? 0);
+  return total > 0 && completed === total;
+}
+
+2) Standings endpoint: don’t compute high/low unless week complete
+
+In GET /api/leagues/:leagueId/standings (likely server/routes.ts), right after you derive seasonNum and weekNum, do:
+
+import { isWeekComplete } from "./utils/week";
+import { calculateWeeklyScores } from "./utils/mokScoring";
+
+// keep weekly scores fresh for UI (OK during the week)
+await calculateWeeklyScores(leagueId, weekNum, seasonNum);
+
+// NEW: block high/low until week is complete
+const weekComplete = await isWeekComplete(seasonNum, weekNum);
+
+let highScoreTeams = null;
+let lowScoreTeams = null;
+let weeklySkins = null;
+
+if (weekComplete) {
+  // read-only: fetch the already-awarded winner & high/low snapshot
+  weeklySkins = await db.execute(sql`
+    SELECT winner_id, winning_score, is_tied, prize_amount
+    FROM weekly_skins
+    WHERE league_id = ${leagueId} AND season = ${seasonNum} AND week = ${weekNum}
+    LIMIT 1
+  `);
+
+  // compute or read high/low for that week from your finalized per-team scores table
+  // (if you snapshot them on award, read that snapshot instead)
+  const teamWeekScores = await db.execute(sql`
+    SELECT team_id, total_points
+    FROM team_week_scores
+    WHERE league_id = ${leagueId} AND season = ${seasonNum} AND week = ${weekNum}
+  `);
+
+  const scores = teamWeekScores.rows ?? [];
+  const max = Math.max(...scores.map(s => Number(s.total_points)));
+  const min = Math.min(...scores.map(s => Number(s.total_points)));
+
+  highScoreTeams = scores.filter(s => Number(s.total_points) === max);
+  lowScoreTeams  = scores.filter(s => Number(s.total_points) === min);
+}
+
+// when week is NOT complete, return nulls so the UI can show “In progress”
+res.json({
+  // ...your existing payload
+  week: weekNum,
+  season: seasonNum,
+  weekComplete,
+  weeklySkins: weeklySkins?.rows?.[0] ?? null,
+  highScoreTeams,      // null until complete
+  lowScoreTeams        // null until complete
+});
+
+
+If you don’t have team_week_scores, you can compute high/low off your finalized per-user/per-team weekly totals table you already use to award skins. The key is: only do it in the if (weekComplete) block.
+
+3) Ensure awarding happens once (you likely already have this)
+
+Keep actual awarding in your single end-of-week path (processEndOfWeek). Do not award from “read” endpoints. The unique key on (league_id, season, week) in weekly_skins prevents duplicates.
