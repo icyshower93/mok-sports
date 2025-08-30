@@ -1,0 +1,137 @@
+ou’re close, but the new logs show the same TDZ crash. The SW + build banner fixes are fine; the remaining issue is module initialization order — you still have (at least) one circular import hitting a const during module eval.
+
+Because your Replit agent couldn’t change vite.config.ts, the safest path is to break the cycle(s) in your hooks so the error disappears even without alias tooling.
+
+Here’s a deterministic way to fix it:
+
+1) Break the auth ↔ push/subscription ↔ auth ring
+
+Right now the pattern is effectively:
+
+use-auth  →  use-auto-push-refresh  →  use-subscription-manager  →  use-auth
+
+
+That ring is exactly how you get ReferenceError: Cannot access 'c' before initialization in prod bundles.
+
+A. Make use-subscription-manager pure (no useAuth import)
+
+Change it to accept the token (or a getter) from the caller.
+
+- // client/src/hooks/use-subscription-manager.ts
+- import { useAuth } from '@/hooks/use-auth';
+- export function useSubscriptionManager() {
+-   const { token } = useAuth();
+-   ...
+- }
++ // client/src/hooks/use-subscription-manager.ts
++ export function useSubscriptionManager(opts: { token?: string | null }) {
++   const { token } = opts ?? {};
++   ...
++ }
+
+B. Make use-auto-push-refresh take the token and not import useAuth
+- // client/src/hooks/use-auto-push-refresh.ts
+- import { useAuth } from '@/hooks/use-auth';
+- import { useSubscriptionManager } from '@/hooks/use-subscription-manager';
+- export function useAutoPushRefresh() {
+-   const { token } = useAuth();
+-   const sub = useSubscriptionManager();
++ // client/src/hooks/use-auto-push-refresh.ts
++ import { useSubscriptionManager } from '@/hooks/use-subscription-manager';
++ export function useAutoPushRefresh(token?: string | null) {
++   const sub = useSubscriptionManager({ token });
+    ...
+  }
+
+C. Do not import use-auto-push-refresh from inside use-auth
+
+If your AuthProvider currently imports/calls it, remove that import and call.
+
+Instead, wire it at the app layer:
+
+// client/src/App.tsx
+import { useAuth } from '@/hooks/use-auth';
+import { useAutoPushRefresh } from '@/hooks/use-auto-push-refresh';
+
+function AutoPushBridge() {
+  const { token } = useAuth();
+  useAutoPushRefresh(token);
+  return null;
+}
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <AutoPushBridge />
+      {/* ...rest of app... */}
+    </AuthProvider>
+  );
+}
+
+
+This removes the direct use-auth ↔ use-auto-push-refresh cycle.
+
+2) Decouple realtime from auth imports
+
+Even though you only call useProductionRealtime() in App, the hook itself likely imports useAuth (or something that does). Remove that import and pass the token in:
+
+- // client/src/hooks/use-production-realtime.ts
+- import { useAuth } from '@/hooks/use-auth';
+- export function useProductionRealtime() {
+-   const { token } = useAuth();
+-   // use token...
+- }
++ export function useProductionRealtime(token?: string | null) {
++   // use token directly, no auth imports in this file
++ }
+
+
+Then in App.tsx:
+
+const { token } = useAuth();
+useProductionRealtime(token);
+
+
+This prevents any hidden cycle like realtime → sub-manager → auth → realtime.
+
+3) Ensure no mixed specifiers remain
+
+Since you can’t enable vite-tsconfig-paths, your best protection is consistency.
+
+Either all alias, or all relative — never both for the same file.
+
+Run these quick checks:
+
+# Any remaining relative imports to the hot modules?
+rg -n "from ['\"]\./use-(auth|subscription-manager|auto-push-refresh|production-realtime)['\"]" client/src
+
+# Any alias imports of those same modules (ensure you chose ONE style consistently)
+rg -n "from ['\"]@/hooks/(use-auth|use-subscription-manager|use-auto-push-refresh|use-production-realtime)['\"]" client/src
+
+
+If you still see both styles for any one of those modules, unify them (pick one style and change all of them).
+
+4) One-off cycle audit (no config changes needed)
+
+Use madge to confirm there are no circular deps left:
+
+npx madge --circular --extensions ts,tsx client/src
+
+
+If it prints any cycles, fix those first (the refactors above should zero them out).
+
+5) Rebuild with sourcemaps (without touching vite.config)
+
+You can ask Vite to emit sourcemaps via CLI:
+
+cd client
+npm run build -- --sourcemap
+
+
+If, after the refactor, anything still blows up, the console stack will map to the exact .ts/.tsx line so we can kill the remaining initializer.
+
+6) Keep the deterministic SW version
+
+You already removed the random &r= — good. Make sure SW registration uses only the build hash:
+
+navigator.serviceWorker?.register(`/sw.js?v=${BUILD_INFO.hash}`);
