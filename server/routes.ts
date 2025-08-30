@@ -460,19 +460,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
           }
         }
         
-        // Get real scoring data from database
+        // Get real scoring data from database (scoped to this league)
         const userScores = await db.select()
           .from(userWeeklyScores)
           .where(and(
             eq(userWeeklyScores.userId, member.userId),
+            eq(userWeeklyScores.leagueId, leagueId),
             eq(userWeeklyScores.season, 2024)
           ));
         
-        // Get locks used count
+        // Get locks used count (scoped to this league)
         const userLocks = await db.select()
           .from(weeklyLocks)
           .where(and(
             eq(weeklyLocks.userId, member.userId),
+            eq(weeklyLocks.leagueId, leagueId),
             eq(weeklyLocks.season, 2024)
           ));
         

@@ -1,0 +1,124 @@
+1) Scope per-game scoring to the current league
+
+File: server/routes/admin.ts
+Target function: calculateAndUpdateMokPoints(...)
+
+Replace the “get team owners” block
+
+Find the block that looks like this (one query that grabs all owners for the two teams, then loops once):
+
+// Get all users who own these teams
+const teamOwners = await db.select({ /* ... */ })
+  .from(stables)
+  .innerJoin(users, eq(stables.userId, users.id))
+  .innerJoin(nflTeams, eq(stables.nflTeamId, nflTeams.id))
+  .where(sql`${stables.nflTeamId} IN (${homeTeamId}, ${awayTeamId})`);
+
+console.log(`Found ${teamOwners.length} team owners for this game`);
+
+// Calculate points for each team owner
+for (const owner of teamOwners) {
+  // ...
+}
+
+
+Replace it with this per-league version:
+
+// Determine which leagues are affected by this game (only leagues where at least one of the two teams is owned)
+const affectedLeagues = await db
+  .selectDistinct({ leagueId: stables.leagueId })
+  .from(stables)
+  .where(sql`${stables.nflTeamId} IN (${homeTeamId}, ${awayTeamId})`);
+
+console.log(`Leagues affected by this game: ${affectedLeagues.map(l => l.leagueId).join(", ")}`);
+
+// Process scoring per league to avoid cross-league crediting
+for (const { leagueId } of affectedLeagues) {
+  // Get users in *this league* who own either the home or away team
+  const teamOwners = await db.select({
+      userId: stables.userId,
+      userName: users.name,
+      leagueId: stables.leagueId,
+      teamId: stables.nflTeamId,
+      teamCode: nflTeams.code
+    })
+    .from(stables)
+    .innerJoin(users, eq(stables.userId, users.id))
+    .innerJoin(nflTeams, eq(stables.nflTeamId, nflTeams.id))
+    .where(and(
+      eq(stables.leagueId, leagueId),
+      sql`${stables.nflTeamId} IN (${homeTeamId}, ${awayTeamId})`
+    ))
+    // safety: avoid duplicate crediting if duplicates exist
+    .groupBy(stables.userId, stables.leagueId, stables.nflTeamId, users.name, nflTeams.code);
+
+  console.log(`League ${leagueId}: found ${teamOwners.length} owner(s) for this game`);
+
+  // Calculate points for each team owner *within this league*
+  for (const owner of teamOwners) {
+    // (keep your existing base/lock/load/insert-or-update logic as-is)
+    // IMPORTANT: ensure the upsert/insert uses owner.leagueId in the key:
+    // .onConflictDoUpdate({ target: [userWeeklyScores.userId, userWeeklyScores.leagueId, userWeeklyScores.season, userWeeklyScores.week], ... })
+  }
+}
+
+
+Key idea: process each affected league separately and always include leagueId in your upsert target so points are stored per-league.
+
+2) Fix Season Standings to only use the current league
+
+File: server/routes.ts
+Route: GET /api/leagues/:leagueId/standings
+
+Inside the loop where you build each member’s totals, make sure both queries filter by leagueId:
+
+A) Scope weekly scores to the league
+
+Find the userWeeklyScores query that may look like:
+
+const userScores = await db.select()
+  .from(userWeeklyScores)
+  .where(and(
+    eq(userWeeklyScores.userId, member.userId),
+    eq(userWeeklyScores.season, 2024)
+  ));
+
+
+Change it to:
+
+const userScores = await db.select()
+  .from(userWeeklyScores)
+  .where(and(
+    eq(userWeeklyScores.userId, member.userId),
+    eq(userWeeklyScores.leagueId, leagueId),
+    eq(userWeeklyScores.season, 2024)
+  ));
+
+B) Scope weekly locks to the league
+
+Find the weeklyLocks query that may look like:
+
+const userLocks = await db.select()
+  .from(weeklyLocks)
+  .where(and(
+    eq(weeklyLocks.userId, member.userId),
+    eq(weeklyLocks.season, 2024)
+  ));
+
+
+Change it to:
+
+const userLocks = await db.select()
+  .from(weeklyLocks)
+  .where(and(
+    eq(weeklyLocks.userId, member.userId),
+    eq(weeklyLocks.leagueId, leagueId),
+    eq(weeklyLocks.season, 2024)
+  ));
+
+
+After these two edits, the totals you compute (sum of userScores.totalPoints, counts of locks, etc.) will be per-league and the “Season Standings” tab will match game scoring.
+
+3) (Optional) Make logs clearer
+
+If you currently gather all owners into an array like allTeamOwners and then loop once, consider moving the processing inside the per-league loop (purely for readability), but it’s not required if your upsert already uses leagueId in the conflict target.

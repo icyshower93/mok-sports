@@ -435,118 +435,114 @@ async function calculateAndUpdateMokPoints(
   try {
     console.log(`🎯 Calculating Mok points for ${awayTeamCode} @ ${homeTeamCode}: ${awayScore}-${homeScore}`);
 
-    // First, find which leagues are affected by these two teams
-    const affectedLeagues = await db.selectDistinct({
-      leagueId: stables.leagueId
-    })
-    .from(stables)
-    .where(sql`${stables.nflTeamId} IN (${homeTeamId}, ${awayTeamId})`);
-
-    console.log(`Found ${affectedLeagues.length} leagues affected by this game`);
-
-    // For each affected league, get the team owners (with GROUP BY to avoid duplicates)
-    const allTeamOwners = [];
-    for (const league of affectedLeagues) {
-      const leagueOwners = await db.select({
-        userId: stables.userId,
-        userName: users.name,
-        leagueId: stables.leagueId,
-        teamId: stables.nflTeamId,
-        teamCode: nflTeams.code
-      })
+    // Determine which leagues are affected by this game (only leagues where at least one of the two teams is owned)
+    const affectedLeagues = await db
+      .selectDistinct({ leagueId: stables.leagueId })
       .from(stables)
-      .innerJoin(users, eq(stables.userId, users.id))
-      .innerJoin(nflTeams, eq(stables.nflTeamId, nflTeams.id))
-      .where(and(
-        eq(stables.leagueId, league.leagueId),
-        sql`${stables.nflTeamId} IN (${homeTeamId}, ${awayTeamId})`
-      ))
-      .groupBy(stables.userId, stables.leagueId, stables.nflTeamId, users.name, nflTeams.code);
+      .where(sql`${stables.nflTeamId} IN (${homeTeamId}, ${awayTeamId})`);
 
-      allTeamOwners.push(...leagueOwners);
-      console.log(`League ${league.leagueId}: Found ${leagueOwners.length} team owners`);
-    }
+    console.log(`Leagues affected by this game: ${affectedLeagues.map(l => l.leagueId).join(", ")}`);
 
-    console.log(`Total: ${allTeamOwners.length} team owners across ${affectedLeagues.length} leagues`);
+    // Process scoring per league to avoid cross-league crediting
+    for (const { leagueId } of affectedLeagues) {
+      // Get users in *this league* who own either the home or away team
+      const teamOwners = await db.select({
+          userId: stables.userId,
+          userName: users.name,
+          leagueId: stables.leagueId,
+          teamId: stables.nflTeamId,
+          teamCode: nflTeams.code
+        })
+        .from(stables)
+        .innerJoin(users, eq(stables.userId, users.id))
+        .innerJoin(nflTeams, eq(stables.nflTeamId, nflTeams.id))
+        .where(and(
+          eq(stables.leagueId, leagueId),
+          sql`${stables.nflTeamId} IN (${homeTeamId}, ${awayTeamId})`
+        ))
+        // safety: avoid duplicate crediting if duplicates exist
+        .groupBy(stables.userId, stables.leagueId, stables.nflTeamId, users.name, nflTeams.code);
 
-    // Calculate points for each team owner
-    for (const owner of allTeamOwners) {
-      const isHomeTeam = owner.teamId === homeTeamId;
-      const teamScore = isHomeTeam ? homeScore : awayScore;
-      const opponentScore = isHomeTeam ? awayScore : homeScore;
+      console.log(`League ${leagueId}: found ${teamOwners.length} owner(s) for this game`);
 
-      // Create team game result
-      const teamResult = {
-        teamCode: owner.teamCode,
-        opponentCode: isHomeTeam ? awayTeamCode : homeTeamCode,
-        teamScore,
-        opponentScore,
-        week,
-        season,
-        gameDate: new Date(),
-        baseMokPoints: 0,
-        isWin: teamScore > opponentScore,
-        isLoss: teamScore < opponentScore,
-        isTie: teamScore === opponentScore,
-        isBlowout: (teamScore > opponentScore) && (teamScore - opponentScore >= 20),
-        isShutout: opponentScore === 0,
-        isWeeklyHigh: false, // calculated at week end
-        isWeeklyLow: false   // calculated at week end
-      };
+      // Calculate points for each team owner *within this league*
+      for (const owner of teamOwners) {
+        const isHomeTeam = owner.teamId === homeTeamId;
+        const teamScore = isHomeTeam ? homeScore : awayScore;
+        const opponentScore = isHomeTeam ? awayScore : homeScore;
 
-      // Calculate base game result points
-      const basePoints = calculateBaseMokPoints(teamResult);
-      
-      // Check for lock bonuses
-      const lockData = await db.select({
-        lockedTeamId: weeklyLocks.lockedTeamId,
-        lockAndLoadTeamId: weeklyLocks.lockAndLoadTeamId
-      })
-      .from(weeklyLocks)
-      .where(and(
-        eq(weeklyLocks.userId, owner.userId),
-        eq(weeklyLocks.leagueId, owner.leagueId),
-        eq(weeklyLocks.week, week),
-        eq(weeklyLocks.season, season)
-      ));
-      
-      const userLock = lockData[0];
-      const isLocked = userLock?.lockedTeamId === owner.teamId;
-      const isLockAndLoad = userLock?.lockAndLoadTeamId === owner.teamId;
-      
-      let lockBonusPoints = 0;
-      let lockAndLoadBonusPoints = 0;
-      
-      // Check for regular lock bonus first
-      if (isLocked) {
-        // Regular lock bonus: +1 for wins, +0.5 for ties, +0 for losses
-        if (teamResult.isWin) {
-          lockBonusPoints = 1;
-        } else if (teamResult.isTie) {
-          lockBonusPoints = 0.5;
+        // Create team game result
+        const teamResult = {
+          teamCode: owner.teamCode,
+          opponentCode: isHomeTeam ? awayTeamCode : homeTeamCode,
+          teamScore,
+          opponentScore,
+          week,
+          season,
+          gameDate: new Date(),
+          baseMokPoints: 0,
+          isWin: teamScore > opponentScore,
+          isLoss: teamScore < opponentScore,
+          isTie: teamScore === opponentScore,
+          isBlowout: (teamScore > opponentScore) && (teamScore - opponentScore >= 20),
+          isShutout: opponentScore === 0,
+          isWeeklyHigh: false, // calculated at week end
+          isWeeklyLow: false   // calculated at week end
+        };
+
+        // Calculate base game result points
+        const basePoints = calculateBaseMokPoints(teamResult);
+        
+        // Check for lock bonuses
+        const lockData = await db.select({
+          lockedTeamId: weeklyLocks.lockedTeamId,
+          lockAndLoadTeamId: weeklyLocks.lockAndLoadTeamId
+        })
+        .from(weeklyLocks)
+        .where(and(
+          eq(weeklyLocks.userId, owner.userId),
+          eq(weeklyLocks.leagueId, owner.leagueId),
+          eq(weeklyLocks.week, week),
+          eq(weeklyLocks.season, season)
+        ));
+        
+        const userLock = lockData[0];
+        const isLocked = userLock?.lockedTeamId === owner.teamId;
+        const isLockAndLoad = userLock?.lockAndLoadTeamId === owner.teamId;
+        
+        let lockBonusPoints = 0;
+        let lockAndLoadBonusPoints = 0;
+        
+        // Check for regular lock bonus first
+        if (isLocked) {
+          // Regular lock bonus: +1 for wins, +0.5 for ties, +0 for losses
+          if (teamResult.isWin) {
+            lockBonusPoints = 1;
+          } else if (teamResult.isTie) {
+            lockBonusPoints = 0.5;
+          }
         }
-      }
-      
-      // Check for lock-and-load bonus (additional +1/-1 on top of lock)
-      if (isLockAndLoad) {
-        // Lock & Load additional scoring: +1 for win, -1 for loss, +0 for tie
-        if (teamResult.isWin) {
-          lockAndLoadBonusPoints = 1;
-        } else if (teamResult.isLoss) {
-          lockAndLoadBonusPoints = -1;
+        
+        // Check for lock-and-load bonus (additional +1/-1 on top of lock)
+        if (isLockAndLoad) {
+          // Lock & Load additional scoring: +1 for win, -1 for loss, +0 for tie
+          if (teamResult.isWin) {
+            lockAndLoadBonusPoints = 1;
+          } else if (teamResult.isLoss) {
+            lockAndLoadBonusPoints = -1;
+          }
+          // No additional points for ties (just the lock bonus)
         }
-        // No additional points for ties (just the lock bonus)
-      }
-      
-      const totalPoints = basePoints + lockBonusPoints + lockAndLoadBonusPoints;
+        
+        const totalPoints = basePoints + lockBonusPoints + lockAndLoadBonusPoints;
 
-      const lockInfo = isLockAndLoad ? 'LOAD' : isLocked ? 'LOCK' : '';
-      console.log(`${owner.userName} (${owner.teamCode}): ${totalPoints} points (${teamScore}-${opponentScore}) ${lockInfo} [Base: ${basePoints}, Lock: ${lockBonusPoints}, L&L: ${lockAndLoadBonusPoints}] - Locked=${isLocked}, Load=${isLockAndLoad}`);
+        const lockInfo = isLockAndLoad ? 'LOAD' : isLocked ? 'LOCK' : '';
+        console.log(`${owner.userName} (${owner.teamCode}): ${totalPoints} points (${teamScore}-${opponentScore}) ${lockInfo} [Base: ${basePoints}, Lock: ${lockBonusPoints}, L&L: ${lockAndLoadBonusPoints}] - Locked=${isLocked}, Load=${isLockAndLoad}`);
 
-      // DEBUG: Log the exact values being saved
-      console.log(`📝 [DEBUG] Saving points for ${owner.userName}: basePoints=${basePoints}, totalPoints=${totalPoints}, userId=${owner.userId}, week=${week}`);
+        // DEBUG: Log the exact values being saved
+        console.log(`📝 [DEBUG] Saving points for ${owner.userName}: basePoints=${basePoints}, totalPoints=${totalPoints}, userId=${owner.userId}, week=${week}`);
 
-      try {
+        try {
         // Update or insert weekly scores - use COALESCE to handle nulls and proper addition
         const result = await db.insert(userWeeklyScores)
           .values({
@@ -570,9 +566,10 @@ async function calculateAndUpdateMokPoints(
             }
           });
 
-        console.log(`✅ [DEBUG] Database upsert completed for ${owner.userName}`);
-      } catch (upsertError) {
-        console.error(`❌ [DEBUG] Database upsert FAILED for ${owner.userName}:`, upsertError);
+          console.log(`✅ [DEBUG] Database upsert completed for ${owner.userName}`);
+        } catch (upsertError) {
+          console.error(`❌ [DEBUG] Database upsert FAILED for ${owner.userName}:`, upsertError);
+        }
       }
     }
 
