@@ -1,0 +1,79 @@
+Short version: the Stable tab is pointing at the wrong league (and sometimes showing the empty state while it’s still loading). In code, the page always uses the first league in /api/user/leagues:
+
+// client/src/pages/teams.tsx
+const { data: leagues = [] } = useQuery({ queryKey: ['/api/user/leagues'], enabled: !!user });
+const selectedLeague = (leagues as any[])[0]?.id || "";
+
+const { data: userTeams = [] } = useQuery({
+  queryKey: [`/api/user/stable/${selectedLeague}`],
+  enabled: !!user && !!selectedLeague,
+});
+
+
+If you finished a draft in another league (not index 0), the fetch targets the wrong league → the server returns an empty stable → UI says “No Teams Yet”. Two more things amplify it:
+
+The empty-state renders even while the teams query is still loading.
+
+After a draft completes, you don’t invalidate /api/user/stable/*, so cache can stay empty until a hard refresh.
+
+Fixes
+1) Persist and respect the user’s league selection
+
+Use state + localStorage (and prefer the last draft league if known).
+
+// teams.tsx
+const { data: leagues = [] } = useQuery({ queryKey: ['/api/user/leagues'], enabled: !!user });
+
+const [selectedLeague, setSelectedLeague] = useState<string>(() =>
+  localStorage.getItem('selectedLeague') || localStorage.getItem('lastDraftLeagueId') || ''
+);
+
+// Choose a sensible default once leagues load
+useEffect(() => {
+  if (!selectedLeague && leagues.length) {
+    // pick the league we drafted most recently if present, else first
+    const last = localStorage.getItem('lastDraftLeagueId');
+    const candidate = (last && leagues.find(l => l.id === last)?.id) || leagues[0].id;
+    setSelectedLeague(candidate);
+  }
+}, [leagues, selectedLeague]);
+
+useEffect(() => {
+  if (selectedLeague) localStorage.setItem('selectedLeague', selectedLeague);
+}, [selectedLeague]);
+
+const { data: userTeams = [], isLoading: teamsLoading } = useQuery({
+  queryKey: [`/api/user/stable/${selectedLeague}`],
+  enabled: !!user && !!selectedLeague,
+});
+
+
+Add a tiny selector UI so users can switch leagues (Dropdown/Tabs). Even a simple <Select> bound to setSelectedLeague is enough.
+
+2) Don’t show “No Teams Yet” while loading or when no league is selected
+
+Gate the empty-state:
+
+// replace the empty-state check:
+{(!selectedLeague || teamsLoading) ? (
+  <div className="py-8 text-center text-muted-foreground">Loading teams…</div>
+) : (userTeams as any[]).length === 0 ? (
+  <div className="text-center py-8"> … “No Teams Yet” … </div>
+) : (
+  /* render teams */
+)}
+
+3) Mark the correct league when a draft finishes
+
+When the draft completes (right where you do post-draft cleanup / navigate), record the league and invalidate stable queries:
+
+// draft.tsx — after the server assigns teams / draft status becomes 'completed'
+localStorage.setItem('lastDraftLeagueId', draftData.leagueId);
+
+// refresh stables everywhere
+queryClient.invalidateQueries({
+  predicate: (q) => String(q.queryKey?.[0] ?? '').startsWith('/api/user/stable/')
+});
+
+
+(You already invalidate ['/api/user/leagues']; keep that too.)

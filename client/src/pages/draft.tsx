@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLocation, useParams } from "wouter";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -981,7 +981,17 @@ export default function DraftPage() {
                     
                     <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
                       <Button 
-                        onClick={() => navigate(`/league/${draftData?.draft?.leagueId}/waiting`)}
+                        onClick={() => {
+                          // Record completed draft league for stable tab
+                          if (draftData?.draft?.leagueId) {
+                            localStorage.setItem('lastDraftLeagueId', draftData.draft.leagueId);
+                          }
+                          // Invalidate stable queries to refresh teams
+                          queryClient.invalidateQueries({
+                            predicate: (q) => String(q.queryKey?.[0] ?? '').startsWith('/api/user/stable/')
+                          });
+                          navigate(`/league/${draftData?.draft?.leagueId}/waiting`);
+                        }}
                         variant="outline"
                         className="flex-1 sm:flex-none"
                         size="lg"
@@ -990,7 +1000,18 @@ export default function DraftPage() {
                         Back to League
                       </Button>
                       <Button 
-                        onClick={() => navigate('/')}
+                        onClick={() => {
+                          // Record completed draft league for stable tab
+                          if (draftData?.draft?.leagueId) {
+                            localStorage.setItem('lastDraftLeagueId', draftData.draft.leagueId);
+                          }
+                          // Invalidate stable queries to refresh teams
+                          queryClient.invalidateQueries({
+                            predicate: (q) => String(q.queryKey?.[0] ?? '').startsWith('/api/user/stable/')
+                          });
+                          queryClient.invalidateQueries({ queryKey: ['/api/user/leagues'] });
+                          navigate('/');
+                        }}
                         variant="default"
                         className="flex-1 sm:flex-none"
                         size="lg"

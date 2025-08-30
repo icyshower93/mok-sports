@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useLocation } from "wouter";
-import { useQuery, useMutation } from "@tanstack/react-query";
-import { queryClient } from "@/lib/queryClient";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+// Import removed - using useQueryClient hook instead
 import { BottomNav } from "@/components/layout/bottom-nav";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -16,13 +16,16 @@ import {
   Lock, 
   Zap,
   AlertTriangle,
-  CheckCircle
+  CheckCircle,
+  ChevronDown
 } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export default function StablePage() {
   const { user } = useAuth();
   const { toast } = useToast();
   const [, navigate] = useLocation();
+  const queryClient = useQueryClient();
   const [selectedWeek] = useState(1);
   
   // Dialog states
@@ -39,7 +42,30 @@ export default function StablePage() {
     enabled: !!user,
   });
 
-  const selectedLeague = (leagues as any[])[0]?.id || "";
+  // Smart league selection: persist user's choice and prefer last draft league
+  const [selectedLeague, setSelectedLeague] = useState<string>(() =>
+    localStorage.getItem('selectedLeague') || localStorage.getItem('lastDraftLeagueId') || ''
+  );
+  
+  // Choose a sensible default once leagues load
+  useEffect(() => {
+    if (!selectedLeague && Array.isArray(leagues) && leagues.length) {
+      // Pick the league we drafted most recently if present, else first
+      const last = localStorage.getItem('lastDraftLeagueId');
+      const leaguesList = leagues as any[];
+      const candidate = (last && leaguesList.find(l => l.id === last)?.id) || leaguesList[0]?.id;
+      if (candidate) {
+        setSelectedLeague(candidate);
+      }
+    }
+  }, [leagues, selectedLeague]);
+  
+  // Persist league selection
+  useEffect(() => {
+    if (selectedLeague) {
+      localStorage.setItem('selectedLeague', selectedLeague);
+    }
+  }, [selectedLeague]);
 
   const { data: userTeams = [], isLoading: teamsLoading } = useQuery({
     queryKey: [`/api/user/stable/${selectedLeague}`],
@@ -141,9 +167,9 @@ export default function StablePage() {
   });
 
   // Check if locks are currently allowed based on week status
-  const locksAllowed = weekLockStatus?.canLock ?? true;
-  const lockRestrictionMessage = weekLockStatus?.message || '';
-  const weekStatus = weekLockStatus?.weekStatus || 'pre_week';
+  const locksAllowed = (weekLockStatus as any)?.canLock ?? true;
+  const lockRestrictionMessage = (weekLockStatus as any)?.message || '';
+  const weekStatus = (weekLockStatus as any)?.weekStatus || 'pre_week';
 
   // Dialog handlers
   const handleLockClick = (team: any) => {
@@ -277,9 +303,30 @@ export default function StablePage() {
   return (
     <div className="min-h-screen bg-background pb-20">
       <div className="max-w-4xl mx-auto px-4 py-6 space-y-6">
-        <div className="flex items-center space-x-2">
-          <Shield className="w-6 h-6 text-primary" />
-          <h1 className="text-2xl font-bold">My Stable</h1>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-2">
+            <Shield className="w-6 h-6 text-primary" />
+            <h1 className="text-2xl font-bold">My Stable</h1>
+          </div>
+          
+          {/* League Selector */}
+          {Array.isArray(leagues) && leagues.length > 1 && (
+            <div className="flex items-center space-x-2">
+              <span className="text-sm text-muted-foreground">League:</span>
+              <Select value={selectedLeague} onValueChange={setSelectedLeague}>
+                <SelectTrigger className="w-48">
+                  <SelectValue placeholder="Select league" />
+                </SelectTrigger>
+                <SelectContent>
+                  {(leagues as any[]).map(league => (
+                    <SelectItem key={league.id} value={league.id}>
+                      {league.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
         </div>
 
         {/* Lock Selection Interface */}
@@ -306,7 +353,12 @@ export default function StablePage() {
               </div>
             </CardHeader>
             <CardContent className="space-y-4 p-4">
-              {(userTeams as any[]).length === 0 ? (
+              {(!selectedLeague || teamsLoading) ? (
+                <div className="py-8 text-center text-muted-foreground">
+                  <Shield className="w-8 h-8 mx-auto mb-2 text-muted-foreground/50" />
+                  <div>Loading teams…</div>
+                </div>
+              ) : (userTeams as any[]).length === 0 ? (
                 <div className="text-center py-8">
                   <div className="w-12 h-12 mx-auto mb-3 bg-muted rounded-full flex items-center justify-center">
                     <Shield className="w-6 h-6 text-muted-foreground" />
