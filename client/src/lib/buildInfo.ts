@@ -1,13 +1,10 @@
 // Build version information for debugging and cache verification
-// Using stable compile-time values since Vite defines aren't available
-const BUILD_TIMESTAMP = '2025-08-30T20:12:26.213Z';
-const BUILD_HASH = 'meyp7co5';
+// Using environment variables set at build time
+const env = import.meta.env;
+const hash = env.VITE_BUILD_HASH ?? 'dev';
+const date = env.VITE_BUILD_TIME ?? new Date().toISOString();
 
-export const BUILD_INFO = {
-  hash: BUILD_HASH,
-  date: BUILD_TIMESTAMP,
-  env: import.meta.env.MODE,
-};
+export const BUILD_INFO = { hash, date, env: env.MODE };
 
 export function logBuildInfo() {
   console.log('🏗️ Build Info:', BUILD_INFO);

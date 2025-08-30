@@ -65,9 +65,10 @@ export function useServiceWorker(enableInPWAOnly: boolean = true) {
       // Wait a moment for cleanup
       await new Promise(resolve => setTimeout(resolve, 100));
 
-      // Add cache-busting timestamp with additional randomness
-      const swUrl = `/sw.js?v=${Date.now()}&r=${Math.random()}`;
-      console.log('[SW Hook] Registering fresh service worker:', swUrl);
+      // Use build hash for service worker versioning
+      const { BUILD_INFO } = await import('../lib/buildInfo');
+      const swUrl = `/sw.js?v=${BUILD_INFO.hash}`;
+      console.log('[SW Hook] Registering service worker with build hash:', swUrl);
 
       const registration = await navigator.serviceWorker.register(swUrl, {
         scope: '/',
