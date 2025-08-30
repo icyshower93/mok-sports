@@ -42,7 +42,7 @@ const testLogin = async (userId?: string) => {
 };
 
 export default function DashboardPage() {
-  const { user, logout } = useAuth();
+  // const { user, logout } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [, setLocation] = useLocation();

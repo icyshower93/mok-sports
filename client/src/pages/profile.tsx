@@ -8,7 +8,7 @@ import { User, Trophy, Calendar, LogOut, BarChart3, Target, Users, TrendingUp } 
 import { useQuery } from "@tanstack/react-query";
 
 export default function ProfilePage() {
-  const { user, logout } = useAuth();
+  // const { user, logout } = useAuth();
 
   // Get user statistics
   const { data: userStats, isLoading: statsLoading } = useQuery({

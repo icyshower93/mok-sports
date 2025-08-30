@@ -37,7 +37,7 @@ interface League {
 }
 
 export function LeagueWaiting() {
-  const { user } = useAuth();
+  // const { user } = useAuth();
   const { toast } = useToast();
   const [, setLocation] = useLocation();
   const [leagueId, setLeagueId] = useState<string | null>(null);
