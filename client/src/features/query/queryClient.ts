@@ -50,8 +50,8 @@ export function getQueryClient(): QueryClient {
   return _qc;
 }
 
-// Keep compatibility - will be removed after migration
-export const queryClient = getQueryClient();
+// Backward compatibility helper removed - use getQueryClient() instead
+// export const queryClient = getQueryClient(); // REMOVED: this defeats lazy pattern
 
 // Maintain backward compatibility while using new AuthToken utility
 export const AuthTokenManager = {
