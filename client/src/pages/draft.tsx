@@ -425,10 +425,12 @@ export default function DraftPage() {
     const isDrafted = picksSafe.some(p => p.nflTeam.id === team.id);
     if (isDrafted) return 'taken';
     
-    // Check division conflict for current user
+    // Check division conflict for current user (must match conference + division)
     if (isCurrentUser && state?.canMakePick) {
       const userPicks = picksSafe.filter(p => p.user.id === user?.id) || [];
-      const hasDivisionConflict = userPicks.some(p => p.nflTeam.division === team.division);
+      const hasDivisionConflict = userPicks.some(
+        p => `${p.nflTeam.conference} ${p.nflTeam.division}` === `${team.conference} ${team.division}`
+      );
       if (hasDivisionConflict) return 'conflict';
     }
     
