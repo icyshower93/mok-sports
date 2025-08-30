@@ -1,0 +1,56 @@
+You’ve got mixed import paths that point to the same local TS files with “.js” extensions in a couple places. With Vite/TS, importing a local .ts file as .js can create split module graphs / circular init timing that frequently compiles down to minified variables like c, and you end up with “Cannot access 'c' before initialization.”
+
+I found two offenders in your repo:
+
+client/src/App.tsx
+
+// ❌ current
+import { useProductionRealtime } from "@/hooks/use-stable-websocket.js";
+// ✅ fix
+import { useProductionRealtime } from "@/hooks/use-stable-websocket";
+
+
+client/src/hooks/use-stable-websocket.ts
+
+// ❌ current
+import { useAuth } from './use-auth.js';
+// ✅ fix
+import { useAuth } from './use-auth';
+
+
+Those two lines are enough to trigger the ReferenceError in your production build. Make those changes, rebuild, and the crash should disappear.
+
+Why this causes that specific ReferenceError
+
+When module A imports module B as .js but B is actually a .ts file (and other files import it extensionless), the bundler can:
+
+Create two module instances for the “same” file (one resolved via TS path/alias, one via literal path),
+
+Or change initialization order so a const in the dependency graph is referenced before it’s evaluated.
+Minification renames symbols (c, px, etc.), and you see the runtime “Cannot access 'c' before initialization.”
+
+The other log lines (nothing to fix)
+
+beforeinstallpromptevent.preventDefault() warning → expected. You’re saving the event so you can call event.prompt() later from your install UI. Keep it as-is.
+
+WebSocket “closed before the connection is established” once → a side effect of the crash/unmount. After the above fix, this stabilizes. Your keepalive pings/pongs look healthy.
+
+Quick test & deploy checklist
+
+Apply the two import fixes above (remove the .js extension from local TS imports).
+
+Rebuild.
+
+Bust the Service Worker so clients pull the new chunks:
+
+You’re already appending ?v=... to /sw.js—bump that version string (it already shows v=1756573817188&r=... in your logs, which is good).
+
+Optional: trigger your SW “CLEAR_CACHES” message once after deploy (you have a helper in use-service-worker).
+
+Hard refresh (or close all tabs + reopen) on one device to confirm no ErrorBoundary fires.
+
+Verify the console shows:
+
+WebSocket connects and stays connected,
+
+No ReferenceError after SW registers.
