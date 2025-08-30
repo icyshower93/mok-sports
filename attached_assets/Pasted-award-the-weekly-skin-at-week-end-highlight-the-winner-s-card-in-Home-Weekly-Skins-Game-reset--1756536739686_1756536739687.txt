@@ -1,0 +1,152 @@
+award the weekly skin at week end
+
+highlight the winner’s card in Home → “Weekly Skins Game”
+
+reset the “Weekly Skins Game” strip to all 0s at the start of the next week
+
+Below are the exact changes to make that happen. They’re minimal and plug straight into your current repo.
+
+1) Backend: add a skins endpoint
+
+Your client is already calling /api/scoring/skins/:leagueId/:season, but there’s no route yet. Add this to server/routes/scoring.ts (anywhere after other scoringRouter.get(...) handlers):
+
+// GET weekly skins history for a league/season
+scoringRouter.get("/api/scoring/skins/:leagueId/:season", authenticateUser, async (req, res) => {
+  try {
+    const { leagueId, season } = req.params;
+
+    const skins = await db
+      .select({
+        leagueId: weeklySkins.leagueId,
+        season: weeklySkins.season,
+        week: weeklySkins.week,
+        prizeAmount: weeklySkins.prizeAmount,
+        isTied: weeklySkins.isTied,
+        isRollover: weeklySkins.isRollover,
+        winningScore: weeklySkins.winningScore,
+        winnerId: weeklySkins.winnerId,
+        winnerName: users.name,
+        awardedAt: weeklySkins.awardedAt,
+      })
+      .from(weeklySkins)
+      .leftJoin(users, eq(weeklySkins.winnerId, users.id))
+      .where(and(
+        eq(weeklySkins.leagueId, leagueId),
+        eq(weeklySkins.season, parseInt(season, 10)),
+      ))
+      .orderBy(asc(weeklySkins.week));
+
+    res.json({ skins });
+  } catch (err) {
+    console.error("[Scoring] Error getting weekly skins:", err);
+    res.status(500).json({ error: "Failed to get weekly skins" });
+  }
+});
+
+
+Why this matters:
+
+This powers both the Home and League pages’ weekly skins UI.
+
+It returns per-week winner, prizeAmount (including rollovers), and tie/rollover rows the client already expects.
+
+2) Backend: award the skin when a week completes (already wired)
+
+You already call endOfWeekProcessor.getWeekEndResults(...) in server/routes/scoring.ts for the week-scores endpoint, and that internally calls processEndOfWeek(...), which:
+
+finds the highest totalPoints for that week per league
+
+inserts into weekly_skins either a winner row or a rollover row
+
+broadcasts a weekly_skins_awarded or weekly_skins_rollover event
+
+So you don’t need extra code to “award”; it happens the first time the week-scores endpoint is hit after the week is complete. If you want this to happen even if nobody opens the app, you can later add a tiny cron hit to that endpoint; not required for now.
+
+3) Frontend: make the winner highlight bullet-proof
+
+In client/src/pages/main.tsx, slightly expand how we derive weeklySkinsWinnerId so the highlight works whether the skins endpoint or the week-scores payload is the first to resolve.
+
+Find the block where you have:
+
+const currentWeekSkin = (skinsData as any)?.skins?.find((skin: any) => skin.week === currentWeek);
+const weeklySkinsWinnerId = currentWeekSkin?.winnerId;
+const weekEndResults = (weeklyRankingsData as any)?.weekEndResults || null;
+
+
+Replace it with:
+
+const currentWeekSkin =
+  (skinsData as any)?.skins?.find((skin: any) => skin.week === currentWeek) ?? null;
+
+const weekEndResults = (weeklyRankingsData as any)?.weekEndResults ?? null;
+
+// Prefer explicit winner from skins API; fall back to weekEndResults
+const weeklySkinsWinnerId =
+  currentWeekSkin?.winnerId ??
+  (weekEndResults?.weeklySkinsWinner ? weekEndResults.weeklySkinsWinner.winnerId : null);
+
+
+You already guard the highlight with:
+
+const hasActualPoints = weeklyRankings.some((m: any) => (m.weeklyPoints || 0) > 0);
+const shouldShowWinner = isSkinsWinner && hasActualPoints;
+
+
+That prevents false “winner” halos when everyone is at 0.
+
+4) Frontend: ensure the Weekly Skins strip hard-resets to 0s on a new week
+
+You’re already requesting rankings with a query key that includes the week:
+
+queryKey: [`/api/scoring/leagues/${selectedLeague}/week-scores/2024/${currentWeek}`]
+
+
+Your backend route returns fallbackRankings (all zeroes) when there are no user_weekly_scores for the new week yet. You’re also rendering with (member.weeklyPoints || 0). This combination resets the strip to zero automatically at week rollover.
+
+To make the reset explicit and instant in the UI even before the network returns, drop in a tiny optimistic reset:
+
+In client/src/pages/main.tsx, right after you calculate currentWeek, add:
+
+// Optimistic weekly reset: if there is no skins row for the current week and the week isn't complete,
+// render zeros and no winner highlight until scores come in.
+const weekHasSkinsRow = !!currentWeekSkin;
+const weekComplete = !!weekEndResults?.weekComplete;
+
+const displayWeeklyRankings =
+  !weekHasSkinsRow && !weekComplete
+    ? (weeklyRankings as any[]).map(m => ({ ...m, weeklyPoints: 0 }))
+    : weeklyRankings;
+
+
+Then change the map to use displayWeeklyRankings:
+
+{Array.isArray(displayWeeklyRankings) && displayWeeklyRankings.length > 0 ? (
+  displayWeeklyRankings.map((member: any, index: number) => {
+    const isSkinsWinner = weeklySkinsWinnerId && member.userId === weeklySkinsWinnerId;
+    const hasActualPoints = displayWeeklyRankings.some((m: any) => (m.weeklyPoints || 0) > 0);
+    const shouldShowWinner = isSkinsWinner && hasActualPoints;
+    // ...
+
+
+Result: when a new week starts, the strip instantly shows all 0s and no highlight. Once scores accrue, points populate; when the week completes, the winner highlights.
+
+5) (Optional) Show rollover pot size on Home
+
+You’re currently hardcoding $30. Replace it with the actual pot (1 + number of consecutive rollovers):
+
+const rolloverCount =
+  Array.isArray((skinsData as any)?.skins)
+    ? (skinsData as any).skins
+        .filter((s: any) => s.week < currentWeek && s.isRollover)
+        .length
+    : 0;
+
+const potThisWeek = 1 + rolloverCount; // e.g., in $/skins
+
+
+Then in the header:
+
+<div className="text-lg font-semibold text-primary">${potThisWeek * 30}</div>
+
+
+(If your game uses a different dollar value per skin, swap the multiplier.)

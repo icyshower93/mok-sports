@@ -152,9 +152,35 @@ export default function MainPage() {
   const weeklyRankings = Array.isArray((weeklyRankingsData as any)?.rankings) ? (weeklyRankingsData as any)?.rankings : [];
   
   // Find current week's skins winner (if any)
-  const currentWeekSkin = (skinsData as any)?.skins?.find((skin: any) => skin.week === currentWeek);
-  const weeklySkinsWinnerId = currentWeekSkin?.winnerId;
-  const weekEndResults = (weeklyRankingsData as any)?.weekEndResults || null;
+  const currentWeekSkin =
+    (skinsData as any)?.skins?.find((skin: any) => skin.week === currentWeek) ?? null;
+
+  const weekEndResults = (weeklyRankingsData as any)?.weekEndResults ?? null;
+
+  // Prefer explicit winner from skins API; fall back to weekEndResults
+  const weeklySkinsWinnerId =
+    currentWeekSkin?.winnerId ??
+    (weekEndResults?.weeklySkinsWinner ? weekEndResults.weeklySkinsWinner.winnerId : null);
+
+  // Optimistic weekly reset: if there is no skins row for the current week and the week isn't complete,
+  // render zeros and no winner highlight until scores come in.
+  const weekHasSkinsRow = !!currentWeekSkin;
+  const weekComplete = !!weekEndResults?.weekComplete;
+
+  const displayWeeklyRankings =
+    !weekHasSkinsRow && !weekComplete
+      ? (weeklyRankings as any[]).map(m => ({ ...m, weeklyPoints: 0 }))
+      : weeklyRankings;
+
+  // Calculate dynamic rollover pot size
+  const rolloverCount =
+    Array.isArray((skinsData as any)?.skins)
+      ? (skinsData as any).skins
+          .filter((s: any) => s.week < currentWeek && s.isRollover)
+          .length
+      : 0;
+
+  const potThisWeek = 1 + rolloverCount; // e.g., in skins
 
   // Fetch teams left to play for current week
   const { data: teamsLeftData } = useQuery({
@@ -333,19 +359,19 @@ export default function MainPage() {
                 <Flame className="w-5 h-5 text-purple-500" />
                 <h3 className="text-lg font-bold">Weekly Skins Game</h3>
               </div>
-              <div className="text-lg font-semibold text-primary">$30</div>
+              <div className="text-lg font-semibold text-primary">${potThisWeek * 30}</div>
             </div>
             
             <div className="overflow-x-auto scrollbar-hide horizontal-scroll">
               <div className="flex space-x-3 pb-4 min-w-max">
-                {Array.isArray(weeklyRankings) && weeklyRankings.length > 0 ? (
-                  weeklyRankings.map((member: any, index: number) => {
+                {Array.isArray(displayWeeklyRankings) && displayWeeklyRankings.length > 0 ? (
+                  displayWeeklyRankings.map((member: any, index: number) => {
                     // FIXED: Only show winner styling if there's actually a skins winner AND it's this member
                     // Don't show winner styling when everyone has 0 points or when there are no skins records
                     const isSkinsWinner = weeklySkinsWinnerId && member.userId === weeklySkinsWinnerId;
                     
                     // Additional check: Don't show winner styling if everyone has 0 points (reset state)
-                    const hasActualPoints = weeklyRankings.some((m: any) => (m.weeklyPoints || 0) > 0);
+                    const hasActualPoints = displayWeeklyRankings.some((m: any) => (m.weeklyPoints || 0) > 0);
                     const shouldShowWinner = isSkinsWinner && hasActualPoints;
 
                     // DEBUG: Log matching logic for each member
@@ -475,7 +501,7 @@ export default function MainPage() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <h4 className="font-semibold text-sm text-foreground truncate">Week {currentWeek} Skins Prize Pool</h4>
-                        <p className="text-xs text-muted-foreground mt-1">$30 weekly prize up for grabs this week</p>
+                        <p className="text-xs text-muted-foreground mt-1">${potThisWeek * 30} weekly prize up for grabs this week</p>
                         <p className="text-xs text-muted-foreground">Active now</p>
                       </div>
                     </div>

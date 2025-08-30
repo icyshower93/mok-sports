@@ -3,8 +3,8 @@ import express from "express";
 import { z } from "zod";
 import { storage } from "../storage.js";
 import { db } from "../db";
-import { eq, and, sql } from "drizzle-orm";
-import { nflGames, nflTeams, weeklyLocks, userWeeklyScores, draftPicks, drafts, leagues, users } from "@shared/schema";
+import { eq, and, sql, asc } from "drizzle-orm";
+import { nflGames, nflTeams, weeklyLocks, userWeeklyScores, draftPicks, drafts, leagues, users, weeklySkins } from "@shared/schema";
 import {
   calculateWeeklyScores,
   MOK_SCORING_RULES
@@ -791,6 +791,39 @@ export function setupScoringRoutes(app: express.Express) {
       res.status(500).json({ message: "Failed to get weekly scores" });
     }
   });
+
+// GET weekly skins history for a league/season
+router.get("/skins/:leagueId/:season", authenticateUser, async (req, res) => {
+  try {
+    const { leagueId, season } = req.params;
+
+    const skins = await db
+      .select({
+        leagueId: weeklySkins.leagueId,
+        season: weeklySkins.season,
+        week: weeklySkins.week,
+        prizeAmount: weeklySkins.prizeAmount,
+        isTied: weeklySkins.isTied,
+        isRollover: weeklySkins.isRollover,
+        winningScore: weeklySkins.winningScore,
+        winnerId: weeklySkins.winnerId,
+        winnerName: users.name,
+        awardedAt: weeklySkins.awardedAt,
+      })
+      .from(weeklySkins)
+      .leftJoin(users, eq(weeklySkins.winnerId, users.id))
+      .where(and(
+        eq(weeklySkins.leagueId, leagueId),
+        eq(weeklySkins.season, parseInt(season, 10)),
+      ))
+      .orderBy(asc(weeklySkins.week));
+
+    res.json({ skins });
+  } catch (err) {
+    console.error("[Scoring] Error getting weekly skins:", err);
+    res.status(500).json({ error: "Failed to get weekly skins" });
+  }
+});
 
   // Enhanced dashboard endpoint with teams left to play
   app.get("/api/leagues/:leagueId/dashboard/:week", async (req, res) => {
