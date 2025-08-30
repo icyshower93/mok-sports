@@ -26,35 +26,38 @@ console.log('🚀 [Server] Build Info:', SERVER_BUILD_INFO);
 console.log('📝 [Server] Environment Note: NODE_ENV=development means we have dev debugging enabled while serving production builds');
 
 async function setupProductionAssets(app: express.Application) {
-  // Multiple path candidates to find client/dist
-  const candidates = [
-    process.env.CLIENT_DIST,                                   // optional override
-    path.resolve(__dirname, '../dist/public'),                 // current build output
-    path.resolve(process.cwd(), 'dist/public'),                // production build location
-    path.resolve(__dirname, '../../client/dist'),              // typical monorepo build
-    path.resolve(process.cwd(), 'client/dist'),                // fallback if cwd is repo root
-    path.resolve(__dirname, '../client/dist'),                 // alt layout
-    path.resolve(__dirname, '../../../client/dist'),           // safety net
-  ].filter(Boolean) as string[];
-
-  const clientDist = candidates.find(p => {
-    try { return p && fs.existsSync(path.join(p, 'index.html')); } catch { return false; }
-  });
-
+  // Single source of truth for build output
+  const clientDist = path.resolve(__dirname, '../dist/public');
+  
   console.log('[server] NODE_ENV:', process.env.NODE_ENV);
   console.log('[server] __dirname:', __dirname);
-  console.log('[server] clientDist candidates:', candidates);
   console.log('[server] selected clientDist:', clientDist);
 
-  if (!clientDist) {
-    console.error('[server] ERROR: Could not find client/dist/index.html. Did you run the client build?');
-    return false;
-  } else {
-    // Serve static assets (don't auto-serve index so SPA fallback can handle all routes)
-    app.use(express.static(clientDist, { index: false, maxAge: '1h' }));
-    console.log('[server] Static assets configured from:', clientDist);
-    return true;
+  if (!fs.existsSync(path.join(clientDist, 'index.html'))) {
+    console.error('[server] Missing build at', clientDist);
+    process.exit(1);
   }
+
+  // Service worker with no-cache
+  app.get('/sw.js', (_req, res) => {
+    res.setHeader('Cache-Control', 'no-store');
+    res.sendFile(path.join(clientDist, 'sw.js'));
+  });
+
+  // Cache control middleware
+  app.use((req, res, next) => {
+    if (req.path.endsWith('.html') || req.headers.accept?.includes('text/html')) {
+      res.setHeader('Cache-Control', 'no-store');
+    } else if (/\.(?:js|css|woff2?)$/.test(req.path)) {
+      res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+    }
+    next();
+  });
+
+  // Serve static assets (don't auto-serve index so SPA fallback can handle all routes)
+  app.use(express.static(clientDist, { index: false }));
+  console.log('[server] Static assets configured from:', clientDist);
+  return true;
 }
 
 const app = express();
@@ -368,6 +371,7 @@ app.use((req, res, next) => {
         }
         
         // SPA fallback: serve index.html for all other routes
+        res.setHeader('Cache-Control', 'no-store');
         res.sendFile(path.join(clientDist, 'index.html'));
       });
     }

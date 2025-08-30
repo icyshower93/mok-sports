@@ -1,0 +1,167 @@
+I dug through your uploaded repo and found why you’re seeing an “old” build even after clearing SW + localStorage. It’s not your browser; it’s the server picking (and caching) the wrong build folder, plus a couple of cache headers that let stale HTML/JS linger.
+
+Here’s the precise diagnosis and the fixes to make it deterministic.
+
+What’s causing the “wrong version” load
+1) The server can serve from the wrong build directory
+
+In server/index.ts you search multiple candidate paths and then pick the first one that contains an index.html:
+
+// server/index.ts (lines ~28–55 in your repo)
+const candidates = [
+  process.env.CLIENT_DIST,                                   // optional override
+  path.resolve(__dirname, '../dist/public'),                 // current build output
+  path.resolve(process.cwd(), 'dist/public'),                // production build location
+  path.resolve(__dirname, '../../client/dist'),              // typical monorepo build
+  path.resolve(process.cwd(), 'client/dist'),                // fallback if cwd is repo root
+  path.resolve(__dirname, '../client/dist'),                 // alt layout
+];
+
+const clientDist = candidates.find(p =>
+  p && fs.existsSync(path.join(p, 'index.html'))
+);
+app.use(express.static(clientDist, { index: false, maxAge: '1h' }));
+
+
+If an older client/dist (or any earlier-matching candidate) still exists on disk, the server will happily select it and serve that version. This exactly matches “build A deployed, server still serving a previous folder.”
+
+You already log the list + selection:
+
+[server] clientDist candidates: [...]
+[server] selected clientDist: <path>
+
+
+If that path doesn’t match your fresh dist/public, that’s the smoking gun.
+
+Fix (pick exactly one build path)
+
+Make the source of truth unambiguous:
+
+Option A (recommended): Export outDir once from Vite and reuse it.
+
+Option B (quick): Force the path via CLIENT_DIST.
+
+Option A (code):
+
+// vite.config.ts — add this small export next to your default export
+export const OUT_DIR = new URL('./dist/public', import.meta.url).pathname;
+
+// server/index.ts (replace the whole candidate dance)
+import { OUT_DIR } from '../vite.config';
+
+const clientDist = OUT_DIR; // single source of truth
+if (!fs.existsSync(path.join(clientDist, 'index.html'))) {
+  console.error('[server] Missing build at', clientDist);
+  process.exit(1);
+}
+app.use(express.static(clientDist, { index: false, maxAge: '1h' }));
+
+
+Option B (env): Set CLIENT_DIST=dist/public in Replit and leave the rest as-is.
+
+Also, delete any stray build folders so they can’t be accidentally picked:
+
+# from repo root — safe to run before every deploy
+rm -rf client/dist dist client/.vite node_modules/.vite
+
+
+Then rebuild:
+
+npm --prefix client ci
+npm --prefix client run build
+
+2) index.html can be cached while it still references old JS
+
+You serve static with max-age: 1h:
+
+app.use(express.static(clientDist, { index: false, maxAge: '1h' }));
+
+
+That’s great for hashed assets, but not index.html. Your SPA fallback later does res.sendFile(index.html) without explicit headers, so depending on proxy behavior, index.html may be cached. If the HTML is stale, it points to the previous hashed JS (e.g., index-nhdiGqg3.js) and you’ll load the old app.
+
+Fix (no-store for HTML; immutable for hashed assets)
+
+Add a tiny header shim:
+
+// right after express.static:
+app.use((req, res, next) => {
+  if (req.path.endsWith('.html') || req.headers.accept?.includes('text/html')) {
+    res.setHeader('Cache-Control', 'no-store');
+  }
+  next();
+});
+
+// SPA fallback
+app.get('*', (req, res) => {
+  res.setHeader('Cache-Control', 'no-store');
+  res.sendFile(path.join(clientDist, 'index.html'));
+});
+
+
+Optionally, be explicit for JS/CSS/woff:
+
+app.use((req, res, next) => {
+  if (/\.(?:js|css|woff2?)$/.test(req.path)) {
+    res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+  }
+  next();
+});
+
+3) Make sure the service worker file itself isn’t cached
+
+You register sw.js with a busting query (good), but it’s still wise to serve /sw.js with no-store:
+
+// BEFORE express.static:
+app.get('/sw.js', (_req, res) => {
+  res.setHeader('Cache-Control', 'no-store');
+  res.sendFile(path.join(clientDist, 'sw.js'));
+});
+
+
+(Your SW already does network-first for HTML and calls skipWaiting() + clients.claim(), which is exactly what we want.)
+
+4) Your current “Build Info” is compile-time hardcoded
+
+I saw your client/src/lib/buildInfo.ts now uses fixed strings:
+
+const BUILD_TIMESTAMP = '2025-08-30T19:47:24.230Z';
+const BUILD_HASH = 'meyob5qe';
+
+
+That’s fine for testing, but it means the hash won’t change unless you edit the file. If your console shows a different hash than you expect, it could be this hardcoded value, not a cache issue.
+
+Fix (compile-time define)
+
+Let Vite inject a fresh value at build:
+
+// vite.config.ts
+export default defineConfig({
+  define: {
+    __BUILD_TIME__: JSON.stringify(new Date().toISOString()),
+    __BUILD_HASH__: JSON.stringify((Date.now()).toString(36)),
+  },
+  // ...
+});
+
+// client/src/lib/buildInfo.ts
+declare const __BUILD_TIME__: string;
+declare const __BUILD_HASH__: string;
+
+export const BUILD_INFO = {
+  hash: __BUILD_HASH__,
+  date: __BUILD_TIME__,
+  env: import.meta.env.MODE,
+};
+
+
+Now the “📦 Version” only changes when you actually build.
+
+Quick “do this now” checklist
+
+Pin the static dir: use CLIENT_DIST=dist/public or import OUT_DIR from Vite and use only that path.
+
+Delete stale build dirs: rm -rf client/dist dist client/.vite node_modules/.vite → rebuild.
+
+Cache headers: add no-store for index.html and an explicit app.get('/sw.js', … no-store) route.
+
+Build ID: switch to Vite define vars so the logged version reflects the current build.
