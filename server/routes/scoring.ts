@@ -510,7 +510,7 @@ router.get("/leagues/:leagueId/week-scores/:season/:week", authenticateUser, aut
     console.log(`[Scoring] Getting weekly scores for league ${leagueId}, season ${season}, week ${week}`);
 
     // Get weekly scores from the database
-    const weeklyScores = await db.select({
+    let weeklyScores = await db.select({
       userId: userWeeklyScores.userId,
       userName: users.name,
       weeklyPoints: userWeeklyScores.totalPoints,
@@ -558,7 +558,7 @@ router.get("/leagues/:leagueId/week-scores/:season/:week", authenticateUser, aut
       if (recomputed.length > 0) {
         console.log(`[Scoring] Computed & persisted ${recomputed.length} weekly scores`);
         // fall through – let the existing response shape use this list
-        (weeklyScores as any) = recomputed;
+        weeklyScores = recomputed;
       } else {
         console.log('[Scoring] Still no scores after compute (likely no completed NFL games for this week)');
       }
@@ -716,55 +716,6 @@ router.get("/leagues/:leagueId/teams-left-to-play/:season/:week", async (req, re
   }
 });
 
-// Get skins data for a league and season
-router.get("/skins/:leagueId/:season", authenticateUser, async (req, res) => {
-  try {
-    const { leagueId, season } = req.params;
-    
-    console.log(`[Scoring] Getting skins data for league ${leagueId}, season ${season}`);
-    
-    // Get all weekly skins for this league and season
-    const skinsResult = await db.execute(sql`
-      SELECT 
-        ws.week,
-        ws.winning_score,
-        ws.prize_amount,
-        ws.is_tied,
-        ws.awarded_at,
-        u.name as winner_name,
-        u.id as winner_id
-      FROM weekly_skins ws
-      LEFT JOIN users u ON ws.winner_id = u.id
-      WHERE ws.league_id = ${leagueId} 
-      AND ws.season = ${parseInt(season)}
-      ORDER BY ws.week ASC
-    `);
-    
-    const skinsData = skinsResult.rows.map((row: any) => ({
-      week: row.week,
-      winnerName: row.winner_name,
-      winnerId: row.winner_id,
-      winningScore: row.winning_score,
-      prizeAmount: row.prize_amount,
-      isTied: row.is_tied,
-      awardedAt: row.awarded_at
-    }));
-    
-    console.log(`[Scoring] Found ${skinsData.length} skins awards for league ${leagueId}`);
-    
-    res.json({
-      leagueId,
-      season: parseInt(season),
-      skins: skinsData,
-      totalSkinsAwarded: skinsData.length,
-      totalPrizeValue: skinsData.reduce((sum, skin) => sum + skin.prizeAmount, 0)
-    });
-    
-  } catch (error) {
-    console.error('[Scoring] Error getting skins data:', error);
-    res.status(500).json({ error: 'Failed to get skins data' });
-  }
-});
 
 export { router as scoringRouter };
 

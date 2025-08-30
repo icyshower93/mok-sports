@@ -1,0 +1,103 @@
+Short answer: you nailed most of it—persistence, the skins endpoint, UI highlight/reset, and schema constraints are all in place. 🎉
+But I see three blockers (two are outright bugs) and one small hardening tweak you should ship now:
+
+🚨 Must-fix bugs
+1) endOfWeekProcessor uses tx.* without a transaction
+
+In server/utils/endOfWeekProcessor.ts you call await tx.select(...) / await tx.insert(...), but there’s no db.transaction(...) creating tx. That’ll throw at runtime the moment a week finishes.
+
+Fix (wrap the award section in a transaction + use tx everywhere inside):
+
+// inside processWeeklySkins(...)
+return await db.transaction(async (tx) => {
+  // idempotency guard inside the tx (re-check!)
+  const existingSkins = await tx.select()
+    .from(weeklySkins)
+    .where(and(
+      eq(weeklySkins.leagueId, leagueId),
+      eq(weeklySkins.season, season),
+      eq(weeklySkins.week, week)
+    ))
+    .limit(1);
+
+  if (existingSkins.length > 0) {
+    return existingSkins[0].isRollover ? { rollover: existingSkins[0] } : { winner: existingSkins[0] };
+  }
+
+  // … your current logic (weeklyScores query, winners[], etc.) …
+  // IMPORTANT: replace every db.* in this block with tx.*
+
+  if (winners.length === 1) {
+    await tx.insert(weeklySkins).values({ leagueId, season, week, winnerId: winners[0].userId,
+      winningScore: winners[0].totalPoints, prizeAmount: totalSkinsThisWeek, isTied: false, isRollover: false, awardedAt: new Date() });
+    return { winner: { week, winnerId: winners[0].userId, prizeAmount: totalSkinsThisWeek } };
+  } else {
+    await tx.insert(weeklySkins).values({ leagueId, season, week,
+      winnerId: null, winningScore: winners[0].totalPoints, prizeAmount: 0, isTied: true, isRollover: true, awardedAt: new Date() });
+    return { rollover: { week, isTied: true } };
+  }
+});
+
+2) Reassignment to a const in the week-scores route
+
+In server/routes/scoring.ts, inside /leagues/:leagueId/week-scores/:season/:week, you declare:
+
+const weeklyScores = await db.select(…)
+
+
+then later do:
+
+(weeklyScores as any) = recomputed;
+
+
+That’s still an assignment to a const and will crash.
+
+Fix (make it let or use a new var):
+
+let weeklyScores = await db.select({ /* … */ });
+// ...
+if (recomputed.length > 0) {
+  weeklyScores = recomputed;
+}
+
+⚠️ Logic issue (pot size)
+3) Rollover pot counts all rollovers, not consecutive ones
+
+In endOfWeekProcessor.ts you compute:
+
+const previousRollovers = await tx.select().from(weeklySkins)
+  .where(and(eq(leagueId), eq(season), eq(isTied,true), eq(isRollover,true)));
+const totalSkinsThisWeek = 1 + previousRollovers.length;
+
+
+That will overpay if there was a winner a few weeks ago (the pot should reset after a win).
+
+Fix (count consecutive rollovers since last non-rollover):
+
+const history = await tx.select().from(weeklySkins)
+  .where(and(eq(weeklySkins.leagueId, leagueId), eq(weeklySkins.season, season)))
+  .orderBy(desc(weeklySkins.week));
+
+let streak = 0;
+for (const row of history) {
+  if (row.isRollover) streak++;
+  else break; // stop at last non-rollover (a real winner)
+}
+const totalSkinsThisWeek = 1 + streak;
+
+
+(Nice: you already persist prizeAmount, so past weeks stay accurate.)
+
+🔒 Small hardening (security)
+4) Protect the skins endpoint with league authorization
+
+Your skins route is:
+
+router.get("/skins/:leagueId/:season", authenticateUser, async (req,res)=>{...})
+
+
+but your week-scores route uses authenticateUser, authorizeLeagueMember.
+
+Fix: add the same authorizeLeagueMember middleware to the skins route to prevent cross-league snooping:
+
+router.get("/skins/:leagueId/:season", authenticateUser, authorizeLeagueMember, async (req,res)=>{ ... })

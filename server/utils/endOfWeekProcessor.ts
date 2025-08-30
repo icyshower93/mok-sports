@@ -297,40 +297,41 @@ export class EndOfWeekProcessor {
   ): Promise<{ winner?: any, rollover?: any }> {
     console.log(`[EndOfWeek] Processing weekly skins for week ${week}`);
 
-    // Check if skins have already been awarded for this week (idempotent guard)
-    const existingSkins = await db.select()
-      .from(weeklySkins)
-      .where(and(
-        eq(weeklySkins.leagueId, leagueId),
-        eq(weeklySkins.season, season),
-        eq(weeklySkins.week, week)
-      ))
-      .limit(1);
+    return await db.transaction(async (tx) => {
+      // idempotency guard inside the tx (re-check!)
+      const existingSkins = await tx.select()
+        .from(weeklySkins)
+        .where(and(
+          eq(weeklySkins.leagueId, leagueId),
+          eq(weeklySkins.season, season),
+          eq(weeklySkins.week, week)
+        ))
+        .limit(1);
 
-    if (existingSkins.length > 0) {
-      console.log(`[EndOfWeek] ⚠️  Skins already awarded for league ${leagueId}, week ${week} - idempotent exit`);
-      const existing = existingSkins[0];
-      return existing.isRollover 
-        ? { rollover: existing } 
-        : { winner: existing };
-    }
+      if (existingSkins.length > 0) {
+        console.log(`[EndOfWeek] ⚠️  Skins already awarded for league ${leagueId}, week ${week} - idempotent exit`);
+        const existing = existingSkins[0];
+        return existing.isRollover 
+          ? { rollover: existing } 
+          : { winner: existing };
+      }
 
-    // Get all user scores for this week
-    const weeklyScores = await db.select({
-      userId: userWeeklyScores.userId,
-      userName: users.name,
-      totalPoints: userWeeklyScores.totalPoints
-      })
-      .from(userWeeklyScores)
-      .innerJoin(users, eq(userWeeklyScores.userId, users.id))
-      .where(
-        and(
-          eq(userWeeklyScores.leagueId, leagueId),
-          eq(userWeeklyScores.season, season),
-          eq(userWeeklyScores.week, week)
+      // Get all user scores for this week
+      const weeklyScores = await tx.select({
+        userId: userWeeklyScores.userId,
+        userName: users.name,
+        totalPoints: userWeeklyScores.totalPoints
+        })
+        .from(userWeeklyScores)
+        .innerJoin(users, eq(userWeeklyScores.userId, users.id))
+        .where(
+          and(
+            eq(userWeeklyScores.leagueId, leagueId),
+            eq(userWeeklyScores.season, season),
+            eq(userWeeklyScores.week, week)
+          )
         )
-      )
-      .orderBy(desc(userWeeklyScores.totalPoints));
+        .orderBy(desc(userWeeklyScores.totalPoints));
 
       if (weeklyScores.length === 0) {
         console.log(`[EndOfWeek] No scores found for week ${week} - no skins award`);
@@ -342,19 +343,21 @@ export class EndOfWeekProcessor {
 
       console.log(`[EndOfWeek] Highest score: ${highestScore}, Winners: ${winners.length}`);
 
-      // Check for previous rollover skins to determine prize amount
-      const previousRollovers = await tx.select()
+      // Check for consecutive rollover skins to determine prize amount
+      const history = await tx.select()
         .from(weeklySkins)
-        .where(
-          and(
-            eq(weeklySkins.leagueId, leagueId),
-            eq(weeklySkins.season, season),
-            eq(weeklySkins.isTied, true),
-            eq(weeklySkins.isRollover, true)
-          )
-        );
+        .where(and(
+          eq(weeklySkins.leagueId, leagueId), 
+          eq(weeklySkins.season, season)
+        ))
+        .orderBy(desc(weeklySkins.week));
 
-      const totalSkinsThisWeek = 1 + previousRollovers.length; // Base 1 skin + rollovers
+      let streak = 0;
+      for (const row of history) {
+        if (row.isRollover) streak++;
+        else break; // stop at last non-rollover (a real winner)
+      }
+      const totalSkinsThisWeek = 1 + streak;
       
       if (winners.length === 1) {
         // Single winner - award all accumulated skins
@@ -403,49 +406,50 @@ export class EndOfWeekProcessor {
           isTied: false
         }
       };
-    } else {
-      // Multiple winners - tie, rollover skins to next week
-      console.log(`[EndOfWeek] 🔄 ${winners.length} users tied with ${highestScore} points - ${totalSkinsThisWeek} skin(s) rolled over`);
+      } else {
+        // Multiple winners - tie, rollover skins to next week
+        console.log(`[EndOfWeek] 🔄 ${winners.length} users tied with ${highestScore} points - ${totalSkinsThisWeek} skin(s) rolled over`);
 
-      // Record the tie with rollover flag
-      await db.insert(weeklySkins).values({
-        leagueId,
-        season,
-        week,
-        winnerId: null, // No winner for ties
-        winningScore: highestScore,
-        prizeAmount: totalSkinsThisWeek,
-        isTied: true,
-        isRollover: true,
-        awardedAt: null // No award given
-      }).onConflictDoNothing();
+        // Record the tie with rollover flag
+        await tx.insert(weeklySkins).values({
+          leagueId,
+          season,
+          week,
+          winnerId: null, // No winner for ties
+          winningScore: highestScore,
+          prizeAmount: totalSkinsThisWeek,
+          isTied: true,
+          isRollover: true,
+          awardedAt: null // No award given
+        }).onConflictDoNothing();
 
-      // Broadcast skins rollover to all connected clients
-      const { globalDraftManager } = await import("../draft/globalDraftManager.js");
-      if (globalDraftManager && (globalDraftManager as any).broadcast) {
-        (globalDraftManager as any).broadcast({
-          type: 'weekly_skins_rollover',
-          data: {
-            leagueId,
-            week,
-            season,
-            tiedUsers: winners.length,
-            tiedScore: highestScore,
-            rolledOverAmount: totalSkinsThisWeek,
-            nextWeekPrize: totalSkinsThisWeek + 1,
-            timestamp: Date.now()
-          }
-        });
-        console.log(`📡 [EndOfWeek] Broadcast skins rollover: ${winners.length} tied, ${totalSkinsThisWeek} skins rolled over`);
-      }
-
-      return {
-        rollover: {
-          reason: `${winners.length} users tied with ${highestScore} points`,
-          nextWeekPrize: totalSkinsThisWeek + 1 // Next week will be worth current + 1 more
+        // Broadcast skins rollover to all connected clients
+        const { globalDraftManager } = await import("../draft/globalDraftManager.js");
+        if (globalDraftManager && (globalDraftManager as any).broadcast) {
+          (globalDraftManager as any).broadcast({
+            type: 'weekly_skins_rollover',
+            data: {
+              leagueId,
+              week,
+              season,
+              tiedUsers: winners.length,
+              tiedScore: highestScore,
+              rolledOverAmount: totalSkinsThisWeek,
+              nextWeekPrize: totalSkinsThisWeek + 1,
+              timestamp: Date.now()
+            }
+          });
+          console.log(`📡 [EndOfWeek] Broadcast skins rollover: ${winners.length} tied, ${totalSkinsThisWeek} skins rolled over`);
         }
-      };
-    }
+
+        return {
+          rollover: {
+            reason: `${winners.length} users tied with ${highestScore} points`,
+            nextWeekPrize: totalSkinsThisWeek + 1 // Next week will be worth current + 1 more
+          }
+        };
+      }
+    });
   }
 
   // Reset weekly points when new week starts (first game of next week)
