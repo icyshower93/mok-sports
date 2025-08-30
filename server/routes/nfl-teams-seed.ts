@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { db } from '../db';
-import { nflTeams } from '../../shared/schema';
+import { nflTeams } from '@shared/schema';
 import { eq } from 'drizzle-orm';
 
 const router = Router();

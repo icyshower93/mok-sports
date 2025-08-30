@@ -1,0 +1,133 @@
+What’s wrong in your repo right now
+1) Your vite.config.ts is corrupted and missing proper alias resolution
+
+I opened your vite.config.ts and it literally contains a line with three dots on its own:
+
+16         ]
+...
+23       "@assets": path.resolve(import.meta.dirname, "attached_assets"),
+
+
+That ... is not valid JS and, more importantly, there’s no alias for @/ or @shared/ even though the code imports from those everywhere. When Vite/rollup can’t consistently resolve those, you get duplicate module instances (same file loaded via different paths), which is a classic way to trigger “cannot access X before initialization”.
+
+Fix
+
+Replace the whole file with a clean version that:
+
+Removes the stray ...
+
+Adds either vite-tsconfig-paths or manual resolve.alias for @ and @shared
+
+Keeps your Replit plugins
+
+Minimal, safe vite.config.ts (drop-in):
+
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import path from "path";
+import runtimeErrorOverlay from "@replit/vite-plugin-runtime-error-modal";
+
+export default defineConfig({
+  plugins: [
+    react(),
+    runtimeErrorOverlay(),
+    ...(process.env.NODE_ENV !== "production" && process.env.REPL_ID !== undefined
+      ? [
+          await import("@replit/vite-plugin-cartographer").then((m) => m.cartographer()),
+        ]
+      : []),
+  ],
+  resolve: {
+    alias: {
+      "@": path.resolve(import.meta.dirname, "client/src"),
+      "@shared": path.resolve(import.meta.dirname, "shared"),
+      "@assets": path.resolve(import.meta.dirname, "attached_assets"),
+    },
+  },
+  root: path.resolve(import.meta.dirname, "client"),
+  build: {
+    outDir: path.resolve(import.meta.dirname, "dist/public"),
+    emptyOutDir: true,
+  },
+  server: {
+    fs: { strict: true, deny: ["**/.*"] },
+  },
+});
+
+
+Optional: instead of manual aliases, you can install vite-tsconfig-paths and add it to plugins, but the manual aliases above are enough and remove a dependency.
+
+2) Mixed import specifiers for the same module (duplication)
+
+I scanned the sources and found the same module being imported both by alias and by relative path:
+
+Alias imports: from '@shared/schema' (used widely)
+
+Relative imports:
+
+server/routes/nfl-teams-seed.ts → from '../../shared/schema'
+
+server/routes/schedule-import.ts → from '../../shared/schema'
+
+That yields two distinct module instances (@shared/schema vs ../../shared/schema). On the server it causes type/identity weirdness (e.g., Zod enums, singletons); on the client it can cascade into TDZ-style crashes after bundling.
+
+Fix
+
+Normalize those two files to only import via @shared/schema:
+
+// server/routes/nfl-teams-seed.ts
+- import { nflTeams } from '../../shared/schema';
++ import { nflTeams } from '@shared/schema';
+
+// server/routes/schedule-import.ts
+- import { nflGames, nflTeams, weeklyLocks, userWeeklyScores } from '../../shared/schema';
++ import { nflGames, nflTeams, weeklyLocks, userWeeklyScores } from '@shared/schema';
+
+
+(I checked the rest of the repo — those were the only two outliers.)
+
+Why this caused your runtime crash
+
+When the bundler sees the same logical file via different paths, it treats them as different modules. That changes evaluation order and can easily produce TDZ errors like “Cannot access 'c' before initialization” in the minified bundle (your hx frame in the stack trace is a minified component/hook caught in the cycle).
+
+Fixing the alias resolution (Step 1) and removing mixed-path duplicates (Step 2) removes the root cause.
+
+After you patch
+
+Clean and rebuild:
+
+Delete .vite, node_modules/.vite, and the app’s dist/dist/public if present.
+
+Run npm install (to ensure no ghost deps), then npm run build, then npm start.
+
+Hard refresh the browser (or open a fresh private window) to avoid a stale service worker grabbing the old bundle. You’re already registering with a build hash; that’s good.
+
+Extra (nice-to-have) sanity check
+
+If you still want belt-and-suspenders protection against future circulars, drop this tiny “module init tracer” at the top of a few high-traffic files (first lines in client/src/App.tsx, client/src/lib/utils.ts, and any feature index files):
+
+// debug/module-trace.ts
+const seen = new Set<string>();
+export function traceModule(id: string) {
+  // eslint-disable-next-line no-console
+  console.log(`[ModuleInit] ${id}`);
+  if (seen.has(id)) console.warn(`[ModuleInit] duplicate init: ${id}`);
+  seen.add(id);
+}
+
+
+Then at the first line of the target files:
+
+import { traceModule } from "@/debug/module-trace";
+traceModule("App"); // or "lib/utils"
+
+
+If a cycle remains somewhere, you’ll see double inits or a file initializing before its dependencies.
+
+TL;DR
+
+Fix vite.config.ts (bad ... line + missing @ / @shared aliases).
+
+Normalize the two relative imports of shared/schema to @shared/schema.
+
+Rebuild, hard-refresh. Your websocket is fine; the crash is from the alias/dup duplication causing a TDZ.

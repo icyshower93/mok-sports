@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { db } from '../db';
 import { eq, and, sql } from 'drizzle-orm';
-import { nflGames, nflTeams, weeklyLocks, userWeeklyScores } from '../../shared/schema';
+import { nflGames, nflTeams, weeklyLocks, userWeeklyScores } from '@shared/schema';
 
 const router = Router();
 
