@@ -8,7 +8,7 @@ import { AuthProvider } from "@/features/auth/AuthProvider";
 import { useAuth } from "@/features/auth/useAuth";
 import { useQuery } from "@tanstack/react-query";
 import { usePWADetection } from "@/hooks/use-pwa-detection";
-import { useServiceWorker } from "@/hooks/use-service-worker";
+import { useServiceWorker } from "@/hooks/use-service-worker-clean";
 import { useAutoPushRefresh } from "@/hooks/use-auto-push-refresh";
 import { PWAInstallPrompt } from "@/components/pwa-install-prompt";
 import { useProductionRealtime } from "@/hooks/use-production-realtime";
@@ -71,10 +71,8 @@ function AppContent() {
     logBuildInfo();
   }, []);
   
-  // Initialize service worker for PWA functionality
-  // Only enable service worker in production or when explicitly testing PWA
-  const shouldEnableServiceWorker = import.meta.env.PROD || import.meta.env.VITE_ENABLE_SW === 'true';
-  useServiceWorker(shouldEnableServiceWorker ? false : true); // Skip in dev unless explicitly enabled
+  // Initialize service worker for PWA functionality (with debug support via ?nosw)
+  useServiceWorker();
   
   // Initialize automatic push notification refresh for iOS PWA
   useAutoPushRefresh({ user, isAuthenticated });

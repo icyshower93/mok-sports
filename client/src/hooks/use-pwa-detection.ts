@@ -17,6 +17,12 @@ export function usePWADetection() {
   });
 
   useEffect(() => {
+    // Debug flag to skip PWA detection
+    if (new URLSearchParams(location.search).has('nopwa')) {
+      console.log('[PWA] Detection skipped due to ?nopwa parameter');
+      return;
+    }
+
     const detectPWAStatus = () => {
       // Check if running in standalone mode (PWA)
       const isStandalone = window.matchMedia('(display-mode: standalone)').matches ||
