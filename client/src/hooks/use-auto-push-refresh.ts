@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
-import { useAuth } from './use-auth';
-import { useSubscriptionManager } from './use-subscription-manager';
+import { useAuth } from '@/hooks/use-auth';
+import { useSubscriptionManager } from '@/hooks/use-subscription-manager';
 
 /**
  * Legacy auto-refresh hook - now delegates to the new SubscriptionManager

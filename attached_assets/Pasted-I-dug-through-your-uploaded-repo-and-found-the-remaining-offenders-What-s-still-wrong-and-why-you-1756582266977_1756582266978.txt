@@ -1,0 +1,83 @@
+I dug through your uploaded repo and found the remaining offenders.
+
+What’s still wrong (and why you still see Cannot access 'c' before initialization)
+
+You have mixed specifiers for a couple of hooks:
+
+client/src/hooks/use-auto-push-refresh.ts
+
+import { useAuth } from './use-auth'                   // ❌ relative
+import { useSubscriptionManager } from './use-subscription-manager' // ❌ relative
+
+
+client/src/hooks/use-draft-websocket-fixed.ts
+
+import { useToast } from './use-toast'                 // ❌ relative
+
+
+Everywhere else those same modules are imported with the alias, e.g. @/hooks/use-auth and @/hooks/use-toast. That causes the bundler to create two separate module instances for each of those files (one for the ./ path and one for the @/ path). Because your auth/subscription/websocket hooks all reference each other, you end up with a circular graph across the duplicated instances → one instance reads a const export from the other before it finishes initializing → production-minified React stack → px(...) → ReferenceError: Cannot access 'c' before initialization.
+
+You can also see the ripple effect in your logs: the app renders → ErrorBoundary fires → your WS is torn down with a 1006 → reconnect loop continues, but the app has already crashed.
+
+Exact fixes to apply
+
+Do these three tiny import changes and the alias plugin:
+
+Switch the last relative imports to the alias
+
+client/src/hooks/use-auto-push-refresh.ts
+
+import { useAuth } from './use-auth';
+
+import { useSubscriptionManager } from './use-subscription-manager';
+
+import { useAuth } from '@/hooks/use-auth';
+
+import { useSubscriptionManager } from '@/hooks/use-subscription-manager';
+
+client/src/hooks/use-draft-websocket-fixed.ts
+
+import { useToast } from './use-toast';
+
+import { useToast } from '@/hooks/use-toast';
+
+(Everything else in your repo already uses the @/ alias for these hooks, which is why these three are the “double load” culprits.)
+
+Make sure Vite actually resolves TS paths at build time
+
+Install the plugin:
+
+npm i -D vite-tsconfig-paths
+
+
+Then update vite.config.ts:
+
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import path from "path";
+import runtimeErrorOverlay from "@replit/vite-plugin-runtime-error-modal";
++import tsconfigPaths from "vite-tsconfig-paths";
+
+export default defineConfig({
+  plugins: [
+    react(),
+    runtimeErrorOverlay(),
++   tsconfigPaths(),
+    // … your Replit plugin(s) if any …
+  ],
+  root: path.resolve(import.meta.dirname, "client"),
+  build: {
+    outDir: path.resolve(import.meta.dirname, "dist/public"),
+    emptyOutDir: true,
++   sourcemap: true, // helps future prod debugging
+  },
+  // …
+});
+
+
+You already have the paths mapping in tsconfig.json:
+
+"paths": { "@/*": ["./client/src/*"], "@shared/*": ["./shared/*"] }
+
+
+Without vite-tsconfig-paths, dev might “work” in some setups, but production builds can still resolve differently — adding the plugin removes that ambiguity.
