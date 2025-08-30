@@ -295,7 +295,13 @@ export default function DraftPage() {
     console.error('Draft fetch error:', error);
   }
 
-  // SMOOTH TIMER SYSTEM: Combines server updates with local countdown
+  // SMOOTH TIMER SYSTEM: RAF-based stable timer with refs for jank-free countdown
+  
+  // Refs for stable timer tracking (no re-renders)
+  const serverTimeAtUpdateRef = useRef(0);      // seconds remaining at last server tick
+  const clientTsAtUpdateRef = useRef(0);        // performance.now() at last server tick
+  const rafRef = useRef<number | null>(null);
+  const [zeroSince, setZeroSince] = useState<number | null>(null);
   
   // Handle server timer updates (WebSocket or API) with mobile alerts
   useEffect(() => {
@@ -340,20 +346,24 @@ export default function DraftPage() {
             setHasNotifiedForThisTurn(true);
           }
         }
-        // Immediate transition to new timer
-        setServerTime(newServerTime);
-        setLocalTime(newServerTime);
-        setLastServerUpdate(Date.now());
-        setIsCountingDown(true);
-      } else {
-        // Normal server update
-        setServerTime(newServerTime);
-        setLocalTime(newServerTime);
-        setLastServerUpdate(Date.now());
-        setIsCountingDown(newServerTime > 0 && draftData?.state?.draft?.status === 'active');
+      }
+      
+      // Update refs immediately (no re-renders needed)
+      serverTimeAtUpdateRef.current = newServerTime;
+      clientTsAtUpdateRef.current = performance.now();
+      
+      // Prevent snap-backs: only update UI if new time is <= current local time
+      const newUiTime = Math.min(newServerTime, localTime || newServerTime);
+      setServerTime(newServerTime);
+      setLocalTime(newUiTime);
+      setIsCountingDown(newServerTime > 0 && draftData?.state?.draft?.status === 'active');
+      
+      // Reset zero tracking on fresh updates
+      if (newServerTime > 0) {
+        setZeroSince(null);
       }
     }
-  }, [lastMessage, draftData, serverTime, isCurrentUser, hasNotifiedForThisTurn, lastNotificationTime]);
+  }, [lastMessage, draftData, serverTime, isCurrentUser, hasNotifiedForThisTurn, lastNotificationTime, localTime]);
   
   // Reset notification flag when it's no longer user's turn
   useEffect(() => {
@@ -362,42 +372,78 @@ export default function DraftPage() {
     }
   }, [isCurrentUser, hasNotifiedForThisTurn]);
 
-  // Smooth local countdown between server updates
+  // Single stable RAF loop - no interval recreation
   useEffect(() => {
-    if (!isCountingDown) return;
+    if (!isCountingDown) {
+      if (rafRef.current != null) cancelAnimationFrame(rafRef.current);
+      rafRef.current = null;
+      return;
+    }
 
-    const interval = setInterval(() => {
-      const timeSinceLastUpdate = (Date.now() - lastServerUpdate) / 1000;
-      const estimatedTime = Math.max(0, serverTime - timeSinceLastUpdate);
-      
-      setLocalTime(estimatedTime);
-      console.log('[SMOOTH TIMER] Local countdown:', estimatedTime.toFixed(1));
-      
-      // PREDICTIVE SWITCHING: When we hit 0, show "Switching..." instead of stale time
-      if (estimatedTime <= 0) {
-        console.log('[SMOOTH TIMER] 🔄 Timer hit 0 - preparing for transition');
+    const tick = () => {
+      const elapsed = (performance.now() - clientTsAtUpdateRef.current) / 1000;
+      // Non-increasing, no snap-backs
+      const raw = serverTimeAtUpdateRef.current - elapsed;
+      const est = raw > 0 ? raw : 0;
+
+      setLocalTime(prev => {
+        // Prevent time from jumping up (snap-backs)
+        const newTime = est > (prev || 0) ? (prev || 0) : est;
+        
+        // Track when we hit zero for grace period
+        if (newTime <= 0 && prev > 0) {
+          setZeroSince(performance.now());
+        }
+        
+        return newTime;
+      });
+
+      rafRef.current = requestAnimationFrame(tick);
+    };
+
+    rafRef.current = requestAnimationFrame(tick);
+    return () => {
+      if (rafRef.current != null) cancelAnimationFrame(rafRef.current);
+      rafRef.current = null;
+    };
+  }, [isCountingDown]);
+  
+  // Handle zero state with grace period
+  useEffect(() => {
+    if (localTime > 0) {
+      if (zeroSince !== null) setZeroSince(null);
+      return;
+    }
+    
+    // If we've shown 0 for > 1.5s and no draft state change, consider stopping
+    if (zeroSince !== null) {
+      const timeSinceZero = (performance.now() - zeroSince) / 1000;
+      if (timeSinceZero > 1.5 && isCountingDown) {
+        console.log('[SMOOTH TIMER] Grace period expired, stopping countdown');
         setIsCountingDown(false);
-        // Keep localTime at 0 instead of letting it show stale serverTime
-        setLocalTime(0);
       }
-    }, 100); // Update every 100ms for smooth display
+    }
+  }, [localTime, zeroSince, isCountingDown]);
+  
+  // Handle tab visibility to correct drift on resume
+  useEffect(() => {
+    const onVis = () => {
+      if (!document.hidden) {
+        // On resume, reset the client timestamp to correct any drift
+        clientTsAtUpdateRef.current = performance.now();
+        console.log('[SMOOTH TIMER] Tab resumed, correcting timer drift');
+      }
+    };
+    document.addEventListener('visibilitychange', onVis);
+    return () => document.removeEventListener('visibilitychange', onVis);
+  }, []);
 
-    return () => clearInterval(interval);
-  }, [isCountingDown, serverTime, lastServerUpdate]);
-
-  // Display logic with smooth transitions
+  // Display logic with smooth transitions and integer rounding
   const displayTime = (() => {
-    if (isCountingDown) {
-      return localTime;
-    }
+    const rawTime = isCountingDown ? localTime : (serverTime || draftData?.state?.timeRemaining || 0);
     
-    // If not counting down and localTime is 0, we're in transition - keep showing 0
-    if (localTime === 0) {
-      return 0;
-    }
-    
-    // Fallback to server time
-    return serverTime || draftData?.state?.timeRemaining || 0;
+    // Smooth to integer if showing whole seconds (avoids 59.999 → 59 flicker)
+    return Math.floor(rawTime + 1e-6);
   })();
   
   console.log('[SMOOTH TIMER] Display time:', displayTime.toFixed(1), 'isCountingDown:', isCountingDown, 'localTime:', localTime.toFixed(1));
