@@ -429,10 +429,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "League not found" });
       }
 
-      // Ensure weekly scores are computed before reading standings
-      const weekNum = 1; // TODO: derive current week properly
+      // Derive current NFL week for this season by looking at the max completed/ongoing game week
+      const seasonNum = 2024; // or read from league/setting if you support multiple seasons
+
+      const maxCompletedWeekResult = await db.execute(sql`
+        SELECT COALESCE(MAX(week), 0) AS week
+        FROM nfl_games
+        WHERE season = ${seasonNum} AND is_completed = true
+      `);
+      const maxCompletedWeek = (maxCompletedWeekResult.rows[0] as any)?.week || 0;
+
+      const maxAnyWeekResult = await db.execute(sql`
+        SELECT COALESCE(MAX(week), 1) AS week
+        FROM nfl_games
+        WHERE season = ${seasonNum}
+      `);
+      const maxAnyWeek = (maxAnyWeekResult.rows[0] as any)?.week || 1;
+
+      // If no games completed yet this week, still compute for the current scheduled week
+      const weekNum = Math.max(maxCompletedWeek, maxAnyWeek);
+
+      // Ensure weekly scores are up to date for the derived week
       const { calculateWeeklyScores } = await import("./utils/mokScoring.js");
-      await calculateWeeklyScores(leagueId, weekNum, 2024);
+      await calculateWeeklyScores(leagueId, weekNum, seasonNum);
 
       // Get all league members
       const members = await storage.getLeagueMembers(leagueId);

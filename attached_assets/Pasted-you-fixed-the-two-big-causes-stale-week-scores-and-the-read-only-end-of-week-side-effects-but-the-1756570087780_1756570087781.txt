@@ -1,0 +1,65 @@
+you fixed the two big causes (stale week scores and the read-only/end-of-week side-effects), but there’s one leftover issue that will keep highlights/points wrong in some cases.
+
+✅ Confirmed fixes in your repo
+
+/server/routes/scoring.ts → week-scores endpoint now recomputes if the table is empty or all zeros with completed games. Good — this eliminates the “all 0s until the end” bug.
+
+EndOfWeekProcessor.getWeekEndResults is now read-only and no longer calls processEndOfWeek. Good — you’ve removed the hidden write/award side-effect.
+
+Home “Weekly Skins Game” card now gates the winner highlight on hasActualPoints, which is correct once weekly scores are fresh.
+
+❗Leftover bug to fix
+
+In /server/routes.ts → GET /api/leagues/:leagueId/standings, you recompute weekly scores but you’re using:
+
+const weekNum = 1; // TODO: derive current week properly
+await calculateWeeklyScores(leagueId, weekNum, 2024);
+
+
+That hard-coded 1 means:
+
+In weeks ≠ 1 you’ll recompute the wrong week, so the Home card can still show zeros or mis-highlight the winner.
+
+Drop-in fix (derive the current week)
+
+Replace that block with this (safe, no schema changes):
+
+// Derive current NFL week for this season by looking at the max completed/ongoing game week
+const seasonNum = 2024; // or read from league/setting if you support multiple seasons
+
+const [{ week: maxCompletedWeek } = { week: 0 }] = await db.execute(sql`
+  SELECT COALESCE(MAX(week), 0) AS week
+  FROM nfl_games
+  WHERE season = ${seasonNum} AND is_completed = true
+`);
+
+const [{ week: maxAnyWeek } = { week: 1 }] = await db.execute(sql`
+  SELECT COALESCE(MAX(week), 1) AS week
+  FROM nfl_games
+  WHERE season = ${seasonNum}
+`);
+
+// If no games completed yet this week, still compute for the current scheduled week
+const weekNum = Math.max(maxCompletedWeek, maxAnyWeek);
+
+// Ensure weekly scores are up to date for the derived week
+const { calculateWeeklyScores } = await import("./utils/mokScoring.js");
+await calculateWeeklyScores(leagueId, weekNum, seasonNum);
+
+
+If you already track a “league currentWeek”, prefer that instead — just make sure it’s the same week your Home card uses.
+
+Quick verification checklist (after that change)
+
+During a live week (after at least one game has is_completed = true):
+
+Hitting either
+GET /api/scoring/leagues/:leagueId/week-scores/:season/:week or
+GET /api/leagues/:leagueId/standings
+should show non-zero weeklyPoints for the right users.
+
+After the last game of the week completes and your admin path runs processEndOfWeek(...):
+
+A single (leagueId, season, week) row exists in weekly_skins.
+
+The Home card shows the winner highlight for the correct user (and suppresses on ties/rollovers).
