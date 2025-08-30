@@ -1,0 +1,68 @@
+our updated repo still has the same two “.js” imports on local TypeScript files in the client. That’s what’s continuing to trigger the minified runtime crash:
+
+ReferenceError: Cannot access 'c' before initialization (right after the SW registers)
+
+When a .ts/.tsx file is imported as *.js (while other files import it extensionless), Vite/TS can create duplicate module instances / circular init timing. In production, symbols minify to c, px, etc., and you get the exact error you’re seeing.
+
+Fix (2 lines)
+
+client/src/App.tsx
+
+- import { useProductionRealtime } from "@/hooks/use-stable-websocket.js";
++ import { useProductionRealtime } from "@/hooks/use-stable-websocket";
+
+
+client/src/hooks/use-stable-websocket.ts
+
+- import { useAuth } from './use-auth.js';
++ import { useAuth } from './use-auth';
+
+
+That’s the only remaining pair on the client side. (I scanned the repo: those are the sole client imports that end with .js.)
+
+Why it blows up at that moment
+
+Your app mounts, auth flips to ready, you register a fresh SW.
+
+Immediately after SW registration, React renders components that pull in the websocket hook.
+
+Because the websocket hook and auth hook are being resolved as different module instances (one via ./use-auth.js, the other extensionless), the bundler’s init order causes a const to be read before its module has finished evaluating → “Cannot access 'c' before initialization.”
+
+After you change those two lines
+
+Rebuild.
+
+Bump the SW query string you already use (it’s in your log, e.g. /sw.js?v=1756577159419&…). Any new build will update it automatically; just make sure the new build is served.
+
+Hard-refresh once (or close/reopen the tab).
+
+Confirm: no ErrorBoundary spam; WebSocket connects and stays healthy (your keepalive pings/pongs already look good).
+
+Optional (nice to have)
+
+Add an ESLint guard so this can’t regress:
+
+// .eslintrc.* (example)
+{
+  "rules": {
+    "no-restricted-imports": [
+      "error",
+      {
+        "patterns": [
+          {
+            "group": ["./*.js", "../*.js"],
+            "message": "Don’t import local TS files with a .js extension; use extensionless imports."
+          }
+        ]
+      }
+    ]
+  }
+}
+
+
+Enable production sourcemaps in Vite for readable stacks:
+
+// vite.config.ts
+export default defineConfig({
+  build: { sourcemap: true }
+})
