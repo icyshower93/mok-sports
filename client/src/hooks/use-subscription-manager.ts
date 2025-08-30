@@ -1,5 +1,4 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
-import { useAuth } from '@/hooks/use-auth';
 
 interface SubscriptionState {
   hasActiveSubscription: boolean;
@@ -10,8 +9,8 @@ interface SubscriptionState {
   error: string | null;
 }
 
-export function useSubscriptionManager() {
-  const { user, isAuthenticated } = useAuth();
+export function useSubscriptionManager(opts: { user?: any; isAuthenticated?: boolean } = {}) {
+  const { user, isAuthenticated } = opts;
   const isProcessingRef = useRef(false);
   
   const [state, setState] = useState<SubscriptionState>({

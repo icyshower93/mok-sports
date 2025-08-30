@@ -1,14 +1,13 @@
 import { useEffect, useRef } from 'react';
-import { useAuth } from '@/hooks/use-auth';
 import { useSubscriptionManager } from '@/hooks/use-subscription-manager';
 
 /**
  * Legacy auto-refresh hook - now delegates to the new SubscriptionManager
  * Maintains backward compatibility while using the enhanced system
  */
-export function useAutoPushRefresh() {
-  const { isAuthenticated } = useAuth();
-  const subscriptionManager = useSubscriptionManager();
+export function useAutoPushRefresh(opts: { user?: any; isAuthenticated?: boolean } = {}) {
+  const { isAuthenticated } = opts;
+  const subscriptionManager = useSubscriptionManager(opts);
   const hasInitialized = useRef(false);
 
   useEffect(() => {

@@ -3,7 +3,6 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Bell, X, CheckCircle2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useAuth } from '@/hooks/use-auth';
 import { usePWADebug } from '@/hooks/use-pwa-debug';
 import { useSubscriptionManager } from '@/hooks/use-subscription-manager';
 
@@ -12,20 +11,23 @@ interface NotificationPromptProps {
   onPermissionGranted?: () => void;
   onDismiss?: () => void;
   forceShow?: boolean; // Allow showing even when permission is denied
+  user?: any; // User object passed from parent
+  isAuthenticated?: boolean; // Auth state passed from parent
 }
 
 export function NotificationPrompt({ 
   className, 
   onPermissionGranted,
   onDismiss,
-  forceShow = false
+  forceShow = false,
+  user,
+  isAuthenticated
 }: NotificationPromptProps) {
   const [permission, setPermission] = useState<NotificationPermission>('default');
   const [isVisible, setIsVisible] = useState(false);
   const [isRequestingPermission, setIsRequestingPermission] = useState(false);
-  const { user } = useAuth();
   const { addLog } = usePWADebug();
-  const subscriptionManager = useSubscriptionManager();
+  const subscriptionManager = useSubscriptionManager({ user, isAuthenticated });
 
   useEffect(() => {
     if ('Notification' in window) {

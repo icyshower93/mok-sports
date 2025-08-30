@@ -77,10 +77,10 @@ function AppContent() {
   useServiceWorker(shouldEnableServiceWorker ? false : true); // Skip in dev unless explicitly enabled
   
   // Initialize automatic push notification refresh for iOS PWA
-  useAutoPushRefresh();
+  useAutoPushRefresh({ user, isAuthenticated });
   
   // Initialize stable WebSocket connection for real-time updates
-  const { isConnected: isRealtimeConnected, connectionStatus } = useProductionRealtime();
+  const { isConnected: isRealtimeConnected, connectionStatus } = useProductionRealtime({ user, isLoading });
   
   // Log WebSocket connection status
   React.useEffect(() => {
@@ -91,8 +91,8 @@ function AppContent() {
       console.log('[App] ✅ Real-time updates active - scores will update instantly');
     } else if (connectionStatus === 'waiting_auth') {
       console.log('[App] ⏳ Waiting for authentication to complete');
-    } else if (connectionStatus === 'reconnecting') {
-      console.log('[App] 🔄 Attempting to reconnect...');
+    } else if (connectionStatus === 'connecting') {
+      console.log('[App] 🔄 Attempting to connect...');
     }
   }, [connectionStatus, isRealtimeConnected]);
 

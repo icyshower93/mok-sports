@@ -1,13 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import { useAuth } from '@/hooks/use-auth';
 
 // Production-optimized WebSocket connection for real-time updates
 // Designed for hundreds of concurrent users with efficient broadcasts
 // Implements keepalive, auth-aware connection, and resilient reconnection
-export function useProductionRealtime() {
+export function useProductionRealtime(opts: { user?: any; isLoading?: boolean } = {}) {
   const queryClient = useQueryClient();
-  const { user, isLoading: authLoading } = useAuth();
+  const { user, isLoading: authLoading } = opts;
   const wsRef = useRef<WebSocket | null>(null);
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const pingIntervalRef = useRef<NodeJS.Timeout | null>(null);
