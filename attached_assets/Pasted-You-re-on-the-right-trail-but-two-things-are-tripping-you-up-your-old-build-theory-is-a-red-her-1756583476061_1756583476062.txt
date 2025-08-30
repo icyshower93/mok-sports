@@ -1,0 +1,246 @@
+You’re on the right trail, but two things are tripping you up:
+
+your “old build” theory is a red herring, and
+
+there are still multiple realtime hooks being mounted + a few mixed/relative imports left in the tree.
+
+I pulled apart the repo you attached and verified both.
+
+0) Why the “old cached build” conclusion is misleading
+
+Your “Build Info” isn’t a real build id — it’s generated with Date.now() at runtime:
+
+// client/src/lib/buildInfo.ts
+export const BUILD_INFO = {
+  version: Date.now(),
+  date: new Date().toISOString(),
+  env: import.meta.env.MODE,
+  hash: import.meta.env.MODE === 'production' ? Date.now().toString(36) : 'dev-' + Date.now().toString(36)
+};
+
+
+That means the string like meylrxzj will change on every page load, even if the bundle didn’t. So seeing meyo7wvd vs meyo53az doesn’t prove a stale asset. (The hashed file name like index-nhdiGqg3.js is the cache-busting signal — if content changes, Vite emits a different name.)
+
+If you want a real build id, see the “Build ID fix” near the end.
+
+1) The crash root cause still present in your repo
+
+Two things in the uploaded code will keep producing a minified ReferenceError: Cannot access 'c' before initialization:
+
+A) The realtime hook is mounted 3x
+
+I see useProductionRealtime() called in:
+
+client/src/App.tsx (keep this one)
+
+client/src/pages/main.tsx ← remove
+
+client/src/pages/league.tsx ← remove
+
+Multiple mounts create competing WS instances and increase the chance of a circular/TDZ read during module init (that’s the px(...) frame in your stack).
+
+Fix: remove page-level calls.
+
+// client/src/pages/main.tsx
+-import { useProductionRealtime } from "@/hooks/use-production-realtime";
+...
+-  // Enable production-optimized WebSocket broadcasts for scalability
+-  useProductionRealtime();
+
+// client/src/pages/league.tsx
+-import { useProductionRealtime } from "@/hooks/use-production-realtime";
+...
+-  // Enable production-optimized WebSocket broadcasts for scalability
+-  useProductionRealtime();
+
+
+Keep the single call in App.tsx only.
+
+B) Mixed import specifiers inside hooks (alias vs relative)
+
+These three still use relative imports in your repo:
+
+// client/src/hooks/use-auto-push-refresh.ts
+import { useAuth } from './use-auth';
+import { useSubscriptionManager } from './use-subscription-manager';
+
+// client/src/hooks/use-subscription-manager.ts
+import { useAuth } from './use-auth';
+
+// client/src/hooks/use-draft-websocket-fixed.ts
+import { useToast } from './use-toast';
+
+
+Meanwhile, other files import the same modules via the @/ alias. In some bundler edge-cases that can produce two instances of the same module and a TDZ read during init.
+
+Fix: standardize on the alias.
+
+// client/src/hooks/use-auto-push-refresh.ts
+- import { useAuth } from './use-auth';
+- import { useSubscriptionManager } from './use-subscription-manager';
++ import { useAuth } from '@/hooks/use-auth';
++ import { useSubscriptionManager } from '@/hooks/use-subscription-manager';
+
+// client/src/hooks/use-subscription-manager.ts
+- import { useAuth } from './use-auth';
++ import { useAuth } from '@/hooks/use-auth';
+
+// client/src/hooks/use-draft-websocket-fixed.ts
+- import { useToast } from './use-toast';
++ import { useToast } from '@/hooks/use-toast';
+
+
+(While you’re at it, update use-stable-websocket.ts to use the alias too, even though it’s unused — future-proofing.)
+
+Make sure Vite actually resolves the alias (next section).
+
+2) Ensure Vite resolves TS path aliases the same way in dev + prod
+
+Install and enable the paths plugin so every @/... resolves to the exact same file id:
+
+npm i -D vite-tsconfig-paths
+
+// vite.config.ts
+ import { defineConfig } from "vite";
+ import react from "@vitejs/plugin-react";
+ import path from "path";
+ import runtimeErrorOverlay from "@replit/vite-plugin-runtime-error-modal";
++import tsconfigPaths from "vite-tsconfig-paths";
+
+ export default defineConfig({
+   plugins: [
+     react(),
+     runtimeErrorOverlay(),
++    tsconfigPaths(),
+     // ... any replit cartographer plugin you use
+   ],
+   resolve: {
+     alias: {
+       // keep your existing aliases here
+       "@assets": path.resolve(import.meta.dirname, "attached_assets"),
++      "@": path.resolve(import.meta.dirname, "client/src"),
++      "@shared": path.resolve(import.meta.dirname, "shared"),
+     },
+   },
+   root: path.resolve(import.meta.dirname, "client"),
+   build: {
+     outDir: path.resolve(import.meta.dirname, "dist/public"),
+     emptyOutDir: true,
++    sourcemap: true, // makes prod stacks readable if anything else pops
+   },
+ });
+
+3) Service Worker: make sure it can’t serve stale HTML
+
+Two concrete tweaks:
+
+A) In client/public/sw.js
+
+Always update immediately and take control:
+
+self.addEventListener('install', (event) => {
+-  if (DEV && self.skipWaiting) self.skipWaiting();
++  if (self.skipWaiting) self.skipWaiting();
+});
+
+self.addEventListener('activate', (event) => {
+  event.waitUntil((async () => {
+-   if (DEV) { /* ... clear old caches ... */ }
++   // always clear old dev caches; optionally prune prod caches by version
++   // ...
++   if (self.clients && self.clients.claim) await self.clients.claim();
+  })());
+});
+
+
+Network-first for HTML (so you never pin a stale shell):
+
+self.addEventListener('fetch', (event) => {
+  const req = event.request;
+  const url = new URL(req.url);
+
++  // Always network-first for HTML/shell
++  if (req.mode === 'navigate' || url.pathname.endsWith('.html')) {
++    event.respondWith((async () => {
++      try { return await fetch(req, { cache: 'no-store' }); }
++      catch { return await caches.match('/index.html'); }
++    })());
++    return;
++  }
+
+  // Network-first for API
+  if (url.pathname.startsWith('/api/')) {
+    event.respondWith(fetch(req));
+    return;
+  }
+
+  // Cache-first for hashed static assets
+  if (url.origin === self.location.origin && /\.(?:js|css|png|svg|ico|woff2?)$/.test(url.pathname)) {
+    // ... your existing cache-first logic ...
+  }
+});
+
+
+B) In the server (production) set proper cache headers so index.html is never cached but hashed assets are:
+
+// server/prod.ts (inside setupProductionAssets)
+app.use(express.static(clientDist, {
+  setHeaders(res, filePath) {
+    if (filePath.endsWith('.html')) {
+      res.setHeader('Cache-Control', 'no-store');
+    } else if (/\.(js|css|png|jpg|jpeg|svg|ico|woff2?)$/.test(filePath)) {
+      res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+    }
+  },
+}));
+
+4) Real build ID (so your logs actually mean something)
+
+Add compile-time constants in Vite:
+
+// vite.config.ts
+ export default defineConfig({
++  define: {
++    __BUILD_TIME__: JSON.stringify(new Date().toISOString()),
++    __BUILD_HASH__: JSON.stringify((Date.now()).toString(36)),
++  },
+   // ...
+ });
+
+
+Then use them:
+
+// client/src/lib/buildInfo.ts
+declare const __BUILD_TIME__: string;
+declare const __BUILD_HASH__: string;
+
+export const BUILD_INFO = {
+  hash: __BUILD_HASH__,
+  date: __BUILD_TIME__,
+  env: import.meta.env.MODE,
+};
+
+export function logBuildInfo() {
+  console.log('🏗️ Build Info:', BUILD_INFO);
+  console.log(`📦 Version: ${BUILD_INFO.hash}`);
+  console.log(`📅 Built: ${BUILD_INFO.date}`);
+  console.log(`🔧 Environment: ${BUILD_INFO.env}`);
+}
+
+
+Now the “📦 Version” will only change when you rebuild, not on every page load.
+
+5) Clean rebuild (so you really test the new graph)
+# from repo root
+rm -rf client/node_modules/.vite client/.vite client/dist dist
+npm --prefix client ci
+npm --prefix client run build
+
+
+Then hard refresh the app (or load in a private window once), and verify:
+
+No ReferenceError: Cannot access 'c' before initialization
+
+[App] WebSocket status: connected appears and stays connected (no 1006 loop)
+
+“📦 Version” stays the same across reloads until you rebuild

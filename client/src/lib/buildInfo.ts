@@ -1,12 +1,13 @@
 // Build version information for debugging and cache verification
+// Using compile-time constants to avoid runtime generation
+const BUILD_TIMESTAMP = '2025-08-30T19:47:24.230Z';
+const BUILD_HASH = 'meyob5qe';
+
 export const BUILD_INFO = {
-  version: Date.now(),
-  date: new Date().toISOString(),
+  version: 1756583244230,
+  date: BUILD_TIMESTAMP,
   env: import.meta.env.MODE,
-  // Simple hash-based version for production builds
-  hash: import.meta.env.MODE === 'production' ? 
-    Date.now().toString(36) : 
-    'dev-' + Date.now().toString(36)
+  hash: BUILD_HASH
 };
 
 export function logBuildInfo() {

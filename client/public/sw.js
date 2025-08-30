@@ -6,8 +6,8 @@ const DEV =
 const CACHE_VERSION = 'static-' + (DEV ? 'dev-' + Date.now() : 'prod-v1.0.0');
 
 self.addEventListener('install', (event) => {
-  // In DEV it's fine to activate immediately
-  if (DEV && self.skipWaiting) self.skipWaiting();
+  // Always activate immediately
+  if (self.skipWaiting) self.skipWaiting();
 });
 
 self.addEventListener('activate', (event) => {
@@ -17,7 +17,7 @@ self.addEventListener('activate', (event) => {
       const names = await caches.keys();
       await Promise.all(names.map((n) => caches.delete(n)));
     }
-    await self.clients.claim();
+    if (self.clients && self.clients.claim) await self.clients.claim();
   })());
 });
 
@@ -27,6 +27,15 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   const req = event.request;
   const url = new URL(req.url);
+
+  // Always network-first for HTML/shell
+  if (req.mode === 'navigate' || url.pathname.endsWith('.html')) {
+    event.respondWith((async () => {
+      try { return await fetch(req, { cache: 'no-store' }); }
+      catch { return await caches.match('/index.html'); }
+    })());
+    return;
+  }
 
   // Network-first for API
   if (url.pathname.startsWith('/api/')) {
