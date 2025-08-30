@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useAuth } from './use-auth';
-import { usePWADetection } from './use-pwa-detection';
+import { useAuth } from '@/hooks/use-auth';
+import { usePWADetection } from '@/hooks/use-pwa-detection';
 
 interface PostLoginNotificationState {
   permissionStatus: NotificationPermission;

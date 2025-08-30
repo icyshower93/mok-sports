@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
-import { useAuth } from './use-auth';
+import { useAuth } from '@/hooks/use-auth';
 
 interface SubscriptionState {
   hasActiveSubscription: boolean;

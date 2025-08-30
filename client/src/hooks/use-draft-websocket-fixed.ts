@@ -9,7 +9,7 @@
 
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import { useAuth } from './use-auth';
+import { useAuth } from '@/hooks/use-auth';
 import { useToast } from './use-toast';
 
 export interface DraftWebSocketMessage {

@@ -1,0 +1,141 @@
+I pulled apart your new repo and traced what could actually throw a production-minified ReferenceError: Cannot access 'c' before initialization. That error nearly always means a circular/duplicate module initialization (temporal dead zone) in ES modules — and in React apps it’s most often caused by importing the same file via two different specifiers so the bundler treats them as two different modules. One module tries to read the other’s const export before it’s initialized → boom.
+
+What I found in your repo (root cause)
+
+You’re mixing alias imports (@/...) and relative imports (./... / ../...) to refer to the same files across hooks/pages. A few concrete examples from the repo:
+
+client/src/App.tsx
+
+import { queryClient } from "./lib/queryClient"     // ← relative
+
+
+while lots of other files import the same thing as:
+
+import { queryClient } from "@/lib/queryClient"      // ← alias
+
+
+client/src/hooks/use-stable-websocket.ts
+
+import { useAuth } from './use-auth'                 // ← relative
+
+
+but elsewhere:
+
+import { useAuth } from "@/hooks/use-auth"           // ← alias
+
+
+Similar mixed paths show up for:
+
+use-subscription-manager.ts → ./use-auth
+
+use-post-login-notifications.ts → ./use-auth, ./use-pwa-detection
+
+use-realtime-scores.tsx → ../services/websocket-manager
+
+use-draft-websocket-fixed.ts → ./use-auth
+
+use-pwa-debug.ts → ./use-subscription-manager
+
+lib/queryClient.ts → ./auth-token
+
+In production/minified builds, those mixed specifiers can lead to two live copies of a module. When those modules import each other even indirectly (e.g., via hooks that cross-reference auth ↔ realtime), the second copy will try to read a const export from the first copy before it finishes initializing, which presents exactly as Cannot access 'c' before initialization at an obfuscated function like px in the stack.
+
+Fix (do this exactly)
+
+Standardize all internal imports to the alias form (@/...) inside client/src. Update the following lines:
+
+client/src/App.tsx
+
+import { queryClient } from "./lib/queryClient"
+
+import { queryClient } from "@/lib/queryClient"
+
+client/src/hooks/use-stable-websocket.ts
+
+import { useAuth } from './use-auth'
+
+import { useAuth } from '@/hooks/use-auth'
+
+client/src/hooks/use-subscription-manager.ts
+
+import { useAuth } from './use-auth'
+
+import { useAuth } from '@/hooks/use-auth'
+
+client/src/hooks/use-post-login-notifications.ts
+
+import { useAuth } from './use-auth'
+
+import { usePWADetection } from './use-pwa-detection'
+
+import { useAuth } from '@/hooks/use-auth'
+
+import { usePWADetection } from '@/hooks/use-pwa-detection'
+
+client/src/hooks/use-realtime-scores.tsx
+
+import { webSocketManager } from '../services/websocket-manager'
+
+import { webSocketManager } from '@/services/websocket-manager'
+
+client/src/hooks/use-draft-websocket-fixed.ts
+
+import { useAuth } from './use-auth'
+
+import { useAuth } from '@/hooks/use-auth'
+
+client/src/hooks/use-pwa-debug.ts
+
+import { useSubscriptionManager } from './use-subscription-manager'
+
+import { useSubscriptionManager } from '@/hooks/use-subscription-manager'
+
+client/src/lib/queryClient.ts
+
+import { AuthToken } from './auth-token'
+
+import { AuthToken } from '@/lib/auth-token'
+
+(Optional for consistency) client/src/main.tsx
+
+import App from "./App"
+
+import App from "@/App"
+
+Make sure Vite always resolves the alias the same way.
+You already have the TS path mapping; add the Vite plugin so the bundler uses it uniformly:
+
+// vite.config.ts
+import tsconfigPaths from "vite-tsconfig-paths";
+
+export default defineConfig({
+  plugins: [
+    react(),
+    runtimeErrorOverlay(),
++   tsconfigPaths(),
+    // ...
+  ],
+  // (optional but helpful for debugging)
+  build: { sourcemap: true },
+});
+
+
+Rebuild and redeploy.
+After the rewrite + plugin, the TDZ/cycle goes away because every import of a given file resolves to one module instance.
+
+About the other console line you saw
+
+Banner not shown: beforeinstallpromptevent.preventDefault()
+That’s harmless. It means you called preventDefault() in your PWA prompt handler but didn’t later call installPrompt.prompt(). Your PWAInstallPrompt component already wires this correctly — you can ignore the log, or only call preventDefault() when you actually intend to show the custom prompt.
+
+Optional hardening (nice to have)
+
+Add a tiny guard so realtime only starts after auth is known:
+
+// inside useProductionRealtime()
+if (authLoading) return { connectionStatus: 'waiting_auth', isConnected: false };
+
+
+Turn on source maps (as above) so future production stack traces map to real files.
+
+If you make the import path changes + add vite-tsconfig-paths, this specific Cannot access 'c' before initialization should disappear, and the rest of your realtime flow (all the [ProductionRealtime] logs in your trace) will continue to work. If anything still pops after that, I’ll zero in with the now-readable source-mapped stack.

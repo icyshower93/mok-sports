@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useSubscriptionManager } from './use-subscription-manager';
+import { useSubscriptionManager } from '@/hooks/use-subscription-manager';
 
 interface PWADebugInfo {
   isStandalone: boolean;

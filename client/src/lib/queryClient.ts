@@ -1,5 +1,5 @@
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
-import { AuthToken } from './auth-token';
+import { AuthToken } from '@/lib/auth-token';
 
 // Maintain backward compatibility while using new AuthToken utility
 export const AuthTokenManager = {
