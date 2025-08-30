@@ -22,26 +22,29 @@ export const unauthorizedBehaviorToQueryFunction = (
     return await res.json();
   };
 
-export const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      queryFn: unauthorizedBehaviorToQueryFunction("returnNull"),
-      refetchOnMount: false,
-      refetchOnWindowFocus: false,
-      retry: (failureCount, error) => {
-        if (error instanceof Error && error.message.includes("401")) {
-          return false;
-        }
-        return failureCount < 2;
+// Singleton guard to prevent multiple QueryClient instances in case of import duplication
+const g = globalThis as any;
+export const queryClient: QueryClient =
+  g.__MOK_QUERY_CLIENT__ ?? (g.__MOK_QUERY_CLIENT__ = new QueryClient({
+    defaultOptions: {
+      queries: {
+        queryFn: unauthorizedBehaviorToQueryFunction("returnNull"),
+        refetchOnMount: false,
+        refetchOnWindowFocus: false,
+        retry: (failureCount, error) => {
+          if (error instanceof Error && error.message.includes("401")) {
+            return false;
+          }
+          return failureCount < 2;
+        },
+        staleTime: 0, // Always stale for live data (draft state)
+        gcTime: 5 * 60 * 1000, // 5 minutes
       },
-      staleTime: 0, // Always stale for live data (draft state)
-      gcTime: 5 * 60 * 1000, // 5 minutes
+      mutations: {
+        retry: 0,
+      },
     },
-    mutations: {
-      retry: 0,
-    },
-  },
-});
+  }));
 
 // Maintain backward compatibility while using new AuthToken utility
 export const AuthTokenManager = {
