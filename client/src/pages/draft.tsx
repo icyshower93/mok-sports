@@ -860,14 +860,17 @@ export default function DraftPage() {
         )}
       </div>
 
-      {/* Screen Flash Effect for Urgency */}
-      {isCurrentUser && displayTime <= 10 && (
-        <div className={`fixed inset-0 pointer-events-none z-30 border-4 transition-all duration-300 ${
-          displayTime <= 5 ? 'border-red-500 animate-pulse' :
-          displayTime <= 10 ? 'border-orange-500' :
-          'border-transparent'
-        }`} />
-      )}
+      {/* Screen Flash Effect for Urgency (always mounted to avoid DOM churn) */}
+      <div
+        aria-hidden
+        className={`fixed inset-0 pointer-events-none z-30 border-4 transition-all duration-300 ${
+          isCurrentUser && displayTime <= 10
+            ? (displayTime <= 5
+                ? 'border-red-500 animate-pulse opacity-100'
+                : 'border-orange-500 opacity-100')
+            : 'border-transparent opacity-0'
+        }`}
+      />
 
       <div className="container mx-auto px-4 py-6">
         <div className="max-w-7xl mx-auto">
