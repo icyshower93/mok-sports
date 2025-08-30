@@ -25,7 +25,7 @@ const SERVER_BUILD_INFO = {
 console.log('🚀 [Server] Build Info:', SERVER_BUILD_INFO);
 console.log('📝 [Server] Environment Note: NODE_ENV=development means we have dev debugging enabled while serving production builds');
 
-async function setupProductionAssets(app: express.Application) {
+async function setupProductionAssets(app: express.Application): Promise<string> {
   // Single source of truth for build output
   const clientDist = path.resolve(__dirname, '../dist/public');
   
@@ -57,7 +57,7 @@ async function setupProductionAssets(app: express.Application) {
   // Serve static assets (don't auto-serve index so SPA fallback can handle all routes)
   app.use(express.static(clientDist, { index: false }));
   console.log('[server] Static assets configured from:', clientDist);
-  return true;
+  return clientDist;
 }
 
 const app = express();
@@ -133,7 +133,8 @@ app.use((req, res, next) => {
   }
 
   // CRITICAL: Configure static asset serving BEFORE any other routes
-  const hasBuiltAssets = await setupProductionAssets(app);
+  const clientDist = await setupProductionAssets(app);
+  const hasBuiltAssets = Boolean(clientDist);
 
   // Add middleware to prevent caching of development files
   app.use('/src', (req, res, next) => {
@@ -343,38 +344,18 @@ app.use((req, res, next) => {
     }
   }
   
-  // SPA fallback: serve index.html for ANY GET that isn't handled above
-  if (hasBuiltAssets) {
-    // Get the client dist path again for SPA fallback
-    const candidates = [
-      process.env.CLIENT_DIST,
-      path.resolve(__dirname, '../dist/public'),
-      path.resolve(process.cwd(), 'dist/public'),
-      path.resolve(__dirname, '../../client/dist'),
-      path.resolve(process.cwd(), 'client/dist'),
-      path.resolve(__dirname, '../client/dist'),
-      path.resolve(__dirname, '../../../client/dist'),
-    ].filter(Boolean) as string[];
-
-    const clientDist = candidates.find(p => {
-      try { return p && fs.existsSync(path.join(p, 'index.html')); } catch { return false; }
+  // SPA fallback (reuse the exact same dist path)
+  if (hasBuiltAssets && clientDist) {
+    app.get('*', (req, res) => {
+      if (req.path.startsWith('/api/') ||
+          req.path.startsWith('/draft-ws') ||
+          req.path.startsWith('/ws/') ||
+          req.path.startsWith('/admin-ws')) {
+        return res.status(404).json({ error: 'Not found' });
+      }
+      res.setHeader('Cache-Control', 'no-store');
+      res.sendFile(path.join(clientDist, 'index.html'));
     });
-
-    if (clientDist) {
-      app.get('*', (req, res) => {
-        // Don't intercept API routes or WebSocket paths
-        if (req.path.startsWith('/api/') || 
-            req.path.startsWith('/draft-ws') || 
-            req.path.startsWith('/ws/') ||
-            req.path.startsWith('/admin-ws')) {
-          return res.status(404).json({ error: 'Not found' });
-        }
-        
-        // SPA fallback: serve index.html for all other routes
-        res.setHeader('Cache-Control', 'no-store');
-        res.sendFile(path.join(clientDist, 'index.html'));
-      });
-    }
   }
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {

@@ -1,0 +1,89 @@
+you fixed most of it 🎯 — but there’s still one server bug that can make you serve an old HTML shell even though your static assets are from the new build. That’s why you sometimes “load the wrong version.”
+
+What’s right (✅)
+
+Single useProductionRealtime() call (only in App.tsx).
+
+Hooks now use @/… imports consistently.
+
+Service worker: skipWaiting(), clients.claim(), network-first for HTML, cache-first for hashed assets.
+
+Server sets no-store for HTML and long-cache for hashed assets. Nice.
+
+The remaining issue (❌)
+
+In server/index.ts you do the right thing in setupProductionAssets() (pick ../dist/public and configure static + SW). But later, for the SPA fallback (app.get('*')), you recompute a clientDist by scanning a list of “candidates” again. If any older build folder exists and appears earlier in that list, your fallback will serve old index.html → which references old index-*.js → boom: wrong version.
+
+You can see both code paths in your file:
+
+Early: const clientDist = path.resolve(__dirname, '../dist/public'); … app.use(express.static(clientDist, …))
+
+Later: const candidates = [ … ]; const clientDist = candidates.find(…); app.get('*', … sendFile(path.join(clientDist,'index.html')))
+
+These two clientDist values can diverge.
+
+Fix (make the SPA fallback use the exact same path)
+
+Have setupProductionAssets return the chosen path, and reuse it for the fallback.
+
+Patch:
+
+-async function setupProductionAssets(app: express.Application) {
++async function setupProductionAssets(app: express.Application): Promise<string> {
+   const clientDist = path.resolve(__dirname, '../dist/public');
+   // … your existing checks, SW route, headers, express.static, logs …
+-  return true;
++  return clientDist;
+}
+
+
+Then at the call site:
+
+-const hasBuiltAssets = await setupProductionAssets(app);
++const clientDist = await setupProductionAssets(app);
++const hasBuiltAssets = Boolean(clientDist);
+
+
+And replace the whole “candidates” block for the SPA fallback with the single, unified path:
+
+-// SPA fallback: serve index.html for ANY GET that isn't handled above
+-if (hasBuiltAssets) {
+-  // Get the client dist path again for SPA fallback
+-  const candidates = [ /* … lots of paths … */ ];
+-  const clientDist = candidates.find(p => { /* exists check */ });
+-  if (clientDist) {
+-    app.get('*', (req, res) => {
+-      // … exclusions …
+-      res.setHeader('Cache-Control', 'no-store');
+-      res.sendFile(path.join(clientDist, 'index.html'));
+-    });
+-  }
+-}
++// SPA fallback (reuse the exact same dist path)
++if (hasBuiltAssets && clientDist) {
++  app.get('*', (req, res) => {
++    if (req.path.startsWith('/api/') ||
++        req.path.startsWith('/draft-ws') ||
++        req.path.startsWith('/ws/') ||
++        req.path.startsWith('/admin-ws')) {
++      return res.status(404).json({ error: 'Not found' });
++    }
++    res.setHeader('Cache-Control', 'no-store');
++    res.sendFile(path.join(clientDist, 'index.html'));
++  });
++}
+
+Optional polish (nice-to-haves)
+
+Add define values in vite.config.ts so your build hash/date are compile-time, not Date.now() fallbacks:
+
+export default defineConfig({
+  define: {
+    __BUILD_TIME__: JSON.stringify(new Date().toISOString()),
+    __BUILD_HASH__: JSON.stringify((Date.now()).toString(36)),
+  },
+  // …
+});
+
+
+(Optional) add vite-tsconfig-paths to ensure alias resolution is identical in dev/prod.
