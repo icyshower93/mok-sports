@@ -12,7 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 import { TeamLogo } from "@/components/team-logo";
 import { apiRequest } from "@/features/query/api";
 import { useResilientWebSocket } from "@/hooks/use-resilient-websocket";
-import { useAuth } from "@/features/auth";
+import { useAuth } from "@/features/auth/useAuth";
 import { trackModuleError } from "@/debug-tracker";
 import type { DraftState, NflTeam, DraftPick } from '@shared/types';
 

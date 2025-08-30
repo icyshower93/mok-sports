@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Calendar, ChevronRight, RotateCcw, LogOut } from "lucide-react";
 import { useLocation } from "wouter";
 
-import { useAuth } from "@/features/auth";
+import { useAuth } from "@/features/auth/useAuth";
 
 // Define simple admin state type
 interface AdminState {

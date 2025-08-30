@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { AuthTokenManager } from "@/features/query/queryClient";
-import { useAuth } from "@/features/auth";
+import { useAuth } from "@/features/auth/useAuth";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { MainLayout } from "@/components/layout/main-layout";
 import { Button } from "@/components/ui/button";

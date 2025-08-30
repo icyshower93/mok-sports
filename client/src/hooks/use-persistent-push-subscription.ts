@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useAuth } from '@/features/auth';
+import { useAuth } from '@/features/auth/useAuth';
 
 interface SubscriptionState {
   subscription: PushSubscription | null;

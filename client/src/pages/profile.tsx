@@ -1,4 +1,4 @@
-import { useAuth } from "@/features/auth";
+import { useAuth } from "@/features/auth/useAuth";
 import { MainLayout } from "@/components/layout/main-layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";

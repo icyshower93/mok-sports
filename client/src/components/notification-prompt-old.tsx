@@ -3,7 +3,7 @@ import { Bell, X, CheckCircle, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { useAuth } from '@/features/auth';
+import { useAuth } from '@/features/auth/useAuth';
 
 interface NotificationPromptProps {
   isProminent?: boolean;

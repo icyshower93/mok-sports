@@ -1,0 +1,171 @@
+The real problem
+ReferenceError: Cannot access 'c' before initialization
+    at hx (...)   // minified function
+
+
+This is a classic Temporal Dead Zone (TDZ) failure in production bundles. It nearly always comes from one of these:
+
+Circular value import (A imports a value from B while B imports a value from A).
+
+Barrel re-exports that hide a cycle (e.g., index.ts re-exporting files that point back to the barrel).
+
+Module duplication (e.g., the same file is imported once via @/x and elsewhere via a relative path like ../../x). Two copies load; one copy references a binding in the other before it’s initialized.
+
+You’ve already had symptoms of (3) in previous builds, and your repo still has:
+
+path aliases in tsconfig.json (@/*, @shared/*)
+
+no vite-tsconfig-paths plugin listed in package.json
+
+a Vite config with elided sections (I can’t see a resolve.alias block in the snippet)
+
+That means there’s a decent chance Vite is resolving aliases in some places (maybe through a manual alias block you added) but not identically everywhere, which can produce duplicate module graphs and TDZ.
+
+Fastest way to pinpoint the culprit (do this once)
+
+Make the prod bundle debuggable (temporarily)
+
+In vite.config.ts:
+
+export default defineConfig({
+  // ...
+  build: {
+    // keep your existing options
+    sourcemap: true,   // <= add for one build
+    minify: false      // <= add for one build
+  }
+})
+
+
+Rebuild and reproduce. Your stack trace will now point to a real file & line (not hx / c). That tells you exactly which import/line is touching a value before it’s ready.
+
+If the crash disappears when minify=false: it’s still a cycle/duplication—minification just changes ordering. Still fix the cycle/dup.
+
+Permanent hardening (very likely to fix your case)
+
+Do these four edits; they’re low-risk and address all three classes of TDZ:
+
+Make Vite resolve aliases exactly like TypeScript (prevents duplicates).
+
+Install:
+
+npm i -D vite-tsconfig-paths
+
+
+In vite.config.ts:
+
+import tsconfigPaths from 'vite-tsconfig-paths';
+
+export default defineConfig({
+  plugins: [
+    react(),
+    runtimeErrorOverlay(),
+    tsconfigPaths(),   // <= add this
+    // ...rest
+  ],
+  // (keep your existing root/build/server)
+});
+
+
+This ensures @/foo and relative imports always resolve to a single module instance.
+
+Nuke risky barrels.
+You have:
+
+client/src/features/auth/index.ts
+
+shared/types/index.ts
+
+Barrels are fine for types, but dangerous for values in React apps. Replace:
+
+// features/auth/index.ts  (REMOVE)
+export { useAuth } from "./useAuth";
+export { AuthProvider } from "./AuthProvider";
+export { AuthContext, type User, type AuthValue } from "./AuthContext";
+
+
+And import directly where you need them:
+
+import { AuthProvider } from '@/features/auth/AuthProvider';
+import { useAuth } from '@/features/auth/useAuth';
+import { AuthContext } from '@/features/auth/AuthContext';
+
+
+Keep the shared/types/index.ts only re-exporting types (that’s safe). If it ever re-exports values, split them out.
+
+Split types from values in imports.
+Anywhere you import only for typing, convert to import type { ... } from '...'. This breaks TDZ edges because type-only imports erase at runtime:
+
+// before
+import { User } from '@/features/auth/AuthContext';
+// after
+import type { User } from '@/features/auth/AuthContext';
+
+
+Defer singletons until after mount (eliminates top-level TDZ).
+If any module does top-level work that reads another module’s values (e.g., creates a client, subscribes, reads context-like constants), wrap them:
+
+// before (risky)
+export const client = createClient(CONFIG_FROM_OTHER_MODULE);
+
+// after (safe)
+let _client: Client | null = null;
+export function getClient() {
+  if (!_client) _client = createClient(CONFIG_FROM_OTHER_MODULE);
+  return _client;
+}
+
+
+Then call getClient() inside effects or event handlers, not at import time.
+
+Quick repo-specific checks to run now
+
+Run these searches and apply the fixes:
+
+Barrels
+
+Find:
+
+rg -n 'export \* from|export \{.*\} from' client/src | sort
+
+
+Remove/replace any barrel that re-exports values from folders that also import back into the barrel or into siblings.
+
+Mixed import paths (duplicate modules)
+
+Find modules imported both ways:
+
+rg -n "from ['\"]@/" client/src > /tmp/alias.txt
+rg -n "from ['\"]\.\./" client/src > /tmp/relative.txt
+
+
+If the same module appears on both reports (e.g., @/lib/utils and ../../lib/utils), normalize them to the alias everywhere (after adding vite-tsconfig-paths).
+
+Auth ↔ hooks ↔ app cycles
+
+Since App.tsx imports AuthProvider and useAuth, make sure no file in features/auth/** imports from App or router/layout files.
+
+Also check hooks like use-production-realtime.ts and use-service-worker.ts don’t import from features/auth/index.ts (the barrel). Import concrete files instead.
+
+Type-only imports
+
+Convert imports used purely for types to import type.
+
+The cosmetic PWA line (optional tidy)
+
+If you want the banner to show:
+
+Remove event.preventDefault() in your beforeinstallprompt listener or
+
+Store the event and call event.prompt() later in your PWAInstallPrompt component.
+
+Sanity check after fixes
+
+Do a clean build:
+
+rm -rf node_modules dist
+npm i
+npm run build
+
+
+Keep build.sourcemap=true for one run to confirm the stack points to your real files (then you can turn it off).

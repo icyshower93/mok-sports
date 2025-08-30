@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { MoreHorizontal, Settings, HelpCircle, Info, LogOut, Users, TestTube } from "lucide-react";
 import { useLocation } from "wouter";
 import { useQuery } from "@tanstack/react-query";
-import { useAuth } from "@/features/auth";
+import { useAuth } from "@/features/auth/useAuth";
 
 export default function MorePage() {
   const { user } = useAuth();

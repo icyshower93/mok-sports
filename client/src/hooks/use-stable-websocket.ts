@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import { useAuth } from '@/features/auth';
+import { useAuth } from '@/features/auth/useAuth';
 
 interface WebSocketMessage {
   type: string;
