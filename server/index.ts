@@ -3,8 +3,15 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import path from "path";
 import fs from "fs";
+import { fileURLToPath } from 'url';
 import { registerRoutes } from "./routes";
-import { setupVite, serveStatic, log } from "./vite";
+
+// ESM __dirname setup
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Environment check
+const isDev = process.env.NODE_ENV !== 'production';
 
 // Backend build info for debugging
 const SERVER_BUILD_INFO = {
@@ -12,14 +19,14 @@ const SERVER_BUILD_INFO = {
   date: new Date().toISOString(),
   env: process.env.NODE_ENV || 'development',
   hash: Date.now().toString(36),
-  note: 'Running in development mode but serving production assets'
+  note: isDev ? 'Running in development mode' : 'Running in production mode'
 };
 
 console.log('🚀 [Server] Build Info:', SERVER_BUILD_INFO);
 console.log('📝 [Server] Environment Note: NODE_ENV=development means we have dev debugging enabled while serving production builds');
 
 async function setupProductionAssets(app: express.Application) {
-  const distPath = path.resolve(import.meta.dirname, "..", "dist", "public");
+  const distPath = path.resolve(__dirname, "..", "dist", "public");
   
   if (fs.existsSync(distPath)) {
     console.log('[Server] Serving built assets from:', distPath);
@@ -139,7 +146,7 @@ app.use((req, res, next) => {
         logLine = logLine.slice(0, 79) + "…";
       }
 
-      log(logLine);
+      console.log(logLine);
     }
   });
 
@@ -166,14 +173,14 @@ app.use((req, res, next) => {
   // Add emergency cache fix route BEFORE other routes
   app.get('/emergency', (req, res) => {
     console.log('[Emergency] Cache fix page requested');
-    const emergencyPath = path.resolve(import.meta.dirname, "..", "emergency-cache-fix.html");
+    const emergencyPath = path.resolve(__dirname, "..", "emergency-cache-fix.html");
     res.sendFile(emergencyPath);
   });
 
   // Add force refresh route for cache bypass
   app.get('/force-refresh', (req, res) => {
     console.log('[Force Refresh] Cache bypass page requested');
-    const refreshPath = path.resolve(import.meta.dirname, "..", "force-refresh.html");
+    const refreshPath = path.resolve(__dirname, "..", "force-refresh.html");
     res.sendFile(refreshPath);
   });
 
@@ -354,10 +361,12 @@ app.use((req, res, next) => {
   }
 
   // Set up Vite or static serving based on environment
-  if (app.get("env") === "development") {
+  if (isDev) {
     // Only use Vite middleware if we don't have built assets
     // This prevents Vite from intercepting asset requests
     if (!hasBuiltAssets) {
+      // Conditional dynamic import for Vite in development only
+      const { setupVite } = await import("./vite.js");
       await setupVite(app, server);
     } else {
       console.log('[Server] Using built assets, skipping Vite middleware');
@@ -399,7 +408,7 @@ app.use((req, res, next) => {
         }
         
         // Serve the built index.html for all SPA routes (force fresh reads to bypass caching)
-        const indexPath = path.resolve(import.meta.dirname, "..", "dist", "public", "index.html");
+        const indexPath = path.resolve(__dirname, "..", "dist", "public", "index.html");
         console.log('[SPA] Force reading fresh index.html for:', req.path);
         fs.readFile(indexPath, 'utf8', (err, data) => {
           if (err) {
@@ -417,7 +426,8 @@ app.use((req, res, next) => {
       });
     }
   } else {
-    serveStatic(app);
+    // Production: serve static assets (already configured above)
+    console.log('[Server] Production mode: static assets already configured');
   }
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
@@ -428,16 +438,17 @@ app.use((req, res, next) => {
     throw err;
   });
 
+  // Health endpoint for Replit deployment detection
+  app.get('/healthz', (_req, res) => res.status(200).send('ok'));
+
   // ALWAYS serve the app on the port specified in the environment variable PORT
-  // Other ports are firewalled. Default to 5000 if not specified.
+  // Other ports are firewalled. Default to 3000 for production compatibility.
   // this serves both the API and the client.
   // It is the only port that is not firewalled.
-  const port = parseInt(process.env.PORT || '5000', 10);
-  server.listen({
-    port,
-    host: "0.0.0.0"
-    // Removed reusePort to prevent containerized deployment issues
-  }, () => {
-    log(`serving on port ${port}`);
+  const PORT = Number(process.env.PORT) || 3000;
+  const HOST = '0.0.0.0';
+  
+  server.listen(PORT, HOST, () => {
+    console.log(`[server] listening on http://${HOST}:${PORT} (NODE_ENV=${process.env.NODE_ENV || 'undefined'})`);
   });
 })();

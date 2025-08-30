@@ -1891,8 +1891,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const path = await import("path");
       const fs = await import("fs");
       
-      const builtIndexPath = path.resolve(import.meta.dirname, "..", "dist", "public", "index.html");
-      const assetsPath = path.resolve(import.meta.dirname, "..", "dist", "public", "assets");
+      const { fileURLToPath } = await import('url');
+      const __filename = fileURLToPath(import.meta.url);
+      const __dirname = path.dirname(__filename);
+      const builtIndexPath = path.resolve(__dirname, "..", "dist", "public", "index.html");
+      const assetsPath = path.resolve(__dirname, "..", "dist", "public", "assets");
       
       const builtExists = fs.existsSync(builtIndexPath);
       const assetsExist = fs.existsSync(assetsPath);
