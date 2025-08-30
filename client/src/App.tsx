@@ -8,7 +8,7 @@ import { AuthProvider } from "@/features/auth/AuthProvider";
 import { useAuth } from "@/features/auth/useAuth";
 import { useQuery } from "@tanstack/react-query";
 import { usePWADetection } from "@/hooks/use-pwa-detection";
-import { useServiceWorker } from "@/hooks/use-service-worker-clean";
+import { useServiceWorker } from "@/hooks/use-service-worker";
 import { useAutoPushRefresh } from "@/hooks/use-auto-push-refresh";
 import { PWAInstallPrompt } from "@/components/pwa-install-prompt";
 import { useProductionRealtime } from "@/hooks/use-production-realtime";

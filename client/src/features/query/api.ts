@@ -1,7 +1,4 @@
 import { AuthToken } from '@/lib/auth-token';
-import { markModule } from '@/lib/dup-guard';
-
-markModule('features/query/api');
 
 export async function apiRequest(
   method: 'GET'|'POST'|'PUT'|'PATCH'|'DELETE',

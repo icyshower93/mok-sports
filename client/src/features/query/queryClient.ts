@@ -1,8 +1,5 @@
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
 import { AuthToken } from '@/lib/auth-token';
-import { markModule } from '@/lib/dup-guard';
-
-markModule('features/query/queryClient');
 
 // Query function with auth handling
 export const unauthorizedBehaviorToQueryFunction = (
@@ -50,8 +47,6 @@ export function getQueryClient(): QueryClient {
   return _qc;
 }
 
-// Backward compatibility helper removed - use getQueryClient() instead
-// export const queryClient = getQueryClient(); // REMOVED: this defeats lazy pattern
 
 // Maintain backward compatibility while using new AuthToken utility
 export const AuthTokenManager = {

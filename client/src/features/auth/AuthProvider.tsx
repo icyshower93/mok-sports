@@ -2,9 +2,6 @@ import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { AuthContext, type AuthValue, type User } from "./AuthContext";
 import { AuthToken } from "@/lib/auth-token";
-import { markModule } from '@/lib/dup-guard';
-
-markModule('features/auth/AuthProvider');
 
 interface OAuthConfig {
   oauthConfigured: boolean;
@@ -35,8 +32,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logoutMutation = useMutation({
     mutationFn: async () => {
-      const { apiRequest } = await import("@/features/query/api");
-      return apiRequest("POST", "/api/auth/logout");
+      const res = await fetch("/api/auth/logout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...AuthToken.headers(),
+        },
+        credentials: "include",
+      });
+      if (!res.ok) throw new Error(`Logout failed: ${res.status}`);
+      return res.json();
     },
     onSuccess: () => {
       setIsAuthenticated(false);
