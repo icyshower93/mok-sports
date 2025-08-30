@@ -1,0 +1,107 @@
+Short answer: it can be the same root cause (stale/invalid selectedLeague → empty stable → nothing to render), but I’ve also seen a separate, common culprit: the dropdown is rendering teams correctly but the logo mapping/asset import is broken, so you see blank items (or nothing) even though the user has teams.
+
+Here’s how to pin it down fast and fix both paths.
+
+1) Is it the same “empty stable” issue?
+
+In the Leagues tab component, log what you feed the dropdown:
+
+console.log('dropdown stable input', { selectedLeague, userId, teams: userStable });
+
+
+If userStable.length === 0, it’s the same issue as before:
+
+Bad selectedLeague (repair like we did in Teams tab), or
+
+Draft completed before stable backfill (run the backfill, or add the auto-heal in the /api/user/stable/:leagueId handler, then reload).
+
+2) If userStable has rows but logos don’t show → separate “logo mapping” bug
+
+Typical causes & fixes:
+
+A) Asset mapping via raw string paths (breaks in Vite builds)
+
+Symptom: works in dev, breaks in prod; <img src="/logos/kc.svg" /> 404s.
+
+Fix: import assets so Vite fingerprints them.
+
+// client/src/assets/nfl.ts
+import KC from '@/assets/logos/kc.svg';
+import SF from '@/assets/logos/sf.svg';
+// …all teams…
+export const NFL_LOGOS: Record<string, string> = {
+  KC, SF, /* … */
+};
+
+
+And render with:
+
+const team = getTeamById(pick.nflTeamId); // returns { abbr: 'KC', name: 'Chiefs' }
+const logo = NFL_LOGOS[team.abbr];
+return <img src={logo} alt={team.name} className="h-6 w-6" />;
+
+
+B) Mismatch between nflTeamId and your logo key
+
+Symptom: some teams render, others don’t.
+
+Fix: ensure the lookup uses the same field your picks store. If picks store nflTeamId like "KC", key your map by "KC". If it’s numeric (e.g., teamId: 12), map by that and not by abbreviation.
+
+C) Query not enabled / wrong IDs wired
+
+Symptom: dropdown shows nothing until a second click or never loads.
+
+Fix: ensure the React Query for the dropdown is gated on both IDs:
+
+const { data: userStable = [] } = useQuery({
+  queryKey: ['/api/user/stable', leagueId, userId],
+  queryFn: () => api.get(`/api/user/${userId}/stable/${leagueId}`).then(r => r.data),
+  enabled: Boolean(userId && leagueId),
+});
+
+
+If you’re reusing /api/user/stable/:leagueId for the current user, but the Leagues tab lets you view another user’s roster, call a user-specific endpoint (or pass userId server-side).
+
+D) CSS/overlay/z-index swallowing the menu
+
+Symptom: menu opens but appears empty; inspecting DOM shows <img> present but not visible.
+
+Fix: give the popover a z-index and size. E.g., for Radix or HeadlessUI:
+
+<PopoverContent className="z-50 w-64 p-2">
+  {/* logos */}
+</PopoverContent>
+
+
+Also ensure images aren’t inside a zero-height flex container. Add h-6 w-6 on <img> or the wrapper.
+
+E) External logo URLs blocked
+
+Symptom: network panel shows CORS/403 on logo URLs (CDN/ESPN).
+
+Fix: ship logos with the app (A) rather than hot-linking, or proxy them via your server with correct CORS headers.
+
+3) Minimal hardening patch (safe to drop in)
+
+Data: Reuse the Teams-tab “auto-heal” for selectedLeague; if the dropdown’s query 403s, fall back to a league the user actually belongs to (don’t show an empty state silently).
+
+UI: Render a placeholder if a logo isn’t found so “nothing” doesn’t look like “no teams”:
+
+const Logo = ({ abbr, name }: { abbr: string; name: string }) => {
+  const src = NFL_LOGOS[abbr];
+  return src ? (
+    <img src={src} alt={name} className="h-6 w-6 rounded-sm" />
+  ) : (
+    <div className="h-6 w-6 rounded-sm bg-muted flex items-center justify-center text-[10px]">
+      {abbr}
+    </div>
+  );
+};
+
+4) Quick checklist
+
+✅ Confirm userStable.length > 0 for that user+league in the Leagues tab.
+
+✅ If 0: fix league selection or run stable backfill (same issue).
+
+✅ If >0: fix asset mapping/import (A/B), query enable/wiring (C), menu CSS/z-index (D), or CORS (E).
