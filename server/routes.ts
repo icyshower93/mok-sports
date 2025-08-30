@@ -440,8 +440,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const memberUser = await storage.getUser(member.userId);
         if (!memberUser) continue;
         
-        // Get their stable teams
-        const stable = await storage.getUserStable(member.userId, leagueId);
+        // Get their stable teams with auto-heal
+        let stable = await storage.getUserStable(member.userId, leagueId);
+        
+        // Auto-heal: if stable is empty but league has completed draft, backfill from draft
+        if (stable.length === 0) {
+          try {
+            const draft = await storage.getLeagueDraft(leagueId);
+            if (draft?.status === "completed") {
+              console.log(`[Standings Auto-heal] Backfilling stable for user ${member.userId} in league ${leagueId} from completed draft ${draft.id}`);
+              await storage.initializeStableFromDraft(draft.id);
+              // Re-read stable after backfill
+              stable = await storage.getUserStable(member.userId, leagueId);
+              console.log(`[Standings Auto-heal] Backfill complete, found ${stable.length} teams`);
+            }
+          } catch (healError) {
+            console.warn(`[Standings Auto-heal] Failed to backfill stable for user ${member.userId} in league ${leagueId}:`, healError);
+            // Continue with empty stable rather than crashing
+          }
+        }
         
         // Get real scoring data from database
         const userScores = await db.select()
