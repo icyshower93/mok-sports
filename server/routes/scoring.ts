@@ -36,6 +36,36 @@ const authenticateUser = (req: any, res: any, next: any) => {
   return authenticateJWT(req, res, next);
 };
 
+// CRITICAL: League authorization middleware - ensures user is member of league
+const authorizeLeagueMember = async (req: any, res: any, next: any) => {
+  try {
+    const { leagueId } = req.params;
+    const user = req.user;
+    
+    if (!user) {
+      return res.status(401).json({ error: 'Authentication required' });
+    }
+    
+    if (!leagueId) {
+      return res.status(400).json({ error: 'League ID required' });
+    }
+    
+    // Check if user is a member of this league
+    const membership = await storage.isUserInLeague(user.id, leagueId);
+    
+    if (!membership) {
+      console.log(`[Scoring Auth] User ${user.id} denied access to league ${leagueId} - not a member`);
+      return res.status(403).json({ error: 'Access denied - not a member of this league' });
+    }
+    
+    console.log(`[Scoring Auth] User ${user.id} authorized for league ${leagueId}`);
+    next();
+  } catch (error) {
+    console.error('[Scoring Auth] League authorization error:', error);
+    res.status(500).json({ error: 'Authorization check failed' });
+  }
+};
+
 const router = express.Router();
 
 // Helper function to calculate Mok points for a single team in a game
@@ -468,7 +498,7 @@ router.get("/standings/:leagueId", async (req, res) => {
 });
 
 // Get weekly rankings for a specific league/season/week
-router.get("/leagues/:leagueId/week-scores/:season/:week", authenticateUser, async (req, res) => {
+router.get("/leagues/:leagueId/week-scores/:season/:week", authenticateUser, authorizeLeagueMember, async (req, res) => {
   try {
     const { leagueId, season, week } = req.params;
     const user = req.user;
@@ -793,7 +823,7 @@ export function setupScoringRoutes(app: express.Express) {
   });
 
 // GET weekly skins history for a league/season
-router.get("/skins/:leagueId/:season", authenticateUser, async (req, res) => {
+router.get("/skins/:leagueId/:season", authenticateUser, authorizeLeagueMember, async (req, res) => {
   try {
     const { leagueId, season } = req.params;
 

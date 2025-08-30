@@ -1,0 +1,182 @@
+Absolutely—here are the biggest architecture/schema flags and the highest-leverage fixes I’d ship next. I’m biasing toward things that prevent silent data issues (idempotency, constraints, time boundaries) and things that reduce “heisenbugs” around week transitions.
+
+Major flags & concrete recommendations
+1) Make end-of-week awarding idempotent and atomic
+
+Why: If two clients hit the “week end” path at once, you can double-insert the skin or compute off a half-written state.
+
+Do this:
+
+Wrap the entire week-close flow in a single DB transaction.
+
+Take a coarse advisory lock per (leagueId, season, week) or use an upsert with a unique key (below) so a second attempt no-ops.
+
+// Pseudocode inside processEndOfWeek(...)
+await db.transaction(async (tx) => {
+  // prevent double-award
+  const already = await tx.select().from(weeklySkins)
+    .where(and(eq(weeklySkins.leagueId, leagueId), eq(weeklySkins.season, season), eq(weeklySkins.week, week)))
+    .limit(1);
+
+  if (already.length) return; // idempotent exit
+
+  // ... compute winner / rollover ...
+
+  await tx.insert(weeklySkins).values({
+    leagueId, season, week, winnerId, winningScore, isRollover, isTied, prizeAmount, awardedAt: new Date()
+  });
+});
+
+2) Enforce one row per week per league (and fast reads)
+
+Why: The UI and logic assume a single truth for each week’s skin.
+
+Do this (schema):
+
+Add a unique key and supporting index.
+
+// in shared/schema.ts weeklySkins table
+uniqueWeek: unique().on(table.leagueId, table.season, table.week),
+
+// also add indexes you filter on frequently:
+index("ix_weekly_skins_league_season_week").on(table.leagueId, table.season, table.week)
+
+
+Do the same for userWeeklyScores:
+
+unique().on(table.leagueId, table.season, table.week, table.userId)
+index("ix_uws_league_season_week").on(table.leagueId, table.season, table.week)
+
+3) Define an authoritative “week is complete” rule (and make it testable)
+
+Risk: Off-by-one timing during Monday/Tuesday games or delayed kickoffs can award early/late.
+
+Do this:
+
+Centralize the check (one function) that:
+
+Pulls all scheduled games for (season, week) from DB
+
+Considers status (Final) and clock; avoid relying only on timestamps
+
+Allows a small buffer (e.g., 90s) after the last game flips to “Final”
+
+Unit test this with fixtures: normal MNF, double-MNF, Tuesday game, postponement.
+
+Expose it clearly in WeekLockRestrictions and have both “can lock” and “week complete” call the same source of truth.
+
+4) Timezones: store UTC, render local
+
+Risk: If any week boundary or “awardedAt” mixes local time with UTC, you’ll see ghost resets/highlights.
+
+Do this:
+
+Ensure all DB timestamps use UTC.
+
+Only convert to local in React (e.g., Intl.DateTimeFormat).
+
+In code paths that compare times, compare UTC.
+
+5) Rollover & tie semantics locked in schema
+
+Risk: Ambiguity when there’s a tie (roll the pot or split?), or when a winner exists but winnerId is null.
+
+Do this:
+
+Add a CHECK-like invariant at write time:
+
+if isRollover = true then winnerId IS NULL and isTied=true
+
+if isRollover = false then winnerId NOT NULL and isTied in (true|false)
+
+Persist the pot for that week (prizeAmount) so you never recompute from historical rows on the client.
+
+// write logic guard (app-level if DB can't do check)
+if (row.isRollover) {
+  assert(row.winnerId == null && row.isTied === true);
+} else {
+  assert(row.winnerId && (row.isTied === true || row.isTied === false));
+}
+
+6) Awarding should not depend on someone opening the app
+
+Risk: If no one hits the endpoint after games finish, the award never writes.
+
+Do this (minimal):
+
+A tiny server cron (node-cron or a platform scheduler) that runs every 5–10 minutes Sun–Tue:
+
+For each active league, if weekComplete && no weeklySkins row, call processEndOfWeek.
+
+Keep it idempotent (see #1), so you can run it aggressively.
+
+7) WebSocket resilience & cache truth
+
+I see WebSocket fix docs—good! Two gotchas are common:
+
+Auth drift: Ensure WS subscriptions are scoped to the current league/season and re-subscribe after token refresh.
+
+Client cache invalidation: When you emit weekly_skins_awarded, have the client invalidate both:
+
+skins query for that league/season
+
+week-scores for currentWeek
+This guarantees the winner highlight + “0s → final points” jump is visible without reloads.
+
+8) Draft & scoring integrity
+
+You already have great unique constraints on draft picks—keep that same spirit for scoring:
+
+For any write that overwrites weekly points, record a tiny audit row (userId, leagueId, week, delta, reason, actorId) so admin fixes are explainable.
+
+Make userWeeklyScores.weeklyPoints non-nullable (default 0). It removes a lot of UI guards.
+
+9) API guardrails (security/tenancy)
+
+On every scoring/skins route: verify the caller is a member of that league (and 403 otherwise). Not just auth’d—authorized for that league. It prevents arbitrary leagueId probing.
+
+Rate-limit public-facing mutation routes.
+
+Return only the fields the UI needs (no emails or cross-league data).
+
+10) Postponed games & bye weeks
+
+Edge cases that often break “week complete”:
+
+A postponed game that’s still “Scheduled” next week → your last-game check must ignore it or mark the week complete with a flag “postponedGames>0”.
+
+Bye weeks: some users will have 0 points the entire week. Make sure your “hasActualPoints” UI logic doesn’t suppress a legit winner highlight when the winner’s score is low (e.g., 1).
+
+11) Testing: lock in the invariants
+
+Add 5 crisp tests around the processor:
+
+normal week → single winner row, correct prizeAmount
+
+tie → rollover row (no winnerId)
+
+consecutive ties → pot accumulates properly, next winner gets full pot
+
+idempotency → double call produces 1 row
+
+postponed game present → week still completes once all played games are final
+
+A quick Jest + a small seeded sqlite/pg container is plenty.
+
+12) Observability: “did my week actually close?”
+
+Two tiny additions:
+
+Log line with structured fields: {leagueId, season, week, winnerId, prizeAmount, tookMs}
+
+A health/awards admin endpoint that lists the last 5 weeks per league with status (complete, awarded, rollover). When something looks off, you’ll see it instantly.
+
+Minor / nice-to-have
+
+DB FKs with ON DELETE CASCADE for league → userWeeklyScores / weeklySkins so league deletion in dev doesn’t strand rows.
+
+Small composite index on nfl_games (season, week, status) if you frequently filter by that in week-complete checks.
+
+Client query keys: ensure they all include leagueId|season|week to avoid bleed between tabs/leagues.
+
+Admin override: a safe mutation to set a week winner manually (with an audit note), in case you need to correct an NFL data glitch.

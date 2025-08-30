@@ -1,5 +1,5 @@
 import { sql, relations } from "drizzle-orm";
-import { pgTable, text, varchar, timestamp, integer, boolean, unique } from "drizzle-orm/pg-core";
+import { pgTable, text, varchar, timestamp, integer, boolean, unique, index } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -192,6 +192,8 @@ export const userWeeklyScores = pgTable("user_weekly_scores", {
 }, (table) => ({
   // Add unique constraint for proper ON CONFLICT handling
   uniqueUserWeek: unique().on(table.userId, table.leagueId, table.season, table.week),
+  // Index for frequent queries by league/season/week
+  ixUwsLeagueSeasonWeek: index("ix_uws_league_season_week").on(table.leagueId, table.season, table.week),
 }));
 
 // Weekly Skins Winners - tracks who wins the weekly $30 prize
@@ -210,6 +212,8 @@ export const weeklySkins = pgTable("weekly_skins", {
 }, (table) => ({
   // Add unique constraint for proper weekly prize tracking  
   uniqueLeagueWeek: unique().on(table.leagueId, table.season, table.week),
+  // Index for skins history queries
+  ixWeeklySkinsLeagueSeasonWeek: index("ix_weekly_skins_league_season_week").on(table.leagueId, table.season, table.week),
 }));
 
 // Relations

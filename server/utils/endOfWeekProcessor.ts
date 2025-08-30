@@ -297,71 +297,89 @@ export class EndOfWeekProcessor {
   ): Promise<{ winner?: any, rollover?: any }> {
     console.log(`[EndOfWeek] Processing weekly skins for week ${week}`);
 
+    // Check if skins have already been awarded for this week (idempotent guard)
+    const existingSkins = await db.select()
+      .from(weeklySkins)
+      .where(and(
+        eq(weeklySkins.leagueId, leagueId),
+        eq(weeklySkins.season, season),
+        eq(weeklySkins.week, week)
+      ))
+      .limit(1);
+
+    if (existingSkins.length > 0) {
+      console.log(`[EndOfWeek] ⚠️  Skins already awarded for league ${leagueId}, week ${week} - idempotent exit`);
+      const existing = existingSkins[0];
+      return existing.isRollover 
+        ? { rollover: existing } 
+        : { winner: existing };
+    }
+
     // Get all user scores for this week
     const weeklyScores = await db.select({
       userId: userWeeklyScores.userId,
       userName: users.name,
       totalPoints: userWeeklyScores.totalPoints
-    })
-    .from(userWeeklyScores)
-    .innerJoin(users, eq(userWeeklyScores.userId, users.id))
-    .where(
-      and(
-        eq(userWeeklyScores.leagueId, leagueId),
-        eq(userWeeklyScores.season, season),
-        eq(userWeeklyScores.week, week)
-      )
-    )
-    .orderBy(desc(userWeeklyScores.totalPoints));
-
-    if (weeklyScores.length === 0) {
-      console.log(`[EndOfWeek] No scores found for week ${week} - no skins award`);
-      return {};
-    }
-
-    const highestScore = weeklyScores[0].totalPoints;
-    const winners = weeklyScores.filter(score => score.totalPoints === highestScore);
-
-    console.log(`[EndOfWeek] Highest score: ${highestScore}, Winners: ${winners.length}`);
-
-    // Check for previous rollover skins to determine prize amount
-    const previousRollovers = await db.select()
-      .from(weeklySkins)
+      })
+      .from(userWeeklyScores)
+      .innerJoin(users, eq(userWeeklyScores.userId, users.id))
       .where(
         and(
-          eq(weeklySkins.leagueId, leagueId),
-          eq(weeklySkins.season, season),
-          eq(weeklySkins.isTied, true),
-          eq(weeklySkins.isRollover, true)
+          eq(userWeeklyScores.leagueId, leagueId),
+          eq(userWeeklyScores.season, season),
+          eq(userWeeklyScores.week, week)
         )
-      );
+      )
+      .orderBy(desc(userWeeklyScores.totalPoints));
 
-    const totalSkinsThisWeek = 1 + previousRollovers.length; // Base 1 skin + rollovers
-    
-    if (winners.length === 1) {
-      // Single winner - award all accumulated skins
-      const winner = winners[0];
+      if (weeklyScores.length === 0) {
+        console.log(`[EndOfWeek] No scores found for week ${week} - no skins award`);
+        return {};
+      }
+
+      const highestScore = weeklyScores[0].totalPoints;
+      const winners = weeklyScores.filter(score => score.totalPoints === highestScore);
+
+      console.log(`[EndOfWeek] Highest score: ${highestScore}, Winners: ${winners.length}`);
+
+      // Check for previous rollover skins to determine prize amount
+      const previousRollovers = await tx.select()
+        .from(weeklySkins)
+        .where(
+          and(
+            eq(weeklySkins.leagueId, leagueId),
+            eq(weeklySkins.season, season),
+            eq(weeklySkins.isTied, true),
+            eq(weeklySkins.isRollover, true)
+          )
+        );
+
+      const totalSkinsThisWeek = 1 + previousRollovers.length; // Base 1 skin + rollovers
       
-      await db.insert(weeklySkins).values({
-        leagueId,
-        season,
-        week,
-        winnerId: winner.userId,
-        winningScore: winner.totalPoints,
-        prizeAmount: totalSkinsThisWeek,
-        isTied: false,
-        isRollover: false,
-        awardedAt: new Date()
-      }).onConflictDoNothing();
+      if (winners.length === 1) {
+        // Single winner - award all accumulated skins
+        const winner = winners[0];
+        
+        await tx.insert(weeklySkins).values({
+          leagueId,
+          season,
+          week,
+          winnerId: winner.userId,
+          winningScore: winner.totalPoints,
+          prizeAmount: totalSkinsThisWeek,
+          isTied: false,
+          isRollover: false,
+          awardedAt: new Date()
+        });
 
-      console.log(`[EndOfWeek] 🏆 ${winner.userName} wins ${totalSkinsThisWeek} skin(s) with ${winner.totalPoints} points`);
+        console.log(`[EndOfWeek] 🏆 ${winner.userName} wins ${totalSkinsThisWeek} skin(s) with ${winner.totalPoints} points`);
 
-      // Broadcast skins award to all connected clients
-      const { globalDraftManager } = await import("../draft/globalDraftManager.js");
-      if (globalDraftManager && (globalDraftManager as any).broadcast) {
-        (globalDraftManager as any).broadcast({
-          type: 'weekly_skins_awarded',
-          data: {
+        // Broadcast skins award to all connected clients
+        const { globalDraftManager } = await import("../draft/globalDraftManager.js");
+        if (globalDraftManager && (globalDraftManager as any).broadcast) {
+          (globalDraftManager as any).broadcast({
+            type: 'weekly_skins_awarded',
+            data: {
             leagueId,
             week,
             season,
