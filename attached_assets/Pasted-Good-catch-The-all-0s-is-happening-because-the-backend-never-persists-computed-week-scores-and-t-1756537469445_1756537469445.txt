@@ -1,0 +1,115 @@
+Good catch. The “all 0s” is happening because the backend never persists computed week scores, and the endpoint your Home tab calls only reads from the user_weekly_scores table. Since that table stays empty, you always see zeros (and the skins award logic can’t run either, because it reads from the same table).
+
+Here’s a tight fix (two small patches). Do these exactly and the Weekly Skins strip will populate, winners will be awarded, and the highlight will show.
+
+✅ Patch 1 — Persist weekly scores when we compute them
+
+File: server/utils/mokScoring.ts
+Goal: After calculateWeeklyScores(...) computes scores, upsert into user_weekly_scores.
+
+Add the import (if not already at top):
+
+import { userWeeklyScores } from "@shared/schema";
+import { sql } from "drizzle-orm";
+
+
+Then, right before the final return userScores; add this block:
+
+// --- Persist computed weekly scores (idempotent) ---
+if (userScores.length > 0) {
+  // Upsert each user's score for (leagueId, season, week)
+  // Schema has a unique key on (userId, leagueId, season, week)
+  await db.transaction(async (tx) => {
+    for (const s of userScores) {
+      await tx.insert(userWeeklyScores).values({
+        userId: s.userId,
+        leagueId,
+        season,
+        week,
+        basePoints: s.basePoints ?? 0,
+        lockBonusPoints: s.lockBonusPoints ?? 0,
+        lockAndLoadBonusPoints: s.lockAndLoadBonusPoints ?? 0,
+        weeklyHighBonusPoints: 0,   // endOfWeekProcessor may update later
+        weeklyLowPenaltyPoints: 0,  // endOfWeekProcessor may update later
+        totalPoints: s.totalPoints ?? 0,
+        updatedAt: new Date(),
+      })
+      .onConflictDoUpdate({
+        target: [userWeeklyScores.userId, userWeeklyScores.leagueId, userWeeklyScores.season, userWeeklyScores.week],
+        set: {
+          basePoints: sql`excluded.base_points`,
+          lockBonusPoints: sql`excluded.lock_bonus_points`,
+          lockAndLoadBonusPoints: sql`excluded.lock_and_load_bonus_points`,
+          // do not touch weeklyHigh/Low here; those are awarded at week end
+          totalPoints: sql`excluded.total_points`,
+          updatedAt: sql`now()`,
+        },
+      });
+    }
+  });
+}
+
+
+Why this matters:
+
+Fills user_weekly_scores, which your /leagues/:leagueId/week-scores/:season/:week reader returns.
+
+Enables endOfWeekProcessor (skins + highs/lows) to work, since it queries this same table.
+
+✅ Patch 2 — Auto-compute on read if empty (first load experience)
+
+File: server/routes/scoring.ts
+Goal: When the Home tab asks for week scores and the table is empty, compute → upsert → re-read so the UI doesn’t stick at 0s.
+
+Find the route:
+
+router.get("/leagues/:leagueId/week-scores/:season/:week", authenticateUser, async (req, res) => {
+
+
+Right after the initial weeklyScores query (you’ll see the log [Scoring] Found ${weeklyScores.length} weekly scores), insert:
+
+// If nothing persisted yet, compute now, persist (via Patch 1), and re-query
+if (weeklyScores.length === 0) {
+  console.log('[Scoring] No persisted weekly scores; computing now…');
+  const seasonNum = parseInt(season, 10);
+  const weekNum = parseInt(week, 10);
+
+  // Compute & persist (Patch 1 handles the upsert)
+  await calculateWeeklyScores(leagueId, weekNum, seasonNum);
+
+  // Re-query with the same select/join as above
+  const recomputed = await db.select({
+    userId: userWeeklyScores.userId,
+    userName: users.name,
+    weeklyPoints: userWeeklyScores.totalPoints,
+    gamesRemaining: sql<number>`0`,
+  })
+  .from(userWeeklyScores)
+  .innerJoin(users, eq(userWeeklyScores.userId, users.id))
+  .where(and(
+    eq(userWeeklyScores.leagueId, leagueId),
+    eq(userWeeklyScores.season, seasonNum),
+    eq(userWeeklyScores.week, weekNum),
+  ))
+  .orderBy(sql`${userWeeklyScores.totalPoints} DESC`);
+
+  if (recomputed.length > 0) {
+    console.log(`[Scoring] Computed & persisted ${recomputed.length} weekly scores`);
+    // fall through – let the existing response shape use this list
+    (weeklyScores as any) = recomputed;
+  } else {
+    console.log('[Scoring] Still no scores after compute (likely no completed NFL games for this week)');
+  }
+}
+
+
+This keeps your existing response shape ({ rankings: …, weekEndResults: … }) intact and makes first-load feel instant.
+
+What this unlocks (and why your “0s” happened)
+
+Your Home tab calls:
+/api/scoring/leagues/:leagueId/week-scores/:season/:week → read-only until now
+With Patch 2, if empty → compute (Patch 1 persists) → re-read → UI shows real numbers.
+
+Your skins & highlights:
+endOfWeekProcessor.processWeeklySkins(...) pulls from user_weekly_scores. Without persistence, it had nothing to award. After Patch 1 + 2, when the week completes, the skins record will write, and your existing highlight logic on the Home “Weekly Skins Game” row will light up the winner card.

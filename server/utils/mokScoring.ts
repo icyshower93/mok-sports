@@ -370,5 +370,39 @@ export async function calculateWeeklyScores(leagueId: string, week: number, seas
     console.log(`📡 [MokScoring] Broadcast score_update for league ${leagueId}, week ${week}`);
   }
   
+  // --- Persist computed weekly scores (idempotent) ---
+  if (userScores.length > 0) {
+    // Upsert each user's score for (leagueId, season, week)
+    // Schema has a unique key on (userId, leagueId, season, week)
+    await db.transaction(async (tx) => {
+      for (const s of userScores) {
+        await tx.insert(userWeeklyScores).values({
+          userId: s.userId,
+          leagueId,
+          season,
+          week,
+          basePoints: s.basePoints ?? 0,
+          lockBonusPoints: s.lockBonusPoints ?? 0,
+          lockAndLoadBonusPoints: s.lockAndLoadBonusPoints ?? 0,
+          weeklyHighBonusPoints: 0,   // endOfWeekProcessor may update later
+          weeklyLowPenaltyPoints: 0,  // endOfWeekProcessor may update later
+          totalPoints: s.totalPoints ?? 0,
+          updatedAt: new Date(),
+        })
+        .onConflictDoUpdate({
+          target: [userWeeklyScores.userId, userWeeklyScores.leagueId, userWeeklyScores.season, userWeeklyScores.week],
+          set: {
+            basePoints: sql`excluded.base_points`,
+            lockBonusPoints: sql`excluded.lock_bonus_points`,
+            lockAndLoadBonusPoints: sql`excluded.lock_and_load_bonus_points`,
+            // do not touch weeklyHigh/Low here; those are awarded at week end
+            totalPoints: sql`excluded.total_points`,
+            updatedAt: sql`now()`,
+          },
+        });
+      }
+    });
+  }
+  
   return userScores;
 }
