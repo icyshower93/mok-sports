@@ -1,0 +1,85 @@
+Nice—this is real progress. One big snag though:
+
+Replit says “I can’t modify the Vite config,” then later celebrates “vite-tsconfig-paths added.” Merely installing the package does nothing unless it’s actually added to vite.config.ts. If the plugin isn’t active, alias + relative paths can still produce duplicate modules, and the TDZ (“Cannot access 'c' before initialization”) can persist.
+
+Here’s how to finish this off cleanly.
+
+1) Make sure the plugin is actually enabled
+
+Open vite.config.ts and confirm you see both of these lines:
+
+import tsconfigPaths from 'vite-tsconfig-paths';
+
+export default defineConfig({
+  plugins: [
+    react(),
+    tsconfigPaths(), // ← this must be here
+  ],
+  build: {
+    sourcemap: true,  // temporary: helps map the TDZ to real files
+    minify: false     // temporary: avoids reordering masking the bug
+  }
+});
+
+
+If it’s not there, add it and rebuild. (You can turn sourcemap and minify back to normal after you verify a clean run.)
+
+2) Verify the barrel removal didn’t leave stragglers
+
+You removed client/src/features/auth/index.ts. Great. Now make sure no file still imports the directory:
+
+# should return nothing
+rg -n "from ['\"]@/features/auth['\"]" client/src
+
+
+If any remain, point them to the concrete files:
+
+@/features/auth/useAuth
+
+@/features/auth/AuthProvider
+
+@/features/auth/AuthContext (use import type { ... } when it’s only types)
+
+Also scan for any other barrels that re-export values (not just types) and remove/inline them:
+
+rg -n "export \* from|export {.*} from" client/src
+
+3) Eliminate duplicate imports (alias vs relative)
+
+Mixed paths to the same module cause two copies to initialize in different orders:
+
+# find alias imports
+rg -n "from ['\"]@/" client/src > /tmp/alias.txt
+# find relative parent imports
+rg -n "from ['\"]\.\./" client/src > /tmp/rel.txt
+
+
+Pick one style (I recommend the alias after enabling the plugin) and normalize any offenders so every import of a given module is identical.
+
+4) Convert type-only imports
+
+Anywhere a symbol is only used as a type, switch to import type so it vanishes at runtime (breaks TDZ edges):
+
+// before
+import { User } from '@/features/auth/AuthContext';
+// after
+import type { User } from '@/features/auth/AuthContext';
+
+5) Defer risky singletons
+
+If any module does work at import time that depends on another module’s values (creating clients, starting sockets, reading config), wrap it:
+
+let _client: Client | null = null;
+export function getClient() {
+  if (!_client) _client = createClient(...);
+  return _client;
+}
+// call getClient() inside effects/handlers, not at top-level
+
+6) Rebuild cleanly and confirm the stack maps to source
+rm -rf node_modules dist
+npm i
+npm run build
+
+
+If the TDZ still fires, with sourcemap:true + minify:false the stack will show the real file & line instead of hx/c. Fix that exact import edge.
