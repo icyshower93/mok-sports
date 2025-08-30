@@ -132,13 +132,15 @@ export default function MainPage() {
 
   // Fetch league standings data (same as league tab)
   const { data: leagueData } = useQuery({
-    queryKey: [`/api/leagues/${selectedLeague}/standings`],
+    queryKey: ['standings', selectedLeague, 2024, currentWeek],
+    queryFn: () => fetch(`/api/leagues/${selectedLeague}/standings`).then(res => res.json()),
     enabled: !!selectedLeague && !!user,
   });
 
   // Fetch weekly rankings - fixed endpoint  
   const { data: weeklyRankingsData, isLoading: weeklyLoading } = useQuery({
-    queryKey: [`/api/scoring/leagues/${selectedLeague}/week-scores/2024/${currentWeek}`],
+    queryKey: ['week-scores', selectedLeague, 2024, currentWeek],
+    queryFn: () => fetch(`/api/scoring/leagues/${selectedLeague}/week-scores/2024/${currentWeek}`).then(res => res.json()),
     enabled: !!selectedLeague,
   });
 

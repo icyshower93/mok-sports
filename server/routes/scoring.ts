@@ -549,27 +549,41 @@ router.get("/leagues/:leagueId/week-scores/:season/:week", authenticateUser, aut
     }
 
     if (shouldRecompute) {
-      console.log('[Scoring] Recomputing weekly scores (empty table or all zeros with completed games)');
-      const { calculateWeeklyScores } = await import("../utils/mokScoring.js");
-      await calculateWeeklyScores(leagueId, weekNum, seasonNum);
+      console.log('[Scoring] Checking if week is finalized before recomputing...');
       
-      // refresh
-      weeklyScores = await db.select({
-        userId: userWeeklyScores.userId,
-        userName: users.name,
-        weeklyPoints: userWeeklyScores.totalPoints,
-        gamesRemaining: sql<number>`0`,
-      })
-      .from(userWeeklyScores)
-      .innerJoin(users, eq(userWeeklyScores.userId, users.id))
-      .where(and(
-        eq(userWeeklyScores.leagueId, leagueId),
-        eq(userWeeklyScores.season, seasonNum),
-        eq(userWeeklyScores.week, weekNum),
-      ))
-      .orderBy(sql`${userWeeklyScores.totalPoints} DESC`);
-      
-      console.log(`[Scoring] Recomputed & persisted ${weeklyScores.length} weekly scores`);
+      // Don't recompute finalized weeks to prevent data drift
+      const isFinalized = await db.execute(sql`
+        SELECT 1
+        FROM weekly_skins
+        WHERE league_id = ${leagueId} AND season = ${seasonNum} AND week = ${weekNum}
+        LIMIT 1
+      `);
+
+      if (isFinalized.rowCount === 0) {
+        console.log('[Scoring] Recomputing weekly scores (empty table or all zeros with completed games)');
+        const { calculateWeeklyScores } = await import("../utils/mokScoring.js");
+        await calculateWeeklyScores(leagueId, weekNum, seasonNum);
+        
+        // refresh after recomputation
+        weeklyScores = await db.select({
+          userId: userWeeklyScores.userId,
+          userName: users.name,
+          weeklyPoints: userWeeklyScores.totalPoints,
+          gamesRemaining: sql<number>`0`,
+        })
+        .from(userWeeklyScores)
+        .innerJoin(users, eq(userWeeklyScores.userId, users.id))
+        .where(and(
+          eq(userWeeklyScores.leagueId, leagueId),
+          eq(userWeeklyScores.season, seasonNum),
+          eq(userWeeklyScores.week, weekNum),
+        ))
+        .orderBy(sql`${userWeeklyScores.totalPoints} DESC`);
+        
+        console.log(`[Scoring] Recomputed & persisted ${weeklyScores.length} weekly scores`);
+      } else {
+        console.log('[Scoring] Week is finalized, preserving existing weekly scores');
+      }
     }
 
     // Check if week is complete and get high/low score teams

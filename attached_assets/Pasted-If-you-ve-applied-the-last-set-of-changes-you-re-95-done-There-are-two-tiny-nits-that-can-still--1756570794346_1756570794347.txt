@@ -1,0 +1,67 @@
+If you’ve applied the last set of changes, you’re ~95% done. There are two tiny nits that can still make things look “off” after a week ends or when you navigate between weeks. Here are the final fixes to make it airtight.
+
+1) Don’t recompute a finalized week
+
+Right now we recompute week scores in a couple endpoints to prevent “all 0s”. That’s good during the week, but after the week is finalized (skins awarded and snapshot stored), you should skip recompute so numbers don’t drift.
+
+Where: both places you call calculateWeeklyScores(...) (e.g. GET /api/leagues/:leagueId/standings and GET /api/scoring/leagues/:leagueId/week-scores/:season/:week).
+
+Drop-in guard:
+
+import { sql } from "../db"; // adjust path
+// ...
+const isFinalized = await db.execute(sql`
+  SELECT 1
+  FROM weekly_skins
+  WHERE league_id = ${leagueId} AND season = ${seasonNum} AND week = ${weekNum}
+  LIMIT 1
+`);
+
+if (isFinalized.rowCount === 0) {
+  // Only recompute if NOT finalized
+  await calculateWeeklyScores(leagueId, weekNum, seasonNum);
+}
+
+
+This preserves mid-week freshness but treats a completed week as immutable.
+
+2) Frontend: query keys must include season + week
+
+If your Season Standings/Weekly Skins card uses React Query (or similar) with a cache key that doesn’t include week, you can see stale high/low or highlights when switching weeks.
+
+Fix the query keys (example):
+
+// before (too coarse):
+useQuery(['standings', leagueId], ...)
+
+// after (correctly scoped):
+useQuery(['standings', leagueId, seasonNum, weekNum], ...)
+
+useQuery(['week-scores', leagueId, seasonNum, weekNum], ...)
+
+
+And when the final game of the week flips to completed (or when your admin triggers processEndOfWeek), invalidate both:
+
+queryClient.invalidateQueries({ queryKey: ['standings', leagueId, seasonNum, weekNum] });
+queryClient.invalidateQueries({ queryKey: ['week-scores', leagueId, seasonNum, weekNum] });
+
+
+This guarantees the UI re-pulls the now-finalized data and shows the skins winner highlight at the right moment.
+
+Quick “done/done” checklist
+
+Mid-week calls to standings/week-scores show live (non-zero) user weekly totals.
+
+standings returns weekComplete: false and highScoreTeams: null, lowScoreTeams: null until the last game finishes.
+
+When the last game completes and processEndOfWeek runs:
+
+A row exists in weekly_skins (league_id, season, week) exactly once.
+
+Subsequent standings/week-scores do not call calculateWeeklyScores for that week (guard above).
+
+Home tab highlights the winner (and suppresses highlighting on ties/rollover, as intended).
+
+Navigating between weeks never shows stale data (query keys include seasonNum + weekNum and are invalidated on award).
+
+If these all check out on your side, then yes — fixed.

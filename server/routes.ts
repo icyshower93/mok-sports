@@ -450,8 +450,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const weekNum = Math.max(maxCompletedWeek, maxAnyWeek);
 
       // keep weekly scores fresh for UI (OK during the week)
-      const { calculateWeeklyScores } = await import("./utils/mokScoring.js");
-      await calculateWeeklyScores(leagueId, weekNum, seasonNum);
+      // Don't recompute finalized weeks to prevent data drift
+      const isFinalized = await db.execute(sql`
+        SELECT 1
+        FROM weekly_skins
+        WHERE league_id = ${leagueId} AND season = ${seasonNum} AND week = ${weekNum}
+        LIMIT 1
+      `);
+
+      if (isFinalized.rowCount === 0) {
+        // Only recompute if NOT finalized
+        const { calculateWeeklyScores } = await import("./utils/mokScoring.js");
+        await calculateWeeklyScores(leagueId, weekNum, seasonNum);
+      }
 
       // NEW: block high/low until week is complete
       const { isWeekComplete } = await import("./utils/week.js");
