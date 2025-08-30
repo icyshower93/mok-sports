@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Calendar, ChevronRight, RotateCcw, LogOut } from "lucide-react";
 import { useLocation } from "wouter";
-import { queryClient } from "@/lib/queryClient";
+
 import { useAuth } from "@/features/auth";
 
 // Define simple admin state type
@@ -49,7 +49,7 @@ export default function AdminPanel() {
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/admin/state'] });
+      useQueryClient().invalidateQueries({ queryKey: ['/api/admin/state'] });
     }
   });
 
@@ -63,7 +63,7 @@ export default function AdminPanel() {
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/admin/state'] });
+      useQueryClient().invalidateQueries({ queryKey: ['/api/admin/state'] });
     }
   });
 

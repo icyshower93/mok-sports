@@ -9,7 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/features/auth";
 import { useLocation } from "wouter";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { queryClient } from "@/lib/queryClient";
+
 import { DraftNotificationReminder } from "@/components/draft-notification-reminder";
 import DraftControls from "@/components/draft-controls";
 import { DraftTestingPanel } from "@/components/draft-testing-panel";
@@ -252,7 +252,7 @@ export function LeagueWaiting() {
             <div className="flex gap-2 justify-center">
               <Button onClick={() => {
                 // Clear any cached league data and redirect
-                queryClient.invalidateQueries({ queryKey: ['/api/leagues/user'] });
+                useQueryClient().invalidateQueries({ queryKey: ['/api/leagues/user'] });
                 setLocation('/?stay=true');
               }}>
                 Return to Dashboard
@@ -293,8 +293,8 @@ export function LeagueWaiting() {
       });
       
       // Clear all league-related cache and redirect
-      queryClient.invalidateQueries({ queryKey: ['/api/leagues/user'] });
-      queryClient.removeQueries({ queryKey: [`/api/leagues/${leagueId}`] });
+      useQueryClient().invalidateQueries({ queryKey: ['/api/leagues/user'] });
+      useQueryClient().removeQueries({ queryKey: [`/api/leagues/${leagueId}`] });
       setLocation('/?stay=true');
     } catch (error) {
       toast({
@@ -436,7 +436,7 @@ export function LeagueWaiting() {
                       canStartDraft={!!league.draftId && !league.draftStarted}
                       draftId={league.draftId}
                       onDraftCreated={(draftId: string) => {
-                        queryClient.invalidateQueries({ queryKey: [`/api/leagues/${leagueId}`] });
+                        useQueryClient().invalidateQueries({ queryKey: [`/api/leagues/${leagueId}`] });
                         toast({
                           title: "Draft created!",
                           description: "Your snake draft is ready to begin.",
@@ -477,11 +477,11 @@ export function LeagueWaiting() {
                 connectionStatus={connectionStatus}
                 onReset={() => {
                   // Force immediate refetch after reset to get new draft ID
-                  queryClient.invalidateQueries({ queryKey: [`/api/leagues/${leagueId}`] });
+                  useQueryClient().invalidateQueries({ queryKey: [`/api/leagues/${leagueId}`] });
                   
                   // Force refetch with delay to ensure fresh data
                   setTimeout(() => {
-                    queryClient.refetchQueries({ queryKey: [`/api/leagues/${leagueId}`] });
+                    useQueryClient().refetchQueries({ queryKey: [`/api/leagues/${leagueId}`] });
                   }, 300);
                 }}
               />

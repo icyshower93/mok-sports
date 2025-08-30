@@ -1,0 +1,147 @@
+Boom — that last clue (mixed dynamic + static imports of lib/queryClient.ts) is exactly the kind of runtime-order hazard that produces a TDZ crash even with zero static cycles. You’re on the right track.
+
+Here’s how to lock this down so it never comes back, plus a clean reference setup.
+
+Why the crash persisted
+
+Static cycle check (Madge) looks only at the graph, not when modules run.
+
+ESM module init is ordered: if module A executes top-level code that imports from B, but B (directly/indirectly) also needs A during its own top-level execution, one side will read a binding before it’s initialized → TDZ (Cannot access 'c' before initialization → minified name gx/px).
+
+Mixing dynamic (import()) and static imports of the same singleton (queryClient) means sometimes the page chunk evaluates first and touches a not-yet-initialized thing from another chunk.
+
+Permanent fixes (do all of these)
+1) Make queryClient a pure, leaf module
+
+Create (or keep) a file that only creates and exports the client — no other imports that might reach into pages/router.
+
+// client/src/features/query/queryClient.ts
+import { QueryClient } from "@tanstack/react-query";
+
+export const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: { staleTime: 30_000, gcTime: 5 * 60_000, retry: 1 },
+    mutations: { retry: 0 }
+  }
+});
+
+2) Provider owns the client; components don’t import it directly
+// client/src/features/query/QueryProvider.tsx
+import { QueryClientProvider } from "@tanstack/react-query";
+import { queryClient } from "./queryClient";
+
+export function QueryProvider({ children }: { children: React.ReactNode }) {
+  return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
+}
+
+
+In your app entry:
+
+// client/src/AppProviders.tsx
+import { QueryProvider } from "@/features/query/QueryProvider";
+import { AuthProvider } from "@/features/auth";
+
+export function AppProviders({ children }: { children: React.ReactNode }) {
+  return (
+    <AuthProvider>
+      <QueryProvider>{children}</QueryProvider>
+    </AuthProvider>
+  );
+}
+
+
+Important: Pages/components should not import queryClient. When you need it (e.g., to invalidate), use:
+
+import { useQueryClient } from "@tanstack/react-query";
+const qc = useQueryClient();
+qc.invalidateQueries({ queryKey: ["..."] });
+
+
+This avoids pulling the singleton at module scope and sidesteps init order entirely.
+
+3) Remove all dynamic imports of queryClient
+
+You already fixed dashboard.tsx. Now enforce it repo-wide:
+
+Search:
+
+rg -n 'import\\(.+queryClient' client/src
+rg -n 'from .+queryClient' client/src
+
+
+The first command should return nothing (no dynamic import).
+
+The second should only show imports in QueryProvider (and maybe test helpers). Everywhere else should use useQueryClient().
+
+4) Unify import path (no duplicates via alias vs relative)
+
+Pick one path for this module, e.g. @/features/query/queryClient. Update TS and Vite so they match:
+
+tsconfig.json
+
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["client/src/*"]
+    }
+  }
+}
+
+
+vite.config.ts
+
+resolve: {
+  alias: {
+    "@": path.resolve(process.cwd(), "client", "src")
+  },
+  dedupe: [
+    "react",
+    "react-dom",
+    "@tanstack/react-query",
+    "clsx",
+    "tailwind-merge",
+    "class-variance-authority"
+  ]
+}
+
+
+Then codemod any stray relative imports to the alias so you don’t end up with two “copies” of the same module via different URLs.
+
+5) Keep pages lazy, but don’t import router/meta from pages
+
+Router lazily imports pages with lazy(() => import("./pages/...")).
+
+Pages must not import the router or a route registry that imports pages. If you keep shared route metadata, keep it in a pure data file (no page imports), or compute via a getter (not at top-level).
+
+6) Guardrails so it can’t regress
+
+ESLint (add both if you use ESLint; adjust paths to your taste):
+
+// .eslintrc.js
+module.exports = {
+  plugins: ["import"],
+  rules: {
+    "import/no-cycle": ["error", { ignoreExternal: true }],
+    // Disallow importing the singleton anywhere except its provider
+    "no-restricted-imports": ["error", {
+      paths: [
+        {
+          name: "@/features/query/queryClient",
+          message: "Import the singleton only inside QueryProvider. Use useQueryClient() elsewhere."
+        }
+      ],
+      // Optional: block all dynamic imports of it
+      patterns: ["**/*queryClient*"]
+    }]
+  }
+};
+
+
+CI sanity:
+
+{
+  "scripts": {
+    "check:cycles": "madge client/src --circular"
+  }
+}

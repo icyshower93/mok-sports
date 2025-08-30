@@ -1,42 +1,9 @@
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
 import { AuthToken } from '@/lib/auth-token';
 
-// Maintain backward compatibility while using new AuthToken utility
-export const AuthTokenManager = {
-  getToken: () => AuthToken.get(),
-  setToken: (token: string) => AuthToken.set(token),
-  removeToken: () => AuthToken.clear(),
-  getAuthHeaders: () => AuthToken.headers()
-};
-
-export async function apiRequest(
-  method: 'GET'|'POST'|'PUT'|'PATCH'|'DELETE',
-  url: string,
-  body?: unknown,
-  extraHeaders: Record<string,string> = {}
-): Promise<any> {
-  const res = await fetch(url, {
-    method,
-    credentials: 'include',
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json',
-      ...AuthToken.headers(),
-      ...extraHeaders,
-    },
-    body: body ? JSON.stringify(body) : undefined,
-  });
-  
-  if (!res.ok) {
-    const text = await res.text().catch(() => '');
-    throw new Error(`HTTP ${res.status} ${res.statusText}${text ? ` - ${text}` : ''}`);
-  }
-  return await res.json();
-}
-
-type UnauthorizedBehavior = "returnNull" | "throw";
+// Query function with auth handling
 export const unauthorizedBehaviorToQueryFunction = (
-  unauthorizedBehavior: UnauthorizedBehavior = "throw",
+  unauthorizedBehavior: "returnNull" | "throw" = "throw",
 ): QueryFunction<any> =>
   async ({ queryKey }) => {
     const res = await fetch(queryKey.join("/") as string, {
@@ -75,3 +42,11 @@ export const queryClient = new QueryClient({
     },
   },
 });
+
+// Maintain backward compatibility while using new AuthToken utility
+export const AuthTokenManager = {
+  getToken: () => AuthToken.get(),
+  setToken: (token: string) => AuthToken.set(token),
+  removeToken: () => AuthToken.clear(),
+  getAuthHeaders: () => AuthToken.headers()
+};

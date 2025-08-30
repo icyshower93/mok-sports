@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { AuthTokenManager } from "@/lib/queryClient";
+import { AuthTokenManager } from "@/features/query/queryClient";
 import { useAuth } from "@/features/auth";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { MainLayout } from "@/components/layout/main-layout";

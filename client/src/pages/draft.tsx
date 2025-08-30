@@ -10,7 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Clock, Users, Trophy, Zap, Shield, Star, Wifi, WifiOff, Play, ArrowLeft, CheckCircle, Circle, Search, X, Sparkles, Target, ChevronUp, ChevronDown, RotateCcw, Plus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { TeamLogo } from "@/components/team-logo";
-import { apiRequest } from "@/lib/queryClient";
+import { apiRequest } from "@/features/query/api";
 import { useResilientWebSocket } from "@/hooks/use-resilient-websocket";
 import { useAuth } from "@/features/auth";
 import { trackModuleError } from "@/debug-tracker";

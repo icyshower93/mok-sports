@@ -10,7 +10,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { TeamLogo } from "@/components/team-logo";
 import { useAuth } from "@/features/auth";
 import { useToast } from "@/hooks/use-toast";
-import { apiRequest } from "@/lib/queryClient";
+import { apiRequest } from "@/features/query/api";
 import { 
   Shield, 
   Lock, 

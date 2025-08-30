@@ -26,7 +26,7 @@ import {
   Pause,
   Settings
 } from "lucide-react";
-import { queryClient } from "@/lib/queryClient";
+
 
 interface DraftTestingPanelProps {
   leagueId: string;
@@ -70,7 +70,7 @@ export function DraftTestingPanel({
         title: "Robots Added",
         description: "5 robot users have been added to the league for testing.",
       });
-      queryClient.invalidateQueries({ queryKey: [`/api/leagues/${leagueId}`] });
+      useQueryClient().invalidateQueries({ queryKey: [`/api/leagues/${leagueId}`] });
     },
     onError: (error: Error) => {
       toast({
@@ -104,8 +104,8 @@ export function DraftTestingPanel({
       console.log('[Reset] Success response:', data);
       
       // Nuclear cache clearing - remove everything
-      queryClient.removeQueries({ queryKey: [`/api/leagues/${leagueId}`] });
-      queryClient.removeQueries({ queryKey: ['/api/leagues/user'] });
+      useQueryClient().removeQueries({ queryKey: [`/api/leagues/${leagueId}`] });
+      useQueryClient().removeQueries({ queryKey: ['/api/leagues/user'] });
       
       toast({
         title: "Draft Reset Complete!",
@@ -115,7 +115,7 @@ export function DraftTestingPanel({
       console.log('[Reset] Successfully reset draft, new draft ID:', data?.draftId);
       
       // Immediate cache refresh with forced refetch
-      const freshData = await queryClient.fetchQuery({
+      const freshData = await useQueryClient().fetchQuery({
         queryKey: [`/api/leagues/${leagueId}`],
         queryFn: async () => {
           const response = await fetch(`/api/leagues/${leagueId}`, {
@@ -129,7 +129,7 @@ export function DraftTestingPanel({
       console.log('[Reset] Fresh data fetched, new draft ID:', freshData?.draftId);
       
       // Force immediate cache invalidation and refetch
-      queryClient.invalidateQueries({ queryKey: [`/api/leagues/${leagueId}`] });
+      useQueryClient().invalidateQueries({ queryKey: [`/api/leagues/${leagueId}`] });
       
       // Small delay to ensure cache propagation before triggering onReset
       setTimeout(() => {
@@ -291,10 +291,10 @@ export function DraftTestingPanel({
               <Button
                 onClick={() => {
                   // Force refresh current draft status
-                  queryClient.invalidateQueries({ queryKey: ['/api/leagues/user'] });
-                  queryClient.invalidateQueries({ queryKey: [`/api/leagues/${leagueId}`] });
+                  useQueryClient().invalidateQueries({ queryKey: ['/api/leagues/user'] });
+                  useQueryClient().invalidateQueries({ queryKey: [`/api/leagues/${leagueId}`] });
                   if (draftId) {
-                    queryClient.invalidateQueries({ queryKey: ['draft', draftId] });
+                    useQueryClient().invalidateQueries({ queryKey: ['draft', draftId] });
                   }
                   toast({
                     title: "Refreshed",
