@@ -1,0 +1,1941 @@
+[
+  {
+    "importer": "client/src/App.tsx",
+    "spec": "@/features/query/QueryProvider",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/features/query/QueryProvider.tsx",
+    "key": "features/query/QueryProvider"
+  },
+  {
+    "importer": "client/src/App.tsx",
+    "spec": "@/components/ui/toaster",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/toaster.tsx",
+    "key": "components/ui/toaster"
+  },
+  {
+    "importer": "client/src/App.tsx",
+    "spec": "@/components/ui/tooltip",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/tooltip.tsx",
+    "key": "components/ui/tooltip"
+  },
+  {
+    "importer": "client/src/App.tsx",
+    "spec": "@/hooks/use-theme",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/hooks/use-theme.tsx",
+    "key": "hooks/use-theme"
+  },
+  {
+    "importer": "client/src/App.tsx",
+    "spec": "@/features/auth/AuthProvider",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/features/auth/AuthProvider.tsx",
+    "key": "features/auth/AuthProvider"
+  },
+  {
+    "importer": "client/src/App.tsx",
+    "spec": "@/features/auth/useAuth",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/features/auth/useAuth.ts",
+    "key": "features/auth/useAuth"
+  },
+  {
+    "importer": "client/src/App.tsx",
+    "spec": "@/hooks/use-pwa-detection",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/hooks/use-pwa-detection.ts",
+    "key": "hooks/use-pwa-detection"
+  },
+  {
+    "importer": "client/src/App.tsx",
+    "spec": "@/hooks/use-service-worker",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/hooks/use-service-worker.ts",
+    "key": "hooks/use-service-worker"
+  },
+  {
+    "importer": "client/src/App.tsx",
+    "spec": "@/hooks/use-auto-push-refresh",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/hooks/use-auto-push-refresh.ts",
+    "key": "hooks/use-auto-push-refresh"
+  },
+  {
+    "importer": "client/src/App.tsx",
+    "spec": "@/components/pwa-install-prompt",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/pwa-install-prompt.tsx",
+    "key": "components/pwa-install-prompt"
+  },
+  {
+    "importer": "client/src/App.tsx",
+    "spec": "@/hooks/use-production-realtime",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/hooks/use-production-realtime.ts",
+    "key": "hooks/use-production-realtime"
+  },
+  {
+    "importer": "client/src/App.tsx",
+    "spec": "@/components/error-boundary",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/error-boundary.tsx",
+    "key": "components/error-boundary"
+  },
+  {
+    "importer": "client/src/App.tsx",
+    "spec": "@/components/desktop-notice",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/desktop-notice.tsx",
+    "key": "components/desktop-notice"
+  },
+  {
+    "importer": "client/src/App.tsx",
+    "spec": "@/pages/login",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/pages/login.tsx",
+    "key": "pages/login"
+  },
+  {
+    "importer": "client/src/App.tsx",
+    "spec": "@/pages/dashboard",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/pages/dashboard.tsx",
+    "key": "pages/dashboard"
+  },
+  {
+    "importer": "client/src/App.tsx",
+    "spec": "@/pages/leagues",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/pages/leagues.tsx",
+    "key": "pages/leagues"
+  },
+  {
+    "importer": "client/src/App.tsx",
+    "spec": "@/pages/draft",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/pages/draft.tsx",
+    "key": "pages/draft"
+  },
+  {
+    "importer": "client/src/App.tsx",
+    "spec": "@/pages/main",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/pages/main.tsx",
+    "key": "pages/main"
+  },
+  {
+    "importer": "client/src/App.tsx",
+    "spec": "@/pages/profile",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/pages/profile.tsx",
+    "key": "pages/profile"
+  },
+  {
+    "importer": "client/src/App.tsx",
+    "spec": "@/pages/teams",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/pages/teams.tsx",
+    "key": "pages/teams"
+  },
+  {
+    "importer": "client/src/App.tsx",
+    "spec": "@/pages/league",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/pages/league.tsx",
+    "key": "pages/league"
+  },
+  {
+    "importer": "client/src/App.tsx",
+    "spec": "@/pages/scores",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/pages/scores.tsx",
+    "key": "pages/scores"
+  },
+  {
+    "importer": "client/src/App.tsx",
+    "spec": "@/pages/agents",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/pages/agents.tsx",
+    "key": "pages/agents"
+  },
+  {
+    "importer": "client/src/App.tsx",
+    "spec": "@/pages/more",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/pages/more.tsx",
+    "key": "pages/more"
+  },
+  {
+    "importer": "client/src/App.tsx",
+    "spec": "@/pages/trades",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/pages/trades.tsx",
+    "key": "pages/trades"
+  },
+  {
+    "importer": "client/src/App.tsx",
+    "spec": "@/pages/admin",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/pages/admin.tsx",
+    "key": "pages/admin"
+  },
+  {
+    "importer": "client/src/App.tsx",
+    "spec": "@/pages/database-viewer",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/pages/database-viewer.tsx",
+    "key": "pages/database-viewer"
+  },
+  {
+    "importer": "client/src/App.tsx",
+    "spec": "@/pages/league-waiting",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/pages/league-waiting.tsx",
+    "key": "pages/league-waiting"
+  },
+  {
+    "importer": "client/src/App.tsx",
+    "spec": "@/pages/not-found",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/pages/not-found.tsx",
+    "key": "pages/not-found"
+  },
+  {
+    "importer": "client/src/App.tsx",
+    "spec": "@/lib/buildInfo",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/lib/buildInfo.ts",
+    "key": "lib/buildInfo"
+  },
+  {
+    "importer": "client/src/components/desktop-notice.tsx",
+    "spec": "@/components/ui/card",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/card.tsx",
+    "key": "components/ui/card"
+  },
+  {
+    "importer": "client/src/components/desktop-notice.tsx",
+    "spec": "@/components/ui/button",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/button.tsx",
+    "key": "components/ui/button"
+  },
+  {
+    "importer": "client/src/components/draft-controls.tsx",
+    "spec": "@/components/ui/card",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/card.tsx",
+    "key": "components/ui/card"
+  },
+  {
+    "importer": "client/src/components/draft-controls.tsx",
+    "spec": "@/components/ui/button",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/button.tsx",
+    "key": "components/ui/button"
+  },
+  {
+    "importer": "client/src/components/draft-controls.tsx",
+    "spec": "@/components/ui/input",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/input.tsx",
+    "key": "components/ui/input"
+  },
+  {
+    "importer": "client/src/components/draft-controls.tsx",
+    "spec": "@/components/ui/label",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/label.tsx",
+    "key": "components/ui/label"
+  },
+  {
+    "importer": "client/src/components/draft-controls.tsx",
+    "spec": "@/components/ui/badge",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/badge.tsx",
+    "key": "components/ui/badge"
+  },
+  {
+    "importer": "client/src/components/draft-controls.tsx",
+    "spec": "@/components/ui/select",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/select.tsx",
+    "key": "components/ui/select"
+  },
+  {
+    "importer": "client/src/components/draft-controls.tsx",
+    "spec": "@/hooks/use-toast",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/hooks/use-toast.ts",
+    "key": "hooks/use-toast"
+  },
+  {
+    "importer": "client/src/components/draft-controls.tsx",
+    "spec": "@/features/query/api",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/features/query/api.ts",
+    "key": "features/query/api"
+  },
+  {
+    "importer": "client/src/components/draft-notification-reminder.tsx",
+    "spec": "@/components/ui/card",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/card.tsx",
+    "key": "components/ui/card"
+  },
+  {
+    "importer": "client/src/components/draft-notification-reminder.tsx",
+    "spec": "@/components/ui/button",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/button.tsx",
+    "key": "components/ui/button"
+  },
+  {
+    "importer": "client/src/components/draft-notification-reminder.tsx",
+    "spec": "@/lib/utils",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/lib/utils.ts",
+    "key": "lib/utils"
+  },
+  {
+    "importer": "client/src/components/draft-testing-panel.tsx",
+    "spec": "@/components/ui/card",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/card.tsx",
+    "key": "components/ui/card"
+  },
+  {
+    "importer": "client/src/components/draft-testing-panel.tsx",
+    "spec": "@/components/ui/button",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/button.tsx",
+    "key": "components/ui/button"
+  },
+  {
+    "importer": "client/src/components/draft-testing-panel.tsx",
+    "spec": "@/components/ui/badge",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/badge.tsx",
+    "key": "components/ui/badge"
+  },
+  {
+    "importer": "client/src/components/draft-testing-panel.tsx",
+    "spec": "@/components/ui/separator",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/separator.tsx",
+    "key": "components/ui/separator"
+  },
+  {
+    "importer": "client/src/components/draft-testing-panel.tsx",
+    "spec": "@/hooks/use-toast",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/hooks/use-toast.ts",
+    "key": "hooks/use-toast"
+  },
+  {
+    "importer": "client/src/components/ios-pwa-banner.tsx",
+    "spec": "@/components/ui/alert",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/alert.tsx",
+    "key": "components/ui/alert"
+  },
+  {
+    "importer": "client/src/components/ios-pwa-banner.tsx",
+    "spec": "@/components/ui/button",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/button.tsx",
+    "key": "components/ui/button"
+  },
+  {
+    "importer": "client/src/components/layout/bottom-nav.tsx",
+    "spec": "@/lib/utils",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/lib/utils.ts",
+    "key": "lib/utils"
+  },
+  {
+    "importer": "client/src/components/layout/main-layout.tsx",
+    "spec": "@/lib/utils",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/lib/utils.ts",
+    "key": "lib/utils"
+  },
+  {
+    "importer": "client/src/components/layout/sidebar.tsx",
+    "spec": "@/lib/utils",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/lib/utils.ts",
+    "key": "lib/utils"
+  },
+  {
+    "importer": "client/src/components/layout/sidebar.tsx",
+    "spec": "@/features/auth/useAuth",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/features/auth/useAuth.ts",
+    "key": "features/auth/useAuth"
+  },
+  {
+    "importer": "client/src/components/layout/sidebar.tsx",
+    "spec": "@/components/ui/avatar",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/avatar.tsx",
+    "key": "components/ui/avatar"
+  },
+  {
+    "importer": "client/src/components/layout/sidebar.tsx",
+    "spec": "@/components/ui/button",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/button.tsx",
+    "key": "components/ui/button"
+  },
+  {
+    "importer": "client/src/components/notification-banner.tsx",
+    "spec": "@/components/ui/button",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/button.tsx",
+    "key": "components/ui/button"
+  },
+  {
+    "importer": "client/src/components/notification-banner.tsx",
+    "spec": "@/components/ui/card",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/card.tsx",
+    "key": "components/ui/card"
+  },
+  {
+    "importer": "client/src/components/notification-banner.tsx",
+    "spec": "@/hooks/use-post-login-notifications",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/hooks/use-post-login-notifications.ts",
+    "key": "hooks/use-post-login-notifications"
+  },
+  {
+    "importer": "client/src/components/notification-prompt-old.tsx",
+    "spec": "@/components/ui/button",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/button.tsx",
+    "key": "components/ui/button"
+  },
+  {
+    "importer": "client/src/components/notification-prompt-old.tsx",
+    "spec": "@/components/ui/card",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/card.tsx",
+    "key": "components/ui/card"
+  },
+  {
+    "importer": "client/src/components/notification-prompt-old.tsx",
+    "spec": "@/hooks/use-toast",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/hooks/use-toast.ts",
+    "key": "hooks/use-toast"
+  },
+  {
+    "importer": "client/src/components/notification-prompt-old.tsx",
+    "spec": "@/features/auth/useAuth",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/features/auth/useAuth.ts",
+    "key": "features/auth/useAuth"
+  },
+  {
+    "importer": "client/src/components/notification-prompt.tsx",
+    "spec": "@/components/ui/button",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/button.tsx",
+    "key": "components/ui/button"
+  },
+  {
+    "importer": "client/src/components/notification-prompt.tsx",
+    "spec": "@/components/ui/card",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/card.tsx",
+    "key": "components/ui/card"
+  },
+  {
+    "importer": "client/src/components/notification-prompt.tsx",
+    "spec": "@/lib/utils",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/lib/utils.ts",
+    "key": "lib/utils"
+  },
+  {
+    "importer": "client/src/components/notification-prompt.tsx",
+    "spec": "@/hooks/use-pwa-debug",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/hooks/use-pwa-debug.ts",
+    "key": "hooks/use-pwa-debug"
+  },
+  {
+    "importer": "client/src/components/notification-prompt.tsx",
+    "spec": "@/hooks/use-subscription-manager",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/hooks/use-subscription-manager.ts",
+    "key": "hooks/use-subscription-manager"
+  },
+  {
+    "importer": "client/src/components/persistent-push-manager.tsx",
+    "spec": "@/hooks/use-persistent-push-subscription",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/hooks/use-persistent-push-subscription.ts",
+    "key": "hooks/use-persistent-push-subscription"
+  },
+  {
+    "importer": "client/src/components/persistent-push-manager.tsx",
+    "spec": "@/components/ui/button",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/button.tsx",
+    "key": "components/ui/button"
+  },
+  {
+    "importer": "client/src/components/persistent-push-manager.tsx",
+    "spec": "@/components/ui/card",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/card.tsx",
+    "key": "components/ui/card"
+  },
+  {
+    "importer": "client/src/components/persistent-push-manager.tsx",
+    "spec": "@/components/ui/badge",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/badge.tsx",
+    "key": "components/ui/badge"
+  },
+  {
+    "importer": "client/src/components/push-diagnostic-panel.tsx",
+    "spec": "@/components/ui/button",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/button.tsx",
+    "key": "components/ui/button"
+  },
+  {
+    "importer": "client/src/components/push-diagnostic-panel.tsx",
+    "spec": "@/components/ui/card",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/card.tsx",
+    "key": "components/ui/card"
+  },
+  {
+    "importer": "client/src/components/push-diagnostic-panel.tsx",
+    "spec": "@/components/ui/badge",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/badge.tsx",
+    "key": "components/ui/badge"
+  },
+  {
+    "importer": "client/src/components/push-diagnostic-panel.tsx",
+    "spec": "@/components/ui/separator",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/separator.tsx",
+    "key": "components/ui/separator"
+  },
+  {
+    "importer": "client/src/components/push-diagnostic-panel.tsx",
+    "spec": "@/components/ui/textarea",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/textarea.tsx",
+    "key": "components/ui/textarea"
+  },
+  {
+    "importer": "client/src/components/pwa-debug-panel.tsx",
+    "spec": "@/hooks/use-pwa-debug",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/hooks/use-pwa-debug.ts",
+    "key": "hooks/use-pwa-debug"
+  },
+  {
+    "importer": "client/src/components/pwa-debug-panel.tsx",
+    "spec": "@/components/ui/button",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/button.tsx",
+    "key": "components/ui/button"
+  },
+  {
+    "importer": "client/src/components/pwa-debug-panel.tsx",
+    "spec": "@/components/ui/card",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/card.tsx",
+    "key": "components/ui/card"
+  },
+  {
+    "importer": "client/src/components/pwa-debug-panel.tsx",
+    "spec": "@/components/ui/badge",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/badge.tsx",
+    "key": "components/ui/badge"
+  },
+  {
+    "importer": "client/src/components/pwa-debug-panel.tsx",
+    "spec": "@/components/ui/collapsible",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/collapsible.tsx",
+    "key": "components/ui/collapsible"
+  },
+  {
+    "importer": "client/src/components/pwa-install-prompt.tsx",
+    "spec": "@/components/ui/button",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/button.tsx",
+    "key": "components/ui/button"
+  },
+  {
+    "importer": "client/src/components/pwa-install-prompt.tsx",
+    "spec": "@/components/ui/card",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/card.tsx",
+    "key": "components/ui/card"
+  },
+  {
+    "importer": "client/src/components/pwa-install-prompt.tsx",
+    "spec": "@/hooks/use-pwa-detection",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/hooks/use-pwa-detection.ts",
+    "key": "hooks/use-pwa-detection"
+  },
+  {
+    "importer": "client/src/components/ui/accordion.tsx",
+    "spec": "@/lib/utils",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/lib/utils.ts",
+    "key": "lib/utils"
+  },
+  {
+    "importer": "client/src/components/ui/alert-dialog.tsx",
+    "spec": "@/lib/utils",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/lib/utils.ts",
+    "key": "lib/utils"
+  },
+  {
+    "importer": "client/src/components/ui/alert-dialog.tsx",
+    "spec": "@/components/ui/button",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/button.tsx",
+    "key": "components/ui/button"
+  },
+  {
+    "importer": "client/src/components/ui/alert.tsx",
+    "spec": "@/lib/utils",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/lib/utils.ts",
+    "key": "lib/utils"
+  },
+  {
+    "importer": "client/src/components/ui/avatar.tsx",
+    "spec": "@/lib/utils",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/lib/utils.ts",
+    "key": "lib/utils"
+  },
+  {
+    "importer": "client/src/components/ui/badge.tsx",
+    "spec": "@/lib/utils",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/lib/utils.ts",
+    "key": "lib/utils"
+  },
+  {
+    "importer": "client/src/components/ui/breadcrumb.tsx",
+    "spec": "@/lib/utils",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/lib/utils.ts",
+    "key": "lib/utils"
+  },
+  {
+    "importer": "client/src/components/ui/button.tsx",
+    "spec": "@/lib/utils",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/lib/utils.ts",
+    "key": "lib/utils"
+  },
+  {
+    "importer": "client/src/components/ui/calendar.tsx",
+    "spec": "@/lib/utils",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/lib/utils.ts",
+    "key": "lib/utils"
+  },
+  {
+    "importer": "client/src/components/ui/calendar.tsx",
+    "spec": "@/components/ui/button",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/button.tsx",
+    "key": "components/ui/button"
+  },
+  {
+    "importer": "client/src/components/ui/card.tsx",
+    "spec": "@/lib/utils",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/lib/utils.ts",
+    "key": "lib/utils"
+  },
+  {
+    "importer": "client/src/components/ui/carousel.tsx",
+    "spec": "@/lib/utils",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/lib/utils.ts",
+    "key": "lib/utils"
+  },
+  {
+    "importer": "client/src/components/ui/carousel.tsx",
+    "spec": "@/components/ui/button",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/button.tsx",
+    "key": "components/ui/button"
+  },
+  {
+    "importer": "client/src/components/ui/chart.tsx",
+    "spec": "@/lib/utils",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/lib/utils.ts",
+    "key": "lib/utils"
+  },
+  {
+    "importer": "client/src/components/ui/checkbox.tsx",
+    "spec": "@/lib/utils",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/lib/utils.ts",
+    "key": "lib/utils"
+  },
+  {
+    "importer": "client/src/components/ui/command.tsx",
+    "spec": "@/lib/utils",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/lib/utils.ts",
+    "key": "lib/utils"
+  },
+  {
+    "importer": "client/src/components/ui/command.tsx",
+    "spec": "@/components/ui/dialog",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/dialog.tsx",
+    "key": "components/ui/dialog"
+  },
+  {
+    "importer": "client/src/components/ui/context-menu.tsx",
+    "spec": "@/lib/utils",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/lib/utils.ts",
+    "key": "lib/utils"
+  },
+  {
+    "importer": "client/src/components/ui/dialog.tsx",
+    "spec": "@/lib/utils",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/lib/utils.ts",
+    "key": "lib/utils"
+  },
+  {
+    "importer": "client/src/components/ui/drawer.tsx",
+    "spec": "@/lib/utils",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/lib/utils.ts",
+    "key": "lib/utils"
+  },
+  {
+    "importer": "client/src/components/ui/dropdown-menu.tsx",
+    "spec": "@/lib/utils",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/lib/utils.ts",
+    "key": "lib/utils"
+  },
+  {
+    "importer": "client/src/components/ui/form.tsx",
+    "spec": "@/lib/utils",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/lib/utils.ts",
+    "key": "lib/utils"
+  },
+  {
+    "importer": "client/src/components/ui/form.tsx",
+    "spec": "@/components/ui/label",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/label.tsx",
+    "key": "components/ui/label"
+  },
+  {
+    "importer": "client/src/components/ui/hover-card.tsx",
+    "spec": "@/lib/utils",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/lib/utils.ts",
+    "key": "lib/utils"
+  },
+  {
+    "importer": "client/src/components/ui/input-otp.tsx",
+    "spec": "@/lib/utils",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/lib/utils.ts",
+    "key": "lib/utils"
+  },
+  {
+    "importer": "client/src/components/ui/input.tsx",
+    "spec": "@/lib/utils",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/lib/utils.ts",
+    "key": "lib/utils"
+  },
+  {
+    "importer": "client/src/components/ui/label.tsx",
+    "spec": "@/lib/utils",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/lib/utils.ts",
+    "key": "lib/utils"
+  },
+  {
+    "importer": "client/src/components/ui/menubar.tsx",
+    "spec": "@/lib/utils",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/lib/utils.ts",
+    "key": "lib/utils"
+  },
+  {
+    "importer": "client/src/components/ui/navigation-menu.tsx",
+    "spec": "@/lib/utils",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/lib/utils.ts",
+    "key": "lib/utils"
+  },
+  {
+    "importer": "client/src/components/ui/pagination.tsx",
+    "spec": "@/lib/utils",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/lib/utils.ts",
+    "key": "lib/utils"
+  },
+  {
+    "importer": "client/src/components/ui/pagination.tsx",
+    "spec": "@/components/ui/button",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/button.tsx",
+    "key": "components/ui/button"
+  },
+  {
+    "importer": "client/src/components/ui/popover.tsx",
+    "spec": "@/lib/utils",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/lib/utils.ts",
+    "key": "lib/utils"
+  },
+  {
+    "importer": "client/src/components/ui/progress.tsx",
+    "spec": "@/lib/utils",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/lib/utils.ts",
+    "key": "lib/utils"
+  },
+  {
+    "importer": "client/src/components/ui/radio-group.tsx",
+    "spec": "@/lib/utils",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/lib/utils.ts",
+    "key": "lib/utils"
+  },
+  {
+    "importer": "client/src/components/ui/resizable.tsx",
+    "spec": "@/lib/utils",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/lib/utils.ts",
+    "key": "lib/utils"
+  },
+  {
+    "importer": "client/src/components/ui/scroll-area.tsx",
+    "spec": "@/lib/utils",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/lib/utils.ts",
+    "key": "lib/utils"
+  },
+  {
+    "importer": "client/src/components/ui/select.tsx",
+    "spec": "@/lib/utils",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/lib/utils.ts",
+    "key": "lib/utils"
+  },
+  {
+    "importer": "client/src/components/ui/separator.tsx",
+    "spec": "@/lib/utils",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/lib/utils.ts",
+    "key": "lib/utils"
+  },
+  {
+    "importer": "client/src/components/ui/sheet.tsx",
+    "spec": "@/lib/utils",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/lib/utils.ts",
+    "key": "lib/utils"
+  },
+  {
+    "importer": "client/src/components/ui/sidebar.tsx",
+    "spec": "@/hooks/use-mobile",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/hooks/use-mobile.tsx",
+    "key": "hooks/use-mobile"
+  },
+  {
+    "importer": "client/src/components/ui/sidebar.tsx",
+    "spec": "@/lib/utils",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/lib/utils.ts",
+    "key": "lib/utils"
+  },
+  {
+    "importer": "client/src/components/ui/sidebar.tsx",
+    "spec": "@/components/ui/button",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/button.tsx",
+    "key": "components/ui/button"
+  },
+  {
+    "importer": "client/src/components/ui/sidebar.tsx",
+    "spec": "@/components/ui/input",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/input.tsx",
+    "key": "components/ui/input"
+  },
+  {
+    "importer": "client/src/components/ui/sidebar.tsx",
+    "spec": "@/components/ui/separator",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/separator.tsx",
+    "key": "components/ui/separator"
+  },
+  {
+    "importer": "client/src/components/ui/sidebar.tsx",
+    "spec": "@/components/ui/skeleton",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/skeleton.tsx",
+    "key": "components/ui/skeleton"
+  },
+  {
+    "importer": "client/src/components/ui/skeleton.tsx",
+    "spec": "@/lib/utils",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/lib/utils.ts",
+    "key": "lib/utils"
+  },
+  {
+    "importer": "client/src/components/ui/slider.tsx",
+    "spec": "@/lib/utils",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/lib/utils.ts",
+    "key": "lib/utils"
+  },
+  {
+    "importer": "client/src/components/ui/switch.tsx",
+    "spec": "@/lib/utils",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/lib/utils.ts",
+    "key": "lib/utils"
+  },
+  {
+    "importer": "client/src/components/ui/table.tsx",
+    "spec": "@/lib/utils",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/lib/utils.ts",
+    "key": "lib/utils"
+  },
+  {
+    "importer": "client/src/components/ui/tabs.tsx",
+    "spec": "@/lib/utils",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/lib/utils.ts",
+    "key": "lib/utils"
+  },
+  {
+    "importer": "client/src/components/ui/textarea.tsx",
+    "spec": "@/lib/utils",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/lib/utils.ts",
+    "key": "lib/utils"
+  },
+  {
+    "importer": "client/src/components/ui/toast.tsx",
+    "spec": "@/lib/utils",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/lib/utils.ts",
+    "key": "lib/utils"
+  },
+  {
+    "importer": "client/src/components/ui/toaster.tsx",
+    "spec": "@/hooks/use-toast",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/hooks/use-toast.ts",
+    "key": "hooks/use-toast"
+  },
+  {
+    "importer": "client/src/components/ui/toggle-group.tsx",
+    "spec": "@/lib/utils",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/lib/utils.ts",
+    "key": "lib/utils"
+  },
+  {
+    "importer": "client/src/components/ui/toggle-group.tsx",
+    "spec": "@/components/ui/toggle",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/toggle.tsx",
+    "key": "components/ui/toggle"
+  },
+  {
+    "importer": "client/src/components/ui/toggle.tsx",
+    "spec": "@/lib/utils",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/lib/utils.ts",
+    "key": "lib/utils"
+  },
+  {
+    "importer": "client/src/components/ui/tooltip.tsx",
+    "spec": "@/lib/utils",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/lib/utils.ts",
+    "key": "lib/utils"
+  },
+  {
+    "importer": "client/src/components/user-drafted-teams.tsx",
+    "spec": "@/components/team-logo",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/team-logo.tsx",
+    "key": "components/team-logo"
+  },
+  {
+    "importer": "client/src/components/user-drafted-teams.tsx",
+    "spec": "@/components/ui/card",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/card.tsx",
+    "key": "components/ui/card"
+  },
+  {
+    "importer": "client/src/components/user-drafted-teams.tsx",
+    "spec": "@/components/ui/badge",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/badge.tsx",
+    "key": "components/ui/badge"
+  },
+  {
+    "importer": "client/src/components/websocket-stress-test.tsx",
+    "spec": "@/components/ui/card",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/card.tsx",
+    "key": "components/ui/card"
+  },
+  {
+    "importer": "client/src/components/websocket-stress-test.tsx",
+    "spec": "@/components/ui/button",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/button.tsx",
+    "key": "components/ui/button"
+  },
+  {
+    "importer": "client/src/components/websocket-stress-test.tsx",
+    "spec": "@/components/ui/badge",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/badge.tsx",
+    "key": "components/ui/badge"
+  },
+  {
+    "importer": "client/src/components/websocket-stress-test.tsx",
+    "spec": "@/components/ui/separator",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/separator.tsx",
+    "key": "components/ui/separator"
+  },
+  {
+    "importer": "client/src/features/auth/AuthProvider.tsx",
+    "spec": "./AuthContext",
+    "kind": "relative",
+    "abs": "/home/runner/workspace/client/src/features/auth/AuthContext.tsx",
+    "key": "features/auth/AuthContext"
+  },
+  {
+    "importer": "client/src/features/auth/AuthProvider.tsx",
+    "spec": "@/features/query/api",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/features/query/api.ts",
+    "key": "features/query/api"
+  },
+  {
+    "importer": "client/src/features/auth/AuthProvider.tsx",
+    "spec": "@/lib/auth-token",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/lib/auth-token.ts",
+    "key": "lib/auth-token"
+  },
+  {
+    "importer": "client/src/features/auth/useAuth.ts",
+    "spec": "./AuthContext",
+    "kind": "relative",
+    "abs": "/home/runner/workspace/client/src/features/auth/AuthContext.tsx",
+    "key": "features/auth/AuthContext"
+  },
+  {
+    "importer": "client/src/features/query/QueryProvider.tsx",
+    "spec": "@/features/query/queryClient",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/features/query/queryClient.ts",
+    "key": "features/query/queryClient"
+  },
+  {
+    "importer": "client/src/features/query/api.ts",
+    "spec": "@/lib/auth-token",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/lib/auth-token.ts",
+    "key": "lib/auth-token"
+  },
+  {
+    "importer": "client/src/features/query/queryClient.ts",
+    "spec": "@/lib/auth-token",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/lib/auth-token.ts",
+    "key": "lib/auth-token"
+  },
+  {
+    "importer": "client/src/hooks/use-auth-error-handler.ts",
+    "spec": "@/hooks/use-toast",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/hooks/use-toast.ts",
+    "key": "hooks/use-toast"
+  },
+  {
+    "importer": "client/src/hooks/use-auto-push-refresh.ts",
+    "spec": "@/hooks/use-subscription-manager",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/hooks/use-subscription-manager.ts",
+    "key": "hooks/use-subscription-manager"
+  },
+  {
+    "importer": "client/src/hooks/use-draft-websocket-fixed.ts",
+    "spec": "@/features/auth/useAuth",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/features/auth/useAuth.ts",
+    "key": "features/auth/useAuth"
+  },
+  {
+    "importer": "client/src/hooks/use-draft-websocket-fixed.ts",
+    "spec": "@/hooks/use-toast",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/hooks/use-toast.ts",
+    "key": "hooks/use-toast"
+  },
+  {
+    "importer": "client/src/hooks/use-persistent-push-subscription.ts",
+    "spec": "@/features/auth/useAuth",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/features/auth/useAuth.ts",
+    "key": "features/auth/useAuth"
+  },
+  {
+    "importer": "client/src/hooks/use-post-login-notifications.ts",
+    "spec": "@/features/auth/useAuth",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/features/auth/useAuth.ts",
+    "key": "features/auth/useAuth"
+  },
+  {
+    "importer": "client/src/hooks/use-post-login-notifications.ts",
+    "spec": "@/hooks/use-pwa-detection",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/hooks/use-pwa-detection.ts",
+    "key": "hooks/use-pwa-detection"
+  },
+  {
+    "importer": "client/src/hooks/use-push-notifications.ts",
+    "spec": "@/features/auth/useAuth",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/features/auth/useAuth.ts",
+    "key": "features/auth/useAuth"
+  },
+  {
+    "importer": "client/src/hooks/use-pwa-debug.ts",
+    "spec": "@/hooks/use-subscription-manager",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/hooks/use-subscription-manager.ts",
+    "key": "hooks/use-subscription-manager"
+  },
+  {
+    "importer": "client/src/hooks/use-realtime-scores.tsx",
+    "spec": "@/services/websocket-manager",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/services/websocket-manager.ts",
+    "key": "services/websocket-manager"
+  },
+  {
+    "importer": "client/src/hooks/use-stable-websocket.ts",
+    "spec": "@/features/auth/useAuth",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/features/auth/useAuth.ts",
+    "key": "features/auth/useAuth"
+  },
+  {
+    "importer": "client/src/main.tsx",
+    "spec": "@/App",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/App.tsx",
+    "key": "App"
+  },
+  {
+    "importer": "client/src/pages/admin.tsx",
+    "spec": "@/components/ui/card",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/card.tsx",
+    "key": "components/ui/card"
+  },
+  {
+    "importer": "client/src/pages/admin.tsx",
+    "spec": "@/components/ui/button",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/button.tsx",
+    "key": "components/ui/button"
+  },
+  {
+    "importer": "client/src/pages/admin.tsx",
+    "spec": "@/components/ui/badge",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/badge.tsx",
+    "key": "components/ui/badge"
+  },
+  {
+    "importer": "client/src/pages/admin.tsx",
+    "spec": "@/features/auth/useAuth",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/features/auth/useAuth.ts",
+    "key": "features/auth/useAuth"
+  },
+  {
+    "importer": "client/src/pages/agents.tsx",
+    "spec": "@/components/layout/bottom-nav",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/layout/bottom-nav.tsx",
+    "key": "components/layout/bottom-nav"
+  },
+  {
+    "importer": "client/src/pages/agents.tsx",
+    "spec": "@/components/ui/card",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/card.tsx",
+    "key": "components/ui/card"
+  },
+  {
+    "importer": "client/src/pages/dashboard.tsx",
+    "spec": "@/features/query/queryClient",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/features/query/queryClient.ts",
+    "key": "features/query/queryClient"
+  },
+  {
+    "importer": "client/src/pages/dashboard.tsx",
+    "spec": "@/features/auth/useAuth",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/features/auth/useAuth.ts",
+    "key": "features/auth/useAuth"
+  },
+  {
+    "importer": "client/src/pages/dashboard.tsx",
+    "spec": "@/components/layout/main-layout",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/layout/main-layout.tsx",
+    "key": "components/layout/main-layout"
+  },
+  {
+    "importer": "client/src/pages/dashboard.tsx",
+    "spec": "@/components/ui/button",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/button.tsx",
+    "key": "components/ui/button"
+  },
+  {
+    "importer": "client/src/pages/dashboard.tsx",
+    "spec": "@/components/ui/dialog",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/dialog.tsx",
+    "key": "components/ui/dialog"
+  },
+  {
+    "importer": "client/src/pages/dashboard.tsx",
+    "spec": "@/components/ui/card",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/card.tsx",
+    "key": "components/ui/card"
+  },
+  {
+    "importer": "client/src/pages/dashboard.tsx",
+    "spec": "@/components/ui/badge",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/badge.tsx",
+    "key": "components/ui/badge"
+  },
+  {
+    "importer": "client/src/pages/dashboard.tsx",
+    "spec": "@/components/ui/input",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/input.tsx",
+    "key": "components/ui/input"
+  },
+  {
+    "importer": "client/src/pages/dashboard.tsx",
+    "spec": "@/components/ui/label",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/label.tsx",
+    "key": "components/ui/label"
+  },
+  {
+    "importer": "client/src/pages/dashboard.tsx",
+    "spec": "@/hooks/use-toast",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/hooks/use-toast.ts",
+    "key": "hooks/use-toast"
+  },
+  {
+    "importer": "client/src/pages/dashboard.tsx",
+    "spec": "@/hooks/use-push-notifications",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/hooks/use-push-notifications.ts",
+    "key": "hooks/use-push-notifications"
+  },
+  {
+    "importer": "client/src/pages/dashboard.tsx",
+    "spec": "@/components/notification-prompt",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/notification-prompt.tsx",
+    "key": "components/notification-prompt"
+  },
+  {
+    "importer": "client/src/pages/dashboard.tsx",
+    "spec": "@/components/persistent-push-manager",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/persistent-push-manager.tsx",
+    "key": "components/persistent-push-manager"
+  },
+  {
+    "importer": "client/src/pages/database-viewer.tsx",
+    "spec": "@/components/ui/card",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/card.tsx",
+    "key": "components/ui/card"
+  },
+  {
+    "importer": "client/src/pages/database-viewer.tsx",
+    "spec": "@/components/ui/badge",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/badge.tsx",
+    "key": "components/ui/badge"
+  },
+  {
+    "importer": "client/src/pages/database-viewer.tsx",
+    "spec": "@/components/ui/button",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/button.tsx",
+    "key": "components/ui/button"
+  },
+  {
+    "importer": "client/src/pages/database-viewer.tsx",
+    "spec": "@/components/ui/collapsible",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/collapsible.tsx",
+    "key": "components/ui/collapsible"
+  },
+  {
+    "importer": "client/src/pages/draft.tsx",
+    "spec": "@/components/ui/card",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/card.tsx",
+    "key": "components/ui/card"
+  },
+  {
+    "importer": "client/src/pages/draft.tsx",
+    "spec": "@/components/ui/button",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/button.tsx",
+    "key": "components/ui/button"
+  },
+  {
+    "importer": "client/src/pages/draft.tsx",
+    "spec": "@/components/ui/badge",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/badge.tsx",
+    "key": "components/ui/badge"
+  },
+  {
+    "importer": "client/src/pages/draft.tsx",
+    "spec": "@/components/ui/scroll-area",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/scroll-area.tsx",
+    "key": "components/ui/scroll-area"
+  },
+  {
+    "importer": "client/src/pages/draft.tsx",
+    "spec": "@/components/ui/tabs",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/tabs.tsx",
+    "key": "components/ui/tabs"
+  },
+  {
+    "importer": "client/src/pages/draft.tsx",
+    "spec": "@/hooks/use-toast",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/hooks/use-toast.ts",
+    "key": "hooks/use-toast"
+  },
+  {
+    "importer": "client/src/pages/draft.tsx",
+    "spec": "@/components/team-logo",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/team-logo.tsx",
+    "key": "components/team-logo"
+  },
+  {
+    "importer": "client/src/pages/draft.tsx",
+    "spec": "@/features/query/api",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/features/query/api.ts",
+    "key": "features/query/api"
+  },
+  {
+    "importer": "client/src/pages/draft.tsx",
+    "spec": "@/hooks/use-resilient-websocket",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/hooks/use-resilient-websocket.ts",
+    "key": "hooks/use-resilient-websocket"
+  },
+  {
+    "importer": "client/src/pages/draft.tsx",
+    "spec": "@/features/auth/useAuth",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/features/auth/useAuth.ts",
+    "key": "features/auth/useAuth"
+  },
+  {
+    "importer": "client/src/pages/draft.tsx",
+    "spec": "@/debug-tracker",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/debug-tracker.ts",
+    "key": "debug-tracker"
+  },
+  {
+    "importer": "client/src/pages/league-waiting.tsx",
+    "spec": "@/components/layout/main-layout",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/layout/main-layout.tsx",
+    "key": "components/layout/main-layout"
+  },
+  {
+    "importer": "client/src/pages/league-waiting.tsx",
+    "spec": "@/components/ui/button",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/button.tsx",
+    "key": "components/ui/button"
+  },
+  {
+    "importer": "client/src/pages/league-waiting.tsx",
+    "spec": "@/components/ui/card",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/card.tsx",
+    "key": "components/ui/card"
+  },
+  {
+    "importer": "client/src/pages/league-waiting.tsx",
+    "spec": "@/components/ui/badge",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/badge.tsx",
+    "key": "components/ui/badge"
+  },
+  {
+    "importer": "client/src/pages/league-waiting.tsx",
+    "spec": "@/hooks/use-toast",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/hooks/use-toast.ts",
+    "key": "hooks/use-toast"
+  },
+  {
+    "importer": "client/src/pages/league-waiting.tsx",
+    "spec": "@/features/auth/useAuth",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/features/auth/useAuth.ts",
+    "key": "features/auth/useAuth"
+  },
+  {
+    "importer": "client/src/pages/league-waiting.tsx",
+    "spec": "@/components/ui/avatar",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/avatar.tsx",
+    "key": "components/ui/avatar"
+  },
+  {
+    "importer": "client/src/pages/league-waiting.tsx",
+    "spec": "@/components/draft-notification-reminder",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/draft-notification-reminder.tsx",
+    "key": "components/draft-notification-reminder"
+  },
+  {
+    "importer": "client/src/pages/league-waiting.tsx",
+    "spec": "@/components/draft-controls",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/draft-controls.tsx",
+    "key": "components/draft-controls"
+  },
+  {
+    "importer": "client/src/pages/league-waiting.tsx",
+    "spec": "@/components/draft-testing-panel",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/draft-testing-panel.tsx",
+    "key": "components/draft-testing-panel"
+  },
+  {
+    "importer": "client/src/pages/league-waiting.tsx",
+    "spec": "@/hooks/use-draft-websocket-fixed",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/hooks/use-draft-websocket-fixed.ts",
+    "key": "hooks/use-draft-websocket-fixed"
+  },
+  {
+    "importer": "client/src/pages/league.tsx",
+    "spec": "@/components/layout/bottom-nav",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/layout/bottom-nav.tsx",
+    "key": "components/layout/bottom-nav"
+  },
+  {
+    "importer": "client/src/pages/league.tsx",
+    "spec": "@/components/ui/card",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/card.tsx",
+    "key": "components/ui/card"
+  },
+  {
+    "importer": "client/src/pages/league.tsx",
+    "spec": "@/components/ui/button",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/button.tsx",
+    "key": "components/ui/button"
+  },
+  {
+    "importer": "client/src/pages/league.tsx",
+    "spec": "@/components/ui/badge",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/badge.tsx",
+    "key": "components/ui/badge"
+  },
+  {
+    "importer": "client/src/pages/league.tsx",
+    "spec": "@/components/ui/avatar",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/avatar.tsx",
+    "key": "components/ui/avatar"
+  },
+  {
+    "importer": "client/src/pages/league.tsx",
+    "spec": "@/components/ui/progress",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/progress.tsx",
+    "key": "components/ui/progress"
+  },
+  {
+    "importer": "client/src/pages/league.tsx",
+    "spec": "@/features/auth/useAuth",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/features/auth/useAuth.ts",
+    "key": "features/auth/useAuth"
+  },
+  {
+    "importer": "client/src/pages/leagues.tsx",
+    "spec": "@/components/ui/card",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/card.tsx",
+    "key": "components/ui/card"
+  },
+  {
+    "importer": "client/src/pages/leagues.tsx",
+    "spec": "@/components/ui/button",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/button.tsx",
+    "key": "components/ui/button"
+  },
+  {
+    "importer": "client/src/pages/leagues.tsx",
+    "spec": "@/components/ui/input",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/input.tsx",
+    "key": "components/ui/input"
+  },
+  {
+    "importer": "client/src/pages/leagues.tsx",
+    "spec": "@/components/ui/label",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/label.tsx",
+    "key": "components/ui/label"
+  },
+  {
+    "importer": "client/src/pages/leagues.tsx",
+    "spec": "@/features/query/api",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/features/query/api.ts",
+    "key": "features/query/api"
+  },
+  {
+    "importer": "client/src/pages/leagues.tsx",
+    "spec": "@/hooks/use-toast",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/hooks/use-toast.ts",
+    "key": "hooks/use-toast"
+  },
+  {
+    "importer": "client/src/pages/login.tsx",
+    "spec": "@/features/auth/useAuth",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/features/auth/useAuth.ts",
+    "key": "features/auth/useAuth"
+  },
+  {
+    "importer": "client/src/pages/login.tsx",
+    "spec": "@/components/ui/button",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/button.tsx",
+    "key": "components/ui/button"
+  },
+  {
+    "importer": "client/src/pages/login.tsx",
+    "spec": "@/components/ui/card",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/card.tsx",
+    "key": "components/ui/card"
+  },
+  {
+    "importer": "client/src/pages/login.tsx",
+    "spec": "@/components/ui/alert",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/alert.tsx",
+    "key": "components/ui/alert"
+  },
+  {
+    "importer": "client/src/pages/main.tsx",
+    "spec": "@/components/ui/button",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/button.tsx",
+    "key": "components/ui/button"
+  },
+  {
+    "importer": "client/src/pages/main.tsx",
+    "spec": "@/components/ui/card",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/card.tsx",
+    "key": "components/ui/card"
+  },
+  {
+    "importer": "client/src/pages/main.tsx",
+    "spec": "@/components/ui/badge",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/badge.tsx",
+    "key": "components/ui/badge"
+  },
+  {
+    "importer": "client/src/pages/main.tsx",
+    "spec": "@/components/ui/avatar",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/avatar.tsx",
+    "key": "components/ui/avatar"
+  },
+  {
+    "importer": "client/src/pages/main.tsx",
+    "spec": "@/components/ui/scroll-area",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/scroll-area.tsx",
+    "key": "components/ui/scroll-area"
+  },
+  {
+    "importer": "client/src/pages/main.tsx",
+    "spec": "@/components/layout/bottom-nav",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/layout/bottom-nav.tsx",
+    "key": "components/layout/bottom-nav"
+  },
+  {
+    "importer": "client/src/pages/main.tsx",
+    "spec": "@/components/team-logo",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/team-logo.tsx",
+    "key": "components/team-logo"
+  },
+  {
+    "importer": "client/src/pages/main.tsx",
+    "spec": "@/features/auth/useAuth",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/features/auth/useAuth.ts",
+    "key": "features/auth/useAuth"
+  },
+  {
+    "importer": "client/src/pages/more.tsx",
+    "spec": "@/components/layout/bottom-nav",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/layout/bottom-nav.tsx",
+    "key": "components/layout/bottom-nav"
+  },
+  {
+    "importer": "client/src/pages/more.tsx",
+    "spec": "@/components/ui/card",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/card.tsx",
+    "key": "components/ui/card"
+  },
+  {
+    "importer": "client/src/pages/more.tsx",
+    "spec": "@/components/ui/button",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/button.tsx",
+    "key": "components/ui/button"
+  },
+  {
+    "importer": "client/src/pages/more.tsx",
+    "spec": "@/features/auth/useAuth",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/features/auth/useAuth.ts",
+    "key": "features/auth/useAuth"
+  },
+  {
+    "importer": "client/src/pages/not-found.tsx",
+    "spec": "@/components/ui/card",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/card.tsx",
+    "key": "components/ui/card"
+  },
+  {
+    "importer": "client/src/pages/profile.tsx",
+    "spec": "@/features/auth/useAuth",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/features/auth/useAuth.ts",
+    "key": "features/auth/useAuth"
+  },
+  {
+    "importer": "client/src/pages/profile.tsx",
+    "spec": "@/components/layout/main-layout",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/layout/main-layout.tsx",
+    "key": "components/layout/main-layout"
+  },
+  {
+    "importer": "client/src/pages/profile.tsx",
+    "spec": "@/components/ui/card",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/card.tsx",
+    "key": "components/ui/card"
+  },
+  {
+    "importer": "client/src/pages/profile.tsx",
+    "spec": "@/components/ui/avatar",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/avatar.tsx",
+    "key": "components/ui/avatar"
+  },
+  {
+    "importer": "client/src/pages/profile.tsx",
+    "spec": "@/components/ui/button",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/button.tsx",
+    "key": "components/ui/button"
+  },
+  {
+    "importer": "client/src/pages/profile.tsx",
+    "spec": "@/components/ui/badge",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/badge.tsx",
+    "key": "components/ui/badge"
+  },
+  {
+    "importer": "client/src/pages/scores.tsx",
+    "spec": "@/features/auth/useAuth",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/features/auth/useAuth.ts",
+    "key": "features/auth/useAuth"
+  },
+  {
+    "importer": "client/src/pages/scores.tsx",
+    "spec": "@/components/ui/card",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/card.tsx",
+    "key": "components/ui/card"
+  },
+  {
+    "importer": "client/src/pages/scores.tsx",
+    "spec": "@/components/ui/button",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/button.tsx",
+    "key": "components/ui/button"
+  },
+  {
+    "importer": "client/src/pages/scores.tsx",
+    "spec": "@/components/ui/badge",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/badge.tsx",
+    "key": "components/ui/badge"
+  },
+  {
+    "importer": "client/src/pages/scores.tsx",
+    "spec": "@/components/ui/avatar",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/avatar.tsx",
+    "key": "components/ui/avatar"
+  },
+  {
+    "importer": "client/src/pages/scores.tsx",
+    "spec": "@/components/layout/bottom-nav",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/layout/bottom-nav.tsx",
+    "key": "components/layout/bottom-nav"
+  },
+  {
+    "importer": "client/src/pages/teams.tsx",
+    "spec": "@/components/layout/bottom-nav",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/layout/bottom-nav.tsx",
+    "key": "components/layout/bottom-nav"
+  },
+  {
+    "importer": "client/src/pages/teams.tsx",
+    "spec": "@/components/ui/card",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/card.tsx",
+    "key": "components/ui/card"
+  },
+  {
+    "importer": "client/src/pages/teams.tsx",
+    "spec": "@/components/ui/button",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/button.tsx",
+    "key": "components/ui/button"
+  },
+  {
+    "importer": "client/src/pages/teams.tsx",
+    "spec": "@/components/ui/badge",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/badge.tsx",
+    "key": "components/ui/badge"
+  },
+  {
+    "importer": "client/src/pages/teams.tsx",
+    "spec": "@/components/ui/dialog",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/dialog.tsx",
+    "key": "components/ui/dialog"
+  },
+  {
+    "importer": "client/src/pages/teams.tsx",
+    "spec": "@/components/team-logo",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/team-logo.tsx",
+    "key": "components/team-logo"
+  },
+  {
+    "importer": "client/src/pages/teams.tsx",
+    "spec": "@/features/auth/useAuth",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/features/auth/useAuth.ts",
+    "key": "features/auth/useAuth"
+  },
+  {
+    "importer": "client/src/pages/teams.tsx",
+    "spec": "@/hooks/use-toast",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/hooks/use-toast.ts",
+    "key": "hooks/use-toast"
+  },
+  {
+    "importer": "client/src/pages/teams.tsx",
+    "spec": "@/features/query/api",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/features/query/api.ts",
+    "key": "features/query/api"
+  },
+  {
+    "importer": "client/src/pages/teams.tsx",
+    "spec": "@/components/ui/select",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/select.tsx",
+    "key": "components/ui/select"
+  },
+  {
+    "importer": "client/src/pages/test-notifications.tsx",
+    "spec": "@/components/ui/button",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/button.tsx",
+    "key": "components/ui/button"
+  },
+  {
+    "importer": "client/src/pages/test-notifications.tsx",
+    "spec": "@/components/ui/card",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/card.tsx",
+    "key": "components/ui/card"
+  },
+  {
+    "importer": "client/src/pages/test-notifications.tsx",
+    "spec": "@/hooks/use-toast",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/hooks/use-toast.ts",
+    "key": "hooks/use-toast"
+  },
+  {
+    "importer": "client/src/pages/test-notifications.tsx",
+    "spec": "@/components/layout/main-layout",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/layout/main-layout.tsx",
+    "key": "components/layout/main-layout"
+  },
+  {
+    "importer": "client/src/pages/trades.tsx",
+    "spec": "@/components/layout/bottom-nav",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/layout/bottom-nav.tsx",
+    "key": "components/layout/bottom-nav"
+  },
+  {
+    "importer": "client/src/pages/trades.tsx",
+    "spec": "@/components/ui/card",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/card.tsx",
+    "key": "components/ui/card"
+  },
+  {
+    "importer": "client/src/pages/trades.tsx",
+    "spec": "@/components/ui/button",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/button.tsx",
+    "key": "components/ui/button"
+  },
+  {
+    "importer": "client/src/pages/trades.tsx",
+    "spec": "@/components/ui/badge",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/badge.tsx",
+    "key": "components/ui/badge"
+  },
+  {
+    "importer": "client/src/pages/trades.tsx",
+    "spec": "@/components/ui/tabs",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/tabs.tsx",
+    "key": "components/ui/tabs"
+  },
+  {
+    "importer": "client/src/pages/trades.tsx",
+    "spec": "@/components/ui/input",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/input.tsx",
+    "key": "components/ui/input"
+  },
+  {
+    "importer": "client/src/pages/trades.tsx",
+    "spec": "@/components/ui/avatar",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/ui/avatar.tsx",
+    "key": "components/ui/avatar"
+  },
+  {
+    "importer": "client/src/pages/trades.tsx",
+    "spec": "@/components/team-logo",
+    "kind": "alias",
+    "abs": "/home/runner/workspace/client/src/components/team-logo.tsx",
+    "key": "components/team-logo"
+  }
+]
