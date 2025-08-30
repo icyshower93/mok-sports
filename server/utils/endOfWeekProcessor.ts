@@ -363,7 +363,8 @@ export class EndOfWeekProcessor {
         // Single winner - award all accumulated skins
         const winner = winners[0];
         
-        await tx.insert(weeklySkins).values({
+        // Schema invariant: winners must have winnerId and isRollover=false
+        const winnerData = {
           leagueId,
           season,
           week,
@@ -373,7 +374,14 @@ export class EndOfWeekProcessor {
           isTied: false,
           isRollover: false,
           awardedAt: new Date()
-        });
+        };
+        
+        // Enforce schema invariants
+        if (!winnerData.winnerId || winnerData.isRollover) {
+          throw new Error(`Schema invariant violation: winner record must have winnerId and isRollover=false`);
+        }
+        
+        await tx.insert(weeklySkins).values(winnerData);
 
         console.log(`[EndOfWeek] 🏆 ${winner.userName} wins ${totalSkinsThisWeek} skin(s) with ${winner.totalPoints} points`);
 
@@ -411,7 +419,7 @@ export class EndOfWeekProcessor {
         console.log(`[EndOfWeek] 🔄 ${winners.length} users tied with ${highestScore} points - ${totalSkinsThisWeek} skin(s) rolled over`);
 
         // Record the tie with rollover flag
-        await tx.insert(weeklySkins).values({
+        const rolloverData = {
           leagueId,
           season,
           week,
@@ -421,7 +429,14 @@ export class EndOfWeekProcessor {
           isTied: true,
           isRollover: true,
           awardedAt: null // No award given
-        }).onConflictDoNothing();
+        };
+        
+        // Enforce schema invariants
+        if (rolloverData.winnerId || !rolloverData.isRollover) {
+          throw new Error(`Schema invariant violation: rollover record must have winnerId=null and isRollover=true`);
+        }
+        
+        await tx.insert(weeklySkins).values(rolloverData).onConflictDoNothing();
 
         // Broadcast skins rollover to all connected clients
         const { globalDraftManager } = await import("../draft/globalDraftManager.js");
