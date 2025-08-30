@@ -26,66 +26,34 @@ console.log('🚀 [Server] Build Info:', SERVER_BUILD_INFO);
 console.log('📝 [Server] Environment Note: NODE_ENV=development means we have dev debugging enabled while serving production builds');
 
 async function setupProductionAssets(app: express.Application) {
-  const distPath = path.resolve(__dirname, "..", "dist", "public");
-  
-  if (fs.existsSync(distPath)) {
-    console.log('[Server] Serving built assets from:', distPath);
-    
-    // Critical: Serve /assets/* files with correct MIME types FIRST
-    app.use('/assets', (req, res, next) => {
-      console.log('[Assets] Serving asset:', req.path);
-      next();
-    }, express.static(path.join(distPath, 'assets'), {
-      maxAge: '1y', // Cache assets for 1 year
-      etag: true,
-      lastModified: true,
-      setHeaders: (res, filePath) => {
-        console.log('[Assets] Setting headers for:', filePath);
-        if (filePath.endsWith('.js')) {
-          res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
-          res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
-          res.setHeader('Pragma', 'no-cache');
-          res.setHeader('Expires', '0');
-          console.log('[Assets] JS file served with no-cache headers to force browser refresh');
-        } else if (filePath.endsWith('.css')) {
-          res.setHeader('Content-Type', 'text/css; charset=utf-8');
-          res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
-          console.log('[Assets] CSS file served with correct MIME type');
-        } else if (filePath.endsWith('.woff2') || filePath.endsWith('.woff')) {
-          res.setHeader('Content-Type', 'font/woff2');
-          res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
-        } else if (filePath.endsWith('.png') || filePath.endsWith('.jpg') || filePath.endsWith('.jpeg')) {
-          res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
-        }
-      }
-    }));
-    
-    // Serve manifest.json, service worker, and other root files including logos
-    app.use(express.static(distPath, {
-      index: false, // Don't serve index.html automatically
-      maxAge: '1d', // Cache for 1 day
-      setHeaders: (res, filePath) => {
-        console.log('[Static] Serving file:', filePath);
-        if (filePath.endsWith('manifest.json')) {
-          res.setHeader('Content-Type', 'application/manifest+json');
-        } else if (filePath.endsWith('sw.js') || filePath.endsWith('service-worker.js')) {
-          res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
-          res.setHeader('Cache-Control', 'no-cache'); // Don't cache service worker
-        } else if (filePath.endsWith('.png')) {
-          res.setHeader('Content-Type', 'image/png');
-          console.log('[Static] PNG file served:', filePath);
-        } else if (filePath.endsWith('.svg')) {
-          res.setHeader('Content-Type', 'image/svg+xml');
-          console.log('[Static] SVG file served:', filePath);
-        }
-      }
-    }));
-    
-    console.log('[Server] Static file serving configured for PWA');
-    return true;
-  } else {
-    console.log('[Server] No built assets found at:', distPath);
+  // Multiple path candidates to find client/dist
+  const candidates = [
+    process.env.CLIENT_DIST,                                   // optional override
+    path.resolve(__dirname, '../dist/public'),                 // current build output
+    path.resolve(process.cwd(), 'dist/public'),                // production build location
+    path.resolve(__dirname, '../../client/dist'),              // typical monorepo build
+    path.resolve(process.cwd(), 'client/dist'),                // fallback if cwd is repo root
+    path.resolve(__dirname, '../client/dist'),                 // alt layout
+    path.resolve(__dirname, '../../../client/dist'),           // safety net
+  ].filter(Boolean) as string[];
+
+  const clientDist = candidates.find(p => {
+    try { return p && fs.existsSync(path.join(p, 'index.html')); } catch { return false; }
+  });
+
+  console.log('[server] NODE_ENV:', process.env.NODE_ENV);
+  console.log('[server] __dirname:', __dirname);
+  console.log('[server] clientDist candidates:', candidates);
+  console.log('[server] selected clientDist:', clientDist);
+
+  if (!clientDist) {
+    console.error('[server] ERROR: Could not find client/dist/index.html. Did you run the client build?');
     return false;
+  } else {
+    // Serve static assets (don't auto-serve index so SPA fallback can handle all routes)
+    app.use(express.static(clientDist, { index: false, maxAge: '1h' }));
+    console.log('[server] Static assets configured from:', clientDist);
+    return true;
   }
 }
 
@@ -363,71 +331,46 @@ app.use((req, res, next) => {
   // Set up Vite or static serving based on environment
   if (isDev) {
     // Only use Vite middleware if we don't have built assets
-    // This prevents Vite from intercepting asset requests
     if (!hasBuiltAssets) {
       // Conditional dynamic import for Vite in development only
       const { setupVite } = await import("./vite.js");
       await setupVite(app, server);
     } else {
       console.log('[Server] Using built assets, skipping Vite middleware');
-      // Add catch-all for SPA routing (only for non-asset routes)
-      app.get('*', (req, res, next) => {
-        // Don't intercept API routes
-        if (req.path.startsWith('/api/')) {
-          return next();
-        }
-        
-        // CRITICAL: Don't intercept WebSocket upgrade paths
-        if (req.path.startsWith('/draft-ws') || 
-            req.path.startsWith('/ws/draft') || 
-            req.path.startsWith('/ws') || 
+    }
+  }
+  
+  // SPA fallback: serve index.html for ANY GET that isn't handled above
+  if (hasBuiltAssets) {
+    // Get the client dist path again for SPA fallback
+    const candidates = [
+      process.env.CLIENT_DIST,
+      path.resolve(__dirname, '../dist/public'),
+      path.resolve(process.cwd(), 'dist/public'),
+      path.resolve(__dirname, '../../client/dist'),
+      path.resolve(process.cwd(), 'client/dist'),
+      path.resolve(__dirname, '../client/dist'),
+      path.resolve(__dirname, '../../../client/dist'),
+    ].filter(Boolean) as string[];
+
+    const clientDist = candidates.find(p => {
+      try { return p && fs.existsSync(path.join(p, 'index.html')); } catch { return false; }
+    });
+
+    if (clientDist) {
+      app.get('*', (req, res) => {
+        // Don't intercept API routes or WebSocket paths
+        if (req.path.startsWith('/api/') || 
+            req.path.startsWith('/draft-ws') || 
+            req.path.startsWith('/ws/') ||
             req.path.startsWith('/admin-ws')) {
-          console.log('[WebSocket] Allowing WebSocket path to pass through for upgrade:', req.path);
-          return next();
+          return res.status(404).json({ error: 'Not found' });
         }
         
-        // Don't intercept static asset requests (images, fonts, etc.)
-        if (req.path.match(/\.(png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot|css|js)$/i)) {
-          console.log('[Static] Allowing static asset request to pass through:', req.path);
-          return next();
-        }
-        
-        // Don't intercept asset requests or static files
-        if (req.path.startsWith('/assets/') || 
-            req.path.endsWith('.js') || 
-            req.path.endsWith('.css') ||
-            req.path.endsWith('.json') ||
-            req.path.endsWith('.ico') ||
-            req.path.endsWith('.png') ||
-            req.path.endsWith('.svg') ||
-            req.path.endsWith('.woff2') ||
-            req.path.endsWith('.manifest') ||
-            req.path === '/sw.js' ||
-            req.path === '/manifest.json') {
-          return next();
-        }
-        
-        // Serve the built index.html for all SPA routes (force fresh reads to bypass caching)
-        const indexPath = path.resolve(__dirname, "..", "dist", "public", "index.html");
-        console.log('[SPA] Force reading fresh index.html for:', req.path);
-        fs.readFile(indexPath, 'utf8', (err, data) => {
-          if (err) {
-            console.error('[SPA] Error reading index.html:', err);
-            return res.status(500).send('Error loading application');
-          }
-          // Comprehensive no-cache headers to prevent index.html caching
-          res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
-          res.setHeader('Pragma', 'no-cache');
-          res.setHeader('Expires', '0');
-          res.setHeader('Surrogate-Control', 'no-store');
-          res.setHeader('Content-Type', 'text/html; charset=utf-8');
-          res.send(data);
-        });
+        // SPA fallback: serve index.html for all other routes
+        res.sendFile(path.join(clientDist, 'index.html'));
       });
     }
-  } else {
-    // Production: serve static assets (already configured above)
-    console.log('[Server] Production mode: static assets already configured');
   }
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {

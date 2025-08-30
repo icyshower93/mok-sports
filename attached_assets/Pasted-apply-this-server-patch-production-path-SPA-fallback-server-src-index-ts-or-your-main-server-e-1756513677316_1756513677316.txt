@@ -1,0 +1,120 @@
+apply this server patch (production path + SPA fallback)
+
+server/src/index.ts (or your main server entry) — use this full pattern:
+
+// server/src/index.ts
+import express from 'express';
+import http from 'http';
+import path from 'path';
+import fs from 'fs';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname  = path.dirname(__filename);
+
+const isDev = process.env.NODE_ENV !== 'production';
+
+const app = express();
+const server = http.createServer(app);
+
+// Health endpoint so the platform knows we're up
+app.get('/healthz', (_req, res) => res.status(200).send('ok'));
+
+// --- DEV: Vite middleware (dynamic import; dev-only) ---
+if (isDev) {
+  const { createServer: createViteServer } = await import('vite');
+  const vite = await createViteServer({
+    root: path.resolve(process.cwd(), 'client'),
+    server: { middlewareMode: true },
+    appType: 'spa',
+  });
+  app.use(vite.middlewares);
+} else {
+  // --- PROD: serve prebuilt client/dist with SPA fallback ---
+  const candidates = [
+    process.env.CLIENT_DIST,                                   // optional override
+    path.resolve(__dirname, '../../client/dist'),              // typical monorepo build
+    path.resolve(process.cwd(), 'client/dist'),                // fallback if cwd is repo root
+    path.resolve(__dirname, '../client/dist'),                 // alt layout
+    path.resolve(__dirname, '../../../client/dist'),           // safety net
+  ].filter(Boolean) as string[];
+
+  const clientDist = candidates.find(p => {
+    try { return p && fs.existsSync(path.join(p, 'index.html')); } catch { return false; }
+  });
+
+  console.log('[server] NODE_ENV:', process.env.NODE_ENV);
+  console.log('[server] __dirname:', __dirname);
+  console.log('[server] clientDist candidates:', candidates);
+  console.log('[server] selected clientDist:', clientDist);
+
+  if (!clientDist) {
+    console.error('[server] ERROR: Could not find client/dist/index.html. Did you run the client build?');
+  } else {
+    // Serve static assets (don’t auto-serve index so SPA fallback can handle all routes)
+    app.use(express.static(clientDist, { index: false, maxAge: '1h' }));
+
+    // SPA fallback: serve index.html for ANY GET that isn't handled above
+    app.get('*', (_req, res) => {
+      res.sendFile(path.join(clientDist, 'index.html'));
+    });
+  }
+}
+
+const PORT = Number(process.env.PORT) || 3000;
+const HOST = '0.0.0.0';
+
+server.listen(PORT, HOST, () => {
+  console.log(`[server] listening on http://${HOST}:${PORT}`);
+});
+
+
+Why this fixes 404:
+
+We compute a robust clientDist path after TS compilation (ESM-safe __dirname).
+
+We serve client/dist with express.static(...).
+
+We always send index.html for any unknown GET using app.get('*', ...), which is required for SPAs (so /draft/:id works too).
+
+We log the chosen path so you can see it in Replit logs.
+
+Make sure these are set in Replit
+
+Run command (deployment): node server/dist/index.js
+
+Env var: NODE_ENV=production
+
+(Optional) If your layout differs, set CLIENT_DIST to the absolute path Replit sees, e.g. /home/runner/<app>/client/dist.
+
+Client/Vite sanity checks
+
+In client/vite.config.ts, ensure you haven’t set a weird base for production. Default is fine:
+
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+
+export default defineConfig({
+  plugins: [react()],
+  // base: '/',  // default; don't set a subpath unless you know you need it
+})
+
+
+Run the build locally (or in Replit build logs) and confirm client/dist/index.html exists along with /assets/*.js.
+
+Minimal verification steps (ask Replit to confirm in logs)
+
+Build step shows client/dist/index.html produced.
+
+On start, logs should include:
+
+[server] NODE_ENV: production
+[server] __dirname: /.../server/dist
+[server] clientDist candidates: [...]
+[server] selected clientDist: /.../client/dist
+[server] listening on http://0.0.0.0:3000
+
+
+Hitting / returns the index.html (no “Cannot GET /”).
+
+Static assets /assets/… respond with 200, not 404.
