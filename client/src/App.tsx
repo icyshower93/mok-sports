@@ -5,7 +5,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/hooks/use-theme";
-import { AuthProvider, useAuth } from "@/hooks/use-auth";
+import { AuthProvider, useAuth } from "@/features/auth";
 import { useQuery } from "@tanstack/react-query";
 import { usePWADetection } from "@/hooks/use-pwa-detection";
 import { useServiceWorker } from "@/hooks/use-service-worker";

@@ -1,4 +1,4 @@
-import { useAuth } from "@/hooks/use-auth";
+import { useAuth } from "@/features/auth";
 import { MainLayout } from "@/components/layout/main-layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -8,7 +8,7 @@ import { User, Trophy, Calendar, LogOut, BarChart3, Target, Users, TrendingUp } 
 import { useQuery } from "@tanstack/react-query";
 
 export default function ProfilePage() {
-  // const { user, logout } = useAuth();
+  const { user, logout } = useAuth();
 
   // Get user statistics
   const { data: userStats, isLoading: statsLoading } = useQuery({

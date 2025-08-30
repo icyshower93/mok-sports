@@ -1,0 +1,260 @@
+Great—so the SW/versioning fix worked, and the remaining crash is a runtime TDZ from a circular import that only surfaces right after auth when the app flips from login → authed routes. The agent’s “comment out useAuth” hack is only masking it. Let’s actually break the cycle cleanly.
+
+Below is a surgical, copy-pasteable plan that works even if we don’t enumerate every file in your repo.
+
+Why this is happening (quickly)
+
+When module A imports B and B (directly or via barrels) imports A, one side tries to read a binding (in minified output it’s c) before it’s initialized → ReferenceError: Cannot access 'c' before initialization. Auth makes it deterministic because a different tree of pages mounts right after auth and finishes evaluating the offending modules.
+
+Common causes:
+
+Barrel files (index.ts) that re-export everything (hooks, stores, pages) and accidentally tie layers together.
+
+useAuth living in a folder that also re-exports components or router constructs which import pages that import useAuth again.
+
+Router files importing pages synchronously, while those pages (or their nested components) import back into router/store/auth.
+
+Permanent fix (do these in order)
+1) Detect cycles so you can confirm you’re done
+
+Add a dev tool that yells when cycles exist.
+
+# add once
+npm i -D madge
+
+# run whenever you want to see cycles
+npx madge client/src --circular
+
+
+If you want it to fail a build locally:
+
+npx madge client/src --circular --warning
+
+
+(You can also add eslint-plugin-import with import/no-cycle: "error", but Madge gives cleaner graphs fast.)
+
+2) Kill the barrels that blend layers
+
+Search for re-exports and convert them to direct imports.
+
+# find barrels
+rg -n "export \* from ['\"][^'\"]+['\"]" client/src | sort
+rg -n "export {[^}]+} from ['\"][^'\"]+['\"]" client/src | sort
+
+
+Typical offenders:
+
+client/src/hooks/index.ts
+
+client/src/pages/index.ts
+
+client/src/features/*/index.ts
+
+client/src/store/index.ts
+
+Action: delete/trim these barrels or make them feature-scoped (see next step). Never have a barrel that re-exports both hooks/stores and pages/router from the same file.
+
+3) Isolate auth into its own feature folder (no app imports!)
+
+Create / enforce this structure:
+
+client/src/features/auth/
+  AuthContext.tsx
+  AuthProvider.tsx
+  useAuth.ts
+  index.ts            // exports ONLY from this folder, nothing app-level
+
+
+Sample minimal files (adapt to your current logic; these imports must be “leafy”—no pages/router here):
+
+// client/src/features/auth/AuthContext.tsx
+import { createContext } from "react";
+
+export type AuthValue = {
+  user: { id: string } | null;
+  token: string | null;
+  loading: boolean;
+  // add other primitives, funcs as needed
+};
+
+export const AuthContext = createContext<AuthValue>({
+  user: null,
+  token: null,
+  loading: true,
+});
+
+// client/src/features/auth/useAuth.ts
+import { useContext } from "react";
+import { AuthContext } from "./AuthContext";
+
+export function useAuth() {
+  return useContext(AuthContext);
+}
+
+// client/src/features/auth/AuthProvider.tsx
+import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { AuthContext, type AuthValue } from "./AuthContext";
+// import your API/client here (must not import any pages/router)
+
+export function AuthProvider({ children }: { children: ReactNode }) {
+  const [user, setUser] = useState<AuthValue["user"]>(null);
+  const [token, setToken] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // put your existing token/user bootstrap here
+    // setUser(...); setToken(...); setLoading(false);
+  }, []);
+
+  const value = useMemo<AuthValue>(() => ({ user, token, loading }), [user, token, loading]);
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+}
+
+// client/src/features/auth/index.ts
+export * from "./useAuth";
+export * from "./AuthProvider";
+export * from "./AuthContext";
+// IMPORTANT: export ONLY files inside this folder.
+
+
+Now ensure none of these files import from @/pages, @/router, @/app, or any barrel that does.
+
+4) Make routes lazy to cut sync edges
+
+Synchronous page imports often complete a cycle. Switch to lazy:
+
+// client/src/router.tsx
+import { createBrowserRouter } from "react-router-dom";
+import { lazy } from "react";
+import { RequireAuth } from "./components/RequireAuth"; // tiny gate component
+// ^ this component may use useAuth, but must not import router or pages dynamically
+
+const Dashboard = lazy(() => import("./pages/dashboard"));
+const Profile   = lazy(() => import("./pages/profile"));
+// ... repeat for authed pages
+
+export const router = createBrowserRouter([
+  { path: "/", element: <Landing /> }, // can be lazy too
+  {
+    path: "/app",
+    element: <RequireAuth><AppShell /></RequireAuth>, // AppShell shouldn’t import router/pages
+    children: [
+      { path: "dashboard", element: <Dashboard /> },
+      { path: "profile",   element: <Profile />   },
+      // ...
+    ],
+  },
+]);
+
+
+A simple RequireAuth:
+
+// client/src/components/RequireAuth.tsx
+import { Navigate, useLocation } from "react-router-dom";
+import { useAuth } from "@/features/auth";
+
+export function RequireAuth({ children }: { children: React.ReactElement }) {
+  const { user, loading } = useAuth();
+  const loc = useLocation();
+  if (loading) return null; // or a spinner
+  return user ? children : <Navigate to="/login" state={{ from: loc }} replace />;
+}
+
+5) Ensure the entry is one-way: Providers → Router
+
+Your entry should provide contexts then mount the router. The provider tree must not import pages/router.
+
+// client/src/AppProviders.tsx
+import { AuthProvider } from "@/features/auth";
+// add other providers (QueryClientProvider, ThemeProvider...) here
+export function AppProviders({ children }: { children: React.ReactNode }) {
+  return <AuthProvider>{children}</AuthProvider>;
+}
+
+// client/src/main.tsx
+import { createRoot } from "react-dom/client";
+import { RouterProvider } from "react-router-dom";
+import { AppProviders } from "./AppProviders";
+import { router } from "./router";
+
+createRoot(document.getElementById("root")!).render(
+  <AppProviders>
+    <RouterProvider router={router} />
+  </AppProviders>
+);
+
+6) Replace barrel imports of useAuth with direct feature import
+
+If any page/component imports from a generic barrel (like @/hooks), rewrite to the feature path to avoid that barrel re-export glue.
+
+# search where useAuth comes from
+rg -n "import\\s*{\\s*useAuth\\s*}.*['\\\"]@/.*['\\\"]" client/src
+
+# quick codemod idea (review diffs!)
+# replace from "@/hooks" or "@/whatever" to "@/features/auth"
+sed -i '' 's|from "@/hooks"|from "@/features/auth"|g' $(rg -l 'from "@/hooks"' client/src)
+
+# Repeat for any other alias path that re-exported useAuth
+
+7) Rebuild, then confirm no cycles
+npx madge client/src --circular
+npm run build
+
+
+Then hard-refresh and verify in DevTools:
+
+SW shows /sw.js?v=<real-hash> (you already have this ✅)
+
+No TDZ crash
+
+Console clean
+
+8) Guardrails (optional but recommended)
+
+A. ESLint rule
+Add to your ESLint config:
+
+"plugins": ["import"],
+"rules": {
+  "import/no-cycle": ["error", { "ignoreExternal": true }],
+  "import/no-internal-modules": ["warn", { "forbid": ["@/pages/**"] }]
+}
+
+
+(Adjust to your code style.)
+
+B. CI check
+
+{
+  "scripts": {
+    "check:cycles": "madge client/src --circular"
+  }
+}
+
+If you still see the error
+
+Now that SW caching and route lazy-loading are fixed, any remaining TDZ is almost certainly a single concrete cycle. Run:
+
+npx madge client/src --circular --json > cycles.json
+
+
+Open cycles.json and post the cycle paths; I’ll tell you exactly which import line to move. 99% of the time it’s one of:
+
+a page importing useAuth from a global barrel that also re-exports router/pages,
+
+a store importing router (or vice-versa),
+
+a shared “layout” importing pages that import the layout back (move layout to components/ and keep it page-agnostic).
+
+TL;DR
+
+You fixed the SW; good.
+
+Now split auth into its own feature folder, delete global barrels, and lazy-load pages from the router.
+
+Replace all useAuth imports to come from @/features/auth.
+
+Verify with Madge that cycles are gone.
+
+Do those and the px TDZ crash will stop for good.
