@@ -1,0 +1,115 @@
+Root cause
+
+ReferenceError: weekData is not defined
+
+That means somewhere in your Home/Main UI (the “px” component in the bundle) we reference a variable that doesn’t exist in scope — not undefined data, but an undeclared identifier. Once React hits that line, it throws, your ErrorBoundary catches, unmounts the app, and your WebSocket gets torn down/reconnected.
+
+This almost certainly came from wiring the “Weekly Skins Game” and week-scores patches: we referenced weekData but your query returns something named weekScores / weekScoresData (or similar). So the fix is just to use the right names and memoize the per-week record.
+
+🔧 Surgical fixes
+1) Home/Main (Weekly section): replace weekData with explicit per-week selectors
+
+In client/src/pages/main.tsx (or wherever your Home dashboard lives), add these selectors and only use these variables later in the file:
+
+import { useMemo, useEffect } from "react";
+
+// Week scores for the current week
+const { data: weekScoresData, isLoading: weekScoresLoading } = useQuery({
+  queryKey: ["/api/scoring/week-scores", selectedLeague, season, currentWeek],
+  enabled: !!selectedLeague,
+});
+
+// Skins rows for the season
+const { data: skinsData } = useQuery({
+  queryKey: ["/api/scoring/skins", selectedLeague, season, currentWeek], // include currentWeek so it resets on week flip
+  enabled: !!selectedLeague,
+});
+
+// Select the current week's score block (never call it "weekData")
+const currentWeekScores = useMemo(() => {
+  const list = Array.isArray(weekScoresData) ? weekScoresData : weekScoresData?.weeks;
+  if (!Array.isArray(list)) return null;
+  return list.find((w: any) => w?.week === currentWeek) ?? null;
+}, [weekScoresData, currentWeek]);
+
+// Pick the weekly_skins row for the current week + winner id
+const currentWeekSkins = useMemo(() => {
+  const list = (skinsData as any)?.skins;
+  if (!Array.isArray(list)) return null;
+  return list.find((r: any) => r?.week === currentWeek) ?? null;
+}, [skinsData, currentWeek]);
+
+const weeklySkinsWinnerId: string | null = currentWeekSkins?.winnerId ?? null;
+
+
+Then, anywhere below where you previously used weekData:
+
+Replace weekData → currentWeekScores
+
+If you derived totals from weekData.users or similar:
+const usersThisWeek = currentWeekScores?.users ?? [];
+
+For the “winner” highlighting, make it only depend on the presence of the weekly_skins winner:
+
+const isSkinsWinner = !!weeklySkinsWinnerId && member.userId === weeklySkinsWinnerId;
+const shouldShowWinner = isSkinsWinner; // do NOT gate on hasActualPoints
+
+2) Reset week-scoped UI on week flip
+
+Still in the same component:
+
+useEffect(() => {
+  // Any local UI toggles that should clear on a new week
+  setShowAllWeeklyRankings(false);
+}, [currentWeek, selectedLeague]);
+
+3) League page “Skins Won” by userId (restate the safe snippet)
+
+In client/src/pages/league.tsx:
+
+const userSkinsWon = useMemo(() => {
+  const list = (skinsData as any)?.skins;
+  if (!Array.isArray(list)) return {};
+  const countsById: Record<string, number> = {};
+  for (const row of list) {
+    const winnerId = row?.winnerId;
+    if (winnerId) countsById[winnerId] = (countsById[winnerId] || 0) + 1;
+  }
+  return countsById;
+}, [skinsData]);
+
+// When rendering rows:
+const skinsWonForMember = userSkinsWon[member.userId] ?? 0;
+
+4) Make the realtime invalidation broad (so standings auto-refresh)
+
+In client/src/hooks/use-production-realtime.ts:
+
+const invalidateScoring = () => {
+  queryClient.invalidateQueries({
+    predicate: (q) => {
+      const k0 = String(q.queryKey?.[0] ?? "");
+      const joined = Array.isArray(q.queryKey) ? q.queryKey.join(" ") : k0;
+      return (
+        k0.startsWith("/api/scoring") ||
+        joined.includes("week-scores") ||
+        joined.includes("season-standings") ||
+        k0.startsWith("/api/leagues") ||
+        k0.startsWith("/api/admin/current-week")
+      );
+    },
+  });
+};
+
+switch (message.type) {
+  case "admin_date_advanced":
+  case "weekly_bonuses_calculated":
+  case "score_update":
+  case "week_closed":
+  case "skins_updated":
+    invalidateScoring();
+    break;
+}
+
+
+That takes care of the “League tab doesn’t auto update” part — once the page isn’t crashing, this makes the queries refetch on scoring/skins events.

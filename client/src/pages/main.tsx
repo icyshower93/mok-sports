@@ -109,8 +109,8 @@ export default function MainPage() {
   useProductionRealtime();
   
   // Extract current week and season data
-  const currentWeek = (weekData as any)?.week || 1;
-  const currentSeason = (weekData as any)?.season || 2024;
+  const currentWeek = (currentWeekData as any)?.currentWeek || 1;
+  const currentSeason = 2024;
   
   // Reset week-scoped UI on week flip
   useEffect(() => {

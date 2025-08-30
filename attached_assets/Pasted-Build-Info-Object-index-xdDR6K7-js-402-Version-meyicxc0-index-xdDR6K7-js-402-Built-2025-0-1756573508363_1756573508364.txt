@@ -1,0 +1,103 @@
+Build Info: Object
+index--xdDR6K7.js:402 📦 Version: meyicxc0
+index--xdDR6K7.js:402 📅 Built: 2025-08-30T17:00:48.960Z
+index--xdDR6K7.js:402 🔧 Environment: production
+index--xdDR6K7.js:358 [StableWebSocket] ⏳ Waiting for authentication...
+index--xdDR6K7.js:402 [App] WebSocket status: waiting_auth (Disconnected)
+index--xdDR6K7.js:402 [App] ⏳ Waiting for authentication to complete
+index--xdDR6K7.js:358 [Auth] Token check - Has token: true Has user: false Loading: true
+(index):1 Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner.
+index--xdDR6K7.js:358 [StableWebSocket] 🔐 Auth confirmed, establishing connection
+index--xdDR6K7.js:358 [StableWebSocket] 🧹 Cleaning up all timers and connections
+index--xdDR6K7.js:358 [StableWebSocket] 🚀 Establishing connection for user: Mok Sports
+index--xdDR6K7.js:358 [Auth] Token check - Has token: true Has user: true Loading: false
+index--xdDR6K7.js:358 [AutoPushRefresh] Legacy hook delegating to SubscriptionManager
+index--xdDR6K7.js:402 [App] WebSocket status: connecting (Disconnected)
+index--xdDR6K7.js:358 [SW Hook] Registering fresh service worker: /sw.js?v=1756573249084&r=0.8234597901733836
+index--xdDR6K7.js:358 [ErrorBoundary] Error caught: ReferenceError weekData is not defined
+getDerivedStateFromError @ index--xdDR6K7.js:358Understand this error
+index--xdDR6K7.js:358 [ErrorBoundary] Stack trace: ReferenceError: weekData is not defined
+    at px (https://mok-sports-draft-mokfantasysport.replit.app/assets/index--xdDR6K7.js:402:157093)
+    at Mm (https://mok-sports-draft-mokfantasysport.replit.app/assets/index--xdDR6K7.js:38:16998)
+    at Iy (https://mok-sports-draft-mokfantasysport.replit.app/assets/index--xdDR6K7.js:40:43963)
+    at Ry (https://mok-sports-draft-mokfantasysport.replit.app/assets/index--xdDR6K7.js:40:39727)
+    at _j (https://mok-sports-draft-mokfantasysport.replit.app/assets/index--xdDR6K7.js:40:39655)
+    at vc (https://mok-sports-draft-mokfantasysport.replit.app/assets/index--xdDR6K7.js:40:39508)
+    at cg (https://mok-sports-draft-mokfantasysport.replit.app/assets/index--xdDR6K7.js:40:36623)
+    at cs (https://mok-sports-draft-mokfantasysport.replit.app/assets/index--xdDR6K7.js:38:3274)
+    at https://mok-sports-draft-mokfantasysport.replit.app/assets/index--xdDR6K7.js:40:34207
+getDerivedStateFromError @ index--xdDR6K7.js:358Understand this error
+index--xdDR6K7.js:358 [ErrorBoundary] Error caught: ReferenceError weekData is not defined
+getDerivedStateFromError @ index--xdDR6K7.js:358Understand this error
+index--xdDR6K7.js:358 [ErrorBoundary] Stack trace: ReferenceError: weekData is not defined
+    at px (https://mok-sports-draft-mokfantasysport.replit.app/assets/index--xdDR6K7.js:402:157093)
+    at Mm (https://mok-sports-draft-mokfantasysport.replit.app/assets/index--xdDR6K7.js:38:16998)
+    at Iy (https://mok-sports-draft-mokfantasysport.replit.app/assets/index--xdDR6K7.js:40:43963)
+    at Ry (https://mok-sports-draft-mokfantasysport.replit.app/assets/index--xdDR6K7.js:40:39727)
+    at _j (https://mok-sports-draft-mokfantasysport.replit.app/assets/index--xdDR6K7.js:40:39655)
+    at vc (https://mok-sports-draft-mokfantasysport.replit.app/assets/index--xdDR6K7.js:40:39508)
+    at mf (https://mok-sports-draft-mokfantasysport.replit.app/assets/index--xdDR6K7.js:40:35875)
+    at cg (https://mok-sports-draft-mokfantasysport.replit.app/assets/index--xdDR6K7.js:40:36678)
+    at cs (https://mok-sports-draft-mokfantasysport.replit.app/assets/index--xdDR6K7.js:38:3274)
+    at https://mok-sports-draft-mokfantasysport.replit.app/assets/index--xdDR6K7.js:40:34207
+getDerivedStateFromError @ index--xdDR6K7.js:358Understand this error
+index--xdDR6K7.js:40 ReferenceError: weekData is not defined
+    at px (index--xdDR6K7.js:402:157093)
+    at Mm (index--xdDR6K7.js:38:16998)
+    at Iy (index--xdDR6K7.js:40:43963)
+    at Ry (index--xdDR6K7.js:40:39727)
+    at _j (index--xdDR6K7.js:40:39655)
+    at vc (index--xdDR6K7.js:40:39508)
+    at mf (index--xdDR6K7.js:40:35875)
+    at cg (index--xdDR6K7.js:40:36678)
+    at cs (index--xdDR6K7.js:38:3274)
+    at index--xdDR6K7.js:40:34207
+ef @ index--xdDR6K7.js:40Understand this error
+index--xdDR6K7.js:358 [ErrorBoundary] DETAILED ERROR - Name: ReferenceError
+componentDidCatch @ index--xdDR6K7.js:358Understand this error
+index--xdDR6K7.js:358 [ErrorBoundary] DETAILED ERROR - Message: weekData is not defined
+componentDidCatch @ index--xdDR6K7.js:358Understand this error
+index--xdDR6K7.js:358 [ErrorBoundary] DETAILED ERROR - Stack: ReferenceError: weekData is not defined
+    at px (https://mok-sports-draft-mokfantasysport.replit.app/assets/index--xdDR6K7.js:402:157093)
+    at Mm (https://mok-sports-draft-mokfantasysport.replit.app/assets/index--xdDR6K7.js:38:16998)
+    at Iy (https://mok-sports-draft-mokfantasysport.replit.app/assets/index--xdDR6K7.js:40:43963)
+    at Ry (https://mok-sports-draft-mokfantasysport.replit.app/assets/index--xdDR6K7.js:40:39727)
+    at _j (https://mok-sports-draft-mokfantasysport.replit.app/assets/index--xdDR6K7.js:40:39655)
+    at vc (https://mok-sports-draft-mokfantasysport.replit.app/assets/index--xdDR6K7.js:40:39508)
+    at mf (https://mok-sports-draft-mokfantasysport.replit.app/assets/index--xdDR6K7.js:40:35875)
+    at cg (https://mok-sports-draft-mokfantasysport.replit.app/assets/index--xdDR6K7.js:40:36678)
+    at cs (https://mok-sports-draft-mokfantasysport.replit.app/assets/index--xdDR6K7.js:38:3274)
+    at https://mok-sports-draft-mokfantasysport.replit.app/assets/index--xdDR6K7.js:40:34207
+componentDidCatch @ index--xdDR6K7.js:358Understand this error
+index--xdDR6K7.js:358 [ErrorBoundary] Component stack: 
+    at px (https://mok-sports-draft-mokfantasysport.replit.app/assets/index--xdDR6K7.js:402:157023)
+    at St (https://mok-sports-draft-mokfantasysport.replit.app/assets/index--xdDR6K7.js:48:3201)
+    at yk (https://mok-sports-draft-mokfantasysport.replit.app/assets/index--xdDR6K7.js:48:4017)
+    at E4 (https://mok-sports-draft-mokfantasysport.replit.app/assets/index--xdDR6K7.js:402:296023)
+    at AT (https://mok-sports-draft-mokfantasysport.replit.app/assets/index--xdDR6K7.js:358:57500)
+    at c (https://mok-sports-draft-mokfantasysport.replit.app/assets/index--xdDR6K7.js:48:46008)
+    at Cw (https://mok-sports-draft-mokfantasysport.replit.app/assets/index--xdDR6K7.js:358:50474)
+    at RT (https://mok-sports-draft-mokfantasysport.replit.app/assets/index--xdDR6K7.js:358:56972)
+    at $k (https://mok-sports-draft-mokfantasysport.replit.app/assets/index--xdDR6K7.js:48:40235)
+    at WT (https://mok-sports-draft-mokfantasysport.replit.app/assets/index--xdDR6K7.js:358:76878)
+    at T4
+componentDidCatch @ index--xdDR6K7.js:358Understand this error
+index--xdDR6K7.js:358 [StableWebSocket] 🧹 Component unmounting, cleaning up
+index--xdDR6K7.js:358 [StableWebSocket] 🧹 Cleaning up all timers and connections
+index--xdDR6K7.js:358 [StableWebSocket] 🔌 Closing connection with code 4003: unmount
+index--xdDR6K7.js:358 WebSocket connection to 'wss://mok-sports-draft-mokfantasysport.replit.app/draft-ws' failed: WebSocket is closed before the connection is established.
+(anonymous) @ index--xdDR6K7.js:358Understand this warning
+index--xdDR6K7.js:358 [StableWebSocket] ❌ Connection error: Event
+E.onerror @ index--xdDR6K7.js:358Understand this error
+index--xdDR6K7.js:358 [StableWebSocket] 🔌 Connection closed - Code: 1006, Reason: 
+index--xdDR6K7.js:358 [StableWebSocket] 🔄 Reconnecting in 1556.5248466289336ms (attempt 1/8)
+index--xdDR6K7.js:358 [SW Hook] Service worker registered successfully
+index--xdDR6K7.js:358 [StableWebSocket] 🧹 Cleaning up all timers and connections
+index--xdDR6K7.js:358 [StableWebSocket] 🚀 Establishing connection for user: Mok Sports
+index--xdDR6K7.js:358 [StableWebSocket] ✅ Connection established
+index--xdDR6K7.js:358 [StableWebSocket] 📡 Subscribed to admin broadcasts
+index--xdDR6K7.js:358 [StableWebSocket] ⏰ Keepalive started (25s interval)
+index--xdDR6K7.js:358 [StableWebSocket] 📨 Message received: admin_ready
+index--xdDR6K7.js:358 [StableWebSocket] ✅ Server confirmation: admin_ready
+index--xdDR6K7.js:358 [StableWebSocket] 📨 Message received: connected
+index--xdDR6K7.js:358 [StableWebSocket] ✅ Server confirmation: connected

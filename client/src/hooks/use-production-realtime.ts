@@ -90,13 +90,14 @@ export function useProductionRealtime() {
           const invalidateScoring = () => {
             queryClient.invalidateQueries({
               predicate: (q) => {
-                const k = String(q.queryKey?.[0] ?? '');
+                const k0 = String(q.queryKey?.[0] ?? "");
+                const joined = Array.isArray(q.queryKey) ? q.queryKey.join(" ") : k0;
                 return (
-                  k.startsWith('/api/scoring') ||
-                  k.includes('/week-scores') ||
-                  k.includes('/season-standings') ||
-                  k.startsWith('/api/leagues') ||
-                  k.startsWith('/api/admin/current-week')
+                  k0.startsWith("/api/scoring") ||
+                  joined.includes("week-scores") ||
+                  joined.includes("season-standings") ||
+                  k0.startsWith("/api/leagues") ||
+                  k0.startsWith("/api/admin/current-week")
                 );
               }
             });
