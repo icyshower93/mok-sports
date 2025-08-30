@@ -435,23 +435,42 @@ async function calculateAndUpdateMokPoints(
   try {
     console.log(`🎯 Calculating Mok points for ${awayTeamCode} @ ${homeTeamCode}: ${awayScore}-${homeScore}`);
 
-    // Get all users who own these teams
-    const teamOwners = await db.select({
-      userId: stables.userId,
-      userName: users.name,
-      leagueId: stables.leagueId,
-      teamId: stables.nflTeamId,
-      teamCode: nflTeams.code
+    // First, find which leagues are affected by these two teams
+    const affectedLeagues = await db.selectDistinct({
+      leagueId: stables.leagueId
     })
     .from(stables)
-    .innerJoin(users, eq(stables.userId, users.id))
-    .innerJoin(nflTeams, eq(stables.nflTeamId, nflTeams.id))
     .where(sql`${stables.nflTeamId} IN (${homeTeamId}, ${awayTeamId})`);
 
-    console.log(`Found ${teamOwners.length} team owners for this game`);
+    console.log(`Found ${affectedLeagues.length} leagues affected by this game`);
+
+    // For each affected league, get the team owners (with GROUP BY to avoid duplicates)
+    const allTeamOwners = [];
+    for (const league of affectedLeagues) {
+      const leagueOwners = await db.select({
+        userId: stables.userId,
+        userName: users.name,
+        leagueId: stables.leagueId,
+        teamId: stables.nflTeamId,
+        teamCode: nflTeams.code
+      })
+      .from(stables)
+      .innerJoin(users, eq(stables.userId, users.id))
+      .innerJoin(nflTeams, eq(stables.nflTeamId, nflTeams.id))
+      .where(and(
+        eq(stables.leagueId, league.leagueId),
+        sql`${stables.nflTeamId} IN (${homeTeamId}, ${awayTeamId})`
+      ))
+      .groupBy(stables.userId, stables.leagueId, stables.nflTeamId, users.name, nflTeams.code);
+
+      allTeamOwners.push(...leagueOwners);
+      console.log(`League ${league.leagueId}: Found ${leagueOwners.length} team owners`);
+    }
+
+    console.log(`Total: ${allTeamOwners.length} team owners across ${affectedLeagues.length} leagues`);
 
     // Calculate points for each team owner
-    for (const owner of teamOwners) {
+    for (const owner of allTeamOwners) {
       const isHomeTeam = owner.teamId === homeTeamId;
       const teamScore = isHomeTeam ? homeScore : awayScore;
       const opponentScore = isHomeTeam ? awayScore : homeScore;
