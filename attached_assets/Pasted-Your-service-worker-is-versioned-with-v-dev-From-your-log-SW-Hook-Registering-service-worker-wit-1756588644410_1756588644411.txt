@@ -1,0 +1,140 @@
+Your service worker is versioned with ?v=dev
+From your log:
+[SW Hook] Registering service worker with build hash: /sw.js?v=dev
+That means the SW doesn’t change its URL between builds → old cached chunks get mixed with your new JS, which often explodes at runtime with TDZ-ish errors (like “Cannot access 'c' before initialization”) once React starts rendering a recently-changed component graph.
+You already wired a BUILD_INFO helper, but Replit isn’t injecting VITE_BUILD_HASH/VITE_BUILD_TIME, so it falls back to 'dev'.
+
+(Secondary) Alias/paths are fine (you already have resolve.alias in vite.config.ts). The error isn’t a missing module — it appears only after connecting and rendering routes. That pattern + a non-bumped SW version screams stale cache rather than a module cycle.
+
+Below are the fixes I’d do — in order.
+
+Fix 1 — Give the SW a real, changing version per build
+Option A (simplest): inject at build time via define in vite.config.ts
+
+Add this near the top of your vite.config.ts:
+
+// vite.config.ts
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import path from "path";
+
+// NEW: generate a per-build hash/time
+const BUILD_HASH =
+  process.env.REPL_ID ||
+  process.env.VERCEL_GIT_COMMIT_SHA ||
+  String(Math.floor(Date.now() / 1000)); // unix seconds is fine
+
+const BUILD_TIME = new Date().toISOString();
+
+export default defineConfig({
+  plugins: [react() /* ...your other plugins */],
+  define: {
+    "import.meta.env.VITE_BUILD_HASH": JSON.stringify(BUILD_HASH),
+    "import.meta.env.VITE_BUILD_TIME": JSON.stringify(BUILD_TIME),
+  },
+  resolve: {
+    alias: {
+      "@": path.resolve(import.meta.dirname, "client", "src"),
+      "@shared": path.resolve(import.meta.dirname, "shared"),
+      "@assets": path.resolve(import.meta.dirname, "attached_assets"),
+    },
+  },
+  root: path.resolve(import.meta.dirname, "client"),
+  build: {
+    outDir: path.resolve(import.meta.dirname, "dist/public"),
+    emptyOutDir: true,
+    // TEMP while debugging the exact origin:
+    sourcemap: true,
+  },
+});
+
+
+Your existing client/src/lib/buildInfo.ts already reads those vars. After this change, your console should show something like:
+
+📦 Version: 1693431234
+📅 Built: 2025-08-30T21:42:10.000Z
+
+
+…and the SW log should say:
+
+[SW Hook] Registering service worker with build hash: /sw.js?v=1693431234
+
+Option B (also fine): write a .env before build
+
+In package.json:
+
+{
+  "scripts": {
+    "prebuild": "node scripts/inject-build-env.js",
+    "build": "vite build"
+  }
+}
+
+
+Create scripts/inject-build-env.js:
+
+const fs = require("fs");
+const path = require("path");
+// IMPORTANT: your Vite root is "client", so place .env there
+const envPath = path.join(__dirname, "..", "client", ".env");
+const hash = process.env.REPL_ID || process.env.VERCEL_GIT_COMMIT_SHA || String(Math.floor(Date.now()/1000));
+const time = new Date().toISOString();
+fs.writeFileSync(envPath, `VITE_BUILD_HASH=${hash}\nVITE_BUILD_TIME=${time}\n`);
+console.log("Wrote build env to", envPath);
+
+
+Either option gets you a changing ?v=... every build.
+
+Fix 2 — One-time cleanup of old caches on users’ devices
+
+Until the SW starts using a real version, people may still have stale caches. Do a one-time cache nuke when the app loads (safe & tiny):
+
+Add to client/src/hooks/use-service-worker.ts right before registering:
+
+// one-time safety: clear old caches that used '?v=dev'
+try {
+  if ("caches" in window) {
+    caches.keys().then(keys => {
+      keys.forEach(k => {
+        if (k.includes("workbox") || k.includes("vite") || k.includes("mok")) {
+          caches.delete(k);
+        }
+      });
+    });
+  }
+} catch {}
+
+
+Also, after you deploy with Fix 1, manually:
+
+Open DevTools → Application → Service Workers → “Unregister”.
+
+Application → Clear Storage → “Clear site data”.
+
+Reload. You should now see a non-dev build hash and a fresh SW.
+
+(You can leave that cache cleanup snippet for a release or two, then remove it.)
+
+Fix 3 — (Temporary) turn on source maps to pinpoint “px”
+
+You already saw stack frames like px (index-...:402:152260). With build.sourcemap: true (in Fix 1), you’ll be able to click those frames and see the exact file/line in your code if anything else crops up.
+
+Optional hardening (nice-to-haves)
+
+Service worker update flow: In use-service-worker.ts, you already inspect updatefound and waiting. Consider prompting the user and calling registration.waiting?.postMessage({ type: 'SKIP_WAITING' }), then window.location.reload() to ensure everyone runs the same bundle.
+
+Log the SW version in UI (tiny badge somewhere) so you can sanity-check what users are running.
+
+Why this fixes your error
+
+When the SW caches old chunks but your HTML points at new chunks, React renders with a mixed module graph. That’s exactly the scenario that produces “Cannot access 'X' before initialization” (the “X” becomes c after minification). Once the SW version increments per build (and you clear the stale caches once), those runtime TDZ errors disappear.
+
+Quick checklist to ship
+
+Patch vite.config.ts with the define block above (or add the prebuild script).
+
+Rebuild + redeploy on Replit.
+
+Reload with DevTools open; confirm logs show a non-dev build hash and SW: /sw.js?v=<hash>.
+
+If you still see the error, click the sourcemapped stack frame and tell me the source file/line it resolves to — but in almost all cases I’ve seen in PWA/Vite apps, the versioned SW fix stabilizes it.

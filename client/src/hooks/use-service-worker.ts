@@ -65,6 +65,21 @@ export function useServiceWorker(enableInPWAOnly: boolean = true) {
       // Wait a moment for cleanup
       await new Promise(resolve => setTimeout(resolve, 100));
 
+      // One-time safety: clear old caches that used '?v=dev'
+      try {
+        if ("caches" in window) {
+          const keys = await caches.keys();
+          for (const key of keys) {
+            if (key.includes("workbox") || key.includes("vite") || key.includes("mok")) {
+              await caches.delete(key);
+              console.log('[SW Hook] Cleared stale cache:', key);
+            }
+          }
+        }
+      } catch (error) {
+        console.log('[SW Hook] Cache cleanup failed (non-critical):', error);
+      }
+
       // Use build hash for service worker versioning
       const { BUILD_INFO } = await import('../lib/buildInfo');
       const swUrl = `/sw.js?v=${BUILD_INFO.hash}`;
