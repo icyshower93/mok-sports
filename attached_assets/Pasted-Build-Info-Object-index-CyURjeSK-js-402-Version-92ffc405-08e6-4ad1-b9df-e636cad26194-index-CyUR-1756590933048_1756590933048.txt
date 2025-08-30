@@ -1,0 +1,101 @@
+Build Info: Object
+index-CyURjeSK.js:402 📦 Version: 92ffc405-08e6-4ad1-b9df-e636cad26194
+index-CyURjeSK.js:402 📅 Built: 2025-08-30T21:46:12.776Z
+index-CyURjeSK.js:402 🔧 Environment: production
+index-CyURjeSK.js:402 [App] WebSocket status: waiting_auth (Disconnected)
+index-CyURjeSK.js:402 [App] ⏳ Waiting for authentication to complete
+index-CyURjeSK.js:358 [Auth] Token check - Has token: false Has user: false Loading: true
+index-CyURjeSK.js:358 [SW Hook] Registering service worker with build hash: /sw.js?v=92ffc405-08e6-4ad1-b9df-e636cad26194
+index-CyURjeSK.js:358 [SW Hook] Service worker registered successfully
+index-CyURjeSK.js:358 [ProductionRealtime] 🧹 Cleaning up WebSocket connection
+index-CyURjeSK.js:358 [AutoPushRefresh] Legacy hook delegating to SubscriptionManager
+index-CyURjeSK.js:358 [ProductionRealtime] 🔐 Auth ready, initiating WebSocket connection
+index-CyURjeSK.js:358 [ProductionRealtime] 🚀 Auth confirmed, establishing WebSocket connection...
+index-CyURjeSK.js:358 [ProductionRealtime] User: Mok Sports ID: d8873675-274c-46f9-ab48-00955c81d875
+index-CyURjeSK.js:358 [Auth] Token check - Has token: true Has user: true Loading: false
+index-CyURjeSK.js:402 [App] WebSocket status: connecting (Disconnected)
+index-CyURjeSK.js:402 [App] 🔄 Attempting to connect...
+(index):1 Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner.
+index-CyURjeSK.js:358 [ErrorBoundary] Error caught: ReferenceError Cannot access 'c' before initialization
+getDerivedStateFromError @ index-CyURjeSK.js:358Understand this error
+index-CyURjeSK.js:358 [ErrorBoundary] Stack trace: ReferenceError: Cannot access 'c' before initialization
+    at gx (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CyURjeSK.js:402:152411)
+    at Om (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CyURjeSK.js:38:16998)
+    at Oy (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CyURjeSK.js:40:43963)
+    at Ay (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CyURjeSK.js:40:39727)
+    at _S (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CyURjeSK.js:40:39655)
+    at xc (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CyURjeSK.js:40:39508)
+    at ug (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CyURjeSK.js:40:36623)
+    at cs (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CyURjeSK.js:38:3274)
+    at https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CyURjeSK.js:40:34207
+getDerivedStateFromError @ index-CyURjeSK.js:358Understand this error
+index-CyURjeSK.js:358 [ErrorBoundary] Error caught: ReferenceError Cannot access 'c' before initialization
+getDerivedStateFromError @ index-CyURjeSK.js:358Understand this error
+index-CyURjeSK.js:358 [ErrorBoundary] Stack trace: ReferenceError: Cannot access 'c' before initialization
+    at gx (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CyURjeSK.js:402:152411)
+    at Om (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CyURjeSK.js:38:16998)
+    at Oy (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CyURjeSK.js:40:43963)
+    at Ay (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CyURjeSK.js:40:39727)
+    at _S (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CyURjeSK.js:40:39655)
+    at xc (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CyURjeSK.js:40:39508)
+    at ff (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CyURjeSK.js:40:35875)
+    at ug (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CyURjeSK.js:40:36678)
+    at cs (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CyURjeSK.js:38:3274)
+    at https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CyURjeSK.js:40:34207
+getDerivedStateFromError @ index-CyURjeSK.js:358Understand this error
+index-CyURjeSK.js:40 ReferenceError: Cannot access 'c' before initialization
+    at gx (index-CyURjeSK.js:402:152411)
+    at Om (index-CyURjeSK.js:38:16998)
+    at Oy (index-CyURjeSK.js:40:43963)
+    at Ay (index-CyURjeSK.js:40:39727)
+    at _S (index-CyURjeSK.js:40:39655)
+    at xc (index-CyURjeSK.js:40:39508)
+    at ff (index-CyURjeSK.js:40:35875)
+    at ug (index-CyURjeSK.js:40:36678)
+    at cs (index-CyURjeSK.js:38:3274)
+    at index-CyURjeSK.js:40:34207
+Jd @ index-CyURjeSK.js:40Understand this error
+index-CyURjeSK.js:358 [ErrorBoundary] DETAILED ERROR - Name: ReferenceError
+componentDidCatch @ index-CyURjeSK.js:358Understand this error
+index-CyURjeSK.js:358 [ErrorBoundary] DETAILED ERROR - Message: Cannot access 'c' before initialization
+componentDidCatch @ index-CyURjeSK.js:358Understand this error
+index-CyURjeSK.js:358 [ErrorBoundary] DETAILED ERROR - Stack: ReferenceError: Cannot access 'c' before initialization
+    at gx (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CyURjeSK.js:402:152411)
+    at Om (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CyURjeSK.js:38:16998)
+    at Oy (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CyURjeSK.js:40:43963)
+    at Ay (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CyURjeSK.js:40:39727)
+    at _S (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CyURjeSK.js:40:39655)
+    at xc (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CyURjeSK.js:40:39508)
+    at ff (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CyURjeSK.js:40:35875)
+    at ug (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CyURjeSK.js:40:36678)
+    at cs (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CyURjeSK.js:38:3274)
+    at https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CyURjeSK.js:40:34207
+componentDidCatch @ index-CyURjeSK.js:358Understand this error
+index-CyURjeSK.js:358 [ErrorBoundary] Component stack: 
+    at gx (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CyURjeSK.js:402:152352)
+    at Nt (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CyURjeSK.js:48:3201)
+    at yk (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CyURjeSK.js:48:4017)
+    at _4 (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CyURjeSK.js:402:291458)
+    at AT (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CyURjeSK.js:358:57726)
+    at c (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CyURjeSK.js:48:46009)
+    at Ew (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CyURjeSK.js:358:50462)
+    at RT (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CyURjeSK.js:358:56966)
+    at $k (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CyURjeSK.js:48:40235)
+    at $T (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CyURjeSK.js:358:76210)
+    at R4
+componentDidCatch @ index-CyURjeSK.js:358Understand this error
+index-CyURjeSK.js:358 [ProductionRealtime] 🧹 Cleaning up WebSocket connection
+index-CyURjeSK.js:358 WebSocket connection to 'wss://mok-sports-draft-mokfantasysport.replit.app/draft-ws' failed: WebSocket is closed before the connection is established.
+(anonymous) @ index-CyURjeSK.js:358Understand this warning
+index-CyURjeSK.js:358 [ProductionRealtime] WebSocket error: Event
+w.onerror @ index-CyURjeSK.js:358Understand this error
+index-CyURjeSK.js:358 [ProductionRealtime] 🔌 WebSocket closed: 1006 (No close frame (network issue)) - 
+index-CyURjeSK.js:358 [ProductionRealtime] 🔄 Reconnecting in 1000ms (attempt 1/8)
+index-CyURjeSK.js:358 [ProductionRealtime] 🚀 Auth confirmed, establishing WebSocket connection...
+index-CyURjeSK.js:358 [ProductionRealtime] User: Mok Sports ID: d8873675-274c-46f9-ab48-00955c81d875
+index-CyURjeSK.js:358 [ProductionRealtime] ✅ WebSocket connected successfully
+index-CyURjeSK.js:358 [ProductionRealtime] 📡 Subscribed to admin broadcasts with keepalive active
+index-CyURjeSK.js:358 [ProductionRealtime] Received broadcast: admin_ready
+index-CyURjeSK.js:358 [ProductionRealtime] Server confirmation received: admin_ready
+index-CyURjeSK.js:358 [ProductionRealtime] Received broadcast: connected
+index-CyURjeSK.js:358 [ProductionRealtime] Server confirmation received: connected
