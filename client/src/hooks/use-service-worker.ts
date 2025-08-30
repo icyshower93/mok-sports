@@ -56,16 +56,7 @@ export function useServiceWorker(enableInPWAOnly: boolean = true) {
     }
 
     try {
-      // DEV-only, first render only - no runtime unregistration
-      if (import.meta.env.DEV) {
-        console.log('[SW Hook] DEV: Service worker registration in development mode');
-        // Only clear on explicit request, not during normal runtime
-      }
-      
-      // Wait a moment for cleanup
-      await new Promise(resolve => setTimeout(resolve, 100));
-
-      // One-time safety: clear old caches that used '?v=dev'
+      // One-time safety: clear known old caches (remove after a few releases)
       try {
         if ("caches" in window) {
           const keys = await caches.keys();
@@ -76,13 +67,11 @@ export function useServiceWorker(enableInPWAOnly: boolean = true) {
             }
           }
         }
-      } catch (error) {
-        console.log('[SW Hook] Cache cleanup failed (non-critical):', error);
-      }
+      } catch {}
 
       // Use build hash for service worker versioning
-      const { BUILD_INFO } = await import('../lib/buildInfo');
-      const swUrl = `/sw.js?v=${BUILD_INFO.hash}`;
+      const version = import.meta.env.VITE_BUILD_HASH ?? "dev";
+      const swUrl = `/sw.js?v=${version}`;
       console.log('[SW Hook] Registering service worker with build hash:', swUrl);
 
       const registration = await navigator.serviceWorker.register(swUrl, {
@@ -90,16 +79,24 @@ export function useServiceWorker(enableInPWAOnly: boolean = true) {
         updateViaCache: 'none' // Force no caching of service worker
       });
 
-      // Handle updates
+      // Update flow: prompt + reload when a new SW is waiting
       registration.addEventListener('updatefound', () => {
-        const newWorker = registration.installing;
-        if (newWorker) {
-          newWorker.addEventListener('statechange', () => {
-            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-              updateServiceWorkerStatus(registration);
-            }
-          });
-        }
+        const sw = registration.installing;
+        if (!sw) return;
+        sw.addEventListener('statechange', () => {
+          if (sw.state === 'installed' && navigator.serviceWorker.controller) {
+            // a new version is available; trigger update
+            registration.waiting?.postMessage({ type: 'SKIP_WAITING' });
+            setTimeout(() => window.location.reload(), 100);
+            updateServiceWorkerStatus(registration);
+          }
+        });
+      });
+
+      // Handle controller changes
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        // controller changed → page will be controlled by the new SW
+        console.log('[SW Hook] Service worker controller changed');
       });
 
       // Handle active service worker

@@ -1,0 +1,176 @@
+I’ll give you a precise, production-ready setup you can compare against what they did. If any of these differ in your project, align to this and you’ll be golden.
+
+1) Prebuild script (ESM-safe)
+
+Create scripts/inject-build-env.mjs (ESM since your repo likely has "type": "module"):
+
+// scripts/inject-build-env.mjs
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const envPath = path.join(__dirname, "..", "client", ".env");
+
+// Prefer a stable unique ID from host CI if present; fallback to timestamp
+const hash =
+  process.env.REPL_ID ||
+  process.env.VERCEL_GIT_COMMIT_SHA ||
+  String(Math.floor(Date.now() / 1000));
+
+const time = new Date().toISOString();
+
+const contents = `VITE_BUILD_HASH=${hash}
+VITE_BUILD_TIME=${time}
+`;
+
+fs.writeFileSync(envPath, contents, "utf8");
+console.log(`[inject-build-env] wrote ${envPath}`);
+
+
+Then in package.json:
+
+{
+  "scripts": {
+    "prebuild": "node scripts/inject-build-env.mjs",
+    "build": "vite build",
+    "preview": "vite preview"
+  }
+}
+
+
+This guarantees every build gets a fresh VITE_BUILD_HASH + VITE_BUILD_TIME.
+
+2) Use the version in SW registration
+
+In client/src/hooks/use-service-worker.ts (or wherever you register your SW), make sure the URL uses the hash:
+
+const version = import.meta.env.VITE_BUILD_HASH ?? "dev";
+
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", async () => {
+    try {
+      // One-time safety: clear known old caches (remove after a few releases)
+      try {
+        if ("caches" in window) {
+          caches.keys().then(keys => {
+            keys.forEach(k => {
+              if (k.includes("workbox") || k.includes("vite") || k.includes("mok")) {
+                caches.delete(k);
+              }
+            });
+          });
+        }
+      } catch {}
+
+      const registration = await navigator.serviceWorker.register(`/sw.js?v=${version}`, {
+        scope: "/",
+        // type: "module" // only if your sw is ESM; otherwise omit
+      });
+
+      // Update flow: prompt + reload when a new SW is waiting
+      registration.addEventListener("updatefound", () => {
+        const sw = registration.installing;
+        if (!sw) return;
+        sw.addEventListener("statechange", () => {
+          if (sw.state === "installed" && navigator.serviceWorker.controller) {
+            // a new version is available; you can replace this with a toast
+            registration.waiting?.postMessage({ type: "SKIP_WAITING" });
+            setTimeout(() => window.location.reload(), 100);
+          }
+        });
+      });
+
+      navigator.serviceWorker.addEventListener("controllerchange", () => {
+        // controller changed → page will be controlled by the new SW
+      });
+    } catch (err) {
+      console.warn("[SW] registration failed:", err);
+    }
+  });
+}
+
+3) (Optional) Add define in vite.config.ts too
+
+Not strictly required if you’re happy with .env, but it’s a nice belt-and-suspenders to ensure values always exist when building in different environments:
+
+// vite.config.ts
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import path from "node:path";
+
+const BUILD_HASH =
+  process.env.VITE_BUILD_HASH ||
+  process.env.REPL_ID ||
+  process.env.VERCEL_GIT_COMMIT_SHA ||
+  String(Math.floor(Date.now() / 1000));
+
+const BUILD_TIME = process.env.VITE_BUILD_TIME || new Date().toISOString();
+
+export default defineConfig({
+  plugins: [react()],
+  define: {
+    "import.meta.env.VITE_BUILD_HASH": JSON.stringify(BUILD_HASH),
+    "import.meta.env.VITE_BUILD_TIME": JSON.stringify(BUILD_TIME)
+  },
+  resolve: {
+    alias: {
+      "@": path.resolve(process.cwd(), "client", "src"),
+      "@shared": path.resolve(process.cwd(), "shared"),
+      "@assets": path.resolve(process.cwd(), "attached_assets")
+    }
+  },
+  root: "client",
+  build: {
+    outDir: "../dist/public",
+    emptyOutDir: true,
+    sourcemap: true   // keep this on until you’re confident everything’s stable
+  }
+});
+
+4) Verify the fix (exact steps)
+
+Hard-refresh the site without cache
+DevTools → Network → check “Disable cache” → Ctrl/Cmd+Shift+R.
+
+Application → Service Workers
+
+Confirm Registration URL shows /sw.js?v=<your-real-hash> (not dev).
+
+If any old SWs exist, click Unregister.
+
+Application → Clear Storage
+
+Check all boxes → Clear site data. Reload.
+
+Console sanity
+
+📦 Version: should show your real hash (same value injected).
+
+[SW Hook] Registering service worker with build hash: /sw.js?v=<hash>
+
+If you still see ?v=dev anywhere, the env injection isn’t reaching the browser bundle—recheck Steps 1–3.
+
+5) Server cache headers (important)
+
+Make sure your server (Replit / Node / whatever you deploy) serves:
+
+index.html and sw.js with:
+Cache-Control: no-cache, no-store, must-revalidate
+
+static assets (/assets/*.js, images, fonts) with:
+Cache-Control: public, max-age=31536000, immutable
+
+This ensures the HTML + SW always refetch, while hashed assets stay cached forever.
+
+6) If you still see “Cannot access 'c' before initialization”
+
+With the SW/versioning sorted, the only common remaining cause is a circular import in app code that only reveals under certain bundling orders. Quick triage:
+
+In your IDE/search, look for barrel files (index.ts re-exporting from sibling modules) that also import back into the barrel. Break those cycles by importing concrete files instead of the barrel.
+
+Prefer type-only imports for types (import type { X } from '...') when possible; that can break runtime edges.
+
+With build.sourcemap: true, click the stack frame (e.g., px in index-....js) and see which source file/line it maps to. That will generally point to the module that’s first accessed too early.
