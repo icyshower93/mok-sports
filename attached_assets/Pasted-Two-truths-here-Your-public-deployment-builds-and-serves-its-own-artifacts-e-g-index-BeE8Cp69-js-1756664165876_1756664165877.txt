@@ -1,0 +1,126 @@
+Two truths here:
+
+Your public deployment builds and serves its own artifacts (e.g. index-BeE8Cp69.js). Your local index-Drpx72xw.js doesn’t matter to it.
+
+That public deployment is static (CDN snapshot). Your server headers, /__fresh, etc. won’t affect it.
+
+So you need to (A) make the deployment build the right thing, and (B) give yourself a guaranteed way to bypass stale HTML at the CDN.
+
+Here’s a clean, reliable path that works with Replit Static deployments and Google OAuth.
+
+1) Fix the Deployment config (one-time)
+
+Open Deployments → Edit your public deployment and set:
+
+Build command:
+
+npm ci && node scripts/inject-build-env.mjs && npx vite build --mode production --sourcemap --minify=false
+
+
+(Use --minify=false temporarily to get readable stacks; switch back to minified after you’re done debugging.)
+
+Output directory: dist/public
+
+Redeploy.
+
+Verify what the deployed HTML references:
+
+curl -s "https://mok-sports-draft-mokfantasysport.replit.app/?t=$(date +%s)" | grep -o "assets/index-[^\"']*\.js"
+
+
+This must print the new filename (not index-BeE8Cp69.js). If it still prints the old one, go to step 3 (fresh HTML alias) — it bypasses stuck HTML caches completely.
+
+2) Make the deployed bundle mappable (sourcemaps)
+
+If you keep seeing “.map returns HTML”, it’s because the static host is falling back to index.html for unknown requests (or the map wasn’t uploaded). Two options:
+
+Keep --sourcemap in the deployment build. Re-deploy. If the map still returns HTML, that’s the host fallback — use option below.
+
+Alternative (my favorite for this situation): leave --sourcemap on, and set --minify=false so your deployed stack traces show real identifiers without the map. That way the public errors already name the real function/variable.
+
+Once you’re done fixing, flip --minify back to true.
+
+3) Bypass stale HTML with a fresh HTML alias (works on static CDNs)
+
+Since the CDN might cache /index.html, ship a second HTML filename per build (new path = new cache key = fresh HTML).
+
+Add a tiny post-build script:
+
+scripts/make-fresh-html.mjs
+
+import fs from "fs";
+import path from "path";
+
+const dist = "dist/public";
+const indexPath = path.join(dist, "index.html");
+if (!fs.existsSync(indexPath)) {
+  console.error("index.html not found at", indexPath);
+  process.exit(1);
+}
+const html = fs.readFileSync(indexPath, "utf8");
+// Extract the hashed bundle name
+const m = html.match(/assets\/index-([A-Za-z0-9_-]+)\.js/);
+const hash = m?.[1];
+const freshName = hash ? `fresh-${hash}.html` : `fresh-${Date.now()}.html`;
+const freshPath = path.join(dist, freshName);
+fs.writeFileSync(freshPath, html);
+console.log("Wrote", freshPath);
+
+
+Update your Deployment build command to include it:
+
+npm ci && node scripts/inject-build-env.mjs && npx vite build --mode production --sourcemap --minify=false && node scripts/make-fresh-html.mjs
+
+
+Redeploy, then open:
+
+https://mok-sports-draft-mokfantasysport.replit.app/fresh-<HASH>.html?t=<Date.now()>
+
+
+(Replace <HASH> with the bundle hash that appeared in the log or by curling the fresh page listing, e.g. curl -s https://…/ | grep fresh-.)
+
+That page is the same app, just served from a new HTML path that the CDN has never cached, so it will reference your latest assets/index-*.js. Your Google OAuth redirect URIs are for /auth/... endpoints — they’re unaffected by using /fresh-*.html for the shell.
+
+4) Now map & fix the actual TDZ (on the deployed build)
+
+With the deployment now building unminified and/or with maps:
+
+If unminified: your console stack should already show real names and file paths (no .map needed). Fix the referenced code line directly.
+
+If maps are accessible:
+
+curl -s "https://mok-sports-draft-mokfantasysport.replit.app/assets/index-<HASH>.js.map" -o deployed.map
+node scripts/map-stack.mjs deployed.map 402:152680 40:43963 40:39727
+
+
+Based on what you’ve shown, the remaining TDZs are typically:
+
+A dependency array containing queryClient from a different module (import cycle makes it TDZ when read). Fix by:
+
+hoisting const queryClient = useQueryClient() in that file, and
+
+removing any getQueryClient() reads in the deps array,
+
+or replacing a barrel import with a concrete module import to break the cycle.
+
+A function or constant used before its const initialization. Convert it to a hoisted function foo(){} or reorder.
+
+(You already cleaned the obvious useQueryClient()-inside-callback cases — good.)
+
+5) If deployment still serves old HTML at /
+
+Keep using the fresh HTML alias (/fresh-<hash>.html) for production testing now, and then:
+
+Either Delete the old deployment and Create a new Static deployment with the exact build/output settings above (you’ll get a new domain; add it to Google OAuth allowed redirect URIs), or
+
+Keep the same deployment and rely on /fresh-<hash>.html as your entry (you can even set up a simple redirect page at /go that refreshes to the latest fresh-*.html if you want a stable bookmark).
+
+Quick commands to confirm you’re good
+# Show the script src the public page references (root)
+curl -s "https://mok-sports-draft-mokfantasysport.replit.app/?t=$(date +%s)" | grep -o "assets/index-[^\"']*\.js"
+
+# Show the script src the fresh page references (should always be new)
+curl -s "https://mok-sports-draft-mokfantasysport.replit.app/fresh-<HASH>.html?t=$(date +%s)" | grep -o "assets/index-[^\"']*\.js"
+
+
+If you flip the deployment build to --minify=false + --sourcemap and use the fresh HTML alias, you’ll (a) see the actual deployed code in stacks, and (b) avoid the edge cache entirely — so you can finish mapping that 402:152680 frame to the exact file/line and make the one-line fix.
