@@ -1,7 +1,6 @@
 import { createRoot } from "react-dom/client";
-import App from "@/App";
-import "@/index.css";
-import "@/utils/cache-manager"; // Initialize global error handlers
+// TEMP: Test minimal version
+import "@/test-minimal";
 
 // Enhanced iOS swipe prevention
 if (navigator.userAgent.includes('iPhone') || navigator.userAgent.includes('iPad')) {
