@@ -17,14 +17,19 @@ import { trackModuleError } from "@/debug-tracker";
 import type { DraftState, NflTeam, DraftPick } from '@shared/types';
 
 export default function DraftPage() {
+  // CRITICAL: All early returns must happen BEFORE any hooks to prevent Rules of Hooks violations
+  const params = useParams();
+  const urlDraftId = (params as any).draftId;
+  
+  // Early return check BEFORE hooks to prevent React scheduler TDZ errors
+  if (!urlDraftId) return null;
+  
   const [location, navigate] = useLocation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { user, isLoading: authLoading, isAuthenticated } = useAuth();
   
   // Extract draft ID from URL params using wouter - SINGLE SOURCE OF TRUTH
-  const params = useParams();
-  const urlDraftId = (params as any).draftId;
   const [actualDraftId, setActualDraftId] = useState<string | null>(urlDraftId);
   const [selectedTeam, setSelectedTeam] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>('');
@@ -586,8 +591,6 @@ export default function DraftPage() {
       });
     }
   };
-
-  if (!draftId) return null;
 
   // Show loading while auth is still loading
   if (authLoading || isLoading) {
