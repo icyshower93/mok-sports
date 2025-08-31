@@ -1,0 +1,64 @@
+The crash is still coming from the same spot:
+
+client/src/features/auth/AuthProvider.tsx references queryClient (in effect deps) and calls getQueryClient().…, but never declares queryClient. That recreates the exact ReferenceError: queryClient is not defined you’re seeing.
+
+Here’s the precise patch to fix it (idiomatic React Query):
+
+diff --git a/client/src/features/auth/AuthProvider.tsx b/client/src/features/auth/AuthProvider.tsx
+@@
+-import { useQuery, useMutation } from "@tanstack/react-query";
++import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+@@
+-export function AuthProvider({ children }: { children: ReactNode }) {
++export function AuthProvider({ children }: { children: ReactNode }) {
++  const queryClient = useQueryClient();
+@@
+-      AuthToken.clear(); // Clear stored token
+-      getQueryClient().clear();
++      AuthToken.clear(); // Clear stored token
++      queryClient.clear();
+       window.location.href = "/";
+     },
+   });
+@@
+-    if (storedToken && !user && !isLoading) {
++    if (storedToken && !user && !isLoading) {
+       console.log('[Auth] Found stored token, refreshing authentication...');
+-      getQueryClient().invalidateQueries({ queryKey: ["/api/auth/me"] });
++      queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
+     }
+-  }, [user, isLoading, queryClient]);
++  }, [user, isLoading, queryClient]);
+@@
+-    if (authStatus === "success" && token) {
++    if (authStatus === "success" && token) {
+       AuthToken.set(token);
+       setIsAuthenticated(true);
+       sessionStorage.setItem('login-time', Date.now().toString());
+-      getQueryClient().invalidateQueries({ queryKey: ["/api/auth/me"] });
++      queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
+       window.history.replaceState({}, document.title, "/");
+     } else if (authStatus === "success") {
+       setIsAuthenticated(true);
+       sessionStorage.setItem('login-time', Date.now().toString());
+-      getQueryClient().invalidateQueries({ queryKey: ["/api/auth/me"] });
++      queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
+       window.history.replaceState({}, document.title, "/");
+     } else if (error) {
+       setIsAuthenticated(false);
+       AuthToken.clear();
+       window.history.replaceState({}, document.title, "/");
+     }
+-  }, [queryClient]);
++  }, [queryClient]);
+
+
+(You can also remove the now-unused getQueryClient import from this file, or keep it if you still use it elsewhere—either way is fine.)
+
+Why this fixes it
+
+React evaluates effect dependency arrays immediately. Referencing an undeclared identifier (queryClient) in […] throws before the effect even runs. Declaring const queryClient = useQueryClient() makes that identifier real and stable per render; the invalidations/clear then work as intended.
+
+I also checked for other offenders
+
+I scanned the repo for any other files that reference queryClient without declaring it—AuthProvider.tsx is the only one. use-production-realtime, use-pwa-realtime, and the realtime scores hook already use useQueryClient() correctly.
