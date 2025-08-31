@@ -437,7 +437,7 @@ export function LeagueWaiting() {
                       canStartDraft={!!league.draftId && !league.draftStarted}
                       draftId={league.draftId}
                       onDraftCreated={(draftId: string) => {
-                        useQueryClient().invalidateQueries({ queryKey: [`/api/leagues/${leagueId}`] });
+                        queryClient.invalidateQueries({ queryKey: [`/api/leagues/${leagueId}`] });
                         toast({
                           title: "Draft created!",
                           description: "Your snake draft is ready to begin.",
@@ -478,7 +478,7 @@ export function LeagueWaiting() {
                 connectionStatus={connectionStatus}
                 onReset={() => {
                   // Force immediate refetch after reset to get new draft ID
-                  useQueryClient().invalidateQueries({ queryKey: [`/api/leagues/${leagueId}`] });
+                  queryClient.invalidateQueries({ queryKey: [`/api/leagues/${leagueId}`] });
                   
                   // Force refetch with delay to ensure fresh data
                   setTimeout(() => {

@@ -1,0 +1,101 @@
+1) AuthProvider.tsx
+
+Declare and use the client; stop calling the singleton here.
+
+- import { useQuery, useMutation } from "@tanstack/react-query";
++ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+- import { getQueryClient } from "@/features/query/queryClient";
++ // (no getQueryClient import needed in this component)
+
+ export function AuthProvider({ children }: { children: ReactNode }) {
++  const queryClient = useQueryClient();
+
+   const logoutMutation = useMutation({
+     mutationFn: () => apiFetch("POST", "/api/auth/logout"),
+     onSuccess: () => {
+       setIsAuthenticated(false);
+       AuthToken.clear();
+-      getQueryClient().clear();
++      queryClient.clear();
+       window.location.href = "/";
+     },
+   });
+
+   useEffect(() => {
+     const storedToken = AuthToken.get();
+     if (storedToken && !user && !isLoading) {
+-      getQueryClient().invalidateQueries({ queryKey: ["/api/auth/me"] });
++      queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
+     }
+   }, [user, isLoading, queryClient]);
+
+   useEffect(() => {
+     const urlParams = new URLSearchParams(window.location.search);
+     const authStatus = urlParams.get("auth");
+     const token = urlParams.get("token");
+
+     if (authStatus === "success" && token) {
+       AuthToken.set(token);
+       setIsAuthenticated(true);
+       sessionStorage.setItem("login-time", Date.now().toString());
+-      getQueryClient().invalidateQueries({ queryKey: ["/api/auth/me"] });
++      queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
+       window.history.replaceState({}, document.title, "/");
+     } else if (authStatus === "success") {
+       setIsAuthenticated(true);
+       sessionStorage.setItem("login-time", Date.now().toString());
+-      getQueryClient().invalidateQueries({ queryKey: ["/api/auth/me"] });
++      queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
+       window.history.replaceState({}, document.title, "/");
+     }
+   }, [queryClient]);
+
+2) pages/admin.tsx
+
+Hoist the client; don’t call the hook inside callbacks.
+
+- import { useQuery, useMutation } from "@tanstack/react-query";
++ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+
++ const queryClient = useQueryClient();
+
+ // in onSuccess handlers:
+- useQueryClient().invalidateQueries({ queryKey: ['/api/admin/state'] });
++ queryClient.invalidateQueries({ queryKey: ['/api/admin/state'] });
+
+3) pages/league-waiting.tsx
+
+Same change in all spots.
+
+- import { useQuery, useMutation } from "@tanstack/react-query";
++ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+
++ const queryClient = useQueryClient();
+
+- useQueryClient().invalidateQueries({ queryKey: ['/api/leagues/user'] });
++ queryClient.invalidateQueries({ queryKey: ['/api/leagues/user'] });
+
+- useQueryClient().removeQueries({ queryKey: [`/api/leagues/${leagueId}`] });
++ queryClient.removeQueries({ queryKey: [`/api/leagues/${leagueId}`] });
+
+- useQueryClient().refetchQueries({ queryKey: [`/api/leagues/${leagueId}`] });
++ queryClient.refetchQueries({ queryKey: [`/api/leagues/${leagueId}`] });
+
+Quick repo-wide check (do this before rebuilding)
+
+Run these two searches locally and fix anything they find:
+
+# 1) Any inline hook calls (bad):
+rg -n "useQueryClient\\(\\)\\." client/src
+
+# 2) Any effect deps referencing queryClient without a declaration in the file:
+rg -n "\\[(?:[^\\]]*\\bqueryClient\\b[^\\]]*)\\]" client/src
+
+
+For each file that matches:
+
+Add import { useQueryClient } from "@tanstack/react-query"
+
+Add const queryClient = useQueryClient(); near the top of the component
+
+Replace useQueryClient().… with queryClient.…
