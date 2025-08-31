@@ -1,0 +1,166 @@
+A) Nuke the stale bundle(s) and serve the new one
+
+Do this exactly in your Replit shell:
+
+# 1) Remove the WHOLE build dir (not just assets)
+rm -rf dist/public
+
+# 2) Rebuild with sourcemaps and readable code
+node scripts/inject-build-env.mjs && npx vite build --mode production --sourcemap --minify=false
+
+# 3) Restart your server process (so it serves the fresh dist/public)
+# If you're running 'npm run dev' already, stop and re-run:
+npm run dev
+
+
+Now verify (from your shell, not the browser):
+
+# Which index file is referenced by the actual HTML the server is serving?
+curl -s "http://localhost:5000/?nosw=1" | rg -o "assets/index-[^\"']+\\.js" -n
+
+# (optional) Peek the map exists and is JSON
+INDEX="assets/index-XXXXXXXX.js"   # <-- paste the name from the line above
+curl -sI "http://localhost:5000/$INDEX"
+curl -s "http://localhost:5000/$INDEX.map" | head -c 100
+
+
+Then in the browser:
+
+DevTools → Application → Service Workers → Unregister (if any).
+
+DevTools → Network → check Disable cache.
+
+Hard-reload with ?nosw=1&cachebust=<Date.now()>.
+
+In the console, confirm errors point to the same index-XXXX.js you saw via curl.
+
+If you still see a different filename in the browser (e.g., index-C3WkTHL3.js), it’s a stale HTML page. Do this:
+
+# what HTML is Replit actually serving publicly?
+curl -s "https://mok-sports-draft-mokfantasysport.replit.app/?nosw=1" | rg -o "assets/index-[^\"']+\\.js" -n
+
+
+If that shows an old index-*.js, your server wasn’t restarted or the old dist/public/index.html was still on disk (the nuking step above fixes that). Repeat A) until the HTML references your newest index-*.js.
+
+B) Map the real stack frame to the real TS/TSX line
+
+Use the exact filename you see in the console now (example below uses index-CMh4aPGq.js—replace with yours):
+
+node scripts/map-stack.mjs \
+  dist/public/assets/index-CMh4aPGq.js.map \
+  402:152675 40:43963 38:16998
+
+
+Tip: pass the top 3–6 frames from the error. Ignore anything that maps into node_modules/… — that’s just React noticing your throw. You want frames whose source is under client/src/....
+
+C) Fix the real TDZ offenders I can already see in your zip
+
+Your current repo (the zip you sent) still contains these patterns that do cause TDZ/ReferenceErrors:
+
+1) AuthProvider.tsx
+
+You reference queryClient in a dependency array but there’s no queryClient declared in that file.
+
+You’re also mixing a global getQueryClient() with an undeclared queryClient.
+
+Fix (choose one approach and be consistent):
+
+Option A (recommended here): use the singleton, and drop it from deps
+
+- import { useQuery, useMutation } from "@tanstack/react-query";
++ import { useQuery, useMutation } from "@tanstack/react-query";
+  import { getQueryClient } from "@/features/query/queryClient";
+
+  // ...
+  useEffect(() => {
+    const storedToken = AuthToken.get();
+    if (storedToken && !user && !isLoading) {
+      getQueryClient().invalidateQueries({ queryKey: ["/api/auth/me"] });
+    }
+- }, [user, isLoading, queryClient]);
++ }, [user, isLoading]);  // ← remove undeclared queryClient from deps
+
+
+…and every other place in that file where you had getQueryClient() is fine. Just don’t put an undeclared queryClient into deps.
+
+Option B: switch to the hook properly:
+
+import { useQueryClient } from "@tanstack/react-query";
+// ...
+const queryClient = useQueryClient();
+// ...
+useEffect(() => {
+  if (storedToken && !user && !isLoading) {
+    queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
+  }
+}, [user, isLoading, queryClient]);
+
+
+Either option is fine. Just don’t reference a variable that doesn’t exist yet.
+
+2) Inline useQueryClient() calls (hook rule + TDZ risk)
+
+These files call the hook inside callbacks, e.g. onSuccess: () => { useQueryClient().invalidateQueries(...) }:
+
+client/src/pages/admin.tsx
+
+client/src/pages/league-waiting.tsx
+
+client/src/components/draft-testing-panel.tsx
+
+That’s illegal (hooks must be called unconditionally at the top level) and it’s a very common way to trip the “Cannot access 'u' before initialization” in production builds.
+
+Fix for each component file:
+
+- import { useMutation } from "@tanstack/react-query";
++ import { useMutation, useQueryClient } from "@tanstack/react-query";
+
+  export default function SomeComponent(...) {
++   const queryClient = useQueryClient();      // ← hoist once
+
+    const someMutation = useMutation({
+      mutationFn: async () => { /* ... */ },
+      onSuccess: () => {
+-       useQueryClient().invalidateQueries({ queryKey: ['...'] });
++       queryClient.invalidateQueries({ queryKey: ['...'] });
+      }
+    });
+
+    // ...and replace every other
+-   useQueryClient().invalidateQueries(...)
+-   useQueryClient().removeQueries(...)
+-   useQueryClient().refetchQueries(...)
++   queryClient.invalidateQueries(...)
++   queryClient.removeQueries(...)
++   queryClient.refetchQueries(...)
+  }
+
+
+One-liner to help you refactor all inline calls:
+
+# list files that contain inline hook use
+rg -l "useQueryClient\\(\\)\\." client/src
+
+# (edit each: add the import + const queryClient = useQueryClient() at top)
+# then inside those files:
+sed -i 's/useQueryClient()\\./queryClient./g' <that-file>
+
+D) Don’t worry about “hooks after early return”
+
+Returning JSX early (e.g., a loading screen) after calling your hooks is fine. The rule is: hooks must run in the same order on every render. Your draft.tsx having:
+
+// hooks...
+if (isLoading) return <Spinner />;
+
+
+is not a rules-of-hooks violation. The bad pattern is calling a hook inside a conditional branch or inside a callback. So ignore advice saying to move all returns before hooks; that’s not the rule.
+
+E) Verify the fix
+
+Rebuild + restart server again (Section A).
+
+Load with ?nosw=1&cachebust=<Date.now()>, Disable cache checked.
+
+If you still see a TDZ, copy the top 3–6 frames for the current index-*.js and run the mapper against that exact .map.
+
+The mapped line will be in one of your client/src/... files; apply the matching micro-fix (hoist/reorder, break a circular import, or hoist the hook).
