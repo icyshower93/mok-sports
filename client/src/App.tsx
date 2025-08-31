@@ -62,7 +62,7 @@ function AppContent() {
   });
 
   // Check if user has any leagues with completed drafts
-  const hasLeaguesWithCompletedDrafts = userLeagues.some(league => 
+  const hasLeaguesWithCompletedDrafts = userLeagues.some((league: UserLeague) => 
     league.draftStatus === 'completed'
   );
   
@@ -217,16 +217,16 @@ function AppContent() {
 function App() {
   return (
     <ErrorBoundary>
-      <QueryProvider>
-        <ThemeProvider defaultTheme="dark" storageKey="mok-sports-theme">
-          <TooltipProvider>
+      <ThemeProvider defaultTheme="dark" storageKey="mok-sports-theme">
+        <TooltipProvider>
+          <QueryProvider>
             <AuthProvider>
               <Toaster />
               <AppContent />
             </AuthProvider>
-          </TooltipProvider>
-        </ThemeProvider>
-      </QueryProvider>
+          </QueryProvider>
+        </TooltipProvider>
+      </ThemeProvider>
     </ErrorBoundary>
   );
 }
