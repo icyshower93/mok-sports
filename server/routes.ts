@@ -2090,6 +2090,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   const httpServer = createServer(app);
   
+  // --- WS/Proxy keep-alive hardening for Replit Reserved VM ---
+  // Prevent the proxy from killing idle upgraded sockets.
+  // These values should exceed any L4/L7 idle cutoffs.
+  httpServer.keepAliveTimeout = 120_000; // 120s
+  httpServer.headersTimeout   = 125_000; // must be > keepAliveTimeout
+  // Disable per-request idle timeout (we rely on app-level timeouts instead)
+  httpServer.requestTimeout   = 0;
+  
   console.log('[Server] 🚀 HTTP server created, initializing WebSocket...');
   
   // Initialize WebSocket server for draft system after HTTP server creation

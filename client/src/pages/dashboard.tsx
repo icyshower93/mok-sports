@@ -82,7 +82,7 @@ export default function DashboardPage() {
 
   // Force refresh leagues data if user is authenticated but no leagues found
   useEffect(() => {
-    if (user && !leaguesLoading && (!userLeagues || userLeagues.length === 0)) {
+    if (user && !leaguesLoading && (!userLeagues || (Array.isArray(userLeagues) && userLeagues.length === 0))) {
       console.log('[Dashboard] User authenticated but no leagues found, refreshing...');
       refetchLeagues();
     }
@@ -327,7 +327,7 @@ export default function DashboardPage() {
                   </CardHeader>
                   <CardContent>
                     <div className="text-2xl font-bold">
-                      {leagueStats?.draftsCompleted || 0}
+                      {(leagueStats as any)?.draftsCompleted || 0}
                     </div>
                     <p className="text-xs text-muted-foreground">Successful drafts</p>
                   </CardContent>
@@ -342,7 +342,7 @@ export default function DashboardPage() {
                   </CardHeader>
                   <CardContent>
                     <div className="text-2xl font-bold">
-                      {leagueStats?.winRate ? `${Math.round(leagueStats.winRate)}%` : 'N/A'}
+                      {(leagueStats as any)?.winRate ? `${Math.round((leagueStats as any).winRate)}%` : 'N/A'}
                     </div>
                     <p className="text-xs text-muted-foreground">League performance</p>
                   </CardContent>

@@ -1,0 +1,98 @@
+1) ReferenceError: Cannot access 'u' before initialization
+
+This is the classic “TDZ” crash that happens when a module is evaluated too early (often via a circular/early import) and a const/class it needs hasn’t been initialized yet. In your app it triggers right as <App/> mounts — before any route renders — which strongly points to one of the page modules imported at the top of App.tsx being evaluated too early in production.
+
+I ran a static cycle scan across client/src + shared (resolving your @/@shared aliases). No hard ESM cycles showed up, which means this is an early evaluation problem rather than a simple A↔B loop.
+
+You import every page at the top of App.tsx. Even if a page isn’t rendered, its module executes on first load. If any of those page files has a top-level read that indirectly touches a not-yet-initialized binding (or a soft cycle through another helper), you get exactly this TDZ in the minified bundle.
+
+Fix (safe + surgical): lazy-load the pages so they’re only evaluated when their route is visited. This removes the early evaluation path that’s tripping the TDZ.
+
+Patch for client/src/App.tsx:
+
+- import MainPage from "@/pages/main";
+- import ProfilePage from "@/pages/profile";
+- import StablePage from "@/pages/teams";
+- import LeaguePage from "@/pages/league";
+- import ScoresPage from "@/pages/scores";
+- import AgentsPage from "@/pages/agents";
+- import MorePage from "@/pages/more";
+- import TradesPage from "@/pages/trades";
+- import AdminPanel from "@/pages/admin";
+- import DatabaseViewer from "@/pages/database-viewer";
+- import { LeagueWaiting } from "@/pages/league-waiting";
+- import NotFound from "@/pages/not-found";
++ import React, { lazy, Suspense } from "react";
++ const MainPage = lazy(() => import("@/pages/main"));
++ const ProfilePage = lazy(() => import("@/pages/profile"));
++ const StablePage = lazy(() => import("@/pages/teams"));
++ const LeaguePage = lazy(() => import("@/pages/league"));
++ const ScoresPage = lazy(() => import("@/pages/scores"));
++ const AgentsPage = lazy(() => import("@/pages/agents"));
++ const MorePage = lazy(() => import("@/pages/more"));
++ const TradesPage = lazy(() => import("@/pages/trades"));
++ const AdminPanel = lazy(() => import("@/pages/admin"));
++ const DatabaseViewer = lazy(() => import("@/pages/database-viewer"));
++ const LeagueWaiting = lazy(() => import("@/pages/league-waiting").then(m => ({ default: m.LeagueWaiting })));
++ const NotFound = lazy(() => import("@/pages/not-found"));
+
+
+Wrap the routes with a Suspense fallback (your existing loading UI is perfect):
+
+-  return (
+-    <>
+-      <Switch>
++  return (
++    <Suspense fallback={
++      <div className="min-h-screen grid place-items-center">
++        <div className="text-center">
++          <div style={{
++            width: 40, height: 40, border: '4px solid #10b981',
++            borderTop: '2px solid transparent',
++            borderRadius: '50%',
++            animation: 'spin 1s linear infinite',
++            margin: '0 auto 16px auto'
++          }}/>
++          <p>Loading…</p>
++        </div>
++      </div>
++    }>
++      <Switch>
+         {/* keep your routes the same, but prefer element renderers: */}
+-        <Route path="/admin" component={AdminPanel} />
++        <Route path="/admin">{() => <AdminPanel />}</Route>
+         {/* ...repeat for all routes that used "component=" */}
+-        <Route component={NotFound} />
+-      </Switch>
+-      {!isPWA && window.innerWidth >= 768 && <DesktopNotice />}
+-    </>
++        <Route>{() => <NotFound />}</Route>
++      </Switch>
++      {!isPWA && window.innerWidth >= 768 && <DesktopNotice />}
++    </Suspense>
+   );
+
+
+This change alone prevents those page files from executing during the initial mount — which is when the TDZ is firing.
+
+Side note: you’ve already handled a similar TDZ footgun inside pages/draft.tsx (the comment about declaring after the query). Lazy-loading complements that by removing the early import path entirely.
+
+2) WebSocket flapping (1006 close) on Reserved VM
+
+Your client shows a healthy connect → ping/pong → sporadic 1006 close → reconnect. The server sends control pings every 20s and the client also sends text “ping” messages every 25s (server responds with {type:"pong"}) — both OK, but on Replit’s proxy a couple of tweaks make things rock solid:
+
+Fixes (server): set timeouts on the HTTP server that owns the upgrade, so the proxy never drops the socket because Node thinks it’s idle. In server/index.ts (after you create const server = http.createServer(app)):
+
++ // Keep-alive tuning for Reserved VM/proxy
++ server.keepAliveTimeout = 120_000;   // allow long-lived conns
++ server.headersTimeout   = 125_000;   // > keepAliveTimeout
++ server.requestTimeout   = 0;         // don't auto-timeout requests
+
+
+Optional (client): since the server already does control-frame pings, you can quiet the client keepalive in use-production-realtime.ts to reduce activity:
+
+- const keepaliveInterval = 25000;
++ const keepaliveInterval = 0; // rely on server pings on Reserved VM
+
+
+(Your reconnection backoff and maxAttempts are already sane.)

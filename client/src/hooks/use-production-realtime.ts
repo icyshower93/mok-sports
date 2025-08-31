@@ -15,7 +15,9 @@ export function useProductionRealtime(opts: { user?: any; isLoading?: boolean } 
   const [reconnectAttempts, setReconnectAttempts] = useState(0);
   const maxReconnectAttempts = 8; // Increased for better resilience
   const baseReconnectDelay = 1000; // 1 second
-  const keepaliveInterval = 25000; // 25 seconds (within mobile timeout limits)
+  // How often to send an app-level keepalive ping.
+  // On Reserved VM, the server already sends control-frame pings; this can be 0 to rely on server only.
+  const keepaliveInterval = 0; // set to 25000 if you prefer client pings
 
   const startKeepalive = (ws: WebSocket) => {
     // Clear any existing ping interval
