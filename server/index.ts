@@ -49,16 +49,6 @@ async function setupProductionAssets(app: express.Application): Promise<string> 
     res.sendFile(path.join(clientDist, 'sw.js'));
   });
 
-  // Cache control middleware
-  app.use((req, res, next) => {
-    if (req.path.endsWith('.html') || req.headers.accept?.includes('text/html')) {
-      res.setHeader('Cache-Control', 'no-store');
-    } else if (/\.(?:js|css|woff2?)$/.test(req.path)) {
-      res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
-    }
-    next();
-  });
-
   // Debug endpoint to show what bundle the running process sees
   app.get("/__build", (_req, res) => {
     let html = "MISSING";
@@ -73,8 +63,16 @@ async function setupProductionAssets(app: express.Application): Promise<string> 
     res.json({ indexHtmlPath: indexHtml, bundle, indexHtmlMtime: stat?.mtime ?? null });
   });
 
-  // Serve static assets (don't auto-serve index so SPA fallback can handle all routes)
-  app.use(express.static(clientDist, { index: false }));
+  // 1) Hashed assets: long cache is OK
+  app.use("/assets", express.static(assetsDir, {
+    immutable: true,
+    maxAge: "31536000s",
+    etag: true,
+    lastModified: true,
+  }));
+
+  // 2) Other static files (root), short/no cache
+  app.use(express.static(clientDist, { maxAge: "0" }));
   console.log('[server] Static assets configured from:', clientDist);
   return clientDist;
 }
@@ -363,16 +361,35 @@ app.use((req, res, next) => {
     }
   }
   
+  // Fresh HTML route to bypass edge cache
+  if (hasBuiltAssets && clientDist) {
+    app.get("/__fresh", (_req, res) => {
+      res.set({
+        "Cache-Control": "no-store, no-cache, must-revalidate",
+        "Pragma": "no-cache",
+        "Expires": "0",
+        "Surrogate-Control": "no-store",
+      });
+      res.sendFile(path.join(clientDist, 'index.html'));
+    });
+  }
+
   // SPA fallback (reuse the exact same dist path)
   if (hasBuiltAssets && clientDist) {
     app.get('*', (req, res) => {
       if (req.path.startsWith('/api/') ||
           req.path.startsWith('/draft-ws') ||
           req.path.startsWith('/ws/') ||
-          req.path.startsWith('/admin-ws')) {
+          req.path.startsWith('/admin-ws') ||
+          req.path.startsWith('/__')) {
         return res.status(404).json({ error: 'Not found' });
       }
-      res.setHeader('Cache-Control', 'no-store');
+      res.set({
+        "Cache-Control": "no-store, no-cache, must-revalidate",
+        "Pragma": "no-cache",
+        "Expires": "0",
+        "Surrogate-Control": "no-store",
+      });
       res.sendFile(path.join(clientDist, 'index.html'));
     });
   }

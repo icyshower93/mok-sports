@@ -1,0 +1,121 @@
+You’re not seeing code issues anymore—you’re stuck behind stale HTML at the edge. Let’s force the public URL to serve the new HTML that points at the new bundle. You don’t need Vite changes; just adjust your server and do one clean rebuild/restart.
+
+Do this exactly
+1) Serve assets first, then HTML with no-store
+
+Put your static middleware before the SPA fallback and make the fallback uncacheable. In your server (Express-ish):
+
+import path from "path";
+import fs from "fs";
+
+const DIST_DIR   = path.resolve(__dirname, "../public");
+const ASSETS_DIR = path.join(DIST_DIR, "assets");
+const INDEX_HTML = path.join(DIST_DIR, "index.html");
+
+console.log("[SERVE] DIST:", DIST_DIR, "INDEX:", INDEX_HTML);
+
+// 1) Hashed assets: long cache is OK
+app.use("/assets", express.static(ASSETS_DIR, {
+  immutable: true,
+  maxAge: "31536000s",
+  etag: true,
+  lastModified: true,
+}));
+
+// (optional) other static files (root), short/no cache
+app.use(express.static(DIST_DIR, { maxAge: "0" }));
+
+// 2) SPA fallback: HTML must NEVER be cached
+app.get("*", (_req, res) => {
+  res.set({
+    "Cache-Control": "no-store, no-cache, must-revalidate",
+    "Pragma": "no-cache",
+    "Expires": "0",
+    // helps some CDNs
+    "Surrogate-Control": "no-store",
+  });
+  res.sendFile(INDEX_HTML);
+});
+
+
+If your app.get("*") comes before app.use("/assets", …), the edge will keep serving old HTML for everything (including /assets), so make sure order matches the above.
+
+2) Add a tiny debug endpoint (to prove what the server reads)
+
+Keep or add this:
+
+app.get("/__build", (_req, res) => {
+  let html = "";
+  try { html = fs.readFileSync(INDEX_HTML, "utf8"); } catch {}
+  const m = html.match(/assets\/index-[^"']+\.js/);
+  res.json({
+    indexHtmlPath: INDEX_HTML,
+    bundle: m ? m[0] : null,
+    indexHtmlMtime: fs.existsSync(INDEX_HTML) ? fs.statSync(INDEX_HTML).mtime : null,
+  });
+});
+
+3) Hard rebuild + restart the process
+pkill -f "node|vite" || true
+rm -rf dist/public
+node scripts/inject-build-env.mjs && npx vite build --mode production --sourcemap --minify=false
+npm run dev   # or whatever starts your server on Replit
+
+4) Verify the running server sees the new bundle
+
+From the shell and public URL:
+
+echo "Local:" && curl -s "http://localhost:5000/__build"
+echo "Public:" && curl -s "https://mok-sports-draft-mokfantasysport.replit.app/__build"
+
+
+Both should report the same assets/index-<HASH>.js. If public still reports the old one, your server didn’t restart or the fallback is pointing at a different directory—double-check the logged DIST/INDEX paths on boot.
+
+5) Load the fresh HTML in your browser (bypass edge/browser cache)
+
+DevTools → Application → Service Workers → Unregister.
+
+DevTools → Network → Disable cache (checked).
+
+Open:
+https://mok-sports-draft-mokfantasysport.replit.app/?nosw=1&cachebust=<Date.now()>
+
+Confirm console links point to the same assets/index-<HASH>.js you saw in /__build.
+
+If / is still sticky at the edge, use a fresh HTML route once to break it:
+
+// add this route next to SPA fallback
+app.get("/__fresh", (_req, res) => {
+  res.set({
+    "Cache-Control": "no-store, no-cache, must-revalidate",
+    "Pragma": "no-cache",
+    "Expires": "0",
+    "Surrogate-Control": "no-store",
+  });
+  res.sendFile(INDEX_HTML);
+});
+
+
+Now open:
+https://mok-sports-draft-mokfantasysport.replit.app/__fresh?ts=<Date.now()>
+This serves the new index.html on a different path, bypassing any stale cached /. From there, the SPA will load the current hashed bundle.
+
+Quick sanity checks
+
+Server order: /assets static before app.get("*").
+
+Root HTML headers: check Network tab for Cache-Control: no-store on / (or /__fresh).
+
+Which bundle is referenced? /__build must match the filename your console stack shows.
+
+About the “Rules of Hooks” fixes
+
+Returning early (e.g. if (isLoading) return …) after hooks is fine. The rule is: call hooks in the same order every render; don’t put hooks inside conditionals/callbacks. The real TDZ culprits you had were:
+
+calling useQueryClient() inside callbacks, and
+
+referencing queryClient in deps without declaring it in that file.
+
+You’ve already fixed those—nice.
+
+If /__build shows the new bundle but the browser still loads an old filename, the only remaining culprit is caching of the HTML response. The no-store + alternate route (/__fresh) solves that immediately.
