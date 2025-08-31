@@ -1,0 +1,119 @@
+Good news: you’ve got the right idea. Since you can only use the public (static) deployment, the fix is:
+
+make the deployment build the new assets,
+
+publish a fresh HTML alias per build, and
+
+open that alias so you bypass any stuck CDN HTML.
+
+Here’s a tight, copy-pasteable setup that does all of that and also tells you the fresh filename automatically.
+
+1) Deployment settings (Static)
+
+In Replit → Deployments → Edit your public deployment:
+
+Build command
+
+npm ci && node scripts/inject-build-env.mjs && \
+npx vite build --mode production --sourcemap --minify=false && \
+node scripts/make-fresh-html.mjs
+
+
+(keep --minify=false while debugging — switch to --minify later)
+
+Output directory
+
+dist/public
+
+
+Then Redeploy.
+
+2) Use this improved scripts/make-fresh-html.mjs
+
+This version (a) creates fresh-<hash>.html, and (b) writes a small manifest so you don’t have to guess the fresh filename.
+
+// scripts/make-fresh-html.mjs
+import fs from "fs";
+import path from "path";
+
+const dist = "dist/public";
+const indexPath = path.join(dist, "index.html");
+if (!fs.existsSync(indexPath)) {
+  console.error("❌ index.html not found at", indexPath);
+  process.exit(1);
+}
+
+const html = fs.readFileSync(indexPath, "utf8");
+const m = html.match(/assets\/index-([A-Za-z0-9_-]+)\.js/);
+if (!m) {
+  console.error("❌ Could not find assets/index-*.js in index.html");
+  process.exit(1);
+}
+const hash = m[1];
+const bundle = `assets/index-${hash}.js`;
+const freshName = `fresh-${hash}.html`;
+const freshPath = path.join(dist, freshName);
+
+fs.writeFileSync(freshPath, html, "utf8");
+
+// Write a manifest so you can programmatically discover the latest fresh page
+const manifest = {
+  freshHtml: `/${freshName}`,
+  bundle,
+  createdAt: new Date().toISOString(),
+};
+fs.writeFileSync(path.join(dist, "fresh-manifest.json"), JSON.stringify(manifest, null, 2), "utf8");
+
+console.log("✅ Wrote:", freshPath);
+console.log("✅ Manifest:", path.join(dist, "fresh-manifest.json"));
+console.log("➡  Open this after deploy:", `https://YOUR-DEPLOYMENT-DOMAIN${manifest.freshHtml}`);
+
+
+(You can replace YOUR-DEPLOYMENT-DOMAIN in the log if you want.)
+
+3) After the deployment finishes
+
+Grab the fresh URL without guessing the hash:
+
+curl -s "https://mok-sports-draft-mokfantasysport.replit.app/fresh-manifest.json" \
+| jq -r .freshHtml
+
+
+Then open:
+
+https://mok-sports-draft-mokfantasysport.replit.app/<that-freshHtml>?t=<Date.now()>
+
+
+That page is the new HTML (never cached before), and it will reference the new assets/index-*.js. Your Google OAuth is still fine — it’s the same domain.
+
+4) Verify quickly
+
+In the browser DevTools (Network → Disable cache), open the fresh URL above.
+
+Check the console error links — the filename should match the new bundle name from the manifest.
+
+If you still need to map, you built with --minify=false, so stacks should already show real symbols. If you prefer maps, try the map URL:
+
+https://mok-sports-draft-mokfantasysport.replit.app/assets/index-<HASH>.js.map
+
+
+(If it returns HTML, keep relying on unminified stacks — that’s fine for debugging.)
+
+5) After you’re done debugging
+
+Flip the build command to --minify (keep the fresh alias step — it’s handy).
+
+You can keep using the manifest to open the latest fresh HTML every time.
+
+If you want / to always be fresh too, create a new static deployment (new domain) and redeploy — new domain = fresh CDN cache. Update OAuth redirect URIs if the domain changes.
+
+Why your earlier “fresh page” still showed the old bundle
+
+You created it locally, but the deployment didn’t rebuild/publish it. The steps above force the deployment itself to produce fresh-<hash>.html and the manifest, so you always hit the fresh page that corresponds to the deployed assets.
+
+If anything still looks off after redeploy, send me the contents of:
+
+https://mok-sports-draft-mokfantasysport.replit.app/fresh-manifest.json
+
+
+and the first matching console stack frame (filename + line:col). I’ll pinpoint any remaining line-level fix immediately.
