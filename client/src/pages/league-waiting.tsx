@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { MainLayout } from "@/components/layout/main-layout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -41,6 +41,7 @@ export function LeagueWaiting() {
   const { toast } = useToast();
   const [, setLocation] = useLocation();
   const [leagueId, setLeagueId] = useState<string | null>(null);
+  const queryClient = useQueryClient();
 
   const [previousMemberCount, setPreviousMemberCount] = useState<number>(0);
   const [notificationSent, setNotificationSent] = useState<boolean>(false);
@@ -252,7 +253,7 @@ export function LeagueWaiting() {
             <div className="flex gap-2 justify-center">
               <Button onClick={() => {
                 // Clear any cached league data and redirect
-                useQueryClient().invalidateQueries({ queryKey: ['/api/leagues/user'] });
+                queryClient.invalidateQueries({ queryKey: ['/api/leagues/user'] });
                 setLocation('/?stay=true');
               }}>
                 Return to Dashboard
@@ -293,8 +294,8 @@ export function LeagueWaiting() {
       });
       
       // Clear all league-related cache and redirect
-      useQueryClient().invalidateQueries({ queryKey: ['/api/leagues/user'] });
-      useQueryClient().removeQueries({ queryKey: [`/api/leagues/${leagueId}`] });
+      queryClient.invalidateQueries({ queryKey: ['/api/leagues/user'] });
+      queryClient.removeQueries({ queryKey: [`/api/leagues/${leagueId}`] });
       setLocation('/?stay=true');
     } catch (error) {
       toast({
@@ -481,7 +482,7 @@ export function LeagueWaiting() {
                   
                   // Force refetch with delay to ensure fresh data
                   setTimeout(() => {
-                    useQueryClient().refetchQueries({ queryKey: [`/api/leagues/${leagueId}`] });
+                    queryClient.refetchQueries({ queryKey: [`/api/leagues/${leagueId}`] });
                   }, 300);
                 }}
               />

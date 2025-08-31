@@ -1,0 +1,121 @@
+I pulled your repo and found two concrete issues that explain why the TDZ/Cannot access 'c' before initialization keeps popping up even though the app eventually connects.
+
+1) AuthProvider.tsx still references an undeclared queryClient
+
+This alone can crash the app during render (React evaluates effect deps immediately). In your repo, client/src/features/auth/AuthProvider.tsx:
+
+Uses queryClient in deps and calls getQueryClient() in effects/mutations
+
+Never declares queryClient
+
+Patch (apply exactly)
+diff --git a/client/src/features/auth/AuthProvider.tsx b/client/src/features/auth/AuthProvider.tsx
+@@
+-import { useQuery, useMutation } from "@tanstack/react-query";
++import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+@@
+ export function AuthProvider({ children }: { children: ReactNode }) {
++  const queryClient = useQueryClient();
+@@
+-      AuthToken.clear(); // Clear stored token
+-      getQueryClient().clear();
++      AuthToken.clear(); // Clear stored token
++      queryClient.clear();
+       window.location.href = "/";
+     },
+   });
+@@
+-      console.log('[Auth] Found stored token, refreshing authentication...');
+-      getQueryClient().invalidateQueries({ queryKey: ["/api/auth/me"] });
++      console.log('[Auth] Found stored token, refreshing authentication...');
++      queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
+     }
+   }, [user, isLoading, queryClient]);
+@@
+-    if (authStatus === "success" && token) {
++    if (authStatus === "success" && token) {
+       AuthToken.set(token);
+       setIsAuthenticated(true);
+       sessionStorage.setItem('login-time', Date.now().toString());
+-      getQueryClient().invalidateQueries({ queryKey: ["/api/auth/me"] });
++      queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
+       window.history.replaceState({}, document.title, "/");
+     } else if (authStatus === "success") {
+       setIsAuthenticated(true);
+       sessionStorage.setItem('login-time', Date.now().toString());
+-      getQueryClient().invalidateQueries({ queryKey: ["/api/auth/me"] });
++      queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
+       window.history.replaceState({}, document.title, "/");
+     } else if (error) {
+       setIsAuthenticated(false);
+       AuthToken.clear();
+       window.history.replaceState({}, document.title, "/");
+     }
+-  }, [queryClient]);
++  }, [queryClient]);
+
+
+You can delete the getQueryClient import from this file after the swap.
+
+2) A few pages call the hook useQueryClient() inside callbacks
+
+That breaks the Rules of Hooks (and can cascade into weird initialization/TDZ timing). Fix by hoisting the client to the top and using the instance.
+
+client/src/pages/admin.tsx
+-import { useQuery, useMutation } from "@tanstack/react-query";
++import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+@@
++const queryClient = useQueryClient();
+@@
+-    onSuccess: () => {
+-      useQueryClient().invalidateQueries({ queryKey: ['/api/admin/state'] });
+-    }
++    onSuccess: () => {
++      queryClient.invalidateQueries({ queryKey: ['/api/admin/state'] });
++    }
+   });
+@@
+-    onSuccess: () => {
+-      useQueryClient().invalidateQueries({ queryKey: ['/api/admin/state'] });
+-    }
++    onSuccess: () => {
++      queryClient.invalidateQueries({ queryKey: ['/api/admin/state'] });
++    }
+   });
+
+client/src/pages/league-waiting.tsx
+
+Add the import + top-level client, then replace inline calls:
+
+-import { useQuery, useMutation } from "@tanstack/react-query";
++import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+@@
++const queryClient = useQueryClient();
+@@
+- useQueryClient().invalidateQueries({ queryKey: ['/api/leagues/user'] });
++ queryClient.invalidateQueries({ queryKey: ['/api/leagues/user'] });
+- useQueryClient().removeQueries({ queryKey: [`/api/leagues/${leagueId}`] });
++ queryClient.removeQueries({ queryKey: [`/api/leagues/${leagueId}`] });
+- useQueryClient().refetchQueries({ queryKey: [`/api/leagues/${leagueId}`] });
++ queryClient.refetchQueries({ queryKey: [`/api/leagues/${leagueId}`] });
+
+
+(Do the same for each occurrence; you have ~6 here.)
+
+✅ Other files already do this right (dashboard.tsx, leagues.tsx, draft.tsx, hooks).
+
+Why your console looks like this (and why it “recovers”)
+
+The TDZ/Cannot access 'c' before initialization fires during initial render when the dependency array or a callback tries to touch something that isn’t initialized yet (undeclared queryClient or a hook misuse).
+
+Your realtime layer then tears down and reconnects; that’s why you see:
+
+waiting_auth → connecting
+
+TDZ crash in ErrorBoundary
+
+WebSocket retries
+
+then ✅ WebSocket connected successfully
+
+Fixing the two issues above should stop the initial crash, which will also calm the spurious 1006 close/error cycle you’re seeing.

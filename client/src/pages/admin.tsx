@@ -1,4 +1,4 @@
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -21,6 +21,7 @@ interface AdminState {
 export default function AdminPanel() {
   const [, navigate] = useLocation();
   const { logout } = useAuth();
+  const queryClient = useQueryClient();
 
   // Fetch admin state from server
   const { data: adminState, isLoading } = useQuery<AdminState>({
@@ -49,7 +50,7 @@ export default function AdminPanel() {
       return response.json();
     },
     onSuccess: () => {
-      useQueryClient().invalidateQueries({ queryKey: ['/api/admin/state'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/state'] });
     }
   });
 
@@ -63,7 +64,7 @@ export default function AdminPanel() {
       return response.json();
     },
     onSuccess: () => {
-      useQueryClient().invalidateQueries({ queryKey: ['/api/admin/state'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/state'] });
     }
   });
 
