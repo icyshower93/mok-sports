@@ -7,7 +7,7 @@ channel = "stable-24_05"
 
 [deployment]
 deploymentTarget = "gce"
-build = ["sh", "-c", "npm start"]
+build = ["sh", "-c", "npm run build"]
 run = ["npm", "run", "start"]
 
 [env]
