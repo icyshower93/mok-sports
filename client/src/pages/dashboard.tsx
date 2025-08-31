@@ -237,7 +237,7 @@ export default function DashboardPage() {
             <Button onClick={() => window.location.href = "/api/auth/google"}>
               Sign in with Google
             </Button>
-            {process.env.NODE_ENV === 'development' && (
+            {import.meta.env.DEV && (
               <div className="space-y-2">
                 <p className="text-sm text-muted-foreground">Development Login:</p>
                 <Button 
