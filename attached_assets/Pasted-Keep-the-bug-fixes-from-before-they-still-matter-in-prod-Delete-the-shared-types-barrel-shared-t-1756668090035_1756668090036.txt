@@ -1,0 +1,171 @@
+Keep the bug fixes from before (they still matter in prod)
+
+Delete the shared/types barrel (shared/types/index.ts) and import leaf types directly (e.g., @shared/types/draft).
+
+Fix the stray i in client/src/hooks/use-production-realtime.ts.
+
+Fix the undeclared isPageLoaded bug in use-service-worker.ts (use a local pageLoaded state as shown earlier).
+
+Those were real crashers and will still break a production bundle.
+
+1) Production-only Vite config (no dev plugins, no async)
+
+Create/replace your root vite.config.ts with a build-only config:
+
+// vite.config.ts
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import path from "path";
+
+export default defineConfig({
+  // We only use Vite for a production build artifact.
+  plugins: [react()],
+  root: path.resolve(import.meta.dirname, "client"),
+  resolve: {
+    alias: {
+      "@": path.resolve(import.meta.dirname, "client/src"),
+      "@shared": path.resolve(import.meta.dirname, "shared"),
+    },
+  },
+  build: {
+    outDir: path.resolve(import.meta.dirname, "dist/public"),
+    emptyOutDir: true,
+    sourcemap: true,        // helpful for prod debugging on the VM
+    minify: "esbuild",      // default, safe
+    cssCodeSplit: true,
+  },
+});
+
+
+No top-level await, no Replit dev plugins—so no timing issues.
+
+Output goes to dist/public (static files).
+
+2) Compile the server to JS (serve the built app)
+
+If your server is TS, add a server build tsconfig.
+
+server/tsconfig.build.json
+
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../dist/server",
+    "module": "CommonJS",
+    "target": "ES2020",
+    "moduleResolution": "Node",
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "sourceMap": true,
+    "declaration": false,
+    "skipLibCheck": true
+  },
+  "include": ["./**/*.ts"]
+}
+
+
+Then make sure your server entry is compatible with static serving + WebSockets:
+
+server/index.ts (drop-in pattern)
+
+import express from "express";
+import path from "path";
+import http from "http";
+import compression from "compression";
+import helmet from "helmet";
+// If you use ws or socket.io, import and attach here:
+import { WebSocketServer } from "ws";
+
+const app = express();
+
+// Security & perf
+app.use(helmet({ contentSecurityPolicy: false }));
+app.use(compression());
+app.use(express.json());
+
+// --- API routes ---
+// app.use("/api", yourApiRouter);
+
+// --- Static build ---
+// dist/public is produced by Vite build
+const publicDir = path.resolve(__dirname, "../public");
+app.use(express.static(publicDir, { index: false }));
+
+// SPA history fallback: serve index.html for unknown routes
+app.get("*", (_req, res) => {
+  res.sendFile(path.join(publicDir, "index.html"));
+});
+
+// --- HTTP + WS server ---
+const server = http.createServer(app);
+
+// Optional: native ws at /ws
+const wss = new WebSocketServer({ server, path: "/ws" });
+wss.on("connection", (socket) => {
+  socket.send(JSON.stringify({ type: "welcome" }));
+  socket.on("message", (data) => {
+    // handle messages
+  });
+  socket.on("close", () => {});
+});
+
+// Replit provides PORT
+const PORT = Number(process.env.PORT || 8000);
+server.listen(PORT, () => {
+  console.log(`[server] listening on :${PORT}`);
+});
+
+
+If you already have WS logic (socket.io, etc.), keep yours—just ensure it’s attached to the same http server and path you use in the client.
+
+3) Make the client’s WS URL production-safe
+
+In your client WS hook, build the URL from window.location so it works inside Replit:
+
+const wsProto = window.location.protocol === "https:" ? "wss" : "ws";
+const wsBase = `${wsProto}://${window.location.host}`;
+const socket = new WebSocket(`${wsBase}/ws`);
+
+
+Avoid hardcoding ports—Replit will proxy your port.
+
+4) Service Worker: prod only, gated cleanly
+
+In use-service-worker.ts, gate registration on prod:
+
+const isProd = import.meta.env.PROD;
+
+const shouldRegisterSW =
+  isProd &&
+  typeof window !== "undefined" &&
+  // optional: only on custom domain / not localhost
+  window.location.hostname !== "localhost";
+
+useEffect(() => {
+  if (!shouldRegisterSW || !pageLoaded) return;
+  void registerServiceWorker();
+}, [shouldRegisterSW, pageLoaded, registerServiceWorker]);
+
+
+This prevents stale SW during edits.
+
+5) Package scripts for a pure production VM
+
+At the repo root package.json:
+
+{
+  "scripts": {
+    "clean": "rimraf dist",
+    "build:server": "tsc -p server/tsconfig.build.json",
+    "build:web": "vite build",
+    "build": "npm run clean && npm run build:server && npm run build:web",
+    "start": "node dist/server/index.js",
+
+    // Optional sanity checks:
+    "check:cycles": "madge --extensions ts,tsx client/src --circular"
+  },
+  "engines": { "node": ">=20" }
+}
+
+
+If you don’t have rimraf or madge, npm i -D rimraf madge.

@@ -14,7 +14,7 @@ import { apiRequest } from "@/features/query/api";
 import { useResilientWebSocket } from "@/hooks/use-resilient-websocket";
 import { useAuth } from "@/features/auth/useAuth";
 import { trackModuleError } from "@/debug-tracker";
-import type { DraftState, NflTeam, DraftPick } from '@shared/types';
+import type { DraftState, NflTeam, DraftPick } from '@shared/types/draft';
 
 export default function DraftPage() {
   // CRITICAL: All early returns must happen BEFORE any hooks to prevent Rules of Hooks violations
