@@ -1,0 +1,107 @@
+I need you to apply these exact code edits and then build with full sourcemaps and no minify.
+
+1) PATCH client/src/features/query/queryClient.ts
+- Replace the top-level `export const queryClient = new QueryClient(...)` with a lazy getter singleton:
+
+--- BEGIN PATCH ---
+import { QueryClient, QueryFunction } from "@tanstack/react-query";
+import { AuthToken } from "@/lib/auth-token";
+
+export const unauthorizedBehaviorToQueryFunction = (
+  unauthorizedBehavior: "returnNull" | "throw" = "throw",
+): QueryFunction<any> =>
+  async ({ queryKey }) => {
+    const res = await fetch(queryKey.join("/") as string, {
+      headers: AuthToken.headers(),
+      credentials: "include",
+    });
+    if (unauthorizedBehavior === "returnNull" && res.status === 401) return null;
+    if (!res.ok) {
+      const text = await res.text().catch(() => "");
+      throw new Error(`HTTP ${res.status} ${res.statusText}${text ? ` - ${text}` : ""}`);
+    }
+    return await res.json();
+  };
+
+let _qc: QueryClient | null = null;
+export function getQueryClient(): QueryClient {
+  const g = globalThis as any;
+  if (g.__MOK_QUERY_CLIENT__) return g.__MOK_QUERY_CLIENT__;
+  if (_qc) return _qc;
+  _qc = new QueryClient({
+    defaultOptions: {
+      queries: {
+        queryFn: unauthorizedBehaviorToQueryFunction("returnNull"),
+        refetchOnMount: false,
+        refetchOnWindowFocus: false,
+        retry: (failureCount, error: any) =>
+          error?.message?.includes("401") ? false : failureCount < 2,
+        staleTime: 0,
+        gcTime: 5 * 60 * 1000,
+      },
+      mutations: { retry: 0 },
+    },
+  });
+  g.__MOK_QUERY_CLIENT__ = _qc;
+  return _qc;
+}
+--- END PATCH ---
+
+2) PATCH client/src/features/query/QueryProvider.tsx
+- Import/Use the getter instead of the const:
+
+--- BEGIN PATCH ---
+import { QueryClientProvider } from "@tanstack/react-query";
+import { getQueryClient } from "@/features/query/queryClient";
+
+export function QueryProvider({ children }: { children: React.ReactNode }) {
+  return <QueryClientProvider client={getQueryClient()}>{children}</QueryClientProvider>;
+}
+--- END PATCH ---
+
+3) PATCH client/src/features/auth/AuthProvider.tsx
+- Remove `import { apiRequest } from "@/features/query/api"` at top level.
+- Add a small local helper that calls fetch with AuthToken headers.
+- Replace any apiRequest(...) calls with apiFetch(method, url, body).
+
+--- BEGIN PATCH ---
+/* remove the top-level: import { apiRequest } from "@/features/query/api"; */
+
+import { AuthToken } from "@/lib/auth-token"; // (should already exist)
+
+const apiFetch = async (
+  method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE",
+  url: string,
+  body?: any
+) => {
+  const res = await fetch(url, {
+    method,
+    headers: { "Content-Type": "application/json", ...AuthToken.headers() },
+    credentials: "include",
+    body: body ? JSON.stringify(body) : undefined,
+  });
+  if (!res.ok) {
+    const text = await res.text().catch(() => "");
+    throw new Error(`HTTP ${res.status} ${res.statusText}${text ? ` - ${text}` : ""}`);
+  }
+  return res.status === 204 ? null : res.json();
+};
+
+/* Replace actual apiRequest usages, e.g.:
+   await apiRequest("POST", "/api/logout")
+   → await apiFetch("POST", "/api/logout")
+*/
+--- END PATCH ---
+
+4) VERIFY WITH GREP
+rg -n "export const queryClient" client/src || true
+rg -n "getQueryClient\\(" client/src || true
+rg -n "from '@/features/query/api'" client/src || true
+
+5) BUILD WITH SOURCEMAPS + NO MINIFY
+node scripts/inject-build-env.mjs && npm run build -- --minify=false --sourcemap
+
+6) After build, restart the app. Open it with:
+?nosw=1&cachebust=$(date +%s)
+
+If any error appears, click the TOP stack frame in DevTools (it will point to the original .ts/.tsx line thanks to the sourcemap). Print that filename:line and the 10 lines around it.

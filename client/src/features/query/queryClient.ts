@@ -1,31 +1,24 @@
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
-import { AuthToken } from '@/lib/auth-token';
+import { AuthToken } from "@/lib/auth-token";
 
-// Query function with auth handling
 export const unauthorizedBehaviorToQueryFunction = (
   unauthorizedBehavior: "returnNull" | "throw" = "throw",
 ): QueryFunction<any> =>
   async ({ queryKey }) => {
     const res = await fetch(queryKey.join("/") as string, {
       headers: AuthToken.headers(),
-      credentials: "include", // Keep cookies as fallback
+      credentials: "include",
     });
-
-    if (unauthorizedBehavior === "returnNull" && res.status === 401) {
-      return null;
-    }
-
+    if (unauthorizedBehavior === "returnNull" && res.status === 401) return null;
     if (!res.ok) {
-      const text = await res.text().catch(() => '');
-      throw new Error(`HTTP ${res.status} ${res.statusText}${text ? ` - ${text}` : ''}`);
+      const text = await res.text().catch(() => "");
+      throw new Error(`HTTP ${res.status} ${res.statusText}${text ? ` - ${text}` : ""}`);
     }
     return await res.json();
   };
 
-// LAZY SINGLETON - eliminates TDZ and init-order hazards
 let _qc: QueryClient | null = null;
 export function getQueryClient(): QueryClient {
-  // also survives duplicate module instances
   const g = globalThis as any;
   if (g.__MOK_QUERY_CLIENT__) return g.__MOK_QUERY_CLIENT__;
   if (_qc) return _qc;
@@ -46,7 +39,6 @@ export function getQueryClient(): QueryClient {
   g.__MOK_QUERY_CLIENT__ = _qc;
   return _qc;
 }
-
 
 // Maintain backward compatibility while using new AuthToken utility
 export const AuthTokenManager = {

@@ -3,6 +3,24 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { AuthContext, type AuthValue, type User } from "./AuthContext";
 import { AuthToken } from "@/lib/auth-token";
 
+const apiFetch = async (
+  method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE",
+  url: string,
+  body?: any
+) => {
+  const res = await fetch(url, {
+    method,
+    headers: { "Content-Type": "application/json", ...AuthToken.headers() },
+    credentials: "include",
+    body: body ? JSON.stringify(body) : undefined,
+  });
+  if (!res.ok) {
+    const text = await res.text().catch(() => "");
+    throw new Error(`HTTP ${res.status} ${res.statusText}${text ? ` - ${text}` : ""}`);
+  }
+  return res.status === 204 ? null : res.json();
+};
+
 interface OAuthConfig {
   oauthConfigured: boolean;
   provider: string;
@@ -31,18 +49,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   });
 
   const logoutMutation = useMutation({
-    mutationFn: async () => {
-      const res = await fetch("/api/auth/logout", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          ...AuthToken.headers(),
-        },
-        credentials: "include",
-      });
-      if (!res.ok) throw new Error(`Logout failed: ${res.status}`);
-      return res.json();
-    },
+    mutationFn: () => apiFetch("POST", "/api/auth/logout"),
     onSuccess: () => {
       setIsAuthenticated(false);
       AuthToken.clear(); // Clear stored token
