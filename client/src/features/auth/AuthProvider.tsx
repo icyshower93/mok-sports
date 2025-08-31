@@ -154,7 +154,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     oauthLoading,
     login,
     logout,
-  }), [user, isLoading, isAuthenticated, oauthConfig?.oauthConfigured, oauthLoading, login, logout]);
+  }), [user, isLoading, isAuthenticated, oauthConfig?.oauthConfigured, oauthLoading]);
 
   return (
     <AuthContext.Provider value={value}>

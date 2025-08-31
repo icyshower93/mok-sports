@@ -17,15 +17,26 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   static getDerivedStateFromError(error: Error): State {
-    console.error('[ErrorBoundary] Error caught:', error.name, error.message);
+    console.error('[ErrorBoundary] Production Error Details:');
+    console.error('[ErrorBoundary] Error name:', error.name);
+    console.error('[ErrorBoundary] Error message:', error.message);
+    console.error('[ErrorBoundary] Full error object:', error);
     console.error('[ErrorBoundary] Stack trace:', error.stack);
+    console.error('[ErrorBoundary] Error constructor:', error.constructor?.name);
+    
+    // Log React-specific error patterns
+    if (error.message?.includes('Minified React error #')) {
+      console.error('[ErrorBoundary] ⚠️ MINIFIED REACT ERROR DETECTED');
+      console.error('[ErrorBoundary] This is React error:', error.message);
+      console.error('[ErrorBoundary] React error details:', error);
+    }
     
     // Prevent error boundary from showing for DOM manipulation errors
     if (error.message?.includes('removeChild') || 
         error.message?.includes('DOM') ||
         error.name === 'NotFoundError') {
       console.warn('[ErrorBoundary] Intercepting DOM error, not showing error boundary');
-      return { hasError: false, error: null };
+      return { hasError: false, error: undefined };
     }
     return { hasError: true, error };
   }
@@ -42,7 +53,7 @@ export class ErrorBoundary extends Component<Props, State> {
         error.name === 'NotFoundError') {
       console.warn('[ErrorBoundary] DOM manipulation error detected - preventing error boundary display');
       // Immediately prevent error boundary from showing
-      this.setState({ hasError: false, error: null });
+      this.setState({ hasError: false, error: undefined });
       return;
     }
   }
