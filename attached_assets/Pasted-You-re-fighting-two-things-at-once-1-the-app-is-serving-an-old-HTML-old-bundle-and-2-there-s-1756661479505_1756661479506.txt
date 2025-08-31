@@ -1,0 +1,176 @@
+You’re fighting two things at once: (1) the app is serving an old HTML → old bundle, and (2) there’s (or was) a real TDZ somewhere. Let’s fix the serve/caching mismatch first so we’re always mapping the actual file the browser is loading.
+
+I’ll give you a “hard reset → verify → map → fix” runbook that works on Replit even if service workers are weird.
+
+0) Make sure we’re serving from the right folder
+
+From the Replit shell:
+
+# Show what your server is actually serving
+rg -n "express\\.static|serve-static|sirv" server | sed -n '1,200p'
+
+# Quick runtime probe: drop a marker in the build dir
+rm -rf dist/public
+mkdir -p dist/public && echo "SERVING_FROM_DIST_PUBLIC $(date)" > dist/public/WHO_SERVES_THIS.txt
+
+
+Now hit it in the browser:
+
+https://mok-sports-draft-mokfantasysport.replit.app/WHO_SERVES_THIS.txt
+
+If you get 404, your server isn’t serving dist/public. Fix your static middleware path before going further.
+
+1) Hard reset the build + server (kills stale HTML/assets)
+# Stop any running app
+pkill -f "node|vite" || true
+
+# Clean slate build dir
+rm -rf dist/public
+
+# Fresh build WITH sourcemaps and readable code
+node scripts/inject-build-env.mjs && npx vite build --mode production --sourcemap --minify=false
+
+# Show what HTML references (this is the source of truth)
+echo "Local HTML references:"
+rg -o "assets/index-[^\"']+\\.js" dist/public/index.html -n
+
+# Start server cleanly (whatever your run command is)
+npm run dev  # or: npm start
+
+
+If the server process is managed by Replit’s “Run” button, click Stop then Run to ensure it picks up the new dist/public.
+
+2) Verify the live HTML points to the same bundle
+
+From the shell and from the public URL:
+
+echo "Live HTML references (local reverse-proxy):"
+curl -s "http://localhost:5000/?nosw=1" | rg -o "assets/index-[^\"']+\\.js" -n || true
+
+echo "Live HTML references (public site):"
+curl -s "https://mok-sports-draft-mokfantasysport.replit.app/?nosw=1" \
+  | rg -o "assets/index-[^\"']+\\.js" -n || true
+
+
+If the public HTML shows a different index-*.js than your local HTML, you’re still serving an old page. Restart the server again and re-run step 2 until they match.
+
+3) Disable client caching while testing
+
+In the browser DevTools:
+
+Application → Service Workers → Unregister anything there.
+
+Network → Disable cache (✓).
+
+Load with a cache-bust: ?nosw=1&cachebust=<Date.now()>.
+
+Confirm the console links point into the same filename you saw in step 2.
+
+4) Get the map (use local file, don’t fetch over HTTP)
+
+List the exact files you just built:
+
+ls -lh dist/public/assets/index-*.js*
+# Expect to see: index-<HASH>.js  and  index-<HASH>.js.map
+rg -n "sourceMappingURL" dist/public/assets/index-*.js
+
+
+Map the top 2–6 frames from your console for that same file:
+
+node scripts/map-stack.mjs dist/public/assets/index-<HASH>.js.map \
+  402:152680 40:43963 40:39727 40:39655 40:39508 38:16998
+
+
+Open the files/lines it prints under source: — that’s the real TDZ site.
+
+If index-<HASH>.js.map is missing or contains HTML, you didn’t build with --sourcemap or your server process is overwriting the file. Re-run step 1.
+
+5) Apply the micro-fix the mapped line implies
+
+What usually causes “Cannot access ‘u’ before initialization”:
+
+Undeclared / out-of-order use in the same file
+
+// ❌ uses b before it’s initialized
+const a = () => b();
+const b = () => {};
+// ✅ fix: hoist or reorder
+function b() {}
+const a = () => b();
+
+
+Hook used inside callbacks/conditionals (we fixed useQueryClient, but check others)
+
+// ❌
+onSuccess: () => { useSomething(); }
+// ✅
+const something = useSomething(); // top-level
+onSuccess: () => { /* use it */ }
+
+
+Circular import (common with barrels export * from './x')
+
+Replace barrel imports with concrete module imports.
+
+Move shared bits to a tiny shared.ts.
+
+As a quick proof, lazy import where used:
+
+useEffect(() => { (async () => {
+  const { foo } = await import("@/features/foo/foo");
+  foo();
+})(); }, []);
+
+
+Dependency array referencing an identifier not declared in the file
+(e.g., [queryClient] with no const queryClient = useQueryClient(); or with no import). Either declare it or remove it from deps if you’re using a singleton API.
+
+6) Quick repo scans to catch remaining offenders
+# Inline hooks (should be zero)
+rg -n "use[A-Z]\\w*\\(\\)\\." client/src
+
+# 'queryClient' in deps (make sure each file declares it at top)
+rg -n "\\[(?:[^\\]]*\\bqueryClient\\b[^\\]]*)\\]" client/src
+
+# Barrels that often create cycles
+rg -n "export \\* from|export {[^}]+} from" client/src
+
+# If you want an explicit list of cycles:
+npm i -D madge
+npx madge --circular client/src --extensions ts,tsx --alias @=client/src
+
+If you still can’t get the right bundle in the browser
+
+This means the HTML being served is stale.
+
+Confirm which file your server sends for /:
+
+Add a one-liner log before sending HTML: console.log('SERVING HTML FROM', pathToFile)
+
+Or temporarily change the <title> in dist/public/index.html to something obvious, rebuild, restart, reload. If title doesn’t change, the server isn’t reading dist/public/index.html.
+
+Ensure your server sets no cache for HTML but allows long cache for /assets/*:
+
+// Express example
+app.use('/assets', express.static(path.join(__dirname, '../dist/public/assets'), {
+  immutable: true,
+  maxAge: '1y',
+}));
+
+app.get('*', (req, res) => {
+  res.set('Cache-Control', 'no-store');  // HTML must not be cached
+  res.sendFile(path.join(__dirname, '../dist/public/index.html'));
+});
+
+
+Drop a marker file and fetch it publicly:
+
+echo "BUILD $(date)" > dist/public/BUILD-MARKER.txt
+curl "https://mok-sports-draft-mokfantasysport.replit.app/BUILD-MARKER.txt"
+
+
+If that returns old content or 404, your server process didn’t pick up the new dist/public. Restart it.
+
+Bottom line
+
+Right now your blocker isn’t the fix — it’s that the public HTML is still pointing to an old index-*.js. Do Section A→B→C to force the live site to serve the bundle you just built, then Section D→E to map and squash any remaining TDZ. If you paste the mapper output (file + line) from your current bundle, I’ll tell you exactly what to change.
