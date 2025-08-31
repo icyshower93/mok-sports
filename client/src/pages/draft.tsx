@@ -21,8 +21,8 @@ export default function DraftPage() {
   const params = useParams();
   const urlDraftId = (params as any).draftId;
   
-  // Early return check BEFORE hooks to prevent React scheduler TDZ errors
-  if (!urlDraftId) return null;
+  // ALL HOOKS MUST BE CALLED CONSISTENTLY - cannot return early after calling hooks
+  // Fixed: Handle null case with conditional rendering instead of early return
   
   const [location, navigate] = useLocation();
   const { toast } = useToast();
@@ -150,6 +150,8 @@ export default function DraftPage() {
   const wsUrl = draftId ? `${window.location.protocol === 'https:' ? 'wss:' : 'ws:'}//${window.location.host}/api/drafts/ws/${draftId}` : null;
   const { status: connectionStatus, message: lastMessage } = useResilientWebSocket(wsUrl);
   const isConnected = connectionStatus === 'open';
+
+  // Handle null urlDraftId case in main render (Rules of Hooks compliance)
 
   // CRITICAL: Declare variables BEFORE any useEffect that uses them
   // Move these after draftData is available from the query
@@ -564,6 +566,8 @@ export default function DraftPage() {
 
   console.log('[Draft] All hooks declared, starting conditional logic');
   console.log('[Draft] RENDER DEBUG - authLoading:', authLoading, 'isLoading:', isLoading, 'error:', !!error, 'draftData:', !!draftData, 'isAuthenticated:', isAuthenticated, 'Time:', Date.now());
+
+  // Handle null urlDraftId case in main render (no early returns allowed)
 
   const handleMakePick = () => {
     if (selectedTeam) {
