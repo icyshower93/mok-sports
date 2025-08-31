@@ -1,0 +1,53 @@
+Short version: their explanation is mostly wrong, and their “fix” won’t (and can’t) solve a ReferenceError: queryClient is not defined.
+
+Why:
+
+queryClient?.clear() and queryClient?.invalidateQueries() only help if queryClient exists but is null/undefined. Your error is that the identifier doesn’t exist at all in that scope. Optional chaining still throws when the variable is undeclared.
+
+React doesn’t have a “provider hasn’t fully established yet” window where useQueryClient() returns null. In React Query v4, useQueryClient() either returns the QueryClient from context or throws if you’re outside the provider. It does not return undefined.
+
+Dependency arrays don’t run “before hooks initialize.” They’re just values read during render. If const queryClient = useQueryClient() is declared above where you reference it, there’s no TDZ. If you reference queryClient before that declaration (or never declare it), you’ll get exactly the ReferenceError you’re seeing.
+
+What to do instead (this actually fixes it):
+
+In client/src/features/auth/AuthProvider.tsx, declare the client and use it.
+
+- import { useQuery, useMutation } from "@tanstack/react-query";
++ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+
+ export function AuthProvider({ children }: { children: ReactNode }) {
++  const queryClient = useQueryClient();
+
+
+Replace all getQueryClient() calls in this component with the hook instance.
+
+- getQueryClient().clear();
++ queryClient.clear();
+
+- getQueryClient().invalidateQueries({ queryKey: ["/api/auth/me"] });
++ queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
+
+
+Make sure queryClient is declared before any useEffect/useMemo that references it in their dependency arrays. (Best: put const queryClient = useQueryClient() right under the function line.)
+
+(Optional but cleaner) Remove getQueryClient import from this file entirely. Use the hook inside components; keep the singleton fetcher only in your top-level QueryProvider.
+
+Verify your provider order once:
+
+QueryClientProvider (or your wrapper QueryProvider) must wrap AuthProvider.
+
+From your tree it already does, so you’re fine. No “initialization race” exists here.
+
+Why this works:
+
+It gives the identifier a real value in scope so the dependency arrays can read it without throwing.
+
+It avoids cross-module singletons inside components, which can re-introduce evaluation-order pitfalls if those modules participate in cycles.
+
+Extra polish (optional):
+
+You can safely keep queryClient out of exhaustive-deps if you want less noise: it’s a stable reference for the app lifetime. If ESLint complains, either keep it in, or add a one-line disable above those effects. But this is not the cause of your crash.
+
+If you previously had a TDZ from circular imports (e.g., barrel export * from chains), keep those barrels trimmed. The error you quoted now is specifically about an undeclared identifier, not a module cycle.
+
+Bottom line: Replit’s “null-safe operators” change doesn’t address the root cause. Declare queryClient via useQueryClient() at the top of AuthProvider, replace getQueryClient() calls there with the hook instance, and the ReferenceError: queryClient is not defined will go away. If you still see a different error after that, paste the new top stack (with sourcemap lines) and I’ll zero in on it.

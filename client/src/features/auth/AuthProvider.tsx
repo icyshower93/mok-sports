@@ -54,7 +54,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     onSuccess: () => {
       setIsAuthenticated(false);
       AuthToken.clear(); // Clear stored token
-      queryClient?.clear();
+      queryClient.clear();
       window.location.href = "/";
     },
   });
@@ -103,7 +103,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     
     if (storedToken && !user && !isLoading) {
       console.log('[Auth] Found stored token, refreshing authentication...');
-      queryClient?.invalidateQueries({ queryKey: ["/api/auth/me"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
     }
   }, [user, isLoading, queryClient]);
 
@@ -119,13 +119,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       AuthToken.set(token);
       setIsAuthenticated(true);
       sessionStorage.setItem('login-time', Date.now().toString());
-      queryClient?.invalidateQueries({ queryKey: ["/api/auth/me"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
       window.history.replaceState({}, document.title, "/");
     } else if (authStatus === "success") {
       // Fallback for cookie-only auth
       setIsAuthenticated(true);
       sessionStorage.setItem('login-time', Date.now().toString());
-      queryClient?.invalidateQueries({ queryKey: ["/api/auth/me"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
       window.history.replaceState({}, document.title, "/");
     } else if (error) {
       setIsAuthenticated(false);
