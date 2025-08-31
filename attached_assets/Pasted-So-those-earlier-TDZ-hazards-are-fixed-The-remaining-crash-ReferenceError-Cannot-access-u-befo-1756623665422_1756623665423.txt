@@ -1,0 +1,117 @@
+So those earlier TDZ hazards are fixed. The remaining crash:
+
+ReferenceError: Cannot access 'u' before initialization
+… at hx (index-*.js:402:152600)
+
+
+is a different TDZ elsewhere. The u is just a minified name; we need to map it back to the real file+line to squash it.
+
+Here’s the quickest way to do that (copy/paste ready).
+
+1) Build with source maps (and make names readable)
+
+In your project root:
+
+# turn on sourcemaps, and keep original function/class names for clearer stacks
+# (Vite uses esbuild to minify; keepNames makes stacks much nicer.)
+# One-time tweak to vite.config.ts:
+
+// export default defineConfig({
+export default defineConfig({
+  esbuild: { keepNames: true },   // <-- add this
+  build: { sourcemap: true },     // <-- ensure sourcemaps
+  // ...rest of your config
+})
+
+
+Then build:
+
+npx vite build --mode production
+
+
+(For an even easier first pass, you can also do npx vite build --mode production --sourcemap --minify=false once; that often makes the error say the real identifier instead of u.)
+
+2) Map the stack frame(s) to original TS/TSX
+
+Add this tiny script once:
+
+npm i -D @jridgewell/trace-mapping
+
+
+Create scripts/map-stack.mjs:
+
+import fs from "fs";
+import { TraceMap, originalPositionFor } from "@jridgewell/trace-mapping";
+
+const [, , mapFile, ...pairs] = process.argv;
+if (!mapFile || pairs.length === 0) {
+  console.error("Usage: node scripts/map-stack.mjs <path-to-map> <line:col> [line:col...]");
+  process.exit(1);
+}
+
+const map = new TraceMap(JSON.parse(fs.readFileSync(mapFile, "utf8")));
+
+for (const pair of pairs) {
+  const [lineStr, colStr] = pair.split(":");
+  const line = Number(lineStr);
+  const column = Number(colStr);
+  const pos = originalPositionFor(map, { line, column });
+  console.log(`${pair} ->`, pos);
+}
+
+
+Run it with the line:column numbers from your console:
+
+node scripts/map-stack.mjs \
+  dist/public/assets/index-CIcHM6EX.js.map \
+  402:152600 40:34207 38:16998
+
+
+You’ll get outputs like:
+
+402:152600 -> { source: "client/src/pages/XYZ.tsx", line: 123, column: 17, name: "realIdentifier" }
+
+
+Open that file at that line — that’s the actual throw site.
+
+3) Fix patterns (what you’re looking for on that line)
+
+A TDZ “Cannot access ‘<name>’ before initialization” in React apps is almost always one of:
+
+Same-file order issue
+e.g.
+
+const a = () => b();   // ← uses b
+const b = () => a();   // ← b isn’t initialized when a runs
+
+
+✅ Fix: convert one to a function declaration (which hoists), or reorder so the callee is defined first, or break the recursion.
+
+Hook used in a callback/conditional
+e.g. useQueryClient() called inside onSuccess or inside if (...) instead of at the top.
+✅ Fix: hoist const queryClient = useQueryClient(); to the top of the component and use that reference everywhere.
+
+Circular imports (module A imports B while B imports A)
+Symptoms: top-level const/let in one file reads a value from the other during module init.
+✅ Fix: break the cycle. Options:
+
+Import concrete submodules instead of a barrel index.ts.
+
+Move shared constants/types into a new tiny module …/shared.ts.
+
+Convert one top-level usage to a lazy use (e.g., move it inside a function/effect so it runs after both modules have initialized).
+
+As a test, replace import {...} from "@/foo" with const mod = await import("@/foo") inside the function that needs it. If the TDZ disappears, you’ve confirmed it’s an import cycle.
+
+4) Two quick grep checks (to catch common offenders)
+
+Run these in the repo root:
+
+# Any inline hook uses (should be zero)
+rg -n "useQueryClient\\(\\)\\." client/src
+
+# Any dependency arrays touching queryClient (make sure each file declares it)
+rg -n "\\[(?:[^\\]]*\\bqueryClient\\b[^\\]]*)\\]" client/src
+
+
+Everything I saw in your zip passes these now.
