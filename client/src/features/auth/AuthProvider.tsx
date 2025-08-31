@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { AuthContext, type AuthValue, type User } from "./AuthContext";
 import { AuthToken } from "@/lib/auth-token";
-import { getQueryClient } from "@/features/query/queryClient";
 
 const apiFetch = async (
   method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE",
