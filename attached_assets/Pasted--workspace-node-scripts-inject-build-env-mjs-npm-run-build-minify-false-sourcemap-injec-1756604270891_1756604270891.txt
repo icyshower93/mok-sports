@@ -1,0 +1,94 @@
+~/workspace$ node scripts/inject-build-env.mjs && npm run build -- --minify=false --sourcemap
+[inject-build-env] wrote /home/runner/workspace/client/.env
+
+> rest-express@1.0.0 build
+> vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist --minify=false --sourcemap
+
+vite v5.4.19 building for production...
+transforming (1) index.htmlBrowserslist: browsers data (caniuse-lite) is 10 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+✓ 1779 modules transformed.
+../dist/public/index.html                                          8.90 kB │ gzip:   2.53 kB
+../dist/public/assets/moksports logo_1755069436420-CWcPioxH.png  187.25 kB
+../dist/public/assets/index-UVOlCMI5.css                          86.29 kB │ gzip:  14.73 kB
+../dist/public/assets/service-worker-cleanup-CmK1kuDh.js           2.81 kB │ gzip:   0.95 kB
+../dist/public/assets/index-DabCoZ4k.js                          633.83 kB │ gzip: 183.12 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 5.57s
+
+  dist/index.js      437.4kb
+  dist/index.js.map  788.9kb
+
+⚡ Done in 23ms
+~/workspace$ npm run dev
+
+> rest-express@1.0.0 dev
+> NODE_ENV=development tsx server/index.ts
+
+🚀 [Server] Build Info: {
+  version: 1756604218290,
+  date: '2025-08-31T01:36:58.290Z',
+  env: 'development',
+  hash: 'mez0spf6',
+  note: 'Running in development mode'
+}
+📝 [Server] Environment Note: NODE_ENV=development means we have dev debugging enabled while serving production builds
+[VAPID] Environment check - Public key length: 87, Private key length: 43
+[VAPID] Using environment VAPID keys
+[server] NODE_ENV: development
+[server] __dirname: /home/runner/workspace/server
+[server] selected clientDist: /home/runner/workspace/dist/public
+[server] Static assets configured from: /home/runner/workspace/dist/public
+📊 Scoring routes registered successfully
+Admin routes registered successfully
+📊 Scoring routes registered successfully
+[DB] New client connected to pool
+[DB] New client connected to pool
+[RobotManager] Initialized 5 robot users
+[System] Robot users initialized for testing
+[Server] 🚀 HTTP server created, initializing WebSocket...
+[WebSocket] ❤️ Starting enhanced heartbeat system for Reserved VM
+[WebSocket] Draft WebSocket server initialized on /draft-ws
+[WebSocket] WebSocket server listening for connections...
+[WebSocket] Server configuration: { path: '/draft-ws', port: 'not listening' }
+[Server] ✅ WebSocket server initialized (handles /draft-ws and /ws/draft paths)
+[Redis] Found Redis connection string in UPSTASH_REDIS_REST_URL
+[Redis] Using Redis connection string
+[RedisStateManager] Initialized
+[Server] ✅ Global draft manager updated with WebSocket and Robot managers
+[Server] ✅ Global draft manager assigned for admin route access
+[Server] ✅ Setting up periodic timer recovery for Reserved VM
+[WebSocket] Draft WebSocket server initialized and connected
+[Redis] Client initialized
+[RedisStateManager] Initialized
+🔄 Recovering active timers after restart...
+🔍 Found 0 drafts in Redis, 0 active timers in DB
+🔍 Processing 0 total drafts: []
+✅ Recovered 0 active timers
+[Server] Using built assets, skipping Vite middleware
+node:events:502
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: listen EADDRINUSE: address already in use 0.0.0.0:5000
+    at Server.setupListenHandle [as _listen2] (node:net:1908:16)
+    at listenInCluster (node:net:1965:12)
+    at doListen (node:net:2139:7)
+    at process.processTicksAndRejections (node:internal/process/task_queues:83:21)
+Emitted 'error' event on Server instance at:
+    at emitErrorNT (node:net:1944:8)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21) {
+  code: 'EADDRINUSE',
+  errno: -98,
+  syscall: 'listen',
+  address: '0.0.0.0',
+  port: 5000
+}
+
+Node.js v20.19.3
+~/workspace$ 
