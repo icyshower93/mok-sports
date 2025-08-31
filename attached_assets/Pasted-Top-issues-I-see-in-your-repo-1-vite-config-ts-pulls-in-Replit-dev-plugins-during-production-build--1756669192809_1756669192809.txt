@@ -1,0 +1,145 @@
+Top issues I see in your repo
+1) vite.config.ts pulls in Replit dev plugins during production build
+
+File: vite.config.ts
+Right now your config does this:
+
+import runtimeErrorOverlay from "@replit/vite-plugin-runtime-error-modal";
+
+export default defineConfig({
+  plugins: [
+    react(),
+    runtimeErrorOverlay(),
+    ...(process.env.NODE_ENV !== "production" && process.env.REPL_ID
+      ? [await import("@replit/vite-plugin-cartographer").then(m => m.cartographer())]
+      : []
+  ],
+  // ...
+});
+
+
+Problems:
+
+It uses top-level await inside a non-async config.
+
+It tests process.env.NODE_ENV, which is not set during vite build in your scripts, so the condition often evaluates as “not production,” and Vite tries to import dev-only Replit plugins in a prod build → brittle init order & “TDZ-looking” failures.
+
+Fix (production-only, clean build config)
+
+Replace your config with this build-only version:
+
+// vite.config.ts
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import path from "path";
+
+export default defineConfig(({ mode }) => {
+  // We ONLY use Vite for production builds on the VM
+  const isProd = mode === "production";
+
+  return {
+    plugins: [react()], // no dev plugins in prod builds
+    root: path.resolve(import.meta.dirname, "client"),
+    resolve: {
+      alias: {
+        "@": path.resolve(import.meta.dirname, "client/src"),
+        "@shared": path.resolve(import.meta.dirname, "shared"),
+      },
+    },
+    build: {
+      outDir: path.resolve(import.meta.dirname, "dist/public"),
+      emptyOutDir: true,
+      sourcemap: true,        // keeps stack traces readable on the VM
+      minify: "esbuild",
+      cssCodeSplit: true,
+    },
+    server: {
+      // not used in your VM flow, but harmless
+      fs: { strict: true, deny: ["**/.*"] },
+    },
+    define: {
+      __BUILD_MODE__: JSON.stringify(mode),
+      __IS_PROD__: JSON.stringify(isProd),
+    },
+  };
+});
+
+
+This removes dev-only plugins entirely from production, avoids TLA weirdness, and uses Vite’s mode (reliable) instead of process.env.NODE_ENV during build.
+
+2) Barrel export in shared/types creates an extra evaluation layer
+
+File: shared/types/index.ts (current)
+
+export * from './draft';
+
+
+Barrels are a classic source of “Cannot access X before initialization” in bundled builds because re-exports add another module to the init graph.
+
+Fix
+
+Delete shared/types/index.ts.
+
+Update imports that point at the barrel to point to the leaf:
+
+Change:
+
+import { DraftMessage, DraftMessageSchema } from '@shared/types';
+
+
+to:
+
+import { DraftMessage, DraftMessageSchema } from '@shared/types/draft';
+
+
+Change (type-only):
+
+import type { DraftState, NflTeam, DraftPick } from '@shared/types';
+
+
+to:
+
+import type { DraftState, NflTeam, DraftPick } from '@shared/types/draft';
+
+
+In your repo these references appear at least in:
+
+client/src/hooks/use-resilient-websocket.ts
+
+client/src/pages/draft.tsx
+
+(Do a quick project-wide search for from '@shared/types' and switch them.)
+
+3) Service Worker hook is fine—but don’t let it cause “stale build” confusion
+
+File: client/src/hooks/use-service-worker.ts
+You already gate registration to PWA mode (good). Since you’re iterating “in prod,” keep it that way so a dev tab doesn’t get pinned to an old SW. No code change required here; just a note: if you ever set it to register outside PWA, stale SW can look like a TDZ/build failure.
+
+4) Server/startup path is already set up correctly for prod
+
+Files: server/index.ts, package.json
+Your scripts are aligned with a pure-production flow:
+
+npm run build bundles server (esbuild → dist/index.js) and client (Vite → dist/public)
+
+npm run start runs dist/index.js which serves dist/public and your APIs
+
+Just make sure the VM uses this exact command:
+
+npm ci && npm run build -- --mode=production && npm run start
+
+
+(--mode=production ensures the Vite config gets mode === 'production'.)
+
+Tiny but worthwhile hardening
+
+Type-only imports: Wherever you only need types, use import type { … } (you already do this in places; finish it across the client). This prevents accidental value imports that can participate in TDZ.
+
+Cycle check: Add a script to detect import cycles (they’re the other main TDZ cause):
+
+"scripts": {
+  "check:cycles": "madge --extensions ts,tsx client/src --circular"
+}
+
+
+Then run npm run check:cycles. If anything shows up, we’ll break the loop.
