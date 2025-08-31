@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { DraftMessage, DraftMessageSchema } from '@shared/types';
+import { DraftMessage, DraftMessageSchema } from '@shared/types/draft';
 
 interface WebSocketStatus {
   status: 'idle' | 'connecting' | 'open' | 'closed';
