@@ -1,0 +1,118 @@
+Here’s a no-config path that gets you from the minified stack (402:152600) to the exact TS/TSX line, plus a couple of optional helpers to sniff out cycles.
+
+1) Build with a sourcemap (no config edits)
+
+Just add flags to your existing build command.
+
+# what you already run (example you showed):
+node scripts/inject-build-env.mjs && npx vite build --mode production
+
+# run THIS instead for the next build:
+node scripts/inject-build-env.mjs && npx vite build --mode production --sourcemap
+
+
+Tip: for one pass with readable names, you can also do:
+
+node scripts/inject-build-env.mjs && npx vite build --mode production --sourcemap --minify=false
+
+
+That alone often makes the stack say the real identifier instead of u/c.
+
+After it finishes, you’ll have a .map file next to the bundle, e.g.:
+
+dist/public/assets/index-CIcHM6EX.js
+dist/public/assets/index-CIcHM6EX.js.map
+
+2) Map the frame(s) to original source (no config edits)
+
+Add a tiny one-off script to translate line:column pairs using the map.
+
+npm i -D @jridgewell/trace-mapping
+
+
+Create scripts/map-stack.mjs:
+
+import fs from "fs";
+import { TraceMap, originalPositionFor } from "@jridgewell/trace-mapping";
+
+const [, , mapFile, ...pairs] = process.argv;
+if (!mapFile || pairs.length === 0) {
+  console.error("Usage: node scripts/map-stack.mjs <path-to-map> <line:col> [line:col...]");
+  process.exit(1);
+}
+const map = new TraceMap(JSON.parse(fs.readFileSync(mapFile, "utf8")));
+for (const pair of pairs) {
+  const [lineStr, colStr] = pair.split(":");
+  const line = Number(lineStr), column = Number(colStr);
+  const pos = originalPositionFor(map, { line, column });
+  console.log(`${pair} ->`, pos);
+}
+
+
+Run it using the bundle name you just built and the numbers from your console:
+
+node scripts/map-stack.mjs \
+  dist/public/assets/index-CIcHM6EX.js.map \
+  402:152600 40:34207 38:16998
+
+
+You’ll get output like:
+
+402:152600 -> { source: "client/src/pages/whatever.tsx", line: 123, column: 17, name: "someIdentifier" }
+
+
+Open that file at that exact line: that’s where the TDZ happens.
+
+3) Fix it on the spot (what to look for)
+
+“Cannot access ‘u’ before initialization” means some let/const (minified as u) is being read before it’s initialized. The usual culprits:
+
+Undeclared / out-of-order in the same file
+
+const a = () => b();   // uses b
+const b = () => {/*…*/};  // b isn't initialized yet when a runs
+
+
+Fix: reorder so b is declared first, or make b a function declaration (function b(){}) which hoists.
+
+Hook used incorrectly
+Calling useQueryClient() inside a callback/conditional.
+Fix: hoist once at the top of the component:
+
+const queryClient = useQueryClient(); // top-level in component
+// then inside callbacks:
+queryClient.invalidateQueries(...)
+
+
+Circular import
+Two modules import each other (often via barrel export * from './x'). One module reads a top-level binding from the other during initialization → TDZ.
+Fix options (no config needed):
+
+Replace barrel imports with concrete submodule imports.
+
+Move shared constants/types to a tiny shared.ts.
+
+As a quick test, lazy-load one side where it’s used:
+
+// inside an event handler or effect:
+const mod = await import("@/features/realtime/whatever");
+mod.subscribe(...);
+
+
+If the TDZ vanishes, you’ve confirmed a cycle—then refactor to a non-cyclic import.
+
+4) (Optional) Quick scanners (no config needed)
+
+These catch common offenders before you even map:
+
+# 1) Inline use of the hook (should be ZERO results)
+rg -n "useQueryClient\\(\\)\\." client/src
+
+# 2) Effects that reference queryClient (make sure each file declares it)
+rg -n "\\[(?:[^\\]]*\\bqueryClient\\b[^\\]]*)\\]" client/src
+
+# 3) Barrels that often create cycles
+rg -n "export \\* from|export {[^}]+} from" client/src
+
+
+If you do find a barrel related to the mapped file, switch the import in the crashing file to a concrete path (e.g., @/features/foo/bar instead of @/features/foo).
