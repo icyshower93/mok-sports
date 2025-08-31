@@ -7,7 +7,7 @@ channel = "stable-24_05"
 
 [deployment]
 deploymentTarget = "gce"
-build = ["sh", "-c", "npx vite build --mode production --sourcemap --minify=false && node scripts/make-fresh-html.mjs"]
+build = ["sh", "-c", "npm start"]
 run = ["npm", "run", "start"]
 
 [env]
