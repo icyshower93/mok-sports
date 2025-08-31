@@ -659,7 +659,7 @@ export default function DraftPage() {
 
   // DEBUG LOGGING AND CRITICAL TIMER SYNC FIX
   if (draftData?.state) {
-    console.log('🔍 [TIMER DEBUG] Server Time:', state.timeRemaining);
+    console.log('🔍 [TIMER DEBUG] Server Time:', state?.timeRemaining);
     console.log('🔍 [TIMER DEBUG] Display Time:', displayTime);
     console.log('🔍 [TIMER DEBUG] Current Player:', currentPlayer?.name);
   }
@@ -837,7 +837,7 @@ export default function DraftPage() {
           {/* Enhanced Timer & Status Bar */}
           <div className="flex items-center space-x-4">
             {/* Current Picker Info */}
-            {state.currentUserId && currentPlayer && (
+            {state?.currentUserId && currentPlayer && (
               <div className="hidden sm:flex items-center space-x-2 px-3 py-1.5 bg-secondary/30 rounded-full">
                 {currentPlayer.avatar && (
                   <img 
@@ -1203,7 +1203,7 @@ export default function DraftPage() {
                         </Button>
                       )}
                     </div>
-                  ) : state.currentUserId ? (
+                  ) : state?.currentUserId ? (
                     <div className="text-center space-y-3">
                       {/* Current Player - Modern Style */}
                       <div className="flex items-center justify-center space-x-3 mb-4">
@@ -1312,7 +1312,7 @@ export default function DraftPage() {
                     const currentRoundOrder = isOddRound ? baseOrder : [...baseOrder].reverse();
                     
                     // Find current pick index and calculate upcoming picks
-                    const currentPickIndex = currentRoundOrder.findIndex((userId: string) => userId === state.currentUserId);
+                    const currentPickIndex = currentRoundOrder.findIndex((userId: string) => userId === state?.currentUserId);
                     const totalPicks = currentRoundOrder.length;
                     
                     return (
@@ -1347,7 +1347,7 @@ export default function DraftPage() {
                         <div className="space-y-1">
                           {currentRoundOrder.map((userId: string, index: number) => {
                             const userPicks = picksSafe.filter(p => p.user.id === userId);
-                            const isCurrentPick = userId === state.currentUserId;
+                            const isCurrentPick = userId === state?.currentUserId;
                             const isUpNext = index === currentPickIndex + 1;
                             const isJustPicked = index === currentPickIndex - 1;
                             const pickPosition = index + 1;
