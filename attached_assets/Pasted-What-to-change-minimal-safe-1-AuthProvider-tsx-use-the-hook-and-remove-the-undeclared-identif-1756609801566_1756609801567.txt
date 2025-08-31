@@ -1,0 +1,78 @@
+What to change (minimal + safe)
+1) AuthProvider.tsx — use the hook and remove the undeclared identifier
+
+Import useQueryClient
+
+Create const queryClient = useQueryClient();
+
+Replace getQueryClient().… calls with queryClient.…
+
+Keep queryClient in the dependency arrays (now it exists).
+
+Patch (apply exactly these edits)
+- import { useQuery, useMutation } from "@tanstack/react-query";
++ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+  import { AuthContext, type AuthValue, type User } from "./AuthContext";
+  import { AuthToken } from "@/lib/auth-token";
+- import { getQueryClient } from "@/features/query/queryClient";
++ import { getQueryClient } from "@/features/query/queryClient"; // (can be removed if you prefer hook-only)
+
+  export function AuthProvider({ children }: { children: ReactNode }) {
++   const queryClient = useQueryClient();
+
+    const logoutMutation = useMutation({
+      mutationFn: () => apiFetch("POST", "/api/auth/logout"),
+      onSuccess: () => {
+        setIsAuthenticated(false);
+        AuthToken.clear();
+-       getQueryClient().clear();
++       queryClient.clear();
+        window.location.href = "/";
+      },
+    });
+
+    // PWA token recovery
+    useEffect(() => {
+      const storedToken = AuthToken.get();
+      if (storedToken && !user && !isLoading) {
+-       getQueryClient().invalidateQueries({ queryKey: ["/api/auth/me"] });
++       queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
+      }
+-   }, [user, isLoading, queryClient]);
++   }, [user, isLoading, queryClient]);
+
+    // URL param auth success
+    useEffect(() => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const authStatus = urlParams.get("auth");
+      const token = urlParams.get("token");
+
+      if (authStatus === "success" && token) {
+        AuthToken.set(token);
+        setIsAuthenticated(true);
+        sessionStorage.setItem("login-time", Date.now().toString());
+-       getQueryClient().invalidateQueries({ queryKey: ["/api/auth/me"] });
++       queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
+        window.history.replaceState({}, document.title, "/");
+      } else if (authStatus === "success") {
+        setIsAuthenticated(true);
+        sessionStorage.setItem("login-time", Date.now().toString());
+-       getQueryClient().invalidateQueries({ queryKey: ["/api/auth/me"] });
++       queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
+        window.history.replaceState({}, document.title, "/");
+      }
+-   }, [queryClient]);
++   }, [queryClient]);
+
+
+You can also remove the getQueryClient import entirely if you switch all calls to the hook, but leaving it unused won’t break anything—lint will just nudge you.
+
+2) Sanity-check other files for the same pattern
+
+You already used useQueryClient() correctly in the other places that have […] queryClient] in deps (use-pwa-realtime.ts, use-realtime-scores.tsx, use-stable-websocket.ts, draft.tsx, scores.tsx, etc.). The only offender I found was AuthProvider.tsx.
+
+Why this fixes it
+
+The dependency array is evaluated like any other expression. Referencing an undeclared identifier (queryClient) throws a ReferenceError before React can even run the effect body.
+
+By declaring const queryClient = useQueryClient(); you make that identifier real and stable per render, and your invalidations/clears become proper instance calls instead of global singletons.
