@@ -28,10 +28,15 @@ console.log('📝 [Server] Environment Note: NODE_ENV=development means we have 
 async function setupProductionAssets(app: express.Application): Promise<string> {
   // Single source of truth for build output
   const clientDist = path.resolve(__dirname, '../dist/public');
+  const indexHtml = path.join(clientDist, 'index.html');
+  const assetsDir = path.join(clientDist, 'assets');
   
   console.log('[server] NODE_ENV:', process.env.NODE_ENV);
   console.log('[server] __dirname:', __dirname);
   console.log('[server] selected clientDist:', clientDist);
+  console.log('[SERVE] DIST_DIR =', clientDist, 'exists?', fs.existsSync(clientDist));
+  console.log('[SERVE] INDEX_HTML =', indexHtml, 'exists?', fs.existsSync(indexHtml));
+  console.log('[SERVE] ASSETS_DIR =', assetsDir, 'exists?', fs.existsSync(assetsDir));
 
   if (!fs.existsSync(path.join(clientDist, 'index.html'))) {
     console.error('[server] Missing build at', clientDist);
@@ -52,6 +57,20 @@ async function setupProductionAssets(app: express.Application): Promise<string> 
       res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
     }
     next();
+  });
+
+  // Debug endpoint to show what bundle the running process sees
+  app.get("/__build", (_req, res) => {
+    let html = "MISSING";
+    let bundle = null;
+    let stat = null;
+    try {
+      html = fs.readFileSync(indexHtml, "utf8");
+      const m = html.match(/assets\/index-[^"']+\.js/);
+      bundle = m ? m[0] : null;
+      stat = fs.statSync(indexHtml);
+    } catch {}
+    res.json({ indexHtmlPath: indexHtml, bundle, indexHtmlMtime: stat?.mtime ?? null });
   });
 
   // Serve static assets (don't auto-serve index so SPA fallback can handle all routes)

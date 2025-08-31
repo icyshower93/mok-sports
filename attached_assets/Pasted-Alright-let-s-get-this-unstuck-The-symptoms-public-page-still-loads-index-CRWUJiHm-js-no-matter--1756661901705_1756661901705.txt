@@ -1,0 +1,172 @@
+Alright, let’s get this unstuck. The symptoms (“public page still loads index-CRWUJiHm.js no matter what”) almost always mean your running server is serving the wrong index.html (or serving the right file with bad cache headers), not that the assets themselves won’t update.
+
+Below is a copy-paste runbook to pinpoint and fix it on Replit without touching Vite config.
+
+1) Verify what the server is actually serving (not what’s on disk)
+
+Add these lines to your server startup code (where you register static + the SPA fallback). They just log the exact file paths used at runtime:
+
+// server/bootstrap (near your Express app setup)
+import fs from "fs";
+import path from "path";
+
+// Adjust these two if your server compiles to dist/server, etc.
+const DIST_DIR = path.resolve(__dirname, "../public");
+const INDEX_HTML = path.join(DIST_DIR, "index.html");
+const ASSETS_DIR = path.join(DIST_DIR, "assets");
+
+console.log("[SERVE] __dirname =", __dirname);
+console.log("[SERVE] DIST_DIR =", DIST_DIR, "exists?", fs.existsSync(DIST_DIR));
+console.log("[SERVE] INDEX_HTML =", INDEX_HTML, "exists?", fs.existsSync(INDEX_HTML));
+console.log("[SERVE] ASSETS_DIR =", ASSETS_DIR, "exists?", fs.existsSync(ASSETS_DIR));
+
+// OPTIONAL: expose a tiny debug endpoint that shows what bundle name the RUNNING PROCESS sees
+app.get("/__build", (_req, res) => {
+  let html = "MISSING";
+  let bundle = null;
+  let stat = null;
+  try {
+    html = fs.readFileSync(INDEX_HTML, "utf8");
+    const m = html.match(/assets\/index-[^"']+\.js/);
+    bundle = m ? m[0] : null;
+    stat = fs.statSync(INDEX_HTML);
+  } catch {}
+  res.json({ indexHtmlPath: INDEX_HTML, bundle, indexHtmlMtime: stat?.mtime ?? null });
+});
+
+
+Restart your server (the Replit “Run” button). Then visit:
+
+https://mok-sports-draft-mokfantasysport.replit.app/__build
+
+It should return JSON like:
+
+{
+  "indexHtmlPath": "/home/runner/.../dist/public/index.html",
+  "bundle": "assets/index-CbykmnKX.js",
+  "indexHtmlMtime": "2025-08-31T07:32:01.123Z"
+}
+
+
+If it shows a different bundle than what your browser console is loading (e.g. server says CbykmnKX but browser loads CRWUJiHm), that’s a cache header / service worker / proxy problem. If it shows a different path (like …/public/index.html instead of …/dist/public/index.html), that’s a path/middleware order problem.
+
+2) Fix static middleware order + caching headers
+
+Make sure your Express (or similar) is:
+
+Serving /assets statically (hashed files can be cached forever), before the SPA fallback.
+
+Serving index.html with Cache-Control: no-store so proxies/browsers do not cache it.
+
+The static middleware should be registered before any app.get("*") catch-all.
+
+Example:
+
+// 1) Static for assets – long cache OK for hashed filenames
+app.use(
+  "/assets",
+  express.static(ASSETS_DIR, {
+    immutable: true,
+    maxAge: "31536000s", // 1 year
+    etag: true,
+    lastModified: true,
+  })
+);
+
+// 2) (Optional) serve other static files at root too, with a short cache
+app.use(
+  express.static(DIST_DIR, {
+    etag: true,
+    lastModified: true,
+    maxAge: "0",
+  })
+);
+
+// 3) SPA fallback – HTML should NEVER be cached
+app.get("*", (_req, res) => {
+  res.set("Cache-Control", "no-store");
+  res.sendFile(INDEX_HTML);
+});
+
+
+Two common gotchas:
+
+If your app.get("*") comes before app.use("/assets", express.static(...)), every path (even /assets/...) returns HTML → you’ll never get the new JS.
+
+If your HTML is served without Cache-Control: no-store, Replit’s edge/browsers may cache it and keep that old <script src="/assets/index-CRWUJiHm.js">.
+
+3) Do a real hard reset of the running instance
+
+In the Replit shell:
+
+# Stop everything
+pkill -f "node|vite" || true
+
+# Clean the build
+rm -rf dist/public
+
+# Fresh build WITH sourcemap and no minify (readable stacks)
+node scripts/inject-build-env.mjs && npx vite build --mode production --sourcemap --minify=false
+
+# Start the server again (use the same command your Run button uses)
+npm run dev  # or your start script
+
+
+Now check what the running process is serving:
+
+# Local (internal) http if you have one
+curl -s "http://localhost:5000/__build"
+
+# Public
+curl -s "https://mok-sports-draft-mokfantasysport.replit.app/__build"
+
+
+Both should report the same assets/index-*.js name, and it should match what you see in dist/public/index.html.
+
+4) Load the app with caching off and confirm the filename
+
+In your browser:
+
+DevTools → Application → Service Workers → Unregister.
+
+DevTools → Network → Disable cache (checked).
+
+Visit:
+https://mok-sports-draft-mokfantasysport.replit.app/?nosw=1&cachebust=<Date.now()>
+
+In the console stack, click into the JS file link and verify it is the same file reported by /__build.
+
+If it’s still loading the old index-CRWUJiHm.js, check Response headers of the root HTML in the Network tab. If you don’t see Cache-Control: no-store, your server didn’t set it (go back to step 2). If you do see no-store yet still get old content, it’s likely your static middleware is not pointing to dist/public (check the logged paths in step 1).
+
+5) Once you’re on the correct build, map and fix any remaining TDZ
+
+Use the sourcemap on disk (don’t fetch over HTTP):
+
+ls dist/public/assets/index-*.js*
+node scripts/map-stack.mjs dist/public/assets/<the-index>.js.map \
+  402:152680 40:43963 40:39727 40:39655 40:39508 38:16998
+
+
+Open the reported source file+line and apply the simple fix it implies:
+
+Same-file order: call after declaration or use a hoisted function foo(){}.
+
+Hooks: never call hooks inside callbacks/conditionals; hoist const x = useX() to top.
+
+Circular imports: replace barrel imports with concrete modules, or lazy-import inside an effect to break the cycle.
+
+(From your last zip I still saw a couple real issues: in the past AuthProvider.tsx referenced queryClient without declaring it, and some components called useQueryClient() inside callbacks — make sure those are fully cleaned everywhere.)
+
+Why your marker /WHO_SERVES_THIS.txt showed HTML
+
+That path is being caught by your SPA fallback (app.get("*")) instead of the static middleware. This is a middleware order smell. Once you put /assets static (and/or express.static(DIST_DIR)) before the wildcard route, /WHO_SERVES_THIS.txt will serve the text file and your bundles will serve correctly.
+
+If after all of this you still see a mismatch
+
+Paste here the output of /__build from the public URL.
+
+Paste the response headers of / (root HTML) from the Network tab.
+
+Paste the three lines your server logs at startup for __dirname, DIST_DIR, INDEX_HTML.
+
+With those three, I can tell you exactly what path/header is off.
