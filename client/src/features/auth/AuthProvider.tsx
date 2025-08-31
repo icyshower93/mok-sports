@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { AuthContext, type AuthValue, type User } from "./AuthContext";
 import { AuthToken } from "@/lib/auth-token";
+import { getQueryClient } from "@/features/query/queryClient";
 
 const apiFetch = async (
   method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE",
@@ -30,7 +31,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [lastKnownAuthState, setLastKnownAuthState] = useState<boolean | null>(null);
   const [authGraceTimer, setAuthGraceTimer] = useState<NodeJS.Timeout | null>(null);
-  const queryClient = useQueryClient();
 
   const { data: user, isLoading, error } = useQuery({
     queryKey: ["/api/auth/me"],
@@ -53,7 +53,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     onSuccess: () => {
       setIsAuthenticated(false);
       AuthToken.clear(); // Clear stored token
-      queryClient.clear();
+      getQueryClient().clear();
       window.location.href = "/";
     },
   });
@@ -102,7 +102,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     
     if (storedToken && !user && !isLoading) {
       console.log('[Auth] Found stored token, refreshing authentication...');
-      queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
+      getQueryClient().invalidateQueries({ queryKey: ["/api/auth/me"] });
     }
   }, [user, isLoading, queryClient]);
 
@@ -118,13 +118,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       AuthToken.set(token);
       setIsAuthenticated(true);
       sessionStorage.setItem('login-time', Date.now().toString());
-      queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
+      getQueryClient().invalidateQueries({ queryKey: ["/api/auth/me"] });
       window.history.replaceState({}, document.title, "/");
     } else if (authStatus === "success") {
       // Fallback for cookie-only auth
       setIsAuthenticated(true);
       sessionStorage.setItem('login-time', Date.now().toString());
-      queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
+      getQueryClient().invalidateQueries({ queryKey: ["/api/auth/me"] });
       window.history.replaceState({}, document.title, "/");
     } else if (error) {
       setIsAuthenticated(false);
