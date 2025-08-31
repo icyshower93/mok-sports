@@ -1,0 +1,112 @@
+Here’s the exact, no-guesswork flow using index-CMh4aPGq.js and its map.
+
+1) Make sure the page is using this bundle
+
+Open DevTools → Application → Service Workers → click Unregister (if any).
+
+DevTools → Network → check Disable cache.
+
+Hard-reload the app with:
+?nosw=1&cachebust= + a fresh timestamp.
+
+Confirm in the console stack that errors link to index-CMh4aPGq.js:LINE:COLUMN (not an older filename).
+
+2) Get the sourcemap (the tab you gave)
+
+Open this in a new tab (it should load as JSON):
+
+https://mok-sports-draft-mokfantasysport.replit.app/assets/index-CMh4aPGq.js.map
+
+
+If you want it locally, save it as:
+
+dist/public/assets/index-CMh4aPGq.js.map
+
+3) Map the stack frames → original TS/TSX lines
+
+You already have scripts/map-stack.mjs. If not, create it:
+
+// scripts/map-stack.mjs
+import fs from "fs";
+import { TraceMap, originalPositionFor } from "@jridgewell/trace-mapping";
+const [, , mapFile, ...pairs] = process.argv;
+if (!mapFile || pairs.length === 0) {
+  console.error("Usage: node scripts/map-stack.mjs <path-to-map> <line:col> [line:col...]");
+  process.exit(1);
+}
+const map = new TraceMap(JSON.parse(fs.readFileSync(mapFile, "utf8")));
+for (const pair of pairs) {
+  const [lineStr, colStr] = pair.split(":");
+  const pos = originalPositionFor(map, { line: Number(lineStr), column: Number(colStr) });
+  console.log(`${pair} ->`, pos);
+}
+
+
+Run it against index-CMh4aPGq.js.map using the exact line:col numbers you see in the console for that file:
+
+# EXAMPLE — replace these with the top 2–3 frames from your console
+node scripts/map-stack.mjs \
+  dist/public/assets/index-CMh4aPGq.js.map \
+  402:152600 40:43963 38:16998
+
+
+You’ll get outputs like:
+
+402:152600 -> { source: "client/src/pages/SomeFile.tsx", line: 123, column: 17, name: "realIdentifier" }
+40:43963   -> { source: "client/src/features/foo/bar.ts", line: 88, column: 5 }
+
+
+Open those files at those lines. That’s where the TDZ originates.
+
+4) Apply the tiny fix the line implies
+
+Typical TDZ causes + fixes:
+
+A) Same-file order
+
+// ❌ uses b before it’s initialized
+const a = () => b();
+const b = () => {};
+// ✅ hoist/reorder
+function b() {}
+const a = () => b();
+
+
+B) Hook in a callback/conditional
+
+// ❌
+onSuccess: () => { useQueryClient().invalidateQueries(...); }
+// ✅
+const queryClient = useQueryClient(); // top of component
+onSuccess: () => { queryClient.invalidateQueries(...); }
+
+
+C) Circular import (often via barrel index.ts)
+
+Replace barrel imports with concrete submodules.
+
+Move shared bits to a tiny shared.ts.
+
+As a quick unblock, lazy-import where used:
+
+useEffect(() => { (async () => {
+  const { foo } = await import("@/features/foo/foo");
+  foo();
+})(); }, []);
+
+5) Rebuild and verify
+rm -rf dist/public/assets/index-*.js*
+node scripts/inject-build-env.mjs && npx vite build --mode production --sourcemap --minify=false
+
+
+Reload with ?nosw=1&cachebust=<Date.now()>. Confirm the console now references index-CMh4aPGq.js (or your newest filename) and that the error is gone. If a new frame appears, repeat step 3 with its line:col.
+
+Handy repo scans
+# Inline hook uses (should be zero)
+rg -n "use[A-Z]\\w*\\(\\)\\." client/src
+
+# Barrels that commonly create cycles
+rg -n "export \\* from|export {[^}]+} from" client/src
+
+
+Send me the mapped result for your top frame (file + line), and I’ll tell you exactly what to change on that line.
