@@ -108,12 +108,8 @@ export class CacheManager {
   }
 }
 
-// Safe lazy export to prevent TDZ errors - instance created only when first accessed
-let _cacheManagerInstance: CacheManager | null = null;
-
+// ✅ Lazy accessor pattern to prevent TDZ errors
+let _cacheManager: CacheManager | null = null;
 export function getCacheManager(): CacheManager {
-  if (!_cacheManagerInstance) {
-    _cacheManagerInstance = CacheManager.getInstance();
-  }
-  return _cacheManagerInstance;
+  return (_cacheManager ??= CacheManager.getInstance());
 }

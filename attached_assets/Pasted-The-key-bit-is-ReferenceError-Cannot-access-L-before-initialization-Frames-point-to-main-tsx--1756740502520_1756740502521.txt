@@ -1,0 +1,112 @@
+The key bit is:
+
+ReferenceError: Cannot access 'L' before initialization
+
+Frames point to main.tsx → bundled main-sMdw1EJ1.js
+
+Your repo zip still has a module-level singleton in client/src/utils/cache-manager.ts that executes at import time.
+
+I unpacked your zip and found:
+
+client/src/utils/cache-manager.ts ends with a module-level export:
+
+export const cacheManager = CacheManager.getInstance();
+
+
+client/src/main.tsx imports that file just for side-effects:
+
+import "@/utils/cache-manager"; // Initialize global error handlers
+
+
+That combination forces the bundler to evaluate the cache-manager module during bootstrap. In production, treeshaking + hoisting can reorder evaluation so a let binding in the bundle (minified as L) is touched before it’s initialized → your TDZ.
+
+Fix (surgical, safe)
+1) Make CacheManager lazy (no work at module load)
+
+client/src/utils/cache-manager.ts
+
+Replace the module-level instance with a lazy getter and (optionally) a helper to run cleanup without importing the class:
+
+// Cache management utilities to prevent MIME type errors
+
+export class CacheManager {
+  private static instance: CacheManager;
+  private cacheSize = 0;
+  private maxSize = 5 * 1024 * 1024; // 5MB
+
+  private constructor() {}
+
+  static getInstance(): CacheManager {
+    if (!CacheManager.instance) {
+      CacheManager.instance = new CacheManager();
+    }
+    return CacheManager.instance;
+  }
+
+  // ... (rest unchanged)
+  isOverLimit(): boolean {
+    return this.cacheSize > this.maxSize;
+  }
+
+  async cleanupIfNeeded(): Promise<void> {
+    const currentSize = await this.getCacheSize();
+    if (currentSize > this.maxSize) {
+      await this.clearAllCaches();
+    }
+  }
+}
+
+// ❌ REMOVE this (TDZ culprit):
+// export const cacheManager = CacheManager.getInstance();
+
+// ✅ Replace with lazy accessors (if you want convenience):
+let _cacheManager: CacheManager | null = null;
+export function getCacheManager(): CacheManager {
+  return (_cacheManager ??= CacheManager.getInstance());
+}
+
+2) Remove the side-effect import from the app bootstrap
+
+client/src/main.tsx
+
+Delete the line that force-loads cache-manager on startup:
+
+-import "@/utils/cache-manager"; // Initialize global error handlers
+
+
+(If some place truly needs it, import the getter where it’s used:
+import { getCacheManager } from "@/utils/cache-manager"; and call it inside a function/effect—not at module top level.)
+
+That’s it. Nothing else in your tree imports cacheManager directly, so you shouldn’t need widespread changes.
+
+Why this resolves your exact error
+
+The minified L that the error references is typically a let in a different module that’s part of the same evaluation cycle. Your side-effect import created a cycle where cache-manager ran during bootstrap; removing the module-level instance breaks the cycle because no code executes at import time anymore.
+
+Deferring instance creation to the first call site ensures the class is defined and the bundle’s module graph is settled before any instance is made.
+
+Quick verification checklist
+
+Build locally in prod mode.
+
+Reload with cache disabled (DevTools → Network → “Disable cache”) and hard-refresh.
+
+Confirm logs follow this order with no ErrorBoundary trip:
+
+[Auth] Token check - Has token: true Has user: false ...
+
+Auth ready, initiating WebSocket connection
+
+Auth confirmed, establishing WebSocket connection...
+
+No ErrorBoundary “Cannot access 'L'...” entries.
+
+Optional hardening (prevents regressions)
+
+Add an ESLint rule (or a quick grep in CI) to block module-level singletons:
+
+Flag patterns like export const something = new and export const something = Class.getInstance() outside functions.
+
+Prefer factories/getters for all managers:
+
+getWebSocketManager() (instead of exporting an instance) if you ever hit similar cycles with websocket-manager.ts.

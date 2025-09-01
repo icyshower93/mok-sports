@@ -1,7 +1,6 @@
 import { createRoot } from "react-dom/client";
 // Defer App module evaluation until after bootstrap to prevent TDZ errors
 import "@/index.css";
-import "@/utils/cache-manager"; // Initialize global error handlers
 
 // Enhanced iOS swipe prevention
 if (navigator.userAgent.includes('iPhone') || navigator.userAgent.includes('iPad')) {
