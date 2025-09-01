@@ -277,7 +277,7 @@ function MainPageContent({
 
   // Fetch teams left to play for current week
   const { data: teamsLeftData } = useQuery({
-    queryKey: [`/api/leagues/${selectedLeague}/teams-left-to-play/${getCurrentSeason()}/${currentWeek}`],
+    queryKey: [`/api/scoring/leagues/${selectedLeague}/teams-left-to-play/${getCurrentSeason()}/${currentWeek}`],
     enabled: !!selectedLeague,
   });
 
