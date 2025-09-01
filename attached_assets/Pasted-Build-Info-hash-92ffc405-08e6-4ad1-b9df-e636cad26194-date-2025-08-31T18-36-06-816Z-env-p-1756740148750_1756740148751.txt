@@ -1,0 +1,307 @@
+Build Info: {hash: '92ffc405-08e6-4ad1-b9df-e636cad26194', date: '2025-08-31T18:36:06.816Z', env: 'production'}
+buildInfo.ts:20 📦 Version: 92ffc405-08e6-4ad1-b9df-e636cad26194
+buildInfo.ts:21 📅 Built: 2025-08-31T18:36:06.816Z
+buildInfo.ts:22 🔧 Environment: production
+App.tsx:88 [App] WebSocket status: waiting_auth (Disconnected)
+App.tsx:94 [App] ⏳ Waiting for authentication to complete
+AuthProvider.tsx:102 [Auth] Token check - Has token: true Has user: false Loading: true
+use-service-worker.ts:130 [SW Hook] Service worker disabled - not in PWA mode
+use-production-realtime.ts:224 [ProductionRealtime] 🧹 Cleaning up WebSocket connection
+use-auto-push-refresh.ts:21 [AutoPushRefresh] Legacy hook delegating to SubscriptionManager
+use-production-realtime.ts:203 [ProductionRealtime] 🔐 Auth ready, initiating WebSocket connection
+use-production-realtime.ts:57 [ProductionRealtime] 🚀 Auth confirmed, establishing WebSocket connection...
+use-production-realtime.ts:58 [ProductionRealtime] User: Mok Sports ID: d8873675-274c-46f9-ab48-00955c81d875
+AuthProvider.tsx:102 [Auth] Token check - Has token: true Has user: true Loading: false
+App.tsx:88 [App] WebSocket status: connecting (Disconnected)
+App.tsx:96 [App] 🔄 Attempting to connect...
+error-boundary.tsx:20 [ErrorBoundary] Production Error Details:
+getDerivedStateFromError @ error-boundary.tsx:20
+t.payload @ react-dom.production.min.js:189
+Hr @ react-dom.production.min.js:154
+zi @ react-dom.production.min.js:200
+Ga @ react-dom.production.min.js:291
+Ka @ react-dom.production.min.js:279
+_d @ react-dom.production.min.js:279
+Ha @ react-dom.production.min.js:267
+E @ scheduler.production.min.js:13
+ut @ scheduler.production.min.js:14Understand this error
+error-boundary.tsx:21 [ErrorBoundary] Error name: ReferenceError
+getDerivedStateFromError @ error-boundary.tsx:21
+t.payload @ react-dom.production.min.js:189
+Hr @ react-dom.production.min.js:154
+zi @ react-dom.production.min.js:200
+Ga @ react-dom.production.min.js:291
+Ka @ react-dom.production.min.js:279
+_d @ react-dom.production.min.js:279
+Ha @ react-dom.production.min.js:267
+E @ scheduler.production.min.js:13
+ut @ scheduler.production.min.js:14Understand this error
+error-boundary.tsx:22 [ErrorBoundary] Error message: Cannot access 'L' before initialization
+getDerivedStateFromError @ error-boundary.tsx:22
+t.payload @ react-dom.production.min.js:189
+Hr @ react-dom.production.min.js:154
+zi @ react-dom.production.min.js:200
+Ga @ react-dom.production.min.js:291
+Ka @ react-dom.production.min.js:279
+_d @ react-dom.production.min.js:279
+Ha @ react-dom.production.min.js:267
+E @ scheduler.production.min.js:13
+ut @ scheduler.production.min.js:14Understand this error
+error-boundary.tsx:23 [ErrorBoundary] Full error object: ReferenceError: Cannot access 'L' before initialization
+    at Se (main.tsx:110:9)
+    at vu (react-dom.production.min.js:160:137)
+    at Co (react-dom.production.min.js:196:258)
+    at Ga (react-dom.production.min.js:290:366)
+    at Ka (react-dom.production.min.js:279:389)
+    at _d (react-dom.production.min.js:279:362)
+    at Ha (react-dom.production.min.js:267:300)
+    at E (scheduler.production.min.js:13:203)
+    at MessagePort.ut (scheduler.production.min.js:14:128)
+getDerivedStateFromError @ error-boundary.tsx:23
+t.payload @ react-dom.production.min.js:189
+Hr @ react-dom.production.min.js:154
+zi @ react-dom.production.min.js:200
+Ga @ react-dom.production.min.js:291
+Ka @ react-dom.production.min.js:279
+_d @ react-dom.production.min.js:279
+Ha @ react-dom.production.min.js:267
+E @ scheduler.production.min.js:13
+ut @ scheduler.production.min.js:14Understand this error
+error-boundary.tsx:24 [ErrorBoundary] Stack trace: ReferenceError: Cannot access 'L' before initialization
+    at Se (https://mok-sports-draft-mokfantasysport.replit.app/assets/main-sMdw1EJ1.js:31:1793)
+    at vu (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BDJrt2Wb.js:38:16959)
+    at Co (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BDJrt2Wb.js:40:3134)
+    at Ga (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BDJrt2Wb.js:40:44223)
+    at Ka (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BDJrt2Wb.js:40:39499)
+    at _d (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BDJrt2Wb.js:40:39472)
+    at Ha (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BDJrt2Wb.js:40:34533)
+    at E (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BDJrt2Wb.js:25:1562)
+    at MessagePort.ut (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BDJrt2Wb.js:25:1930)
+getDerivedStateFromError @ error-boundary.tsx:24
+t.payload @ react-dom.production.min.js:189
+Hr @ react-dom.production.min.js:154
+zi @ react-dom.production.min.js:200
+Ga @ react-dom.production.min.js:291
+Ka @ react-dom.production.min.js:279
+_d @ react-dom.production.min.js:279
+Ha @ react-dom.production.min.js:267
+E @ scheduler.production.min.js:13
+ut @ scheduler.production.min.js:14Understand this error
+error-boundary.tsx:25 [ErrorBoundary] Error constructor: ReferenceError
+getDerivedStateFromError @ error-boundary.tsx:25
+t.payload @ react-dom.production.min.js:189
+Hr @ react-dom.production.min.js:154
+zi @ react-dom.production.min.js:200
+Ga @ react-dom.production.min.js:291
+Ka @ react-dom.production.min.js:279
+_d @ react-dom.production.min.js:279
+Ha @ react-dom.production.min.js:267
+E @ scheduler.production.min.js:13
+ut @ scheduler.production.min.js:14Understand this error
+error-boundary.tsx:20 [ErrorBoundary] Production Error Details:
+getDerivedStateFromError @ error-boundary.tsx:20
+t.payload @ react-dom.production.min.js:189
+Hr @ react-dom.production.min.js:154
+zi @ react-dom.production.min.js:200
+Ga @ react-dom.production.min.js:291
+Ka @ react-dom.production.min.js:279
+Ed @ react-dom.production.min.js:279
+Zr @ react-dom.production.min.js:279
+Io @ react-dom.production.min.js:270
+Ha @ react-dom.production.min.js:267
+E @ scheduler.production.min.js:13
+ut @ scheduler.production.min.js:14Understand this error
+error-boundary.tsx:21 [ErrorBoundary] Error name: ReferenceError
+getDerivedStateFromError @ error-boundary.tsx:21
+t.payload @ react-dom.production.min.js:189
+Hr @ react-dom.production.min.js:154
+zi @ react-dom.production.min.js:200
+Ga @ react-dom.production.min.js:291
+Ka @ react-dom.production.min.js:279
+Ed @ react-dom.production.min.js:279
+Zr @ react-dom.production.min.js:279
+Io @ react-dom.production.min.js:270
+Ha @ react-dom.production.min.js:267
+E @ scheduler.production.min.js:13
+ut @ scheduler.production.min.js:14Understand this error
+error-boundary.tsx:22 [ErrorBoundary] Error message: Cannot access 'L' before initialization
+getDerivedStateFromError @ error-boundary.tsx:22
+t.payload @ react-dom.production.min.js:189
+Hr @ react-dom.production.min.js:154
+zi @ react-dom.production.min.js:200
+Ga @ react-dom.production.min.js:291
+Ka @ react-dom.production.min.js:279
+Ed @ react-dom.production.min.js:279
+Zr @ react-dom.production.min.js:279
+Io @ react-dom.production.min.js:270
+Ha @ react-dom.production.min.js:267
+E @ scheduler.production.min.js:13
+ut @ scheduler.production.min.js:14Understand this error
+error-boundary.tsx:23 [ErrorBoundary] Full error object: ReferenceError: Cannot access 'L' before initialization
+    at Se (main.tsx:110:9)
+    at vu (react-dom.production.min.js:160:137)
+    at Co (react-dom.production.min.js:196:258)
+    at Ga (react-dom.production.min.js:290:366)
+    at Ka (react-dom.production.min.js:279:389)
+    at Ed (react-dom.production.min.js:279:320)
+    at Zr (react-dom.production.min.js:279:180)
+    at Io (react-dom.production.min.js:270:88)
+    at Ha (react-dom.production.min.js:267:429)
+    at E (scheduler.production.min.js:13:203)
+getDerivedStateFromError @ error-boundary.tsx:23
+t.payload @ react-dom.production.min.js:189
+Hr @ react-dom.production.min.js:154
+zi @ react-dom.production.min.js:200
+Ga @ react-dom.production.min.js:291
+Ka @ react-dom.production.min.js:279
+Ed @ react-dom.production.min.js:279
+Zr @ react-dom.production.min.js:279
+Io @ react-dom.production.min.js:270
+Ha @ react-dom.production.min.js:267
+E @ scheduler.production.min.js:13
+ut @ scheduler.production.min.js:14Understand this error
+error-boundary.tsx:24 [ErrorBoundary] Stack trace: ReferenceError: Cannot access 'L' before initialization
+    at Se (https://mok-sports-draft-mokfantasysport.replit.app/assets/main-sMdw1EJ1.js:31:1793)
+    at vu (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BDJrt2Wb.js:38:16959)
+    at Co (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BDJrt2Wb.js:40:3134)
+    at Ga (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BDJrt2Wb.js:40:44223)
+    at Ka (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BDJrt2Wb.js:40:39499)
+    at Ed (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BDJrt2Wb.js:40:39430)
+    at Zr (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BDJrt2Wb.js:40:39289)
+    at Io (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BDJrt2Wb.js:40:35710)
+    at Ha (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BDJrt2Wb.js:40:34666)
+    at E (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BDJrt2Wb.js:25:1562)
+getDerivedStateFromError @ error-boundary.tsx:24
+t.payload @ react-dom.production.min.js:189
+Hr @ react-dom.production.min.js:154
+zi @ react-dom.production.min.js:200
+Ga @ react-dom.production.min.js:291
+Ka @ react-dom.production.min.js:279
+Ed @ react-dom.production.min.js:279
+Zr @ react-dom.production.min.js:279
+Io @ react-dom.production.min.js:270
+Ha @ react-dom.production.min.js:267
+E @ scheduler.production.min.js:13
+ut @ scheduler.production.min.js:14Understand this error
+error-boundary.tsx:25 [ErrorBoundary] Error constructor: ReferenceError
+getDerivedStateFromError @ error-boundary.tsx:25
+t.payload @ react-dom.production.min.js:189
+Hr @ react-dom.production.min.js:154
+zi @ react-dom.production.min.js:200
+Ga @ react-dom.production.min.js:291
+Ka @ react-dom.production.min.js:279
+Ed @ react-dom.production.min.js:279
+Zr @ react-dom.production.min.js:279
+Io @ react-dom.production.min.js:270
+Ha @ react-dom.production.min.js:267
+E @ scheduler.production.min.js:13
+ut @ scheduler.production.min.js:14Understand this error
+react-dom.production.min.js:188 ReferenceError: Cannot access 'L' before initialization
+    at Se (main.tsx:110:9)
+    at vu (react-dom.production.min.js:160:137)
+    at Co (react-dom.production.min.js:196:258)
+    at Ga (react-dom.production.min.js:290:366)
+    at Ka (react-dom.production.min.js:279:389)
+    at Ed (react-dom.production.min.js:279:320)
+    at Zr (react-dom.production.min.js:279:180)
+    at Io (react-dom.production.min.js:270:88)
+    at Ha (react-dom.production.min.js:267:429)
+    at E (scheduler.production.min.js:13:203)
+_o @ react-dom.production.min.js:188
+o.componentDidCatch.t.callback @ react-dom.production.min.js:189
+gi @ react-dom.production.min.js:156
+Di @ react-dom.production.min.js:260
+Ba @ react-dom.production.min.js:259
+wd @ react-dom.production.min.js:258
+Cd @ react-dom.production.min.js:282
+gn @ react-dom.production.min.js:280
+Ha @ react-dom.production.min.js:268
+E @ scheduler.production.min.js:13
+ut @ scheduler.production.min.js:14Understand this error
+error-boundary.tsx:45 [ErrorBoundary] DETAILED ERROR - Name: ReferenceError
+componentDidCatch @ error-boundary.tsx:45
+o.componentDidCatch.t.callback @ react-dom.production.min.js:189
+gi @ react-dom.production.min.js:156
+Di @ react-dom.production.min.js:260
+Ba @ react-dom.production.min.js:259
+wd @ react-dom.production.min.js:258
+Cd @ react-dom.production.min.js:282
+gn @ react-dom.production.min.js:280
+Ha @ react-dom.production.min.js:268
+E @ scheduler.production.min.js:13
+ut @ scheduler.production.min.js:14Understand this error
+error-boundary.tsx:46 [ErrorBoundary] DETAILED ERROR - Message: Cannot access 'L' before initialization
+componentDidCatch @ error-boundary.tsx:46
+o.componentDidCatch.t.callback @ react-dom.production.min.js:189
+gi @ react-dom.production.min.js:156
+Di @ react-dom.production.min.js:260
+Ba @ react-dom.production.min.js:259
+wd @ react-dom.production.min.js:258
+Cd @ react-dom.production.min.js:282
+gn @ react-dom.production.min.js:280
+Ha @ react-dom.production.min.js:268
+E @ scheduler.production.min.js:13
+ut @ scheduler.production.min.js:14Understand this error
+error-boundary.tsx:47 [ErrorBoundary] DETAILED ERROR - Stack: ReferenceError: Cannot access 'L' before initialization
+    at Se (https://mok-sports-draft-mokfantasysport.replit.app/assets/main-sMdw1EJ1.js:31:1793)
+    at vu (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BDJrt2Wb.js:38:16959)
+    at Co (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BDJrt2Wb.js:40:3134)
+    at Ga (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BDJrt2Wb.js:40:44223)
+    at Ka (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BDJrt2Wb.js:40:39499)
+    at Ed (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BDJrt2Wb.js:40:39430)
+    at Zr (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BDJrt2Wb.js:40:39289)
+    at Io (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BDJrt2Wb.js:40:35710)
+    at Ha (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BDJrt2Wb.js:40:34666)
+    at E (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BDJrt2Wb.js:25:1562)
+componentDidCatch @ error-boundary.tsx:47
+o.componentDidCatch.t.callback @ react-dom.production.min.js:189
+gi @ react-dom.production.min.js:156
+Di @ react-dom.production.min.js:260
+Ba @ react-dom.production.min.js:259
+wd @ react-dom.production.min.js:258
+Cd @ react-dom.production.min.js:282
+gn @ react-dom.production.min.js:280
+Ha @ react-dom.production.min.js:268
+E @ scheduler.production.min.js:13
+ut @ scheduler.production.min.js:14Understand this error
+error-boundary.tsx:48 [ErrorBoundary] Component stack: 
+    at Se (https://mok-sports-draft-mokfantasysport.replit.app/assets/main-sMdw1EJ1.js:31:1733)
+    at Z (https://mok-sports-draft-mokfantasysport.replit.app/assets/App-xJFImDNB.js:10:3200)
+    at Ji (https://mok-sports-draft-mokfantasysport.replit.app/assets/App-xJFImDNB.js:10:4016)
+    at Suspense
+    at Cd (https://mok-sports-draft-mokfantasysport.replit.app/assets/App-xJFImDNB.js:40:79730)
+    at Ku (https://mok-sports-draft-mokfantasysport.replit.app/assets/App-xJFImDNB.js:40:57581)
+    at va (https://mok-sports-draft-mokfantasysport.replit.app/assets/App-xJFImDNB.js:10:40032)
+    at Ma (https://mok-sports-draft-mokfantasysport.replit.app/assets/App-xJFImDNB.js:10:43235)
+    at c (https://mok-sports-draft-mokfantasysport.replit.app/assets/App-xJFImDNB.js:10:45668)
+    at oi (https://mok-sports-draft-mokfantasysport.replit.app/assets/App-xJFImDNB.js:40:50141)
+    at Hu (https://mok-sports-draft-mokfantasysport.replit.app/assets/App-xJFImDNB.js:40:56639)
+    at ed (https://mok-sports-draft-mokfantasysport.replit.app/assets/App-xJFImDNB.js:40:71543)
+    at Sd
+componentDidCatch @ error-boundary.tsx:48
+o.componentDidCatch.t.callback @ react-dom.production.min.js:189
+gi @ react-dom.production.min.js:156
+Di @ react-dom.production.min.js:260
+Ba @ react-dom.production.min.js:259
+wd @ react-dom.production.min.js:258
+Cd @ react-dom.production.min.js:282
+gn @ react-dom.production.min.js:280
+Ha @ react-dom.production.min.js:268
+E @ scheduler.production.min.js:13
+ut @ scheduler.production.min.js:14Understand this error
+use-production-realtime.ts:224 [ProductionRealtime] 🧹 Cleaning up WebSocket connection
+use-production-realtime.ts:238 WebSocket connection to 'wss://mok-sports-draft-mokfantasysport.replit.app/draft-ws' failed: WebSocket is closed before the connection is established.
+(anonymous) @ use-production-realtime.ts:238
+Lo @ react-dom.production.min.js:239
+Pt @ react-dom.production.min.js:243
+Gn @ react-dom.production.min.js:283
+ji @ react-dom.production.min.js:272
+mn @ react-dom.production.min.js:127
+Cd @ react-dom.production.min.js:282
+gn @ react-dom.production.min.js:280
+Ha @ react-dom.production.min.js:268
+E @ scheduler.production.min.js:13
+ut @ scheduler.production.min.js:14Understand this warning
+use-production-realtime.ts:189 [ProductionRealtime] WebSocket error: Event {isTrusted: true, type: 'error', target: WebSocket, currentTarget: WebSocket, eventPhase: 2, …}
+x.onerror @ use-production-realtime.ts:189Understand this error
+use-production-realtime.ts:155 [ProductionRealtime] 🔌 WebSocket closed: 1006 (No close frame (network issue)) - 

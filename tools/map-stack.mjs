@@ -11,8 +11,13 @@ function mapPos(line, column) {
   console.log(`${js}:${line}:${column} → ${pos.source}:${pos.line}:${pos.column}`);
 }
 
-// Map common error positions - adjust these based on your actual stack traces
-console.log("Mapping common error positions...");
-mapPos(1, 1);
-mapPos(100, 1000);
-mapPos(402, 152675);  // From the example
+// Map production error positions - update these based on latest logs
+console.log("Mapping production error positions...");
+console.log("📦 Current build bundles:");
+console.log("  main-sMdw1EJ1.js   - 16.55 kB");
+console.log("  App-xJFImDNB.js    - 156.90 kB");
+console.log("  index-BDJrt2Wb.js  - 144.57 kB");
+console.log();
+
+// Previous TDZ error was fixed by removing module-level cacheManager export
+// mapPos(31, 1793);  // main-sMdw1EJ1.js:31:1793 - FIXED: TDZ in cache-manager.ts

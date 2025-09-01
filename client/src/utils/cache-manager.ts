@@ -108,4 +108,12 @@ export class CacheManager {
   }
 }
 
-export const cacheManager = CacheManager.getInstance();
+// Safe lazy export to prevent TDZ errors - instance created only when first accessed
+let _cacheManagerInstance: CacheManager | null = null;
+
+export function getCacheManager(): CacheManager {
+  if (!_cacheManagerInstance) {
+    _cacheManagerInstance = CacheManager.getInstance();
+  }
+  return _cacheManagerInstance;
+}
