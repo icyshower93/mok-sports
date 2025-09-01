@@ -45,11 +45,31 @@ import mokSportsLogoWhite from "@assets/MokSports_White_1755068930869.png";
 import mokSportsLogo from "@assets/moksports logo_1755069436420.png";
 import { useAuth } from "@/features/auth/useAuth";
 
-// Group 5: Add basic page structure with useAuth hook
+// Group 6: Add query logic (likely TDZ source)
 export default function Main() { 
   const { user } = useAuth();
+  const [selectedLeague, setSelectedLeague] = useState<string>("");
   
-  if (!user) {
+  // Fetch user's leagues
+  const { data: leagues = [], isLoading: leaguesLoading } = useQuery({
+    queryKey: ['/api/user/leagues'],
+    enabled: !!user,
+  });
+
+  // Get current week from scoring API
+  const { data: currentWeekData } = useQuery({
+    queryKey: ['/api/scoring/current-week'],
+    enabled: !!user,
+  });
+
+  // Set first league as default selection
+  useEffect(() => {
+    if ((leagues as any[]).length > 0 && !selectedLeague) {
+      setSelectedLeague((leagues as any[])[0].id);
+    }
+  }, [leagues, selectedLeague]);
+  
+  if (!user || leaguesLoading) {
     return <div>Loading...</div>;
   }
 
@@ -57,7 +77,8 @@ export default function Main() {
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-6">
         <h1 className="text-2xl font-bold">Welcome {user.name}</h1>
-        <p>main probe - group 5 (+ useAuth usage)</p>
+        <p>main probe - group 6 (+ query logic)</p>
+        <p>Leagues: {leagues.length}, Selected: {selectedLeague}</p>
       </div>
       <BottomNav />
     </div>
