@@ -84,11 +84,14 @@ export function useSmartRedirect(enabled: boolean) {
           startTransition(() => {
             setLocation(`/draft/${draft.draftId}`);
           });
-        } else {
-          // Go to league waiting room or main league page
+        } else if (draft?.status === "idle" && draft.draftId) {
+          // Draft exists but not started - go to waiting room
           startTransition(() => {
             setLocation(`/league/waiting?id=${pickLeagueId}`);
           });
+        } else {
+          // No draft or completed draft - stay on main page, don't redirect
+          console.log('[SmartRedirect] No active/idle draft found, staying on main page');
         }
         
         // Warm caches

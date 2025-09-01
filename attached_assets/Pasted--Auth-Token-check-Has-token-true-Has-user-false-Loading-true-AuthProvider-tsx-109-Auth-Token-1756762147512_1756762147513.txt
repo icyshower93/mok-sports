@@ -1,0 +1,57 @@
+[Auth] Token check - Has token: true Has user: false Loading: true
+AuthProvider.tsx:109 [Auth] Token check - Has token: true Has user: true Loading: false
+main.tsx:281 Main page debug: Object
+main.tsx:301 🔍 SKINS WINNER DEBUG: Object
+/api/scoring/skins/3e98be5a-1189-4a0e-8468-c6e54fb21137/2024/1:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+main.tsx:281 Main page debug: Object
+main.tsx:301 🔍 SKINS WINNER DEBUG: Object
+main.tsx:281 Main page debug: Object
+main.tsx:301 🔍 SKINS WINNER DEBUG: Object
+/api/leagues/3e98be5a-1189-4a0e-8468-c6e54fb21137/teams-left-to-play/2024/1:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+league-waiting.tsx:81 [LeagueWaiting] EMERGENCY DEBUG - ABOUT TO CALL useDraftWebSocket with: Object
+use-draft-websocket-fixed.ts:31 [WebSocket] Hook called with: Object
+league-waiting.tsx:89 [LeagueWaiting] EMERGENCY DEBUG - WebSocket hook returned: Object
+use-draft-websocket-fixed.ts:120 [WebSocket] MAIN useEffect trigger - draftId: null userId: true
+use-draft-websocket-fixed.ts:141 [WebSocket] ❌ Connection requirements not met: Object
+league-waiting.tsx:81 [LeagueWaiting] EMERGENCY DEBUG - ABOUT TO CALL useDraftWebSocket with: Object
+use-draft-websocket-fixed.ts:31 [WebSocket] Hook called with: Object
+league-waiting.tsx:89 [LeagueWaiting] EMERGENCY DEBUG - WebSocket hook returned: Object
+league-waiting.tsx:81 [LeagueWaiting] EMERGENCY DEBUG - ABOUT TO CALL useDraftWebSocket with: Object
+use-draft-websocket-fixed.ts:31 [WebSocket] Hook called with: Object
+league-waiting.tsx:89 [LeagueWaiting] EMERGENCY DEBUG - WebSocket hook returned: Object
+use-draft-websocket-fixed.ts:120 [WebSocket] MAIN useEffect trigger - draftId: 8bc15d18-2046-42a7-8cca-c51b734121c3 userId: true
+use-draft-websocket-fixed.ts:123 [WebSocket] ✅ Conditions met, validating draft exists before connection...
+league-waiting.tsx:94 [LeagueWaiting] League data updated: Object
+league-waiting.tsx:107 [League] Draft ID changed, WebSocket should reconnect to: 8bc15d18-2046-42a7-8cca-c51b734121c3
+league-waiting.tsx:81 [LeagueWaiting] EMERGENCY DEBUG - ABOUT TO CALL useDraftWebSocket with: Object
+use-draft-websocket-fixed.ts:31 [WebSocket] Hook called with: Object
+league-waiting.tsx:89 [LeagueWaiting] EMERGENCY DEBUG - WebSocket hook returned: Object
+use-draft-websocket-fixed.ts:129 [WebSocket] ✅ Draft exists, proceeding with connection
+use-draft-websocket-fixed.ts:34 [WebSocket] === STARTING NEW CONNECTION ATTEMPT ===
+use-draft-websocket-fixed.ts:35 [WebSocket] Draft ID: 8bc15d18-2046-42a7-8cca-c51b734121c3 User ID: d8873675-274c-46f9-ab48-00955c81d875
+use-draft-websocket-fixed.ts:55 [WebSocket] Creating connection to: wss://mok-sports-draft-mokfantasysport.replit.app/draft-ws?userId=d8873675-274c-46f9-ab48-00955c81d875&draftId=8bc15d18-2046-42a7-8cca-c51b734121c3
+league-waiting.tsx:81 [LeagueWaiting] EMERGENCY DEBUG - ABOUT TO CALL useDraftWebSocket with: Object
+use-draft-websocket-fixed.ts:31 [WebSocket] Hook called with: Object
+league-waiting.tsx:89 [LeagueWaiting] EMERGENCY DEBUG - WebSocket hook returned: Object
+use-draft-websocket-fixed.ts:63 [WebSocket] ✅ CONNECTION ESTABLISHED
+league-waiting.tsx:81 [LeagueWaiting] EMERGENCY DEBUG - ABOUT TO CALL useDraftWebSocket with: Object
+use-draft-websocket-fixed.ts:31 [WebSocket] Hook called with: Object
+league-waiting.tsx:89 [LeagueWaiting] EMERGENCY DEBUG - WebSocket hook returned: Object
+use-draft-websocket-fixed.ts:70 [WebSocket] Message received: connected
+use-draft-websocket-fixed.ts:75 [WebSocket] Connected confirmation received
+league-waiting.tsx:81 [LeagueWaiting] EMERGENCY DEBUG - ABOUT TO CALL useDraftWebSocket with: Object
+use-draft-websocket-fixed.ts:31 [WebSocket] Hook called with: Object
+league-waiting.tsx:89 [LeagueWaiting] EMERGENCY DEBUG - WebSocket hook returned: Object
+use-draft-websocket-fixed.ts:70 [WebSocket] Message received: connected
+use-draft-websocket-fixed.ts:75 [WebSocket] Connected confirmation received
+league-waiting.tsx:81 [LeagueWaiting] EMERGENCY DEBUG - ABOUT TO CALL useDraftWebSocket with: Object
+use-draft-websocket-fixed.ts:31 [WebSocket] Hook called with: Object
+league-waiting.tsx:89 [LeagueWaiting] EMERGENCY DEBUG - WebSocket hook returned: Object
+use-draft-websocket-fixed.ts:70 [WebSocket] Message received: draft_state
+league-waiting.tsx:81 [LeagueWaiting] EMERGENCY DEBUG - ABOUT TO CALL useDraftWebSocket with: Object
+use-draft-websocket-fixed.ts:31 [WebSocket] Hook called with: Object
+league-waiting.tsx:89 [LeagueWaiting] EMERGENCY DEBUG - WebSocket hook returned: Object
+use-draft-websocket-fixed.ts:70 [WebSocket] Message received: score_update
+league-waiting.tsx:81 [LeagueWaiting] EMERGENCY DEBUG - ABOUT TO CALL useDraftWebSocket with: Object
+use-draft-websocket-fixed.ts:31 [WebSocket] Hook called with: Object
+league-waiting.tsx:89 [LeagueWaiting] EMERGENCY DEBUG - WebSocket hook returned: Object
