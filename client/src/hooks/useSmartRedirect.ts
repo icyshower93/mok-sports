@@ -101,10 +101,10 @@ export function useSmartRedirect(enabled: boolean) {
             setLocation(`/league/waiting?id=${pickLeagueId}`);
           });
         } else {
-          // No draft or completed draft - redirect to dashboard (big Create/Join buttons)
-          console.log('[SmartRedirect] No active/idle draft found, redirecting to dashboard');
+          // No draft or completed draft - go to main app (scores, teams, etc.)
+          console.log('[SmartRedirect] No active/idle draft found, going to main app');
           startTransition(() => {
-            setLocation("/dashboard");
+            setLocation("/");
           });
         }
         
