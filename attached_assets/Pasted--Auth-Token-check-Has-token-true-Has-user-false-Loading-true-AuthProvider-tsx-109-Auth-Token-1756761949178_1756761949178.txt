@@ -1,0 +1,35 @@
+[Auth] Token check - Has token: true Has user: false Loading: true
+AuthProvider.tsx:109 [Auth] Token check - Has token: true Has user: true Loading: false
+draft.tsx:455 [SMOOTH TIMER] Display time: 0.0 isCountingDown: false localTime: 0.0
+draft.tsx:527 [TIMER SYNC] Display: 0.0s, Limit: 120s, Progress: 0.0%
+draft.tsx:577 [Draft] All hooks declared, starting conditional logic
+draft.tsx:578 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1756761915073
+draft.tsx:614 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+draft.tsx:171 [Draft] === STARTING DRAFT FETCH ===
+draft.tsx:172 [Draft] Draft ID: 8bc15d18-2046-42a7-8cca-c51b734121c3
+draft.tsx:173 [Draft] Auth status - User: Mok Sports Authenticated: true Loading: false
+draft.tsx:175 [Draft] Current URL: https://mok-sports-draft-mokfantasysport.replit.app/draft/8bc15d18-2046-42a7-8cca-c51b734121c3
+draft.tsx:176 [Draft] Current pathname: /draft/8bc15d18-2046-42a7-8cca-c51b734121c3
+draft.tsx:179 [Draft] Making API request to: /api/drafts/8bc15d18-2046-42a7-8cca-c51b734121c3
+draft.tsx:455 [SMOOTH TIMER] Display time: 0.0 isCountingDown: false localTime: 0.0
+draft.tsx:527 [TIMER SYNC] Display: 0.0s, Limit: 120s, Progress: 0.0%
+draft.tsx:577 [Draft] All hooks declared, starting conditional logic
+draft.tsx:578 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1756761915080
+draft.tsx:614 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+draft.tsx:455 [SMOOTH TIMER] Display time: 0.0 isCountingDown: false localTime: 0.0
+draft.tsx:527 [TIMER SYNC] Display: 0.0s, Limit: 120s, Progress: 0.0%
+draft.tsx:577 [Draft] All hooks declared, starting conditional logic
+draft.tsx:578 [Draft] RENDER DEBUG - authLoading: false isLoading: true error: false draftData: false isAuthenticated: true Time: 1756761915210
+draft.tsx:614 [Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+use-resilient-websocket.ts:45 WebSocket connection to 'wss://mok-sports-draft-mokfantasysport.replit.app/api/drafts/ws/8bc15d18-2046-42a7-8cca-c51b734121c3' failed: 
+A @ use-resilient-websocket.ts:45
+(anonymous) @ use-resilient-websocket.ts:147
+al @ react-dom.production.min.js:243
+Jn @ react-dom.production.min.js:285
+(anonymous) @ react-dom.production.min.js:281
+E @ scheduler.production.min.js:13
+st @ scheduler.production.min.js:14Understand this error
+use-resilient-websocket.ts:111 [WS] Connection error: Event {isTrusted: true, type: 'error', target: WebSocket, currentTarget: WebSocket, eventPhase: 2, …}
+A.X.onerror @ use-resilient-websocket.ts:111Understand this warning
+use-resilient-websocket.ts:115 [WS] Connection closed: 1006 
+use-resilient-websocket.ts:130 [WS] Reconnecting in 750ms (attempt 1)
