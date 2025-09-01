@@ -1,0 +1,144 @@
+1) Fix the #426 immediately (wrap lazy routes in Suspense)
+
+You mentioned “test production build without Suspense complexity.” That’s what triggers #426. Any React.lazy component must be within <Suspense fallback={...}>.
+
+Apply this patch to client/src/App.tsx:
+
+- import React from "react";
++ import React, { lazy, Suspense } from "react";
+  import { Switch, Route } from "wouter";
+
+- import LoginPage from "@/pages/login";
+- import DashboardPage from "@/pages/dashboard";
+- import LeaguesPage from "@/pages/leagues";
+- import DraftPage from "@/pages/draft";
+- import MainPage from "@/pages/main";
+- import ProfilePage from "@/pages/profile";
+- import StablePage from "@/pages/teams";
+- import LeaguePage from "@/pages/league";
+- import ScoresPage from "@/pages/scores";
+- import AgentsPage from "@/pages/agents";
+- import MorePage from "@/pages/more";
+- import TradesPage from "@/pages/trades";
+- import AdminPanel from "@/pages/admin";
+- import DatabaseViewer from "@/pages/database-viewer";
+- import { LeagueWaiting } from "@/pages/league-waiting";
+- import NotFound from "@/pages/not-found";
++ const LoginPage = lazy(() => import("@/pages/login"));
++ const DashboardPage = lazy(() => import("@/pages/dashboard"));
++ const LeaguesPage = lazy(() => import("@/pages/leagues"));
++ const DraftPage = lazy(() => import("@/pages/draft"));
++ const MainPage = lazy(() => import("@/pages/main"));
++ const ProfilePage = lazy(() => import("@/pages/profile"));
++ const StablePage = lazy(() => import("@/pages/teams"));
++ const LeaguePage = lazy(() => import("@/pages/league"));
++ const ScoresPage = lazy(() => import("@/pages/scores"));
++ const AgentsPage = lazy(() => import("@/pages/agents"));
++ const MorePage = lazy(() => import("@/pages/more"));
++ const TradesPage = lazy(() => import("@/pages/trades"));
++ const AdminPanel = lazy(() => import("@/pages/admin"));
++ const DatabaseViewer = lazy(() => import("@/pages/database-viewer"));
++ const LeagueWaiting = lazy(() =>
++   import("@/pages/league-waiting").then(m => ({ default: m.LeagueWaiting }))
++ );
++ const NotFound = lazy(() => import("@/pages/not-found"));
+
+  export default function App() {
+    // ...providers and AppContent unchanged
+-   return (
+-     <>
+-       <Switch>
++   return (
++     <Suspense
++       fallback={
++         <div className="min-h-screen grid place-items-center">
++           <div className="text-center">
++             <div
++               style={{
++                 width: 40, height: 40,
++                 border: "4px solid #10b981",
++                 borderTop: "2px solid transparent",
++                 borderRadius: "50%",
++                 animation: "spin 1s linear infinite",
++                 margin: "0 auto 16px auto",
++               }}
++             />
++             <p>Loading…</p>
++           </div>
++         </div>
++       }
++     >
++       <Switch>
+          {/* keep your <Route> list the same */}
+-       </Switch>
+-       {!isPWA && window.innerWidth >= 768 && <DesktopNotice />}
+-     </>
++       </Switch>
++       {!isPWA && window.innerWidth >= 768 && <DesktopNotice />}
++     </Suspense>
+    );
+  }
+
+
+If you already added React.lazy, you must keep the <Suspense> wrapper. Removing it will crash every time.
+
+You also deferred the App import in client/src/main.tsx — keep that. It reduces early module evaluation and helps with TDZ.
+
+2) Pinpoint the exact TDZ source in 30 seconds (use your sourcemap)
+
+You have stacks like:
+
+assets/index-rf9AYMeG.js:402:152675
+
+
+Map that to the original file/line and fix that single offender.
+
+Add this tiny script:
+
+tools/map-stack.mjs
+
+import fs from "fs";
+import path from "path";
+import { TraceMap, originalPositionFor } from "@jridgewell/trace-mapping";
+
+const dist = path.resolve("dist/public/assets"); // adjust if your outDir differs
+const js = fs.readdirSync(dist).find(f => /^index-.*\.js$/.test(f));
+const map = new TraceMap(fs.readFileSync(path.join(dist, js + ".map"), "utf8"));
+
+function mapPos(line, column) {
+  const pos = originalPositionFor(map, { line, column });
+  console.log(`${js}:${line}:${column} → ${pos.source}:${pos.line}:${pos.column}`);
+}
+
+// paste the numbers from your prod stack here:
+mapPos(402, 152675);
+
+
+Run:
+
+npm i -D @jridgewell/trace-mapping
+npm run build
+node tools/map-stack.mjs
+
+
+It will print the original client/src/... file and line where a const/class is read before it’s initialized.
+
+Typical one-line fixes when you open that file:
+
+Move the referenced const above where it’s used.
+
+Don’t read from singletons at module scope; move those reads inside a function/component or a useEffect.
+
+Break subtle import loops by extracting shared constants/types to a tiny leaf module (no imports), and have both sides import from that.
+
+Note: the TDZ is almost never React’s fault — it’s module evaluation order. The sourcemap gives you the exact line.
+
+3) Keep the WS stability tweaks (you’re good there)
+
+You already have a healthy ping/pong cycle. If you want fewer client logs, gate the client ping by env:
+
+-const keepaliveInterval = 25000;
++const keepaliveInterval = Number(import.meta.env.VITE_WS_CLIENT_PING_MS ?? 0);
+
+
+Then set VITE_WS_CLIENT_PING_MS=0 in Replit Secrets.
