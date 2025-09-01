@@ -52,12 +52,6 @@ export function useSmartRedirect(enabled: boolean) {
     
     // Skip redirection if on specific pages
     if (location === "/leagues" || location === "/dashboard") return;
-    
-    // NAVIGATION FIX: Skip smart redirect when user explicitly navigates to main (/) after draft completion
-    if (location === "/" && localStorage.getItem('skipSmartRedirect') === 'true') {
-      localStorage.removeItem('skipSmartRedirect'); // One-time bypass
-      return;
-    }
 
     const last = getLastLeagueId();
     const hasLast = last && leagues?.some(l => l.id === last);

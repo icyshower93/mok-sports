@@ -1031,8 +1031,7 @@ export default function DraftPage() {
                             localStorage.setItem('lastDraftLeagueId', draftData.draft.leagueId);
                           }
                           
-                          // NAVIGATION FIX: Skip smart redirect for this navigation
-                          localStorage.setItem('skipSmartRedirect', 'true');
+                          // NAVIGATION FIX: Navigate to main page
                           navigate('/');
                           
                           // Delay query invalidation to after navigation completes

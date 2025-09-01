@@ -177,7 +177,7 @@ export class DatabaseStorage implements IStorage {
       })),
       draftId: draft?.id,
       draftStatus: draft?.status,
-      draftStarted: !!draft && draft.status !== 'not_started'
+      draftStarted: !!draft && draft.status === 'active'
     };
   }
 
