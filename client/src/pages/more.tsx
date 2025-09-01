@@ -1,3 +1,4 @@
+import { startTransition } from "react";
 import { BottomNav } from "@/components/layout/bottom-nav";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -66,7 +67,7 @@ export default function MorePage() {
               <Button 
                 variant="outline" 
                 className="w-full justify-start"
-                onClick={() => navigate('/admin')}
+                onClick={() => startTransition(() => navigate('/admin'))}
               >
                 <Settings className="w-4 h-4 mr-3" />
                 Admin Panel

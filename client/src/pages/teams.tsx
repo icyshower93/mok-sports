@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, startTransition } from "react";
 import { useLocation } from "wouter";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 // Import removed - using useQueryClient hook instead
@@ -411,7 +411,7 @@ export default function StablePage() {
                   <p className="text-sm text-muted-foreground mb-4 max-w-sm mx-auto">
                     Complete a draft to start building your stable
                   </p>
-                  <Button onClick={() => navigate('/leagues')} size="sm">
+                  <Button onClick={() => startTransition(() => navigate('/leagues'))} size="sm">
                     Join a League
                   </Button>
                 </div>

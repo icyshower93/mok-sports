@@ -8,7 +8,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { RefreshCw, ArrowLeftRight, Clock, Users, ArrowLeft, Search, Plus, User, Send } from "lucide-react";
 import { useLocation } from "wouter";
 import { TeamLogo } from "@/components/team-logo";
-import { useState } from "react";
+import { useState, startTransition } from "react";
 
 export default function TradesPage() {
   const [, navigate] = useLocation();
@@ -58,7 +58,7 @@ export default function TradesPage() {
             <Button 
               variant="ghost" 
               size="sm" 
-              onClick={() => navigate('/')}
+              onClick={() => startTransition(() => navigate('/'))}
               className="p-2"
             >
               <ArrowLeft className="w-5 h-5" />
