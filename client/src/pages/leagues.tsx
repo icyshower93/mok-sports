@@ -40,7 +40,7 @@ export default function LeaguesPage() {
     enabled: !!user,
   });
 
-  const currentLeagueId = userLeagues?.[0]?.id;
+  const currentLeagueId = Array.isArray(userLeagues) && userLeagues.length > 0 ? userLeagues[0].id : null;
 
   const { data: standings, isLoading } = useQuery<StandingsResponse>({
     queryKey: ['/api/leagues', currentLeagueId, 'standings', selectedSeason],
