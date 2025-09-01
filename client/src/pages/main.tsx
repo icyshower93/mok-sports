@@ -263,6 +263,14 @@ export default function MainPage() {
     </div>;
   }
 
+  // Auto-redirect users with no leagues to the leagues page
+  useEffect(() => {
+    if (user && !leaguesLoading && !(leagues as any[])?.length) {
+      console.log('[MainPage] User authenticated but no leagues found, redirecting to leagues page');
+      startTransition(() => navigate('/leagues'));
+    }
+  }, [user, leaguesLoading, leagues, navigate]);
+
   if (!selectedLeague || !(leagues as any[])?.length) {
     return <div className="min-h-screen bg-background pb-20">
       <div className="w-full p-4">

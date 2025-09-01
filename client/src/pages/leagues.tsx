@@ -21,13 +21,18 @@ export default function LeaguesPage() {
     mutationFn: async (code: string) => {
       return apiRequest("POST", "/api/leagues/join", { joinCode: code });
     },
-    onSuccess: () => {
+    onSuccess: (result: any) => {
       toast({
         title: "Success!",
         description: "You've joined the league successfully",
       });
       queryClient.invalidateQueries({ queryKey: ['/api/user/leagues'] });
-      navigate('/'); // This will now show the main app since user has leagues
+      // Navigate to league waiting room with the joined league ID
+      if (result?.league?.id) {
+        navigate(`/league/waiting?id=${result.league.id}`);
+      } else {
+        navigate('/'); // Fallback if no league ID
+      }
     },
     onError: (error: any) => {
       toast({
@@ -42,13 +47,18 @@ export default function LeaguesPage() {
     mutationFn: async (name: string) => {
       return apiRequest("POST", "/api/leagues", { name, maxTeams: 6 });
     },
-    onSuccess: () => {
+    onSuccess: (result: any) => {
       toast({
         title: "Success!",
         description: "League created successfully",
       });
       queryClient.invalidateQueries({ queryKey: ['/api/user/leagues'] });
-      navigate('/'); // This will now show the main app since user has leagues
+      // Navigate to league waiting room with the new league ID
+      if (result?.league?.id) {
+        navigate(`/league/waiting?id=${result.league.id}`);
+      } else {
+        navigate('/'); // Fallback if no league ID
+      }
     },
     onError: (error: any) => {
       toast({
