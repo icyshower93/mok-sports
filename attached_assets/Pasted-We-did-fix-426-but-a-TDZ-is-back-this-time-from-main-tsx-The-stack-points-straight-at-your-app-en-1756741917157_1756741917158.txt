@@ -1,0 +1,82 @@
+We did fix #426, but a TDZ is back—this time from main.tsx. The stack points straight at your app entry:
+
+ReferenceError: Cannot access 'L' before initialization
+at Se (main.tsx:110:9) → bundled main-5jr8GcwA.js:31:1793
+
+That means something in client/src/main.tsx is touching a let/const (minified to L) before it’s initialized. Given your earlier snippet, the likely culprit is the “Enhanced iOS swipe prevention” block (or any other top-level utility you recently added around the Suspense change).
+
+What happened
+
+When you added root <Suspense> and shuffled code in main.tsx, a top-level block now references a const/let/arrow-function declared below it (or creates an import-time cycle). In prod, bundling + minification renamed that identifier to L and preserved temporal dead zone rules → boom.
+
+Fast fix (drop-in patch for main.tsx)
+
+Move any top-level imperative code (iOS swipe prevention, event listeners, bootstrapping helpers) below all its declarations, or wrap it in a self-contained IIFE placed after imports.
+
+Prefer function declarations over const fn = () => {} when something is called earlier (function declarations hoist; const/let don’t).
+
+Here’s a safe, self-contained iOS block you can paste at the bottom of main.tsx, after your root.render(...):
+
+// --- iOS swipe/back-gesture prevention (safe: no TDZ) ---
+(function setupIOSSwipePrevention() {
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+  if (!isIOS) return;
+
+  let touching = false;
+  let startX = 0;
+
+  // passive:true for start/end; passive:false for move because we may preventDefault
+  window.addEventListener(
+    "touchstart",
+    (e) => {
+      touching = true;
+      startX = e.touches[0]?.clientX ?? 0;
+    },
+    { passive: true }
+  );
+
+  window.addEventListener(
+    "touchmove",
+    (e) => {
+      if (!touching) return;
+      const dx = (e.touches[0]?.clientX ?? 0) - startX;
+      // prevent right-edge back-swipe; tune threshold if needed
+      if (dx > 30 && e.touches[0]?.clientX < 20) {
+        e.preventDefault();
+      }
+    },
+    { passive: false }
+  );
+
+  window.addEventListener(
+    "touchend",
+    () => {
+      touching = false;
+    },
+    { passive: true }
+  );
+})();
+
+
+If you had helpers like const isIOS = … or const setupIOSSwipePrevention = … declared below their first use, either:
+
+Move the use below the declaration, or
+
+Convert to a function declaration: function setupIOSSwipePrevention() { … } (then call it).
+
+Quick checklist to catch it now
+
+Run these in the repo root:
+
+# Find any top-level iOS/gesture/service-worker blocks in main
+rg -n "iOS|swipe|gesture|preventDefault|touchstart|touchmove|service worker" client/src/main.tsx
+
+# Look for identifiers used before declared in main.tsx (arrow funcs/consts)
+rg -n "const\s+\w+\s*=\s*\(" client/src/main.tsx
+rg -n "let\s+\w+" client/src/main.tsx
+
+# Side-effect-only imports reintroduced?
+rg -n 'import\s+["\']@/.*["\']\s*;(\s*//.*)?$' client/src/main.tsx | rg -v 'from'
+
+
+If commenting out the entire iOS swipe block makes the crash disappear, you’ve confirmed the source—then re-add it using the safe IIFE above.
