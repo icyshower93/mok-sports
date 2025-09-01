@@ -20,6 +20,17 @@ async function fetchActiveDraft(leagueId: string) {
     });
     if (!res.ok) return null;
     const data = await res.json();
+    
+    // Use draftStatus field directly from storage layer
+    if (data.draftStatus) {
+      const draftStatus = data.draftStatus;
+      if (draftStatus === "active") return { status: "active", draftId: data.draftId };
+      if (draftStatus === "idle") return { status: "idle", draftId: data.draftId };
+      // If completed or any other status, return none (go to dashboard)
+      return { status: "none", draftId: data.draftId };
+    }
+    
+    // Fallback for leagues without drafts
     return {
       status: data.draftStarted ? "active" : data.draftId ? "idle" : "none",
       draftId: data.draftId
