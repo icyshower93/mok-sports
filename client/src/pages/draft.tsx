@@ -1031,8 +1031,9 @@ export default function DraftPage() {
                             localStorage.setItem('lastDraftLeagueId', draftData.draft.leagueId);
                           }
                           
-                          // NAVIGATION FIX: Navigate to dashboard with stay=true to bypass smart redirect
-                          navigate('/dashboard?stay=true');
+                          // NAVIGATION FIX: Skip smart redirect for this navigation
+                          localStorage.setItem('skipSmartRedirect', 'true');
+                          navigate('/');
                           
                           // Delay query invalidation to after navigation completes
                           setTimeout(() => {
