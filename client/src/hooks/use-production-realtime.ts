@@ -100,6 +100,7 @@ export function useProductionRealtime(opts: { user?: any; isLoading?: boolean } 
                   joined.includes("week-scores") ||
                   joined.includes("season-standings") ||
                   k0.startsWith("/api/leagues") ||
+                  k0.startsWith("/api/user/leagues") ||
                   k0.startsWith("/api/admin/current-week")
                 );
               }
@@ -107,6 +108,17 @@ export function useProductionRealtime(opts: { user?: any; isLoading?: boolean } 
           };
 
           switch (message.type) {
+            case 'admin_ready':
+            case 'connected':
+              // Invalidate league context queries on connection
+              queryClient.invalidateQueries({
+                predicate: (q) => {
+                  const k0 = String(q.queryKey?.[0] ?? "");
+                  return k0.startsWith("/api/leagues") || k0.startsWith("/api/user/leagues");
+                }
+              });
+              break;
+              
             case 'admin_date_advanced':
             case 'weekly_bonuses_calculated':
             case 'score_update':

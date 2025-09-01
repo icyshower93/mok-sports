@@ -1,0 +1,61 @@
+2) League page shows “pre-join” state (should list members)
+
+That means the page isn’t seeing your current league context. Typically one of:
+
+You’re routing to a generic League landing instead of the active league (missing leagueId).
+
+The queries that populate currentLeagueId (often via /api/user/stable/:id or /api/leagues) aren’t ready yet.
+
+A TDZ-style re-order: a derived currentLeague variable is referenced before the query is declared.
+
+What to do
+
+On /leagues, load user stable data + leagues first, then derive and render.
+
+// pages/leagues.tsx (example)
+import { useQuery } from "@tanstack/react-query";
+import { useMemo } from "react";
+
+export default function LeaguesPage() {
+  // 1) Declare queries first
+  const { data: stable } = useQuery({ queryKey: ["/api/user/stable/me"], enabled: true });
+  const { data: leagues } = useQuery({ queryKey: ["/api/leagues"], enabled: true });
+
+  // 2) Derive AFTER queries
+  const currentLeagueId = stable?.primaryLeagueId ?? stable?.lastVisitedLeagueId ?? null;
+  const currentLeague = useMemo(
+    () => leagues?.find((l: any) => l.id === currentLeagueId),
+    [leagues, currentLeagueId]
+  );
+
+  // 3) Render
+  if (!leagues) return <div className="p-4">Loading leagues…</div>;
+  if (!currentLeague) {
+    // Show “join a league” UI only if truly no league
+    return <LeagueLanding leagues={leagues} />;
+  }
+  return <LeagueHome league={currentLeague} />;
+}
+
+
+Ensure your realtime hook invalidates these keys so the page refreshes correctly once auth completes / server signals ready:
+
+// hooks/use-production-realtime.ts - inside onmessage switch
+case 'admin_ready':
+case 'connected':
+  queryClient.invalidateQueries({
+    predicate: (q) => {
+      const k0 = String(q.queryKey?.[0] ?? "");
+      return k0.startsWith("/api/leagues")
+          || k0.startsWith("/api/user/stable/");
+    }
+  });
+  break;
+
+
+Double-check order on the League page (no const currentWeek = currentWeekData… before useQuery anymore).
+
+Spot check for forward references/TDZ:
+
+rg -n "currentLeague|currentWeek" client/src/pages -S
+rg -n "const .* = .*current(League|Week)" client/src/pages -S

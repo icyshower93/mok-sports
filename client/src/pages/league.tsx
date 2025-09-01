@@ -35,18 +35,18 @@ export default function LeaguePage() {
   
   // WebSocket connection managed at app level (App.tsx)
   
-  // Get league ID from URL (assumes pattern /league?id=...)
-  const searchParams = new URLSearchParams(location.split('?')[1] || '');
-  const leagueId = searchParams.get('id');
-  
-  // If no league ID, try to get the user's first league
+  // 1) First, load user leagues data
   const { data: userLeagues } = useQuery({
     queryKey: ['/api/user/leagues'],
-    enabled: !!user && !leagueId,
+    enabled: !!user,
   });
   
-  // Use the provided league ID or fall back to EEW2YU league
-  const targetLeagueId = leagueId || (userLeagues as any[])?.[0]?.id || '243d719b-92ce-4752-8689-5da93ee69213';
+  // 2) Get league ID from URL or derive from user context
+  const searchParams = new URLSearchParams(location.split('?')[1] || '');
+  const urlLeagueId = searchParams.get('id');
+  
+  // 3) Determine target league ID (URL takes precedence, then first user league)
+  const targetLeagueId = urlLeagueId || (userLeagues as any[])?.[0]?.id;
   
   // Get current week info
   const { data: currentWeekData } = useQuery({

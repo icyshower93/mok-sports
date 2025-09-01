@@ -32,7 +32,7 @@ const navItems: NavItem[] = [
     icon: Shield
   },
   {
-    path: "/leagues", 
+    path: "/league", 
     label: "League",
     icon: Trophy
   },
