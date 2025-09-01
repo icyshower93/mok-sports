@@ -13,6 +13,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useLocation } from "wouter";
 import { setLastLeagueId } from "@/hooks/useLastLeague";
 import { apiRequest } from "@/features/query/api";
+import { useHasLeague } from "@/features/leagues/useHasLeague";
 
 const enableDebugUI =
   (import.meta as any).env?.VITE_ENABLE_DEBUG_UI === "true" ||
@@ -83,13 +84,8 @@ export default function DashboardPage() {
   const urlParams = new URLSearchParams(window.location.search);
   const shouldStayOnDashboard = urlParams.get('stay') === 'true';
 
-  // Fetch user's leagues
-  const { data: leagues = [], isLoading: leaguesLoading } = useQuery<League[]>({
-    queryKey: ["/api/user/leagues"],
-    enabled: !!user,
-    refetchOnWindowFocus: true,
-    staleTime: 10_000,
-  });
+  // Use centralized league check
+  const { hasLeague, isLoading: leaguesLoading, leagues = [] } = useHasLeague();
 
   // League creation mutation
   const createLeagueMutation = useMutation({
@@ -190,8 +186,91 @@ export default function DashboardPage() {
   }
 
   const firstName = user.name?.split(" ")[0] || "Player";
-  const hasLeagues = leagues.length > 0;
 
+  // If user has no leagues, show minimal welcome screen
+  if (hasLeague === false) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-background to-muted/30 flex items-center justify-center">
+        <div className="mx-auto max-w-md p-6 text-center">
+          <h1 className="text-2xl font-semibold mb-4">Welcome to Mok Sports</h1>
+          <p className="text-sm text-muted-foreground mb-6">Create a new league or join an existing one to get started.</p>
+          <div className="grid gap-3">
+            <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
+              <DialogTrigger asChild>
+                <Button className="w-full">
+                  <Plus className="w-4 h-4 mr-2" />
+                  Create League
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Create New League</DialogTitle>
+                </DialogHeader>
+                <form onSubmit={handleCreateLeague} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="leagueName">League Name</Label>
+                    <Input
+                      id="leagueName"
+                      placeholder="Enter league name"
+                      value={leagueName}
+                      onChange={(e) => setLeagueName(e.target.value)}
+                    />
+                  </div>
+                  <Button 
+                    type="submit" 
+                    className="w-full"
+                    disabled={!leagueName.trim() || createLeagueMutation.isPending}
+                  >
+                    {createLeagueMutation.isPending ? "Creating..." : "Create League"}
+                  </Button>
+                </form>
+              </DialogContent>
+            </Dialog>
+
+            <Dialog open={joinDialogOpen} onOpenChange={setJoinDialogOpen}>
+              <DialogTrigger asChild>
+                <Button variant="outline" className="w-full">
+                  <UserPlus className="w-4 h-4 mr-2" />
+                  Join League
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Join League</DialogTitle>
+                </DialogHeader>
+                <form onSubmit={handleJoinLeague} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="joinCode">League Code</Label>
+                    <Input
+                      id="joinCode"
+                      placeholder="Enter 6-character code"
+                      value={joinCode}
+                      onChange={(e) => setJoinCode(e.target.value)}
+                      maxLength={6}
+                    />
+                  </div>
+                  <Button 
+                    type="submit" 
+                    className="w-full"
+                    disabled={!joinCode.trim() || joinLeagueMutation.isPending}
+                  >
+                    {joinLeagueMutation.isPending ? "Joining..." : "Join League"}
+                  </Button>
+                </form>
+              </DialogContent>
+            </Dialog>
+          </div>
+          
+          <Button variant="ghost" onClick={logout} className="text-muted-foreground mt-6">
+            <LogOut className="w-4 h-4 mr-2" />
+            Logout
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  // For users with leagues, show the full dashboard
   return (
     <MainLayout>
       <div className="p-4 max-w-4xl mx-auto space-y-6">
@@ -202,7 +281,7 @@ export default function DashboardPage() {
               Welcome, {firstName}!
             </h1>
             <p className="text-muted-foreground">
-              {hasLeagues && shouldStayOnDashboard 
+              {hasLeague && shouldStayOnDashboard 
                 ? "Manage your leagues and track your fantasy performance" 
                 : "Ready to draft entire teams? Let's get started."}
             </p>
