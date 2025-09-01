@@ -1,0 +1,141 @@
+hooks order mismatch between renders (React’s “Rendered fewer/more hooks than expected” error). It typically happens when a component:
+
+calls a hook conditionally (inside if, return, ternary, try/catch, etc), or
+
+throws / early-returns on one render path so some hooks don’t run, but on the next render path those hooks do run.
+
+Your pages/main.tsx is very close to correct (most hooks are top-level), but with the recent additions it’s hitting a render path that returns early sometimes and not others. Let’s fix this in a way that’s bulletproof and easy for Replit to apply.
+
+TL;DR fix Replit should make
+
+Split the page into a small “gate” (no heavy hooks) and a content component (all hooks, no early returns).
+This guarantees React sees the same number of hooks in each component on every render.
+
+1) In client/src/pages/main.tsx, wrap the content
+
+Create a tiny gate that only uses cheap facts (auth + basic leagues list).
+
+If not ready, it returns loaders.
+
+Once ready, it renders <MainPageContent …/> where all other hooks live and there are no conditional returns.
+
+Patch (minimal structure to follow):
+
+// at top: keep imports as-is
+
+// 1) Keep your existing MainPage export but turn it into a “gate”
+export default function MainPage() {
+  const { user } = useAuth();
+  const [, navigate] = useLocation();
+
+  // Only the minimal query here (your existing fetcher)
+  const { data: leagues = [], isLoading: leaguesLoading } = useQuery({
+    queryKey: ['/api/leagues/user'],
+    enabled: !!user,
+    staleTime: 60_000,
+  });
+
+  // EARLY RETURNS ARE ALLOWED HERE – no other hooks below in this component
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-background pb-20 flex items-center justify-center">
+        <div>Loading...</div>
+      </div>
+    );
+  }
+
+  if (leaguesLoading) {
+    return (
+      <div className="min-h-screen bg-background pb-20 flex items-center justify-center">
+        <div className="w-6 h-6 animate-spin rounded-full border border-muted-foreground border-t-transparent" />
+      </div>
+    );
+  }
+
+  if (!leagues?.length) {
+    return (
+      <div className="min-h-screen bg-background pb-20">
+        <div className="w-full p-4">
+          <div className="text-center py-8">
+            <h3 className="text-lg font-semibold mb-2">No Leagues Found</h3>
+            <p className="text-sm text-muted-foreground mb-4">Join a league to view your dashboard</p>
+            <Button onClick={() => startTransition(() => navigate('/league'))} size="sm">
+              Browse Leagues
+            </Button>
+          </div>
+          <BottomNav />
+        </div>
+      </div>
+    );
+  }
+
+  // hand off to content component; from this point on, NO conditional returns inside it
+  return <MainPageContent user={user} initialLeagueId={leagues[0].id} leagues={leagues} />;
+}
+
+// 2) Move ALL the remaining hooks & UI into this component and REMOVE any early returns inside it.
+function MainPageContent({ user, initialLeagueId, leagues }: {
+  user: { name: string, id: string } // adjust to your user shape
+  initialLeagueId: string
+  leagues: Array<{ id: string, name: string }>
+}) {
+  const [, navigate] = useLocation();
+  const [selectedLeague, setSelectedLeague] = useState<string>(initialLeagueId);
+  const [showAllWeeklyRankings, setShowAllWeeklyRankings] = useState(false);
+
+  // From here down, paste your existing hooks: current-week, standings, week-scores, skins, teams-left, nfl-news, etc.
+  // IMPORTANT: no `if (...) return ...;` inside this component.
+  // Instead, derive booleans and render placeholders inline with JSX, e.g. {loading ? <Spinner/> : <Content/>}
+
+  // Example:
+  const { data: currentWeekData } = useQuery({ queryKey: ['/api/scoring/current-week'], enabled: !!user });
+  const currentWeek = (currentWeekData as any)?.currentWeek ?? 1;
+
+  const { data: leagueData } = useQuery({
+    queryKey: ['standings', selectedLeague, 2024, currentWeek],
+    queryFn: () => fetch(`/api/leagues/${selectedLeague}/standings`).then(r => r.json()),
+    enabled: !!selectedLeague && !!user,
+  });
+
+  // ... keep ALL other useQuery/useEffect hooks here, unchanged ...
+  // (week-scores, skins, teams-left-to-play, nfl-news, etc.)
+  // DO NOT early-return inside this component.
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-background to-muted/10 pb-20">
+      {/* render placeholders inline where needed instead of returning */}
+      {/* e.g., {!leagueData ? <Skeleton/> : <YourRealUI/> } */}
+      {/* Rest of your big JSX ... */}
+      <BottomNav />
+    </div>
+  );
+}
+
+
+This surgical split removes the render-path flip-flop that causes #310, without changing your data logic.
+
+Why this fixes your exact error
+
+Your logs show several renders (“Main page debug …”, “SKINS WINNER DEBUG …”), then boom at main.tsx:267. That line is in an early-return region. On some renders you return before a batch of hooks runs; on others you don’t. React then detects that the same component ran a different number of hooks between renders → #310.
+
+By putting the early returns in a separate component that has no other hooks, you ensure that component always runs zero heavy hooks regardless of branch. The inner MainPageContent always runs all its hooks before any conditional UI, so hook order never changes.
+
+Extra guardrails Replit should add (quick wins)
+
+Never call hooks inside conditionals
+Run this repo-wide check and fix any offenders:
+
+Search for if ( in the 5 lines before any useState|useEffect|useQuery|useMemo|useCallback calls.
+
+Fix by moving the hook out of the conditional and using enabled: flags for queries or conditional JSX for display.
+
+Avoid throwing during render
+In a few places you do: user.name.split(' ')[0]. Change to safe access:
+
+const firstName = (user?.name || '').split(' ')[0] || 'Player';
+
+
+Throwing during render can also flip hook execution paths.
+
+Keep your loading branches above the heavy hooks
+The gate/content split above is the clean pattern for all big pages.

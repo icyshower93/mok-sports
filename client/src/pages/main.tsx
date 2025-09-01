@@ -98,10 +98,76 @@ interface League {
   name: string;
 }
 
+// Gate component - minimal hooks, early returns allowed
 export default function MainPage() {
   const { user } = useAuth();
   const [, navigate] = useLocation();
-  const [selectedLeague, setSelectedLeague] = useState<string>("");
+
+  // Only the minimal query here - user's leagues
+  const { data: leagues = [], isLoading: leaguesLoading } = useQuery({
+    queryKey: ['/api/user/leagues'],
+    enabled: !!user,
+    staleTime: 60_000,
+  });
+
+  // EARLY RETURNS ARE ALLOWED HERE – no other hooks below in this component
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-background pb-20 flex items-center justify-center">
+        <div>Loading...</div>
+      </div>
+    );
+  }
+
+  if (leaguesLoading) {
+    return (
+      <div className="min-h-screen bg-background pb-20 flex items-center justify-center">
+        <div className="w-6 h-6 animate-spin rounded-full border border-muted-foreground border-t-transparent" />
+      </div>
+    );
+  }
+
+  if (!(leagues as any[])?.length) {
+    return (
+      <div className="min-h-screen bg-background pb-20">
+        <div className="w-full p-4">
+          <div className="text-center py-8">
+            <h3 className="text-lg font-semibold mb-2">No Leagues Found</h3>
+            <p className="text-sm text-muted-foreground mb-4">Join a league to view your dashboard</p>
+            <Button onClick={() => startTransition(() => navigate('/dashboard'))} size="sm">
+              Go to Dashboard
+            </Button>
+          </div>
+        </div>
+        <BottomNav />
+      </div>
+    );
+  }
+
+  // Hand off to content component; from this point on, NO conditional returns inside it
+  return (
+    <MainPageContent 
+      user={user} 
+      initialLeagueId={(leagues as any[])[0].id} 
+      leagues={leagues as any[]} 
+      navigate={navigate}
+    />
+  );
+}
+
+// Content component - ALL hooks, NO early returns
+function MainPageContent({ 
+  user, 
+  initialLeagueId, 
+  leagues, 
+  navigate 
+}: {
+  user: any;
+  initialLeagueId: string;
+  leagues: any[];
+  navigate: any;
+}) {
+  const [selectedLeague, setSelectedLeague] = useState<string>(initialLeagueId);
   const [showAllWeeklyRankings, setShowAllWeeklyRankings] = useState(false);
   
   // WebSocket connection managed at app level (App.tsx)
@@ -120,12 +186,6 @@ export default function MainPage() {
   useEffect(() => {
     setShowAllWeeklyRankings(false);
   }, [currentWeek, selectedLeague]);
-
-  // Fetch user's leagues
-  const { data: leagues = [], isLoading: leaguesLoading } = useQuery({
-    queryKey: ['/api/user/leagues'],
-    enabled: !!user,
-  });
 
 
   // Set first league as default selection
@@ -251,40 +311,15 @@ export default function MainPage() {
     }))
   });
 
-  if (!user) {
-    return <div className="min-h-screen bg-background pb-20 flex items-center justify-center">
-      <div>Loading...</div>
-    </div>;
-  }
-
-  if (leaguesLoading) {
-    return <div className="min-h-screen bg-background pb-20 flex items-center justify-center">
-      <div className="w-6 h-6 animate-spin rounded-full border border-muted-foreground border-t-transparent" />
-    </div>;
-  }
-
   // Auto-redirect users with no leagues to the leagues page
   useEffect(() => {
-    if (user && !leaguesLoading && !(leagues as any[])?.length) {
+    if (user && leagues?.length === 0) {
       console.log('[MainPage] User authenticated but no leagues found, redirecting to leagues page');
       startTransition(() => navigate('/leagues'));
     }
-  }, [user, leaguesLoading, leagues, navigate]);
+  }, [user, leagues, navigate]);
 
-  if (!selectedLeague || !(leagues as any[])?.length) {
-    return <div className="min-h-screen bg-background pb-20">
-      <div className="w-full p-4">
-        <div className="text-center py-8">
-          <h3 className="text-lg font-semibold mb-2">No Leagues Found</h3>
-          <p className="text-sm text-muted-foreground mb-4">Join a league to view your dashboard</p>
-          <Button onClick={() => startTransition(() => navigate('/dashboard'))} size="sm">
-            Go to Dashboard
-          </Button>
-        </div>
-      </div>
-      <BottomNav />
-    </div>;
-  }
+  // NO EARLY RETURNS FROM HERE ON - render placeholders inline instead
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-muted/10 pb-20">
@@ -294,13 +329,13 @@ export default function MainPage() {
         <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm border-b border-border/50 px-6 py-4">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-xl font-bold text-foreground">Welcome, {user.name.split(' ')[0]}!</h1>
+              <h1 className="text-xl font-bold text-foreground">Welcome, {(user?.name || '').split(' ')[0] || 'Player'}!</h1>
               <p className="text-sm text-muted-foreground">Week {currentWeek} • 2024 Season</p>
             </div>
             <Avatar className="w-10 h-10 border-2 border-primary/20">
               <AvatarImage src={user.avatar} alt={user.name} />
               <AvatarFallback className="bg-primary/10 text-primary font-semibold">
-                {user.name.split(' ').map(n => n[0]).join('').toUpperCase()}
+                {(user?.name || 'Player').split(' ').map((n: string) => n[0]).join('').toUpperCase()}
               </AvatarFallback>
             </Avatar>
           </div>
