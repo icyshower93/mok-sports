@@ -1,5 +1,5 @@
 import { createRoot } from "react-dom/client";
-import App from "@/App";
+// Defer App module evaluation until after bootstrap to prevent TDZ errors
 import "@/index.css";
 import "@/utils/cache-manager"; // Initialize global error handlers
 
@@ -29,5 +29,8 @@ if (navigator.userAgent.includes('iPhone') || navigator.userAgent.includes('iPad
 
 // Service worker is now handled by the useServiceWorker hook in PWA mode only
 
-createRoot(document.getElementById("root")!).render(<App />);
+(async () => {
+  const { default: App } = await import("@/App");
+  createRoot(document.getElementById("root")!).render(<App />);
+})();
 // Build marker: Sat Aug 30 07:42:21 PM UTC 2025

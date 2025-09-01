@@ -1540,7 +1540,7 @@ export default function DraftPage() {
                   )}
 
                   {/* Vibration Test Button (Development) */}
-                  {import.meta.env.DEV && (
+                  {(() => { try { return import.meta.env.DEV; } catch { return false; } })() && (
                     <div className="mb-4 p-2 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200">
                       <div className="flex items-center justify-between">
                         <span className="text-xs text-yellow-800 dark:text-yellow-200">Vibration Test</span>

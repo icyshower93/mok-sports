@@ -1,0 +1,128 @@
+Good news: your WS looks healthy now. The remaining crash is the same TDZ (“Cannot access u before initialization”), and in your repo it’s still caused by eager page imports in App.tsx. Your current App.tsx imports every page at the top, so all those modules execute during the very first render — that’s exactly when the TDZ fires.
+
+I checked your archive (/client/src/App.tsx) and it still has direct imports like:
+
+import LoginPage from "@/pages/login";
+import DashboardPage from "@/pages/dashboard";
+// ...
+import { LeagueWaiting } from "@/pages/league-waiting";
+import NotFound from "@/pages/not-found";
+
+
+Let’s convert those to lazy imports and wrap the routes in Suspense. That stops the early module evaluation and eliminates this production-only TDZ.
+
+Patch (drop-in)
+
+Save this as fix-lazy-pages.patch at repo root, then apply:
+
+git checkout -b fix/lazy-pages
+git apply --index fix-lazy-pages.patch
+git commit -m "fix: lazy-load all pages to remove TDZ crash in prod"
+git push -u origin fix/lazy-pages
+
+fix-lazy-pages.patch
+*** a/client/src/App.tsx
+--- b/client/src/App.tsx
+@@
+-import React from "react";
++import React, { lazy, Suspense } from "react";
+@@
+-import LoginPage from "@/pages/login";
+-import DashboardPage from "@/pages/dashboard";
+-import LeaguesPage from "@/pages/leagues";
+-import DraftPage from "@/pages/draft";
+-import MainPage from "@/pages/main";
+-import ProfilePage from "@/pages/profile";
+-import StablePage from "@/pages/teams";
+-import LeaguePage from "@/pages/league";
+-import ScoresPage from "@/pages/scores";
+-import AgentsPage from "@/pages/agents";
+-import MorePage from "@/pages/more";
+-import TradesPage from "@/pages/trades";
+-import AdminPanel from "@/pages/admin";
+-import DatabaseViewer from "@/pages/database-viewer";
+-import { LeagueWaiting } from "@/pages/league-waiting";
+-import NotFound from "@/pages/not-found";
++// Defer page module evaluation until route visit
++const LoginPage = lazy(() => import("@/pages/login"));
++const DashboardPage = lazy(() => import("@/pages/dashboard"));
++const LeaguesPage = lazy(() => import("@/pages/leagues"));
++const DraftPage = lazy(() => import("@/pages/draft"));
++const MainPage = lazy(() => import("@/pages/main"));
++const ProfilePage = lazy(() => import("@/pages/profile"));
++const StablePage = lazy(() => import("@/pages/teams"));
++const LeaguePage = lazy(() => import("@/pages/league"));
++const ScoresPage = lazy(() => import("@/pages/scores"));
++const AgentsPage = lazy(() => import("@/pages/agents"));
++const MorePage = lazy(() => import("@/pages/more"));
++const TradesPage = lazy(() => import("@/pages/trades"));
++const AdminPanel = lazy(() => import("@/pages/admin"));
++const DatabaseViewer = lazy(() => import("@/pages/database-viewer"));
++const LeagueWaiting = lazy(() =>
++  import("@/pages/league-waiting").then(m => ({ default: m.LeagueWaiting }))
++);
++const NotFound = lazy(() => import("@/pages/not-found"));
+@@
+-  return (
+-      <Switch>
++  return (
++    <Suspense
++      fallback={
++        <div className="min-h-screen grid place-items-center">
++          <div className="text-center">
++            <div
++              style={{
++                width: 40, height: 40,
++                border: "4px solid #10b981",
++                borderTop: "2px solid transparent",
++                borderRadius: "50%",
++                animation: "spin 1s linear infinite",
++                margin: "0 auto 16px auto",
++              }}
++            />
++            <p>Loading…</p>
++          </div>
++        </div>
++      }
++    >
++      <Switch>
+         <Route path="/admin" component={AdminPanel} />
+         <Route path="/database" component={DatabaseViewer} />
+         <Route path="/dashboard" component={DashboardPage} />
+         <Route path="/leagues" component={LeaguesPage} />
+         <Route path="/league/waiting" component={LeagueWaiting} />
+@@
+         <Route path="/stable" component={StablePage} />
+         <Route path="/league" component={LeaguePage} />
+         <Route path="/scores" component={ScoresPage} />
+         <Route path="/more" component={MorePage} />
+         <Route path="/more/trades" component={TradesPage} />
+@@
+-        <Route component={NotFound} />
+-      </Switch>
+-      {!isPWA && window.innerWidth >= 768 && <DesktopNotice />}
++        <Route component={NotFound} />
++      </Switch>
++      {!isPWA && window.innerWidth >= 768 && <DesktopNotice />}
++    </Suspense>
+   );
+
+
+Note: LeagueWaiting is a named export in your repo, so the then(m => ({ default: m.LeagueWaiting })) shim is required for React.lazy.
+
+Optional hardening (if you still see it)
+
+Defer App module itself in client/src/main.tsx:
+
+-import App from "@/App";
+-createRoot(document.getElementById("root")!).render(<App />);
++// Defer App module evaluation until after bootstrap
++(async () => {
++  const { default: App } = await import("@/App");
++  createRoot(document.getElementById("root")!).render(<App />);
++})();
+
+
+Map the exact offender if anything survives:
+
+Add tools/map-stack.mjs (from my earlier message) and run it with the numbers from your prod stack (e.g. 402,152675). It will print the original source file/line so you can fix that single module if needed.

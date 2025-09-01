@@ -70,7 +70,7 @@ export function useServiceWorker(enableInPWAOnly: boolean = true) {
       } catch {}
 
       // Use build hash for service worker versioning
-      const version = import.meta.env.VITE_BUILD_HASH ?? "dev";
+      const version = (() => { try { return import.meta.env.VITE_BUILD_HASH; } catch { return "dev"; } })() ?? "dev";
       const swUrl = `/sw.js?v=${version}`;
       console.log('[SW Hook] Registering service worker with build hash:', swUrl);
 

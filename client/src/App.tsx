@@ -1,5 +1,5 @@
 import { Switch, Route } from "wouter";
-import React from "react";
+import React, { lazy, Suspense } from "react";
 import { QueryProvider } from "@/features/query/QueryProvider";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -32,23 +32,25 @@ interface UserLeague {
 
 import { ErrorBoundary } from "@/components/error-boundary";
 import { DesktopNotice } from "@/components/desktop-notice";
-// Direct imports - avoiding lazy loading to eliminate Suspense-related React errors
-import LoginPage from "@/pages/login";
-import DashboardPage from "@/pages/dashboard";
-import LeaguesPage from "@/pages/leagues";
-import DraftPage from "@/pages/draft";
-import MainPage from "@/pages/main";
-import ProfilePage from "@/pages/profile";
-import StablePage from "@/pages/teams";
-import LeaguePage from "@/pages/league";
-import ScoresPage from "@/pages/scores";
-import AgentsPage from "@/pages/agents";
-import MorePage from "@/pages/more";
-import TradesPage from "@/pages/trades";
-import AdminPanel from "@/pages/admin";
-import DatabaseViewer from "@/pages/database-viewer";
-import { LeagueWaiting } from "@/pages/league-waiting";
-import NotFound from "@/pages/not-found";
+// Defer page module evaluation until route visit to prevent TDZ errors
+const LoginPage = lazy(() => import("@/pages/login"));
+const DashboardPage = lazy(() => import("@/pages/dashboard"));
+const LeaguesPage = lazy(() => import("@/pages/leagues"));
+const DraftPage = lazy(() => import("@/pages/draft"));
+const MainPage = lazy(() => import("@/pages/main"));
+const ProfilePage = lazy(() => import("@/pages/profile"));
+const StablePage = lazy(() => import("@/pages/teams"));
+const LeaguePage = lazy(() => import("@/pages/league"));
+const ScoresPage = lazy(() => import("@/pages/scores"));
+const AgentsPage = lazy(() => import("@/pages/agents"));
+const MorePage = lazy(() => import("@/pages/more"));
+const TradesPage = lazy(() => import("@/pages/trades"));
+const AdminPanel = lazy(() => import("@/pages/admin"));
+const DatabaseViewer = lazy(() => import("@/pages/database-viewer"));
+const LeagueWaiting = lazy(() =>
+  import("@/pages/league-waiting").then(m => ({ default: m.LeagueWaiting }))
+);
+const NotFound = lazy(() => import("@/pages/not-found"));
 import { logBuildInfo } from "@/lib/buildInfo";
 
 function AppContent() {
@@ -156,7 +158,26 @@ function AppContent() {
   }
 
   return (
-    <div>
+    <Suspense
+      fallback={
+        <div className="min-h-screen grid place-items-center">
+          <div className="text-center">
+            <div
+              style={{
+                width: 40,
+                height: 40,
+                border: "4px solid #10b981",
+                borderTop: "2px solid transparent",
+                borderRadius: "50%",
+                animation: "spin 1s linear infinite",
+                margin: "0 auto 16px auto",
+              }}
+            />
+            <p>Loading…</p>
+          </div>
+        </div>
+      }
+    >
       <Switch>
         <Route path="/login">{() => <LoginPage />}</Route>
         <Route path="/admin">{() => <AdminPanel />}</Route>
@@ -211,7 +232,7 @@ function AppContent() {
         <Route>{() => <NotFound />}</Route>
       </Switch>
       {!isPWA && window.innerWidth >= 768 && <DesktopNotice />}
-    </div>
+    </Suspense>
   );
 }
 
