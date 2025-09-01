@@ -1,0 +1,57 @@
+You’re hitting a classic use-before-declare inside the same component:
+
+Line ~110 reads currentWeekData
+
+Line ~125 declares currentWeekData with useQuery(...)
+
+That’s a straight TDZ in JS/TS (for const/let). Fix is just reordering (or deriving after declare).
+
+Minimal, safe patch
+
+Move the useQuery for current week above any usage, then derive currentWeek:
+
+- // ❌ uses currentWeekData before it exists
+- const currentWeek = (currentWeekData as any)?.currentWeek || 1;
+-
+- const { data: currentWeekData } = useQuery({
+-   queryKey: ['/api/scoring/current-week'],
+-   enabled: !!user,
+- });
+
++ // ✅ declare first…
++ const { data: currentWeekData } = useQuery({
++   queryKey: ['/api/scoring/current-week'],
++   enabled: !!user,
++ });
++ // …then derive
++ const currentWeek = currentWeekData?.currentWeek ?? 1;
+
+Also make sure
+
+Any other queries or computed values that use currentWeek must appear after those two lines. For example:
+
+// ✅ after currentWeek is defined
+const weekScores = useQuery({
+  queryKey: ['/api/scoring/week-scores', currentWeek],
+  enabled: !!user && !!currentWeekData, // optional: avoid fetching with default 1
+});
+
+Quick scan to catch siblings
+
+Run these on pages/main.tsx to find similar hazards:
+
+# Any top-level consts calling functions (often depend on helpers/vars below)
+rg -n '^\s*(export\s+)?const\s+\w+\s*=\s*[A-Za-z_$][\w$]*\(' client/src/pages/main.tsx
+
+# Any use of currentWeek before its declaration
+rg -n 'currentWeek(?!Data)' client/src/pages/main.tsx
+
+
+If you see other patterns like:
+
+const columns = makeColumns(currentWeek, formatCell); // before currentWeek or formatCell is declared
+
+
+either move them below, convert helper arrows to hoisted function declarations, or wrap computed values in a lazy getter and call inside the component (e.g., useMemo(() => getColumns(currentWeek), [currentWeek])).
+
+Ship that reorder, hard refresh, and paste the new console logs if anything else pops. This specific TDZ should be gone once currentWeekData is declared before use.

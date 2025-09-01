@@ -106,8 +106,14 @@ export default function MainPage() {
   
   // WebSocket connection managed at app level (App.tsx)
   
+  // Get current week from scoring API - MUST BE FIRST
+  const { data: currentWeekData } = useQuery({
+    queryKey: ['/api/scoring/current-week'],
+    enabled: !!user,
+  });
+  
   // Extract current week and season data
-  const currentWeek = (currentWeekData as any)?.currentWeek || 1;
+  const currentWeek = currentWeekData?.currentWeek ?? 1;
   const currentSeason = 2024;
   
   // Reset week-scoped UI on week flip
@@ -118,12 +124,6 @@ export default function MainPage() {
   // Fetch user's leagues
   const { data: leagues = [], isLoading: leaguesLoading } = useQuery({
     queryKey: ['/api/user/leagues'],
-    enabled: !!user,
-  });
-
-  // Get current week from scoring API
-  const { data: currentWeekData } = useQuery({
-    queryKey: ['/api/scoring/current-week'],
     enabled: !!user,
   });
 
