@@ -211,7 +211,14 @@ function MainPageContent({
 
   // Fetch skins data to identify winners
   const { data: skinsData } = useQuery({
-    queryKey: [`/api/scoring/skins/${selectedLeague}/${getCurrentSeason()}`, currentWeek],
+    // Keep currentWeek in the key so it refetches when week changes…
+    queryKey: ['skins', selectedLeague, getCurrentSeason(), currentWeek],
+    // …but hit the right endpoint (no week in the path)
+    queryFn: async () => {
+      const res = await fetch(`/api/scoring/skins/${selectedLeague}/${getCurrentSeason()}`, { credentials: 'include' });
+      if (!res.ok) throw new Error('Failed to fetch skins');
+      return res.json();
+    },
     enabled: !!selectedLeague,
   });
 
