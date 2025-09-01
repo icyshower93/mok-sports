@@ -37,7 +37,7 @@ export function usePWADebug() {
   const addLog = (message: string) => {
     const timestamp = new Date().toLocaleTimeString();
     const logEntry = `[${timestamp}] ${message}`;
-    console.log(`[PWA DEBUG] ${logEntry}`);
+    // Debug logging removed for production
     setLogs(prev => [...prev.slice(-19), logEntry]); // Keep last 20 logs
   };
 
