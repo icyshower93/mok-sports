@@ -23,6 +23,11 @@ export function useResilientWebSocket(url: string | null): WebSocketStatus {
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const heartbeatRef = useRef<NodeJS.Timeout | null>(null);
   const stopRef = useRef(false);
+  
+  // HARDENING: Message de-duplication to prevent stale/duplicate messages
+  const turnIdRef = useRef<string | null>(null);
+  const seqRef = useRef<number>(0);
+  const lastMessageIdRef = useRef<string | null>(null);
 
   useEffect(() => {
     if (!url) {
@@ -60,6 +65,42 @@ export function useResilientWebSocket(url: string | null): WebSocketStatus {
         try {
           const data = JSON.parse(event.data);
           const validatedMessage = DraftMessageSchema.parse(data);
+          
+          // HARDENING: Message de-duplication logic
+          if (validatedMessage.type === 'timer_update') {
+            // Check for stale timer messages
+            if (turnIdRef.current && data.turnId && data.turnId !== turnIdRef.current) {
+              console.log('[WS] Ignoring stale timer message for old turn:', data.turnId);
+              return;
+            }
+            
+            // Check for out-of-order messages
+            if (typeof data.seq === 'number' && data.seq <= seqRef.current) {
+              console.log('[WS] Ignoring out-of-order message:', data.seq, '<=', seqRef.current);
+              return;
+            }
+            
+            // Update sequence number
+            seqRef.current = data.seq ?? seqRef.current;
+            
+          } else if (validatedMessage.type === 'draft_state_update' && data.turnId) {
+            // Adopt new turn epoch when turn changes
+            if (turnIdRef.current !== data.turnId) {
+              turnIdRef.current = data.turnId;
+              seqRef.current = 0;
+              console.log('[WS] New turn started:', data.turnId);
+            }
+            
+          } else if (validatedMessage.type === 'pick_made') {
+            // Prevent duplicate pick notifications
+            const messageId = data.pickId || `${data.userId}-${data.teamId}-${Date.now()}`;
+            if (lastMessageIdRef.current === messageId) {
+              console.log('[WS] Ignoring duplicate pick message:', messageId);
+              return;
+            }
+            lastMessageIdRef.current = messageId;
+          }
+          
           setMessage(validatedMessage);
         } catch (error) {
           console.warn('[WS] Invalid message format:', error);

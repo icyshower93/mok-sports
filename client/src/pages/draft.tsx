@@ -539,26 +539,24 @@ export default function DraftPage() {
     gcTime: 0,
   });
 
-  // Make pick mutation - FIXED: Prevent DOM race condition by using safer query invalidation
+  // Make pick mutation - HARDENED: Single transition with optimized invalidation
   const makePickMutation = useMutation({
     mutationFn: async (nflTeamId: string) => {
-      // Use the apiRequest function to include authentication headers
       return await apiRequest('POST', `/api/drafts/${draftId}/pick`, { nflTeamId });
     },
-    onSuccess: () => {
-      // RACE CONDITION FIX: Use setTimeout to batch invalidations and prevent DOM conflicts
-      setTimeout(() => {
-        // Invalidate queries in a single batch to prevent multiple rapid re-renders
+    onSuccess: (data) => {
+      // HARDENING: Single transition with batched invalidations
+      startTransition(() => {
         queryClient.invalidateQueries({ 
           predicate: (query) => {
-            const queryKey = query.queryKey;
-            return (
-              (queryKey[0] === 'draft' && queryKey[1] === draftId) ||
-              (queryKey[0] === 'draft' && queryKey[1] === draftId && queryKey[2] === 'teams')
-            );
+            const k = String((query.queryKey?.[0] ?? '') as string);
+            return k.startsWith('/api/draft') || 
+                   k.startsWith('/api/scoring') || 
+                   k.startsWith('/api/leagues') ||
+                   (query.queryKey[0] === 'draft' && query.queryKey[1] === draftId);
           }
         });
-      }, 100); // Small delay to let current render complete
+      });
       
       setSelectedTeam(null);
       toast({
@@ -573,6 +571,7 @@ export default function DraftPage() {
         variant: "destructive",
       });
     },
+    retry: 0 // No retries to prevent duplicate submissions
   });
 
   console.log('[Draft] All hooks declared, starting conditional logic');

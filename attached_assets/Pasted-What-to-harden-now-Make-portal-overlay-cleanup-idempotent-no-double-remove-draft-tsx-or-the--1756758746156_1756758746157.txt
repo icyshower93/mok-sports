@@ -1,0 +1,103 @@
+What to harden now
+
+Make portal/overlay cleanup idempotent (no double-remove)
+
+// draft.tsx (or the overlay/timer component)
+const hostRef = useRef<HTMLDivElement | null>(null);
+
+useEffect(() => {
+  const host = document.createElement("div");
+  host.dataset.portal = "draft-overlay";
+  document.body.appendChild(host);
+  hostRef.current = host;
+
+  return () => {
+    const h = hostRef.current;
+    if (h?.parentNode) h.parentNode.removeChild(h);  // safe even if already removed
+    hostRef.current = null;
+  };
+}, []);
+
+
+Render the overlay/timer via createPortal(children, hostRef.current!). Don’t innerHTML = "" or removeChild children—let React handle children through the portal.
+
+Ensure there’s one global Toaster/Provider
+
+Keep <Toaster/> (and ToastProvider, TooltipProvider, etc.) mounted at the app root only.
+
+Remove any page-local duplicates in draft.tsx.
+
+Make list keys stable
+Anywhere the draft renders fast-changing lists (picks, available players, queue, etc.), ensure keys are unique & stable (e.g., pick.id or player.id, never array index). This prevents React from detaching/reattaching unexpected nodes under pressure.
+
+Tame query invalidation after a pick
+Wrap invalidations in a single transition and avoid duplicate invalidates:
+
+const qc = useQueryClient();
+const makePick = useMutation({
+  mutationFn: apiMakePick,
+  onSuccess: (data) => {
+    // light optimistic update if you have it:
+    // qc.setQueryData(['/api/draft/state', draftId], patchWith(data));
+
+    startTransition(() => {
+      qc.invalidateQueries({ predicate: q => {
+        const k = String((q.queryKey?.[0] ?? '') as string);
+        return k.startsWith('/api/draft/state')
+            || k.startsWith('/api/draft/picks')
+            || k.startsWith('/api/scoring')
+            || k.startsWith('/api/leagues');
+      }});
+    });
+  },
+  retry: 0,
+});
+
+
+One invalidate cluster > many individual invalidations. Also avoid invalidating in both onMutate and onSuccess.
+
+WS/timer de-dup on the client
+Even with better server cleanup, protect the UI from stale messages:
+
+// use-production-realtime.ts or draft ws hook
+const turnIdRef = useRef<string | null>(null);
+const seqRef = useRef<number>(0);
+
+function handleMessage(msg: any) {
+  if (msg.type === 'timer_tick') {
+    if (turnIdRef.current && msg.turnId !== turnIdRef.current) return; // stale timer
+    if (typeof msg.seq === 'number' && msg.seq <= seqRef.current) return; // out-of-order
+    seqRef.current = msg.seq ?? seqRef.current;
+    // ...apply update
+  } else if (msg.type === 'turn_started') {
+    turnIdRef.current = msg.turnId;   // adopt new epoch
+    seqRef.current = 0;
+  }
+}
+
+
+Clean intervals & listeners defensively
+Anywhere you call setInterval, addEventListener, etc., ensure cleanup guards:
+
+const id = window.setInterval(tick, 25000);
+return () => { clearInterval(id); };
+
+useEffect(() => {
+  const onVis = () => {/* … */};
+  document.addEventListener('visibilitychange', onVis);
+  return () => document.removeEventListener('visibilitychange', onVis);
+}, []);
+
+
+Optional: soft self-heal if this ever reappears
+If your ErrorBoundary sees the specific removeChild error, force a safe remount of just the draft subtree (don’t nuke the whole app). E.g., keep a recoverKey in state and bump it to remount <Draft/>. (This is a last-resort guard; the fixes above should make it unnecessary.)
+
+Quick verification passes
+
+Rapid-fire picks (manual + auto): no blank screen, no console errors.
+
+Switch tabs mid-pick, come back: timer continues cleanly, no duplicate overlays.
+
+Mobile Safari: rotate, background the app, return: no duplicate timers or portals.
+
+Throttled network: no double invalidations when a slow success arrives after a fast optimistic path.
