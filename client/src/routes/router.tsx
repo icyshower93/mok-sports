@@ -11,8 +11,10 @@ const Draft = React.lazy(() => import("@/pages/draft"));
 const Scores = React.lazy(() => import("@/pages/scores"));
 const Teams = React.lazy(() => import("@/pages/teams"));
 const Leagues = React.lazy(() => import("@/pages/leagues"));
+const LeagueWaiting = React.lazy(() => import("@/pages/league-waiting"));
 const Trades = React.lazy(() => import("@/pages/trades"));
 const Admin = React.lazy(() => import("@/pages/admin"));
+const DatabaseViewer = React.lazy(() => import("@/pages/database-viewer"));
 const Agents = React.lazy(() => import("@/pages/agents"));
 const Profile = React.lazy(() => import("@/pages/profile"));
 const TestNotifications = React.lazy(() => import("@/pages/test-notifications"));
@@ -51,14 +53,18 @@ export function getRouter() {
     <Switch>
       <Route path="/login" component={Login} />
       <Route path="/dashboard" component={() => <AuthGuard><Dashboard /></AuthGuard>} />
+      <Route path="/draft/:draftId" component={() => <AuthGuard><Draft /></AuthGuard>} />
       <Route path="/draft" component={() => <AuthGuard><Draft /></AuthGuard>} />
       <Route path="/scores" component={() => <AuthGuard><Scores /></AuthGuard>} />
+      <Route path="/standings" component={() => <AuthGuard><Scores /></AuthGuard>} />
       <Route path="/teams" component={() => <AuthGuard><Teams /></AuthGuard>} />
       <Route path="/leagues" component={() => <AuthGuard><Leagues /></AuthGuard>} />
+      <Route path="/league/waiting" component={() => <AuthGuard><LeagueWaiting /></AuthGuard>} />
       <Route path="/more" component={() => <AuthGuard><MoreIndex /></AuthGuard>} />
       <Route path="/more/trades" component={() => <AuthGuard><Trades /></AuthGuard>} />
       <Route path="/trades" component={() => <AuthGuard><Trades /></AuthGuard>} />
       <Route path="/admin" component={() => <AuthGuard><Admin /></AuthGuard>} />
+      <Route path="/database" component={() => <AuthGuard><DatabaseViewer /></AuthGuard>} />
       <Route path="/agents" component={() => <AuthGuard><Agents /></AuthGuard>} />
       <Route path="/profile" component={() => <AuthGuard><Profile /></AuthGuard>} />
       <Route path="/test-notifications" component={() => <AuthGuard><TestNotifications /></AuthGuard>} />
