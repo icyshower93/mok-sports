@@ -1,3 +1,5 @@
+import { trace } from "@/debug/trace";
+trace("hooks/use-toast.ts");
 import { useState, useEffect, type ReactNode } from "react";
 import type {
   ToastActionElement,
