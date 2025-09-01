@@ -1,0 +1,79 @@
+2) Bisect pages/main.tsx imports (fast)
+
+Temporarily replace pages/main.tsx with a minimal component:
+
+// pages/main.tsx (TEMP)
+export default function Main() { return <div>main probe</div>; }
+
+
+Now re-add imports in small groups (UI-only, then hooks, then features). After each group, build + hard refresh.
+
+The first group that brings the TDZ back contains the culprit.
+
+Tips while bisecting
+
+Run these (in Replit shell) to see exactly what main pulls:
+
+# List direct imports of the page
+rg -n "^import .* from ['\"]" client/src/pages/main.tsx
+
+# Likely-dangerous patterns in the app (check matched files first when the TDZ returns)
+rg -n "export\s+(const|let|var)\s+\w+\s*=\s*new\s+" client/src
+rg -n "export\s+(const|let|var)\s+\w+\s*=\s*\w+\.getInstance" client/src
+rg -n 'import\s+["\']@/.*["\']\s*;$' client/src | rg -v "from"   # side-effect imports
+rg -n "export\s*\*\s*from" client/src                            # barrels
+rg -n 'export\s*\{[^}]+\}\s*from\s*["\']@/' client/src           # cross-barrel reexports
+
+
+Anything that matches in the group you just re-enabled is prime suspect.
+
+3) Apply the one-line fixes (no rewrites)
+
+Where you find offenders, do these micro-fixes:
+
+Module-level singletons
+
+// ❌ export const store = new Store()
+// ✅
+let _store: Store | null = null;
+export function getStore() { return (_store ??= new Store()); }
+
+
+(You already did this for cache/websocket; do the same for any others the page pulls.)
+
+Barrel imports / re-exports
+
+// ❌ import { X } from "@/features";           // hits index.ts barrel
+// ✅ import { X } from "@/features/X";         // import concrete file
+
+// ❌ export * from "./A"; export * from "./B";
+// ✅ export { A } from "./A"; export { B } from "./B";
+
+
+Barrels are classic cycle creators when pages import “feature root” modules.
+
+Side-effect imports
+
+// ❌ import "@/something";          // runs module code on import
+// ✅ move work into a function/useEffect or lazy dynamic import
+
+
+If you truly need it, call it inside a component useEffect, or wrap as:
+
+const init = () => import("@/something").then(m => m.init?.());
+useEffect(() => { init(); }, []);
+
+
+Heavy hooks/components the page uses
+Lazily load anything that drags big trees (admin, analytics, stores) to break cycles:
+
+const AdminPanel = React.lazy(() => import("@/features/admin/AdminPanel"));
+// use <Suspense><AdminPanel/></Suspense> where needed
+
+4) If you want a quick win before bisecting
+
+Two changes often clear this instantly, especially for a “main page”:
+
+Replace all imports going through folder barrels in pages/main.tsx with direct file paths.
+
+Convert any remaining export const X = new Y() in modules used by pages/main to the lazy getter pattern.
