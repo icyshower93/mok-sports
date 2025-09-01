@@ -1,5 +1,4 @@
-import { trace } from "@/debug/trace";
-trace("queryClient.ts");
+// Debug imports removed
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
 
 // NOTE: no top-level import of AuthToken to avoid cycles

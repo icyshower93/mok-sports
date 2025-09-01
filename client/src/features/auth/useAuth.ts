@@ -1,5 +1,4 @@
-import { trace } from "@/debug/trace";
-trace("features/auth/useAuth.ts");
+// Debug imports removed
 import { useContext } from "react";
 import { AuthContext } from "./AuthContext";
 

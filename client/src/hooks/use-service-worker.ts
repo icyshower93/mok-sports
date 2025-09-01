@@ -1,5 +1,4 @@
-import { trace } from "@/debug/trace";
-trace("hooks/use-service-worker.ts");
+// Debug imports removed
 import { useState, useEffect, useCallback } from 'react';
 
 export interface ServiceWorkerStatus {

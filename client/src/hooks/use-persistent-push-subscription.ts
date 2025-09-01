@@ -1,5 +1,4 @@
-import { trace } from "@/debug/trace";
-trace("hooks/use-persistent-push-subscription.ts");
+// Debug imports removed
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/features/auth/useAuth';
 

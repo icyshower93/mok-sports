@@ -1,5 +1,4 @@
-import { trace } from "@/debug/trace";
-trace("hooks/use-draft-websocket.ts");
+// Debug imports removed
 import { useEffect, useRef, useState, useCallback } from 'react';
 
 type WSStatus = 'idle' | 'connecting' | 'connected' | 'closed';

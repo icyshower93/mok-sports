@@ -3,6 +3,7 @@ import { getQueryClient } from "@/features/query/queryClient";
 import { AuthProvider } from "@/features/auth/AuthProvider";
 import { ThemeProvider } from "@/providers/ThemeProvider";
 import { getRouter } from "@/routes/router";
+import { Toaster } from "@/components/ui/toaster";
 import { Suspense } from "react";
 
 export default function App() {
@@ -13,6 +14,7 @@ export default function App() {
           <Suspense fallback={<div className="flex items-center justify-center min-h-screen">Loading...</div>}>
             {getRouter()}
           </Suspense>
+          <Toaster />
         </AuthProvider>
       </QueryClientProvider>
     </ThemeProvider>
