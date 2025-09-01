@@ -43,7 +43,8 @@ import { BottomNav } from "@/components/layout/bottom-nav";
 import { TeamLogo } from "@/components/team-logo";
 import mokSportsLogoWhite from "@assets/MokSports_White_1755068930869.png";
 import mokSportsLogo from "@assets/moksports logo_1755069436420.png";
+import { useAuth } from "@/features/auth/useAuth";
 
 export default function Main() { 
-  return <div>main probe - group 3 (+ components & assets)</div>; 
+  return <div>main probe - group 4 (+ features/auth)</div>; 
 }
