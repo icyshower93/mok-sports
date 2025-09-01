@@ -40,13 +40,7 @@ function AuthGuard({ children }: { children: React.ReactNode }) {
   );
 }
 
-function MoreIndex() {
-  const [, nav] = useLocation();
-  React.useEffect(() => { 
-    nav('/more/trades', { replace: true }); 
-  }, [nav]);
-  return null;
-}
+const MoreHub = React.lazy(() => import("@/pages/more/index"));
 
 export function getRouter() {
   return (
@@ -60,7 +54,7 @@ export function getRouter() {
       <Route path="/teams" component={() => <AuthGuard><Teams /></AuthGuard>} />
       <Route path="/leagues" component={() => <AuthGuard><Leagues /></AuthGuard>} />
       <Route path="/league/waiting" component={() => <AuthGuard><LeagueWaiting /></AuthGuard>} />
-      <Route path="/more" component={() => <AuthGuard><MoreIndex /></AuthGuard>} />
+      <Route path="/more" component={() => <AuthGuard><MoreHub /></AuthGuard>} />
       <Route path="/more/trades" component={() => <AuthGuard><Trades /></AuthGuard>} />
       <Route path="/trades" component={() => <AuthGuard><Trades /></AuthGuard>} />
       <Route path="/admin" component={() => <AuthGuard><Admin /></AuthGuard>} />

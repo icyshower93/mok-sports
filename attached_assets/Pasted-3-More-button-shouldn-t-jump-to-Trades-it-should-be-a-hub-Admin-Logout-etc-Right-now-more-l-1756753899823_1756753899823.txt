@@ -1,0 +1,90 @@
+3) More button shouldn’t jump to Trades; it should be a hub (Admin, Logout, etc.)
+
+Right now /more likely redirects to /more/trades. Replace that with a “More Hub” page and link to Trades from there.
+
+What to do
+
+Make a MoreHub page and route /more to it.
+
+Keep Trades at /more/trades (linked from the hub).
+
+// pages/more/index.tsx
+import { startTransition } from "react";
+import { useLocation } from "wouter";
+import { useAuth } from "@/features/auth/useAuth";
+import { Shield, LogOut, SlidersHorizontal, User, ShoppingBag } from "lucide-react";
+
+const Row = ({ icon: Icon, label, onClick }: any) => (
+  <button
+    className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-muted"
+    onClick={onClick}
+  >
+    <Icon className="size-5 opacity-80" />
+    <span className="text-sm">{label}</span>
+  </button>
+);
+
+export default function MoreHub() {
+  const [, navigate] = useLocation();
+  const { user, logout } = useAuth();
+
+  return (
+    <div className="p-4 space-y-2">
+      {user?.isAdmin && (
+        <Row
+          icon={Shield}
+          label="Admin Panel"
+          onClick={() => startTransition(() => navigate("/admin"))}
+        />
+      )}
+      <Row
+        icon={User}
+        label="Profile"
+        onClick={() => startTransition(() => navigate("/profile"))}
+      />
+      <Row
+        icon={SlidersHorizontal}
+        label="Settings"
+        onClick={() => startTransition(() => navigate("/settings"))}
+      />
+      <Row
+        icon={ShoppingBag}
+        label="Trades Center"
+        onClick={() => startTransition(() => navigate("/more/trades"))}
+      />
+      <Row
+        icon={LogOut}
+        label="Log out"
+        onClick={() => startTransition(() => logout())}
+      />
+    </div>
+  );
+}
+
+// App.tsx (Wouter routes)
+<Route path="/more" component={MoreHub} />
+<Route path="/more/trades" component={TradesPage} />
+
+// components/bottom-nav.tsx (labels)
+const TABS = [
+  { to: "/main",    label: "Home",   icon: Home },
+  { to: "/leagues", label: "League", icon: Shield },
+  { to: "/more",    label: "More",   icon: Menu },
+];
+
+
+Quick checks
+
+rg -n "path=.{0,30}['\"]/more['\"]" client/src -S
+rg -n "navigate\(.*/more" client/src -S
+rg -n "label:\s*['\"](Draft|Trades)['\"]" client/src -S
+
+Bonus: tiny guardrails to keep things stable
+
+Always declare queries first, derive second, render last (the pattern that killed the final TDZ).
+
+Wrap navigation & auth state changes in startTransition to avoid React 426 in prod.
+
+Keep query invalidations on realtime “ready/connected/season reset”.
+
+If you previously used a ToastProvider, mount it again near the root and keep useToast() calls in event handlers (not at module top) to avoid eager side-effects.
