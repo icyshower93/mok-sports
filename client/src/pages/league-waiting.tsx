@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, startTransition } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { MainLayout } from "@/components/layout/main-layout";
 import { Button } from "@/components/ui/button";
@@ -182,7 +182,7 @@ export function LeagueWaiting() {
         <div className="min-h-[70vh] flex items-center justify-center">
           <div className="text-center space-y-4">
             <p className="text-muted-foreground">No league selected</p>
-            <Button onClick={() => setLocation('/')}>
+            <Button onClick={() => startTransition(() => setLocation('/'))}>
               Return to Dashboard
             </Button>
           </div>
@@ -461,7 +461,7 @@ export function LeagueWaiting() {
                     <span className="font-semibold text-fantasy-purple">Draft is Live!</span>
                   </div>
                   <Button 
-                    onClick={() => setLocation(`/draft/${league.draftId}`)}
+                    onClick={() => startTransition(() => setLocation(`/draft/${league.draftId}`))}
                     className="w-full"
                     size="lg"
                   >

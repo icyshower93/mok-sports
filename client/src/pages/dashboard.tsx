@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, startTransition } from "react";
 import { AuthTokenManager } from "@/features/query/queryClient";
 import { useAuth } from "@/features/auth/useAuth";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
@@ -376,7 +376,7 @@ export default function DashboardPage() {
                           <Button
                             variant="outline"
                             size="sm"
-                            onClick={() => setLocation(`/league/waiting?id=${league.id}`)}
+                            onClick={() => startTransition(() => setLocation(`/league/waiting?id=${league.id}`))}
                           >
                             {league.draftStatus === 'completed' ? 'View Results' : 'Enter League'}
                           </Button>

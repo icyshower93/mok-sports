@@ -1,4 +1,5 @@
 import { useLocation } from "wouter";
+import { startTransition } from "react";
 import { 
   Home, 
   Shield, 
@@ -61,7 +62,7 @@ export function BottomNav() {
           return (
             <button
               key={item.path}
-              onClick={() => setLocation(item.path)}
+              onClick={() => startTransition(() => setLocation(item.path))}
               className={cn(
                 "flex flex-col items-center justify-center gap-1 text-xs font-medium transition-colors",
                 "min-h-[60px] px-1 py-2", // Enhanced PWA touch target with better padding
