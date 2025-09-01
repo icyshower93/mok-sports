@@ -163,7 +163,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loc] = useLocation();
   const enableSmart =
     isAuthenticated && !!user && !isLoading &&
-    (loc === "/" || loc === "/dashboard" || loc.startsWith("/league") || loc.startsWith("/draft"));
+    (loc === "/" || loc === "/dashboard" || loc.startsWith("/league/") || loc.startsWith("/draft"));
   useSmartRedirect(enableSmart);
 
   const value = useMemo<AuthValue>(() => ({

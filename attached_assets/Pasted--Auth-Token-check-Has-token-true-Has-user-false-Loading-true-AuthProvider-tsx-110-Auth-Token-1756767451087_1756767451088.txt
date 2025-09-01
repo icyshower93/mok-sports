@@ -1,0 +1,30 @@
+[Auth] Token check - Has token: true Has user: false Loading: true
+AuthProvider.tsx:110 [Auth] Token check - Has token: true Has user: true Loading: false
+useSmartRedirect.ts:19 [SmartRedirect] No leagues, redirecting to dashboard from /leagues
+useSmartRedirect.ts:29 [SmartRedirect] Has leagues, redirecting to main app from landing page /dashboard
+main.tsx:281 Main page debug: Object
+main.tsx:301 🔍 SKINS WINNER DEBUG: Object
+api/scoring/skins/3e98be5a-1189-4a0e-8468-c6e54fb21137/2024/1:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+api/leagues/3e98be5a-1189-4a0e-8468-c6e54fb21137/teams-left-to-play/2024/1:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+main.tsx:281 Main page debug: Object
+main.tsx:301 🔍 SKINS WINNER DEBUG: Object
+main.tsx:281 Main page debug: Object
+main.tsx:301 🔍 SKINS WINNER DEBUG: Object
+main.tsx:281 Main page debug: Object
+main.tsx:301 🔍 SKINS WINNER DEBUG: Object
+main.tsx:423 🎯 Member matching debug for Mok Sports: Object
+main.tsx:423 🎯 Member matching debug for Alpha Bot: Object
+main.tsx:423 🎯 Member matching debug for Beta Bot: Object
+main.tsx:423 🎯 Member matching debug for Gamma Bot: Object
+main.tsx:423 🎯 Member matching debug for Delta Bot: Object
+main.tsx:423 🎯 Member matching debug for Echo Bot: Object
+main.tsx:281 Main page debug: Object
+main.tsx:301 🔍 SKINS WINNER DEBUG: Object
+main.tsx:423 🎯 Member matching debug for Mok Sports: Object
+main.tsx:423 🎯 Member matching debug for Alpha Bot: Object
+main.tsx:423 🎯 Member matching debug for Beta Bot: Object
+main.tsx:423 🎯 Member matching debug for Gamma Bot: Object
+main.tsx:423 🎯 Member matching debug for Delta Bot: Object
+main.tsx:423 🎯 Member matching debug for Echo Bot: Object
+api/scoring/skins/3e98be5a-1189-4a0e-8468-c6e54fb21137/2024/1:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+api/leagues/3e98be5a-1189-4a0e-8468-c6e54fb21137/teams-left-to-play/2024/1:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
