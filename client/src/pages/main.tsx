@@ -129,7 +129,7 @@ export default function MainPage() {
 
   if (!(leagues as any[])?.length) {
     return (
-      <div className="min-h-screen bg-background pb-20">
+      <div className="min-h-screen bg-background">
         <div className="w-full p-4">
           <div className="text-center py-8">
             <h3 className="text-lg font-semibold mb-2">No Leagues Found</h3>
@@ -139,7 +139,6 @@ export default function MainPage() {
             </Button>
           </div>
         </div>
-        <BottomNav />
       </div>
     );
   }
