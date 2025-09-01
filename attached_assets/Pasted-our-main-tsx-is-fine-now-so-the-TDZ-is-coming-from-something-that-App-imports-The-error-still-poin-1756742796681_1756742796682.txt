@@ -1,0 +1,99 @@
+our main.tsx is fine now, so the TDZ is coming from something that App imports. The error still points to main.tsx only because the crash happens while await import("@/App") evaluates its dependency graph.
+
+From your network panel I see requests already firing from queryClient.ts pathing (config, leagues) before the app finishes booting—i.e., something in the App graph still does work at import time or there’s a circular import that triggers a Temporal Dead Zone.
+
+Your posted queryClient.ts is close, but there’s one likely cycle: it imports AuthToken at module load:
+
+import { AuthToken } from "@/lib/auth-token";
+
+
+If auth-token.ts (directly or indirectly) imports anything that imports the query client (or the app tree), you’ve got a cycle → TDZ (the minifier renames a let to L, which is the “L” you’re seeing).
+
+Quick, surgical fix: break the potential cycle with a lazy import
+
+Replace the top-level AuthToken import with a dynamic import inside the query function so it’s only resolved at call time (well after the module graph has settled).
+
+Revised client/src/queryClient.ts
+
+import { trace } from "@/debug/trace";
+trace("queryClient.ts");
+import { QueryClient, QueryFunction } from "@tanstack/react-query";
+
+// NOTE: no top-level import of AuthToken to avoid cycles
+
+export const unauthorizedBehaviorToQueryFunction = (
+  unauthorizedBehavior: "returnNull" | "throw" = "throw",
+): QueryFunction<any> =>
+  async ({ queryKey }) => {
+    // 👇 Lazy import to break cycles with auth modules
+    const { AuthToken } = await import("@/lib/auth-token");
+
+    const res = await fetch(queryKey.join("/") as string, {
+      headers: AuthToken.headers(),
+      credentials: "include",
+    });
+
+    if (unauthorizedBehavior === "returnNull" && res.status === 401) return null;
+
+    if (!res.ok) {
+      const text = await res.text().catch(() => "");
+      throw new Error(`HTTP ${res.status} ${res.statusText}${text ? ` - ${text}` : ""}`);
+    }
+    return await res.json();
+  };
+
+let _qc: QueryClient | null = null;
+export function getQueryClient(): QueryClient {
+  const g = globalThis as any;
+  if (g.__MOK_QUERY_CLIENT__) return g.__MOK_QUERY_CLIENT__;
+  if (_qc) return _qc;
+
+  _qc = new QueryClient({
+    defaultOptions: {
+      queries: {
+        queryFn: unauthorizedBehaviorToQueryFunction("returnNull"),
+        refetchOnMount: false,
+        refetchOnWindowFocus: false,
+        retry: (failureCount, error: any) =>
+          error?.message?.includes("401") ? false : failureCount < 2,
+        staleTime: 0,
+        gcTime: 5 * 60 * 1000,
+      },
+      mutations: { retry: 0 },
+    },
+  });
+
+  g.__MOK_QUERY_CLIENT__ = _qc;
+  return _qc;
+}
+
+// (Optional) keep if other modules expect this helper object:
+export const AuthTokenManager = {
+  getToken: async () => (await import("@/lib/auth-token")).then(m => m.AuthToken.get()),
+  setToken: async (token: string) => (await import("@/lib/auth-token")).then(m => m.AuthToken.set(token)),
+  removeToken: async () => (await import("@/lib/auth-token")).then(m => m.AuthToken.clear()),
+  getAuthHeaders: async () => (await import("@/lib/auth-token")).then(m => m.AuthToken.headers()),
+};
+
+
+This breaks any auth-token ↔ queryClient ↔ App cycle without changing your behavior. The tiny cost of a dynamic import happens only on first query execution.
+
+Do these two checks as well (fast):
+
+Make sure auth-token.ts doesn’t import the query client or anything that imports it. If it does, keep the dynamic import approach above—don’t try to re-link them.
+
+Scan for any remaining module-level work elsewhere:
+
+# Module-level singletons
+rg -n 'export\s+(const|let|var)\s+\w+\s*=\s*new\s+' client/src
+rg -n 'export\s+(const|let|var)\s+\w+\s*=\s*\w+\.getInstance' client/src
+
+# Bare side-effect imports
+rg -n 'import\s+["\']@/.*["\']\s*;(\s*//.*)?$' client/src | rg -v 'from'
+
+# Barrels (common cycle source)
+rg -n 'export\s*\*\s*from' client/src
+rg -n 'export\s*\{[^}]+\}\s*from\s*["\']@/' client/src
+
+
+Anything that does work at import time → convert to a lazy getter (like we did with websocket-manager and cache-manager).

@@ -1,17 +1,23 @@
 import { trace } from "@/debug/trace";
 trace("queryClient.ts");
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
-import { AuthToken } from "@/lib/auth-token";
+
+// NOTE: no top-level import of AuthToken to avoid cycles
 
 export const unauthorizedBehaviorToQueryFunction = (
   unauthorizedBehavior: "returnNull" | "throw" = "throw",
 ): QueryFunction<any> =>
   async ({ queryKey }) => {
+    // 👇 Lazy import to break cycles with auth modules
+    const { AuthToken } = await import("@/lib/auth-token");
+
     const res = await fetch(queryKey.join("/") as string, {
       headers: AuthToken.headers(),
       credentials: "include",
     });
+
     if (unauthorizedBehavior === "returnNull" && res.status === 401) return null;
+
     if (!res.ok) {
       const text = await res.text().catch(() => "");
       throw new Error(`HTTP ${res.status} ${res.statusText}${text ? ` - ${text}` : ""}`);
@@ -42,10 +48,10 @@ export function getQueryClient(): QueryClient {
   return _qc;
 }
 
-// Maintain backward compatibility while using new AuthToken utility
+// (Optional) keep if other modules expect this helper object:
 export const AuthTokenManager = {
-  getToken: () => AuthToken.get(),
-  setToken: (token: string) => AuthToken.set(token),
-  removeToken: () => AuthToken.clear(),
-  getAuthHeaders: () => AuthToken.headers()
+  getToken: async () => (await import("@/lib/auth-token")).AuthToken.get(),
+  setToken: async (token: string) => (await import("@/lib/auth-token")).AuthToken.set(token),
+  removeToken: async () => (await import("@/lib/auth-token")).AuthToken.clear(),
+  getAuthHeaders: async () => (await import("@/lib/auth-token")).AuthToken.headers(),
 };
