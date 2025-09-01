@@ -1007,11 +1007,16 @@ export default function DraftPage() {
                           if (draftData?.draft?.leagueId) {
                             localStorage.setItem('lastDraftLeagueId', draftData.draft.leagueId);
                           }
-                          // Invalidate stable queries to refresh teams
-                          queryClient.invalidateQueries({
-                            predicate: (q) => String(q.queryKey?.[0] ?? '').startsWith('/api/user/stable/')
-                          });
+                          
+                          // NAVIGATION FIX: Navigate first, then invalidate queries
                           navigate(`/league/${draftData?.draft?.leagueId}/waiting`);
+                          
+                          // Delay query invalidation to after navigation completes
+                          setTimeout(() => {
+                            queryClient.invalidateQueries({
+                              predicate: (q) => String(q.queryKey?.[0] ?? '').startsWith('/api/user/stable/')
+                            });
+                          }, 100);
                         }}
                         variant="outline"
                         className="flex-1 sm:flex-none"
@@ -1026,12 +1031,17 @@ export default function DraftPage() {
                           if (draftData?.draft?.leagueId) {
                             localStorage.setItem('lastDraftLeagueId', draftData.draft.leagueId);
                           }
-                          // Invalidate stable queries to refresh teams
-                          queryClient.invalidateQueries({
-                            predicate: (q) => String(q.queryKey?.[0] ?? '').startsWith('/api/user/stable/')
-                          });
-                          queryClient.invalidateQueries({ queryKey: ['/api/user/leagues'] });
+                          
+                          // NAVIGATION FIX: Navigate first, then invalidate queries to prevent page refresh
                           navigate('/');
+                          
+                          // Delay query invalidation to after navigation completes
+                          setTimeout(() => {
+                            queryClient.invalidateQueries({
+                              predicate: (q) => String(q.queryKey?.[0] ?? '').startsWith('/api/user/stable/')
+                            });
+                            queryClient.invalidateQueries({ queryKey: ['/api/user/leagues'] });
+                          }, 100);
                         }}
                         variant="default"
                         className="flex-1 sm:flex-none"
