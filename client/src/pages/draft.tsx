@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, startTransition } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLocation, useParams } from "wouter";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -643,7 +643,7 @@ export default function DraftPage() {
             </p>
 
             <div className="space-y-2">
-              <Button onClick={() => navigate('/')} variant="outline">
+              <Button onClick={() => startTransition(() => navigate('/'))} variant="outline">
                 Return to Home
               </Button>
               <Button onClick={() => window.location.reload()}>
@@ -828,7 +828,7 @@ export default function DraftPage() {
             <Button 
               variant="ghost" 
               size="sm" 
-              onClick={() => navigate('/league/waiting')}
+              onClick={() => startTransition(() => navigate('/league/waiting'))}
               className="p-2 hover:bg-secondary/50 transition-all duration-200"
             >
               <ArrowLeft className="w-5 h-5" />

@@ -1,0 +1,149 @@
+Great—we killed the TDZs. Now your crash is a different class of React prod-only error:
+
+Minified React error #426 → “A component suspended while responding to synchronous input. Wrap updates that may suspend in startTransition.” 
+React
+
+You’re also seeing a 401 from /api/auth/me right before the crash. Two things are likely happening together:
+
+A state change or navigation runs in a sync event (click/route change/init handler),
+
+That update mounts a lazy/suspenseful thing (code-split route, data loader that throws a Promise, etc.),
+
+There’s no startTransition around the update, so React throws #426.
+
+Below is a surgical plan that fixes this without changing your app semantics.
+
+1) Put a real Suspense boundary at the root
+
+In main.tsx, render your app under <Suspense> (cheap, prevents full-page crash during lazy page loads):
+
+// client/src/main.tsx
+import { createRoot } from "react-dom/client";
+import { StrictMode, Suspense } from "react";
+import App from "./App";
+
+const root = createRoot(document.getElementById("root")!);
+root.render(
+  <StrictMode>
+    <Suspense fallback={<div className="p-6 text-sm opacity-70">Loading…</div>}>
+      <App />
+    </Suspense>
+  </StrictMode>
+);
+
+
+If you already have a boundary, keep this one too—nested is fine.
+
+2) Wrap any event → navigation/state that can lazy-load with startTransition
+
+React’s guidance for #426 is explicit: wrap the update. 
+React
+
+A) Route navigations (buttons, links with handlers, sidebar items)
+import { startTransition } from "react";
+import { useNavigate } from "react-router-dom";
+
+const MyButton = () => {
+  const navigate = useNavigate();
+  return (
+    <button
+      onClick={() => {
+        startTransition(() => {
+          navigate("/league"); // or router.navigate(), setRoute(), etc.
+        });
+      }}
+    >
+      Go to League
+    </button>
+  );
+};
+
+B) Auth gate flipping “ready” → mounts protected lazy routes
+
+In AuthProvider.tsx (where you set hasUser / isReady after /api/auth/me), wrap the state promotion:
+
+import { startTransition, useEffect } from "react";
+// ...
+useEffect(() => {
+  if (authResolved) {
+    startTransition(() => {
+      setHasUser(!!user);
+      setLoading(false);
+    });
+  }
+}, [authResolved, user]);
+
+C) Any “setScreen/setRoute” style state that controls which lazy component renders
+import { startTransition } from "react";
+// ...
+onSelectTab={(tab) => {
+  startTransition(() => setActiveTab(tab));
+}}
+
+3) Make your router lazy-safe
+
+If you’re using React Router with lazy routes/loaders, make sure RouterProvider is under a Suspense, or use the fallbackElement:
+
+import { RouterProvider } from "react-router-dom";
+
+<RouterProvider router={router} fallbackElement={<div>Loading…</div>} />
+
+
+(You can keep the root <Suspense> too—belt and suspenders.)
+
+4) Don’t let the 401 bubble into Suspense
+
+The 401 from /api/auth/me is fine—just ensure it doesn’t throw during a sync event. Options:
+
+In your auth fetcher, handle 401 and set “loggedOut” state instead of throwing.
+
+If you use route loaders, return a handled response and render your login route; don’t rely on an unhandled thrown promise.
+
+Example:
+
+// auth.ts
+export async function fetchMe() {
+  const res = await fetch("/api/auth/me");
+  if (res.status === 401) return { user: null }; // handle gracefully
+  if (!res.ok) throw new Error("Auth check failed");
+  return res.json();
+}
+
+
+Then inside effects:
+
+useEffect(() => {
+  let cancelled = false;
+  (async () => {
+    const data = await fetchMe();
+    if (cancelled) return;
+    startTransition(() => setUser(data.user)); // safe promotion
+  })();
+  return () => { cancelled = true; };
+}, []);
+
+5) Quick repo-wide grep to find hotspots
+
+Run these and wrap the matches as needed:
+
+# Navigations / router promotions in handlers
+rg -n "onClick=\{.*navigate\(" client/src
+rg -n "\brouter\.navigate\(" client/src
+rg -n "\bset(Route|Screen|View)\(" client/src
+
+# Places that flip auth/ready state after async
+rg -n "setHasUser|setLoading|setReady" client/src
+
+
+Anywhere those fire due to user actions (clicks, immediate startup handlers that synchronously respond to URL), wrap the update with startTransition.
+
+Why this matches your logs
+
+You see a 401 (loader/auth check) → app chooses a path that mounts a lazy route/component.
+
+React detects “suspended during a sync update” → throws #426 in production. 
+React
+
+Adding a Suspense boundary guards render; startTransition tells React this update may suspend, so it can show the fallback instead of crashing.
+
+If you apply the root <Suspense> and add startTransition around the few state/route promotions above, the #426 will disappear.

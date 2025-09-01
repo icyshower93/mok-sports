@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useState, startTransition, type ReactNode } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { AuthContext, type AuthValue, type User } from "./AuthContext";
 import { AuthToken } from "@/lib/auth-token";
@@ -70,16 +70,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         clearTimeout(authGraceTimer);
         setAuthGraceTimer(null);
       }
-      setIsAuthenticated(true);
-      setLastKnownAuthState(true);
+      startTransition(() => {
+        setIsAuthenticated(true);
+        setLastKnownAuthState(true);
+      });
     } else if (lastKnownAuthState === true && !isLoading) {
       // User was authenticated but now isn't - add grace period
       if (!authGraceTimer) {
         const timer = setTimeout(() => {
           // After grace period, check if we still don't have auth
           if (!user && !isLoading) {
-            setIsAuthenticated(false);
-            setLastKnownAuthState(false);
+            startTransition(() => {
+              setIsAuthenticated(false);
+              setLastKnownAuthState(false);
+            });
           }
           setAuthGraceTimer(null);
         }, 5000); // 5 second grace period
@@ -91,8 +95,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         clearTimeout(authGraceTimer);
         setAuthGraceTimer(null);
       }
-      setIsAuthenticated(false);
-      setLastKnownAuthState(false);
+      startTransition(() => {
+        setIsAuthenticated(false);
+        setLastKnownAuthState(false);
+      });
     }
   }, [user, error, isLoading, lastKnownAuthState, authGraceTimer]);
 
@@ -117,18 +123,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (authStatus === "success" && token) {
       // Store the token for PWA compatibility
       AuthToken.set(token);
-      setIsAuthenticated(true);
+      startTransition(() => {
+        setIsAuthenticated(true);
+      });
       sessionStorage.setItem('login-time', Date.now().toString());
       queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
       window.history.replaceState({}, document.title, "/");
     } else if (authStatus === "success") {
       // Fallback for cookie-only auth
-      setIsAuthenticated(true);
+      startTransition(() => {
+        setIsAuthenticated(true);
+      });
       sessionStorage.setItem('login-time', Date.now().toString());
       queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
       window.history.replaceState({}, document.title, "/");
     } else if (error) {
-      setIsAuthenticated(false);
+      startTransition(() => {
+        setIsAuthenticated(false);
+      });
       AuthToken.clear();
       window.history.replaceState({}, document.title, "/");
     }

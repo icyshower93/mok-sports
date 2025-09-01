@@ -1,3 +1,4 @@
+import { startTransition } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -105,7 +106,7 @@ export default function AdminPanel() {
             <Button 
               variant="ghost" 
               size="sm" 
-              onClick={() => navigate("/")}
+              onClick={() => startTransition(() => navigate("/"))}
               className="flex items-center space-x-2"
             >
               <ArrowLeft className="w-4 h-4" />

@@ -1,5 +1,5 @@
 import { createRoot } from "react-dom/client";
-// Defer App module evaluation until after bootstrap to prevent TDZ errors
+import { StrictMode, Suspense } from "react";
 import "@/index.css";
 
 // Enhanced iOS swipe prevention
@@ -30,6 +30,12 @@ if (navigator.userAgent.includes('iPhone') || navigator.userAgent.includes('iPad
 
 (async () => {
   const { default: App } = await import("@/App");
-  createRoot(document.getElementById("root")!).render(<App />);
+  createRoot(document.getElementById("root")!).render(
+    <StrictMode>
+      <Suspense fallback={<div className="p-6 text-sm opacity-70">Loading…</div>}>
+        <App />
+      </Suspense>
+    </StrictMode>
+  );
 })();
 // Build marker: Sat Aug 30 07:42:21 PM UTC 2025

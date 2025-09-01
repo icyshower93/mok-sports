@@ -1,0 +1,109 @@
+🏗️ Build Info: Object
+buildInfo.ts:20 📦 Version: 92ffc405-08e6-4ad1-b9df-e636cad26194
+buildInfo.ts:21 📅 Built: 2025-08-31T18:36:06.816Z
+buildInfo.ts:22 🔧 Environment: production
+App.tsx:88 [App] WebSocket status: waiting_auth (Disconnected)
+App.tsx:94 [App] ⏳ Waiting for authentication to complete
+AuthProvider.tsx:102 [Auth] Token check - Has token: false Has user: false Loading: true
+use-service-worker.ts:130 [SW Hook] Service worker disabled - not in PWA mode
+(index):1 Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner.
+/api/auth/me:1  Failed to load resource: the server responded with a status of 401 ()Understand this error
+error-boundary.tsx:20 [ErrorBoundary] Production Error Details:
+getDerivedStateFromError @ error-boundary.tsx:20Understand this error
+error-boundary.tsx:21 [ErrorBoundary] Error name: Error
+getDerivedStateFromError @ error-boundary.tsx:21Understand this error
+error-boundary.tsx:22 [ErrorBoundary] Error message: Minified React error #426; visit https://reactjs.org/docs/error-decoder.html?invariant=426 for the full message or use the non-minified dev environment for full errors and additional helpful warnings.
+getDerivedStateFromError @ error-boundary.tsx:22Understand this error
+error-boundary.tsx:23 [ErrorBoundary] Full error object: Error: Minified React error #426; visit https://reactjs.org/docs/error-decoder.html?invariant=426 for the full message or use the non-minified dev environment for full errors and additional helpful warnings.
+    at Wa (react-dom.production.min.js:277:279)
+    at Zr (react-dom.production.min.js:279:200)
+    at ji (react-dom.production.min.js:272:245)
+    at mn (react-dom.production.min.js:127:105)
+    at react-dom.production.min.js:266:273
+getDerivedStateFromError @ error-boundary.tsx:23Understand this error
+error-boundary.tsx:24 [ErrorBoundary] Stack trace: Error: Minified React error #426; visit https://reactjs.org/docs/error-decoder.html?invariant=426 for the full message or use the non-minified dev environment for full errors and additional helpful warnings.
+    at Wa (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BDJrt2Wb.js:40:38423)
+    at Zr (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BDJrt2Wb.js:40:39309)
+    at ji (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BDJrt2Wb.js:40:36456)
+    at mn (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BDJrt2Wb.js:38:3258)
+    at https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BDJrt2Wb.js:40:34060
+getDerivedStateFromError @ error-boundary.tsx:24Understand this error
+error-boundary.tsx:25 [ErrorBoundary] Error constructor: Error
+getDerivedStateFromError @ error-boundary.tsx:25Understand this error
+error-boundary.tsx:29 [ErrorBoundary] ⚠️ MINIFIED REACT ERROR DETECTED
+getDerivedStateFromError @ error-boundary.tsx:29Understand this error
+error-boundary.tsx:30 [ErrorBoundary] This is React error: Minified React error #426; visit https://reactjs.org/docs/error-decoder.html?invariant=426 for the full message or use the non-minified dev environment for full errors and additional helpful warnings.
+getDerivedStateFromError @ error-boundary.tsx:30Understand this error
+error-boundary.tsx:31 [ErrorBoundary] React error details: Error: Minified React error #426; visit https://reactjs.org/docs/error-decoder.html?invariant=426 for the full message or use the non-minified dev environment for full errors and additional helpful warnings.
+    at Wa (react-dom.production.min.js:277:279)
+    at Zr (react-dom.production.min.js:279:200)
+    at ji (react-dom.production.min.js:272:245)
+    at mn (react-dom.production.min.js:127:105)
+    at react-dom.production.min.js:266:273
+getDerivedStateFromError @ error-boundary.tsx:31Understand this error
+error-boundary.tsx:20 [ErrorBoundary] Production Error Details:
+getDerivedStateFromError @ error-boundary.tsx:20Understand this error
+error-boundary.tsx:21 [ErrorBoundary] Error name: Error
+getDerivedStateFromError @ error-boundary.tsx:21Understand this error
+error-boundary.tsx:22 [ErrorBoundary] Error message: Minified React error #426; visit https://reactjs.org/docs/error-decoder.html?invariant=426 for the full message or use the non-minified dev environment for full errors and additional helpful warnings.
+getDerivedStateFromError @ error-boundary.tsx:22Understand this error
+error-boundary.tsx:23 [ErrorBoundary] Full error object: Error: Minified React error #426; visit https://reactjs.org/docs/error-decoder.html?invariant=426 for the full message or use the non-minified dev environment for full errors and additional helpful warnings.
+    at Wa (react-dom.production.min.js:277:279)
+    at Zr (react-dom.production.min.js:279:200)
+    at Io (react-dom.production.min.js:270:88)
+    at ji (react-dom.production.min.js:272:300)
+    at mn (react-dom.production.min.js:127:105)
+    at react-dom.production.min.js:266:273
+getDerivedStateFromError @ error-boundary.tsx:23Understand this error
+error-boundary.tsx:24 [ErrorBoundary] Stack trace: Error: Minified React error #426; visit https://reactjs.org/docs/error-decoder.html?invariant=426 for the full message or use the non-minified dev environment for full errors and additional helpful warnings.
+    at Wa (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BDJrt2Wb.js:40:38423)
+    at Zr (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BDJrt2Wb.js:40:39309)
+    at Io (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BDJrt2Wb.js:40:35710)
+    at ji (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BDJrt2Wb.js:40:36511)
+    at mn (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BDJrt2Wb.js:38:3258)
+    at https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BDJrt2Wb.js:40:34060
+getDerivedStateFromError @ error-boundary.tsx:24Understand this error
+error-boundary.tsx:25 [ErrorBoundary] Error constructor: Error
+getDerivedStateFromError @ error-boundary.tsx:25Understand this error
+error-boundary.tsx:29 [ErrorBoundary] ⚠️ MINIFIED REACT ERROR DETECTED
+getDerivedStateFromError @ error-boundary.tsx:29Understand this error
+error-boundary.tsx:30 [ErrorBoundary] This is React error: Minified React error #426; visit https://reactjs.org/docs/error-decoder.html?invariant=426 for the full message or use the non-minified dev environment for full errors and additional helpful warnings.
+getDerivedStateFromError @ error-boundary.tsx:30Understand this error
+error-boundary.tsx:31 [ErrorBoundary] React error details: Error: Minified React error #426; visit https://reactjs.org/docs/error-decoder.html?invariant=426 for the full message or use the non-minified dev environment for full errors and additional helpful warnings.
+    at Wa (react-dom.production.min.js:277:279)
+    at Zr (react-dom.production.min.js:279:200)
+    at Io (react-dom.production.min.js:270:88)
+    at ji (react-dom.production.min.js:272:300)
+    at mn (react-dom.production.min.js:127:105)
+    at react-dom.production.min.js:266:273
+getDerivedStateFromError @ error-boundary.tsx:31Understand this error
+react-dom.production.min.js:188 Error: Minified React error #426; visit https://reactjs.org/docs/error-decoder.html?invariant=426 for the full message or use the non-minified dev environment for full errors and additional helpful warnings.
+    at Wa (react-dom.production.min.js:277:279)
+    at Zr (react-dom.production.min.js:279:200)
+    at Io (react-dom.production.min.js:270:88)
+    at ji (react-dom.production.min.js:272:300)
+    at mn (react-dom.production.min.js:127:105)
+    at react-dom.production.min.js:266:273
+_o @ react-dom.production.min.js:188Understand this error
+error-boundary.tsx:45 [ErrorBoundary] DETAILED ERROR - Name: Error
+componentDidCatch @ error-boundary.tsx:45Understand this error
+error-boundary.tsx:46 [ErrorBoundary] DETAILED ERROR - Message: Minified React error #426; visit https://reactjs.org/docs/error-decoder.html?invariant=426 for the full message or use the non-minified dev environment for full errors and additional helpful warnings.
+componentDidCatch @ error-boundary.tsx:46Understand this error
+error-boundary.tsx:47 [ErrorBoundary] DETAILED ERROR - Stack: Error: Minified React error #426; visit https://reactjs.org/docs/error-decoder.html?invariant=426 for the full message or use the non-minified dev environment for full errors and additional helpful warnings.
+    at Wa (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BDJrt2Wb.js:40:38423)
+    at Zr (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BDJrt2Wb.js:40:39309)
+    at Io (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BDJrt2Wb.js:40:35710)
+    at ji (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BDJrt2Wb.js:40:36511)
+    at mn (https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BDJrt2Wb.js:38:3258)
+    at https://mok-sports-draft-mokfantasysport.replit.app/assets/index-BDJrt2Wb.js:40:34060
+componentDidCatch @ error-boundary.tsx:47Understand this error
+error-boundary.tsx:48 [ErrorBoundary] Component stack: 
+    at Cd (https://mok-sports-draft-mokfantasysport.replit.app/assets/App-xJFImDNB.js:40:79730)
+    at Ku (https://mok-sports-draft-mokfantasysport.replit.app/assets/App-xJFImDNB.js:40:57581)
+    at va (https://mok-sports-draft-mokfantasysport.replit.app/assets/App-xJFImDNB.js:10:40032)
+    at Ma (https://mok-sports-draft-mokfantasysport.replit.app/assets/App-xJFImDNB.js:10:43235)
+    at c (https://mok-sports-draft-mokfantasysport.replit.app/assets/App-xJFImDNB.js:10:45668)
+    at oi (https://mok-sports-draft-mokfantasysport.replit.app/assets/App-xJFImDNB.js:40:50141)
+    at Hu (https://mok-sports-draft-mokfantasysport.replit.app/assets/App-xJFImDNB.js:40:56639)
+    at ed (https://mok-sports-draft-mokfantasysport.replit.app/assets/App-xJFImDNB.js:40:71543)
+    at Sd
