@@ -4,7 +4,7 @@ import { Switch, Route } from "wouter";
 import React, { lazy, Suspense } from "react";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { getQueryClient } from "@/features/query/queryClient";
-import { Toaster } from "@/components/ui/toaster";
+// import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/hooks/use-theme";
 import { AuthProvider } from "@/features/auth/AuthProvider";
@@ -246,7 +246,7 @@ function App() {
         <TooltipProvider>
           <QueryClientProvider client={getQueryClient()}>
             <AuthProvider>
-              <Toaster />
+              {/* <Toaster /> */}
               <AppContent />
             </AuthProvider>
           </QueryClientProvider>
