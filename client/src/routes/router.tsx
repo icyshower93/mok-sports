@@ -1,12 +1,12 @@
 import * as React from "react";
 import { Switch, Route } from "wouter";
 
-const Home = React.lazy(() => import("@/pages/main"));
+const Probe = React.lazy(() => import("@/pages/_probe"));
 
 export function getRouter() {
   return (
     <Switch>
-      <Route path="/" component={Home} />
+      <Route path="/" component={Probe} />
     </Switch>
   );
 }
