@@ -101,11 +101,15 @@ export function useSmartRedirect(enabled: boolean) {
             setLocation(`/league/waiting?id=${pickLeagueId}`);
           });
         } else {
-          // No draft or completed draft - go to main app (scores, teams, etc.)
-          console.log('[SmartRedirect] No active/idle draft found, going to main app');
-          startTransition(() => {
-            setLocation("/");
-          });
+          // No active/idle draft.
+          // If the user is on pre-draft screens, bump them to the main app.
+          // Otherwise, do not hijack normal navigation (scores/teams/more/etc).
+          if (location === "/dashboard" || location.startsWith("/league")) {
+            console.log("[SmartRedirect] Completed/no draft; leaving guarded page -> /");
+            startTransition(() => setLocation("/"));
+          } else {
+            console.log("[SmartRedirect] Completed/no draft; staying on", location);
+          }
         }
         
         // Warm caches

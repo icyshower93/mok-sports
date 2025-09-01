@@ -1,0 +1,54 @@
+I dug through your repo and found two concrete causes that match the behavior you’re seeing:
+
+1) Global redirect hook is hijacking tab navigation
+
+File: client/src/hooks/useSmartRedirect.ts
+Right now useSmartRedirect runs from the AuthProvider for every page (see client/src/features/auth/AuthProvider.tsx, it calls useSmartRedirect(isAuthenticated && !!user && !isLoading)), and the hook’s logic sends you back to / whenever there’s no active or idle draft:
+
+// useSmartRedirect.ts (current)
+else {
+  // No draft or completed draft - go to main app (scores, teams, etc.)
+  console.log('[SmartRedirect] No active/idle draft found, going to main app');
+  startTransition(() => {
+    setLocation("/");
+  });
+}
+
+
+That means when you click Teams/Scores/More, the hook immediately yanks you back to Home (/). That’s exactly why all tabs appear “broken” after draft completion.
+
+Minimal fix (don’t hijack real tabs)
+
+Only bump the user to / if they’re on a pre-draft page (dashboard/league screens). Otherwise, let them stay on the tab they chose:
+
+ // useSmartRedirect.ts
+- else {
+-   // No draft or completed draft - go to main app (scores, teams, etc.)
+-   console.log('[SmartRedirect] No active/idle draft found, going to main app');
+-   startTransition(() => {
+-     setLocation("/");
+-   });
+- }
++ else {
++   // No active/idle draft.
++   // If the user is on pre-draft screens, bump them to the main app.
++   // Otherwise, do not hijack normal navigation (scores/teams/more/etc).
++   if (location === "/dashboard" || location.startsWith("/league")) {
++     console.log("[SmartRedirect] Completed/no draft; leaving guarded page -> /");
++     startTransition(() => setLocation("/"));
++   } else {
++     console.log("[SmartRedirect] Completed/no draft; staying on", location);
++   }
++ }
+
+
+If you prefer stricter control, you can also only run useSmartRedirect on landing contexts. In AuthProvider.tsx, gate it by path:
+
+import { useLocation } from "wouter";
+const [loc] = useLocation();
+const enableSmart = isAuthenticated && !!user && !isLoading &&
+  (loc === "/" || loc === "/dashboard" || loc.startsWith("/league") || loc.startsWith("/draft"));
+useSmartRedirect(enableSmart);
+
+
+That keeps the smart routing at app entry/leagues/draft, but never when the user is inside the regular app tabs.
