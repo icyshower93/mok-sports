@@ -1031,8 +1031,8 @@ export default function DraftPage() {
                             localStorage.setItem('lastDraftLeagueId', draftData.draft.leagueId);
                           }
                           
-                          // NAVIGATION FIX: Navigate first, then invalidate queries to prevent page refresh
-                          navigate('/');
+                          // NAVIGATION FIX: Navigate to dashboard with stay=true to bypass smart redirect
+                          navigate('/dashboard?stay=true');
                           
                           // Delay query invalidation to after navigation completes
                           setTimeout(() => {
