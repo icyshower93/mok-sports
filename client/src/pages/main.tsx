@@ -68,6 +68,19 @@ export default function Main() {
       setSelectedLeague((leagues as any[])[0].id);
     }
   }, [leagues, selectedLeague]);
+
+  // Group 7: Add complex queries with dynamic queryFn (likely TDZ source)
+  const { data: leagueData } = useQuery({
+    queryKey: ['standings', selectedLeague, 2024, currentWeekData?.currentWeek],
+    queryFn: () => fetch(`/api/leagues/${selectedLeague}/standings`).then(res => res.json()),
+    enabled: !!selectedLeague && !!user,
+  });
+
+  const { data: weeklyRankingsData, isLoading: weeklyLoading } = useQuery({
+    queryKey: ['week-scores', selectedLeague, 2024, currentWeekData?.currentWeek],
+    queryFn: () => fetch(`/api/scoring/leagues/${selectedLeague}/week-scores/2024/${currentWeekData?.currentWeek}`).then(res => res.json()),
+    enabled: !!selectedLeague,
+  });
   
   if (!user || leaguesLoading) {
     return <div>Loading...</div>;
