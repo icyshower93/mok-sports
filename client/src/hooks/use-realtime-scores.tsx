@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import { webSocketManager } from '@/services/websocket-manager';
+import { getWebSocketManager } from '@/services/websocket-manager';
 
 // Real-time score updates hook using persistent WebSocket manager
 export function useRealtimeScores() {
@@ -11,6 +11,7 @@ export function useRealtimeScores() {
     console.log('[RealtimeScores] Setting up persistent WebSocket connection');
     
     // Provide query client to the WebSocket manager
+    const webSocketManager = getWebSocketManager();
     webSocketManager.setQueryClient(queryClient);
     
     // Add connection listeners to track state changes

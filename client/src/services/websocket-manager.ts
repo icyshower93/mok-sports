@@ -292,5 +292,8 @@ class WebSocketManager {
   }
 }
 
-// Export singleton instance
-export const webSocketManager = new WebSocketManager();
+// ✅ Lazy accessor pattern to prevent TDZ errors
+let _webSocketManager: WebSocketManager | null = null;
+export function getWebSocketManager(): WebSocketManager {
+  return (_webSocketManager ??= new WebSocketManager());
+}

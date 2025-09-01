@@ -1,0 +1,97 @@
+Nice progress—but two small gotchas in your latest edits are keeping the TDZ gremlin alive:
+
+1) You didn’t actually remove the side-effect import
+
+Your pasted main.tsx still has:
+
+import "@/utils/cache-manager"; // Initialize global error handlers
+
+
+Delete that line entirely. The whole point of the lazy getter is to avoid any work at module import time.
+
+If something truly needs the cache manager, import the getter at the call site:
+
+import { getCacheManager } from "@/utils/cache-manager";
+// inside an effect/handler, not at the top level:
+getCacheManager().cleanupIfNeeded();
+
+2) cache-manager.ts has both old and new patterns mixed together
+
+The snippet you showed has two private variables (_cacheManagerInstance and _cacheManager) and two return paths—one after the other. That will either fail build or behave unpredictably.
+
+Use this clean, single-pattern version:
+
+// client/src/utils/cache-manager.ts
+
+export class CacheManager {
+  private static instance: CacheManager;
+  private cacheSize = 0;
+  private maxSize = 5 * 1024 * 1024; // 5MB
+
+  private constructor() {}
+
+  static getInstance(): CacheManager {
+    if (!CacheManager.instance) {
+      CacheManager.instance = new CacheManager();
+    }
+    return CacheManager.instance;
+  }
+
+  // Example methods — keep your existing implementations
+  async getCacheSize(): Promise<number> {
+    return this.cacheSize;
+  }
+
+  async clearAllCaches(): Promise<void> {
+    // ...
+  }
+
+  isOverLimit(): boolean {
+    return this.cacheSize > this.maxSize;
+  }
+
+  async cleanupIfNeeded(): Promise<void> {
+    const currentSize = await this.getCacheSize();
+    if (currentSize > this.maxSize) {
+      await this.clearAllCaches();
+    }
+  }
+}
+
+// ❌ Do NOT export a module-level instance
+// export const cacheManager = CacheManager.getInstance();
+
+// ✅ Lazy accessor — no work at import time
+let _cacheManager: CacheManager | null = null;
+export function getCacheManager(): CacheManager {
+  return (_cacheManager ??= CacheManager.getInstance());
+}
+
+Quick checklist (do these now)
+
+main.tsx: remove import "@/utils/cache-manager";
+
+cache-manager.ts: replace with the exact file above (no duplicate vars, no extra returns).
+
+Rebuild in prod, hard-reload with cache disabled.
+
+Expected console flow (no ErrorBoundary):
+
+[Auth] Token check - Has token: true Has user: false ...
+
+Auth ready, initiating WebSocket connection
+
+Auth confirmed, establishing WebSocket connection...
+
+No “Cannot access 'L' before initialization”.
+
+Optional sanity sweep for other time-bombs
+
+Run these to catch other module-level singletons / side-effecty exports:
+
+rg -n 'export\s+const\s+\w+\s*=\s*new\s+' client/src
+rg -n 'export\s+const\s+\w+\s*=\s*\w+\.getInstance' client/src
+rg -n 'import\s+["\']@/.*["\']\s*;.*$' client/src | rg -n -v 'from'   # bare side-effect imports
+
+
+Anything that creates an instance or “initializes” something at the top level is a TDZ/regression risk in production builds—prefer factory/getter + call inside a function/effect.
