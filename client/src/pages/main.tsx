@@ -113,7 +113,7 @@ export default function MainPage() {
   });
   
   // Extract current week and season data
-  const currentWeek = currentWeekData?.currentWeek ?? 1;
+  const currentWeek = (currentWeekData as any)?.currentWeek ?? 1;
   const currentSeason = 2024;
   
   // Reset week-scoped UI on week flip

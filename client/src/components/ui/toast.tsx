@@ -1,5 +1,4 @@
-import { trace } from "@/debug/trace";
-trace("components/ui/toast.tsx");
+// Debug imports removed
 import * as React from "react";
 import * as ToastPrimitives from "@radix-ui/react-toast";
 import { cva, type VariantProps } from "class-variance-authority";

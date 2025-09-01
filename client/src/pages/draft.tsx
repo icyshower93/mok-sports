@@ -13,7 +13,7 @@ import { TeamLogo } from "@/components/team-logo";
 import { apiRequest } from "@/features/query/api";
 import { useResilientWebSocket } from "@/hooks/use-resilient-websocket";
 import { useAuth } from "@/features/auth/useAuth";
-import { trackModuleError } from "@/debug-tracker";
+// Debug import removed
 import type { DraftState, NflTeam, DraftPick } from '@shared/types/draft';
 
 export default function DraftPage() {
@@ -212,8 +212,7 @@ export default function DraftPage() {
         console.error('[Draft] Error type:', typeof error);
         console.error('[Draft] Error constructor:', error?.constructor?.name);
         
-        // Track the error for PWA debugging
-        trackModuleError(error, 'draft-fetch');
+        // Error tracking removed
         
         console.error('[Draft] Full error details:', {
           message: error instanceof Error ? error.message : 'Unknown error',
@@ -261,7 +260,7 @@ export default function DraftPage() {
           }
         } catch (directError) {
           console.error('[Draft] Direct fetch also failed:', directError);
-          trackModuleError(directError, 'direct-fetch');
+          // Error tracking removed
         }
         
         throw error;
