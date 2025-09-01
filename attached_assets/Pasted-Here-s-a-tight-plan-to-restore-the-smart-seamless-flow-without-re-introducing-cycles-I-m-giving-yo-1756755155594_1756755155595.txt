@@ -1,0 +1,263 @@
+Here’s a tight plan to restore the smart, seamless flow without re-introducing cycles. I’m giving you drop-in files + exact touch points so you can implement today.
+
+Target UX (what we’re restoring)
+
+Post-login smart redirect
+
+If ?stay=true (or shouldStayOnDashboard), land on /dashboard.
+
+Else:
+
+If user has a last active league → go straight to that league (or draft if an in-progress draft exists).
+
+Else if user has any leagues → go to the most recently active league.
+
+Else → /dashboard with create/join CTAs.
+
+Dashboard as a hub
+
+Lists all leagues (owner/member), with “Resume Draft” / “Go to League”.
+
+Multi-league management.
+
+No auto-redirect if stay=true.
+
+League context memory
+
+Remember the last visited league (localStorage + query cache).
+
+Update it whenever user visits a league or draft.
+
+Context-aware returns
+
+Leaving a league → /dashboard?stay=true.
+
+Finishing a draft → league page.
+
+Cancelling join/create → /dashboard?stay=true.
+
+Files to add
+1) client/src/hooks/useLastLeague.ts
+import { useCallback } from "react";
+
+const KEY = "mok:lastLeagueId";
+
+export function getLastLeagueId(): string | null {
+  try { return localStorage.getItem(KEY); } catch { return null; }
+}
+
+export function setLastLeagueId(id: string | null) {
+  try {
+    if (!id) localStorage.removeItem(KEY);
+    else localStorage.setItem(KEY, id);
+  } catch {}
+}
+
+export function useLastLeague() {
+  const rememberLeague = useCallback((leagueId: string) => setLastLeagueId(leagueId), []);
+  const clearLeague = useCallback(() => setLastLeagueId(null), []);
+  return { getLastLeagueId, rememberLeague, clearLeague };
+}
+
+2) client/src/hooks/useSmartRedirect.ts
+import { useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useQueryClient, useQuery } from "@tanstack/react-query";
+import { getLastLeagueId, setLastLeagueId } from "./useLastLeague";
+
+// Minimal API adapters (replace with your existing fetchers)
+async function fetchMyLeagues() {
+  const res = await fetch("/api/leagues/user");
+  if (!res.ok) throw new Error("Failed to load leagues");
+  return res.json() as Promise<Array<{ id: string; updatedAt: string }>>;
+}
+async function fetchActiveDraft(leagueId: string) {
+  const res = await fetch(`/api/draft/${leagueId}/status`);
+  if (!res.ok) return null;
+  try { return await res.json() as { status: "idle" | "active" | "complete" }; } catch { return null; }
+}
+
+export function useSmartRedirect(enabled: boolean) {
+  const nav = useNavigate();
+  const loc = useLocation();
+  const qc = useQueryClient();
+
+  const stay = new URLSearchParams(loc.search).get("stay") === "true";
+  const { data: leagues, isLoading } = useQuery({
+    queryKey: ["/api/leagues/user"],
+    queryFn: fetchMyLeagues,
+    enabled,
+    staleTime: 10_000,
+  });
+
+  useEffect(() => {
+    if (!enabled || isLoading) return;
+    if (stay) return; // explicit stay on dashboard
+
+    // If already on a league/draft page, do nothing
+    if (loc.pathname.startsWith("/league") || loc.pathname.startsWith("/draft")) return;
+
+    const last = getLastLeagueId();
+    const hasLast = last && leagues?.some(l => l.id === last);
+
+    const pickLeagueId =
+      (hasLast && last)
+      || leagues?.toSorted((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())[0]?.id
+      || null;
+
+    if (!pickLeagueId) {
+      // No leagues → stay on dashboard
+      return;
+    }
+
+    (async () => {
+      // Check draft state for that league
+      const draft = await fetchActiveDraft(pickLeagueId);
+      // Prefer draft if active
+      if (draft?.status === "active") {
+        setLastLeagueId(pickLeagueId);
+        nav(`/draft/${pickLeagueId}`, { replace: true });
+      } else {
+        setLastLeagueId(pickLeagueId);
+        nav(`/league/${pickLeagueId}`, { replace: true });
+      }
+      // bonus: warm caches
+      qc.prefetchQuery({ queryKey: [`/api/leagues/${pickLeagueId}/standings`] });
+    })();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [enabled, isLoading, stay, loc.pathname, JSON.stringify(leagues)]);
+}
+
+3) client/src/pages/dashboard.tsx (upgrade)
+
+Add multi-league list + actions and do not auto-redirect if stay=true.
+
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { setLastLeagueId } from "@/hooks/useLastLeague";
+
+async function fetchMyLeagues() {
+  const r = await fetch("/api/leagues/user");
+  if (!r.ok) throw new Error("Failed");
+  return r.json() as Promise<Array<{ id: string; name: string; updatedAt: string }>>;
+}
+
+export default function DashboardPage() {
+  const nav = useNavigate();
+  const [params] = useSearchParams();
+  const stay = params.get("stay") === "true";
+  const { data: leagues = [], isLoading } = useQuery({ queryKey: ["/api/leagues/user"], queryFn: fetchMyLeagues });
+
+  const goLeague = (id: string) => {
+    setLastLeagueId(id);
+    nav(`/league/${id}`);
+  };
+
+  return (
+    <div className="p-4 max-w-3xl mx-auto">
+      <h1 className="text-2xl font-semibold mb-4">Your Dashboard</h1>
+
+      <div className="mb-6 flex gap-3">
+        <Link to="/create-league" className="btn btn-primary">Create League</Link>
+        <Link to="/join-league" className="btn">Join League</Link>
+      </div>
+
+      <h2 className="text-lg font-medium mb-2">Your Leagues</h2>
+      {isLoading ? <div>Loading…</div> : (
+        leagues.length === 0 ? (
+          <div className="text-sm text-muted">No leagues yet — create or join one above.</div>
+        ) : (
+          <ul className="divide-y rounded border">
+            {leagues.map(l => (
+              <li key={l.id} className="p-3 flex items-center justify-between">
+                <div>
+                  <div className="font-medium">{l.name}</div>
+                  <div className="text-xs opacity-60">Updated {new Date(l.updatedAt).toLocaleString()}</div>
+                </div>
+                <div className="flex gap-2">
+                  <button className="btn btn-sm" onClick={() => goLeague(l.id)}>Go to League</button>
+                  <Link className="btn btn-sm" to={`/draft/${l.id}`}>Resume Draft</Link>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )
+      )}
+
+      {/* Optional: analytics placeholders */}
+      <div className="mt-6 grid grid-cols-2 gap-3">
+        <div className="card p-3">Seasons played (coming soon)</div>
+        <div className="card p-3">Total skins won (coming soon)</div>
+      </div>
+    </div>
+  );
+}
+
+4) Touch points (small edits)
+a) App routing – mount smart redirect right after login
+
+Where you render your root after auth success (often App.tsx or the first authed layout):
+
+// inside AuthedLayout or App after user is known
+import { useSmartRedirect } from "@/hooks/useSmartRedirect";
+
+function AuthedLayout() {
+  const userReady = true; // your existing auth-ready flag
+  useSmartRedirect(userReady); // 🔁 does nothing if stay=true or already on league/draft
+  return <Outlet />;
+}
+
+b) Remember league context when a user visits a league or draft
+
+In league.tsx and draft.tsx:
+
+import { useEffect } from "react";
+import { useParams } from "react-router-dom";
+import { setLastLeagueId } from "@/hooks/useLastLeague";
+
+const { leagueId } = useParams();
+useEffect(() => {
+  if (leagueId) setLastLeagueId(leagueId);
+}, [leagueId]);
+
+c) Leave / Delete / Exit flows → send users back cleanly
+
+Where you handle “leave league”:
+
+await fetch(`/api/leagues/${leagueId}/leave`, { method: "POST" });
+queryClient.invalidateQueries({ queryKey: ["/api/leagues/user"] });
+setLastLeagueId(null);
+navigate("/dashboard?stay=true", { replace: true });
+
+d) Create / Join success → waiting room or league page
+
+After a successful create/join:
+
+setLastLeagueId(newLeagueId);
+navigate(`/league/${newLeagueId}`, { replace: true }); // or waiting room route if you have a step
+
+Avoiding cycles / TDZ risks
+
+All logic is inside hooks using plain fetch; no top-level cross-module imports to “barrel” utilities.
+
+useSmartRedirect only runs after auth is ready; it doesn’t import the large page modules, just navigates.
+
+useLastLeague touches only localStorage.
+
+Optional: route guard for /dashboard
+
+If you want the old behavior (auto jump to a league when user hits /dashboard without stay=true):
+
+// in DashboardPage
+import { useEffect } from "react";
+import { getLastLeagueId } from "@/hooks/useLastLeague";
+import { useNavigate, useSearchParams } from "react-router-dom";
+
+useEffect(() => {
+  if (stay) return;
+  const last = getLastLeagueId();
+  if (last) nav(`/league/${last}`, { replace: true });
+}, [stay]);
+
+
+(You already get this behavior from useSmartRedirect at root, so this is purely belt-and-suspenders.)

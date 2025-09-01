@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState, startTransition, type ReactNode } from "r
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { AuthContext, type AuthValue, type User } from "./AuthContext";
 import { AuthToken } from "@/lib/auth-token";
+import { useSmartRedirect } from "@/hooks/useSmartRedirect";
 
 const apiFetch = async (
   method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE",
@@ -156,6 +157,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const logout = async () => {
     await logoutMutation.mutateAsync();
   };
+
+  // Smart redirect for authenticated users
+  useSmartRedirect(isAuthenticated && !!user && !isLoading);
 
   const value = useMemo<AuthValue>(() => ({
     user: (user as User) || null,

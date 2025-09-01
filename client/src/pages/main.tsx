@@ -277,8 +277,8 @@ export default function MainPage() {
         <div className="text-center py-8">
           <h3 className="text-lg font-semibold mb-2">No Leagues Found</h3>
           <p className="text-sm text-muted-foreground mb-4">Join a league to view your dashboard</p>
-          <Button onClick={() => startTransition(() => navigate('/leagues'))} size="sm">
-            Join or Create League
+          <Button onClick={() => startTransition(() => navigate('/dashboard'))} size="sm">
+            Go to Dashboard
           </Button>
         </div>
       </div>

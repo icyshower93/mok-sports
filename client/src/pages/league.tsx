@@ -7,7 +7,8 @@ import { Progress } from "@/components/ui/progress";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/features/auth/useAuth";
 import { useLocation } from "wouter";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
+import { setLastLeagueId } from "@/hooks/useLastLeague";
 import { 
   Trophy, 
   DollarSign, 
@@ -47,6 +48,13 @@ export default function LeaguePage() {
   
   // 3) Determine target league ID (URL takes precedence, then first user league)
   const targetLeagueId = urlLeagueId || (userLeagues as any[])?.[0]?.id;
+  
+  // Remember league visit
+  useEffect(() => {
+    if (targetLeagueId) {
+      setLastLeagueId(targetLeagueId);
+    }
+  }, [targetLeagueId]);
   
   // Get current week info
   const { data: currentWeekData } = useQuery({

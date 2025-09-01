@@ -9,6 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/features/auth/useAuth";
 import { useLocation } from "wouter";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { setLastLeagueId } from "@/hooks/useLastLeague";
 
 import { DraftNotificationReminder } from "@/components/draft-notification-reminder";
 import DraftControls from "@/components/draft-controls";
@@ -53,10 +54,12 @@ export function LeagueWaiting() {
     
     if (id && id !== 'undefined' && id !== 'null') {
       setLeagueId(id);
+      // Remember this league visit
+      setLastLeagueId(id);
     } else {
       // If no valid league ID, redirect to dashboard
       console.warn('Invalid or missing league ID, redirecting to dashboard');
-      setLocation('/?stay=true');
+      setLocation('/dashboard?stay=true');
     }
   }, [setLocation]);
 
@@ -254,7 +257,7 @@ export function LeagueWaiting() {
               <Button onClick={() => {
                 // Clear any cached league data and redirect
                 queryClient.invalidateQueries({ queryKey: ['/api/leagues/user'] });
-                setLocation('/?stay=true');
+                setLocation('/dashboard?stay=true');
               }}>
                 Return to Dashboard
               </Button>
@@ -296,7 +299,8 @@ export function LeagueWaiting() {
       // Clear all league-related cache and redirect
       queryClient.invalidateQueries({ queryKey: ['/api/leagues/user'] });
       queryClient.removeQueries({ queryKey: [`/api/leagues/${leagueId}`] });
-      setLocation('/?stay=true');
+      setLastLeagueId(null);
+      setLocation('/dashboard?stay=true');
     } catch (error) {
       toast({
         title: "Error",
