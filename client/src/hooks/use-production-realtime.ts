@@ -72,7 +72,7 @@ export function useProductionRealtime(opts: { user?: any; isLoading?: boolean } 
         setReconnectAttempts(0);
         
         // Start keepalive system immediately after connection
-        startKeepalive(ws);
+        // startKeepalive(ws);  // TEMP: disabled for TDZ debugging
         
         // Subscribe to admin broadcasts for real-time updates
         ws.send(JSON.stringify({
