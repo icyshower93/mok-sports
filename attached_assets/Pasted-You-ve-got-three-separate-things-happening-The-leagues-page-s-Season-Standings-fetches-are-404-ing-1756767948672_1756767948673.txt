@@ -1,0 +1,113 @@
+You’ve got three separate things happening:
+
+The leagues page’s Season Standings fetches are 404’ing.
+
+Auth + a couple static assets show 500s.
+
+You’ve got a re-fetch loop spamming “SKINS WINNER DEBUG”.
+
+Here’s what’s actually going on and how to fix it.
+
+A) Why Season Standings isn’t loading (the 404s)
+
+These two failing requests:
+
+api/scoring/skins/<leagueId>/2024/1   ← 404
+api/leagues/<leagueId>/teams-left-to-play/2024/1  ← 404
+
+
+Notice the missing leading slash. You’re calling api/... (relative path) instead of /api/... (root path). On a page like /leagues, a relative URL resolves to /leagues/api/..., which your server doesn’t have — hence 404. This alone will block Season Standings from rendering.
+
+Fix: normalize your API base & paths
+
+Pick one pattern and make it consistent:
+
+Option 1 (recommended): set baseURL to /api and never put /api in individual calls.
+
+// client/src/lib/api.ts (or wherever you create axios/fetch wrapper)
+import axios from "axios";
+
+const API_BASE = import.meta.env.VITE_API_BASE || "/api"; // <<— ALWAYS absolute
+export const api = axios.create({
+  baseURL: API_BASE.replace(/\/+$/, ""), // "/api"
+  withCredentials: true,
+});
+
+// 🔒 Dev safety: assert all request paths begin with "/"
+api.interceptors.request.use((config) => {
+  if (config.url && !config.url.startsWith("/")) {
+    if (import.meta.env.DEV) {
+      console.error("[API] Path must start with '/':", config.url);
+    }
+    config.url = `/${config.url}`;
+  }
+  return config;
+});
+
+
+Then update calls to omit the /api prefix and start with a slash:
+
+- api.get(`api/scoring/skins/${leagueId}/${season}/${week}`)
++ api.get(`/scoring/skins/${leagueId}/${season}/${week}`)
+
+- api.get(`api/leagues/${leagueId}/teams-left-to-play/${season}/${week}`)
++ api.get(`/leagues/${leagueId}/teams-left-to-play/${season}/${week}`)
+
+
+If you’re using fetch, same idea:
+
+- fetch(`api/scoring/skins/${leagueId}/${season}/${week}`)
++ fetch(`/api/scoring/skins/${leagueId}/${season}/${week}`)
+
+
+Tip: add an eslint rule or a tiny unit test that rejects strings starting with "api/" to prevent regressions.
+
+Also check the route name shape
+
+If your backend uses teamsLeftToPlay (camelCase) instead of teams-left-to-play, you’ll get a 404 even with the slash. Match whatever your server actually exposes:
+
+- `/leagues/${leagueId}/teams-left-to-play/${season}/${week}`
++ `/leagues/${leagueId}/teamsLeftToPlay/${season}/${week}`
+
+
+(You can open your server routes or the Tank01_endpoints.md to confirm the exact spelling; align the client accordingly.)
+
+Make the season/week dynamic (you’re still calling 2024/1)
+
+Your calls are hard-coded to 2024/1. If your DB/schedule is for 2025, some endpoints will 404 simply because there’s no data for 2024.
+
+Centralize this:
+
+// client/src/lib/season.ts
+export function inferSeason(d = new Date()) {
+  // adjust rule for your sport’s calendar; this is a safe default
+  const y = d.getUTCFullYear();
+  const m = d.getUTCMonth() + 1;
+  return m >= 3 ? y : y - 1; // season flips in March
+}
+
+export function getCurrentWeekFromStoreOr1(storeWeek?: number) {
+  return Number.isFinite(storeWeek) && storeWeek! > 0 ? storeWeek! : 1;
+}
+
+
+Then in Season Standings / Weekly Skins:
+
+const season = inferSeason();
+const week = getCurrentWeekFromStoreOr1(scheduleStore.currentWeek);
+api.get(`/scoring/skins/${leagueId}/${season}/${week}`);
+api.get(`/leagues/${leagueId}/teamsLeftToPlay/${season}/${week}`);
+
+
+And render a helpful empty state instead of crashing if a 404 still occurs:
+
+try {
+  const { data } = await api.get(...);
+  setState(data);
+} catch (err: any) {
+  if (err?.response?.status === 404) {
+    setState(null); // no data yet — render "No standings yet"
+  } else {
+    throw err; // real error
+  }
+}
