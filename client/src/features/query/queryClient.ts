@@ -1,3 +1,5 @@
+import { trace } from "@/debug/trace";
+trace("queryClient.ts");
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
 import { AuthToken } from "@/lib/auth-token";
 

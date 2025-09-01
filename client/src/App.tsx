@@ -1,3 +1,5 @@
+import { trace } from "@/debug/trace";
+trace("App.tsx");
 import { Switch, Route } from "wouter";
 import React, { lazy, Suspense } from "react";
 import { QueryClientProvider } from "@tanstack/react-query";

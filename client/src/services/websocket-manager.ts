@@ -1,3 +1,5 @@
+import { trace } from "@/debug/trace";
+trace("websocket-manager.ts");
 // Singleton WebSocket manager for persistent connections across component lifecycles
 import { QueryClient } from '@tanstack/react-query';
 

@@ -1,3 +1,5 @@
+import { trace } from "@/debug/trace";
+trace("main.tsx");
 import { createRoot } from "react-dom/client";
 import { StrictMode, Suspense } from "react";
 import "@/index.css";

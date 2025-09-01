@@ -1,3 +1,5 @@
+import { trace } from "@/debug/trace";
+trace("cache-manager.ts");
 // Cache management utilities to prevent MIME type errors
 
 export class CacheManager {
