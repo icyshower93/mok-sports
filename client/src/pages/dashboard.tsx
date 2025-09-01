@@ -1,4 +1,4 @@
-import { useState, useEffect, startTransition } from "react";
+import { useState, useEffect, startTransition, useMemo } from "react";
 import { useAuth } from "@/features/auth/useAuth";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { MainLayout } from "@/components/layout/main-layout";
@@ -13,6 +13,10 @@ import { useToast } from "@/hooks/use-toast";
 import { useLocation } from "wouter";
 import { setLastLeagueId } from "@/hooks/useLastLeague";
 import { apiRequest } from "@/features/query/api";
+
+const enableDebugUI =
+  (import.meta as any).env?.VITE_ENABLE_DEBUG_UI === "true" ||
+  (typeof process !== "undefined" && (process as any).env?.VITE_ENABLE_DEBUG_UI === "true");
 
 interface League {
   id: string;
@@ -37,6 +41,43 @@ export default function DashboardPage() {
   const [joinDialogOpen, setJoinDialogOpen] = useState(false);
   const [leagueName, setLeagueName] = useState("");
   const [joinCode, setJoinCode] = useState("");
+
+  // 🔌 Lazy-load debug panels only if enabled
+  const [DebugPanels, setDebugPanels] = useState<null | React.ComponentType>(null);
+  useEffect(() => {
+    let cancelled = false;
+    if (enableDebugUI) {
+      // Dynamic import to avoid TDZ and heavy deps at module eval
+      Promise.all([
+        import("@/components/pwa-debug-panel").catch(() => ({ PWADebugPanel: () => null })),
+        import("@/components/push-diagnostic-panel").catch(() => ({ PushDiagnosticPanel: () => null })),
+      ]).then(([PWA, Push]) => {
+        if (cancelled) return;
+        const Panel = () => (
+          <div className="mt-8 space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">PWA Debug Panel</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <PWA.PWADebugPanel />
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Push Notification Diagnostics</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Push.PushDiagnosticPanel user={user} />
+              </CardContent>
+            </Card>
+          </div>
+        );
+        setDebugPanels(() => Panel);
+      });
+    }
+    return () => { cancelled = true; };
+  }, [user]);
 
   // Check URL params for stay parameter
   const urlParams = new URLSearchParams(window.location.search);
@@ -329,6 +370,9 @@ export default function DashboardPage() {
             </Card>
           </div>
         )}
+
+        {/* Debug Panels - Only loaded when enabled */}
+        {enableDebugUI && DebugPanels ? <DebugPanels /> : null}
       </div>
     </MainLayout>
   );

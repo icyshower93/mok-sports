@@ -264,7 +264,6 @@ export function registerPushNotificationRoutes(app: Express) {
   });
 
   // Validate existing subscription endpoint
-  /*
   app.post("/api/push/validate-subscription", authenticateJWT, async (req, res) => {
     try {
       const user = req.user as any;
@@ -328,7 +327,6 @@ export function registerPushNotificationRoutes(app: Express) {
       });
     }
   });
-  */
 
   // Cleanup invalid subscriptions
   /*
@@ -398,8 +396,7 @@ export function registerPushNotificationRoutes(app: Express) {
   */
 
   // Send test notification (for debugging)
-  // Debug endpoints - commented out for production (uncomment to re-enable testing)
-  /*
+  // Debug endpoints - enabled for development testing
   app.post("/api/push/test", authenticateJWT, async (req, res) => {
     try {
       const user = req.user as any;
@@ -446,7 +443,6 @@ export function registerPushNotificationRoutes(app: Express) {
       });
     }
   });
-  */
 
   // Send league full notification to all members
   app.post("/api/push/league-full", authenticateJWT, async (req, res) => {
