@@ -28,6 +28,7 @@ import {
   CheckCircle,
   Coins
 } from "lucide-react";
+import { getCurrentSeason } from "@/lib/season";
 
 export default function LeaguePage() {
   const { user } = useAuth();
@@ -64,7 +65,7 @@ export default function LeaguePage() {
   
   // Get current week and season for proper cache keys
   const currentWeek = (currentWeekData as any)?.week || 1;
-  const currentSeason = 2024;
+  const currentSeason = getCurrentSeason();
   
   // Get league standings data
   const { data: leagueData, isLoading } = useQuery({
@@ -75,7 +76,7 @@ export default function LeaguePage() {
 
   // Get weekly skins data to show winners
   const { data: skinsData } = useQuery({
-    queryKey: [`/api/scoring/skins/${targetLeagueId}/2024`],
+    queryKey: [`/api/scoring/skins/${targetLeagueId}/${getCurrentSeason()}`],
     enabled: !!user && !!targetLeagueId,
   });
 

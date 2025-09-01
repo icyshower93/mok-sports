@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Trophy, Crown, Medal, Award, TrendingUp, Zap } from "lucide-react";
 import { MainLayout } from "@/components/layout/main-layout";
+import { getCurrentSeason } from "@/lib/season";
 
 interface SeasonStandings {
   userId: string;
@@ -32,7 +33,7 @@ interface StandingsResponse {
 
 export default function LeaguesPage() {
   const { user } = useAuth();
-  const [selectedSeason] = useState(2024); // Current season for now
+  const [selectedSeason] = useState(getCurrentSeason()); // Current season dynamically determined
   
   // Get user's current league (using first league for now)
   const { data: userLeagues } = useQuery({
@@ -43,7 +44,7 @@ export default function LeaguesPage() {
   const currentLeagueId = Array.isArray(userLeagues) && userLeagues.length > 0 ? userLeagues[0].id : null;
 
   const { data: standings, isLoading } = useQuery<StandingsResponse>({
-    queryKey: ['/api/leagues', currentLeagueId, 'standings', selectedSeason],
+    queryKey: [`/api/leagues/${currentLeagueId}/standings/${selectedSeason}`],
     enabled: !!currentLeagueId,
   });
 

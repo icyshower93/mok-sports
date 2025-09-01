@@ -43,6 +43,7 @@ import { TeamLogo } from "@/components/team-logo";
 import { useAuth } from "@/features/auth/useAuth";
 import mokSportsLogoWhite from "@assets/MokSports_White_1755068930869.png";
 import mokSportsLogo from "@assets/moksports logo_1755069436420.png";
+import { getCurrentSeason } from "@/lib/season";
 
 // Industry-standard logo component using imported assets (same pattern as team logos)
 const LogoDisplay = () => {
@@ -179,7 +180,7 @@ function MainPageContent({
   
   // Extract current week and season data
   const currentWeek = (currentWeekData as any)?.currentWeek ?? 1;
-  const currentSeason = 2024;
+  const currentSeason = getCurrentSeason();
   
   // Reset week-scoped UI on week flip
   useEffect(() => {
@@ -196,21 +197,21 @@ function MainPageContent({
 
   // Fetch league standings data (same as league tab)
   const { data: leagueData } = useQuery({
-    queryKey: ['standings', selectedLeague, 2024, currentWeek],
+    queryKey: ['standings', selectedLeague, currentSeason, currentWeek],
     queryFn: () => fetch(`/api/leagues/${selectedLeague}/standings`).then(res => res.json()),
     enabled: !!selectedLeague && !!user,
   });
 
   // Fetch weekly rankings - fixed endpoint  
   const { data: weeklyRankingsData, isLoading: weeklyLoading } = useQuery({
-    queryKey: ['week-scores', selectedLeague, 2024, currentWeek],
-    queryFn: () => fetch(`/api/scoring/leagues/${selectedLeague}/week-scores/2024/${currentWeek}`).then(res => res.json()),
+    queryKey: ['week-scores', selectedLeague, currentSeason, currentWeek],
+    queryFn: () => fetch(`/api/scoring/leagues/${selectedLeague}/week-scores/${getCurrentSeason()}/${currentWeek}`).then(res => res.json()),
     enabled: !!selectedLeague,
   });
 
   // Fetch skins data to identify winners
   const { data: skinsData } = useQuery({
-    queryKey: [`/api/scoring/skins/${selectedLeague}/2024`, currentWeek],
+    queryKey: [`/api/scoring/skins/${selectedLeague}/${getCurrentSeason()}`, currentWeek],
     enabled: !!selectedLeague,
   });
 
@@ -250,7 +251,7 @@ function MainPageContent({
 
   // Fetch teams left to play for current week
   const { data: teamsLeftData } = useQuery({
-    queryKey: [`/api/leagues/${selectedLeague}/teams-left-to-play/2024/${currentWeek}`],
+    queryKey: [`/api/leagues/${selectedLeague}/teams-left-to-play/${getCurrentSeason()}/${currentWeek}`],
     enabled: !!selectedLeague,
   });
 
@@ -329,7 +330,7 @@ function MainPageContent({
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-xl font-bold text-foreground">Welcome, {(user?.name || '').split(' ')[0] || 'Player'}!</h1>
-              <p className="text-sm text-muted-foreground">Week {currentWeek} • 2024 Season</p>
+              <p className="text-sm text-muted-foreground">Week {currentWeek} • {currentSeason} Season</p>
             </div>
             <Avatar className="w-10 h-10 border-2 border-primary/20">
               <AvatarImage src={user.avatar} alt={user.name} />
