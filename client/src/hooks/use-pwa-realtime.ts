@@ -1,3 +1,5 @@
+import { trace } from "@/debug/trace";
+trace("hooks/use-pwa-realtime.ts");
 import { useEffect, useRef } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 

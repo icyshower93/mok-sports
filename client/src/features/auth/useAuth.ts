@@ -1,3 +1,5 @@
+import { trace } from "@/debug/trace";
+trace("features/auth/useAuth.ts");
 import { useContext } from "react";
 import { AuthContext } from "./AuthContext";
 

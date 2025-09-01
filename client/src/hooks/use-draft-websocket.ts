@@ -1,3 +1,5 @@
+import { trace } from "@/debug/trace";
+trace("hooks/use-draft-websocket.ts");
 import { useEffect, useRef, useState, useCallback } from 'react';
 
 type WSStatus = 'idle' | 'connecting' | 'connected' | 'closed';

@@ -1,3 +1,5 @@
+import { trace } from "@/debug/trace";
+trace("hooks/use-production-realtime.ts");
 import { useEffect, useRef, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 
