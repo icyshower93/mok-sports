@@ -3,7 +3,14 @@ const DEV =
   self.location.hostname.includes('localhost') ||
   self.location.host.includes('replit');
 
-const CACHE_VERSION = 'static-' + (DEV ? 'dev-' + Date.now() : 'prod-v1.0.0');
+const BUILD_HASH = (() => {
+  try { 
+    return self.location.search.match(/[?&]v=([^&]+)/)?.[1] || Date.now().toString(36);
+  } catch { 
+    return Date.now().toString(36); 
+  }
+})();
+const CACHE_VERSION = 'static-' + (DEV ? 'dev-' + BUILD_HASH : 'prod-' + BUILD_HASH);
 
 self.addEventListener('install', (event) => {
   // Always activate immediately
@@ -12,11 +19,18 @@ self.addEventListener('install', (event) => {
 
 self.addEventListener('activate', (event) => {
   event.waitUntil((async () => {
-    // Only wipe caches aggressively in DEV
-    if (DEV) {
-      const names = await caches.keys();
-      await Promise.all(names.map((n) => caches.delete(n)));
+    // Clear old cache versions (keeps current version)
+    const names = await caches.keys();
+    const currentPrefix = CACHE_VERSION.split('-').slice(0, 2).join('-'); // Keep 'static-dev' or 'static-prod' 
+    const oldCaches = names.filter(name => 
+      name.startsWith('static-') && !name.startsWith(currentPrefix)
+    );
+    
+    if (DEV || oldCaches.length > 0) {
+      console.log('[SW] Clearing', DEV ? 'all caches (dev)' : 'old caches:', DEV ? names : oldCaches);
+      await Promise.all((DEV ? names : oldCaches).map((n) => caches.delete(n)));
     }
+    
     if (self.clients && self.clients.claim) await self.clients.claim();
   })());
 });

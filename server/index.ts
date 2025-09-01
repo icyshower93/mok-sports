@@ -71,8 +71,13 @@ async function setupProductionAssets(app: express.Application): Promise<string> 
     lastModified: true,
   }));
 
-  // 2) Other static files (root), short/no cache
-  app.use(express.static(clientDist, { maxAge: "0" }));
+  // 2) Other static files (root), short/no cache - includes manifest.json
+  app.use(express.static(clientDist, { 
+    maxAge: "0",
+    etag: true,
+    lastModified: true,
+    index: false // Don't serve index.html for static files
+  }));
   console.log('[server] Static assets configured from:', clientDist);
   return clientDist;
 }
