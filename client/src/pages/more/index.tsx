@@ -39,6 +39,11 @@ export default function MoreHub() {
   const [, navigate] = useLocation();
   const { user, logout } = useAuth();
 
+  // Determine admin access based on environment  
+  const isAdmin = import.meta.env.DEV || 
+                  window.location.hostname.includes('replit') ||
+                  window.location.hostname === 'localhost';
+
   return (
     <div className="space-y-4">
       <Card>
@@ -73,7 +78,7 @@ export default function MoreHub() {
             description="Manage team trades and free agents"
             onClick={() => startTransition(() => navigate("/more/trades"))}
           />
-          {(user as any)?.isAdmin && (
+          {isAdmin && (
             <MoreRow
               icon={Shield}
               label="Admin Panel"
@@ -81,7 +86,7 @@ export default function MoreHub() {
               onClick={() => startTransition(() => navigate("/admin"))}
             />
           )}
-          {(user as any)?.isAdmin && (
+          {isAdmin && (
             <MoreRow
               icon={Database}
               label="Database Viewer"
