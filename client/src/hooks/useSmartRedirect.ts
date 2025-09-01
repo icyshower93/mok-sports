@@ -11,7 +11,7 @@ export function useSmartRedirect(enabled: boolean) {
     // Only run when explicitly enabled
     if (!enabled || hasLeague === undefined) return;
 
-    const onLanding = location === "/" || location === "/dashboard" || location.startsWith("/league");
+    const onLanding = location === "/" || location === "/dashboard" || location.startsWith("/league/");
 
     if (!hasLeague) {
       // New user: only redirect if they're on a landing-ish route
