@@ -539,20 +539,32 @@ export default function DraftPage() {
     gcTime: 0,
   });
 
-  // Make pick mutation
+  // Make pick mutation - FIXED: Prevent DOM race condition by using safer query invalidation
   const makePickMutation = useMutation({
     mutationFn: async (nflTeamId: string) => {
       // Use the apiRequest function to include authentication headers
       return await apiRequest('POST', `/api/drafts/${draftId}/pick`, { nflTeamId });
     },
     onSuccess: () => {
+      // RACE CONDITION FIX: Use setTimeout to batch invalidations and prevent DOM conflicts
+      setTimeout(() => {
+        // Invalidate queries in a single batch to prevent multiple rapid re-renders
+        queryClient.invalidateQueries({ 
+          predicate: (query) => {
+            const queryKey = query.queryKey;
+            return (
+              (queryKey[0] === 'draft' && queryKey[1] === draftId) ||
+              (queryKey[0] === 'draft' && queryKey[1] === draftId && queryKey[2] === 'teams')
+            );
+          }
+        });
+      }, 100); // Small delay to let current render complete
+      
+      setSelectedTeam(null);
       toast({
         title: "Pick made successfully!",
         description: "Your team has been drafted.",
       });
-      setSelectedTeam(null);
-      queryClient.invalidateQueries({ queryKey: ['draft', draftId] });
-      queryClient.invalidateQueries({ queryKey: ['draft', draftId, 'teams'] });
     },
     onError: (error: Error) => {
       toast({
@@ -569,15 +581,18 @@ export default function DraftPage() {
   // Handle null urlDraftId case in main render (no early returns allowed)
 
   const handleMakePick = () => {
-    if (selectedTeam) {
+    if (selectedTeam && !makePickMutation.isPending) { // Prevent double-clicks during submission
       makePickMutation.mutate(selectedTeam, {
         onSuccess: () => {
-          // Trigger celebration animation
-          setShowCelebration(true);
-          setTimeout(() => setShowCelebration(false), 2000);
-          
-          // Enhanced haptic feedback for successful pick
-          vibrate([200, 100, 200, 100, 400]);
+          // RACE CONDITION FIX: Delay state updates to prevent DOM conflicts
+          setTimeout(() => {
+            // Trigger celebration animation
+            setShowCelebration(true);
+            setTimeout(() => setShowCelebration(false), 2000);
+            
+            // Enhanced haptic feedback for successful pick
+            vibrate([200, 100, 200, 100, 400]);
+          }, 50); // Small delay to prevent DOM conflicts
           
           setSelectedTeam(null);
           toast({

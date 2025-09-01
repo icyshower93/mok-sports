@@ -1,0 +1,218 @@
+During the draft, i get this error occasionally and screen goes blank:
+
+[TIMER SYNC] Display: 0.0s, Limit: 120s, Progress: 0.0%
+draft.tsx:566 [Draft] All hooks declared, starting conditional logic
+draft.tsx:567 [Draft] RENDER DEBUG - authLoading: false isLoading: false error: false draftData: true isAuthenticated: true Time: 1756758049125
+draft.tsx:668 🔍 [TIMER DEBUG] Server Time: 0
+draft.tsx:669 🔍 [TIMER DEBUG] Display Time: 0
+draft.tsx:670 🔍 [TIMER DEBUG] Current Player: Echo Bot
+react-dom.production.min.js:188 NotFoundError: Failed to execute 'removeChild' on 'Node': The node to be removed is not a child of this node.
+    at Ba (react-dom.production.min.js:248:289)
+    at Pe (react-dom.production.min.js:251:315)
+    at Ha (react-dom.production.min.js:252:286)
+    at Pe (react-dom.production.min.js:251:463)
+    at Ha (react-dom.production.min.js:252:91)
+    at Pe (react-dom.production.min.js:251:463)
+    at Ha (react-dom.production.min.js:252:286)
+    at Pe (react-dom.production.min.js:251:463)
+    at Ha (react-dom.production.min.js:252:286)
+    at Pe (react-dom.production.min.js:251:463)
+Co @ react-dom.production.min.js:188
+La.t.callback @ react-dom.production.min.js:188
+Si @ react-dom.production.min.js:156
+ji @ react-dom.production.min.js:261
+Wa @ react-dom.production.min.js:259
+wd @ react-dom.production.min.js:258
+Cd @ react-dom.production.min.js:282
+Sn @ react-dom.production.min.js:280
+$i @ react-dom.production.min.js:272
+hn @ react-dom.production.min.js:127
+Cd @ react-dom.production.min.js:282
+Sn @ react-dom.production.min.js:280
+Qa @ react-dom.production.min.js:269
+E @ scheduler.production.min.js:13
+st @ scheduler.production.min.js:14Understand this error
+react-dom.production.min.js:248 Uncaught NotFoundError: Failed to execute 'removeChild' on 'Node': The node to be removed is not a child of this node.
+    at Ba (react-dom.production.min.js:248:289)
+    at Pe (react-dom.production.min.js:251:315)
+    at Ha (react-dom.production.min.js:252:286)
+    at Pe (react-dom.production.min.js:251:463)
+    at Ha (react-dom.production.min.js:252:91)
+    at Pe (react-dom.production.min.js:251:463)
+    at Ha (react-dom.production.min.js:252:286)
+    at Pe (react-dom.production.min.js:251:463)
+    at Ha (react-dom.production.min.js:252:286)
+    at Pe (react-dom.production.min.js:251:463)
+Ba @ react-dom.production.min.js:248
+Pe @ react-dom.production.min.js:251
+Ha @ react-dom.production.min.js:252
+Pe @ react-dom.production.min.js:251
+Ha @ react-dom.production.min.js:252
+Pe @ react-dom.production.min.js:251
+Ha @ react-dom.production.min.js:252
+Pe @ react-dom.production.min.js:251
+Ha @ react-dom.production.min.js:252
+Pe @ react-dom.production.min.js:251
+Ha @ react-dom.production.min.js:252
+Pe @ react-dom.production.min.js:251
+Ha @ react-dom.production.min.js:252
+Pe @ react-dom.production.min.js:251
+Ha @ react-dom.production.min.js:252
+Pe @ react-dom.production.min.js:251
+Ha @ react-dom.production.min.js:252
+Pe @ react-dom.production.min.js:251
+Ha @ react-dom.production.min.js:252
+Pe @ react-dom.production.min.js:251
+Ha @ react-dom.production.min.js:257
+Pe @ react-dom.production.min.js:251
+Ha @ react-dom.production.min.js:252
+Pe @ react-dom.production.min.js:251
+Ha @ react-dom.production.min.js:252
+Pe @ react-dom.production.min.js:251
+Ha @ react-dom.production.min.js:255
+Pe @ react-dom.production.min.js:251
+Ha @ react-dom.production.min.js:254
+Pe @ react-dom.production.min.js:251
+Ha @ react-dom.production.min.js:257
+Pe @ react-dom.production.min.js:251
+Ha @ react-dom.production.min.js:252
+Pe @ react-dom.production.min.js:251
+Ha @ react-dom.production.min.js:257
+Pe @ react-dom.production.min.js:251
+Ha @ react-dom.production.min.js:252
+Pe @ react-dom.production.min.js:251
+Ha @ react-dom.production.min.js:257
+Pe @ react-dom.production.min.js:251
+Ha @ react-dom.production.min.js:252
+Pe @ react-dom.production.min.js:251
+Ha @ react-dom.production.min.js:252
+Pe @ react-dom.production.min.js:251
+Ha @ react-dom.production.min.js:255
+Pe @ react-dom.production.min.js:251
+Ha @ react-dom.production.min.js:254
+Pe @ react-dom.production.min.js:251
+Ha @ react-dom.production.min.js:257
+Pe @ react-dom.production.min.js:251
+Ha @ react-dom.production.min.js:254
+Cd @ react-dom.production.min.js:282
+Sn @ react-dom.production.min.js:280
+Qa @ react-dom.production.min.js:269
+E @ scheduler.production.min.js:13
+st @ scheduler.production.min.js:14Understand this error
+ChatGPT said:
+Thought for 1m 18s
+
+Great catch. That stack (“Failed to execute 'removeChild'…”) isn’t React logic being wrong; it’s React trying to reconcile the DOM while something in your code (or a library you’re using) has already moved/removed the node out from under it. That race throws when React calls parent.removeChild(child) but child.parentNode !== parent anymore.
+
+What this means (plain English)
+
+Some code in the draft flow is directly mutating the DOM outside React’s control (or doing it twice), e.g.:
+
+creating a DOM node with document.createElement(...) and appending it to document.body (portals, overlays, toasts, timers, popups), then
+
+removing it manually in an effect cleanup and React also tries to remove it, or
+
+removing it twice due to fast mount/unmount/changing state.
+
+calling element.remove() / container.removeChild(...) / innerHTML = "" on a node React also manages.
+
+mounting two instances of a “global” UI (e.g. Toaster/Portal root) and both clean up the same container.
+
+Your logs (“[Draft] All hooks declared…”, “TIMER DEBUG…”) line up with things that often use portals/DOM nodes (timer HUD, overlays, toasts) and toggle quickly during the draft—exactly when these races show up.
+
+Quick triage: find the offenders
+
+Run these searches (they won’t modify anything):
+
+# direct DOM manipulation
+rg -n "appendChild|removeChild|innerHTML|createElement|\.remove\(\)|document\." client/src -S
+
+# ad-hoc React roots or portals
+rg -n "createPortal|ReactDOM\.createPortal|createRoot\(" client/src
+
+# multiple toasters/providers (shadcn/radix)
+rg -n "<Toaster|ToastProvider|TooltipProvider|Dialog.*Portal|Sheet.*Portal" client/src
+
+
+Common culprits in draft UIs: custom countdown/timer, modals/sheets, tooltips, toasts, any “overlay” you built by appending to document.body.
+
+Drop-in fixes (make cleanups idempotent & let React own children)
+1) If you create & append a container to document.body
+
+Use a dedicated container and remove it only if it still has a parent.
+
+const portalHostRef = useRef<HTMLDivElement | null>(null);
+
+useEffect(() => {
+  const host = document.createElement("div");
+  host.dataset.portal = "draft-overlay";
+  document.body.appendChild(host);
+  portalHostRef.current = host;
+
+  return () => {
+    // idempotent cleanup – safe even if it was already removed
+    const h = portalHostRef.current;
+    if (h?.parentNode) h.parentNode.removeChild(h);
+    portalHostRef.current = null;
+  };
+}, []);
+
+// then render with createPortal(content, portalHostRef.current!)
+
+
+Do not manually remove the portal’s child nodes. Let React (via createPortal) handle children. Only remove the host you created.
+
+2) If you mutate a ref container’s children yourself
+
+Never clear a node React also renders into. Instead, nest a library-owned inner div:
+
+<div ref={outerRef}>
+  <div ref={libRootRef} /> {/* library can do whatever it wants here */}
+</div>
+
+
+And only clear libRootRef:
+
+useEffect(() => {
+  const el = libRootRef.current!;
+  // library attaches nodes into el
+  return () => {
+    // safe, idempotent
+    while (el.firstChild) el.removeChild(el.firstChild);
+  };
+}, []);
+
+3) If you call .remove() or removeChild(...) in cleanup
+
+Guard it:
+
+return () => {
+  try {
+    if (node?.parentNode) node.parentNode.removeChild(node);
+  } catch {}
+};
+
+
+(This prevents the crash even if the logic races; you should still apply #1/#2 so React remains the sole owner of React-rendered nodes.)
+
+4) Ensure there’s only one global Toaster/Provider
+
+If you added a <Toaster /> at App and another on the draft page, remove the page one. Same for <ToastProvider>, <TooltipProvider>, etc. Duplicates often lead to double portal containers being mounted/removed.
+
+5) Check keys on fast-changing lists
+
+When the draft list reorders, unstable or duplicate key props can cause React to detach/reattach nodes unexpectedly. Make sure keys are unique and stable (e.g. pick.id, not array index).
+
+Why it’s “occasional”
+
+This is a race: it happens when a state change, route change, or timer tick causes a very quick mount→unmount (or two overlapping renders) right as your manual DOM cleanup runs. Sometimes React gets there first; sometimes your cleanup does—hence “occasionally” and the blank screen.
+
+Where to look first (based on your logs)
+
+client/src/pages/draft.tsx around the timer/overlay/popup areas (you logged “TIMER SYNC” right before the crash).
+
+Any custom modal/portal in the draft (confirm pick, autodraft warning, etc.).
+
+Any toast/snackbar created specifically in draft.
+
+Any place you used createRoot inside a component—replace that with a portal, or ensure you unmount the root you created and don’t also let React remove the same node.

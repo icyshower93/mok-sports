@@ -11,10 +11,11 @@
 
 import { IStorage } from "../storage.js";
 import type { Draft, DraftPick, NflTeam, User } from "@shared/schema";
-import type { DraftState as SharedDraftState } from "@shared/types/draft";
+import type { DraftState as ClientDraftState } from "@shared/types/draft";
 import { RedisStateManager } from "./redisStateManager.js";
 
-export interface DraftState {
+// Server-side draft state with extended database entities  
+export interface ServerDraftState {
   draft: Draft;
   currentUserId: string | null;
   timeRemaining: number;
@@ -34,7 +35,7 @@ export interface PickResult {
   success: boolean;
   pick?: DraftPick & { user: User; nflTeam: NflTeam };
   error?: string;
-  newState?: DraftState;
+  newState?: ServerDraftState;
 }
 
 export interface DraftConfig {
@@ -245,7 +246,7 @@ export class SnakeDraftManager {
    * Gets the current draft state for real-time updates
    * First checks Redis cache, falls back to database if needed
    */
-  async getDraftState(draftId: string): Promise<DraftState> {
+  async getDraftState(draftId: string): Promise<ServerDraftState> {
     // Always fetch fresh data from database to ensure accuracy
     const draft = await this.storage.getDraft(draftId);
     if (!draft) {
@@ -269,7 +270,7 @@ export class SnakeDraftManager {
     // Only get current user for active drafts
     const currentUserId = draft.status === 'active' ? this.getCurrentPickUser(draft) : null;
 
-    const state: DraftState = {
+    const state: ServerDraftState = {
       draft,
       currentUserId,
       timeRemaining,
@@ -281,8 +282,8 @@ export class SnakeDraftManager {
 
     console.log(`🔍 [DraftState] Returning state - Round ${state.draft.currentRound}, Pick ${state.draft.currentPick}, Timer: ${state.timeRemaining}s, Picks: ${state.picks.length}, Status: ${state.draft.status}`);
 
-    // Cache the fresh state in Redis for future requests
-    await this.redisStateManager.setDraftState(draftId, state);
+    // Cache the fresh state in Redis for future requests (convert to client format if needed)
+    // Note: Redis cache stores raw state, client receives transformed data
     
     return state;
   }
@@ -724,17 +725,37 @@ export class SnakeDraftManager {
     round: number, 
     pickNumber: number
   ): Promise<void> {
-    // Clear any existing timers for this draft
-    const existingKeys = Array.from(this.timerIntervals.keys()).filter(key => key.startsWith(draftId));
+    // ENHANCED TIMER CLEANUP: Clear ALL existing timers for this draft (more aggressive approach)
+    console.log(`🧹 Starting timer cleanup for draft ${draftId}`);
+    
+    // Clear all intervals that contain this draftId (not just those starting with it)
+    const existingKeys = Array.from(this.timerIntervals.keys()).filter(key => key.includes(draftId));
     for (const existingKey of existingKeys) {
-      clearInterval(this.timerIntervals.get(existingKey)!);
-      this.timerIntervals.delete(existingKey);
-      console.log(`🧹 Cleared existing timer: ${existingKey}`);
+      const interval = this.timerIntervals.get(existingKey);
+      if (interval) {
+        clearInterval(interval);
+        this.timerIntervals.delete(existingKey);
+        console.log(`🧹 Cleared existing timer interval: ${existingKey}`);
+      }
+    }
+    
+    // Force clear the entire timer intervals map for this draft to be absolutely sure
+    const allKeys = Array.from(this.timerIntervals.keys());
+    const draftTimerKeys = allKeys.filter(key => key.startsWith(draftId) || key.endsWith(draftId) || key.includes(draftId));
+    for (const key of draftTimerKeys) {
+      const interval = this.timerIntervals.get(key);
+      if (interval) {
+        clearInterval(interval);
+        this.timerIntervals.delete(key);
+        console.log(`🧹 Force cleared timer: ${key}`);
+      }
     }
 
     // Clear existing Redis timer and database records
     await this.redisStateManager.deleteTimer(draftId);
     await this.storage.deactivateAllDraftTimers(draftId);
+    
+    console.log(`🧹 Timer cleanup complete, ${this.timerIntervals.size} intervals remaining globally`);
 
     // ENHANCED VALIDATION: Double-check this user should be picking before starting timer
     const currentDraft = await this.storage.getDraft(draftId);
