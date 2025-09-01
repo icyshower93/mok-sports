@@ -66,6 +66,7 @@ export function BottomNav() {
               className={cn(
                 "flex flex-col items-center justify-center gap-1 text-xs font-medium transition-colors",
                 "min-h-[60px] px-1 py-2", // Enhanced PWA touch target with better padding
+                "focus:outline-none focus:ring-0", // Remove any focus glow/ring effects
                 isActive 
                   ? "text-primary" 
                   : "text-muted-foreground hover:text-foreground"
