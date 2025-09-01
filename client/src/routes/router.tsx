@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Switch, Route } from "wouter";
+import { Switch, Route, useLocation } from "wouter";
 import { useAuth } from "@/features/auth/AuthContext";
 import { MainLayout } from "@/components/layout/main-layout";
 import { BottomNav } from "@/components/layout/bottom-nav";
@@ -10,6 +10,7 @@ const Dashboard = React.lazy(() => import("@/pages/dashboard"));
 const Draft = React.lazy(() => import("@/pages/draft"));
 const Scores = React.lazy(() => import("@/pages/scores"));
 const Teams = React.lazy(() => import("@/pages/teams"));
+const Leagues = React.lazy(() => import("@/pages/leagues"));
 const Trades = React.lazy(() => import("@/pages/trades"));
 const Admin = React.lazy(() => import("@/pages/admin"));
 const Agents = React.lazy(() => import("@/pages/agents"));
@@ -37,6 +38,14 @@ function AuthGuard({ children }: { children: React.ReactNode }) {
   );
 }
 
+function MoreIndex() {
+  const [, nav] = useLocation();
+  React.useEffect(() => { 
+    nav('/more/trades', { replace: true }); 
+  }, [nav]);
+  return null;
+}
+
 export function getRouter() {
   return (
     <Switch>
@@ -45,6 +54,9 @@ export function getRouter() {
       <Route path="/draft" component={() => <AuthGuard><Draft /></AuthGuard>} />
       <Route path="/scores" component={() => <AuthGuard><Scores /></AuthGuard>} />
       <Route path="/teams" component={() => <AuthGuard><Teams /></AuthGuard>} />
+      <Route path="/leagues" component={() => <AuthGuard><Leagues /></AuthGuard>} />
+      <Route path="/more" component={() => <AuthGuard><MoreIndex /></AuthGuard>} />
+      <Route path="/more/trades" component={() => <AuthGuard><Trades /></AuthGuard>} />
       <Route path="/trades" component={() => <AuthGuard><Trades /></AuthGuard>} />
       <Route path="/admin" component={() => <AuthGuard><Admin /></AuthGuard>} />
       <Route path="/agents" component={() => <AuthGuard><Agents /></AuthGuard>} />

@@ -6,7 +6,8 @@ import {
   Activity, 
   Star, 
   User,
-  MoreHorizontal 
+  MoreHorizontal,
+  Menu
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -30,8 +31,8 @@ const navItems: NavItem[] = [
     icon: Shield
   },
   {
-    path: "/draft", 
-    label: "Draft",
+    path: "/leagues", 
+    label: "League",
     icon: Trophy
   },
   {
@@ -40,9 +41,10 @@ const navItems: NavItem[] = [
     icon: Activity
   },
   {
-    path: "/trades",
-    label: "Trades",
-    icon: MoreHorizontal
+    path: "/more",
+    label: "More",
+    icon: Menu,
+    isActive: (pathname) => pathname.startsWith("/more")
   }
 ];
 
