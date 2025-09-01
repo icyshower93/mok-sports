@@ -2,6 +2,7 @@ import * as React from "react";
 import { Switch, Route, useLocation } from "wouter";
 import { useAuth } from "@/features/auth/AuthContext";
 import { AppShell } from "@/components/layout/app-shell";
+import RequireLeague from "@/routes/guards/RequireLeague";
 
 const Main = React.lazy(() => import("@/pages/main"));
 const Login = React.lazy(() => import("@/pages/login"));
@@ -49,22 +50,24 @@ export function getRouter() {
       <Route path="/dashboard" component={() => <AuthGuard><Dashboard /></AuthGuard>} />
       <Route path="/draft/:draftId" component={() => <AuthGuard><Draft /></AuthGuard>} />
       <Route path="/draft" component={() => <AuthGuard><Draft /></AuthGuard>} />
-      <Route path="/scores" component={() => <AuthGuard><Scores /></AuthGuard>} />
-      <Route path="/standings" component={() => <AuthGuard><Scores /></AuthGuard>} />
-      <Route path="/teams" component={() => <AuthGuard><Teams /></AuthGuard>} />
-      <Route path="/leagues" component={() => <AuthGuard><Leagues /></AuthGuard>} />
+      <Route path="/scores" component={() => <AuthGuard><RequireLeague><Scores /></RequireLeague></AuthGuard>} />
+      <Route path="/standings" component={() => <AuthGuard><RequireLeague><Scores /></RequireLeague></AuthGuard>} />
+      <Route path="/teams" component={() => <AuthGuard><RequireLeague><Teams /></RequireLeague></AuthGuard>} />
+      <Route path="/leagues" component={() => <AuthGuard><RequireLeague><Leagues /></RequireLeague></AuthGuard>} />
       <Route path="/league/waiting" component={() => <AuthGuard><LeagueWaiting /></AuthGuard>} />
-      <Route path="/more" component={() => <AuthGuard><MoreHub /></AuthGuard>} />
-      <Route path="/more/trades" component={() => <AuthGuard><Trades /></AuthGuard>} />
-      <Route path="/trades" component={() => <AuthGuard><Trades /></AuthGuard>} />
+      <Route path="/more" component={() => <AuthGuard><RequireLeague><MoreHub /></RequireLeague></AuthGuard>} />
+      <Route path="/more/trades" component={() => <AuthGuard><RequireLeague><Trades /></RequireLeague></AuthGuard>} />
+      <Route path="/trades" component={() => <AuthGuard><RequireLeague><Trades /></RequireLeague></AuthGuard>} />
       <Route path="/admin" component={() => <AuthGuard><Admin /></AuthGuard>} />
       <Route path="/database" component={() => <AuthGuard><DatabaseViewer /></AuthGuard>} />
       <Route path="/agents" component={() => <AuthGuard><Agents /></AuthGuard>} />
-      <Route path="/profile" component={() => <AuthGuard><Profile /></AuthGuard>} />
+      <Route path="/profile" component={() => <AuthGuard><RequireLeague><Profile /></RequireLeague></AuthGuard>} />
       <Route path="/test-notifications" component={() => <AuthGuard><TestNotifications /></AuthGuard>} />
       <Route path="/">
         <AuthGuard>
-          <Main />
+          <RequireLeague>
+            <Main />
+          </RequireLeague>
         </AuthGuard>
       </Route>
     </Switch>
