@@ -431,7 +431,7 @@ export default function DashboardPage() {
         </Card>
 
         {/* Analytics Section - Placeholder for future features */}
-        {hasLeagues && (
+        {hasLeague && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Card>
               <CardContent className="p-4 text-center">
