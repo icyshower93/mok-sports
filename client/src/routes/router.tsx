@@ -12,6 +12,9 @@ const Scores = React.lazy(() => import("@/pages/scores"));
 const Teams = React.lazy(() => import("@/pages/teams"));
 const Trades = React.lazy(() => import("@/pages/trades"));
 const Admin = React.lazy(() => import("@/pages/admin"));
+const Agents = React.lazy(() => import("@/pages/agents"));
+const Profile = React.lazy(() => import("@/pages/profile"));
+const TestNotifications = React.lazy(() => import("@/pages/test-notifications"));
 
 function AuthGuard({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isLoading, oauthLoading } = useAuth();
@@ -44,6 +47,9 @@ export function getRouter() {
       <Route path="/teams" component={() => <AuthGuard><Teams /></AuthGuard>} />
       <Route path="/trades" component={() => <AuthGuard><Trades /></AuthGuard>} />
       <Route path="/admin" component={() => <AuthGuard><Admin /></AuthGuard>} />
+      <Route path="/agents" component={() => <AuthGuard><Agents /></AuthGuard>} />
+      <Route path="/profile" component={() => <AuthGuard><Profile /></AuthGuard>} />
+      <Route path="/test-notifications" component={() => <AuthGuard><TestNotifications /></AuthGuard>} />
       <Route path="/">
         <AuthGuard>
           <Main />
