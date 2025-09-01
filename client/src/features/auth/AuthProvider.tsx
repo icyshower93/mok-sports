@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState, startTransition, type ReactNode } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useLocation } from "wouter";
 import { AuthContext, type AuthValue, type User } from "./AuthContext";
 import { AuthToken } from "@/lib/auth-token";
 import { useSmartRedirect } from "@/hooks/useSmartRedirect";
@@ -158,8 +159,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await logoutMutation.mutateAsync();
   };
 
-  // Smart redirect for authenticated users
-  useSmartRedirect(isAuthenticated && !!user && !isLoading);
+  // Smart redirect only for landing contexts
+  const [loc] = useLocation();
+  const enableSmart =
+    isAuthenticated && !!user && !isLoading &&
+    (loc === "/" || loc === "/dashboard" || loc.startsWith("/league") || loc.startsWith("/draft"));
+  useSmartRedirect(enableSmart);
 
   const value = useMemo<AuthValue>(() => ({
     user: (user as User) || null,
