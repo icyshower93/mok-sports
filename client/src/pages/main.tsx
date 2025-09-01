@@ -1,4 +1,4 @@
-import { useState, useEffect, startTransition } from "react";
+import { useState, useEffect, startTransition, useMemo } from "react";
 import { useLocation } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -215,39 +215,58 @@ function MainPageContent({
     enabled: !!selectedLeague,
   });
 
-  // Extract rankings and week-end results with proper fallbacks
-  const weeklyRankings = Array.isArray((weeklyRankingsData as any)?.rankings) ? (weeklyRankingsData as any)?.rankings : [];
+  // Extract rankings and week-end results with proper fallbacks - MEMOIZED to prevent re-render loops
+  const weeklyRankings = useMemo(() => {
+    return Array.isArray((weeklyRankingsData as any)?.rankings) ? (weeklyRankingsData as any)?.rankings : [];
+  }, [weeklyRankingsData]);
   
-  // Find current week's skins winner (if any)
-  const currentWeekSkin =
-    (skinsData as any)?.skins?.find((skin: any) => skin.week === currentWeek) ?? null;
-
-  const weekEndResults = (weeklyRankingsData as any)?.weekEndResults ?? null;
-
-  // Prefer explicit winner from skins API; fall back to weekEndResults
-  const weeklySkinsWinnerId =
-    currentWeekSkin?.winnerId ??
-    (weekEndResults?.weeklySkinsWinner ? weekEndResults.weeklySkinsWinner.winnerId : null);
-
-  // Optimistic weekly reset: if there is no skins row for the current week and the week isn't complete,
-  // render zeros and no winner highlight until scores come in.
-  const weekHasSkinsRow = !!currentWeekSkin;
-  const weekComplete = !!weekEndResults?.weekComplete;
-
-  const displayWeeklyRankings =
-    !weekHasSkinsRow && !weekComplete
+  // Find current week's skins winner (if any) - MEMOIZED
+  const skinsComputations = useMemo(() => {
+    const currentWeekSkin = (skinsData as any)?.skins?.find((skin: any) => skin.week === currentWeek) ?? null;
+    const weekEndResults = (weeklyRankingsData as any)?.weekEndResults ?? null;
+    
+    // Prefer explicit winner from skins API; fall back to weekEndResults
+    const weeklySkinsWinnerId = currentWeekSkin?.winnerId ?? 
+      (weekEndResults?.weeklySkinsWinner ? weekEndResults.weeklySkinsWinner.winnerId : null);
+    
+    // Optimistic weekly reset calculations
+    const weekHasSkinsRow = !!currentWeekSkin;
+    const weekComplete = !!weekEndResults?.weekComplete;
+    
+    const displayWeeklyRankings = !weekHasSkinsRow && !weekComplete
       ? (weeklyRankings as any[]).map(m => ({ ...m, weeklyPoints: 0 }))
       : weeklyRankings;
-
-  // Calculate dynamic rollover pot size
-  const rolloverCount =
-    Array.isArray((skinsData as any)?.skins)
-      ? (skinsData as any).skins
-          .filter((s: any) => s.week < currentWeek && s.isRollover)
-          .length
+    
+    // Calculate dynamic rollover pot size
+    const rolloverCount = Array.isArray((skinsData as any)?.skins)
+      ? (skinsData as any).skins.filter((s: any) => s.week < currentWeek && s.isRollover).length
       : 0;
-
-  const potThisWeek = 1 + rolloverCount; // e.g., in skins
+    
+    const potThisWeek = 1 + rolloverCount;
+    
+    return {
+      currentWeekSkin,
+      weekEndResults,
+      weeklySkinsWinnerId,
+      weekHasSkinsRow,
+      weekComplete,
+      displayWeeklyRankings,
+      rolloverCount,
+      potThisWeek
+    };
+  }, [skinsData, weeklyRankingsData, currentWeek, weeklyRankings]);
+  
+  // Destructure memoized values
+  const {
+    currentWeekSkin,
+    weekEndResults, 
+    weeklySkinsWinnerId,
+    weekHasSkinsRow,
+    weekComplete,
+    displayWeeklyRankings,
+    rolloverCount,
+    potThisWeek
+  } = skinsComputations;
 
   // Fetch teams left to play for current week
   const { data: teamsLeftData } = useQuery({
@@ -278,38 +297,18 @@ function MainPageContent({
   const weeklyPrize = 30; // Static $30 per week as per Mok rules
   const teamsLeftToPlay = Array.isArray((teamsLeftData as any)?.teamsLeftToPlay) ? (teamsLeftData as any)?.teamsLeftToPlay : [];
 
-  // Debug logging
-  console.log('Main page debug:', {
-    user: user?.name,
-    leagues: (leagues as any[])?.length || 0,
-    selectedLeague,
-    currentWeek,
-    leagueData: leagueData ? 'loaded' : 'null',
-    currentUserStanding,
-    userStats: {
-      totalPoints: userTotalPoints,
-      rank: userRank,
-      skinsWon: userSkinsWon
-    },
-    weeklyRankings: weeklyRankings?.length || 0,
-    teamsLeftToPlay: teamsLeftToPlay?.length || 0,
-    skinsData: skinsData ? 'loaded' : 'null',
-    currentWeekSkin,
-    weeklySkinsWinnerId
-  });
-
-  // DETAILED SKINS DEBUG
-  console.log('🔍 SKINS WINNER DEBUG:', {
-    currentWeek,
-    skinsDataFull: skinsData,
-    currentWeekSkin,
-    weeklySkinsWinnerId,
-    rankingsWithUserIds: weeklyRankings?.map((r: any) => ({ 
-      name: r.name, 
-      userId: r.userId, 
-      weeklyPoints: r.weeklyPoints 
-    }))
-  });
+  // Debug logging - REMOVED SPAM: Only log once when data changes significantly
+  useEffect(() => {
+    if (import.meta.env.DEV && selectedLeague && leagueData) {
+      console.log('[Main] League data loaded:', {
+        user: user?.name,
+        selectedLeague,
+        currentWeek,
+        userStats: { totalPoints: userTotalPoints, rank: userRank, skinsWon: userSkinsWon },
+        weeklySkinsWinnerId
+      });
+    }
+  }, [selectedLeague, currentWeek, weeklySkinsWinnerId]); // Only when these stable values change
 
   // Auto-redirect users with no leagues to the leagues page
   useEffect(() => {
