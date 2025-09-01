@@ -1,4 +1,4 @@
-import { createContext } from "react";
+import { createContext, useContext } from "react";
 
 export interface User {
   id: string;
@@ -28,3 +28,11 @@ export const AuthContext = createContext<AuthValue>({
   login: () => {},
   logout: async () => {},
 });
+
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+  return context;
+};
