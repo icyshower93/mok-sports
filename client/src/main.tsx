@@ -1,12 +1,25 @@
-import { trace } from "@/debug/trace";
-trace("main.tsx");
 import { createRoot } from "react-dom/client";
 import { StrictMode, Suspense } from "react";
 import "@/index.css";
 
-(async () => {
+(async function bootstrap() {
   const { default: App } = await import("@/App");
-  createRoot(document.getElementById("root")!).render(
+
+  const rootEl = document.getElementById("root");
+  if (!rootEl) {
+    document.addEventListener("DOMContentLoaded", () => {
+      createRoot(document.getElementById("root")!).render(
+        <StrictMode>
+          <Suspense fallback={<div className="p-6 text-sm opacity-70">Loading…</div>}>
+            <App />
+          </Suspense>
+        </StrictMode>
+      );
+    });
+    return;
+  }
+
+  createRoot(rootEl).render(
     <StrictMode>
       <Suspense fallback={<div className="p-6 text-sm opacity-70">Loading…</div>}>
         <App />
