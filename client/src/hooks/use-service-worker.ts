@@ -127,9 +127,17 @@ export function useServiceWorker(enableInPWAOnly: boolean = true) {
                   (window.navigator as any).standalone === true ||
                   document.referrer.includes('android-app://');
 
-    if (enableInPWAOnly && !isPWA) {
-      console.log('[SW Hook] Service worker disabled - not in PWA mode');
+    // Allow service worker in development when debug UI is enabled for push notification testing
+    const debugUIEnabled = (import.meta as any).env?.VITE_ENABLE_DEBUG_UI === "true" ||
+                           (typeof process !== "undefined" && (process as any).env?.VITE_ENABLE_DEBUG_UI === "true");
+
+    if (enableInPWAOnly && !isPWA && !debugUIEnabled) {
+      console.log('[SW Hook] Service worker disabled - not in PWA mode and debug UI not enabled');
       return;
+    }
+
+    if (debugUIEnabled && !isPWA) {
+      console.log('[SW Hook] Service worker enabled for debug UI - push notification testing');
     }
 
     registerServiceWorker();
