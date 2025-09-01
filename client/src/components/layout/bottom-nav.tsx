@@ -19,19 +19,19 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   {
-    path: "/main",
+    path: "/",
     label: "Home",
     icon: Home,
-    isActive: (pathname) => pathname === "/main" || pathname === "/"
+    isActive: (pathname) => pathname === "/" || pathname === "/main"
   },
   {
-    path: "/stable",
-    label: "Stable",
+    path: "/teams",
+    label: "Teams",
     icon: Shield
   },
   {
-    path: "/league",
-    label: "League",
+    path: "/draft", 
+    label: "Draft",
     icon: Trophy
   },
   {
@@ -40,8 +40,8 @@ const navItems: NavItem[] = [
     icon: Activity
   },
   {
-    path: "/more",
-    label: "More",
+    path: "/trades",
+    label: "Trades",
     icon: MoreHorizontal
   }
 ];

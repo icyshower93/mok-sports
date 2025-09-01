@@ -1,9 +1,17 @@
 import * as React from "react";
 import { Switch, Route } from "wouter";
 import { useAuth } from "@/features/auth/AuthContext";
+import { MainLayout } from "@/components/layout/main-layout";
+import { BottomNav } from "@/components/layout/bottom-nav";
 
 const Main = React.lazy(() => import("@/pages/main"));
 const Login = React.lazy(() => import("@/pages/login"));
+const Dashboard = React.lazy(() => import("@/pages/dashboard"));
+const Draft = React.lazy(() => import("@/pages/draft"));
+const Scores = React.lazy(() => import("@/pages/scores"));
+const Teams = React.lazy(() => import("@/pages/teams"));
+const Trades = React.lazy(() => import("@/pages/trades"));
+const Admin = React.lazy(() => import("@/pages/admin"));
 
 function AuthGuard({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isLoading, oauthLoading } = useAuth();
@@ -16,13 +24,26 @@ function AuthGuard({ children }: { children: React.ReactNode }) {
     return <Login />;
   }
   
-  return <>{children}</>;
+  return (
+    <MainLayout>
+      <div className="pb-20">
+        {children}
+      </div>
+      <BottomNav />
+    </MainLayout>
+  );
 }
 
 export function getRouter() {
   return (
     <Switch>
       <Route path="/login" component={Login} />
+      <Route path="/dashboard" component={() => <AuthGuard><Dashboard /></AuthGuard>} />
+      <Route path="/draft" component={() => <AuthGuard><Draft /></AuthGuard>} />
+      <Route path="/scores" component={() => <AuthGuard><Scores /></AuthGuard>} />
+      <Route path="/teams" component={() => <AuthGuard><Teams /></AuthGuard>} />
+      <Route path="/trades" component={() => <AuthGuard><Trades /></AuthGuard>} />
+      <Route path="/admin" component={() => <AuthGuard><Admin /></AuthGuard>} />
       <Route path="/">
         <AuthGuard>
           <Main />
