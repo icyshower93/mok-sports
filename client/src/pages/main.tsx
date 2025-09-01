@@ -45,6 +45,21 @@ import mokSportsLogoWhite from "@assets/MokSports_White_1755068930869.png";
 import mokSportsLogo from "@assets/moksports logo_1755069436420.png";
 import { useAuth } from "@/features/auth/useAuth";
 
+// Group 5: Add basic page structure with useAuth hook
 export default function Main() { 
-  return <div>main probe - group 4 (+ features/auth)</div>; 
+  const { user } = useAuth();
+  
+  if (!user) {
+    return <div>Loading...</div>;
+  }
+
+  return (
+    <div className="min-h-screen bg-background">
+      <div className="container mx-auto px-4 py-6">
+        <h1 className="text-2xl font-bold">Welcome {user.name}</h1>
+        <p>main probe - group 5 (+ useAuth usage)</p>
+      </div>
+      <BottomNav />
+    </div>
+  ); 
 }
