@@ -54,6 +54,7 @@ export function getRouter() {
       <Route path="/standings" component={() => <AuthGuard><RequireLeague><Scores /></RequireLeague></AuthGuard>} />
       <Route path="/teams" component={() => <AuthGuard><RequireLeague><Teams /></RequireLeague></AuthGuard>} />
       <Route path="/leagues" component={() => <AuthGuard><RequireLeague><Leagues /></RequireLeague></AuthGuard>} />
+      <Route path="/league" component={() => <AuthGuard><RequireLeague><Leagues /></RequireLeague></AuthGuard>} />
       <Route path="/league/waiting" component={() => <AuthGuard><LeagueWaiting /></AuthGuard>} />
       <Route path="/more" component={() => <AuthGuard><RequireLeague><MoreHub /></RequireLeague></AuthGuard>} />
       <Route path="/more/trades" component={() => <AuthGuard><RequireLeague><Trades /></RequireLeague></AuthGuard>} />
