@@ -388,7 +388,7 @@ export default function StablePage() {
                     <AlertTriangle className="w-6 h-6 text-red-500" />
                   </div>
                   <h3 className="text-base font-semibold mb-2 text-red-600 dark:text-red-400">League Access Error</h3>
-                  <p className="text-sm text-muted-foreground mb-4 max-w-sm mx-auto">
+                  <p className="text-sm text-muted-foreground mb-4">
                     You don't have access to this league. Please select a different league.
                   </p>
                   <Button 
@@ -408,7 +408,7 @@ export default function StablePage() {
                     <Shield className="w-6 h-6 text-muted-foreground" />
                   </div>
                   <h3 className="text-base font-semibold mb-2">No Teams Yet</h3>
-                  <p className="text-sm text-muted-foreground mb-4 max-w-sm mx-auto">
+                  <p className="text-sm text-muted-foreground mb-4">
                     Complete a draft to start building your stable
                   </p>
                   <Button onClick={() => startTransition(() => navigate('/leagues'))} size="sm">

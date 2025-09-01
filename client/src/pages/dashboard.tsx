@@ -273,7 +273,7 @@ export default function DashboardPage() {
           Logout
         </Button>
         
-        <div className={`w-full space-y-8 ${hasLeagues && shouldStayOnDashboard ? 'max-w-6xl' : 'max-w-md'}`}>
+        <div className="w-full space-y-8">
           {/* Welcome Header */}
           <div className={`space-y-2 ${hasLeagues && shouldStayOnDashboard ? 'text-left' : 'text-center'}`}>
             <h1 className="text-3xl font-bold text-fantasy-green">

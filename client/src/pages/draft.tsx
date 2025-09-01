@@ -626,7 +626,7 @@ export default function DraftPage() {
     
     return (
       <div className="min-h-screen bg-gradient-to-br from-background to-secondary/20 flex items-center justify-center">
-        <Card className="max-w-md">
+        <Card className="w-full">
           <CardContent className="p-6 text-center">
             <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <Shield className="w-8 h-8 text-red-600" />
@@ -1249,7 +1249,7 @@ export default function DraftPage() {
                         </div>
                         
                         {/* Clean Progress Bar */}
-                        <div className="w-full max-w-md mx-auto mb-4">
+                        <div className="w-full mb-4">
                           <div className="relative h-2 bg-muted rounded-full overflow-hidden">
                             <div 
                               className={`h-full rounded-full transition-all duration-1000 ease-linear ${

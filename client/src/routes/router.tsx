@@ -1,8 +1,7 @@
 import * as React from "react";
 import { Switch, Route, useLocation } from "wouter";
 import { useAuth } from "@/features/auth/AuthContext";
-import { MainLayout } from "@/components/layout/main-layout";
-import { BottomNav } from "@/components/layout/bottom-nav";
+import { AppShell } from "@/components/layout/app-shell";
 
 const Main = React.lazy(() => import("@/pages/main"));
 const Login = React.lazy(() => import("@/pages/login"));
@@ -31,12 +30,13 @@ function AuthGuard({ children }: { children: React.ReactNode }) {
   }
   
   return (
-    <MainLayout>
-      <div className="pb-20">
-        {children}
+    <AppShell>
+      <div className="pb-20 min-h-screen bg-gradient-to-b from-background to-muted/30">
+        <div className="py-6">
+          {children}
+        </div>
       </div>
-      <BottomNav />
-    </MainLayout>
+    </AppShell>
   );
 }
 
