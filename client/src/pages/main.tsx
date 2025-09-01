@@ -1,4 +1,4 @@
-// pages/main.tsx (TEMP) - Bisecting imports: Group 1 (React + UI)
+// pages/main.tsx (TEMP) - Bisecting imports: Group 2 (Icons)
 import { useState, useEffect, startTransition } from "react";
 import { useLocation } from "wouter";
 import { useQuery } from "@tanstack/react-query";
@@ -8,6 +8,38 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
+import { 
+  Shield, 
+  TrendingUp, 
+  Clock, 
+  Trophy, 
+  Calendar,
+  ChevronRight,
+  ChevronDown,
+  ChevronUp,
+  Crown,
+  Users,
+  Zap,
+  Target,
+  Star,
+  Flame,
+  Gift,
+  ArrowUp,
+  ArrowDown,
+  Minus,
+  Activity,
+  DollarSign,
+  Bell,
+  User,
+  ExternalLink,
+  ChevronLeft,
+  Play,
+  Globe,
+  FileText,
+  Monitor,
+  Newspaper
+} from "lucide-react";
+
 export default function Main() { 
-  return <div>main probe - group 1 (React + UI)</div>; 
+  return <div>main probe - group 2 (+ icons)</div>; 
 }
