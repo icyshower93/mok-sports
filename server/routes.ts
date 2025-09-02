@@ -1534,7 +1534,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (draft && draft.status !== 'completed' && draft.status !== 'canceled') {
         console.log('[draft/start] IDEMPOTENT: Returning existing draft in status:', draft.status);
         
-        const { draftManager } = await import("./index.js");
+        const draftManager = (global as any).draftManager;
         const draftState = await draftManager.getDraftState(draft.id);
         
         return res.status(200).json({
@@ -1550,7 +1550,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!draft) {
         console.log('[draft/start] Creating new draft for league', leagueId);
         
-        const { draftManager } = await import("./index.js");
+        const draftManager = (global as any).draftManager;
         
         // Get league members to create draft order
         const members = await storage.getLeagueMembers(leagueId);
