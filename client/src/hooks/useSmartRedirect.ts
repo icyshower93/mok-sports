@@ -23,7 +23,8 @@ export function useSmartRedirect(enabled: boolean) {
       location.startsWith("/admin") ||
       location.startsWith("/database") ||
       location === "/leagues" ||          // ← IMPORTANT
-      location.startsWith("/leagues/");    // ← IMPORTANT
+      location.startsWith("/leagues/") ||  // ← IMPORTANT  
+      location.startsWith("/league/");     // ← FIX: League waiting room and draft pages
 
     if (isNormalTab) {
       // Do not perform any redirect logic on real app tabs.
