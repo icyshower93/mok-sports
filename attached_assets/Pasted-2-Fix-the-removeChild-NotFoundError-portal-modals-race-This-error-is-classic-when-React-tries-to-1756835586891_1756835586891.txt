@@ -1,0 +1,76 @@
+2) Fix the removeChild NotFoundError (portal/modals race)
+
+This error is classic when React tries to unmount a node that you already removed manually (or the node’s parent changed unexpectedly). Your logs even show:
+
+VM23:39 Removed banner element: <div data-state="closed" class="fixed inset-0 ...">
+
+
+That suggests there’s some imperative DOM removal (maybe a snippet from earlier debugging or an injected utility) that removes the overlay/backdrop or banner while Radix UI’s <Dialog> (or your portal) is also trying to clean it up. When React then calls removeChild during unmount, the node is already gone → NotFoundError.
+
+Additionally, Radix warns:
+
+Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+
+
+That means your dialog markup is slightly off; fix it while we’re here.
+
+What to do
+
+Remove any code that manually removes DOM nodes created by the dialog/banner/toast. Examples to delete:
+
+document.body.removeChild(...)
+
+node.remove() on the dialog overlay/backdrop
+
+Any “cleanup” that targets elements Radix/React owns
+
+Ensure the dialog is controlled only by React state (no imperative DOM hacking).
+
+Give the dialog a proper description (accessibility + Radix warning suppression).
+
+Safe Dialog pattern (Radix + React)
+import {
+  Dialog, DialogTrigger, DialogContent,
+  DialogHeader, DialogTitle, DialogDescription
+} from "@/components/ui/dialog";
+
+export function CreateLeagueDialog() {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button onClick={() => setOpen(true)}>Create league</Button>
+      </DialogTrigger>
+
+      <DialogContent aria-describedby="create-league-desc">
+        <DialogHeader>
+          <DialogTitle>Create a new league</DialogTitle>
+          <DialogDescription id="create-league-desc">
+            Name your league and choose season settings. You can invite players next.
+          </DialogDescription>
+        </DialogHeader>
+
+        {/* form goes here; on submit, await API success, then setOpen(false) */}
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+
+Do not conditionally mount/unmount the portal container itself (keep <Dialog> mounted; control only open), and do not remove its DOM nodes manually.
+
+Extra race-condition hardening
+
+If you have any custom portals/toasts:
+
+Wrap any node.remove() with an existence guard:
+
+if (node && node.parentNode) node.parentNode.removeChild(node);
+
+
+…but again: avoid removing nodes created by React libraries.
+
+Avoid mounting the dialog inside components that are themselves conditionally mounted during navigation—prefer a stable parent (e.g., App shell) if you saw double mounts.
+
+If React StrictMode is on in dev, remember effects run twice; avoid global singletons that append/remove the same node in both calls.

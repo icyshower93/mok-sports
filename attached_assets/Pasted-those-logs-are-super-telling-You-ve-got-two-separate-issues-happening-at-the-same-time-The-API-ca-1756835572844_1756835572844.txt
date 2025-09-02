@@ -1,0 +1,89 @@
+those logs are super telling. You’ve got two separate issues happening at the same time:
+
+The API call to create the league is failing (HTTP 400), so your navigation to the draft room never happens.
+
+A DOM race during a modal/portal unmount is throwing NotFoundError: removeChild…, which blanks the screen via the error boundary.
+
+Here’s how to fix both, in order.
+
+1) Fix the 400 on POST /api/leagues
+
+A 400 almost always means the backend rejected your payload (missing/incorrect fields or types). Right now your UI likely fires the request and immediately tries to close a dialog / navigate, but the server returns 400 and you end up with neither success nor a handled error.
+
+What to do
+
+Inspect the response body in Network tab for /api/leagues → the error text usually lists the bad field.
+
+Match the exact schema the backend expects (names, types). Common gotchas:
+
+seasonYear must be a number (not a string).
+
+numTeams must be a number.
+
+commissionerUserId / commissionerId must be present and match the server’s field name exactly.
+
+name / leagueName field name mismatch.
+
+Sending FormData instead of JSON (missing Content-Type).
+
+Frontend change (example)
+
+Make your creation handler await, guard, and validate before closing the modal or navigating:
+
+// CreateLeagueForm.tsx (or wherever the handler lives)
+async function onCreateLeague(form: {
+  name: string;
+  seasonYear: number | string;
+  numTeams: number | string;
+  draftType: 'snake' | 'auction'; // example
+}) {
+  setCreating(true);
+  setError(null);
+
+  const payload = {
+    name: form.name?.trim(),
+    seasonYear: Number(form.seasonYear),
+    numTeams: Number(form.numTeams),
+    draftType: form.draftType,            // if required
+    // commissionerUserId: auth.user.id,  // match your server field name
+  };
+
+  // Basic client-side validation
+  if (!payload.name) return setError('League name is required.');
+  if (!Number.isInteger(payload.seasonYear)) return setError('Season year must be a number.');
+  if (!Number.isInteger(payload.numTeams) || payload.numTeams < 2) return setError('Teams must be a number ≥ 2.');
+
+  try {
+    const res = await fetch('/api/leagues', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+
+    if (!res.ok) {
+      // Try to read message the server returns
+      const text = await res.text().catch(() => '');
+      throw new Error(text || `Create league failed (${res.status})`);
+    }
+
+    const league = await res.json(); // expect { id, ... }
+    // Only now close dialog + navigate
+    setOpen(false);
+    navigate(`/draft/${league.id}`); // or whatever your draft waiting room route is
+  } catch (e:any) {
+    setError(e.message || 'Failed to create league.');
+  } finally {
+    setCreating(false);
+  }
+}
+
+
+Key points
+
+Don’t close the dialog or route away until res.ok is true.
+
+Surface any server message to the user so 400s are debuggable.
+
+Ensure headers include Content-Type: application/json.
+
+If your API expects different keys, rename them here to match exactly.

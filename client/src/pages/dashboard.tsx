@@ -90,7 +90,37 @@ export default function DashboardPage() {
   // League creation mutation
   const createLeagueMutation = useMutation({
     mutationFn: async (name: string) => {
-      return apiRequest("POST", "/api/leagues", { name, maxTeams: 6 });
+      // Ensure proper payload format
+      const payload = {
+        name: name.trim(),
+        maxTeams: 6
+      };
+
+      console.log("[CreateLeague] Sending payload:", payload);
+
+      // Use fetch directly to get better error details
+      const res = await fetch('/api/leagues', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          ...((window as any).authToken ? { 'Authorization': `Bearer ${(window as any).authToken}` } : {})
+        },
+        credentials: 'include',
+        body: JSON.stringify(payload),
+      });
+
+      console.log("[CreateLeague] Response status:", res.status);
+
+      if (!res.ok) {
+        const errorText = await res.text().catch(() => '');
+        console.error("[CreateLeague] Error response:", errorText);
+        throw new Error(errorText || `Create league failed (${res.status})`);
+      }
+
+      const result = await res.json();
+      console.log("[CreateLeague] Success result:", result);
+      return result;
     },
     onSuccess: (result: any) => {
       toast({
@@ -98,8 +128,11 @@ export default function DashboardPage() {
         description: "League created successfully",
       });
       queryClient.invalidateQueries({ queryKey: ['/api/user/leagues'] });
+      
+      // Only close dialog and navigate after successful response
       setCreateDialogOpen(false);
       setLeagueName("");
+      
       // Navigate to league waiting room
       if (result?.league?.id) {
         setLastLeagueId(result.league.id);
@@ -109,11 +142,13 @@ export default function DashboardPage() {
       }
     },
     onError: (error: any) => {
+      console.error("[CreateLeague] Mutation error:", error);
       toast({
         title: "Error",
         description: error.message || "Failed to create league",
         variant: "destructive",
       });
+      // Don't close dialog on error so user can retry
     }
   });
 
