@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, startTransition } from "react";
+import { useState, useEffect, useRef, startTransition, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLocation, useParams } from "wouter";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -13,17 +13,151 @@ import { TeamLogo } from "@/components/team-logo";
 import { apiRequest } from "@/features/query/api";
 import { useResilientWebSocket } from "@/hooks/use-resilient-websocket";
 import { useAuth } from "@/features/auth/useAuth";
-// Debug import removed
 import type { DraftState, NflTeam, DraftPick } from '@shared/types/draft';
 
+// ✅ Pure constants first (no window/auth/route dependencies)
+const DEFAULT_PICK_TIME_LIMIT = 120;
+const MINIMUM_SWIPE_DISTANCE = 50;
+const TIMER_WARNING_THRESHOLDS = {
+  URGENT: 5,
+  WARNING: 10,
+  CAUTION: 30,
+} as const;
+const NOTIFICATION_COOLDOWN = 30000; // 30 seconds
+const VIBRATION_PATTERNS = {
+  WARNING: 100,
+  URGENT: [100, 50, 100] as number[],
+  CRITICAL: [200, 100, 200, 100, 200] as number[],
+  YOUR_TURN: [300, 100, 300] as number[],
+};
+
+// ✅ Fully hoisted helper functions (safe to call anywhere below)
+function normalizeDraftResponse(data: any, params: any): any {
+  return {
+    id: data.id ?? params.draftId,
+    leagueId: data.leagueId ?? data.state?.leagueId ?? null,
+    
+    // unify status across shapes: status | state.status | state.phase
+    status: data.status ?? data.state?.status ?? data.state?.phase ?? 'waiting',
+    
+    // unify current player id / object
+    currentPlayerId: data.currentPlayer?.id ?? data.state?.currentPlayerId ?? null,
+    
+    // normalize participants for user matching
+    participants: data.participants ?? data.players ?? data.state?.participants ?? [],
+    
+    // timer seconds (server or 0)
+    timerSeconds: data.timer?.remaining ?? data.state?.timer?.remaining ?? 0,
+    
+    // preserve original data structure for backward compatibility
+    state: data.state,
+    draft: data.draft || data.state?.draft,
+    isCurrentUser: data.isCurrentUser,
+    
+    // add missing properties for UI compatibility
+    currentPlayer: data.currentPlayer ?? data.state?.currentPlayer ?? null,
+    league: data.league ?? data.state?.league ?? null
+  };
+}
+
+function computeWebSocketUrl(origin: string, draftId: string, userId: string): string {
+  const wsBase = origin.replace(/^http/i, 'ws');
+  return `${wsBase}/draft-ws?userId=${userId}&draftId=${draftId}`;
+}
+
+function formatTime(seconds: number): string {
+  const mins = Math.floor(seconds / 60);
+  const secs = seconds % 60;
+  return `${mins}:${secs.toString().padStart(2, '0')}`;
+}
+
+function getConferenceColor(conference: string): string {
+  return conference === 'AFC' ? 'bg-red-500/10 text-red-700 dark:text-red-300' : 'bg-blue-500/10 text-blue-700 dark:text-blue-300';
+}
+
+function getTimerRingColor(displayTime: number): string {
+  if (displayTime <= TIMER_WARNING_THRESHOLDS.URGENT) return 'stroke-red-500 animate-pulse';
+  if (displayTime <= TIMER_WARNING_THRESHOLDS.WARNING) return 'stroke-orange-500';
+  if (displayTime <= TIMER_WARNING_THRESHOLDS.CAUTION) return 'stroke-yellow-500';
+  return 'stroke-green-500';
+}
+
+function getBackgroundColor(isCurrentUser: boolean, displayTime: number): string {
+  if (!isCurrentUser) return '';
+  if (displayTime <= TIMER_WARNING_THRESHOLDS.URGENT) return 'bg-red-50 dark:bg-red-950/20 animate-pulse';
+  if (displayTime <= TIMER_WARNING_THRESHOLDS.WARNING) return 'bg-orange-50 dark:bg-orange-950/20';
+  if (displayTime <= TIMER_WARNING_THRESHOLDS.CAUTION) return 'bg-yellow-50 dark:bg-yellow-950/20';
+  return 'bg-green-50 dark:bg-green-950/20';
+}
+
+function getTeamStatus(team: NflTeam, picksSafe: DraftPick[], isCurrentUser: boolean, state: DraftState, userId?: string): 'available' | 'taken' | 'conflict' {
+  const isDrafted = picksSafe.some(p => p.nflTeam.id === team.id);
+  if (isDrafted) return 'taken';
+  
+  // Check division conflict for current user (must match conference + division)
+  if (isCurrentUser && state?.canMakePick) {
+    const userPicks = picksSafe.filter(p => p.user.id === userId) || [];
+    const hasDivisionConflict = userPicks.some(
+      p => `${p.nflTeam.conference} ${p.nflTeam.division}` === `${team.conference} ${team.division}`
+    );
+    if (hasDivisionConflict) return 'conflict';
+  }
+  
+  return 'available';
+}
+
+function filterTeamsBySearch(teams: NflTeam[], searchTerm: string): NflTeam[] {
+  if (!searchTerm.trim()) return teams;
+  
+  const lowerSearch = searchTerm.toLowerCase();
+  return teams.filter(team => 
+    team.name.toLowerCase().includes(lowerSearch) ||
+    team.city.toLowerCase().includes(lowerSearch) ||
+    team.abbreviation.toLowerCase().includes(lowerSearch)
+  );
+}
+
+function vibrateDevice(pattern: number | number[]): boolean {
+  try {
+    if ('vibrate' in navigator && navigator.vibrate) {
+      const result = navigator.vibrate(pattern);
+      console.log('[VIBRATION]', result ? 'Success' : 'Failed', pattern);
+      return result;
+    } else {
+      console.log('[VIBRATION] API not supported on this device');
+      return false;
+    }
+  } catch (error) {
+    console.error('[VIBRATION] Error:', error);
+    return false;
+  }
+}
+
+function sendNotificationToUser(title: string, options?: NotificationOptions): void {
+  if ('Notification' in window && Notification.permission === 'granted') {
+    new Notification(title, {
+      icon: '/icon-192x192.png',
+      badge: '/icon-192x192.png',
+      ...options
+    });
+  }
+}
+
+async function requestNotificationPermissionFromUser(): Promise<void> {
+  if ('Notification' in window && 'serviceWorker' in navigator) {
+    if (Notification.permission === 'default') {
+      await Notification.requestPermission();
+    }
+  }
+}
+
+// ✅ React component last
 export default function DraftPage() {
   // CRITICAL: All early returns must happen BEFORE any hooks to prevent Rules of Hooks violations
   const params = useParams();
   const urlDraftId = (params as any).draftId;
   
   // ALL HOOKS MUST BE CALLED CONSISTENTLY - cannot return early after calling hooks
-  // Fixed: Handle null case with conditional rendering instead of early return
-  
   const [location, navigate] = useLocation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -42,16 +176,6 @@ export default function DraftPage() {
   const [showFAB, setShowFAB] = useState(false);
   const [starting, setStarting] = useState(false);
   
-  // Fetch user's leagues to get the current draft ID
-  const { data: leagueData } = useQuery({
-    queryKey: ['/api/leagues/user'],
-    queryFn: async () => {
-      return await apiRequest('GET', '/api/leagues/user');
-    },
-    enabled: !!user && !authLoading,
-    staleTime: 1000 * 10, // Cache for 10 seconds
-  });
-  
   // Enhanced timer state for smooth countdown
   const [serverTime, setServerTime] = useState<number>(0);
   const [localTime, setLocalTime] = useState<number>(0);
@@ -62,46 +186,19 @@ export default function DraftPage() {
   const [lastNotificationTime, setLastNotificationTime] = useState<number>(0);
   const [hasNotifiedForThisTurn, setHasNotifiedForThisTurn] = useState<boolean>(false);
 
-  // Mobile UX utilities with better error handling
-  const vibrate = (pattern: number | number[]) => {
-    try {
-      if ('vibrate' in navigator && navigator.vibrate) {
-        const result = navigator.vibrate(pattern);
-        console.log('[VIBRATION]', result ? 'Success' : 'Failed', pattern);
-        return result;
-      } else {
-        console.log('[VIBRATION] API not supported on this device');
-        return false;
-      }
-    } catch (error) {
-      console.error('[VIBRATION] Error:', error);
-      return false;
-    }
-  };
-
-  const requestNotificationPermission = async () => {
-    if ('Notification' in window && 'serviceWorker' in navigator) {
-      if (Notification.permission === 'default') {
-        await Notification.requestPermission();
-      }
-    }
-  };
-
-  const sendNotification = (title: string, options?: NotificationOptions) => {
-    if ('Notification' in window && Notification.permission === 'granted') {
-      new Notification(title, {
-        icon: '/icon-192x192.png',
-        badge: '/icon-192x192.png',
-        ...options
-      });
-    }
-  };
-
-
+  // Fetch user's leagues to get the current draft ID
+  const { data: leagueData } = useQuery({
+    queryKey: ['/api/leagues/user'],
+    queryFn: async () => {
+      return await apiRequest('GET', '/api/leagues/user');
+    },
+    enabled: !!user && !authLoading,
+    staleTime: 1000 * 10, // Cache for 10 seconds
+  });
 
   // Request notification permission on mount
   useEffect(() => {
-    requestNotificationPermission();
+    requestNotificationPermissionFromUser();
   }, []);
 
   // Auto-redirect to correct draft if URL has wrong draft ID
@@ -154,8 +251,6 @@ export default function DraftPage() {
       console.log('[Draft] === STARTING DRAFT FETCH ===');
       console.log('[Draft] Draft ID:', draftId);
       console.log('[Draft] Auth status - User:', user?.name, 'Authenticated:', isAuthenticated, 'Loading:', authLoading);
-      console.log('[Draft] Current URL:', window.location.href);
-      console.log('[Draft] Current pathname:', window.location.pathname);
       
       try {
         console.log('[Draft] Making API request to:', `/api/drafts/${draftId}`);
@@ -186,47 +281,8 @@ export default function DraftPage() {
         const data = await response.json();
         console.log('[Draft] ✅ Draft data received successfully:', data);
         
-        // Normalize the Draft API response (fixes draftStatus: undefined)
-        const normalized = {
-          id: data.id ?? params.draftId,
-          leagueId: data.leagueId ?? data.state?.leagueId ?? null,
-
-          // unify status across shapes: status | state.status | state.phase
-          status:
-            data.status ??
-            data.state?.status ??
-            data.state?.phase ??
-            'waiting',
-
-          // unify current player id / object
-          currentPlayerId:
-            data.currentPlayer?.id ??
-            data.state?.currentPlayerId ??
-            null,
-
-          // normalize participants for user matching
-          participants:
-            data.participants ??
-            data.players ??
-            data.state?.participants ??
-            [],
-
-          // timer seconds (server or 0)
-          timerSeconds:
-            data.timer?.remaining ??
-            data.state?.timer?.remaining ??
-            0,
-            
-          // preserve original data structure for backward compatibility
-          state: data.state,
-          draft: data.draft || data.state?.draft,
-          isCurrentUser: data.isCurrentUser,
-          
-          // add missing properties for UI compatibility
-          currentPlayer: data.currentPlayer ?? data.state?.currentPlayer ?? null,
-          league: data.league ?? data.state?.league ?? null
-        };
-        
+        // Normalize the Draft API response using hoisted function
+        const normalized = normalizeDraftResponse(data, params);
         console.log('[Draft] 🔧 Normalized response:', normalized);
         
         return normalized;
@@ -247,24 +303,18 @@ export default function DraftPage() {
     }
   });
 
-  // WebSocket connection - connect when auth is ready and we have a draftId
-  const wsBase =
-    import.meta.env.VITE_WS_BASE_URL ||
-    window.location.origin.replace(/^http/i, 'ws');
+  // WebSocket URL computed safely with useMemo
+  const wsUrl = useMemo(() => {
+    if (!draftId || !user?.id) return null;
+    const baseUrl = import.meta.env.VITE_WS_BASE_URL || window.location.origin;
+    return computeWebSocketUrl(baseUrl, draftId, user.id);
+  }, [draftId, user?.id]);
 
-  const wsUrl = draftId ? `${wsBase}/draft-ws?userId=${user?.id}&draftId=${draftId}` : null;
   const shouldConnectWS = Boolean(!authLoading && user && wsUrl);
-    
   console.log('[Draft] WebSocket connection decision:', { shouldConnectWS, wsUrl: wsUrl || 'none' });
   
   const { status: connectionStatus, message: lastMessage } = useResilientWebSocket(wsUrl);
   const isConnected = connectionStatus === 'open';
-
-  // Handle null urlDraftId case in main render (Rules of Hooks compliance)
-
-  // CRITICAL: Declare variables BEFORE any useEffect that uses them
-  // Move these after draftData is available from the query
-  // Variables will be defined below after the query is declared
 
   // Redirect if no draft ID
   useEffect(() => {
@@ -272,7 +322,6 @@ export default function DraftPage() {
       navigate('/dashboard');
     }
   }, [draftId, navigate]);
-
 
   // CRITICAL: Declare variables after query is defined to prevent temporal dead zone errors  
   const state: DraftState = (draftData?.state ?? {}) as DraftState;
@@ -288,17 +337,17 @@ export default function DraftPage() {
 
   // Derived, null-safe handles using normalized fields
   const draft = draftData?.state?.draft ?? null;
-  const draftStatus = draftData?.status ?? 'not_started';               // now defined
-  const currentPlayerId = draftData?.currentPlayerId ?? null;          // now defined or null
-  const isCountingDown = draftStatus === 'active';                     // or a boolean the API gives you
-  const displaySeconds = draftData?.timerSeconds ?? 0;                 // now defined
+  const draftStatus = draftData?.status ?? 'not_started';
+  const currentPlayerId = draftData?.currentPlayerId ?? null;
+  const isCountingDown = draftStatus === 'active';
+  const displaySeconds = draftData?.timerSeconds ?? 0;
   const timeRemainingSafe = draftData?.timerSeconds ?? 0;
   const picksSafe = state?.picks ?? [];
   const availableTeamsSafe = state?.availableTeams ?? [];
   const draftOrderSafe = draft?.draftOrder ?? [];
   const currentRoundSafe = draft?.currentRound ?? 1;
   const totalRoundsSafe = draft?.totalRounds ?? (draftOrderSafe.length || 1);
-  const pickTimeLimitSafe = draft?.pickTimeLimit ?? 120;
+  const pickTimeLimitSafe = draft?.pickTimeLimit ?? DEFAULT_PICK_TIME_LIMIT;
 
   // Log errors for debugging
   if (error) {
@@ -324,15 +373,15 @@ export default function DraftPage() {
       
       // Mobile UX: Vibration alerts for timer warnings
       if (isCurrentUser) {
-        if (newServerTime <= 30 && newServerTime > 25 && serverTime > 30) {
+        if (newServerTime <= TIMER_WARNING_THRESHOLDS.CAUTION && newServerTime > 25 && serverTime > 30) {
           console.log('[VIBRATION] 30s warning triggered');
-          vibrate(100); // Short vibration at 30s
-        } else if (newServerTime <= 10 && newServerTime > 5 && serverTime > 10) {
+          vibrateDevice(VIBRATION_PATTERNS.WARNING);
+        } else if (newServerTime <= TIMER_WARNING_THRESHOLDS.WARNING && newServerTime > 5 && serverTime > 10) {
           console.log('[VIBRATION] 10s warning triggered');
-          vibrate([100, 50, 100]); // Double vibration at 10s
-        } else if (newServerTime <= 5 && newServerTime > 0 && serverTime > 5) {
+          vibrateDevice(VIBRATION_PATTERNS.URGENT);
+        } else if (newServerTime <= TIMER_WARNING_THRESHOLDS.URGENT && newServerTime > 0 && serverTime > 5) {
           console.log('[VIBRATION] 5s urgent warning triggered');
-          vibrate([200, 100, 200, 100, 200]); // Urgent pattern at 5s
+          vibrateDevice(VIBRATION_PATTERNS.CRITICAL);
         }
       }
       
@@ -345,9 +394,9 @@ export default function DraftPage() {
         if (isCurrentUser && !hasNotifiedForThisTurn) {
           const now = Date.now();
           // Prevent duplicate notifications within 30 seconds
-          if (now - lastNotificationTime > 30000) {
-            vibrate([300, 100, 300]); // Strong "your turn" vibration
-            sendNotification('Your Draft Pick!', {
+          if (now - lastNotificationTime > NOTIFICATION_COOLDOWN) {
+            vibrateDevice(VIBRATION_PATTERNS.YOUR_TURN);
+            sendNotificationToUser('Your Draft Pick!', {
               body: 'It\'s your turn to draft a team',
               tag: 'draft-turn',
               requireInteraction: true
@@ -366,7 +415,6 @@ export default function DraftPage() {
       const newUiTime = Math.min(newServerTime, localTime || newServerTime);
       setServerTime(newServerTime);
       setLocalTime(newUiTime);
-      // isCountingDown is now computed from draftStatus, no need to set state
       
       // Reset zero tracking on fresh updates
       if (newServerTime > 0) {
@@ -430,7 +478,6 @@ export default function DraftPage() {
       const timeSinceZero = (performance.now() - zeroSince) / 1000;
       if (timeSinceZero > 1.5 && isCountingDown) {
         console.log('[SMOOTH TIMER] Grace period expired, stopping countdown');
-        // isCountingDown is now computed from draftStatus, no need to set state
       }
     }
   }, [localTime, zeroSince, isCountingDown]);
@@ -449,54 +496,18 @@ export default function DraftPage() {
   }, []);
 
   // Display logic with smooth transitions and integer rounding
-  const displayTime = (() => {
+  const displayTime = useMemo(() => {
     const rawTime = isCountingDown ? localTime : (serverTime || draftData?.timerSeconds || 0);
-    
     // Smooth to integer if showing whole seconds (avoids 59.999 → 59 flicker)
     return Math.floor(rawTime + 1e-6);
-  })();
+  }, [isCountingDown, localTime, serverTime, draftData?.timerSeconds]);
   
   console.log('[TIMER DEBUG] Server Time:', displaySeconds);
   console.log('[TIMER DEBUG] Display Time:', displayTime);
   console.log('[TIMER DEBUG] Current Player:', currentPlayerId);
   console.log('[NORMALIZED FIELDS] Status:', draftStatus, 'CurrentPlayerId:', currentPlayerId, 'TimerSeconds:', displaySeconds, 'IsCountingDown:', isCountingDown);
 
-  // Variables moved earlier in the file to prevent compilation errors
-
-  // Mobile UX helper functions
-  const getTimerRingColor = () => {
-    if (displayTime <= 5) return 'stroke-red-500 animate-pulse';
-    if (displayTime <= 10) return 'stroke-orange-500';
-    if (displayTime <= 30) return 'stroke-yellow-500';
-    return 'stroke-green-500';
-  };
-
-  const getBackgroundColor = () => {
-    if (!isCurrentUser) return '';
-    if (displayTime <= 5) return 'bg-red-50 dark:bg-red-950/20 animate-pulse';
-    if (displayTime <= 10) return 'bg-orange-50 dark:bg-orange-950/20';
-    if (displayTime <= 30) return 'bg-yellow-50 dark:bg-yellow-950/20';
-    return 'bg-green-50 dark:bg-green-950/20';
-  };
-
-  // Team availability status helper
-  const getTeamStatus = (team: NflTeam) => {
-    const isDrafted = picksSafe.some(p => p.nflTeam.id === team.id);
-    if (isDrafted) return 'taken';
-    
-    // Check division conflict for current user (must match conference + division)
-    if (isCurrentUser && state?.canMakePick) {
-      const userPicks = picksSafe.filter(p => p.user.id === user?.id) || [];
-      const hasDivisionConflict = userPicks.some(
-        p => `${p.nflTeam.conference} ${p.nflTeam.division}` === `${team.conference} ${team.division}`
-      );
-      if (hasDivisionConflict) return 'conflict';
-    }
-    
-    return 'available';
-  };
-
-  // Swipe gesture handlers
+  // Event handlers using hoisted functions
   const handleTouchStart = (e: React.TouchEvent) => {
     setTouchStartX(e.touches[0].clientX);
   };
@@ -505,12 +516,42 @@ export default function DraftPage() {
     const touchEndX = e.changedTouches[0].clientX;
     const diff = touchStartX - touchEndX;
     
-    if (Math.abs(diff) > 50) { // Minimum swipe distance
+    if (Math.abs(diff) > MINIMUM_SWIPE_DISTANCE) {
       if (diff > 0 && currentConference === 'AFC') {
         setCurrentConference('NFC');
       } else if (diff < 0 && currentConference === 'NFC') {
         setCurrentConference('AFC');
       }
+    }
+  };
+
+  const handleMakePick = () => {
+    if (selectedTeam && isCurrentUser && state?.canMakePick) {
+      makePickMutation.mutate(selectedTeam);
+    }
+  };
+
+  const onStartDraft = async () => {
+    if (!draftId) return;
+    
+    setStarting(true);
+    try {
+      await apiRequest('POST', `/api/leagues/${draftData?.leagueId}/draft/start`);
+      toast({
+        title: "Draft started!",
+        description: "The draft has begun. Good luck!",
+      });
+      
+      // Invalidate queries to refresh data
+      queryClient.invalidateQueries({ queryKey: ['draft', draftId] });
+    } catch (error: any) {
+      toast({
+        title: "Failed to start draft",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setStarting(false);
     }
   };
 
@@ -521,13 +562,13 @@ export default function DraftPage() {
 
   // Auto-expand panels when user's turn approaches
   useEffect(() => {
-    if (displayTime <= 30 && isCurrentUser) {
+    if (displayTime <= TIMER_WARNING_THRESHOLDS.CAUTION && isCurrentUser) {
       setPanelsCollapsed(false);
     }
   }, [displayTime, isCurrentUser]);
 
-  // TIMER FIX: Use actual draft timer limit instead of hardcoded 60
-  const draftTimerLimit = pickTimeLimitSafe
+  // TIMER FIX: Use actual draft timer limit instead of hardcoded value
+  const draftTimerLimit = pickTimeLimitSafe;
   const progressPercentage = displayTime > 0 ? Math.min(1.0, displayTime / draftTimerLimit) : 0;
   
   // Debug logging for timer sync
@@ -582,1199 +623,359 @@ export default function DraftPage() {
   });
 
   console.log('[Draft] All hooks declared, starting conditional logic');
-  console.log('[Draft] RENDER DEBUG - authLoading:', authLoading, 'isLoading:', isLoading, 'error:', !!error, 'draftData:', !!draftData, 'isAuthenticated:', isAuthenticated, 'Time:', Date.now());
 
-  // Handle null urlDraftId case in main render (no early returns allowed)
+  // Loading states
+  if (!draftId) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <h2 className="text-xl font-semibold mb-2">No Draft Found</h2>
+          <p className="text-muted-foreground mb-4">You don't have an active draft.</p>
+          <Button onClick={() => navigate('/dashboard')}>
+            Go to Dashboard
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
-  const handleMakePick = () => {
-    if (selectedTeam && !makePickMutation.isPending) { // Prevent double-clicks during submission
-      makePickMutation.mutate(selectedTeam, {
-        onSuccess: () => {
-          // RACE CONDITION FIX: Delay state updates to prevent DOM conflicts
-          setTimeout(() => {
-            // Trigger celebration animation
-            setShowCelebration(true);
-            setTimeout(() => setShowCelebration(false), 2000);
-            
-            // Enhanced haptic feedback for successful pick
-            vibrate([200, 100, 200, 100, 400]);
-          }, 50); // Small delay to prevent DOM conflicts
-          
-          setSelectedTeam(null);
-          toast({
-            title: "🎉 Pick successful!",
-            description: "Your team has been drafted."
-          });
-        },
-        onError: (error: any) => {
-          toast({
-            title: "Pick failed",
-            description: error.message || "Failed to draft team. Please try again."
-          });
-        }
-      });
-    }
-  };
+  const loadingReason = !user ? 'authentication' : 
+                       authLoading ? 'authentication loading' :
+                       isLoading ? 'draft data loading' :
+                       !draftData ? 'no draft data' : 
+                       null;
 
-  // Start Draft function for commissioners
-  const onStartDraft = async () => {
-    if (starting) return;
-    setStarting(true);
-    try {
-      const res = await fetch(`/api/leagues/${draftData?.leagueId}/draft/start`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-      });
-      if (!res.ok) throw new Error(await res.text().catch(() => `Failed (${res.status})`));
-      const updated = await res.json(); // should include status, currentPlayerId, timer, etc.
-
-      // normalize again & stash
-      const next = {
-        ...draftData,
-        status: updated.status ?? updated.state?.status ?? 'active',
-        currentPlayerId: updated.currentPlayerId ?? null,
-        timerSeconds: updated.timer?.remaining ?? updated.state?.timer?.remaining ?? 120,
-        participants: updated.participants ?? updated.state?.participants ?? draftData?.participants,
-      };
-      
-      // Invalidate queries to refetch with new state
-      queryClient.invalidateQueries({ queryKey: ['draft', draftId, 'state'] });
-      queryClient.invalidateQueries({ queryKey: ['/api/user/leagues'] });
-
-      toast({
-        title: "Draft started!",
-        description: "The draft is now active."
-      });
-    } catch (e: any) {
-      toast({
-        title: "Failed to start draft",
-        description: e.message || 'Failed to start draft',
-        variant: "destructive"
-      });
-    } finally {
-      setStarting(false);
-    }
-  };
-
-  // Show loading during initial hydration to prevent redirect flicker
-  if (authLoading || isLoading || (!draftData && !error)) {
-    const loadingReason = authLoading ? 'auth' : isLoading ? 'data' : 'hydration';
+  if (loadingReason) {
     console.log('[Draft] RENDER: Loading state -', loadingReason, '- authLoading:', authLoading, 'isLoading:', isLoading, 'draftData:', !!draftData);
     
     return (
-      <div className="min-h-screen bg-gradient-to-br from-background to-secondary/20 flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-16 h-16 bg-fantasy-purple/10 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Zap className="w-8 h-8 text-fantasy-purple animate-pulse" />
-          </div>
-          <p className="text-muted-foreground">
-            {loadingReason === 'auth' ? 'Authenticating...' : 
-             loadingReason === 'data' ? 'Loading draft data...' : 
-             'Connecting to draft room...'}
-          </p>
-          <p className="text-xs text-muted-foreground/60 mt-2">
-            This prevents redirect flicker during initial load
-          </p>
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center space-y-4">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+          <p className="text-sm text-muted-foreground capitalize">{loadingReason}...</p>
         </div>
       </div>
     );
   }
 
-  if (error || !draftData) {
-    console.error('Draft error:', error);
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    
-    // Enhanced debug information for troubleshooting
-    console.log('[Draft Debug] Full error details:', {
-      error,
-      errorMessage,
-      draftId,
-      connectionStatus,
-      // Auth token details omitted to avoid circular imports
-    });
-    
+  if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-background to-secondary/20 flex items-center justify-center">
-        <Card className="w-full">
-          <CardContent className="p-6 text-center">
-            <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Shield className="w-8 h-8 text-red-600" />
-            </div>
-            <h2 className="text-xl font-semibold mb-2">Draft Connection Issue</h2>
-            <p className="text-muted-foreground mb-4">
-              {errorMessage.includes('404') ? 
-                'No draft exists for this league. The draft may need to be created first.' :
-                errorMessage.includes('403') || errorMessage.includes('401') ?
-                'Authentication issue detected. The system should auto-authenticate in development mode.' :
-                'Unable to load the draft room. Please try again.'
-              }
-            </p>
-
-            <div className="space-y-2">
-              <Button onClick={() => startTransition(() => navigate('/'))} variant="outline">
-                Return to Home
-              </Button>
-              <Button onClick={() => window.location.reload()}>
-                Try Again
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <h2 className="text-xl font-semibold mb-2">Error Loading Draft</h2>
+          <p className="text-muted-foreground mb-4">{error.message}</p>
+          <Button onClick={() => queryClient.invalidateQueries({ queryKey: ['draft', draftId] })}>
+            Try Again
+          </Button>
+        </div>
       </div>
     );
   }
 
-  // REMOVED: Duplicate timer sync that was causing infinite re-render loop
-  // The timer sync is already handled in the main timer useEffect hook
-
-  // Variables moved earlier to prevent temporal dead zone errors
-  // const state and isCurrentUser are now declared above
-  const currentPlayer = draftData?.currentPlayer || 
-    (currentPlayerId ? draftData?.participants?.find((p: any) => p.id === currentPlayerId || p.userId === currentPlayerId) : null) || null;
-  const teams = teamsData?.teams || {};
-
-  // DEBUG LOGGING AND CRITICAL TIMER SYNC FIX
-  if (draftData?.state) {
-    console.log('🔍 [TIMER DEBUG] Server Time:', draftData?.timerSeconds);
-    console.log('🔍 [TIMER DEBUG] Display Time:', displayTime);
-    console.log('🔍 [TIMER DEBUG] Current Player:', currentPlayer?.name);
-  }
-
-  const formatTime = (seconds: number) => {
-    const totalSeconds = Math.max(0, seconds);
-    const mins = Math.floor(totalSeconds / 60);
-    const secs = Math.floor(totalSeconds % 60);
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
-  };
-
-  // Timer phase stability to prevent React DOM mismatches
-  const timerPhase =
-    draftStatus !== 'active' ? draftStatus :
-    displayTime > 0 ? 'countdown' : 'transition';
-
-  const getConferenceColor = (conference: string) => {
-    return conference === 'AFC' ? 'bg-blue-500' : 'bg-red-500';
-  };
-
-  // Filter teams by search term
-  const filterTeams = (teams: NflTeam[]) => {
-    if (!searchTerm) return teams;
-    const term = searchTerm.toLowerCase();
-    return teams.filter(team => 
-      team.city.toLowerCase().includes(term) ||
-      team.name.toLowerCase().includes(term) ||
-      team.code.toLowerCase().includes(term) ||
-      team.division.toLowerCase().includes(term)
-    );
-  };
-
-  // Create stable conference team renderer with search (FIXED: prevent re-render loops)
+  // Helper function for rendering teams using hoisted functions
   const renderConferenceTeams = (conference: 'AFC' | 'NFC') => {
-    // Get all teams from available teams and picks to create comprehensive list
-    const allTeams = [...(availableTeamsSafe || [])];
-    const draftedTeams = picksSafe?.map(p => p.nflTeam) || [];
+    const allTeams = teamsData?.availableTeams || availableTeamsSafe || [];
+    const conferenceTeams = allTeams.filter((team: NflTeam) => team.conference === conference);
+    const filteredTeams = filterTeamsBySearch(conferenceTeams, searchTerm);
     
-    // Combine available and drafted teams for complete view
-    let conferenceTeams = [...allTeams, ...draftedTeams]
-      .filter(team => team.conference === conference)
-      .reduce((acc, team) => {
-        if (!acc.some(t => t.id === team.id)) {
-          acc.push(team);
-        }
-        return acc;
-      }, [] as NflTeam[]);
+    if (filteredTeams.length === 0) {
+      return (
+        <div className="text-center py-8 text-muted-foreground">
+          {searchTerm ? 'No teams match your search' : 'No teams available'}
+        </div>
+      );
+    }
 
-    // Apply search filter
-    conferenceTeams = filterTeams(conferenceTeams);
-
-    // Group by division
-    const divisions = conferenceTeams.reduce((acc, team) => {
-      if (!acc[team.division]) acc[team.division] = [];
-      acc[team.division].push(team);
+    // Group teams by division
+    const divisions = filteredTeams.reduce((acc, team) => {
+      const divisionKey = `${team.conference} ${team.division}`;
+      if (!acc[divisionKey]) acc[divisionKey] = [];
+      acc[divisionKey].push(team);
       return acc;
     }, {} as Record<string, NflTeam[]>);
 
-    return Object.entries(divisions).map(([division, divisionTeams]) => (
-      <div key={division} className="mb-6">
-        <h4 className="text-xs font-medium text-muted-foreground mb-3 uppercase tracking-wider">
-          {division}
-        </h4>
-        <div className="grid grid-cols-1 gap-2">
-          {divisionTeams.map((team) => {
-            const isDrafted = picksSafe?.some(p => p.nflTeam.id === team.id);
-            const draftedBy = isDrafted ? picksSafe?.find(p => p.nflTeam.id === team.id) : null;
-            const isAvailable = availableTeamsSafe?.some(t => t.id === team.id);
-            
-            return (
-              <button
-                key={team.id}
-                className={`w-full p-3 rounded-lg border transition-all duration-150 text-left ${
-                  selectedTeam === team.id 
-                    ? 'border-primary bg-primary/5 shadow-sm' 
-                    : isDrafted 
-                    ? 'border-border bg-muted/30 opacity-60 cursor-not-allowed'
-                    : 'border-border hover:border-primary/50 hover:bg-muted/50'
-                } ${!state?.canMakePick || !isCurrentUser || isDrafted ? 'cursor-not-allowed' : 'cursor-pointer'}`}
-                onClick={() => isAvailable && !isDrafted && setSelectedTeam(team.id)}
-                disabled={!state?.canMakePick || !isCurrentUser || isDrafted}
-              >
-                <div className="flex items-center space-x-3">
-                  <div className="relative">
-                    <TeamLogo 
-                      logoUrl={team.logoUrl}
-                      teamCode={team.code}
-                      teamName={`${team.city} ${team.name}`}
-                      size="lg"
-                    />
-                    {/* Team Availability Status Indicator */}
-                    <div className={`absolute -top-1 -right-1 w-3 h-3 rounded-full border-2 border-background ${
-                      isDrafted ? 'bg-red-500' :
-                      (() => {
-                        const status = getTeamStatus(team);
-                        return status === 'conflict' ? 'bg-orange-500 animate-pulse' : 'bg-green-500';
-                      })()
-                    }`} />
-                  </div>
-                  
-                  <div className="flex-1">
-                    <div className="font-medium text-sm flex items-center space-x-2">
-                      <span>{team.city} {team.name}</span>
-                      {getTeamStatus(team) === 'conflict' && isCurrentUser && (
-                        <Target className="w-3 h-3 text-orange-500" />
-                      )}
-                    </div>
-                    <div className="text-xs text-muted-foreground">{team.division}</div>
-                    {getTeamStatus(team) === 'conflict' && isCurrentUser && (
-                      <div className="text-xs text-orange-600 mt-1">
-                        Division limit reached
+    return (
+      <div className="space-y-6">
+        {Object.entries(divisions).map(([division, teams]) => (
+          <div key={division}>
+            <h4 className="font-medium text-sm text-muted-foreground mb-3 px-1">
+              {division}
+            </h4>
+            <div className="grid grid-cols-1 gap-2">
+              {teams.map((team) => {
+                const teamStatus = getTeamStatus(team, picksSafe, isCurrentUser, state, user?.id);
+                const isSelected = selectedTeam === team.id;
+                const isDisabled = teamStatus !== 'available' || !state?.canMakePick || !isCurrentUser;
+                
+                return (
+                  <button
+                    key={team.id}
+                    onClick={() => !isDisabled && setSelectedTeam(isSelected ? null : team.id)}
+                    disabled={isDisabled}
+                    data-testid={`button-select-team-${team.code.toLowerCase()}`}
+                    className={`
+                      w-full p-3 rounded-lg border-2 transition-all duration-200 text-left
+                      ${isSelected 
+                        ? 'border-primary bg-primary/10 shadow-md' 
+                        : 'border-transparent hover:border-muted-foreground/20'
+                      }
+                      ${teamStatus === 'taken' 
+                        ? 'opacity-50 cursor-not-allowed bg-muted/30' 
+                        : teamStatus === 'conflict'
+                        ? 'opacity-60 cursor-not-allowed bg-orange-50 dark:bg-orange-950/20 border-orange-200 dark:border-orange-800'
+                        : 'hover:bg-muted/50 cursor-pointer'
+                      }
+                      ${!isCurrentUser || !state?.canMakePick 
+                        ? 'cursor-not-allowed opacity-75' 
+                        : ''
+                      }
+                    `}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="relative flex-shrink-0">
+                        <TeamLogo teamCode={team.code} size="sm" />
+                        {teamStatus === 'taken' && (
+                          <div className="absolute inset-0 flex items-center justify-center bg-black/20 rounded">
+                            <CheckCircle className="w-4 h-4 text-white" />
+                          </div>
+                        )}
+                        {teamStatus === 'conflict' && (
+                          <div className="absolute inset-0 flex items-center justify-center bg-orange-500/20 rounded">
+                            <X className="w-4 h-4 text-orange-600" />
+                          </div>
+                        )}
                       </div>
-                    )}
-                  </div>
-                  
-                  <div className="flex items-center space-x-2">
-                    {isDrafted && draftedBy ? (
-                      <div className="text-right">
-                        <div className="text-xs font-medium text-muted-foreground flex items-center space-x-1">
-                          <Circle className="w-3 h-3 fill-red-500 text-red-500" />
-                          <span>Taken</span>
+                      <div className="flex-1">
+                        <div className="font-medium text-sm">
+                          {team.city} {team.name}
                         </div>
                         <div className="text-xs text-muted-foreground">
-                          {draftedBy.user.name} (R{draftedBy.round})
+                          {team.code} • {team.division}
                         </div>
                       </div>
-                    ) : selectedTeam === team.id ? (
-                      <div className="flex items-center space-x-2">
-                        <CheckCircle className="w-4 h-4 text-green-500" />
-                        <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-                      </div>
-                    ) : null}
-                  </div>
-                </div>
-              </button>
-            );
-          })}
-        </div>
+                      {isSelected && (
+                        <div className="flex-shrink-0">
+                          <Circle className="w-5 h-5 text-primary" fill="currentColor" />
+                        </div>
+                      )}
+                      {teamStatus === 'conflict' && (
+                        <Badge variant="outline" className="text-xs border-orange-300 text-orange-600">
+                          Division
+                        </Badge>
+                      )}
+                      {teamStatus === 'taken' && (
+                        <Badge variant="secondary" className="text-xs">
+                          Taken
+                        </Badge>
+                      )}
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        ))}
       </div>
-    ));
+    );
   };
 
+  // Main render
   return (
-    <div className="min-h-screen bg-background relative">
-      {/* Celebration Animation Overlay */}
-      {showCelebration && (
-        <div className="fixed inset-0 z-50 pointer-events-none flex items-center justify-center">
-          <div className="text-6xl animate-bounce">
-            <Sparkles className="w-24 h-24 text-yellow-500" />
+    <div className={`min-h-screen transition-colors duration-300 ${getBackgroundColor(isCurrentUser, displayTime)}`}>
+      {/* Header */}
+      <div className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b">
+        <div className="flex items-center justify-between p-4">
+          <div className="flex items-center gap-3">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => navigate('/dashboard')}
+              data-testid="button-back-to-dashboard"
+            >
+              <ArrowLeft className="w-4 h-4" />
+            </Button>
+            <div>
+              <h1 className="font-semibold text-lg">Draft Room</h1>
+              <p className="text-xs text-muted-foreground">
+                Round {currentRoundSafe} • Pick {(draft?.currentPick ?? 1)}
+              </p>
+            </div>
           </div>
-          <div className="absolute inset-0 bg-gradient-to-r from-yellow-400 via-red-500 to-pink-500 opacity-20 animate-pulse" />
+          
+          <div className="flex items-center gap-2">
+            <Badge variant={isConnected ? "default" : "destructive"} className="text-xs">
+              {isConnected ? (
+                <>
+                  <Wifi className="w-3 h-3 mr-1" />
+                  Live
+                </>
+              ) : (
+                <>
+                  <WifiOff className="w-3 h-3 mr-1" />
+                  Offline
+                </>
+              )}
+            </Badge>
+          </div>
+        </div>
+      </div>
+
+      {/* Timer Section */}
+      {draftStatus === 'active' && (
+        <div className="p-4 border-b bg-card/50">
+          <div className="flex items-center justify-between">
+            <div>
+              <div className="text-2xl font-bold tabular-nums">
+                {formatTime(displayTime)}
+              </div>
+              <div className="text-sm text-muted-foreground">
+                {isCurrentUser ? 'Your turn to pick!' : `Waiting for pick...`}
+              </div>
+            </div>
+            
+            <div className="relative w-16 h-16">
+              <svg className="w-16 h-16 -rotate-90 transform">
+                <circle
+                  cx="32"
+                  cy="32"
+                  r="28"
+                  stroke="currentColor"
+                  strokeWidth="3"
+                  fill="transparent"
+                  className="text-muted-foreground/20"
+                />
+                <circle
+                  cx="32"
+                  cy="32"
+                  r="28"
+                  stroke="currentColor"
+                  strokeWidth="3"
+                  fill="transparent"
+                  strokeDasharray={`${2 * Math.PI * 28}`}
+                  strokeDashoffset={`${2 * Math.PI * 28 * (1 - progressPercentage)}`}
+                  className={`transition-all duration-1000 ${getTimerRingColor(displayTime)}`}
+                  strokeLinecap="round"
+                />
+              </svg>
+              <div className="absolute inset-0 flex items-center justify-center">
+                <Clock className={`w-6 h-6 ${displayTime <= TIMER_WARNING_THRESHOLDS.URGENT ? 'animate-pulse text-red-500' : 'text-muted-foreground'}`} />
+              </div>
+            </div>
+          </div>
         </div>
       )}
 
-      {/* Modern Sticky Header with Glassmorphism */}
-      <div className="sticky top-0 z-40 bg-background/80 backdrop-blur-xl border-b border-border/50 px-4 lg:px-8 py-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              onClick={() => startTransition(() => navigate('/league/waiting'))}
-              className="p-2 hover:bg-secondary/50 transition-all duration-200"
-            >
-              <ArrowLeft className="w-5 h-5" />
-            </Button>
-            <div>
-              <h1 className="text-xl font-bold">Draft Room</h1>
-              <div className="text-sm text-muted-foreground">
-                {draftData?.league?.name || 'Loading...'}
-              </div>
-            </div>
-          </div>
-          
-          {/* Enhanced Timer & Status Bar */}
-          <div className="flex items-center space-x-4">
-            {/* Current Picker Info */}
-            {currentPlayerId && currentPlayer && (
-              <div className="hidden sm:flex items-center space-x-2 px-3 py-1.5 bg-secondary/30 rounded-full">
-                {currentPlayer.avatar && (
-                  <img 
-                    src={currentPlayer.avatar} 
-                    alt={currentPlayer.name}
-                    className={`w-6 h-6 rounded-full transition-all duration-300 ${
-                      isCurrentUser ? 'ring-2 ring-green-400 animate-pulse' : ''
-                    }`}
-                  />
-                )}
-                <div className="text-xs">
-                  <div className={`font-medium ${isCurrentUser ? 'text-green-600' : 'text-foreground'}`}>
-                    {isCurrentUser ? 'Your turn!' : currentPlayer.name}
-                  </div>
-                </div>
-              </div>
-            )}
+      {/* Main Content */}
+      <div className="flex-1 p-4 space-y-4">
+        {draftStatus === 'not_started' && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Play className="w-5 h-5" />
+                Ready to Draft
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-muted-foreground mb-4">
+                All players are ready. Start the draft when everyone is prepared.
+              </p>
+              <Button 
+                onClick={onStartDraft}
+                disabled={starting}
+                className="w-full"
+                data-testid="button-start-draft"
+              >
+                {starting ? 'Starting...' : 'Start Draft'}
+              </Button>
+            </CardContent>
+          </Card>
+        )}
 
-            {/* Enhanced Timer Circle */}
-            {draftStatus === 'active' && (
-              <div className="relative">
-                <svg className="w-12 h-12 transform -rotate-90">
-                  <circle
-                    cx="24"
-                    cy="24"
-                    r="20"
-                    stroke="currentColor"
-                    strokeWidth="3"
-                    fill="none"
-                    className="text-secondary opacity-25"
-                  />
-                  <circle
-                    cx="24"
-                    cy="24"
-                    r="20"
-                    stroke="currentColor"
-                    strokeWidth="3"
-                    fill="none"
-                    strokeDasharray={`${2 * Math.PI * 20}`}
-                    strokeDashoffset={`${2 * Math.PI * 20 * (1 - progressPercentage)}`}
-                    className={`transition-all duration-500 ${getTimerRingColor()} ${
-                      displayTime <= 10 ? 'animate-pulse' : ''
-                    } ${displayTime <= 5 ? 'drop-shadow-lg' : ''}`}
-                    strokeLinecap="round"
-                    style={{
-                      animation: displayTime <= 30 ? 'pulse 2s ease-in-out infinite' : undefined
-                    }}
-                  />
-                </svg>
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className={`text-sm font-bold transition-colors duration-300 ${
-                    displayTime <= 5 ? 'text-red-600 animate-pulse' :
-                    displayTime <= 10 ? 'text-orange-600' :
-                    displayTime <= 30 ? 'text-yellow-600' :
-                    'text-foreground'
-                  }`}>
-                    {Math.max(0, Math.ceil(displayTime))}
-                  </div>
-                </div>
-              </div>
-            )}
-            
-            {/* Connection Status */}
-            <div className="flex items-center space-x-2">
-              {isConnected ? (
-                <div className="flex items-center space-x-1 text-green-600">
-                  <Wifi className="w-4 h-4" />
-                  <span className="text-xs font-medium hidden sm:inline">Connected</span>
-                </div>
-              ) : (
-                <div className="flex items-center space-x-1 text-red-600">
-                  <WifiOff className="w-4 h-4 animate-pulse" />
-                  <span className="text-xs font-medium hidden sm:inline">Disconnected</span>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* Progress Bar for Mobile */}
         {draftStatus === 'active' && (
-          <div className="sm:hidden mt-3 w-full bg-secondary/30 rounded-full h-2 overflow-hidden">
-            <div 
-              className={`h-full rounded-full transition-all duration-500 ${
-                displayTime <= 10 ? 'bg-red-500 animate-pulse' : 
-                displayTime <= 30 ? 'bg-orange-500' : 
-                'bg-green-500'
-              }`}
-              style={{ width: `${Math.max(0, progressPercentage * 100)}%` }}
-            />
-          </div>
-        )}
-      </div>
-
-      {/* Screen Flash Effect for Urgency (always mounted to avoid DOM churn) */}
-      <div
-        aria-hidden
-        className={`fixed inset-0 pointer-events-none z-30 border-4 transition-all duration-300 ${
-          isCurrentUser && displayTime <= 10
-            ? (displayTime <= 5
-                ? 'border-red-500 animate-pulse opacity-100'
-                : 'border-orange-500 opacity-100')
-            : 'border-transparent opacity-0'
-        }`}
-      />
-
-      <div className="container mx-auto px-4 py-6">
-        <div className="max-w-7xl mx-auto">
-          
-          {/* Modern Header */}
-          <div className="mb-8">
-            <div className="text-center mb-4">
-              <h1 className="text-2xl font-semibold text-foreground mb-1">Draft Room</h1>
-              <div className="flex items-center justify-center space-x-6 text-sm text-muted-foreground">
-                <div className="flex items-center space-x-1">
-                  <span>Round {currentRoundSafe} of {totalRoundsSafe}</span>
-                </div>
-                <div className="h-1 w-1 bg-muted-foreground rounded-full" />
-                <div className="flex items-center space-x-1">
-                  <span>Pick {draft?.currentPick ?? 1}</span>
-                </div>
+          <Tabs value={currentConference} onValueChange={(value) => setCurrentConference(value as 'AFC' | 'NFC')}>
+            <div className="flex items-center justify-between mb-4">
+              <TabsList>
+                <TabsTrigger value="AFC" className={getConferenceColor('AFC')}>
+                  AFC
+                </TabsTrigger>
+                <TabsTrigger value="NFC" className={getConferenceColor('NFC')}>
+                  NFC
+                </TabsTrigger>
+              </TabsList>
+              
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <input
+                  type="text"
+                  placeholder="Search teams..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10 pr-4 py-2 text-sm border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                  data-testid="input-search-teams"
+                />
+                {searchTerm && (
+                  <button
+                    onClick={() => setSearchTerm('')}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2"
+                    data-testid="button-clear-search"
+                  >
+                    <X className="w-4 h-4 text-muted-foreground hover:text-foreground" />
+                  </button>
+                )}
               </div>
             </div>
-          </div>
 
-          {/* Completed Draft - Mobile Optimized Layout */}
-          {draftStatus === 'completed' ? (
-            <div className="space-y-4">
-              {/* Header - Mobile Optimized */}
-              <Card className="w-full">
-                <CardContent className="p-4">
-                  <div className="text-center space-y-4">
-                    <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
-                      <div className="text-green-700 dark:text-green-300 font-bold text-lg mb-1">
-                        🎉 Draft Complete!
-                      </div>
-                      <div className="text-sm text-green-600 dark:text-green-400">
-                        All {picksSafe?.length || 0} picks completed across {Math.max(...(picksSafe?.map(p => p.round) || [0]))} rounds
-                      </div>
-                    </div>
-                    
-                    <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-                      <Button 
-                        onClick={() => {
-                          // Record completed draft league for stable tab
-                          if (draftData?.draft?.leagueId) {
-                            localStorage.setItem('lastDraftLeagueId', draftData.draft.leagueId);
-                          }
-                          
-                          // NAVIGATION FIX: Navigate first, then invalidate queries
-                          navigate(`/league/${draftData?.draft?.leagueId}/waiting`);
-                          
-                          // Delay query invalidation to after navigation completes
-                          setTimeout(() => {
-                            queryClient.invalidateQueries({
-                              predicate: (q) => String(q.queryKey?.[0] ?? '').startsWith('/api/user/stable/')
-                            });
-                          }, 100);
-                        }}
-                        variant="outline"
-                        className="flex-1 sm:flex-none"
-                        size="lg"
-                      >
-                        <ArrowLeft className="w-4 h-4 mr-2" />
-                        Back to League
-                      </Button>
-                      <Button 
-                        onClick={() => {
-                          // Record completed draft league for stable tab
-                          if (draftData?.draft?.leagueId) {
-                            localStorage.setItem('lastDraftLeagueId', draftData.draft.leagueId);
-                          }
-                          
-                          // NAVIGATION FIX: Navigate to main app
-                          navigate('/');
-                          
-                          // Delay query invalidation to after navigation completes
-                          setTimeout(() => {
-                            queryClient.invalidateQueries({
-                              predicate: (q) => String(q.queryKey?.[0] ?? '').startsWith('/api/user/stable/')
-                            });
-                            queryClient.invalidateQueries({ queryKey: ['/api/user/leagues'] });
-                          }, 100);
-                        }}
-                        variant="default"
-                        className="flex-1 sm:flex-none"
-                        size="lg"
-                      >
-                        <Trophy className="w-4 h-4 mr-2" />
-                        Go to Main App
-                      </Button>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-                  
-              {/* Draft Results - Mobile Optimized */}
-              <Card className="w-full">
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-lg text-center">Final Draft Results</CardTitle>
-                </CardHeader>
-                <CardContent className="p-4">
-                  {/* League Members and Their Teams - Mobile Layout */}
-                  <div className="space-y-4">
-                    {draftOrderSafe?.map((userId: string) => {
-                      const userPicks = picksSafe?.filter(p => p.user.id === userId) || [];
-                      const user = userPicks[0]?.user;
-                      
-                      if (!user) return null;
-                      
-                      return (
-                        <div key={userId} className="p-3 bg-secondary/20 rounded-lg border">
-                          <div className="flex items-center space-x-3 mb-3">
-                            {user.avatar && (
-                              <img 
-                                src={user.avatar} 
-                                alt={user.name} 
-                                className="w-8 h-8 rounded-full"
-                              />
-                            )}
-                            <div className="font-semibold text-lg">{user.name}</div>
-                          </div>
-                          {/* Mobile-Friendly Team Grid */}
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                            {userPicks.map((pick) => (
-                              <div 
-                                key={pick.id} 
-                                className="flex items-center space-x-2 p-2 bg-background/60 rounded-lg border text-sm"
-                              >
-                                <img 
-                                  src={pick.nflTeam.logoUrl} 
-                                  alt={pick.nflTeam.name}
-                                  className="w-6 h-6 flex-shrink-0"
-                                />
-                                <div className="min-w-0 flex-1">
-                                  <div className="font-medium truncate">{pick.nflTeam.name}</div>
-                                  <div className="text-xs text-muted-foreground">
-                                    Round {pick.round} {pick.isAutoPick ? '(Auto)' : ''}
-                                  </div>
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </CardContent>
-              </Card>
-                    
-              {/* Free Agent Teams - Mobile Optimized */}
-              {availableTeamsSafe && availableTeamsSafe.length > 0 && (
-                <Card className="w-full">
-                  <CardHeader className="pb-3">
-                    <CardTitle className="text-lg text-center">Free Agent Teams</CardTitle>
-                  </CardHeader>
-                  <CardContent className="p-4">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      {availableTeamsSafe.slice(0, 4).map((team) => (
-                        <div 
-                          key={team.id} 
-                          className="flex items-center space-x-3 p-3 bg-muted/30 rounded-lg border"
-                        >
-                          <img 
-                            src={team.logoUrl} 
-                            alt={team.name}
-                            className="w-8 h-8 flex-shrink-0"
-                          />
-                          <div className="min-w-0 flex-1">
-                            <div className="font-medium truncate">{team.name}</div>
-                            <div className="text-xs text-muted-foreground">{team.conference}</div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
-              
-              {/* Draft Stats - Mobile Optimized */}
-              <Card className="w-full">
-                <CardContent className="p-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="text-center p-4 bg-secondary/30 rounded-lg">
-                      <div className="text-2xl font-bold">{picksSafe?.filter(p => !p.isAutoPick).length || 0}</div>
-                      <div className="text-xs text-muted-foreground">Manual Picks</div>
-                    </div>
-                    <div className="text-center p-4 bg-secondary/30 rounded-lg">
-                      <div className="text-2xl font-bold">{picksSafe?.filter(p => p.isAutoPick).length || 0}</div>
-                      <div className="text-xs text-muted-foreground">Auto Picks</div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          ) : (
-            /* Normal Draft Layout */
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              
-              {/* Current Pick & Timer */}
-              <div className="lg:col-span-1 space-y-4">
-                <Card>
-                  <CardHeader className="pb-3">
-                    <CardTitle className="text-lg flex items-center space-x-2">
-                      <Clock className="w-5 h-5" />
-                      <span>Current Pick</span>
-                    </CardTitle>
-                  </CardHeader>
-                <CardContent>
-                  {(draftStatus === 'not_started' || draftStatus === 'pending' || draftStatus === 'waiting') ? (
-                    <div className="text-center space-y-3">
-                      <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
-                        <div className="text-blue-700 dark:text-blue-300 font-medium mb-2">
-                          ⏳ Waiting for Draft to Start
-                        </div>
-                        <div className="text-sm text-blue-600 dark:text-blue-400 mb-3">
-                          The league creator will start the draft when ready
-                        </div>
-                        <div className="flex items-center justify-center space-x-2 text-xs text-blue-500 dark:text-blue-400">
-                          <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-                          <span>Connected - real-time updates enabled</span>
-                        </div>
-                      </div>
-                      
-                      {/* Show start button if current user is commissioner */}
-                      {user?.id === draftData?.league?.creatorId && (
-                        <Button
-                          onClick={onStartDraft}
-                          disabled={starting}
-                          className="w-full"
-                          size="lg"
-                        >
-                          <Play className="w-4 h-4 mr-2" />
-                          {starting ? 'Starting…' : 'Start Draft'}
-                        </Button>
-                      )}
-                  ) : draftStatus === 'starting' ? (
-                    <div className="text-center space-y-3">
-                      <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
-                        <div className="text-green-700 dark:text-green-300 font-medium mb-2">
-                          🚀 Draft Starting!
-                        </div>
-                        <div className="text-sm text-green-600 dark:text-green-400 mb-3">
-                          Draft starts in
-                        </div>
-                        
-                        {/* Countdown Display */}
-                        <div className="text-4xl font-bold text-green-600 dark:text-green-400 mb-2 font-mono" aria-live="polite">
-                          {formatTime(displayTime)}
-                        </div>
-                        
-                        <div className="flex items-center justify-center space-x-2 text-xs text-green-500 dark:text-green-400">
-                          <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                          <span>Draft starting soon</span>
-                        </div>
-                      </div>
-                    </div>
-                    </div>
-                  ) : state?.currentUserId ? (
-                    <div className="text-center space-y-3">
-                      {/* Current Player - Modern Style */}
-                      <div className="flex items-center justify-center space-x-3 mb-4">
-                        {currentPlayer?.avatar && (
-                          <img 
-                            src={currentPlayer.avatar} 
-                            alt={currentPlayer.name} 
-                            className="w-8 h-8 rounded-full border-2 border-background shadow-sm"
-                          />
-                        )}
-                        <div className="text-center">
-                          <div className="text-sm text-muted-foreground">On the clock</div>
-                          <div className="font-medium text-foreground">
-                            {currentPlayer?.name || 'Loading...'}
-                          </div>
-                        </div>
-                      </div>
-                      
-                      {/* Timer - Keyed by phase to prevent React DOM mismatches */}
-                      <div key={timerPhase}>
-                        <div className={`text-3xl font-bold mb-3 font-mono transition-colors duration-300 ${
-                          displayTime <= 0 ? 'text-red-500 animate-pulse' : 
-                          displayTime <= 10 ? 'text-red-500 animate-pulse' : 
-                          displayTime <= 30 ? 'text-orange-500' : 'text-foreground'
-                        }`} aria-live="polite">
-                          {draftStatus === 'completed' ? (
-                            <span className="text-green-600 font-medium">
-                              Draft Complete
-                            </span>
-                          ) : displayTime <= 0 && localTime === 0 && !isCountingDown ? (
-                            <span className="text-muted-foreground">
-                              —
-                            </span>
-                          ) : (
-                            formatTime(displayTime)
-                          )}
-                        </div>
-                        
-                        {/* Clean Progress Bar */}
-                        <div className="w-full mb-4">
-                          <div className="relative h-2 bg-muted rounded-full overflow-hidden">
-                            <div 
-                              className={`h-full rounded-full transition-all duration-1000 ease-linear ${
-                                displayTime <= 10 ? 'bg-red-500' : 
-                                displayTime <= 30 ? 'bg-orange-500' : 
-                                'bg-primary'
-                              }`}
-                              style={{
-                                width: `${Math.max(0, (displayTime / pickTimeLimitSafe) * 100)}%`
-                              }}
-                            />
-                          </div>
-                          
-                          {/* Clean time display */}
-                          <div className="flex justify-between items-center mt-2 text-xs text-muted-foreground">
-                            <span>0:00</span>
-                            <span className={`font-medium ${
-                              displayTime <= 10 ? 'text-red-500' : 
-                              displayTime <= 30 ? 'text-orange-500' : 
-                              'text-foreground'
-                            }`}>
-                              {displayTime <= 10 ? 'Time running out' : 'Time remaining'}
-                            </span>
-                            <span>{formatTime(pickTimeLimitSafe)}</span>
-                          </div>
-                        </div>
-                        {isCurrentUser ? (
-                          <Badge className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100 border-green-200 dark:border-green-800">
-                            <Clock className="w-3 h-3 mr-1" />
-                            Your pick
-                          </Badge>
-                        ) : (
-                          <Badge variant="secondary" className="text-sm">
-                            <Clock className="w-3 h-3 mr-1" />
-                            {currentPlayer?.name || 'Player'} is picking
-                          </Badge>
-                        )}
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="text-center py-6">
-                      <div className="text-muted-foreground text-sm">
-                        Draft information loading...
-                      </div>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-
-              {/* Snake Draft Order */}
-              <Card>
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-lg flex items-center space-x-2">
-                    <span>Snake Draft Order</span>
-                    <Badge variant="outline" className="text-xs">Round {currentRoundSafe}</Badge>
-                  </CardTitle>
-                  <div className="text-xs text-muted-foreground">
-                    Direction changes each round
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  {(() => {
-                    // Calculate snake draft order for current round
-                    const baseOrder = draftOrderSafe || [];
-                    const isOddRound = currentRoundSafe % 2 === 1;
-                    const currentRoundOrder = isOddRound ? baseOrder : [...baseOrder].reverse();
-                    
-                    // Find current pick index and calculate upcoming picks
-                    const currentPickIndex = currentRoundOrder.findIndex((userId: string) => userId === state?.currentUserId);
-                    const totalPicks = currentRoundOrder.length;
-                    
-                    return (
-                      <div className="space-y-3">
-                        {/* Round Direction Indicator */}
-                        <div className="flex items-center justify-center space-x-2 p-2 bg-secondary/30 rounded-lg">
-                          <div className="text-xs font-medium">
-                            Round {currentRoundSafe} Direction:
-                          </div>
-                          <div className="flex items-center space-x-1">
-                            {isOddRound ? (
-                              <>
-                                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                                <div className="text-xs">→</div>
-                                <div className="w-2 h-2 bg-blue-300 rounded-full"></div>
-                                <div className="text-xs">→</div>
-                                <div className="w-2 h-2 bg-blue-100 rounded-full"></div>
-                              </>
-                            ) : (
-                              <>
-                                <div className="w-2 h-2 bg-red-100 rounded-full"></div>
-                                <div className="text-xs">←</div>
-                                <div className="w-2 h-2 bg-red-300 rounded-full"></div>
-                                <div className="text-xs">←</div>
-                                <div className="w-2 h-2 bg-red-500 rounded-full"></div>
-                              </>
-                            )}
-                          </div>
-                        </div>
-
-                        {/* Draft Positions */}
-                        <div className="space-y-1">
-                          {currentRoundOrder.map((userId: string, index: number) => {
-                            const userPicks = picksSafe.filter(p => p.user.id === userId);
-                            const isCurrentPick = userId === state?.currentUserId;
-                            const isUpNext = index === currentPickIndex + 1;
-                            const isJustPicked = index === currentPickIndex - 1;
-                            const pickPosition = index + 1;
-                            
-                            // Calculate actual pick number in the draft
-                            const pickNumber = ((currentRoundSafe - 1) * totalPicks) + pickPosition;
-                            
-                            // Get user name - try multiple sources
-                            let userName = 'Loading...';
-                            if (userPicks.length > 0 && userPicks[0].user?.name) {
-                              userName = userPicks[0].user.name;
-                            } else if (currentPlayer && currentPlayer.id === userId) {
-                              userName = currentPlayer.name;
-                            } else {
-                              // Fallback to known user names based on userId
-                              const userNameMap: Record<string, string> = {
-                                '320ca071-16f9-41e0-b991-663da88afbc0': 'Beta Bot',
-                                'd8873675-274c-46f9-ab48-00955c81d875': 'Mok Sports',
-                                'f159aa72-dee8-4847-8ccc-22ecf9f27695': 'Delta Bot',
-                                '8dce55ed-86ab-4723-a7c6-9ade8cd7aaae': 'Alpha Bot',
-                                '766992a8-44f0-4d0e-a65f-987237e67a35': 'Gamma Bot',
-                                '9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a': 'Sky Evans'
-                              };
-                              userName = userNameMap[userId] || 'Unknown User';
-                            }
-                            
-                            let statusColor = 'bg-secondary/30';
-                            let statusText = '';
-                            let statusBadge = null;
-                            
-                            if (isCurrentPick) {
-                              statusColor = 'bg-fantasy-purple/20 border-2 border-fantasy-purple';
-                              statusText = 'Drafting Now';
-                              statusBadge = (
-                                <Badge variant="default" className="text-xs animate-pulse">
-                                  <Clock className="w-3 h-3 mr-1" />
-                                  NOW
-                                </Badge>
-                              );
-                            } else if (isUpNext) {
-                              statusColor = 'bg-orange-100 dark:bg-orange-900/30 border border-orange-300';
-                              statusText = 'Up Next';
-                              statusBadge = (
-                                <Badge variant="outline" className="text-xs bg-orange-50 text-orange-700 border-orange-300">
-                                  NEXT
-                                </Badge>
-                              );
-                            } else if (isJustPicked) {
-                              statusColor = 'bg-green-100 dark:bg-green-900/30 border border-green-300';
-                              statusText = 'Just Picked';
-                              statusBadge = (
-                                <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-300">
-                                  DONE
-                                </Badge>
-                              );
-                            }
-                            
-                            return (
-                              <div 
-                                key={userId} 
-                                className={`flex items-center space-x-3 p-3 rounded-lg transition-all ${statusColor}`}
-                              >
-                                {/* Position Number with Direction Arrow */}
-                                <div className="flex items-center space-x-2">
-                                  <div className={`text-sm font-bold w-7 h-7 rounded-full flex items-center justify-center ${
-                                    isCurrentPick ? 'bg-fantasy-purple text-white' : 
-                                    isUpNext ? 'bg-orange-500 text-white' :
-                                    isJustPicked ? 'bg-green-500 text-white' :
-                                    'bg-secondary text-muted-foreground'
-                                  }`}>
-                                    {pickPosition}
-                                  </div>
-                                  
-                                  {/* Snake Direction Indicator */}
-                                  {index < currentRoundOrder.length - 1 && (
-                                    <div className="text-xs text-muted-foreground">
-                                      {isOddRound ? '↓' : '↑'}
-                                    </div>
-                                  )}
-                                </div>
-                                
-                                <div className="flex-1 min-w-0">
-                                  <div className="flex items-center justify-between">
-                                    <div>
-                                      <div className="text-sm font-medium truncate">
-                                        {userName}
-                                      </div>
-                                      <div className="text-xs text-muted-foreground">
-                                        Pick #{pickNumber} • {userPicks.length} teams drafted
-                                      </div>
-                                    </div>
-                                    {statusBadge}
-                                  </div>
-                                </div>
-                              </div>
-                            );
-                          })}
-                        </div>
-
-                        {/* Next Round Preview */}
-                        {currentRoundSafe < totalRoundsSafe && (
-                          <div className="mt-4 p-3 bg-secondary/20 rounded-lg border border-dashed border-secondary">
-                            <div className="text-xs font-medium text-muted-foreground mb-2">
-                              Round {currentRoundSafe + 1} Preview:
-                            </div>
-                            <div className="flex items-center space-x-2 text-xs text-muted-foreground">
-                              <span>Direction will be:</span>
-                              {(currentRoundSafe + 1) % 2 === 1 ? (
-                                <span className="text-blue-600 font-medium">Forward →</span>
-                              ) : (
-                                <span className="text-red-600 font-medium">← Reverse</span>
-                              )}
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })()}
-                </CardContent>
-              </Card>
-
-              {/* Recent Picks */}
-              <Card>
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-lg">Recent Picks</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <ScrollArea className="h-48">
-                    <div className="space-y-2">
-                      {picksSafe.slice(-8).reverse().map((pick) => (
-                        <div key={pick.id} className="flex items-center space-x-3 p-2 rounded-lg bg-secondary/50">
-                          <TeamLogo 
-                            logoUrl={pick.nflTeam.logoUrl}
-                            teamCode={pick.nflTeam.code}
-                            teamName={`${pick.nflTeam.city} ${pick.nflTeam.name}`}
-                            size="md"
-                          />
-                          <div className="flex-1 min-w-0">
-                            <div className="text-sm font-medium truncate">
-                              {pick.nflTeam.city} {pick.nflTeam.name}
-                            </div>
-                            <div className="text-xs text-muted-foreground">
-                              R{pick.round} - {pick.user.name}
-                              {pick.isAutoPick && ' (Auto)'}
-                            </div>
-                          </div>
-                          <div className={`w-2 h-2 rounded-full ${getConferenceColor(pick.nflTeam.conference)}`} />
-                        </div>
-                      ))}
-                    </div>
-                  </ScrollArea>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Team Selection */}
-            <div className="lg:col-span-2">
-              <Card>
-                <CardHeader className="pb-3">
-                  <div className="flex items-center justify-between">
-                    <CardTitle className="text-lg">NFL Teams</CardTitle>
-                    <div className="text-sm text-muted-foreground">
-                      {availableTeamsSafe?.length || 0} available • {picksSafe?.length || 0} drafted
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  {isCurrentUser && state?.canMakePick && (
-                    <div className="mb-4 p-3 bg-fantasy-purple/10 rounded-lg border border-fantasy-purple/20">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm font-medium">
-                          {selectedTeam ? 'Team selected' : 'Select a team to draft'}
-                        </span>
-                        <Button 
-                          onClick={handleMakePick}
-                          disabled={!selectedTeam || makePickMutation.isPending}
-                          size="sm"
-                        >
-                          {makePickMutation.isPending ? 'Drafting...' : 'Draft Team'}
-                        </Button>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Vibration Test Button (Development) */}
-                  {(() => { try { return import.meta.env.DEV; } catch { return false; } })() && (
-                    <div className="mb-4 p-2 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200">
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs text-yellow-800 dark:text-yellow-200">Vibration Test</span>
-                        <Button 
-                          size="sm"
-                          variant="outline"
-                          onClick={() => {
-                            console.log('[VIBRATION TEST] Testing vibration...');
-                            const result = vibrate([200, 100, 200]);
-                            console.log('[VIBRATION TEST] Result:', result);
-                            
-                            // Also test if HTTPS is the issue
-                            console.log('[VIBRATION TEST] Protocol:', window.location.protocol);
-                            console.log('[VIBRATION TEST] Navigator vibrate:', 'vibrate' in navigator);
-                            console.log('[VIBRATION TEST] User agent:', navigator.userAgent);
-                          }}
-                        >
-                          Test Vibration
-                        </Button>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Quick Team Search */}
-                  <div className="relative mb-4">
-                    <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                    <input
-                      type="text"
-                      placeholder="Search teams, cities, divisions..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      className="w-full pl-9 pr-10 py-2 border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
-                      data-testid="input-team-search"
-                    />
-                    {searchTerm && (
-                      <button
-                        onClick={() => setSearchTerm('')}
-                        className="absolute right-3 top-3 text-muted-foreground hover:text-foreground"
-                        data-testid="button-clear-search"
-                      >
-                        <X className="h-4 w-4" />
-                      </button>
-                    )}
-                  </div>
-
-                  <ScrollArea className="h-96">
-                    {/* Modern Swipe-Enabled Conference Selection */}
-                    <div 
-                      className="w-full"
-                      onTouchStart={handleTouchStart}
-                      onTouchEnd={handleTouchEnd}
-                    >
-                      {/* Conference Toggle with Visual Indicators */}
-                      <div className="grid w-full grid-cols-2 mb-4 bg-secondary/20 rounded-lg p-1">
-                        <button
-                          onClick={() => setCurrentConference('AFC')}
-                          className={`py-2 px-4 rounded-md text-sm font-medium transition-all duration-200 ${
-                            currentConference === 'AFC' 
-                              ? 'bg-background shadow-sm text-foreground' 
-                              : 'text-muted-foreground hover:text-foreground'
-                          }`}
-                        >
-                          AFC ({(filterTeams(availableTeamsSafe?.filter(team => team.conference === 'AFC') || [])?.length || 0)} available)
-                        </button>
-                        <button
-                          onClick={() => setCurrentConference('NFC')}
-                          className={`py-2 px-4 rounded-md text-sm font-medium transition-all duration-200 ${
-                            currentConference === 'NFC' 
-                              ? 'bg-background shadow-sm text-foreground' 
-                              : 'text-muted-foreground hover:text-foreground'
-                          }`}
-                        >
-                          NFC ({(filterTeams(availableTeamsSafe?.filter(team => team.conference === 'NFC') || [])?.length || 0)} available)
-                        </button>
-                      </div>
-                      
-                      {/* Swipe Indicator */}
-                      <div className="flex justify-center mb-3">
-                        <div className="text-xs text-muted-foreground flex items-center space-x-2">
-                          <ChevronUp className="w-3 h-3 rotate-180" />
-                          <span>Swipe to switch conferences</span>
-                          <ChevronUp className="w-3 h-3" />
-                        </div>
-                      </div>
-
-                      {/* Conference Content with Smooth Transitions */}
-                      <div className="transition-all duration-300 ease-in-out">
-                        <div className="space-y-4">
-                          {renderConferenceTeams(currentConference)}
-                        </div>
-                      </div>
-                    </div>
-                  </ScrollArea>
-                </CardContent>
-              </Card>
-            </div>
-
-          </div>
-            )}
-        </div>
-
-        {/* Draft Completion Navigation */}
-        {draftStatus === 'completed' && (
-          <div className="mt-8 mx-4 lg:mx-8">
-            <Card className="border-green-500 bg-green-50 dark:bg-green-950/30">
-              <CardContent className="pt-6">
-                <div className="text-center space-y-4">
-                  <div className="flex items-center justify-center space-x-2">
-                    <Trophy className="w-6 h-6 text-green-600" />
-                    <h3 className="text-xl font-bold text-green-700 dark:text-green-400">Draft Completed!</h3>
-                  </div>
-                  <p className="text-sm text-green-600 dark:text-green-300">
-                    All picks have been made. Your fantasy season is ready to begin!
-                  </p>
-                  <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                    <Button 
-                      onClick={() => {
-                        // Force refresh user leagues data and navigate to main app
-                        queryClient.invalidateQueries({ queryKey: ['/api/user/leagues'] });
-                        navigate('/');
-                      }}
-                      size="lg"
-                      className="bg-green-600 hover:bg-green-700"
-                    >
-                      <Trophy className="w-4 h-4 mr-2" />
-                      Go to Main App
-                    </Button>
-                    <Button 
-                      onClick={() => {
-                        const currentLeague = leagueData?.find((l: any) => l.draftId === draftData?.state?.draft?.id);
-                        if (currentLeague) {
-                          navigate(`/league/waiting?id=${currentLeague.id}`);
-                        }
-                      }}
-                      variant="outline"
-                      size="lg"
-                    >
-                      <ArrowLeft className="w-4 h-4 mr-2" />
-                      Back to League
-                    </Button>
-                  </div>
+            <TabsContent value="AFC" className="mt-0">
+              <ScrollArea className="h-[60vh]" onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
+                <div className="pr-4">
+                  {renderConferenceTeams('AFC')}
                 </div>
-              </CardContent>
-            </Card>
-          </div>
-        )}
+              </ScrollArea>
+            </TabsContent>
 
-        {/* Floating Action Button (FAB) for Draft Pick */}
-        {showFAB && (
-          <div className="fixed bottom-6 right-6 z-40">
-            <Button
-              onClick={handleMakePick}
-              disabled={makePickMutation.isPending}
-              size="lg"
-              className="h-14 w-14 rounded-full shadow-lg bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white border-0 transition-all duration-300 hover:scale-105"
-            >
-              {makePickMutation.isPending ? (
-                <RotateCcw className="w-6 h-6 animate-spin" />
-              ) : (
-                <Plus className="w-6 h-6" />
-              )}
-            </Button>
-            
-            {/* FAB Tooltip */}
-            <div className="absolute bottom-16 right-0 bg-black/90 text-white text-xs px-3 py-2 rounded-lg whitespace-nowrap opacity-0 pointer-events-none transition-opacity duration-200 hover:opacity-100">
-              Draft Selected Team
-            </div>
-          </div>
+            <TabsContent value="NFC" className="mt-0">
+              <ScrollArea className="h-[60vh]" onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
+                <div className="pr-4">
+                  {renderConferenceTeams('NFC')}
+                </div>
+              </ScrollArea>
+            </TabsContent>
+          </Tabs>
         )}
-
       </div>
+
+      {/* Floating Action Button */}
+      {showFAB && (
+        <div className="fixed bottom-6 right-6 z-50">
+          <Button
+            size="lg"
+            onClick={handleMakePick}
+            disabled={makePickMutation.isPending}
+            className="rounded-full shadow-lg"
+            data-testid="button-make-pick"
+          >
+            {makePickMutation.isPending ? (
+              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+            ) : (
+              <>
+                <Zap className="w-5 h-5 mr-2" />
+                Draft Pick
+              </>
+            )}
+          </Button>
+        </div>
+      )}
+
+      {/* Celebration Animation */}
+      {showCelebration && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className="text-center space-y-4 animate-in fade-in-0 zoom-in-95 duration-500">
+            <div className="text-6xl animate-bounce">🎉</div>
+            <h2 className="text-2xl font-bold text-white">Pick Made!</h2>
+            <p className="text-white/80">Great choice!</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
