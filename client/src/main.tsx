@@ -3,6 +3,7 @@ import { StrictMode, Suspense } from "react";
 import "@/index.css";
 
 (async function bootstrap() {
+  console.log("🚀 FRONTEND STARTING - bootstrap function running");
   const { default: App } = await import("@/App");
 
   const rootEl = document.getElementById("root");
