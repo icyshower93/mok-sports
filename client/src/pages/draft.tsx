@@ -31,38 +31,33 @@ const VIBRATION_PATTERNS = {
   YOUR_TURN: [300, 100, 300] as number[],
 };
 
-// ✅ Fully hoisted helper functions (safe to call anywhere below)
-function normalizeDraftResponse(data: any, params: any): any {
+// ✅ HOISTED helpers (functions, not const fns)
+export function normalizeDraftResponse(raw: any): any {
+  const state = raw?.state ?? raw ?? {};
+  const participants = state.participants ?? raw.participants ?? [];
   return {
-    id: data.id ?? params.draftId,
-    leagueId: data.leagueId ?? data.state?.leagueId ?? null,
-    
-    // unify status across shapes: status | state.status | state.phase
-    status: data.status ?? data.state?.status ?? data.state?.phase ?? 'waiting',
-    
-    // unify current player id / object
-    currentPlayerId: data.currentPlayer?.id ?? data.state?.currentPlayerId ?? null,
-    
-    // normalize participants for user matching
-    participants: data.participants ?? data.players ?? data.state?.participants ?? [],
-    
-    // timer seconds (server or 0)
-    timerSeconds: data.timer?.remaining ?? data.state?.timer?.remaining ?? 0,
-    
-    // preserve original data structure for backward compatibility
-    state: data.state,
-    draft: data.draft || data.state?.draft,
-    isCurrentUser: data.isCurrentUser,
-    
-    // add missing properties for UI compatibility
-    currentPlayer: data.currentPlayer ?? data.state?.currentPlayer ?? null,
-    league: data.league ?? data.state?.league ?? null
+    id: raw.id ?? state.id ?? null,
+    leagueId: raw.leagueId ?? state.leagueId ?? null,
+    status: raw.status ?? state.status ?? state.phase ?? 'waiting',
+    currentPlayerId:
+      raw.currentPlayerId ?? raw.currentPlayer?.id ?? state.currentPlayerId ?? null,
+    participants,
+    timerSeconds:
+      raw.timer?.remaining ??
+      state.timer?.remaining ??
+      0,
+    // preserve compatibility
+    state: raw.state,
+    draft: raw.draft || raw.state?.draft,
+    isCurrentUser: raw.isCurrentUser,
+    currentPlayer: raw.currentPlayer ?? raw.state?.currentPlayer ?? null,
+    league: raw.league ?? raw.state?.league ?? null
   };
 }
 
-function computeWebSocketUrl(origin: string, draftId: string, userId: string): string {
-  const wsBase = origin.replace(/^http/i, 'ws');
-  return `${wsBase}/draft-ws?userId=${userId}&draftId=${draftId}`;
+function computeWsUrl(origin: string, draftId: string): string {
+  const base = origin.replace(/^http/i, 'ws');
+  return `${base}/ws/draft/${draftId}`;
 }
 
 function formatTime(seconds: number): string {
@@ -282,7 +277,7 @@ export default function DraftPage() {
         console.log('[Draft] ✅ Draft data received successfully:', data);
         
         // Normalize the Draft API response using hoisted function
-        const normalized = normalizeDraftResponse(data, params);
+        const normalized = normalizeDraftResponse(data);
         console.log('[Draft] 🔧 Normalized response:', normalized);
         
         return normalized;
@@ -309,8 +304,8 @@ export default function DraftPage() {
   const wsUrl = canConnect 
     ? useMemo(() => {
         const baseUrl = import.meta.env.VITE_WS_BASE_URL || window.location.origin;
-        return computeWebSocketUrl(baseUrl, draftId!, user!.id);
-      }, [draftId, user?.id])
+        return computeWsUrl(baseUrl, draftId!);
+      }, [draftId])
     : null;
 
   console.log('[Draft] WebSocket connection decision:', { 
