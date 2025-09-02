@@ -161,9 +161,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // Smart redirect only for landing contexts
   const [loc] = useLocation();
-  const enableSmart =
-    isAuthenticated && !!user && !isLoading &&
-    (loc === "/" || loc === "/dashboard" || loc.startsWith("/league/") || loc.startsWith("/draft"));
+  const isLanding =
+    loc === "/" ||
+    loc === "/dashboard" ||
+    loc === "/league" ||            // exact
+    loc.startsWith("/league/") ||   // league/* only
+    loc.startsWith("/draft");       // draft/* only
+  const enableSmart = isAuthenticated && !!user && !isLoading && isLanding;
   useSmartRedirect(enableSmart);
 
   const value = useMemo<AuthValue>(() => ({
