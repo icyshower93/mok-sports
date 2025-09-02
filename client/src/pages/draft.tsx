@@ -286,10 +286,13 @@ export default function DraftPage() {
       (p?.email && p.email === user?.email)
   ) && draftData?.currentPlayerId === myId;
 
-  // Derived, null-safe handles  
+  // Derived, null-safe handles using normalized fields
   const draft = draftData?.state?.draft ?? null;
   const draftStatus = draftData?.status ?? 'not_started';
-  const timeRemainingSafe = draftData?.state?.timeRemaining ?? 0;
+  const currentPlayerId = draftData?.currentPlayerId ?? null;
+  const timeRemainingSafe = draftData?.timerSeconds ?? 0;
+  const isCountingDown = draftStatus === 'active';
+  const displaySeconds = draftData?.timerSeconds ?? 0;
   const picksSafe = state?.picks ?? [];
   const availableTeamsSafe = state?.availableTeams ?? [];
   const draftOrderSafe = draft?.draftOrder ?? [];
@@ -314,7 +317,7 @@ export default function DraftPage() {
   useEffect(() => {
     const newServerTime = lastMessage?.type === 'timer_update' ? 
       lastMessage.data?.timeRemaining : 
-      draftData?.state?.timeRemaining;
+      draftData?.timerSeconds;
 
     if (newServerTime !== undefined && newServerTime !== serverTime) {
       console.log('[SMOOTH TIMER] Server update received:', newServerTime);
@@ -363,7 +366,7 @@ export default function DraftPage() {
       const newUiTime = Math.min(newServerTime, localTime || newServerTime);
       setServerTime(newServerTime);
       setLocalTime(newUiTime);
-      setIsCountingDown(newServerTime > 0 && draftData?.state?.draft?.status === 'active');
+      setIsCountingDown(newServerTime > 0 && draftStatus === 'active');
       
       // Reset zero tracking on fresh updates
       if (newServerTime > 0) {
@@ -447,7 +450,7 @@ export default function DraftPage() {
 
   // Display logic with smooth transitions and integer rounding
   const displayTime = (() => {
-    const rawTime = isCountingDown ? localTime : (serverTime || draftData?.state?.timeRemaining || 0);
+    const rawTime = isCountingDown ? localTime : (serverTime || draftData?.timerSeconds || 0);
     
     // Smooth to integer if showing whole seconds (avoids 59.999 → 59 flicker)
     return Math.floor(rawTime + 1e-6);
@@ -724,7 +727,8 @@ export default function DraftPage() {
 
   // Variables moved earlier to prevent temporal dead zone errors
   // const state and isCurrentUser are now declared above
-  const currentPlayer = draftData?.currentPlayer || null;
+  const currentPlayer = draftData?.currentPlayer || 
+    (currentPlayerId ? draftData?.participants?.find((p: any) => p.id === currentPlayerId || p.userId === currentPlayerId) : null) || null;
   const teams = teamsData?.teams || {};
 
   // DEBUG LOGGING AND CRITICAL TIMER SYNC FIX
@@ -907,7 +911,7 @@ export default function DraftPage() {
           {/* Enhanced Timer & Status Bar */}
           <div className="flex items-center space-x-4">
             {/* Current Picker Info */}
-            {draftData?.currentPlayerId && currentPlayer && (
+            {currentPlayerId && currentPlayer && (
               <div className="hidden sm:flex items-center space-x-2 px-3 py-1.5 bg-secondary/30 rounded-full">
                 {currentPlayer.avatar && (
                   <img 
