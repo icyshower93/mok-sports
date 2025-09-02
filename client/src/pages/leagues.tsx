@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/features/auth/useAuth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -39,7 +39,7 @@ export default function LeaguesPage() {
   }, []);
   
   const { user } = useAuth();
-  const [selectedSeason] = useState(getCurrentSeason()); // Current season dynamically determined
+  const season = getCurrentSeason();
   
   // Get user's current league (using first league for now)
   const { data: userLeagues } = useQuery({
@@ -47,22 +47,20 @@ export default function LeaguesPage() {
     enabled: !!user,
   });
 
-  const currentLeagueId = Array.isArray(userLeagues) && userLeagues.length > 0 ? userLeagues[0].id : null;
+  const leagueId = Array.isArray(userLeagues) && userLeagues.length > 0 ? userLeagues[0].id : null;
 
   const standingsQuery = useQuery<StandingsResponse>({
-    queryKey: ["league-standings", currentLeagueId, selectedSeason],
-    enabled: !!currentLeagueId,
+    queryKey: ["league-standings", leagueId, season],
+    enabled: !!leagueId,
     retry: false,
     queryFn: async () => {
-      const url = `/api/leagues/${currentLeagueId}/standings/${selectedSeason}`;
-      console.debug("[Leagues] fetching:", url);
+      const url = `/api/leagues/${leagueId}/standings/${season}`;
+      console.debug("[Leagues] fetching standings:", url);
       const res = await fetch(url, { credentials: "include" });
-      if (!res.ok) {
-        const body = await res.text().catch(() => "");
-        console.error("[Leagues] fetch error", res.status, body);
-        throw new Error(`Standings fetch failed: ${res.status}`);
-      }
-      return res.json();
+      const text = await res.text().catch(() => "");
+      console.debug("[Leagues] response status:", res.status, "body:", text.slice(0, 200));
+      if (!res.ok) throw new Error(`Standings fetch failed: ${res.status}`);
+      return JSON.parse(text);
     },
   });
 
@@ -76,7 +74,7 @@ export default function LeaguesPage() {
     );
   }
 
-  if (!currentLeagueId) {
+  if (!leagueId) {
     return (
       <MainLayout>
         <div className="p-3 text-sm">No league selected.</div>
@@ -87,13 +85,7 @@ export default function LeaguesPage() {
   if (standingsQuery.isLoading) {
     return (
       <MainLayout>
-        <div className="p-4 max-w-4xl mx-auto">
-          <Card>
-            <CardContent className="p-8 text-center">
-              <div>Loading standings...</div>
-            </CardContent>
-          </Card>
-        </div>
+        <div className="p-3 text-sm">Loading standings…</div>
       </MainLayout>
     );
   }
@@ -143,7 +135,7 @@ export default function LeaguesPage() {
               League Standings
             </h1>
             <p className="text-muted-foreground">
-              {standingsQuery.data?.leagueInfo?.name || 'League'} • Season {selectedSeason}
+              {standingsQuery.data?.leagueInfo?.name || 'League'} • Season {season}
             </p>
           </div>
           <Badge variant="secondary">
