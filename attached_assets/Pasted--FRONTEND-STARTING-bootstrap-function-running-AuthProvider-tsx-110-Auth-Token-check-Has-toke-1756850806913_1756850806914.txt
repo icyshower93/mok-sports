@@ -1,0 +1,103 @@
+🚀 FRONTEND STARTING - bootstrap function running
+AuthProvider.tsx:110 [Auth] Token check - Has token: false Has user: false Loading: true
+AuthProvider.tsx:110 [Auth] Token check - Has token: true Has user: true Loading: false
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+RequireLeague.tsx:5 [RequireLeague] entering
+RequireLeague.tsx:9 [RequireLeague] Object
+RequireLeague.tsx:13 [RequireLeague] loading state; returning null
+NavigationTracer.tsx:8 [Nav] location => /
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+RequireLeague.tsx:5 [RequireLeague] entering
+RequireLeague.tsx:9 [RequireLeague] Object
+RequireLeague.tsx:18 [RequireLeague] no league; redirect -> /dashboard
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+NavigationTracer.tsx:8 [Nav] location => /dashboard
+index.mjs:308 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+(anonymous) @ index.mjs:308Understand this warning
+dashboard.tsx:100 [CreateLeague] Sending payload: Object
+dashboard.tsx:108 [CreateLeague] Response status: 201
+dashboard.tsx:124 [CreateLeague] Success result: Object
+dashboard.tsx:128 [CreateLeague] Success - server returned: Object
+dashboard.tsx:144 [CreateLeague] Navigating to waiting room with leagueId: 579f8dd5-e854-495e-830b-681dcb876c14
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+league-waiting.tsx:53 [LeagueWaiting] Auth state: Object
+league-waiting.tsx:94 [LeagueWaiting] WebSocket connection check: Object
+use-draft-websocket-fixed.ts:25 [WebSocket] Hook called with: Object
+league-waiting.tsx:110 [LeagueWaiting] WebSocket status: Object
+NavigationTracer.tsx:8 [Nav] location => /league/waiting
+league-waiting.tsx:66 [LeagueWaiting] Checking URL params: Object
+use-draft-websocket-fixed.ts:114 [WebSocket] MAIN useEffect trigger - draftId: null userId: true
+use-draft-websocket-fixed.ts:135 [WebSocket] ❌ Connection requirements not met: Object
+league-waiting.tsx:53 [LeagueWaiting] Auth state: Object
+league-waiting.tsx:94 [LeagueWaiting] WebSocket connection check: Object
+use-draft-websocket-fixed.ts:25 [WebSocket] Hook called with: Object
+league-waiting.tsx:110 [LeagueWaiting] WebSocket status: Object
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+league-waiting.tsx:53 [LeagueWaiting] Auth state: Object
+league-waiting.tsx:94 [LeagueWaiting] WebSocket connection check: Object
+use-draft-websocket-fixed.ts:25 [WebSocket] Hook called with: Object
+league-waiting.tsx:110 [LeagueWaiting] WebSocket status: Object
+league-waiting.tsx:120 [LeagueWaiting] League data updated: Object
+league-waiting.tsx:53 [LeagueWaiting] Auth state: Object
+league-waiting.tsx:94 [LeagueWaiting] WebSocket connection check: Object
+use-draft-websocket-fixed.ts:25 [WebSocket] Hook called with: Object
+league-waiting.tsx:110 [LeagueWaiting] WebSocket status: Object
+league-waiting.tsx:53 [LeagueWaiting] Auth state: Object
+league-waiting.tsx:94 [LeagueWaiting] WebSocket connection check: Object
+use-draft-websocket-fixed.ts:25 [WebSocket] Hook called with: Object
+league-waiting.tsx:110 [LeagueWaiting] WebSocket status: Object
+league-waiting.tsx:53 [LeagueWaiting] Auth state: Object
+league-waiting.tsx:94 [LeagueWaiting] WebSocket connection check: Object
+use-draft-websocket-fixed.ts:25 [WebSocket] Hook called with: Object
+league-waiting.tsx:110 [LeagueWaiting] WebSocket status: Object
+league-waiting.tsx:120 [LeagueWaiting] League data updated: Object
+league-waiting.tsx:53 [LeagueWaiting] Auth state: Object
+league-waiting.tsx:94 [LeagueWaiting] WebSocket connection check: Object
+use-draft-websocket-fixed.ts:25 [WebSocket] Hook called with: Object
+league-waiting.tsx:110 [LeagueWaiting] WebSocket status: Object
+draft-controls.tsx:43 [StartDraft] ✅ Starting draft for league: 579f8dd5-e854-495e-830b-681dcb876c14
+league-waiting.tsx:53 [LeagueWaiting] Auth state: Object
+league-waiting.tsx:94 [LeagueWaiting] WebSocket connection check: Object
+use-draft-websocket-fixed.ts:25 [WebSocket] Hook called with: Object
+league-waiting.tsx:110 [LeagueWaiting] WebSocket status: Object
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+draft.tsx:301 [Draft] WebSocket connection decision: Object
+draft.tsx:417 [TIMER DEBUG] Display Time: 0
+draft.tsx:418 [TIMER DEBUG] Current Player: null
+draft.tsx:419 [NORMALIZED FIELDS] Status: not_started CurrentPlayerId: null TimerSeconds: 0
+draft.tsx:502 [TIMER SYNC] Display: 0.0s, Limit: 120s, Progress: 0.0%
+draft.tsx:556 [Draft] All hooks declared, starting conditional logic
+draft.tsx:577 [Draft] RENDER: Loading state - draft data loading - authLoading: false isLoading: true draftData: false
+NavigationTracer.tsx:8 [Nav] location => /draft/46160cd7-595b-4f70-9956-795ea53993ff
+draft.tsx:228 [Draft] === STARTING DRAFT FETCH ===
+draft.tsx:229 [Draft] Draft ID: 46160cd7-595b-4f70-9956-795ea53993ff
+draft.tsx:230 [Draft] Auth status - User: Sky Evans Authenticated: true Loading: false
+draft.tsx:233 [Draft] Making API request to: /api/drafts/46160cd7-595b-4f70-9956-795ea53993ff
