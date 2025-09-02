@@ -424,6 +424,81 @@ export default async function setupDraftRoutes(app: any, storage: IStorage, webS
     }
   });
 
+  // Start draft by league ID - this is what the frontend expects
+  app.post("/api/leagues/:leagueId/draft/start", async (req: any, res: any) => {
+    try {
+      const user = await getAuthenticatedUser(req);
+      if (!user) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+      const { leagueId } = req.params;
+
+      // Verify user is league creator
+      const league = await storage.getLeague(leagueId);
+      console.log(`[Draft Start] User ${user.id} attempting to start draft. League creator: ${league?.creatorId}`);
+      if (!league || league.creatorId !== user.id) {
+        return res.status(403).json({ message: "Only league creator can start draft" });
+      }
+
+      // Get or create draft for this league
+      let draft = await storage.getLeagueDraft(leagueId);
+      
+      if (!draft) {
+        // Create new draft
+        draft = await storage.createDraft({
+          leagueId,
+          draftOrder: league.members.map(m => m.id),
+          totalRounds: 5,
+          pickTimeLimit: 120
+        });
+        console.log(`[Draft Start] Created new draft ${draft.id} for league ${leagueId}`);
+      }
+
+      if (draft.status !== 'not_started') {
+        // If draft is already active, return it idempotently
+        if (draft.status === 'active') {
+          console.log(`[Draft Start] Draft already active, returning existing state`);
+          const draftState = await draftManager.getDraftState(draft.id);
+          
+          return res.json({
+            message: "Draft already started",
+            draftId: draft.id,
+            leagueId,
+            status: draft.status,
+            state: draftState
+          });
+        }
+        
+        return res.status(400).json({ message: "Draft has already been started" });
+      }
+
+      // ✅ Send response FIRST - keep it minimal & serializable
+      const draftState = await draftManager.startDraft(draft.id);
+
+      res.status(201).json({
+        message: "Draft started successfully",
+        draftId: draft.id,
+        leagueId,
+        status: "active",
+        state: draftState
+      });
+
+      // 🔔 Then broadcast in the background (don't let failures affect the response)
+      setImmediate(() => {
+        try {
+          // Broadcast to WebSocket clients if available
+          console.log(`[Draft Start] Broadcasting draft started event for league ${leagueId}`);
+        } catch (e) {
+          console.error("[draft/start] broadcast failed:", e);
+        }
+      });
+
+    } catch (error) {
+      console.error('Error starting draft by league ID:', error);
+      res.status(500).json({ message: "Failed to start draft" });
+    }
+  });
+
   // Get draft by league ID - needed for frontend navigation
   app.get("/api/drafts/league/:leagueId", async (req: any, res: any) => {
     try {
