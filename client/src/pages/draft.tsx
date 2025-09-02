@@ -255,7 +255,7 @@ export default function DraftPage() {
   const wsUrl = draftId ? `${wsBase}/draft-ws?userId=${user?.id}&draftId=${draftId}` : null;
   const shouldConnectWS = Boolean(!authLoading && user && wsUrl);
     
-  console.log('[Draft] WebSocket connection decision:', { shouldConnectWS, wsUrl: !!wsUrl, draftStatus: draftData?.status });
+  console.log('[Draft] WebSocket connection decision:', { shouldConnectWS, wsUrl: wsUrl || 'none', draftStatus });
   
   const { status: connectionStatus, message: lastMessage } = useResilientWebSocket(wsUrl);
   const isConnected = connectionStatus === 'open';
@@ -456,7 +456,9 @@ export default function DraftPage() {
     return Math.floor(rawTime + 1e-6);
   })();
   
-  console.log('[SMOOTH TIMER] Display time:', displayTime.toFixed(1), 'isCountingDown:', isCountingDown, 'localTime:', localTime.toFixed(1));
+  console.log('[TIMER DEBUG] Server Time:', displaySeconds);
+  console.log('[TIMER DEBUG] Display Time:', displayTime);
+  console.log('[TIMER DEBUG] Current Player:', currentPlayerId);
   console.log('[NORMALIZED FIELDS] Status:', draftStatus, 'CurrentPlayerId:', currentPlayerId, 'TimerSeconds:', displaySeconds, 'IsCountingDown:', isCountingDown);
 
   // Variables moved earlier in the file to prevent compilation errors
@@ -631,7 +633,7 @@ export default function DraftPage() {
       const next = {
         ...draftData,
         status: updated.status ?? updated.state?.status ?? 'active',
-        currentPlayerId: updated.currentPlayerId ?? updated.state?.currentPlayerId ?? null,
+        currentPlayerId: updated.currentPlayerId ?? null,
         timerSeconds: updated.timer?.remaining ?? updated.state?.timer?.remaining ?? 120,
         participants: updated.participants ?? updated.state?.participants ?? draftData?.participants,
       };
@@ -734,7 +736,7 @@ export default function DraftPage() {
 
   // DEBUG LOGGING AND CRITICAL TIMER SYNC FIX
   if (draftData?.state) {
-    console.log('🔍 [TIMER DEBUG] Server Time:', state?.timeRemaining);
+    console.log('🔍 [TIMER DEBUG] Server Time:', draftData?.timerSeconds);
     console.log('🔍 [TIMER DEBUG] Display Time:', displayTime);
     console.log('🔍 [TIMER DEBUG] Current Player:', currentPlayer?.name);
   }
@@ -1704,7 +1706,7 @@ export default function DraftPage() {
         </div>
 
         {/* Draft Completion Navigation */}
-        {draftData?.state?.draft?.status === 'completed' && (
+        {draftStatus === 'completed' && (
           <div className="mt-8 mx-4 lg:mx-8">
             <Card className="border-green-500 bg-green-50 dark:bg-green-950/30">
               <CardContent className="pt-6">
