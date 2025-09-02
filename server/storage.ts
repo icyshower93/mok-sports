@@ -24,10 +24,10 @@ export interface IStorage {
   
   // League methods
   createLeague(league: InsertLeague & { joinCode: string }): Promise<League>;
-  getLeague(id: string): Promise<(League & { memberCount: number; members: Array<{ id: string; name: string; avatar: string | null; joinedAt: string }>; draftId?: string; draftStatus?: string }) | undefined>;
+  getLeague(id: string): Promise<(League & { memberCount: number; members: Array<{ id: string; name: string; avatar: string | null; joinedAt: string }>; draftId: string | null; draftStatus: string | null }) | undefined>;
   getLeagueByName(name: string): Promise<League | undefined>;
   getLeagueByJoinCode(joinCode: string): Promise<League | undefined>;
-  getUserLeagues(userId: string): Promise<Array<League & { memberCount: number; isCreator: boolean; draftId?: string; draftStatus?: string }>>;
+  getUserLeagues(userId: string): Promise<Array<League & { memberCount: number; isCreator: boolean; draftId: string | null; draftStatus: string | null }>>;
   joinLeague(member: InsertLeagueMember): Promise<LeagueMember>;
   leaveLeague(userId: string, leagueId: string): Promise<void>;
   isUserInLeague(userId: string, leagueId: string): Promise<boolean>;
@@ -175,8 +175,8 @@ export class DatabaseStorage implements IStorage {
         ...member,
         joinedAt: member.joinedAt.toISOString(),
       })),
-      draftId: draft?.id,
-      draftStatus: draft?.status,
+      draftId: draft?.id ?? null,
+      draftStatus: draft?.status ?? null,
       draftStarted: !!draft && draft.status === 'active'
     };
   }
@@ -218,8 +218,8 @@ export class DatabaseStorage implements IStorage {
       // Convert null values to undefined for TypeScript compatibility
       return userLeagues.map(league => ({
         ...league,
-        draftId: league.draftId || undefined,
-        draftStatus: league.draftStatus || undefined,
+        draftId: league.draftId ?? null,
+        draftStatus: league.draftStatus ?? null,
       }));
     } catch (error) {
       console.error('[Storage] Error fetching user leagues:', error);

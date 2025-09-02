@@ -1551,14 +1551,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.log('[draft/start] Creating new draft for league', leagueId);
         
         const { draftManager } = await import("./index.js");
+        
+        // Get league members to create draft order
+        const members = await storage.getLeagueMembers(leagueId);
+        const draftOrder = members.map(m => m.userId);
+        
         const newDraftResponse = await storage.createDraft({
           leagueId,
           totalRounds: 5,
           pickTimeLimit: 120, // 2 minutes default
+          draftOrder,
         });
         
-        draft = newDraftResponse.draft;
+        draft = newDraftResponse;
         console.log('[draft/start] Created new draft', draft.id, 'for league', leagueId);
+        
+        // CRITICAL: Link the draft to the league via draftId field
+        await storage.updateLeague(leagueId, { 
+          draftId: draft.id,
+          draftStarted: true 
+        });
+        console.log('[draft/start] Updated league with draftId:', draft.id);
       }
       
       // Start the draft if not already started

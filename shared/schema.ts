@@ -22,6 +22,7 @@ export const leagues = pgTable("leagues", {
   isActive: boolean("is_active").notNull().default(true),
   draftScheduledAt: timestamp("draft_scheduled_at"),
   draftStarted: boolean("draft_started").notNull().default(false),
+  draftId: varchar("draft_id").unique(), // CRITICAL: Link to active draft
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
@@ -29,6 +30,7 @@ export const leagueMembers = pgTable("league_members", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   leagueId: varchar("league_id").notNull().references(() => leagues.id),
   userId: varchar("user_id").notNull().references(() => users.id),
+  role: varchar("role", { length: 20 }).notNull().default("member"), // 'commissioner' | 'member'
   joinedAt: timestamp("joined_at").defaultNow().notNull(),
 });
 
@@ -45,13 +47,13 @@ export const nflTeams = pgTable("nfl_teams", {
 
 export const drafts = pgTable("drafts", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  leagueId: varchar("league_id").notNull().references(() => leagues.id),
+  leagueId: varchar("league_id").notNull().unique().references(() => leagues.id), // CRITICAL: Unique constraint prevents multiple drafts per league
   status: varchar("status", { length: 20 }).notNull().default("not_started"), // not_started, starting, active, completed, paused
   currentRound: integer("current_round").notNull().default(1),
   currentPick: integer("current_pick").notNull().default(1),
   totalRounds: integer("total_rounds").notNull().default(5),
   pickTimeLimit: integer("pick_time_limit").notNull().default(180), // seconds
-  draftOrder: text("draft_order").array().notNull(), // array of user IDs in draft order
+  draftOrder: text("draft_order").array().notNull(), // array of user IDs in draft order (renamed from pickOrder for clarity)
   startedAt: timestamp("started_at"),
   completedAt: timestamp("completed_at"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
@@ -233,6 +235,11 @@ export const leaguesRelations = relations(leagues, ({ one, many }) => ({
   }),
   members: many(leagueMembers),
   drafts: many(drafts),
+  // CRITICAL: Add relation to active draft via draftId
+  activeDraft: one(drafts, {
+    fields: [leagues.draftId],
+    references: [drafts.id],
+  }),
 }));
 
 export const leagueMembersRelations = relations(leagueMembers, ({ one }) => ({
