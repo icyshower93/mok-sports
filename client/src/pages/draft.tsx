@@ -185,7 +185,50 @@ export default function DraftPage() {
         const data = await response.json();
         console.log('[Draft] ✅ Draft data received successfully:', data);
         
-        return data;
+        // Normalize the Draft API response (fixes draftStatus: undefined)
+        const normalized = {
+          id: data.id ?? params.draftId,
+          leagueId: data.leagueId ?? data.state?.leagueId ?? null,
+
+          // unify status across shapes: status | state.status | state.phase
+          status:
+            data.status ??
+            data.state?.status ??
+            data.state?.phase ??
+            'waiting',
+
+          // unify current player id / object
+          currentPlayerId:
+            data.currentPlayer?.id ??
+            data.state?.currentPlayerId ??
+            null,
+
+          // normalize participants for user matching
+          participants:
+            data.participants ??
+            data.players ??
+            data.state?.participants ??
+            [],
+
+          // timer seconds (server or 0)
+          timerSeconds:
+            data.timer?.remaining ??
+            data.state?.timer?.remaining ??
+            0,
+            
+          // preserve original data structure for backward compatibility
+          state: data.state,
+          draft: data.draft || data.state?.draft,
+          isCurrentUser: data.isCurrentUser,
+          
+          // add missing properties for UI compatibility
+          currentPlayer: data.currentPlayer ?? data.state?.currentPlayer ?? null,
+          league: data.league ?? data.state?.league ?? null
+        };
+        
+        console.log('[Draft] 🔧 Normalized response:', normalized);
+        
+        return normalized;
       } catch (error) {
         console.error('[Draft] ❌ Error fetching draft data:', error);
         throw error;
@@ -195,7 +238,7 @@ export default function DraftPage() {
     staleTime: 2000, // 2 seconds to balance real-time needs with performance
     refetchInterval: (data) => {
       // Only poll if draft is active and we're waiting for updates
-      return data?.draft?.status === 'active' || data?.draft?.status === 'starting' ? 3000 : false;
+      return data?.status === 'active' || data?.status === 'starting' ? 3000 : false;
     },
     retry: (failureCount, error) => {
       console.log(`[Draft] Query retry ${failureCount}, error:`, error);
@@ -204,14 +247,14 @@ export default function DraftPage() {
   });
 
   // WebSocket connection - only connect when auth is ready and draft is not completed/canceled
-  const shouldConnectWS = !authLoading && !!user && !!draftId && draftData?.draft && 
-    draftData.draft.status !== 'completed' && draftData.draft.status !== 'canceled';
+  const shouldConnectWS = !authLoading && !!user && !!draftId && draftData?.status && 
+    draftData.status !== 'completed' && draftData.status !== 'canceled';
     
   const wsUrl = shouldConnectWS ? 
-    `${window.location.protocol === 'https:' ? 'wss:' : 'ws:'}//${window.location.host}/api/drafts/ws/${draftId}` : 
+    `/draft-ws?userId=${user?.id}&draftId=${draftId}` : 
     null;
     
-  console.log('[Draft] WebSocket connection decision:', { shouldConnectWS, wsUrl: !!wsUrl, draftStatus: draftData?.draft?.status });
+  console.log('[Draft] WebSocket connection decision:', { shouldConnectWS, wsUrl: !!wsUrl, draftStatus: draftData?.status });
   
   const { status: connectionStatus, message: lastMessage } = useResilientWebSocket(wsUrl);
   const isConnected = connectionStatus === 'open';
@@ -232,11 +275,19 @@ export default function DraftPage() {
 
   // CRITICAL: Declare variables after query is defined to prevent temporal dead zone errors  
   const state: DraftState = (draftData?.state ?? {}) as DraftState;
-  const isCurrentUser = draftData?.isCurrentUser || false;
+  
+  // Enhanced isCurrentUser calculation with multiple auth provider ID fields
+  const myId = user?.id || (user as any)?.sub || (user as any)?.userId || (user as any)?.uid || '';
+  const isCurrentUser = draftData?.participants?.some(
+    (p: any) =>
+      p?.userId === myId ||
+      p?.id === myId ||
+      (p?.email && p.email === user?.email)
+  ) && draftData?.currentPlayerId === myId;
 
-  // Derived, null-safe handles
+  // Derived, null-safe handles  
   const draft = draftData?.state?.draft ?? null;
-  const draftStatus = draft?.status ?? 'not_started';
+  const draftStatus = draftData?.status ?? 'not_started';
   const timeRemainingSafe = draftData?.state?.timeRemaining ?? 0;
   const picksSafe = state?.picks ?? [];
   const availableTeamsSafe = state?.availableTeams ?? [];
@@ -814,7 +865,7 @@ export default function DraftPage() {
           {/* Enhanced Timer & Status Bar */}
           <div className="flex items-center space-x-4">
             {/* Current Picker Info */}
-            {state?.currentUserId && currentPlayer && (
+            {draftData?.currentPlayerId && currentPlayer && (
               <div className="hidden sm:flex items-center space-x-2 px-3 py-1.5 bg-secondary/30 rounded-full">
                 {currentPlayer.avatar && (
                   <img 

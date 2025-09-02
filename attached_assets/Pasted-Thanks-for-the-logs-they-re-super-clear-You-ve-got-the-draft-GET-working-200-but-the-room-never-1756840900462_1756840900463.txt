@@ -1,0 +1,68 @@
+Thanks for the logs — they’re super clear. You’ve got the draft GET working (200) but the room never actually “starts” because:
+
+Your WebSocket never connects. In your own debug you print:
+
+[Draft] WebSocket connection decision: { shouldConnectWS: undefined, wsUrl: false, draftStatus: undefined }
+
+
+That means your “connect?” logic can’t find a status or a WS URL, so it bails.
+
+Your API response shape doesn’t match what the UI expects. The UI expects draft.status (top level), currentPlayer, and maybe a timer, but the server is returning state: { … } and you’re not normalizing it. So you end up with:
+
+isLoading: false, draftData: true, isCurrentUser: false, currentPlayer: null
+
+
+→ no one’s on the clock, timer stays at 0, and nothing moves.
+
+Below are drop-in fixes that will get the room going.
+
+1) Normalize the Draft API response (fixes draftStatus: undefined)
+
+Right after your GET /api/drafts/:id succeeds, derive the fields your UI uses from data.state.
+
+// draft.tsx — right after you do: const data = await res.json()
+
+const normalized = {
+  id: data.id ?? params.draftId,
+  leagueId: data.leagueId ?? data.state?.leagueId ?? null,
+
+  // unify status across shapes: status | state.status | state.phase
+  status:
+    data.status ??
+    data.state?.status ??
+    data.state?.phase ??
+    'waiting',
+
+  // unify current player id / object
+  currentPlayerId:
+    data.currentPlayer?.id ??
+    data.state?.currentPlayerId ??
+    null,
+
+  // normalize participants for user matching
+  participants:
+    data.participants ??
+    data.players ??
+    data.state?.participants ??
+    [],
+
+  // timer seconds (server or 0)
+  timerSeconds:
+    data.timer?.remaining ??
+    data.state?.timer?.remaining ??
+    0,
+};
+
+// store this normalized object alongside the raw one if you like
+setDraft(normalized);
+
+
+Also compute isCurrentUser from a few possible id fields (auth provider differences):
+
+const myId = auth.user?.id || auth.user?.sub || auth.user?.userId || auth.user?.uid || '';
+const isCurrentUser = normalized.participants?.some(
+  (p: any) =>
+    p?.userId === myId ||
+    p?.id === myId ||
+    (p?.email && p.email === auth.user?.email)
+);
