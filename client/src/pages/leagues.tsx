@@ -368,12 +368,19 @@ export default function LeaguesPage() {
         </Card>
 
         {/* Player Roster Dialog */}
-        <Dialog open={!!selectedPlayer} onOpenChange={(open) => !open && setSelectedPlayer(null)}>
+        <Dialog 
+          open={!!selectedPlayer} 
+          onOpenChange={(open) => {
+            if (!open) {
+              setSelectedPlayer(null);
+            }
+          }}
+        >
           <DialogContent className="max-w-md">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
                 <Shield className="w-5 h-5" />
-                {standings.find(p => p.userId === selectedPlayer)?.userName}'s Teams
+                {selectedPlayer && standings.find(p => p.userId === selectedPlayer)?.userName}'s Teams
               </DialogTitle>
             </DialogHeader>
             
