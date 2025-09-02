@@ -1,0 +1,43 @@
+if you apply these exact changes, the draft room will load, connect, and start reliably:
+
+Kill the TDZ + cycles
+
+Ensure no hook/store/service imports anything from pages/draft.tsx (including via export * from ... barrels). If needed, add a draft-types.ts and point shared imports there.
+
+In draft.tsx, convert helper const fn = () => {} to function declarations and place them above the component. Move all module-level derived values (auth/route/window) into the component or a hook.
+
+Make WS connect purely on draftId
+
+const canConnect = auth.authReady && Boolean(draftId)
+
+const wsUrl = canConnect ? origin→ws + /ws/draft/:draftId : null
+
+Connect in an effect that depends on (canConnect, wsUrl, auth.token). Don’t gate on status.
+
+Normalize API + WS payloads
+
+After GET /api/drafts/:id and on every WS draft:update|draft:started, run a small normalizeDraftResponse() that guarantees these top-level fields exist: { id, leagueId, status, currentPlayerId, participants, timerSeconds }. Render only from this normalized object.
+
+Start Draft → update store immediately
+
+On POST /leagues/:leagueId/draft/start, normalize the response and write it to state so UI shows status:'active', currentPlayerId, and a non-zero timerSeconds even before the WS broadcast arrives. Disable the button while pending.
+
+Unify auth for all API calls
+
+Use one apiFetch() that always sets credentials:'include' (cookies) and adds Authorization: Bearer <token> if present.
+
+Server: every protected route (including /add-robots and /draft/start) should accept cookie OR token via a single middleware.
+
+Keep the Radix dialog fix
+
+Add DialogDescription + aria-describedby to silence the warning and avoid portal unmount quirks during navigation.
+
+Why this fixes it
+
+Hoisting + cycle break removes the TDZ crash that was newly exposed by your refactors/minified build.
+
+WS now connects as soon as draftId exists (no status dependency), so you start receiving live state.
+
+Normalization gives JSX the fields it expects, regardless of whether the server returns state.{…} or top-level keys.
+
+Unified auth stops the 401 on “add robots” and keeps all endpoints consistent.

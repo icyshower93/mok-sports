@@ -148,7 +148,7 @@ export default function DraftPage() {
   const [location, navigate] = useLocation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const { user, isLoading: authLoading, isAuthenticated } = useAuth();
+  // Auth will be accessed via auth variable in WebSocket section
   
   // Extract draft ID from URL params using wouter - SINGLE SOURCE OF TRUTH
   const [actualDraftId, setActualDraftId] = useState<string | null>(urlDraftId);
@@ -179,7 +179,7 @@ export default function DraftPage() {
     queryFn: async () => {
       return await apiRequest('GET', '/api/leagues/user');
     },
-    enabled: !!user && !authLoading,
+    enabled: !!auth.user && !auth.isLoading,
     staleTime: 1000 * 10, // Cache for 10 seconds
   });
 
@@ -190,7 +190,7 @@ export default function DraftPage() {
 
   // Auto-redirect to correct draft if URL has wrong draft ID
   useEffect(() => {
-    if (!leagueData || !urlDraftId || authLoading) return;
+    if (!leagueData || !urlDraftId || auth.isLoading) return;
     
     // Find the league that contains this user and has an active draft
     const activeLeague = leagueData.find((league: any) => 
@@ -205,7 +205,7 @@ export default function DraftPage() {
     } else if (activeLeague?.draftId) {
       setActualDraftId(activeLeague.draftId);
     }
-  }, [leagueData, urlDraftId, user?.id, navigate, queryClient, authLoading]);
+  }, [leagueData, urlDraftId, auth.user?.id, navigate, queryClient, auth.isLoading]);
 
   // Use the actual draft ID for all operations - SINGLE SOURCE OF TRUTH
   const draftId = actualDraftId;
@@ -278,7 +278,7 @@ export default function DraftPage() {
         throw error;
       }
     },
-    enabled: !!draftId && !!user && !authLoading,
+    enabled: !!draftId && !!auth.user && !auth.isLoading,
     staleTime: 2000, // 2 seconds to balance real-time needs with performance
     refetchInterval: (queryData: any) => {
       // Only poll if draft is active and we're waiting for updates
@@ -290,18 +290,20 @@ export default function DraftPage() {
     }
   });
 
-  // Simple, TDZ-proof WebSocket connection logic - only based on auth readiness and draftId
-  const authReady = !authLoading && !!user;
-  const canConnect = authReady && Boolean(draftId);
-  const wsUrl = canConnect 
-    ? useMemo(() => {
-        const baseUrl = import.meta.env.VITE_WS_BASE_URL || window.location.origin;
-        return computeWsUrl(baseUrl, draftId!);
-      }, [draftId])
-    : null;
+  // Simple WebSocket connection logic - purely based on draftId and auth ready
+  const params = useParams();
+  const draftId = (params as any).draftId!;
+  
+  const auth = useAuth();
+  const canConnect = !auth.isLoading && !!auth.user && Boolean(draftId);
+  
+  const wsUrl = useMemo(
+    () => (canConnect ? computeWsUrl(window.location.origin, draftId) : null),
+    [canConnect, draftId]
+  );
 
   console.log('[Draft] WebSocket connection decision:', { 
-    authReady, 
+    authReady: !auth.isLoading && !!auth.user,
     canConnect, 
     draftId: draftId || 'none',
     wsUrl: wsUrl || 'none' 
@@ -359,7 +361,7 @@ export default function DraftPage() {
     const draft = draftData.state?.draft ?? null;
     
     // Enhanced isCurrentUser calculation with multiple auth provider ID fields
-    const myId = user?.id || (user as any)?.sub || (user as any)?.userId || (user as any)?.uid || '';
+    const myId = auth.user?.id || (auth.user as any)?.sub || (auth.user as any)?.userId || (auth.user as any)?.uid || '';
     const isCurrentUser = draftData.participants?.some(
       (p: any) =>
         p?.userId === myId ||
@@ -766,7 +768,7 @@ export default function DraftPage() {
             </h4>
             <div className="grid grid-cols-1 gap-2">
               {teams.map((team) => {
-                const teamStatus = getTeamStatus(team, normalized.picks, normalized.isCurrentUser, normalized, user?.id);
+                const teamStatus = getTeamStatus(team, normalized.picks, normalized.isCurrentUser, normalized, auth.user?.id);
                 const isSelected = selectedTeam === team.id;
                 const isDisabled = teamStatus !== 'available' || !normalized.canMakePick || !normalized.isCurrentUser;
                 
