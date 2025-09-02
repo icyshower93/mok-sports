@@ -1,0 +1,97 @@
+1) Fix the backend: make /draft/start idempotent and return a draftId
+
+Your 500 is almost certainly one of these (seen in many fantasy drafts):
+
+League not found / leagueId not parsed correctly.
+
+No members yet → trying to compute order on [] or undefined.
+
+Current user isn’t commissioner → access check throws.
+
+A draft already exists (status not completed) → unique constraint or null ref.
+
+DB schema missing league.draftId or relation.
+
+Reference handler (Node/Express + Prisma; adapt to your stack)
+// POST /api/leagues/:leagueId/draft/start
+router.post('/leagues/:leagueId/draft/start', requireAuth, async (req, res) => {
+  const leagueId = req.params.leagueId;
+  const userId = req.user.id;
+
+  try {
+    const league = await prisma.league.findUnique({
+      where: { id: leagueId },
+      include: { members: true, draft: true }
+    });
+    if (!league) return res.status(404).send('League not found');
+
+    // Only commissioner can start (adjust to your rules)
+    if (league.commissionerId !== userId) {
+      return res.status(403).send('Only the commissioner can start the draft');
+    }
+
+    // Idempotency: if draft already exists and not completed, just return it
+    if (league.draft && league.draft.status !== 'completed' && league.draft.status !== 'canceled') {
+      return res.status(200).json({
+        draftId: league.draft.id,
+        leagueId: league.id,
+        status: league.draft.status,
+        pickOrder: league.draft.pickOrder,
+        rounds: league.draft.rounds,
+        currentPick: league.draft.currentPick
+      });
+    }
+
+    // Preconditions
+    if (!league.members || league.members.length < 2) {
+      return res.status(400).send('Need at least 2 managers to start a draft');
+    }
+
+    // Compute pick order (simple shuffle; replace with saved order if you have one)
+    const pickOrder = league.members.map(m => m.userId);
+    for (let i = pickOrder.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [pickOrder[i], pickOrder[j]] = [pickOrder[j], pickOrder[i]];
+    }
+    const rounds = 12; // or from league settings
+
+    const draft = await prisma.$transaction(async (tx) => {
+      const created = await tx.draft.create({
+        data: {
+          leagueId: league.id,
+          status: 'waiting',          // or 'active' if you start immediately
+          pickOrder,                  // JSON column
+          rounds,
+          currentRound: 1,
+          currentPick: 1
+        }
+      });
+
+      await tx.league.update({
+        where: { id: league.id },
+        data: { draftId: created.id }
+      });
+
+      return created;
+    });
+
+    return res.status(201).json({
+      draftId: draft.id,
+      leagueId: league.id,
+      status: draft.status,
+      pickOrder: draft.pickOrder,
+      rounds: draft.rounds,
+      currentPick: draft.currentPick
+    });
+  } catch (err) {
+    console.error('[draft/start] error', { leagueId, userId, err });
+    return res.status(500).send('Failed to start draft');
+  }
+});
+
+Add these server logs (temporarily) to pinpoint your 500:
+console.log('[draft/start] leagueId=', leagueId, 'userId=', userId);
+console.log('[draft/start] league?', !!league, 'members=', league?.members?.length, 'hasDraft=', !!league?.draft);
+
+
+If you see members=0 or league?.draft already exists, that explains the 500.
