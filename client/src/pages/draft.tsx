@@ -150,6 +150,9 @@ export default function DraftPage() {
   const queryClient = useQueryClient();
   // Auth will be accessed via auth variable in WebSocket section
   
+  // Store normalized draft state
+  const [draft, setDraft] = useState<any>(null);
+  
   // Extract draft ID from URL params using wouter - SINGLE SOURCE OF TRUTH
   const [actualDraftId, setActualDraftId] = useState<string | null>(urlDraftId);
   const [selectedTeam, setSelectedTeam] = useState<string | null>(null);
@@ -265,11 +268,11 @@ export default function DraftPage() {
           throw new Error(`Draft request failed: ${response.status} ${response.statusText}`);
         }
         
-        const data = await response.json();
-        console.log('[Draft] ✅ Draft data received successfully:', data);
+        const raw = await response.json();
+        console.log('[Draft] ✅ Draft data received successfully:', raw);
         
         // Normalize the Draft API response using hoisted function
-        const normalized = normalizeDraftResponse(data);
+        const normalized = normalizeDraftResponse(raw);
         console.log('[Draft] 🔧 Normalized response:', normalized);
         
         return normalized;
@@ -287,6 +290,10 @@ export default function DraftPage() {
     retry: (failureCount, error) => {
       console.log(`[Draft] Query retry ${failureCount}, error:`, error);
       return failureCount < 3;
+    },
+    onSuccess: (normalizedData) => {
+      // Store normalized draft in state
+      setDraft(normalizedData);
     }
   });
 
@@ -319,11 +326,15 @@ export default function DraftPage() {
     }
   }, [draftId, navigate]);
 
-  // NORMALIZE SERVER DATA FOR JSX - JSX only reads from normalized object (never nested state)
-  // This prevents JSX from accidentally calling helpers that use uninitialized symbols
+  // Render only from normalized draft state
+  const draftStatus = draft?.status;
+  const currentPlayerId = draft?.currentPlayerId;
+  const displaySeconds = draft?.timerSeconds ?? 0;
+  
+  // Keep the fallback object for compatibility (using draft state)
   const normalized = useMemo(() => {
-    if (!draftData) {
-      // Safe fallback structure when no data
+    if (!draft) {
+      // Safe fallback structure when no draft data
       return {
         // Draft metadata
         id: draftId || '',
@@ -356,58 +367,12 @@ export default function DraftPage() {
       };
     }
     
-    // Extract safe data from potentially complex nested structure
-    const state: DraftState = (draftData.state ?? {}) as DraftState;
-    const draft = draftData.state?.draft ?? null;
-    
-    // Enhanced isCurrentUser calculation with multiple auth provider ID fields
-    const myId = auth.user?.id || (auth.user as any)?.sub || (auth.user as any)?.userId || (auth.user as any)?.uid || '';
-    const isCurrentUser = draftData.participants?.some(
-      (p: any) =>
-        p?.userId === myId ||
-        p?.id === myId ||
-        (p?.email && p.email === user?.email)
-    ) && draftData.currentPlayerId === myId;
-    
-    const status = draftData.status ?? 'not_started';
-    const timerSeconds = draftData.timerSeconds ?? 0;
-    
-    return {
-      // Draft metadata
-      id: draftData.id ?? draftId ?? '',
-      status,
-      leagueId: draftData.leagueId ?? '',
-      
-      // Timer data
-      timerSeconds,
-      isCountingDown: status === 'active',
-      displayTime: timerSeconds, // Will be updated by smooth timer logic
-      
-      // User and permissions
-      currentPlayerId: draftData.currentPlayerId ?? null,
-      isCurrentUser,
-      participants: draftData.participants ?? [],
-      
-      // Draft progress
-      currentRound: draft?.currentRound ?? 1,
-      currentPick: draft?.currentPick ?? 1,
-      totalRounds: draft?.totalRounds ?? 5,
-      pickTimeLimit: draft?.pickTimeLimit ?? DEFAULT_PICK_TIME_LIMIT,
-      draftOrder: draft?.draftOrder ?? [],
-      
-      // Data arrays
-      picks: state.picks ?? [],
-      availableTeams: state.availableTeams ?? [],
-      
-      // UI state
-      canMakePick: state.canMakePick ?? false
-    };
-  }, [draftData, draftId, user]);
+    // Use normalized draft state directly
+    return draft;
+  }, [draft, draftId]);
   
-  // JSX-safe aliases for backward compatibility (but prefer using normalized directly)
-  const draftStatus = normalized.status;
+  // JSX-safe aliases for backward compatibility - using normalized (which is now just draft)
   const isCountingDown = normalized.isCountingDown;
-  const currentPlayerId = normalized.currentPlayerId;
   const isCurrentUser = normalized.isCurrentUser;
   const picksSafe = normalized.picks;
   const availableTeamsSafe = normalized.availableTeams;
@@ -431,7 +396,7 @@ export default function DraftPage() {
   useEffect(() => {
     const newServerTime = lastMessage?.type === 'timer_update' ? 
       lastMessage.data?.timeRemaining : 
-      draftData?.timerSeconds;
+      displaySeconds;
 
     if (newServerTime !== undefined && newServerTime !== serverTime) {
       console.log('[SMOOTH TIMER] Server update received:', newServerTime);
