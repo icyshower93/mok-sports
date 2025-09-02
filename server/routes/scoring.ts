@@ -1111,9 +1111,29 @@ router.get("/skins/:leagueId/:season", authenticateUser, authorizeLeagueMember, 
         return res.status(400).json({ message: "Invalid season" });
       }
 
+      // Get league info
+      const leagueInfo = await storage.getLeagueById(leagueId);
+      if (!leagueInfo) {
+        return res.status(404).json({ message: "League not found" });
+      }
+
+      // Get current week from NFL schedule
+      const { getCurrentWeek } = await import("../utils/nflSchedule.js");
+      const currentWeekData = await getCurrentWeek(seasonNum);
+
       // TODO: Implement calculateSeasonStandings function
       const standings: any[] = [];
-      res.json(standings);
+      
+      res.json({
+        standings,
+        season: seasonNum,
+        currentWeek: currentWeekData?.week || 1,
+        leagueInfo: {
+          id: leagueInfo.id,
+          name: leagueInfo.name,
+          memberCount: leagueInfo.memberCount || 0
+        }
+      });
     } catch (error) {
       console.error('Error getting season standings:', error);
       res.status(500).json({ message: "Failed to get season standings" });
