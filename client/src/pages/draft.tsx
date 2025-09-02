@@ -427,11 +427,11 @@ export default function DraftPage() {
   console.log('[NORMALIZED FIELDS] Status:', draftStatus, 'CurrentPlayerId:', currentPlayerId, 'TimerSeconds:', draft?.timerSeconds);
 
   // Event handlers using hoisted functions
-  const handleTouchStart = (e: React.TouchEvent) => {
+  function handleTouchStart(e: React.TouchEvent) {
     setTouchStartX(e.touches[0].clientX);
-  };
+  }
 
-  const handleTouchEnd = (e: React.TouchEvent) => {
+  function handleTouchEnd(e: React.TouchEvent) {
     const touchEndX = e.changedTouches[0].clientX;
     const diff = touchStartX - touchEndX;
     
@@ -442,15 +442,15 @@ export default function DraftPage() {
         setCurrentConference('AFC');
       }
     }
-  };
+  }
 
-  const handleMakePick = () => {
+  function handleMakePick() {
     if (selectedTeam && normalized.isCurrentUser && normalized.canMakePick) {
       makePickMutation.mutate(selectedTeam);
     }
-  };
+  }
 
-  const onStartDraft = async () => {
+  async function onStartDraft() {
     const leagueId = draft?.leagueId || draftData?.leagueId;
     if (!leagueId || starting) return; // Idempotent check
     
@@ -606,7 +606,7 @@ export default function DraftPage() {
   }
 
   // Helper function for rendering teams using hoisted functions - normalized data
-  const renderConferenceTeams = (conference: Conference) => {
+  function renderConferenceTeams(conference: Conference) {
     const allTeams = teamsData?.availableTeams || normalized.availableTeams;
     const conferenceTeams = allTeams.filter((team: NflTeam) => team.conference === conference);
     const filteredTeams = filterTeamsBySearch(conferenceTeams, searchTerm);
