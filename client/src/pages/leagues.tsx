@@ -49,6 +49,33 @@ export default function LeaguesPage() {
 
   const leagueId = Array.isArray(userLeagues) && userLeagues.length > 0 ? userLeagues[0].id : null;
 
+  // Helper to normalize server response shape
+  function normalizeStandingsPayload(raw: any): StandingsResponse {
+    // Server accidentally returned an array: treat it as "standings" with unknown meta
+    if (Array.isArray(raw)) {
+      console.debug("[Leagues] Server returned array, normalizing...");
+      return { 
+        standings: raw, 
+        season: season,
+        currentWeek: 1, 
+        leagueInfo: { id: leagueId || '', name: 'League', memberCount: raw.length } 
+      };
+    }
+    // Server returned the expected object shape or nullish
+    if (raw && typeof raw === "object") {
+      const { standings = [], currentWeek = 1, leagueInfo = { id: leagueId || '', name: 'League', memberCount: 0 } } = raw;
+      return { standings, season: raw.season || season, currentWeek, leagueInfo };
+    }
+    // Anything else: treat as empty
+    console.debug("[Leagues] Server returned unexpected format, using empty data");
+    return { 
+      standings: [], 
+      season: season,
+      currentWeek: 1, 
+      leagueInfo: { id: leagueId || '', name: 'League', memberCount: 0 } 
+    };
+  }
+
   const standingsQuery = useQuery<StandingsResponse>({
     queryKey: ["league-standings", leagueId, season],
     enabled: !!leagueId,
@@ -60,7 +87,15 @@ export default function LeaguesPage() {
       const text = await res.text().catch(() => "");
       console.debug("[Leagues] response status:", res.status, "body:", text.slice(0, 200));
       if (!res.ok) throw new Error(`Standings fetch failed: ${res.status}`);
-      return JSON.parse(text);
+      
+      let json: any;
+      try {
+        json = text ? JSON.parse(text) : null;
+      } catch {
+        console.debug("[Leagues] Failed to parse JSON response");
+        json = null;
+      }
+      return normalizeStandingsPayload(json);
     },
   });
 

@@ -1,0 +1,63 @@
+Leagues] fetching standings: /api/leagues/<id>/standings/2025
+[Leagues] response status: 200 body: []
+Your fetch is succeeding, but the server is returning an empty array ([]), while your UI code for the Season Standings panel expects an object like:
+
+ts
+Copy code
+{
+  standings: Array<...>,
+  currentWeek: number,
+  leagueInfo: {...}
+}
+When the component tries to read data.standings (or destructure { standings, currentWeek, leagueInfo }), it gets undefined because data is []. That leaves the card with nothing to render → blank.
+
+Below are the precision fixes so the Leagues tab never goes blank again—whether the server sends the correct object or accidentally returns an array.
+
+1) Harden the Leagues page fetch + normalize the shape
+In client/src/pages/leagues.tsx (or wherever you fetch standings), replace your query block with this defensive version:
+
+ts
+Copy code
+import { useQuery } from "@tanstack/react-query";
+
+// tiny helper for clarity
+function normalizeStandingsPayload(raw: any) {
+  // Server accidentally returned an array: treat it as "standings" with unknown meta
+  if (Array.isArray(raw)) {
+    return { standings: raw, currentWeek: null, leagueInfo: null };
+  }
+  // Server returned the expected object shape or nullish
+  if (raw && typeof raw === "object") {
+    const { standings = [], currentWeek = null, leagueInfo = null } = raw;
+    return { standings, currentWeek, leagueInfo };
+  }
+  // Anything else: treat as empty
+  return { standings: [], currentWeek: null, leagueInfo: null };
+}
+
+const season = inferSeason(); // or 2025 if you’re still hardcoding
+const leagueId = activeLeagueId ?? myLeagues?.[0]?.id ?? null;
+
+const standingsQuery = useQuery({
+  queryKey: ["league-standings", leagueId, season],
+  enabled: !!leagueId,
+  retry: false,
+  queryFn: async () => {
+    const url = `/api/leagues/${leagueId}/standings/${season}`;
+    console.debug("[Leagues] fetching standings:", url);
+    const res = await fetch(url, { credentials: "include" });
+    const text = await res.text().catch(() => "");
+    console.debug("[Leagues] response status:", res.status, "body:", text.slice(0, 200));
+
+    if (!res.ok) throw new Error(`Standings fetch failed: ${res.status}`);
+    let json: any;
+    try {
+      json = text ? JSON.parse(text) : null;
+    } catch {
+      json = null;
+    }
+    return normalizeStandingsPayload(json);
+  },
+});
+Now the component always receives { standings, currentWeek, leagueInfo }, even if the server gives [].
+
