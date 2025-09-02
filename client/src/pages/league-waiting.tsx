@@ -188,6 +188,19 @@ export function LeagueWaiting() {
     },
   });
 
+  // Auto-navigate to draft room when draft becomes active
+  useEffect(() => {
+    if (!league) return;
+    
+    const ready = Boolean(league.draftId) && 
+                  (league.draftStatus === "active" || league.draftStarted === true);
+
+    if (ready) {
+      console.log('[LeagueWaiting] Draft is active, navigating to draft room:', league.draftId);
+      setLocation(`/draft/${league.draftId}`, { replace: true });
+    }
+  }, [league?.draftId, league?.draftStatus, league?.draftStarted, setLocation]);
+
   // Track member count changes for UI updates
   useEffect(() => {
     if (league && league.memberCount !== previousMemberCount) {
