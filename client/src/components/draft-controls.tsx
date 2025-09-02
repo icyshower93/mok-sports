@@ -37,95 +37,55 @@ export default function DraftControls({
   const [pickTimeLimit, setPickTimeLimit] = useState(120); // Default 2 minutes to match server
   const totalRounds = 5; // Fixed to 5 rounds for 6-person leagues
   
-  // CLIENT HYGIENE: Prevent double-clicks and noise
-  const [starting, setStarting] = useState(false);
 
-  // CLIENT HYGIENE: Improved start draft function with double-click protection
+  // Optimistic start draft function with snappy UI updates
   const onStartDraft = async () => {
-    if (starting) {
-      console.log('[StartDraft] ⚠️ Already starting, ignoring duplicate click');
-      return;
-    }
-    setStarting(true);
-    try {
-      console.log('[StartDraft] ✅ Starting draft for league:', leagueId);
+    console.log('[StartDraft] ✅ Starting draft for league:', leagueId);
+    
+    const res = await apiFetch(`/api/leagues/${leagueId}/draft/start`, { method: "POST" });
+    if (!res.ok) throw new Error(await res.text().catch(() => `Failed (${res.status})`));
+    const { draftId } = await res.json();
+    
+    // Optimistic update for snappy UI
+    const updateLeagueData = (oldLeagues: any) => {
+      if (!oldLeagues) return oldLeagues;
       
-      const response = await apiFetch(`/api/leagues/${leagueId}/draft/start`, {
-        method: 'POST',
+      return oldLeagues.map((league: any) => {
+        if (league.id === leagueId) {
+          return {
+            ...league,
+            draftId,
+            draftStatus: "active",
+            draftStarted: true
+          };
+        }
+        return league;
       });
-      
-      if (!response.ok) {
-        const errorText = await response.text().catch(() => "");
-        throw new Error(errorText || `Failed to start draft (${response.status})`);
-      }
-      
-      const data = await response.json();
-      console.log('[StartDraft] ✅ Draft response:', data);
-      
-      // CRITICAL: Update ALL league-related caches for immediate WebSocket connection
-      console.log('[StartDraft] 🔄 Updating all league caches with draftId:', data.draftId);
-      
-      // Update both possible league query keys
-      const updateLeagueData = (oldLeagues: any) => {
-        if (!oldLeagues) return oldLeagues;
-        
-        return oldLeagues.map((league: any) => {
-          if (league.id === leagueId) {
-            return {
-              ...league,
-              draftId: data.draftId,
-              draftStarted: true,
-              draftStatus: data.status
-            };
-          }
-          return league;
-        });
+    };
+    
+    queryClient.setQueryData(['/api/user/leagues'], updateLeagueData);
+    queryClient.setQueryData(['/api/leagues/user'], updateLeagueData);
+    queryClient.setQueryData([`/api/leagues/${leagueId}`], (oldLeague: any) => {
+      if (!oldLeague) return oldLeague;
+      return {
+        ...oldLeague,
+        draftId,
+        draftStatus: "active",
+        draftStarted: true
       };
-      
-      queryClient.setQueryData(['/api/user/leagues'], updateLeagueData);
-      queryClient.setQueryData(['/api/leagues/user'], updateLeagueData);
-      
-      // Update draft info cache
-      queryClient.setQueryData(['/api/drafts/league', leagueId], {
-        draft: {
-          id: data.draftId,
-          status: data.status,
-          leagueId: leagueId
-        },
-        ...data.state
-      });
-      
-      // CRITICAL: Trigger refetch to ensure SSR/refresh compatibility
-      queryClient.invalidateQueries({ queryKey: ['/api/user/leagues'] });
-      queryClient.invalidateQueries({ queryKey: ['/api/leagues/user'] });
-      queryClient.invalidateQueries({ queryKey: ['league', leagueId] });
-      
-      console.log('[StartDraft] ✅ Store updated with draft info before navigation');
-      console.log('[StartDraft] 🚀 NAVIGATING to draft room:', leagueId);
-      
-      // Navigate to draft room using the returned draft ID
-      setLocation(`/draft/${data.draftId}`, { replace: true });
-      
-      toast({
-        title: "Draft started!",
-        description: data.message || "The live draft is now beginning. Good luck!",
-      });
-      
-      if (onDraftStarted) {
-        onDraftStarted();
-      }
-      
-      return data;
-    } catch (error: any) {
-      toast({
-        title: "Failed to start draft",
-        description: error.message || "Failed to start draft",
-        variant: "destructive",
-      });
-      throw error;
-    } finally {
-      setStarting(false);
+    });
+    
+    // Navigation handled by waiting-room effect
+    toast({
+      title: "Draft started!",
+      description: "The live draft is now beginning. Good luck!",
+    });
+    
+    if (onDraftStarted) {
+      onDraftStarted();
     }
+    
+    return { draftId };
   };
 
   // Start draft mutation using the proper league-based endpoint
@@ -331,12 +291,12 @@ export default function DraftControls({
 
             <Button
               onClick={() => startDraftMutation.mutate()}
-              disabled={startDraftMutation.isPending || starting}
+              disabled={startDraftMutation.isPending}
               className="w-full"
               size="lg"
             >
               <Play className="w-4 h-4 mr-2" />
-              {(startDraftMutation.isPending || starting) ? 'Starting Draft...' : 'Start Draft Now'}
+              {startDraftMutation.isPending ? 'Starting Draft...' : 'Start Draft Now'}
             </Button>
           </>
         )}
@@ -355,12 +315,12 @@ export default function DraftControls({
             <div className="flex space-x-2">
               <Button
                 onClick={() => startDraftMutation.mutate()}
-                disabled={startDraftMutation.isPending || starting}
+                disabled={startDraftMutation.isPending}
                 className="flex-1"
                 size="lg"
               >
                 <Play className="w-4 h-4 mr-2" />
-                {(startDraftMutation.isPending || starting) ? 'Starting...' : 'Start Draft'}
+                {startDraftMutation.isPending ? 'Starting...' : 'Start Draft'}
               </Button>
               
               <Button
