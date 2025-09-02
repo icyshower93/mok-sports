@@ -34,8 +34,7 @@ export function useSmartRedirect(enabled: boolean) {
     const onLanding = 
       location === "/" ||
       location === "/dashboard" ||
-      location === "/league" ||
-      location.startsWith("/league/");
+      location === "/league";
 
     // Debug log to confirm redirect state
     console.debug("[SmartRedirect]", { location, hasLeague, onLanding, enabled });
