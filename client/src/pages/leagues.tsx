@@ -173,121 +173,109 @@ export default function LeaguesPage() {
 
   return (
     <MainLayout>
-      <div className="p-4 max-w-4xl mx-auto space-y-6">
+      <div className="space-y-4">
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between px-4 pt-2">
           <div>
-            <h1 className="text-2xl font-bold flex items-center gap-2">
-              <Trophy className="w-6 h-6 text-primary" />
-              League Standings
+            <h1 className="text-xl font-bold text-foreground">
+              {leagueInfo?.name || 'My League'}
             </h1>
-            <p className="text-muted-foreground">
-              {leagueInfo?.name || 'League'} • Season {season}
-            </p>
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <span>2024 Season</span>
+              <span>•</span>
+              <span>Week {currentWeek || 1}</span>
+            </div>
           </div>
-          <Badge variant="secondary">
-            Week {currentWeek || 1}
+          <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200 dark:bg-green-950 dark:text-green-300 dark:border-green-800">
+            Active
           </Badge>
         </div>
 
         {/* Standings Table */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <TrendingUp className="w-5 h-5" />
-              Season Rankings
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              {standings.map((player, index) => (
-                  <div
-                    key={player.userId}
-                    className={`p-4 rounded-lg border transition-colors ${getRankColor(player.rank)} ${
-                      player.isCurrentUser ? "ring-2 ring-primary" : ""
-                    }`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        {getRankIcon(player.rank)}
-                        <Avatar className="w-8 h-8">
-                          <AvatarFallback className="text-xs">
-                            {player.userName?.charAt(0).toUpperCase() || "?"}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div>
-                          <div className="font-medium flex items-center gap-2">
-                            {player.userName}
-                            {player.isCurrentUser && (
-                              <Badge variant="secondary" className="text-xs">You</Badge>
-                            )}
-                          </div>
-                          <div className="text-xs text-muted-foreground">
-                            {player.weeklyWins} weekly wins
-                          </div>
-                        </div>
+        <div className="bg-card">
+          <div className="px-4 py-3 border-b border-border">
+            <h2 className="font-semibold text-foreground">League Standings</h2>
+          </div>
+          
+          <div className="divide-y divide-border">
+            {standings.map((player, index) => (
+              <div
+                key={player.userId}
+                className={`px-4 py-4 flex items-center justify-between hover:bg-muted/50 transition-colors ${
+                  player.isCurrentUser ? "bg-primary/5 border-l-4 border-l-primary" : ""
+                }`}
+                data-testid={`standings-row-${player.userId}`}
+              >
+                <div className="flex items-center gap-4">
+                  <div className="w-8 flex justify-center">
+                    {player.rank <= 3 ? (
+                      <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
+                        player.rank === 1 ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200" :
+                        player.rank === 2 ? "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200" :
+                        "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200"
+                      }`}>
+                        {player.rank}
                       </div>
-                      
-                      <div className="text-right">
-                        <div className="font-bold text-lg">
-                          {player.totalMokPoints} pts
-                        </div>
-                        <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                          {player.skinsWon > 0 && (
-                            <span className="flex items-center gap-1">
-                              <Zap className="w-3 h-3" />
-                              {player.skinsWon} skins
-                            </span>
-                          )}
-                          {player.lockSuccessRate !== undefined && (
-                            <span>
-                              {Math.round(player.lockSuccessRate * 100)}% locks
-                            </span>
-                          )}
-                        </div>
-                      </div>
+                    ) : (
+                      <span className="text-sm font-medium text-muted-foreground">#{player.rank}</span>
+                    )}
+                  </div>
+                  
+                  <Avatar className="w-10 h-10">
+                    <AvatarFallback className="text-sm font-medium">
+                      {player.userName?.split(' ').map(n => n[0]).join('').toUpperCase() || "?"}
+                    </AvatarFallback>
+                  </Avatar>
+                  
+                  <div>
+                    <div className="font-medium text-foreground flex items-center gap-2">
+                      {player.userName}
+                      {player.isCurrentUser && (
+                        <Badge variant="secondary" className="text-xs px-1.5 py-0.5">YOU</Badge>
+                      )}
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                      {player.weeklyWins} wins • {player.skinsWon} skins
                     </div>
                   </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+                </div>
+                
+                <div className="text-right">
+                  <div className="text-lg font-bold text-foreground">
+                    {player.totalMokPoints}
+                  </div>
+                  <div className="text-xs text-muted-foreground">
+                    points
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
 
-        {/* Season Stats Summary */}
+        {/* Quick Stats */}
         {standings && standings.length > 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Card>
-              <CardContent className="p-4 text-center">
-                <Crown className="w-8 h-8 mx-auto mb-2 text-yellow-500" />
-                <div className="font-medium">Current Leader</div>
-                <div className="text-sm text-muted-foreground">
-                  {standings[0]?.userName}
-                </div>
-                <div className="text-lg font-bold">
-                  {standings[0]?.totalMokPoints} pts
-                </div>
-              </CardContent>
-            </Card>
+          <div className="grid grid-cols-3 gap-3 px-4">
+            <div className="text-center py-3 bg-card rounded-lg border">
+              <div className="text-lg font-bold text-foreground">
+                {standings[0]?.totalMokPoints || 0}
+              </div>
+              <div className="text-xs text-muted-foreground">Leader Points</div>
+            </div>
             
-            <Card>
-              <CardContent className="p-4 text-center">
-                <TrendingUp className="w-8 h-8 mx-auto mb-2 text-primary" />
-                <div className="font-medium">Total Players</div>
-                <div className="text-lg font-bold">
-                  {leagueInfo?.memberCount || 0}
-                </div>
-              </CardContent>
-            </Card>
+            <div className="text-center py-3 bg-card rounded-lg border">
+              <div className="text-lg font-bold text-foreground">
+                {standings.length}
+              </div>
+              <div className="text-xs text-muted-foreground">Players</div>
+            </div>
             
-            <Card>
-              <CardContent className="p-4 text-center">
-                <Zap className="w-8 h-8 mx-auto mb-2 text-amber-500" />
-                <div className="font-medium">Total Skins Won</div>
-                <div className="text-lg font-bold">
-                  {standings.reduce((sum, p) => sum + (p.skinsWon || 0), 0)}
-                </div>
-              </CardContent>
-            </Card>
+            <div className="text-center py-3 bg-card rounded-lg border">
+              <div className="text-lg font-bold text-foreground">
+                {standings.reduce((sum, p) => sum + (p.skinsWon || 0), 0)}
+              </div>
+              <div className="text-xs text-muted-foreground">Total Skins</div>
+            </div>
           </div>
         )}
       </div>
