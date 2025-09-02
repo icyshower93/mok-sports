@@ -36,108 +36,73 @@ export default function DraftControls({
   const [pickTimeLimit, setPickTimeLimit] = useState(120); // Default 2 minutes to match server
   const totalRounds = 5; // Fixed to 5 rounds for 6-person leagues
 
-  // Combined create and start draft mutation
-  const createAndStartDraftMutation = useMutation({
-    mutationFn: async () => {
-      console.log('[StartDraft] ✅ ALWAYS CREATING COMPLETELY NEW DRAFT for league:', leagueId);
-      console.log('[StartDraft] ✅ Ignoring any existing draft - creating fresh one');
-      
-      // Clear ALL cached data first - critical for clean state
-      queryClient.clear();
-      console.log('[StartDraft] ✅ Cleared all cached data before creating new draft');
-      
-      // ALWAYS create a brand new draft (ignore any existing draftId)
-      const createResponse = await fetch('/api/drafts', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          leagueId,
-          totalRounds,
-          pickTimeLimit
-        }),
-        credentials: 'include'
-      });
-      
-      if (!createResponse.ok) {
-        const error = await createResponse.json();
-        throw new Error(error.message || 'Failed to create draft');
-      }
-      
-      const createData = await createResponse.json();
-      const newDraftId = createData.draft.id;
-      
-      console.log('[StartDraft] ✅ NEW DRAFT CREATED:', newDraftId);
-      
-      // Then immediately start the draft
-      const startResponse = await fetch(`/api/drafts/${newDraftId}/start`, {
-        method: 'POST',
-        credentials: 'include'
-      });
-      
-      if (!startResponse.ok) {
-        const error = await startResponse.json();
-        throw new Error(error.message || 'Failed to start draft');
-      }
-      
-      console.log('[StartDraft] ✅ NEW DRAFT STARTED with timer system - Ready for WebSocket');
-      return { ...createData, draftId: newDraftId };
-    },
-    onSuccess: (data) => {
-      console.log('[StartDraft] ✅ SUCCESS - New draft ready:', data.draftId);
-      
-      toast({
-        title: "Draft started!",
-        description: "The live draft is now beginning. Good luck!",
-      });
-      
-      // Clear cache and prepare for new draft
-      queryClient.clear();
-      queryClient.invalidateQueries({ queryKey: ['league', leagueId] });
-      queryClient.invalidateQueries({ queryKey: ['draft', data.draftId] });
-      queryClient.invalidateQueries({ queryKey: ['/api/leagues'] });
-      
-      console.log('[StartDraft] ✅ All systems ready for WebSocket connection to:', data.draftId);
-      console.log('[StartDraft] 🚀 NAVIGATING to new draft immediately:', data.draftId);
-      
-      // Navigate to the new draft immediately
-      setTimeout(() => {
-        window.location.href = `/draft/${data.draftId}`;
-      }, 100);
-      
-      if (onDraftStarted) {
-        onDraftStarted();
-      }
-    },
-    onError: (error: Error) => {
-      toast({
-        title: "Failed to start draft",
-        description: error.message,
-        variant: "destructive",
-      });
-    },
-  });
-
-  // Legacy start draft mutation (for existing drafts)
+  // Start draft mutation using the proper league-based endpoint
   const startDraftMutation = useMutation({
     mutationFn: async () => {
-      if (!draftId) throw new Error('No draft ID');
-      const response = await fetch(`/api/drafts/${draftId}/start`, {
+      console.log('[StartDraft] ✅ Starting draft for league:', leagueId);
+      
+      // Use the new league-based endpoint that creates or starts the draft
+      const response = await fetch(`/api/leagues/${leagueId}/draft/start`, {
         method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         credentials: 'include'
       });
+      
       if (!response.ok) {
         const error = await response.json();
         throw new Error(error.message || 'Failed to start draft');
       }
-      return response.json();
+      
+      const data = await response.json();
+      console.log('[StartDraft] ✅ Draft response:', data);
+      
+      return data; // { draftId, leagueId, status, message, state }
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      console.log('[StartDraft] ✅ SUCCESS - Draft ready:', data);
+      
       toast({
         title: "Draft started!",
-        description: "The live draft is now beginning. Good luck!",
+        description: data.message || "The live draft is now beginning. Good luck!",
       });
-      queryClient.invalidateQueries({ queryKey: ['draft', draftId] });
-      if (onDraftStarted) { onDraftStarted(); }
+      
+      // CRITICAL: Update store with draft status BEFORE navigation
+      // This prevents the redirect race condition by ensuring the store knows about the draft
+      queryClient.setQueryData(['/api/user/leagues'], (oldLeagues: any) => {
+        if (!oldLeagues) return oldLeagues;
+        
+        return oldLeagues.map((league: any) => {
+          if (league.id === leagueId) {
+            return {
+              ...league,
+              draftId: data.draftId,
+              draftStarted: true,
+              draftStatus: data.status
+            };
+          }
+          return league;
+        });
+      });
+      
+      // Update draft info cache
+      queryClient.setQueryData(['/api/drafts/league', leagueId], {
+        draft: {
+          id: data.draftId,
+          status: data.status,
+          leagueId: leagueId
+        },
+        ...data.state
+      });
+      
+      console.log('[StartDraft] ✅ Store updated with draft info before navigation');
+      console.log('[StartDraft] 🚀 NAVIGATING to draft room:', leagueId);
+      
+      // Navigate to draft room using league ID (consistent with our useSmartRedirect logic)
+      setLocation(`/draft/${leagueId}`, { replace: true });
+      
+      if (onDraftStarted) {
+        onDraftStarted();
+      }
     },
     onError: (error: Error) => {
       toast({
@@ -344,13 +309,13 @@ export default function DraftControls({
             )}
 
             <Button
-              onClick={() => createAndStartDraftMutation.mutate()}
-              disabled={createAndStartDraftMutation.isPending}
+              onClick={() => startDraftMutation.mutate()}
+              disabled={startDraftMutation.isPending}
               className="w-full"
               size="lg"
             >
               <Play className="w-4 h-4 mr-2" />
-              {createAndStartDraftMutation.isPending ? 'Starting Draft...' : 'Start Draft Now'}
+              {startDraftMutation.isPending ? 'Starting Draft...' : 'Start Draft Now'}
             </Button>
           </>
         )}

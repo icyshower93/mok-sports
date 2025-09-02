@@ -1487,6 +1487,85 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Start draft by league ID - creates or starts the league's draft
+  app.post("/api/leagues/:leagueId/draft/start", async (req, res) => {
+    try {
+      const user = await getAuthenticatedUser(req);
+      if (!user) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+
+      const { leagueId } = req.params;
+      
+      // Verify user is league creator
+      const league = await storage.getLeague(leagueId);
+      if (!league) {
+        return res.status(404).json({ message: "League not found" });
+      }
+      
+      if (league.creatorId !== user.id) {
+        return res.status(403).json({ message: "Only league creator can start draft" });
+      }
+      
+      // Check if league has enough members
+      const memberCount = await storage.getLeagueMemberCount(leagueId);
+      if (memberCount < 2) {
+        return res.status(400).json({ message: "League needs at least 2 members to start draft" });
+      }
+
+      // Get or create draft for this league
+      let draft = await storage.getLeagueDraft(leagueId);
+      
+      if (!draft) {
+        // Create new draft
+        const { draftManager } = await import("./index.js");
+        console.log(`[League Draft Start] Creating new draft for league ${leagueId}`);
+        
+        const newDraftResponse = await storage.createDraft({
+          leagueId,
+          totalRounds: 5,
+          pickTimeLimit: 120, // 2 minutes default
+        });
+        
+        draft = newDraftResponse.draft;
+        console.log(`[League Draft Start] Created new draft ${draft.id} for league ${leagueId}`);
+      }
+      
+      // Start the draft if not already started
+      if (draft.status === 'not_started') {
+        const { draftManager } = await import("./index.js");
+        console.log(`[League Draft Start] Starting draft ${draft.id} for league ${leagueId}`);
+        
+        const draftState = await draftManager.startDraft(draft.id);
+        
+        // Return proper structure for client-side store update
+        res.json({
+          draftId: draft.id,
+          leagueId: leagueId,
+          status: 'starting', // Will transition to 'active' after countdown
+          message: "Draft starting in 10 seconds",
+          state: draftState
+        });
+      } else {
+        // Draft already exists and is not in not_started state
+        const { draftManager } = await import("./index.js");
+        const draftState = await draftManager.getDraftState(draft.id);
+        
+        res.json({
+          draftId: draft.id,
+          leagueId: leagueId,
+          status: draft.status,
+          message: `Draft is already ${draft.status}`,
+          state: draftState
+        });
+      }
+      
+    } catch (error) {
+      console.error('Error starting league draft:', error);
+      res.status(500).json({ message: "Failed to start draft" });
+    }
+  });
+
   // Register push notification routes
   registerPushNotificationRoutes(app);
   

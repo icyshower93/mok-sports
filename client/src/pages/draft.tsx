@@ -146,32 +146,13 @@ export default function DraftPage() {
     }
   }, [draftId, queryClient]);
 
-  // WebSocket connection - keyed by draftId for proper cleanup on route changes
-  const wsUrl = draftId ? `${window.location.protocol === 'https:' ? 'wss:' : 'ws:'}//${window.location.host}/api/drafts/ws/${draftId}` : null;
-  const { status: connectionStatus, message: lastMessage } = useResilientWebSocket(wsUrl);
-  const isConnected = connectionStatus === 'open';
-
-  // Handle null urlDraftId case in main render (Rules of Hooks compliance)
-
-  // CRITICAL: Declare variables BEFORE any useEffect that uses them
-  // Move these after draftData is available from the query
-  // Variables will be defined below after the query is declared
-
-  // Redirect if no draft ID
-  useEffect(() => {
-    if (!draftId) {
-      navigate('/dashboard');
-    }
-  }, [draftId, navigate]);
-
-  // Fetch draft state with polling for real-time updates
+  // Fetch draft state with priority to establish connection rules
   const { data: draftData, isLoading, error } = useQuery({
     queryKey: ['draft', draftId, 'state'], // Include 'state' for specificity
     queryFn: async ({ signal }) => {
       console.log('[Draft] === STARTING DRAFT FETCH ===');
       console.log('[Draft] Draft ID:', draftId);
       console.log('[Draft] Auth status - User:', user?.name, 'Authenticated:', isAuthenticated, 'Loading:', authLoading);
-      // Token logging removed to avoid circular imports
       console.log('[Draft] Current URL:', window.location.href);
       console.log('[Draft] Current pathname:', window.location.pathname);
       
@@ -192,94 +173,62 @@ export default function DraftPage() {
         console.log('[Draft] Response received:', {
           status: response.status,
           statusText: response.statusText,
-          ok: response.ok,
-          headers: Object.fromEntries(response.headers.entries())
+          url: response.url
         });
         
         if (!response.ok) {
           const errorText = await response.text();
           console.error('[Draft] API Error Response:', errorText);
-          throw new Error(`HTTP ${response.status}: ${errorText}`);
+          throw new Error(`Draft request failed: ${response.status} ${response.statusText}`);
         }
         
         const data = await response.json();
-        console.log('[Draft] Successfully fetched draft data:', data);
-        console.log('[Draft] === DRAFT FETCH SUCCESS ===');
+        console.log('[Draft] ✅ Draft data received successfully:', data);
+        
         return data;
       } catch (error) {
-        console.error('[Draft] === DRAFT FETCH ERROR ===');
-        console.error('[Draft] Error fetching draft data:', error);
-        console.error('[Draft] Error type:', typeof error);
-        console.error('[Draft] Error constructor:', error?.constructor?.name);
-        
-        // Error tracking removed
-        
-        console.error('[Draft] Full error details:', {
-          message: error instanceof Error ? error.message : 'Unknown error',
-          stack: error instanceof Error ? error.stack : 'No stack trace',
-          user: user?.name,
-          // hasToken: omitted to avoid circular imports
-          isAuthenticated,
-          authLoading,
-          draftId,
-          currentUrl: window.location.href
-        });
-        
-        // Try to make a direct fetch to see what's happening
-        try {
-          console.log('[Draft] Attempting direct fetch for debugging...');
-          const directResponse = await fetch(`/api/drafts/${draftId}`, {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${document.cookie.split('token=')[1]?.split(';')[0] || ''}` // Fallback auth
-            },
-            credentials: 'include'
-          });
-          
-          console.log('[Draft] Direct fetch response:', {
-            status: directResponse.status,
-            statusText: directResponse.statusText,
-            headers: Object.fromEntries(directResponse.headers.entries())
-          });
-          
-          const directText = await directResponse.text();
-          console.log('[Draft] Direct fetch response body:', directText);
-          
-          // Store the response for PWA debugging
-          try {
-            sessionStorage.setItem('mok-last-direct-fetch', JSON.stringify({
-              status: directResponse.status,
-              statusText: directResponse.statusText,
-              headers: Object.fromEntries(directResponse.headers.entries()),
-              body: directText,
-              timestamp: new Date().toISOString()
-            }));
-          } catch (e) {
-            console.warn('[Draft] Could not store direct fetch result');
-          }
-        } catch (directError) {
-          console.error('[Draft] Direct fetch also failed:', directError);
-          // Error tracking removed
-        }
-        
+        console.error('[Draft] ❌ Error fetching draft data:', error);
         throw error;
       }
     },
-    enabled: !!draftId && !authLoading, // Wait for auth to load before making requests
-    refetchInterval: 5000, // Reduced polling - WebSocket handles timer updates
-    staleTime: 0, // Never trust cached data - always stale
-    gcTime: 0, // React Query v5: disable caching completely
+    enabled: !!draftId && !!user && !authLoading,
+    staleTime: 2000, // 2 seconds to balance real-time needs with performance
+    refetchInterval: (data) => {
+      // Only poll if draft is active and we're waiting for updates
+      return data?.draft?.status === 'active' || data?.draft?.status === 'starting' ? 3000 : false;
+    },
     retry: (failureCount, error) => {
-      // Don't retry on authentication errors
-      if (error instanceof Error && error.message.includes('401')) {
-        console.log('[Draft] Authentication error, not retrying');
-        return false;
-      }
-      console.log(`[Draft] Retrying fetch, attempt ${failureCount + 1}`);
+      console.log(`[Draft] Query retry ${failureCount}, error:`, error);
       return failureCount < 3;
     }
   });
+
+  // WebSocket connection - only connect when auth is ready and draft is not completed/canceled
+  const shouldConnectWS = !authLoading && !!user && !!draftId && draftData?.draft && 
+    draftData.draft.status !== 'completed' && draftData.draft.status !== 'canceled';
+    
+  const wsUrl = shouldConnectWS ? 
+    `${window.location.protocol === 'https:' ? 'wss:' : 'ws:'}//${window.location.host}/api/drafts/ws/${draftId}` : 
+    null;
+    
+  console.log('[Draft] WebSocket connection decision:', { shouldConnectWS, wsUrl: !!wsUrl, draftStatus: draftData?.draft?.status });
+  
+  const { status: connectionStatus, message: lastMessage } = useResilientWebSocket(wsUrl);
+  const isConnected = connectionStatus === 'open';
+
+  // Handle null urlDraftId case in main render (Rules of Hooks compliance)
+
+  // CRITICAL: Declare variables BEFORE any useEffect that uses them
+  // Move these after draftData is available from the query
+  // Variables will be defined below after the query is declared
+
+  // Redirect if no draft ID
+  useEffect(() => {
+    if (!draftId) {
+      navigate('/dashboard');
+    }
+  }, [draftId, navigate]);
+
 
   // CRITICAL: Declare variables after query is defined to prevent temporal dead zone errors  
   const state: DraftState = (draftData?.state ?? {}) as DraftState;
