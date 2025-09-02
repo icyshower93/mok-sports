@@ -79,6 +79,20 @@ input, textarea, [contenteditable="true"], p, span, h1, h2, h3, h4, h5, h6 {
   user-select: text;
 }
 
+/* Remove all icon glow/shadow effects for clean navigation */
+svg {
+  filter: none !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+
+/* Specifically target Lucide React icons */
+.lucide {
+  filter: none !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+
 :root {
   --background: hsl(0, 0%, 100%);
   --foreground: hsl(222, 84%, 4.9%);
