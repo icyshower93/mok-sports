@@ -15,21 +15,13 @@ import { useResilientWebSocket } from "@/hooks/use-resilient-websocket";
 import { useAuth } from "@/features/auth/useAuth";
 import type { DraftState, NflTeam, DraftPick } from '@shared/types/draft';
 
-// ✅ Pure constants first (no window/auth/route dependencies)
-const DEFAULT_PICK_TIME_LIMIT = 120;
-const MINIMUM_SWIPE_DISTANCE = 50;
-const TIMER_WARNING_THRESHOLDS = {
-  URGENT: 5,
-  WARNING: 10,
-  CAUTION: 30,
-} as const;
-const NOTIFICATION_COOLDOWN = 30000; // 30 seconds
-const VIBRATION_PATTERNS = {
-  WARNING: 100,
-  URGENT: [100, 50, 100] as number[],
-  CRITICAL: [200, 100, 200, 100, 200] as number[],
-  YOUR_TURN: [300, 100, 300] as number[],
-};
+// ✅ Import shared constants from centralized draft-types (no duplication)
+import { TIMER_CONSTANTS, DRAFT_UI_CONSTANTS } from '@/draft/draft-types';
+import type { TeamStatus, Conference } from '@/draft/draft-types';
+
+// Extract constants to avoid duplication
+const { DEFAULT_PICK_TIME_LIMIT } = TIMER_CONSTANTS;
+const { MINIMUM_SWIPE_DISTANCE, TIMER_WARNING_THRESHOLDS, NOTIFICATION_COOLDOWN, VIBRATION_PATTERNS } = DRAFT_UI_CONSTANTS;
 
 // ✅ HOISTED helpers (functions, not const fns)
 export function normalizeDraftResponse(raw: any): any {
@@ -66,7 +58,7 @@ function formatTime(seconds: number): string {
   return `${mins}:${secs.toString().padStart(2, '0')}`;
 }
 
-function getConferenceColor(conference: string): string {
+function getConferenceColor(conference: Conference): string {
   return conference === 'AFC' ? 'bg-red-500/10 text-red-700 dark:text-red-300' : 'bg-blue-500/10 text-blue-700 dark:text-blue-300';
 }
 
@@ -85,7 +77,7 @@ function getBackgroundColor(isCurrentUser: boolean, displayTime: number): string
   return 'bg-green-50 dark:bg-green-950/20';
 }
 
-function getTeamStatus(team: NflTeam, picksSafe: DraftPick[], isCurrentUser: boolean, state: DraftState, userId?: string): 'available' | 'taken' | 'conflict' {
+function getTeamStatus(team: NflTeam, picksSafe: DraftPick[], isCurrentUser: boolean, state: DraftState, userId?: string): TeamStatus {
   const isDrafted = picksSafe.some(p => p.nflTeam.id === team.id);
   if (isDrafted) return 'taken';
   
@@ -166,7 +158,7 @@ export default function DraftPage() {
   // Modern UI state management
   const [showCelebration, setShowCelebration] = useState(false);
   const [panelsCollapsed, setPanelsCollapsed] = useState(true);
-  const [currentConference, setCurrentConference] = useState<'AFC' | 'NFC'>('AFC');
+  const [currentConference, setCurrentConference] = useState<Conference>('AFC');
   const [touchStartX, setTouchStartX] = useState<number>(0);
   const [showFAB, setShowFAB] = useState(false);
   const [starting, setStarting] = useState(false);
@@ -744,7 +736,7 @@ export default function DraftPage() {
   }
 
   // Helper function for rendering teams using hoisted functions - normalized data
-  const renderConferenceTeams = (conference: 'AFC' | 'NFC') => {
+  const renderConferenceTeams = (conference: Conference) => {
     const allTeams = teamsData?.availableTeams || normalized.availableTeams;
     const conferenceTeams = allTeams.filter((team: NflTeam) => team.conference === conference);
     const filteredTeams = filterTeamsBySearch(conferenceTeams, searchTerm);

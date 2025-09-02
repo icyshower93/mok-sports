@@ -1,15 +1,15 @@
 import { useState, useEffect, useRef } from 'react';
 import { DraftMessage, DraftMessageSchema } from '@shared/types/draft';
 import type { ConnectionStatus } from '@/draft/draft-types';
+import { TIMER_CONSTANTS } from '@/draft/draft-types';
 
 interface WebSocketStatus {
   status: ConnectionStatus;
   message: DraftMessage | null;
 }
 
-const BASE_DELAY = 750;
-const MAX_DELAY = 10_000;
-const HEARTBEAT_INTERVAL = 25_000; // 25 seconds
+// Use centralized constants to avoid duplication
+const { BASE_DELAY, MAX_DELAY, HEARTBEAT_INTERVAL } = TIMER_CONSTANTS;
 
 function backoffDelay(attempt: number): number {
   return Math.min(MAX_DELAY, BASE_DELAY * Math.pow(2, attempt));
