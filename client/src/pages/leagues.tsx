@@ -32,6 +32,8 @@ interface StandingsResponse {
 }
 
 export default function LeaguesPage() {
+  console.debug("[Leagues] mount");
+  
   const { user } = useAuth();
   const [selectedSeason] = useState(getCurrentSeason()); // Current season dynamically determined
   
