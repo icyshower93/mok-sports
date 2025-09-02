@@ -1112,14 +1112,13 @@ router.get("/skins/:leagueId/:season", authenticateUser, authorizeLeagueMember, 
       }
 
       // Get league info
-      const leagueInfo = await storage.getLeagueById(leagueId);
+      const leagueInfo = await storage.getLeague(leagueId);
       if (!leagueInfo) {
         return res.status(404).json({ message: "League not found" });
       }
 
-      // Get current week from NFL schedule
-      const { getCurrentWeek } = await import("../utils/nflSchedule.js");
-      const currentWeekData = await getCurrentWeek(seasonNum);
+      // Get current week (simplified for now)
+      const currentWeekNumber = 1;
 
       // TODO: Implement calculateSeasonStandings function
       const standings: any[] = [];
@@ -1127,11 +1126,11 @@ router.get("/skins/:leagueId/:season", authenticateUser, authorizeLeagueMember, 
       res.json({
         standings,
         season: seasonNum,
-        currentWeek: currentWeekData?.week || 1,
+        currentWeek: currentWeekNumber,
         leagueInfo: {
           id: leagueInfo.id,
           name: leagueInfo.name,
-          memberCount: leagueInfo.memberCount || 0
+          memberCount: 0 // TODO: Calculate actual member count
         }
       });
     } catch (error) {
