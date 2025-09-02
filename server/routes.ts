@@ -1487,40 +1487,70 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Start draft by league ID - creates or starts the league's draft
+  // Start draft by league ID - creates or starts the league's draft (IDEMPOTENT)
   app.post("/api/leagues/:leagueId/draft/start", async (req, res) => {
+    const leagueId = req.params.leagueId;
+    let userId = null;
+    
     try {
       const user = await getAuthenticatedUser(req);
       if (!user) {
+        console.log('[draft/start] leagueId=', leagueId, 'userId= NONE - Not authenticated');
         return res.status(401).json({ message: "Not authenticated" });
       }
-
-      const { leagueId } = req.params;
       
-      // Verify user is league creator
+      userId = user.id;
+      console.log('[draft/start] leagueId=', leagueId, 'userId=', userId);
+      
+      // Verify league exists and get basic info
       const league = await storage.getLeague(leagueId);
+      console.log('[draft/start] league?', !!league, 'creator=', league?.creatorId);
+      
       if (!league) {
+        console.log('[draft/start] ERROR: League not found');
         return res.status(404).json({ message: "League not found" });
       }
       
-      if (league.creatorId !== user.id) {
+      // Only commissioner can start (adjust to your rules)
+      if (league.creatorId !== userId) {
+        console.log('[draft/start] ERROR: Access denied - user is not creator');
         return res.status(403).json({ message: "Only league creator can start draft" });
       }
       
-      // Check if league has enough members
+      // Check member count to prevent empty draft
       const memberCount = await storage.getLeagueMemberCount(leagueId);
+      console.log('[draft/start] members=', memberCount);
+      
       if (memberCount < 2) {
+        console.log('[draft/start] ERROR: Not enough members');
         return res.status(400).json({ message: "League needs at least 2 members to start draft" });
       }
 
-      // Get or create draft for this league
+      // Get existing draft (if any)
       let draft = await storage.getLeagueDraft(leagueId);
+      console.log('[draft/start] hasDraft=', !!draft, 'status=', draft?.status);
       
-      if (!draft) {
-        // Create new draft
-        const { draftManager } = await import("./index.js");
-        console.log(`[League Draft Start] Creating new draft for league ${leagueId}`);
+      // IDEMPOTENCY: If draft already exists and not completed, just return it
+      if (draft && draft.status !== 'completed' && draft.status !== 'canceled') {
+        console.log('[draft/start] IDEMPOTENT: Returning existing draft in status:', draft.status);
         
+        const { draftManager } = await import("./index.js");
+        const draftState = await draftManager.getDraftState(draft.id);
+        
+        return res.status(200).json({
+          draftId: draft.id,
+          leagueId: leagueId,
+          status: draft.status,
+          message: `Draft is already ${draft.status}`,
+          state: draftState
+        });
+      }
+      
+      // Create new draft if none exists or previous one was completed
+      if (!draft) {
+        console.log('[draft/start] Creating new draft for league', leagueId);
+        
+        const { draftManager } = await import("./index.js");
         const newDraftResponse = await storage.createDraft({
           leagueId,
           totalRounds: 5,
@@ -1528,18 +1558,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
         
         draft = newDraftResponse.draft;
-        console.log(`[League Draft Start] Created new draft ${draft.id} for league ${leagueId}`);
+        console.log('[draft/start] Created new draft', draft.id, 'for league', leagueId);
       }
       
       // Start the draft if not already started
       if (draft.status === 'not_started') {
-        const { draftManager } = await import("./index.js");
-        console.log(`[League Draft Start] Starting draft ${draft.id} for league ${leagueId}`);
+        console.log('[draft/start] Starting draft', draft.id, 'for league', leagueId);
         
+        const { draftManager } = await import("./index.js");
         const draftState = await draftManager.startDraft(draft.id);
         
+        console.log('[draft/start] SUCCESS: Draft started with state:', !!draftState);
+        
         // Return proper structure for client-side store update
-        res.json({
+        return res.status(201).json({
           draftId: draft.id,
           leagueId: leagueId,
           status: 'starting', // Will transition to 'active' after countdown
@@ -1547,11 +1579,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
           state: draftState
         });
       } else {
-        // Draft already exists and is not in not_started state
+        // This shouldn't happen due to idempotency check above, but just in case
+        console.log('[draft/start] FALLBACK: Draft status is', draft.status);
         const { draftManager } = await import("./index.js");
         const draftState = await draftManager.getDraftState(draft.id);
         
-        res.json({
+        return res.status(200).json({
           draftId: draft.id,
           leagueId: leagueId,
           status: draft.status,
@@ -1561,8 +1594,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
     } catch (error) {
-      console.error('Error starting league draft:', error);
-      res.status(500).json({ message: "Failed to start draft" });
+      console.error('[draft/start] ERROR:', { leagueId, userId, error: error.message, stack: error.stack });
+      return res.status(500).json({ message: "Failed to start draft", details: error.message });
     }
   });
 
