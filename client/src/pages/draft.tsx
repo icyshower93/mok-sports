@@ -263,7 +263,11 @@ export default function DraftPage() {
         console.log('[Draft] 🔧 Normalized response:', normalized);
         
         return normalized;
-      } catch (error) {
+      } catch (error: any) {
+        // ✅ Don't log AbortError - happens during normal query cancellation
+        if (error?.name === "AbortError" || error?.message?.includes("signal is aborted")) {
+          return;
+        }
         console.error('[Draft] ❌ Error fetching draft data:', error);
         throw error;
       }
@@ -274,7 +278,11 @@ export default function DraftPage() {
       // Only poll if draft is active and we're waiting for updates
       return queryData?.status === 'active' || queryData?.status === 'starting' ? 3000 : false;
     },
-    retry: (failureCount, error) => {
+    retry: (failureCount, error: any) => {
+      // ✅ Don't retry AbortErrors
+      if (error?.name === "AbortError" || error?.message?.includes("signal is aborted")) {
+        return false;
+      }
       console.log(`[Draft] Query retry ${failureCount}, error:`, error);
       return failureCount < 3;
     },
@@ -460,6 +468,10 @@ export default function DraftPage() {
       // Invalidate queries to refresh data
       queryClient.invalidateQueries({ queryKey: ['draft', draftId] });
     } catch (error: any) {
+      // ✅ Don't show toast for AbortErrors - happens during normal cancellation
+      if (error?.name === "AbortError" || error?.message?.includes("signal is aborted")) {
+        return;
+      }
       toast({
         title: "Failed to start draft",
         description: error.message || 'Failed to start draft',
@@ -528,6 +540,10 @@ export default function DraftPage() {
       });
     },
     onError: (error: Error) => {
+      // ✅ Don't show toast for AbortErrors - happens during normal cancellation
+      if (error?.name === "AbortError" || error?.message?.includes("signal is aborted")) {
+        return;
+      }
       toast({
         title: "Failed to make pick",
         description: error.message,

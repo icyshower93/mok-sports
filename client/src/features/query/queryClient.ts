@@ -6,22 +6,31 @@ import { QueryClient, QueryFunction } from "@tanstack/react-query";
 export const unauthorizedBehaviorToQueryFunction = (
   unauthorizedBehavior: "returnNull" | "throw" = "throw",
 ): QueryFunction<any> =>
-  async ({ queryKey }) => {
-    // 👇 Lazy import to break cycles with auth modules
-    const { AuthToken } = await import("@/lib/auth-token");
+  async ({ queryKey, signal }) => {
+    try {
+      // 👇 Lazy import to break cycles with auth modules
+      const { AuthToken } = await import("@/lib/auth-token");
 
-    const res = await fetch(queryKey.join("/") as string, {
-      headers: AuthToken.headers(),
-      credentials: "include",
-    });
+      const res = await fetch(queryKey.join("/") as string, {
+        headers: AuthToken.headers(),
+        credentials: "include",
+        signal, // ✅ Add signal for proper cancellation
+      });
 
-    if (unauthorizedBehavior === "returnNull" && res.status === 401) return null;
+      if (unauthorizedBehavior === "returnNull" && res.status === 401) return null;
 
-    if (!res.ok) {
-      const text = await res.text().catch(() => "");
-      throw new Error(`HTTP ${res.status} ${res.statusText}${text ? ` - ${text}` : ""}`);
+      if (!res.ok) {
+        const text = await res.text().catch(() => "");
+        throw new Error(`HTTP ${res.status} ${res.statusText}${text ? ` - ${text}` : ""}`);
+      }
+      return await res.json();
+    } catch (error: any) {
+      // ✅ Don't throw AbortError - let React Query handle cancellation silently
+      if (error?.name === "AbortError" || error?.message?.includes("signal is aborted")) {
+        return; // React Query will handle this gracefully
+      }
+      throw error;
     }
-    return await res.json();
   };
 
 let _qc: QueryClient | null = null;
@@ -35,8 +44,13 @@ export function getQueryClient(): QueryClient {
         queryFn: unauthorizedBehaviorToQueryFunction("returnNull"),
         refetchOnMount: false,
         refetchOnWindowFocus: false,
-        retry: (failureCount, error: any) =>
-          error?.message?.includes("401") ? false : failureCount < 2,
+        retry: (failureCount, error: any) => {
+          // ✅ Don't retry AbortErrors
+          if (error?.name === "AbortError" || error?.message?.includes("signal is aborted")) {
+            return false;
+          }
+          return error?.message?.includes("401") ? false : failureCount < 2;
+        },
         staleTime: 0,
         gcTime: 5 * 60 * 1000,
       },
