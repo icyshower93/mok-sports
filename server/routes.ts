@@ -1578,23 +1578,78 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (draft.status === 'not_started') {
         console.log('[draft/start] Starting draft', draft.id, 'for league', leagueId);
         
-        const { draftManager } = await import("./index.js");
+        const draftManager = (global as any).draftManager;
         const draftState = await draftManager.startDraft(draft.id);
         
         console.log('[draft/start] SUCCESS: Draft started with state:', !!draftState);
         
-        // Return proper structure for client-side store update
+        // Broadcast draft:started event to all clients for instant sync
+        const { webSocketManager } = await import('./websocket/draftWebSocket.js');
+        webSocketManager.broadcastToDraft(draft.id, {
+          type: 'draft:started',
+          data: {
+            draftId: draft.id,
+            status: 'starting',
+            currentPlayerId: draftState.currentUserId,
+            timerSeconds: draftState.timeRemaining || 0,
+            message: 'Draft is starting!'
+          }
+        });
+        console.log('[draft/start] Broadcasted draft:started event to all clients');
+        
+        // Get additional data for normalized response
+        const participants = await storage.getLeagueMembers(draft.leagueId);
+        let currentPlayer = null;
+        if (draftState.currentUserId) {
+          const currentUser = await storage.getUser(draftState.currentUserId);
+          if (currentUser) {
+            currentPlayer = { 
+              id: currentUser.id, 
+              name: currentUser.name, 
+              avatar: currentUser.avatar 
+            };
+          }
+        }
+        
+        // Return normalized structure with top-level fields
         return res.status(201).json({
-          draftId: draft.id,
+          id: draft.id,
           leagueId: leagueId,
+          
+          // Top-level normalized fields
           status: 'starting', // Will transition to 'active' after countdown
+          currentPlayerId: draftState.currentUserId,
+          participants: participants.map((p: any) => ({
+            id: p.userId,
+            userId: p.userId,
+            name: p.user?.name || 'Unknown',
+            avatar: p.user?.avatar || null,
+            email: p.user?.email || null
+          })),
+          timerSeconds: draftState.timeRemaining || 0,
+          
+          // Current player object
+          currentPlayer,
+          
+          // League info
+          league: {
+            id: league.id,
+            name: league.name,
+            creatorId: league.creatorId
+          },
+          
+          // Additional fields
+          isCurrentUser: draftState.currentUserId === userId,
           message: "Draft starting in 10 seconds",
-          state: draftState
+          
+          // Preserve backward compatibility
+          state: draftState,
+          draft: draftState.draft
         });
       } else {
         // This shouldn't happen due to idempotency check above, but just in case
         console.log('[draft/start] FALLBACK: Draft status is', draft.status);
-        const { draftManager } = await import("./index.js");
+        const draftManager = (global as any).draftManager;
         const draftState = await draftManager.getDraftState(draft.id);
         
         return res.status(200).json({
@@ -1606,9 +1661,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
       
-    } catch (error) {
-      console.error('[draft/start] ERROR:', { leagueId, userId, error: error.message, stack: error.stack });
-      return res.status(500).json({ message: "Failed to start draft", details: error.message });
+    } catch (error: any) {
+      console.error('[draft/start] ERROR:', { leagueId, userId, error: error?.message, stack: error?.stack });
+      return res.status(500).json({ message: "Failed to start draft", details: error?.message || 'Unknown error' });
     }
   });
 
@@ -1642,6 +1697,100 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const nflTeamsSeedRoutes = (await import('./routes/nfl-teams-seed.js')).default;
   app.use('/api/nfl-teams', nflTeamsSeedRoutes);
   
+  // GET /api/drafts/:id - Fetch draft state with normalized top-level fields
+  app.get('/api/drafts/:draftId', async (req, res) => {
+    const { draftId } = req.params;
+    
+    try {
+      const user = await getAuthenticatedUser(req);
+      if (!user) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+      
+      console.log('[GET /api/drafts/:id] Fetching draft:', draftId, 'for user:', user.id);
+      
+      // Get draft from storage
+      const draft = await storage.getDraft(draftId);
+      if (!draft) {
+        return res.status(404).json({ message: "Draft not found" });
+      }
+      
+      // Verify user is in the league
+      const league = await storage.getLeague(draft.leagueId);
+      if (!league) {
+        return res.status(404).json({ message: "League not found" });
+      }
+      
+      const isInLeague = await storage.isUserInLeague(user.id, draft.leagueId);
+      if (!isInLeague) {
+        return res.status(403).json({ message: "Not authorized to view this draft" });
+      }
+      
+      // Get draft state from manager
+      const draftManager = (global as any).draftManager;
+      const draftState = await draftManager.getDraftState(draftId);
+      
+      // Get current player information
+      let currentPlayer = null;
+      if (draftState.currentUserId) {
+        const currentUser = await storage.getUser(draftState.currentUserId);
+        if (currentUser) {
+          currentPlayer = { 
+            id: currentUser.id, 
+            name: currentUser.name, 
+            avatar: currentUser.avatar 
+          };
+        }
+      }
+      
+      // Get all participants
+      const participants = await storage.getLeagueMembers(draft.leagueId);
+      
+      // Return normalized response with top-level fields for easy client access
+      const normalizedResponse = {
+        id: draft.id,
+        leagueId: draft.leagueId,
+        
+        // Top-level normalized fields - no more digging into state!
+        status: draft.status,
+        currentPlayerId: draftState.currentUserId,
+        participants: participants.map(p => ({
+          id: p.userId,
+          userId: p.userId,
+          name: p.user?.name || 'Unknown',
+          avatar: p.user?.avatar || null,
+          email: p.user?.email || null
+        })),
+        timerSeconds: draftState.timeRemaining || 0,
+        
+        // Current player object for easy access
+        currentPlayer,
+        
+        // League information
+        league: {
+          id: league.id,
+          name: league.name,
+          creatorId: league.creatorId
+        },
+        
+        // Additional computed fields
+        isCurrentUser: draftState.currentUserId === user.id,
+        
+        // Preserve original nested structure for backward compatibility
+        state: draftState,
+        draft: draftState.draft
+      };
+      
+      console.log('[GET /api/drafts/:id] Returning normalized response with status:', normalizedResponse.status, 'currentPlayerId:', normalizedResponse.currentPlayerId, 'timerSeconds:', normalizedResponse.timerSeconds);
+      
+      res.json(normalizedResponse);
+      
+    } catch (error: any) {
+      console.error('[GET /api/drafts/:id] Error:', error);
+      res.status(500).json({ message: 'Failed to fetch draft', error: error?.message || 'Unknown error' });
+    }
+  });
+
   // Draft reset endpoint - Creates new draft for seamless WebSocket connection
   app.post('/api/testing/reset-draft', async (req, res) => {
     try {
