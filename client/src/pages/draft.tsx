@@ -236,9 +236,9 @@ export default function DraftPage() {
     },
     enabled: !!draftId && !!user && !authLoading,
     staleTime: 2000, // 2 seconds to balance real-time needs with performance
-    refetchInterval: (data) => {
+    refetchInterval: (queryData) => {
       // Only poll if draft is active and we're waiting for updates
-      return data?.status === 'active' || data?.status === 'starting' ? 3000 : false;
+      return queryData?.status === 'active' || queryData?.status === 'starting' ? 3000 : false;
     },
     retry: (failureCount, error) => {
       console.log(`[Draft] Query retry ${failureCount}, error:`, error);
@@ -246,13 +246,13 @@ export default function DraftPage() {
     }
   });
 
-  // WebSocket connection - only connect when auth is ready and draft is not completed/canceled
-  const shouldConnectWS = !authLoading && !!user && !!draftId && draftData?.status && 
-    draftData.status !== 'completed' && draftData.status !== 'canceled';
-    
-  const wsUrl = shouldConnectWS ? 
-    `/draft-ws?userId=${user?.id}&draftId=${draftId}` : 
-    null;
+  // WebSocket connection - connect when auth is ready and we have a draftId
+  const wsBase =
+    import.meta.env.VITE_WS_BASE_URL ||
+    window.location.origin.replace(/^http/i, 'ws');
+
+  const wsUrl = draftId ? `${wsBase}/draft-ws?userId=${user?.id}&draftId=${draftId}` : null;
+  const shouldConnectWS = Boolean(!authLoading && user && wsUrl);
     
   console.log('[Draft] WebSocket connection decision:', { shouldConnectWS, wsUrl: !!wsUrl, draftStatus: draftData?.status });
   
