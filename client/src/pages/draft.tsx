@@ -101,7 +101,7 @@ function filterTeamsBySearch(teams: NflTeam[], searchTerm: string): NflTeam[] {
   return teams.filter(team => 
     team.name.toLowerCase().includes(lowerSearch) ||
     team.city.toLowerCase().includes(lowerSearch) ||
-    team.abbreviation.toLowerCase().includes(lowerSearch)
+    team.code.toLowerCase().includes(lowerSearch)
   );
 }
 
@@ -238,7 +238,7 @@ export default function DraftPage() {
     queryFn: async ({ signal }) => {
       console.log('[Draft] === STARTING DRAFT FETCH ===');
       console.log('[Draft] Draft ID:', draftId);
-      console.log('[Draft] Auth status - User:', user?.name, 'Authenticated:', isAuthenticated, 'Loading:', authLoading);
+      console.log('[Draft] Auth status - User:', auth.user?.name, 'Authenticated:', auth.isAuthenticated, 'Loading:', auth.isLoading);
       
       try {
         console.log('[Draft] Making API request to:', `/api/drafts/${draftId}`);
@@ -293,12 +293,11 @@ export default function DraftPage() {
   });
 
   // Simple WebSocket connection logic - purely based on draftId and auth ready
-  const draftId = urlDraftId!;
-  
+  // Use the draftId from above (already declared on line 212)
   const canConnect = !auth.isLoading && !!auth.user && Boolean(draftId);
   
   const wsUrl = useMemo(
-    () => (canConnect ? computeWsUrl(window.location.origin, draftId) : null),
+    () => (canConnect && draftId ? computeWsUrl(window.location.origin, draftId) : null),
     [canConnect, draftId]
   );
 
@@ -657,7 +656,7 @@ export default function DraftPage() {
                   >
                     <div className="flex items-center gap-3">
                       <div className="relative flex-shrink-0">
-                        <TeamLogo teamCode={team.code} size="sm" />
+                        <TeamLogo teamCode={team.code} size="sm" logoUrl={team.logoUrl} teamName={team.name} />
                         {teamStatus === 'taken' && (
                           <div className="absolute inset-0 flex items-center justify-center bg-black/20 rounded">
                             <CheckCircle className="w-4 h-4 text-white" />
