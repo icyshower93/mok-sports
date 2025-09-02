@@ -577,11 +577,28 @@ export default function DraftPage() {
   };
 
   const onStartDraft = async () => {
-    if (!draftId) return;
+    const leagueId = draft?.leagueId || draftData?.leagueId;
+    if (!leagueId || starting) return; // Idempotent check
     
     setStarting(true);
     try {
-      await apiRequest('POST', `/api/leagues/${draftData?.leagueId}/draft/start`);
+      const response = await fetch(`/api/leagues/${leagueId}/draft/start`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error(await response.text().catch(() => `Failed (${response.status})`));
+      }
+      
+      const raw = await response.json();
+      const next = normalizeDraftResponse(raw);
+      setDraft(next); // immediate UI update (status='active', currentPlayerId set, timer>0)
+      
       toast({
         title: "Draft started!",
         description: "The draft has begun. Good luck!",
@@ -592,7 +609,7 @@ export default function DraftPage() {
     } catch (error: any) {
       toast({
         title: "Failed to start draft",
-        description: error.message,
+        description: error.message || 'Failed to start draft',
         variant: "destructive",
       });
     } finally {
