@@ -189,9 +189,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log("[Auth] Available cookies:", Object.keys(req.cookies || {}));
       console.log("[Auth] Authorization header:", authHeader);
       
-      // REMOVED: No more automatic fallback to Sky Evans (causes PWA conflicts)
-      console.log("[Auth] No token found - authentication required");
+      // Development fallback - only for create league and essential operations
+      if (process.env.NODE_ENV === 'development') {
+        console.log("[Auth] Development mode - using Sky Evans fallback for essential operations");
+        return {
+          id: '9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a', // Sky Evans user ID
+          email: 'sky@mokfantasysports.com',
+          name: 'Sky Evans'
+        };
+      }
       
+      console.log("[Auth] No token found - authentication required");
       return null;
     }
 

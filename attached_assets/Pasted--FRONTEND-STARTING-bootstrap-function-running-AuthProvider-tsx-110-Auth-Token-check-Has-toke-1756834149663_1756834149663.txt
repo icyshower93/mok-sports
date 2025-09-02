@@ -1,0 +1,31 @@
+🚀 FRONTEND STARTING - bootstrap function running
+AuthProvider.tsx:110 [Auth] Token check - Has token: true Has user: false Loading: true
+AuthProvider.tsx:110 [Auth] Token check - Has token: true Has user: true Loading: false
+index.mjs:308 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+(anonymous) @ index.mjs:308Understand this warning
+VM24:39 Removed banner element: <div data-state=​"closed" class=​"fixed inset-0 z-50 bg-background/​80 backdrop-blur-sm data-[state=open]​:​animate-in data-[state=closed]​:​animate-out data-[state=closed]​:​fade-out-0 data-[state=open]​:​fade-in-0" style=​"pointer-events:​ auto;​">​</div>​
+sw.js?v=92ffc405-08e6-4ad1-b9df-e636cad26194:30 [SW] Clearing all caches (dev) Array(2)
+api/leagues:1  Failed to load resource: the server responded with a status of 400 ()Understand this error
+react-dom.production.min.js:188 NotFoundError: Failed to execute 'removeChild' on 'Node': The node to be removed is not a child of this node.
+    at Ba (react-dom.production.min.js:248:271)
+    at Ge (react-dom.production.min.js:247:255)
+    at Ba (react-dom.production.min.js:249:238)
+    at Ge (react-dom.production.min.js:247:255)
+    at Ba (react-dom.production.min.js:249:238)
+    at Ge (react-dom.production.min.js:247:255)
+    at Ba (react-dom.production.min.js:249:238)
+    at Ge (react-dom.production.min.js:247:255)
+    at Ba (react-dom.production.min.js:249:238)
+    at Ge (react-dom.production.min.js:247:255)
+Co @ react-dom.production.min.js:188Understand this error
+react-dom.production.min.js:127 Uncaught NotFoundError: Failed to execute 'removeChild' on 'Node': The node to be removed is not a child of this node.
+    at Ba (react-dom.production.min.js:248:271)
+    at Ge (react-dom.production.min.js:247:255)
+    at Ba (react-dom.production.min.js:249:238)
+    at Ge (react-dom.production.min.js:247:255)
+    at Ba (react-dom.production.min.js:249:238)
+    at Ge (react-dom.production.min.js:247:255)
+    at Ba (react-dom.production.min.js:249:238)
+    at Ge (react-dom.production.min.js:247:255)
+    at Ba (react-dom.production.min.js:249:238)
+    at Ge (react-dom.production.min.js:247:255)Understand this error
