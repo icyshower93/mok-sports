@@ -3,6 +3,8 @@ import { useHasLeague } from "@/features/leagues/useHasLeague";
 
 export default function RequireLeague({ children }: { children: React.ReactNode }) {
   const { hasLeague } = useHasLeague();
+  
+  console.debug("[RequireLeague]", { hasLeague });
 
   // While unknown, don't render anything (prevents brief bottom-nav flash)
   if (hasLeague === undefined) return null;
