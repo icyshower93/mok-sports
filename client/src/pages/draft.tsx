@@ -578,10 +578,10 @@ export default function DraftPage() {
     return Math.floor(rawTime + 1e-6);
   }, [normalized.isCountingDown, localTime, serverTime, normalized.timerSeconds]);
   
-  console.log('[TIMER DEBUG] Server Time:', displaySeconds);
+  console.log('[TIMER DEBUG] Server Time:', serverTime);
   console.log('[TIMER DEBUG] Display Time:', displayTime);
   console.log('[TIMER DEBUG] Current Player:', currentPlayerId);
-  console.log('[NORMALIZED FIELDS] Status:', draftStatus, 'CurrentPlayerId:', currentPlayerId, 'TimerSeconds:', displaySeconds, 'IsCountingDown:', isCountingDown);
+  console.log('[NORMALIZED FIELDS] Status:', draftStatus, 'CurrentPlayerId:', currentPlayerId, 'TimerSeconds:', normalized.timerSeconds, 'IsCountingDown:', isCountingDown);
 
   // Event handlers using hoisted functions
   const handleTouchStart = (e: React.TouchEvent) => {
@@ -602,7 +602,7 @@ export default function DraftPage() {
   };
 
   const handleMakePick = () => {
-    if (selectedTeam && isCurrentUser && state?.canMakePick) {
+    if (selectedTeam && normalized.isCurrentUser && normalized.canMakePick) {
       makePickMutation.mutate(selectedTeam);
     }
   };
