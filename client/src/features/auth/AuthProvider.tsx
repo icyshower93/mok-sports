@@ -57,7 +57,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setIsAuthenticated(false);
       AuthToken.clear(); // Clear stored token
       queryClient.clear();
-      window.location.href = "/";
+      window.location.href = "/login";
     },
   });
 
