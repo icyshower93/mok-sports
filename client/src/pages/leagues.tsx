@@ -376,13 +376,13 @@ export default function LeaguesPage() {
             }
           }}
         >
-          <DialogContent className="max-w-md">
+          <DialogContent className="max-w-md" aria-describedby="player-roster-desc">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
                 <Shield className="w-5 h-5" />
                 {selectedPlayer && standings.find(p => p.userId === selectedPlayer)?.userName}'s Teams
               </DialogTitle>
-              <DialogDescription>
+              <DialogDescription id="player-roster-desc">
                 View the teams drafted by this player
               </DialogDescription>
             </DialogHeader>

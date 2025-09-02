@@ -249,10 +249,10 @@ export default function DashboardPage() {
                   Create League
                 </Button>
               </DialogTrigger>
-              <DialogContent>
+              <DialogContent aria-describedby="create-league-desc">
                 <DialogHeader>
                   <DialogTitle>Create New League</DialogTitle>
-                  <DialogDescription>
+                  <DialogDescription id="create-league-desc">
                     Create a new 6-player fantasy league. You'll need to invite 5 other players to start drafting.
                   </DialogDescription>
                 </DialogHeader>
@@ -295,10 +295,10 @@ export default function DashboardPage() {
                   Join League
                 </Button>
               </DialogTrigger>
-              <DialogContent>
+              <DialogContent aria-describedby="join-league-desc">
                 <DialogHeader>
                   <DialogTitle>Join League</DialogTitle>
-                  <DialogDescription>
+                  <DialogDescription id="join-league-desc">
                     Enter the 6-character league code to join an existing league.
                   </DialogDescription>
                 </DialogHeader>
@@ -367,9 +367,12 @@ export default function DashboardPage() {
                 Create League
               </Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent aria-describedby="create-league-quick-desc">
               <DialogHeader>
                 <DialogTitle>Create New League</DialogTitle>
+                <DialogDescription id="create-league-quick-desc">
+                  Create a new 6-player fantasy league. You'll need to invite 5 other players to start drafting.
+                </DialogDescription>
               </DialogHeader>
               <form onSubmit={handleCreateLeague} className="space-y-4">
                 <div className="space-y-2">
@@ -399,9 +402,12 @@ export default function DashboardPage() {
                 Join League
               </Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent aria-describedby="join-league-quick-desc">
               <DialogHeader>
                 <DialogTitle>Join League</DialogTitle>
+                <DialogDescription id="join-league-quick-desc">
+                  Enter the 6-character league code to join an existing league.
+                </DialogDescription>
               </DialogHeader>
               <form onSubmit={handleJoinLeague} className="space-y-4">
                 <div className="space-y-2">
