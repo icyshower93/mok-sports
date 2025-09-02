@@ -24,27 +24,16 @@ import type { TeamStatus, Conference } from '@/draft/draft-types';
 const { DEFAULT_PICK_TIME_LIMIT } = TIMER_CONSTANTS;
 const { MINIMUM_SWIPE_DISTANCE, TIMER_WARNING_THRESHOLDS, NOTIFICATION_COOLDOWN, VIBRATION_PATTERNS } = DRAFT_UI_CONSTANTS;
 
-// ✅ HOISTED helpers (functions, not const fns)
-export function normalizeDraftResponse(raw: any): any {
-  const state = raw?.state ?? raw ?? {};
-  const participants = state.participants ?? raw.participants ?? [];
+// ✅ Normalize every draft payload into one consistent shape
+function normalizeDraft(raw: any) {
+  const s = raw?.state ?? raw ?? {};
   return {
-    id: raw.id ?? state.id ?? null,
-    leagueId: raw.leagueId ?? state.leagueId ?? null,
-    status: raw.status ?? state.status ?? state.phase ?? 'waiting',
-    currentPlayerId:
-      raw.currentPlayerId ?? raw.currentPlayer?.id ?? state.currentPlayerId ?? null,
-    participants,
-    timerSeconds:
-      raw.timer?.remaining ??
-      state.timer?.remaining ??
-      0,
-    // preserve compatibility
-    state: raw.state,
-    draft: raw.draft || raw.state?.draft,
-    isCurrentUser: raw.isCurrentUser,
-    currentPlayer: raw.currentPlayer ?? raw.state?.currentPlayer ?? null,
-    league: raw.league ?? raw.state?.league ?? null
+    id: raw.id ?? s.id ?? null,
+    leagueId: raw.leagueId ?? s.leagueId ?? null,
+    status: raw.status ?? s.status ?? s.phase ?? "waiting",
+    currentPlayerId: raw.currentPlayerId ?? raw.currentPlayer?.id ?? s.currentPlayerId ?? null,
+    participants: raw.participants ?? s.participants ?? [],
+    timerSeconds: raw.timer?.remaining ?? s.timer?.remaining ?? 0,
   };
 }
 
@@ -269,8 +258,8 @@ export default function DraftPage() {
         const raw = await response.json();
         console.log('[Draft] ✅ Draft data received successfully:', raw);
         
-        // Normalize the Draft API response using hoisted function
-        const normalized = normalizeDraftResponse(raw);
+        // ✅ Normalize the Draft API response 
+        const normalized = normalizeDraft(raw);
         console.log('[Draft] 🔧 Normalized response:', normalized);
         
         return normalized;
@@ -323,11 +312,6 @@ export default function DraftPage() {
     }
   }, [location, draft?.status, navigate]);
 
-  // Render only from normalized draft state
-  const draftStatus = draft?.status;
-  const currentPlayerId = draft?.currentPlayerId;
-  const displaySeconds = draft?.timerSeconds ?? 0;
-  
   // Keep the fallback object for compatibility (using draft state)
   const normalized = useMemo(() => {
     if (!draft) {
@@ -368,6 +352,11 @@ export default function DraftPage() {
     return draft;
   }, [draft, draftId]);
   
+  // ✅ Render only from normalized draft state
+  const draftStatus = normalized.status;
+  const currentPlayerId = normalized.currentPlayerId;
+  const displaySeconds = normalized.timerSeconds ?? 0;
+  
   // JSX-safe aliases for backward compatibility - using normalized (which is now just draft)
   const isCurrentUser = normalized.isCurrentUser;
   const picksSafe = normalized.picks;
@@ -386,11 +375,11 @@ export default function DraftPage() {
   useEffect(() => {
     if (!lastMessage) return;
     
-    // Normalize WebSocket messages that contain draft state updates
-    if (lastMessage.type === 'draft_state_update' || lastMessage.type === 'pick_made') {
-      const payload = lastMessage.data ?? lastMessage;
+    // ✅ Normalize WebSocket messages that contain draft state updates
+    if (lastMessage.type === 'draft_state_update' || lastMessage.type === 'pick_made' || lastMessage.type === 'draft:state' || lastMessage.type === 'draft:update' || lastMessage.type === 'draft:started') {
+      const payload = lastMessage.payload ?? lastMessage.data ?? lastMessage;
       if (payload) {
-        const normalizedUpdate = normalizeDraftResponse(payload);
+        const normalizedUpdate = normalizeDraft(payload);
         setDraft(normalizedUpdate);
         console.log('[WS] Normalized draft update from WebSocket:', normalizedUpdate);
       }
@@ -419,7 +408,7 @@ export default function DraftPage() {
   
   console.log('[TIMER DEBUG] Display Time:', displayTime);
   console.log('[TIMER DEBUG] Current Player:', currentPlayerId);
-  console.log('[NORMALIZED FIELDS] Status:', draftStatus, 'CurrentPlayerId:', currentPlayerId, 'TimerSeconds:', draft?.timerSeconds);
+  console.log('[NORMALIZED FIELDS] Status:', draftStatus, 'CurrentPlayerId:', currentPlayerId, 'TimerSeconds:', displaySeconds);
 
   // Event handlers using hoisted functions
   function handleTouchStart(e: React.TouchEvent) {
@@ -460,7 +449,7 @@ export default function DraftPage() {
       }
       
       const raw = await response.json();
-      const next = normalizeDraftResponse(raw);
+      const next = normalizeDraft(raw);
       setDraft(next); // immediate UI update (status='active', currentPlayerId set, timer>0)
       
       toast({
