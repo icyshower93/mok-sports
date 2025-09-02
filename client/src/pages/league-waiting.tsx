@@ -38,7 +38,7 @@ interface League {
 }
 
 export function LeagueWaiting() {
-  const { user } = useAuth();
+  const { user, isLoading: authLoading, isAuthenticated } = useAuth();
   const { toast } = useToast();
   const [, setLocation] = useLocation();
   const [leagueId, setLeagueId] = useState<string | null>(null);
@@ -47,10 +47,23 @@ export function LeagueWaiting() {
   const [previousMemberCount, setPreviousMemberCount] = useState<number>(0);
   const [notificationSent, setNotificationSent] = useState<boolean>(false);
 
+  // Wait for auth to be ready before proceeding
+  const authReady = !authLoading && (isAuthenticated || !isAuthenticated);
+
+  console.log('[LeagueWaiting] Auth state:', { 
+    user: !!user, 
+    authLoading, 
+    isAuthenticated, 
+    authReady,
+    timestamp: Date.now()
+  });
+
   // Get league ID from URL params and handle invalid/missing IDs
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const id = params.get('id');
+    
+    console.log('[LeagueWaiting] Checking URL params:', { id, authReady });
     
     if (id && id !== 'undefined' && id !== 'null') {
       setLeagueId(id);
@@ -63,10 +76,10 @@ export function LeagueWaiting() {
     }
   }, [setLocation]);
 
-  // Fetch league details
+  // Fetch league details - wait for both league ID and auth to be ready
   const { data: league, isLoading, refetch, error } = useQuery<League>({
     queryKey: [`/api/leagues/${leagueId}`],
-    enabled: !!leagueId && !!user,
+    enabled: !!leagueId && authReady && !!user,
     refetchInterval: 2000, // Refresh every 2 seconds for faster updates
     retry: (failureCount, error) => {
       // Don't retry if user is not authorized (removed from league)
@@ -77,16 +90,29 @@ export function LeagueWaiting() {
     },
   });
 
-  // WebSocket connection for real-time draft updates
-  console.log('[LeagueWaiting] EMERGENCY DEBUG - ABOUT TO CALL useDraftWebSocket with:', { 
+  // WebSocket connection for real-time draft updates - wait for auth and league to be ready
+  console.log('[LeagueWaiting] WebSocket connection check:', { 
     draftId: league?.draftId, 
     leagueId,
+    authReady,
     leagueLoaded: !!league,
     hasDraftId: !!league?.draftId,
+    shouldConnect: authReady && !!league?.draftId,
     timestamp: Date.now()
   });
-  const { connectionStatus, isConnected } = useDraftWebSocket(league?.draftId || null, leagueId);
-  console.log('[LeagueWaiting] EMERGENCY DEBUG - WebSocket hook returned:', { connectionStatus, isConnected, timestamp: Date.now() });
+  
+  // Only connect WebSocket when auth is ready and we have league data
+  const { connectionStatus, isConnected } = useDraftWebSocket(
+    authReady && league?.draftId ? league.draftId : null, 
+    authReady ? leagueId : null
+  );
+  
+  console.log('[LeagueWaiting] WebSocket status:', { 
+    connectionStatus, 
+    isConnected, 
+    authReady,
+    timestamp: Date.now() 
+  });
 
   // Debug logging for league data
   useEffect(() => {

@@ -123,6 +123,8 @@ export default function DashboardPage() {
       return result;
     },
     onSuccess: (result: any) => {
+      console.log("[CreateLeague] Success - server returned:", result);
+      
       toast({
         title: "Success!",
         description: "League created successfully",
@@ -134,10 +136,20 @@ export default function DashboardPage() {
       setLeagueName("");
       
       // Navigate to league waiting room
-      if (result?.league?.id) {
-        setLastLeagueId(result.league.id);
+      // Server returns league object directly, not wrapped in { league: ... }
+      const leagueId = result?.id;
+      if (leagueId) {
+        console.log("[CreateLeague] Navigating to waiting room with leagueId:", leagueId);
+        setLastLeagueId(leagueId);
         startTransition(() => {
-          setLocation(`/league/waiting?id=${result.league.id}`);
+          setLocation(`/league/waiting?id=${leagueId}`);
+        });
+      } else {
+        console.error("[CreateLeague] No league ID in response:", result);
+        toast({
+          title: "Warning",
+          description: "League created but navigation failed - check your leagues page",
+          variant: "destructive",
         });
       }
     },
