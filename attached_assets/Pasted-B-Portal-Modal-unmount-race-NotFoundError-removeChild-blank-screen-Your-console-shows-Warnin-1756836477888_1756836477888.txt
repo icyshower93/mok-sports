@@ -1,0 +1,42 @@
+B) Portal/Modal unmount race → NotFoundError: removeChild… → blank screen
+
+Your console shows Warning: Missing Description or aria-describedby for {DialogContent} and then a removeChild error. This is the classic Radix/portal a11y + DOM unmount race: when a dialog has incomplete a11y wiring or there’s any manual DOM manipulation of the overlay/backdrop, React can try to remove a child that’s already gone.
+
+I didn’t find any manual removeChild in your components; the race is likely triggered by the dialog lacking a DialogDescription (Radix relies on it for aria-describedby). Fixing the a11y wiring usually eliminates this crash.
+
+Exact fix (client)
+
+In client/src/pages/dashboard.tsx, change your Create League dialog to include a description and let Radix wire aria-describedby:
+
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
+
+// ...
+
+<Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
+  <DialogTrigger asChild>
+    <Button className="w-full">
+      <Plus className="w-4 h-4 mr-2" />
+      Create League
+    </Button>
+  </DialogTrigger>
+
+  {/* Add DialogDescription and (optionally) set aria-describedby on Content */}
+  <DialogContent aria-describedby="create-league-desc">
+    <DialogHeader>
+      <DialogTitle>Create New League</DialogTitle>
+      <DialogDescription id="create-league-desc">
+        Name your league and choose settings. You can invite players on the next screen.
+      </DialogDescription>
+    </DialogHeader>
+
+    <form onSubmit={handleCreateLeague} className="space-y-4">
+      {/* name input, etc. */}
+      {/* keep the submit button disabled while invalid/pending (see above) */}
+    </form>
+  </DialogContent>
+</Dialog>
+
+
+Also make sure you don’t imperatively remove any dialog/banner DOM (overlay/backdrop). If some utility does node.remove() (e.g., from earlier experiments), delete it. Let Radix/React own those nodes completely.
+
+Your ErrorBoundary already tries to suppress NotFoundError, but the safest approach is to prevent the error rather than catch it after the fact.

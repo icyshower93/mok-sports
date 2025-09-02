@@ -3,7 +3,7 @@ import { useAuth } from "@/features/auth/useAuth";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { MainLayout } from "@/components/layout/main-layout";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -252,6 +252,9 @@ export default function DashboardPage() {
               <DialogContent>
                 <DialogHeader>
                   <DialogTitle>Create New League</DialogTitle>
+                  <DialogDescription>
+                    Create a new 6-player fantasy league. You'll need to invite 5 other players to start drafting.
+                  </DialogDescription>
                 </DialogHeader>
                 <form onSubmit={handleCreateLeague} className="space-y-4">
                   <div className="space-y-2">
@@ -261,12 +264,23 @@ export default function DashboardPage() {
                       placeholder="Enter league name"
                       value={leagueName}
                       onChange={(e) => setLeagueName(e.target.value)}
+                      maxLength={50}
+                      data-testid="input-league-name"
                     />
+                    {leagueName.trim().length > 50 && (
+                      <p className="text-xs text-destructive">League name must be 50 characters or less</p>
+                    )}
+                    {leagues && leagues.some(league => league.name.toLowerCase() === leagueName.trim().toLowerCase()) && (
+                      <p className="text-xs text-amber-600 dark:text-amber-400">
+                        ⚠️ You already have a league with this name
+                      </p>
+                    )}
                   </div>
                   <Button 
                     type="submit" 
                     className="w-full"
-                    disabled={!leagueName.trim() || createLeagueMutation.isPending}
+                    disabled={!leagueName.trim() || leagueName.trim().length > 50 || createLeagueMutation.isPending}
+                    data-testid="button-create-league"
                   >
                     {createLeagueMutation.isPending ? "Creating..." : "Create League"}
                   </Button>
@@ -284,6 +298,9 @@ export default function DashboardPage() {
               <DialogContent>
                 <DialogHeader>
                   <DialogTitle>Join League</DialogTitle>
+                  <DialogDescription>
+                    Enter the 6-character league code to join an existing league.
+                  </DialogDescription>
                 </DialogHeader>
                 <form onSubmit={handleJoinLeague} className="space-y-4">
                   <div className="space-y-2">
@@ -294,12 +311,14 @@ export default function DashboardPage() {
                       value={joinCode}
                       onChange={(e) => setJoinCode(e.target.value)}
                       maxLength={6}
+                      data-testid="input-join-code"
                     />
                   </div>
                   <Button 
                     type="submit" 
                     className="w-full"
-                    disabled={!joinCode.trim() || joinLeagueMutation.isPending}
+                    disabled={!joinCode.trim() || joinCode.trim().length !== 6 || joinLeagueMutation.isPending}
+                    data-testid="button-join-league"
                   >
                     {joinLeagueMutation.isPending ? "Joining..." : "Join League"}
                   </Button>
