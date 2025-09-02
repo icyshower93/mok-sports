@@ -1,0 +1,73 @@
+Almost there! If you applied the fixes we walked through, you should see this behavior now:
+
+Green-light checklist (what “good” looks like):
+
+No “Cannot access … before initialization” (TDZ) errors in console.
+
+On /draft/:id you see a WebSocket connected log (however you print it) right after authReady && draftId.
+
+GET /api/drafts/:id returns and your normalized draft object has:
+{ id, leagueId, status, currentPlayerId, participants, timerSeconds }.
+
+Clicking Add robots hits /add-robots with 200/201, not 401.
+
+Clicking Start draft immediately updates UI to status: "active", shows a current player, and timer > 0 (no waiting on WS to feel responsive).
+
+You’re not auto-redirected away from /draft/:id until status === "completed".
+
+No Radix Dialog warning about Description / aria-describedby.
+
+If any one of those isn’t green, here are the last tiny switches to flip:
+
+WS should connect based only on draftId:
+
+const canConnect = auth.authReady && Boolean(draftId);
+const wsUrl = useMemo(() => (canConnect ? computeWsUrl(window.location.origin, draftId) : null), [canConnect, draftId]);
+useEffect(() => {
+  if (!canConnect || !wsUrl) return;
+  connectWebSocket(wsUrl, { token: auth.token });
+  return () => disconnectWebSocket();
+}, [canConnect, wsUrl, auth.token]);
+
+
+Normalize all draft payloads (GET + WS + start):
+
+function normalizeDraftResponse(raw:any){
+  const s = raw?.state ?? raw ?? {};
+  return {
+    id: raw.id ?? s.id ?? null,
+    leagueId: raw.leagueId ?? s.leagueId ?? null,
+    status: raw.status ?? s.status ?? s.phase ?? 'waiting',
+    currentPlayerId: raw.currentPlayerId ?? raw.currentPlayer?.id ?? s.currentPlayerId ?? null,
+    participants: raw.participants ?? s.participants ?? [],
+    timerSeconds: raw.timer?.remaining ?? s.timer?.remaining ?? 0,
+  };
+}
+
+
+Use this after GET /drafts/:id, after WS messages, and after POST /draft/start.
+
+Start draft writes to state immediately (don’t wait for WS):
+
+const res = await apiFetch(`/api/leagues/${leagueId}/draft/start`, { method:'POST' });
+const next = normalizeDraftResponse(await res.json());
+setDraft(next);
+
+
+Unified auth for every fetch:
+
+// apiFetch: always credentials:'include', add Authorization: Bearer <token> if present
+
+
+Kill the Radix warning wherever you have a dialog:
+
+<DialogContent aria-describedby="create-league-desc">
+  <DialogHeader>
+    <DialogTitle>Create New League</DialogTitle>
+    <DialogDescription id="create-league-desc"> … </DialogDescription>
+  </DialogHeader>
+  …
+</DialogContent>
+
+
+If your console now shows WS “connected”, status: "active", a non-null currentPlayerId, and a ticking timer, then yes—this build is good to ship.

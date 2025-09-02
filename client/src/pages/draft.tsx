@@ -11,6 +11,7 @@ import { Clock, Users, Trophy, Zap, Shield, Star, Wifi, WifiOff, Play, ArrowLeft
 import { useToast } from "@/hooks/use-toast";
 import { TeamLogo } from "@/components/team-logo";
 import { apiRequest } from "@/features/query/api";
+import { apiFetch } from "@/lib/api";
 import { useResilientWebSocket } from "@/hooks/use-resilient-websocket";
 import { useAuth } from "@/features/auth/useAuth";
 import type { DraftState, NflTeam, DraftPick } from '@shared/types/draft';
@@ -141,14 +142,14 @@ async function requestNotificationPermissionFromUser(): Promise<void> {
 // ✅ React component last
 export default function DraftPage() {
   // CRITICAL: All early returns must happen BEFORE any hooks to prevent Rules of Hooks violations
-  const params = useParams();
-  const urlDraftId = (params as any).draftId;
+  const urlParams = useParams();
+  const urlDraftId = (urlParams as any).draftId;
   
   // ALL HOOKS MUST BE CALLED CONSISTENTLY - cannot return early after calling hooks
   const [location, navigate] = useLocation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  // Auth will be accessed via auth variable in WebSocket section
+  const auth = useAuth(); // Auth declared early
   
   // Store normalized draft state
   const [draft, setDraft] = useState<any>(null);
@@ -288,17 +289,12 @@ export default function DraftPage() {
       console.log(`[Draft] Query retry ${failureCount}, error:`, error);
       return failureCount < 3;
     },
-    onSuccess: (normalizedData) => {
-      // Store normalized draft in state
-      setDraft(normalizedData);
-    }
+    // Remove onSuccess - deprecated in TanStack Query v5
   });
 
   // Simple WebSocket connection logic - purely based on draftId and auth ready
-  const params = useParams();
-  const draftId = (params as any).draftId!;
+  const draftId = urlDraftId!;
   
-  const auth = useAuth();
   const canConnect = !auth.isLoading && !!auth.user && Boolean(draftId);
   
   const wsUrl = useMemo(
@@ -456,13 +452,8 @@ export default function DraftPage() {
     
     setStarting(true);
     try {
-      const response = await fetch(`/api/leagues/${leagueId}/draft/start`, {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        }
+      const response = await apiFetch(`/api/leagues/${leagueId}/draft/start`, {
+        method: 'POST'
       });
       
       if (!response.ok) {
@@ -572,14 +563,14 @@ export default function DraftPage() {
     );
   }
 
-  const loadingReason = !user ? 'authentication' : 
-                       authLoading ? 'authentication loading' :
+  const loadingReason = !auth.user ? 'authentication' : 
+                       auth.isLoading ? 'authentication loading' :
                        isLoading ? 'draft data loading' :
                        !draftData ? 'no draft data' : 
                        null;
 
   if (loadingReason) {
-    console.log('[Draft] RENDER: Loading state -', loadingReason, '- authLoading:', authLoading, 'isLoading:', isLoading, 'draftData:', !!draftData);
+    console.log('[Draft] RENDER: Loading state -', loadingReason, '- authLoading:', auth.isLoading, 'isLoading:', isLoading, 'draftData:', !!draftData);
     
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -636,7 +627,7 @@ export default function DraftPage() {
             </h4>
             <div className="grid grid-cols-1 gap-2">
               {teams.map((team) => {
-                const teamStatus = getTeamStatus(team, normalized.picks, normalized.isCurrentUser, normalized, auth.user?.id);
+                const teamStatus = getTeamStatus(team, normalized.picks, normalized.isCurrentUser, normalized, auth.user?.id || '');
                 const isSelected = selectedTeam === team.id;
                 const isDisabled = teamStatus !== 'available' || !normalized.canMakePick || !normalized.isCurrentUser;
                 
