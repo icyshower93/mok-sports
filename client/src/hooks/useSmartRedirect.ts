@@ -70,8 +70,14 @@ export function useSmartRedirect(enabled: boolean) {
         hasDraftInfo: !!draftInfo 
       });
 
-      // If we just created the league/draft but store didn't hydrate yet, be lenient: stay put.
-      // Only redirect away if draft is explicitly completed/canceled or confirmed not found
+      // CRITICAL: Be lenient during initial hydration to prevent flicker
+      // If draft data is still loading (undefined) or query hasn't been attempted yet, give it time
+      if (draftInfo === undefined) {
+        console.debug("[SmartRedirect] Draft data still loading or query not attempted, staying put to allow hydration");
+        return; // Don't redirect during loading/hydration window
+      }
+      
+      // Only redirect away if draft is explicitly completed/canceled or confirmed not found (null)
       if (draftInfo === null || draftStatus === "completed" || draftStatus === "canceled") {
         console.log("[SmartRedirect] Draft is done/non-existent, redirecting to main app from", location);
         startTransition(() => {
@@ -126,6 +132,11 @@ export function useSmartRedirect(enabled: boolean) {
             });
             return;
           }
+        } 
+        // EDGE CASE: Handle freshly created drafts where status might not be updated yet
+        else if (!draftStatus || draftStatus === undefined) {
+          console.debug("[SmartRedirect] Draft status unknown, being lenient to allow hydration");
+          return; // Give time for draft status to properly hydrate
         } 
         // If draft is completed → allow access to main app
         else if (draftStatus === "completed" || draftStatus === "canceled") {

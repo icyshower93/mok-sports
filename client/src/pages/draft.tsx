@@ -558,17 +558,25 @@ export default function DraftPage() {
     }
   };
 
-  // Show loading while auth is still loading
-  if (authLoading || isLoading) {
-    console.log('[Draft] RENDER: Loading state - authLoading:', authLoading, 'isLoading:', isLoading, 'draftData:', !!draftData);
+  // Show loading during initial hydration to prevent redirect flicker
+  if (authLoading || isLoading || (!draftData && !error)) {
+    const loadingReason = authLoading ? 'auth' : isLoading ? 'data' : 'hydration';
+    console.log('[Draft] RENDER: Loading state -', loadingReason, '- authLoading:', authLoading, 'isLoading:', isLoading, 'draftData:', !!draftData);
+    
     return (
       <div className="min-h-screen bg-gradient-to-br from-background to-secondary/20 flex items-center justify-center">
         <div className="text-center">
           <div className="w-16 h-16 bg-fantasy-purple/10 rounded-full flex items-center justify-center mx-auto mb-4">
             <Zap className="w-8 h-8 text-fantasy-purple animate-pulse" />
           </div>
-          <p className="text-muted-foreground">Loading draft room...</p>
-
+          <p className="text-muted-foreground">
+            {loadingReason === 'auth' ? 'Authenticating...' : 
+             loadingReason === 'data' ? 'Loading draft data...' : 
+             'Connecting to draft room...'}
+          </p>
+          <p className="text-xs text-muted-foreground/60 mt-2">
+            This prevents redirect flicker during initial load
+          </p>
         </div>
       </div>
     );
