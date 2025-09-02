@@ -592,13 +592,13 @@ export default function StablePage() {
 
       {/* Lock Confirmation Dialog */}
       <Dialog open={lockDialogOpen} onOpenChange={handleLockDialogChange}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-md" aria-describedby="lock-team-desc">
           <DialogHeader>
             <div className="flex items-center space-x-2">
               <Lock className="w-5 h-5 text-blue-600" />
               <DialogTitle>Lock Team for Week {selectedWeek}</DialogTitle>
             </div>
-            <DialogDescription className="space-y-3 pt-2">
+            <DialogDescription id="lock-team-desc" className="space-y-3 pt-2">
               <div className="flex items-center space-x-3 p-3 rounded-lg bg-muted/50">
                 {selectedTeam && (
                   <>
@@ -686,7 +686,7 @@ export default function StablePage() {
 
       {/* Lock & Load Confirmation Dialog */}
       <Dialog open={lockAndLoadDialogOpen} onOpenChange={handleLockAndLoadDialogChange}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-md" aria-describedby="lock-and-load-desc">
           <DialogHeader>
             <div className="flex items-center space-x-2">
               <div className="p-1 rounded-full bg-amber-100 dark:bg-amber-900/30">
@@ -696,7 +696,7 @@ export default function StablePage() {
                 Lock & Load for Week {selectedWeek}
               </DialogTitle>
             </div>
-            <DialogDescription className="space-y-3 pt-2">
+            <DialogDescription id="lock-and-load-desc" className="space-y-3 pt-2">
               <div className="flex items-center space-x-3 p-3 rounded-lg bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800">
                 {selectedTeam && (
                   <>
