@@ -45,9 +45,21 @@ export default function LeaguesPage() {
 
   const currentLeagueId = Array.isArray(userLeagues) && userLeagues.length > 0 ? userLeagues[0].id : null;
 
-  const { data: standings, isLoading } = useQuery<StandingsResponse>({
-    queryKey: [`/api/leagues/${currentLeagueId}/standings/${selectedSeason}`],
+  const standingsQuery = useQuery<StandingsResponse>({
+    queryKey: ["league-standings", currentLeagueId, selectedSeason],
     enabled: !!currentLeagueId,
+    retry: false,
+    queryFn: async () => {
+      const url = `/api/leagues/${currentLeagueId}/standings/${selectedSeason}`;
+      console.debug("[Leagues] fetching:", url);
+      const res = await fetch(url, { credentials: "include" });
+      if (!res.ok) {
+        const body = await res.text().catch(() => "");
+        console.error("[Leagues] fetch error", res.status, body);
+        throw new Error(`Standings fetch failed: ${res.status}`);
+      }
+      return res.json();
+    },
   });
 
   if (!user) {
@@ -63,17 +75,29 @@ export default function LeaguesPage() {
   if (!currentLeagueId) {
     return (
       <MainLayout>
+        <div className="p-3 text-sm">No league selected.</div>
+      </MainLayout>
+    );
+  }
+
+  if (standingsQuery.isLoading) {
+    return (
+      <MainLayout>
         <div className="p-4 max-w-4xl mx-auto">
           <Card>
             <CardContent className="p-8 text-center">
-              <Trophy className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
-              <h3 className="text-lg font-semibold mb-2">No League Found</h3>
-              <p className="text-muted-foreground">
-                You need to join a league to view standings.
-              </p>
+              <div>Loading standings...</div>
             </CardContent>
           </Card>
         </div>
+      </MainLayout>
+    );
+  }
+
+  if (standingsQuery.isError) {
+    return (
+      <MainLayout>
+        <div className="p-3 text-sm text-red-600">Failed to load standings. Check console.</div>
       </MainLayout>
     );
   }
@@ -115,11 +139,11 @@ export default function LeaguesPage() {
               League Standings
             </h1>
             <p className="text-muted-foreground">
-              {standings?.leagueInfo?.name || 'League'} • Season {selectedSeason}
+              {standingsQuery.data?.leagueInfo?.name || 'League'} • Season {selectedSeason}
             </p>
           </div>
           <Badge variant="secondary">
-            Week {standings?.currentWeek || 1}
+            Week {standingsQuery.data?.currentWeek || 1}
           </Badge>
         </div>
 
@@ -132,12 +156,7 @@ export default function LeaguesPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            {isLoading ? (
-              <div className="text-center py-8">
-                <div className="w-6 h-6 animate-spin rounded-full border border-muted-foreground border-t-transparent mx-auto" />
-                <p className="text-sm text-muted-foreground mt-2">Loading standings...</p>
-              </div>
-            ) : standings?.standings?.length === 0 ? (
+            {standingsQuery.data?.standings?.length === 0 ? (
               <div className="text-center py-8">
                 <Trophy className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
                 <h3 className="text-lg font-semibold mb-2">No Standings Yet</h3>
@@ -147,7 +166,7 @@ export default function LeaguesPage() {
               </div>
             ) : (
               <div className="space-y-3">
-                {standings?.standings?.map((player, index) => (
+                {standingsQuery.data?.standings?.map((player, index) => (
                   <div
                     key={player.userId}
                     className={`p-4 rounded-lg border transition-colors ${getRankColor(player.rank)} ${
@@ -202,17 +221,17 @@ export default function LeaguesPage() {
         </Card>
 
         {/* Season Stats Summary */}
-        {standings?.standings && standings.standings.length > 0 && (
+        {standingsQuery.data?.standings && standingsQuery.data.standings.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <Card>
               <CardContent className="p-4 text-center">
                 <Crown className="w-8 h-8 mx-auto mb-2 text-yellow-500" />
                 <div className="font-medium">Current Leader</div>
                 <div className="text-sm text-muted-foreground">
-                  {standings.standings[0]?.userName}
+                  {standingsQuery.data.standings[0]?.userName}
                 </div>
                 <div className="text-lg font-bold">
-                  {standings.standings[0]?.totalMokPoints} pts
+                  {standingsQuery.data.standings[0]?.totalMokPoints} pts
                 </div>
               </CardContent>
             </Card>
@@ -222,7 +241,7 @@ export default function LeaguesPage() {
                 <TrendingUp className="w-8 h-8 mx-auto mb-2 text-primary" />
                 <div className="font-medium">Total Players</div>
                 <div className="text-lg font-bold">
-                  {standings.leagueInfo.memberCount}
+                  {standingsQuery.data.leagueInfo.memberCount}
                 </div>
               </CardContent>
             </Card>
@@ -232,7 +251,7 @@ export default function LeaguesPage() {
                 <Zap className="w-8 h-8 mx-auto mb-2 text-amber-500" />
                 <div className="font-medium">Total Skins Won</div>
                 <div className="text-lg font-bold">
-                  {standings.standings.reduce((sum, p) => sum + (p.skinsWon || 0), 0)}
+                  {standingsQuery.data.standings.reduce((sum, p) => sum + (p.skinsWon || 0), 0)}
                 </div>
               </CardContent>
             </Card>
