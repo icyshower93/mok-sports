@@ -144,87 +144,76 @@
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
     <script>
-      // Enhanced banner removal for iOS PWA
+      // Safe banner removal for iOS PWA (prevents React dialog conflicts)
       function removeAllBanners() {
-        const selectors = [
+        // Only target very specific Replit elements, avoid React-managed content
+        const specificSelectors = [
           'iframe[src*="replit"]',
           'div[id*="replit-banner"]',
           'div[class*="replit-banner"]',
           '.replit-dev-banner',
-          '[data-replit-banner]',
-          'div[style*="position: fixed"][style*="top: 0"]',
-          'div[style*="z-index: 999"]',
-          'div[style*="z-index: 9999"]',
-          '[style*="position: fixed"][style*="top: 0"]'
+          '[data-replit-banner]'
         ];
         
-        selectors.forEach(selector => {
+        specificSelectors.forEach(selector => {
           const elements = document.querySelectorAll(selector);
           elements.forEach(el => {
-            el.remove();
-          });
-        });
-        
-        // Enhanced check for any top banners, especially green ones
-        const allDivs = document.querySelectorAll('div');
-        allDivs.forEach(div => {
-          const style = window.getComputedStyle(div);
-          const rect = div.getBoundingClientRect();
-          
-          // Remove if it's a fixed positioned element at the top
-          if (style.position === 'fixed' && rect.top <= 50) {
-            // Check if it's a banner-like element
-            if (rect.width > window.innerWidth * 0.8 || // Wide element
-                style.backgroundColor.includes('green') || 
-                style.background.includes('green') ||
-                style.backgroundColor.includes('rgb(') ||
-                div.innerHTML.toLowerCase().includes('replit') ||
-                div.innerHTML.toLowerCase().includes('banner')) {
-              div.remove();
-              console.log('Removed banner element:', div);
-            }
-          }
-        });
-        
-        // iOS PWA specific: Remove elements in the safe area
-        if (window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches) {
-          const topElements = document.querySelectorAll('*');
-          topElements.forEach(el => {
-            const rect = el.getBoundingClientRect();
-            if (rect.top <= 44 && rect.height < 100 && rect.width > window.innerWidth * 0.5) {
-              const style = window.getComputedStyle(el);
-              if (style.position === 'fixed' || style.position === 'absolute') {
+            // Safety check: don't remove React-managed elements
+            if (el && el.parentNode && !el.closest('[data-radix-popper-content-wrapper], [data-radix-portal], [data-state]')) {
+              try {
                 el.remove();
-                console.log('Removed PWA safe area banner:', el);
+                console.log('Safely removed Replit banner:', el.tagName);
+              } catch (e) {
+                // Ignore removal errors
               }
             }
           });
-        }
+        });
+        
+        // Very conservative banner detection - only target obvious external banners
+        const suspiciousDivs = document.querySelectorAll('div');
+        suspiciousDivs.forEach(div => {
+          // Skip if this is inside React root or is React-managed
+          if (div.closest('#root') || 
+              div.closest('[data-radix-popper-content-wrapper]') || 
+              div.closest('[data-radix-portal]') ||
+              div.hasAttribute('data-state') ||
+              div.hasAttribute('data-radix-portal')) {
+            return;
+          }
+          
+          const style = window.getComputedStyle(div);
+          const rect = div.getBoundingClientRect();
+          
+          // Only remove if it's clearly an external banner with explicit Replit content
+          if (style.position === 'fixed' && 
+              rect.top <= 20 && 
+              rect.width > window.innerWidth * 0.9 &&
+              (div.innerHTML.toLowerCase().includes('replit') ||
+               div.innerHTML.toLowerCase().includes('deployment'))) {
+            try {
+              if (div && div.parentNode) {
+                div.remove();
+                console.log('Removed external banner with Replit content');
+              }
+            } catch (e) {
+              // Ignore removal errors
+            }
+          }
+        });
       }
       
-      // Run immediately and repeatedly for PWA
+      // Much less aggressive execution - only run a few times
       removeAllBanners();
-      setTimeout(removeAllBanners, 100);
       setTimeout(removeAllBanners, 500);
-      setTimeout(removeAllBanners, 1000);
       setTimeout(removeAllBanners, 2000);
       
-      // Continuous monitoring for iOS PWA
-      setInterval(removeAllBanners, 5000);
-      
-      // Watch for new elements
-      if (typeof MutationObserver !== 'undefined') {
-        const observer = new MutationObserver(removeAllBanners);
-        observer.observe(document.body, { childList: true, subtree: true });
-      }
-      
-      // iOS PWA specific event listeners
+      // Remove the aggressive monitoring that was causing conflicts
+      // Only run on page visibility changes for PWA
       if (window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches) {
-        window.addEventListener('focus', removeAllBanners);
-        window.addEventListener('pageshow', removeAllBanners);
         document.addEventListener('visibilitychange', () => {
           if (!document.hidden) {
-            setTimeout(removeAllBanners, 100);
+            setTimeout(removeAllBanners, 500);
           }
         });
       }
