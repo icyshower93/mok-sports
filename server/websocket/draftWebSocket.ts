@@ -399,6 +399,12 @@ export class DraftWebSocketManager {
         });
         break;
 
+      case 'draft:get_state':
+        // ✅ Handle immediate state request from useDraftWebSocket
+        console.log(`[WebSocket] Client requesting draft state for draft ${connection.draftId}`);
+        this.sendCurrentDraftState(connection);
+        break;
+
       default:
         console.log('[WebSocket] Unknown message type:', message.type);
     }
@@ -712,6 +718,26 @@ export class DraftWebSocketManager {
       data: state,
       timestamp: Date.now()
     });
+  }
+
+  // ✅ Send current draft state to a single connection
+  private async sendCurrentDraftState(connection: DraftConnection) {
+    try {
+      console.log(`[WebSocket] Sending current draft state to user ${connection.userId} for draft ${connection.draftId}`);
+      
+      // Send canonical draft state message
+      this.sendToConnection(connection, {
+        type: 'draft:state',
+        payload: {
+          draftId: connection.draftId,
+          timestamp: Date.now()
+        }
+      });
+      
+      console.log(`[WebSocket] ✅ Draft state sent to user ${connection.userId}`);
+    } catch (error) {
+      console.error(`[WebSocket] ❌ Failed to send draft state to user ${connection.userId}:`, error);
+    }
   }
 
   private broadcastToDraft(draftId: string, message: any) {

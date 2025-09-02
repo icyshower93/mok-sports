@@ -12,7 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 import { TeamLogo } from "@/components/team-logo";
 import { apiRequest } from "@/features/query/api";
 import { apiFetch } from "@/lib/api";
-import { useResilientWebSocket } from "@/hooks/use-resilient-websocket";
+import { useDraftWebSocket } from "@/hooks/use-draft-websocket";
 import { useAuth } from "@/features/auth/useAuth";
 import type { DraftState, NflTeam, DraftPick } from '@shared/types/draft';
 
@@ -308,8 +308,8 @@ export default function DraftPage() {
     wsUrl: wsUrl || 'none' 
   });
   
-  const { status: connectionStatus, message: lastMessage } = useResilientWebSocket(wsUrl);
-  const isConnected = connectionStatus === 'open';
+  const { connectionStatus, lastMessage } = useDraftWebSocket(draftId || '');
+  const isConnected = connectionStatus === 'connected';
 
   // Smart redirect: don't auto-leave /draft/:id while not completed
   useEffect(() => {

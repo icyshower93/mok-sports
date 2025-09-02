@@ -39,7 +39,13 @@ export function useDraftWebSocket(draftId: string) {
     const ws = new WebSocket(url);
     wsRef.current = ws;
 
-    ws.onopen = () => { attemptsRef.current = 0; setConnectionStatus('connected'); };
+    ws.onopen = () => { 
+      attemptsRef.current = 0; 
+      setConnectionStatus('connected'); 
+      
+      // ✅ Immediately request full state on connection
+      ws.send(JSON.stringify({ type: "draft:get_state", draftId }));
+    };
     ws.onmessage = (ev) => { try { setLastMessage(JSON.parse(ev.data)); } catch {} };
     ws.onerror = () => { /* let onclose schedule reconnect */ };
     ws.onclose = (ev) => {
