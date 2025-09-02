@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from "@/components/ui/dialog";
 import { Trophy, Crown, Medal, Award, TrendingUp, Zap, Eye, Lock, Shield } from "lucide-react";
 import { MainLayout } from "@/components/layout/main-layout";
 import { getCurrentSeason } from "@/lib/season";
@@ -382,6 +382,9 @@ export default function LeaguesPage() {
                 <Shield className="w-5 h-5" />
                 {selectedPlayer && standings.find(p => p.userId === selectedPlayer)?.userName}'s Teams
               </DialogTitle>
+              <DialogDescription>
+                View the teams drafted by this player
+              </DialogDescription>
             </DialogHeader>
             
             {playerRoster && (
