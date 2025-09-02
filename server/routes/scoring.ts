@@ -1120,8 +1120,79 @@ router.get("/skins/:leagueId/:season", authenticateUser, authorizeLeagueMember, 
       // Get current week (simplified for now)
       const currentWeekNumber = 1;
 
-      // TODO: Implement calculateSeasonStandings function
-      const standings: any[] = [];
+      // Calculate season standings by aggregating all weekly scores
+      const seasonStandings = await db.select({
+        userId: userWeeklyScores.userId,
+        userName: users.name,
+        totalMokPoints: sql<number>`COALESCE(SUM(${userWeeklyScores.totalPoints}), 0)`,
+        weeklyWins: sql<number>`COUNT(CASE WHEN ${userWeeklyScores.totalPoints} > 0 THEN 1 END)`,
+        basePoints: sql<number>`COALESCE(SUM(${userWeeklyScores.basePoints}), 0)`,
+        lockBonusPoints: sql<number>`COALESCE(SUM(${userWeeklyScores.lockBonusPoints}), 0)`,
+        lockAndLoadBonusPoints: sql<number>`COALESCE(SUM(${userWeeklyScores.lockAndLoadBonusPoints}), 0)`
+      })
+      .from(userWeeklyScores)
+      .innerJoin(users, eq(userWeeklyScores.userId, users.id))
+      .where(
+        and(
+          eq(userWeeklyScores.leagueId, leagueId),
+          eq(userWeeklyScores.season, seasonNum)
+        )
+      )
+      .groupBy(userWeeklyScores.userId, users.name)
+      .orderBy(sql`COALESCE(SUM(${userWeeklyScores.totalPoints}), 0) DESC`);
+
+      // Calculate skins won for each user
+      const standingsWithSkins = await Promise.all(
+        seasonStandings.map(async (standing, index) => {
+          // Count weeks where this user had the highest score
+          const weeksWithHighestScore = await db.select({
+            week: userWeeklyScores.week,
+            maxPoints: sql<number>`MAX(${userWeeklyScores.totalPoints})`
+          })
+          .from(userWeeklyScores)
+          .where(
+            and(
+              eq(userWeeklyScores.leagueId, leagueId),
+              eq(userWeeklyScores.season, seasonNum)
+            )
+          )
+          .groupBy(userWeeklyScores.week);
+
+          let skinsWon = 0;
+          for (const weekData of weeksWithHighestScore) {
+            const [userWeekData] = await db.select({
+              points: userWeeklyScores.totalPoints
+            })
+            .from(userWeeklyScores)
+            .where(
+              and(
+                eq(userWeeklyScores.userId, standing.userId),
+                eq(userWeeklyScores.leagueId, leagueId),
+                eq(userWeeklyScores.season, seasonNum),
+                eq(userWeeklyScores.week, weekData.week)
+              )
+            );
+
+            if (userWeekData && userWeekData.points === weekData.maxPoints) {
+              skinsWon++;
+            }
+          }
+
+          return {
+            userId: standing.userId,
+            userName: standing.userName,
+            totalMokPoints: standing.totalMokPoints,
+            weeklyWins: standing.weeklyWins,
+            lockSuccessRate: standing.lockBonusPoints / Math.max(standing.lockBonusPoints + standing.lockAndLoadBonusPoints, 1),
+            lockAndLoadSuccessRate: standing.lockAndLoadBonusPoints / Math.max(standing.lockAndLoadBonusPoints, 1),
+            skinsWon,
+            rank: index + 1,
+            isCurrentUser: standing.userId === user.id
+          };
+        })
+      );
+
+      const standings = standingsWithSkins;
       
       res.json({
         standings,
