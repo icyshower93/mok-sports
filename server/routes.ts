@@ -1628,8 +1628,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.log('[draft/start] SUCCESS: Draft started with state:', !!draftState);
         
         // Broadcast draft:started event to all clients for instant sync
-        const { webSocketManager } = await import('./websocket/draftWebSocket.js');
-        webSocketManager.broadcastToDraft(draft.id, {
+        draftManager.webSocketManager.broadcastToDraft(draft.id, {
           type: 'draft:started',
           data: {
             draftId: draft.id,
