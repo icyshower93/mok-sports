@@ -40,6 +40,7 @@ export default function DraftPage() {
   const [currentConference, setCurrentConference] = useState<'AFC' | 'NFC'>('AFC');
   const [touchStartX, setTouchStartX] = useState<number>(0);
   const [showFAB, setShowFAB] = useState(false);
+  const [starting, setStarting] = useState(false);
   
   // Fetch user's leagues to get the current draft ID
   const { data: leagueData } = useQuery({
@@ -236,7 +237,7 @@ export default function DraftPage() {
     },
     enabled: !!draftId && !!user && !authLoading,
     staleTime: 2000, // 2 seconds to balance real-time needs with performance
-    refetchInterval: (queryData) => {
+    refetchInterval: (queryData: any) => {
       // Only poll if draft is active and we're waiting for updates
       return queryData?.status === 'active' || queryData?.status === 'starting' ? 3000 : false;
     },
@@ -606,6 +607,47 @@ export default function DraftPage() {
           });
         }
       });
+    }
+  };
+
+  // Start Draft function for commissioners
+  const onStartDraft = async () => {
+    if (starting) return;
+    setStarting(true);
+    try {
+      const res = await fetch(`/api/leagues/${draftData?.leagueId}/draft/start`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+      });
+      if (!res.ok) throw new Error(await res.text().catch(() => `Failed (${res.status})`));
+      const updated = await res.json(); // should include status, currentPlayerId, timer, etc.
+
+      // normalize again & stash
+      const next = {
+        ...draftData,
+        status: updated.status ?? updated.state?.status ?? 'active',
+        currentPlayerId: updated.currentPlayerId ?? updated.state?.currentPlayerId ?? null,
+        timerSeconds: updated.timer?.remaining ?? updated.state?.timer?.remaining ?? 120,
+        participants: updated.participants ?? updated.state?.participants ?? draftData?.participants,
+      };
+      
+      // Invalidate queries to refetch with new state
+      queryClient.invalidateQueries({ queryKey: ['draft', draftId, 'state'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/user/leagues'] });
+
+      toast({
+        title: "Draft started!",
+        description: "The draft is now active."
+      });
+    } catch (e: any) {
+      toast({
+        title: "Failed to start draft",
+        description: e.message || 'Failed to start draft',
+        variant: "destructive"
+      });
+    } finally {
+      setStarting(false);
     }
   };
 
@@ -1175,7 +1217,7 @@ export default function DraftPage() {
                     </CardTitle>
                   </CardHeader>
                 <CardContent>
-                  {draftStatus === 'not_started' ? (
+                  {(draftStatus === 'not_started' || draftStatus === 'pending' || draftStatus === 'waiting') ? (
                     <div className="text-center space-y-3">
                       <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
                         <div className="text-blue-700 dark:text-blue-300 font-medium mb-2">
@@ -1189,6 +1231,19 @@ export default function DraftPage() {
                           <span>Connected - real-time updates enabled</span>
                         </div>
                       </div>
+                      
+                      {/* Show start button if current user is commissioner */}
+                      {user?.id === draftData?.league?.creatorId && (
+                        <Button
+                          onClick={onStartDraft}
+                          disabled={starting}
+                          className="w-full"
+                          size="lg"
+                        >
+                          <Play className="w-4 h-4 mr-2" />
+                          {starting ? 'Starting…' : 'Start Draft'}
+                        </Button>
+                      )}
                   ) : draftStatus === 'starting' ? (
                     <div className="text-center space-y-3">
                       <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
@@ -1210,36 +1265,6 @@ export default function DraftPage() {
                         </div>
                       </div>
                     </div>
-                      
-                      {/* Show start button if current user is creator */}
-                      {user?.id === draftData?.league?.creatorId && (
-                        <Button
-                          onClick={async () => {
-                            try {
-                              const response = await fetch(`/api/drafts/${draftId}/start`, {
-                                method: 'POST',
-                                credentials: 'include'
-                              });
-                              if (response.ok) {
-                                toast({
-                                  title: "Draft Started!",
-                                  description: "The timer is now running for the first pick."
-                                });
-                              }
-                            } catch (error) {
-                              toast({
-                                title: "Failed to start draft",
-                                description: "Please try again."
-                              });
-                            }
-                          }}
-                          className="w-full"
-                          size="lg"
-                        >
-                          <Play className="w-4 h-4 mr-2" />
-                          Start Draft
-                        </Button>
-                      )}
                     </div>
                   ) : state?.currentUserId ? (
                     <div className="text-center space-y-3">
