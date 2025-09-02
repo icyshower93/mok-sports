@@ -35,13 +35,20 @@ export default function DraftControls({
   const [showSettings, setShowSettings] = useState(false);
   const [pickTimeLimit, setPickTimeLimit] = useState(120); // Default 2 minutes to match server
   const totalRounds = 5; // Fixed to 5 rounds for 6-person leagues
+  
+  // CLIENT HYGIENE: Prevent double-clicks and noise
+  const [starting, setStarting] = useState(false);
 
-  // Start draft mutation using the proper league-based endpoint
-  const startDraftMutation = useMutation({
-    mutationFn: async () => {
+  // CLIENT HYGIENE: Improved start draft function with double-click protection
+  const onStartDraft = async () => {
+    if (starting) {
+      console.log('[StartDraft] ⚠️ Already starting, ignoring duplicate click');
+      return;
+    }
+    setStarting(true);
+    try {
       console.log('[StartDraft] ✅ Starting draft for league:', leagueId);
       
-      // Use the new league-based endpoint that creates or starts the draft
       const response = await fetch(`/api/leagues/${leagueId}/draft/start`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -49,25 +56,14 @@ export default function DraftControls({
       });
       
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || 'Failed to start draft');
+        const errorText = await response.text().catch(() => "");
+        throw new Error(errorText || `Failed to start draft (${response.status})`);
       }
       
       const data = await response.json();
       console.log('[StartDraft] ✅ Draft response:', data);
       
-      return data; // { draftId, leagueId, status, message, state }
-    },
-    onSuccess: (data) => {
-      console.log('[StartDraft] ✅ SUCCESS - Draft ready:', data);
-      
-      toast({
-        title: "Draft started!",
-        description: data.message || "The live draft is now beginning. Good luck!",
-      });
-      
-      // CRITICAL: Update store with draft status BEFORE navigation
-      // This prevents the redirect race condition by ensuring the store knows about the draft
+      // CRITICAL: Update stores BEFORE navigation logic relies on draftId
       queryClient.setQueryData(['/api/user/leagues'], (oldLeagues: any) => {
         if (!oldLeagues) return oldLeagues;
         
@@ -100,17 +96,32 @@ export default function DraftControls({
       // Navigate to draft room using league ID (consistent with our useSmartRedirect logic)
       setLocation(`/draft/${leagueId}`, { replace: true });
       
+      toast({
+        title: "Draft started!",
+        description: data.message || "The live draft is now beginning. Good luck!",
+      });
+      
       if (onDraftStarted) {
         onDraftStarted();
       }
-    },
-    onError: (error: Error) => {
+      
+      return data;
+    } catch (error: any) {
       toast({
         title: "Failed to start draft",
-        description: error.message,
+        description: error.message || "Failed to start draft",
         variant: "destructive",
       });
-    },
+      throw error;
+    } finally {
+      setStarting(false);
+    }
+  };
+
+  // Start draft mutation using the proper league-based endpoint
+  const startDraftMutation = useMutation({
+    mutationFn: onStartDraft,
+    // Success and error handling moved to onStartDraft function for better control
   });
 
   // SEAMLESS RESET: Create new draft and auto-navigate to it
@@ -310,12 +321,12 @@ export default function DraftControls({
 
             <Button
               onClick={() => startDraftMutation.mutate()}
-              disabled={startDraftMutation.isPending}
+              disabled={startDraftMutation.isPending || starting}
               className="w-full"
               size="lg"
             >
               <Play className="w-4 h-4 mr-2" />
-              {startDraftMutation.isPending ? 'Starting Draft...' : 'Start Draft Now'}
+              {(startDraftMutation.isPending || starting) ? 'Starting Draft...' : 'Start Draft Now'}
             </Button>
           </>
         )}
@@ -334,12 +345,12 @@ export default function DraftControls({
             <div className="flex space-x-2">
               <Button
                 onClick={() => startDraftMutation.mutate()}
-                disabled={startDraftMutation.isPending}
+                disabled={startDraftMutation.isPending || starting}
                 className="flex-1"
                 size="lg"
               >
                 <Play className="w-4 h-4 mr-2" />
-                {startDraftMutation.isPending ? 'Starting...' : 'Start Draft'}
+                {(startDraftMutation.isPending || starting) ? 'Starting...' : 'Start Draft'}
               </Button>
               
               <Button

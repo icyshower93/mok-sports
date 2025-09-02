@@ -10,6 +10,7 @@ import { BottomNav } from "@/components/layout/bottom-nav";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -892,7 +893,10 @@ export default function ScoresPage() {
         open={!!selectedGame}
         onOpenChange={(open) => !open && setSelectedGame(null)}
       >
-        <DialogContent className="max-w-md p-0 gap-0">
+        <DialogContent className="max-w-md p-0 gap-0" aria-describedby="game-details-desc">
+          <DialogDescription id="game-details-desc" className="sr-only">
+            Detailed game information and score breakdown
+          </DialogDescription>
           {selectedGame && (
             <div className="relative">
               {/* Header with gradient background */}
