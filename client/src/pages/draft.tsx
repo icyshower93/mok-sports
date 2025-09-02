@@ -56,7 +56,7 @@ export default function DraftPage() {
   const [serverTime, setServerTime] = useState<number>(0);
   const [localTime, setLocalTime] = useState<number>(0);
   const [lastServerUpdate, setLastServerUpdate] = useState<number>(0);
-  const [isCountingDown, setIsCountingDown] = useState<boolean>(false);
+  const [isCountingDownState, setIsCountingDown] = useState<boolean>(false);
   
   // Prevent notification spam
   const [lastNotificationTime, setLastNotificationTime] = useState<number>(0);
@@ -366,7 +366,7 @@ export default function DraftPage() {
       const newUiTime = Math.min(newServerTime, localTime || newServerTime);
       setServerTime(newServerTime);
       setLocalTime(newUiTime);
-      setIsCountingDown(newServerTime > 0 && draftStatus === 'active');
+      // isCountingDown is now computed from draftStatus, no need to set state
       
       // Reset zero tracking on fresh updates
       if (newServerTime > 0) {
@@ -430,7 +430,7 @@ export default function DraftPage() {
       const timeSinceZero = (performance.now() - zeroSince) / 1000;
       if (timeSinceZero > 1.5 && isCountingDown) {
         console.log('[SMOOTH TIMER] Grace period expired, stopping countdown');
-        setIsCountingDown(false);
+        // isCountingDown is now computed from draftStatus, no need to set state
       }
     }
   }, [localTime, zeroSince, isCountingDown]);
