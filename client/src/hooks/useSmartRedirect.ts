@@ -11,6 +11,25 @@ export function useSmartRedirect(enabled: boolean) {
     // Only run when explicitly enabled
     if (!enabled || hasLeague === undefined) return;
 
+    // Any of these are NORMAL app tabs. Never hijack them.
+    const isNormalTab =
+      location === "/" ||
+      location === "/scores" ||
+      location === "/teams" ||
+      location === "/more" ||
+      location.startsWith("/trades") ||
+      location.startsWith("/profile") ||
+      location.startsWith("/agents") ||
+      location.startsWith("/admin") ||
+      location.startsWith("/database") ||
+      location === "/leagues" ||          // ← IMPORTANT
+      location.startsWith("/leagues/");    // ← IMPORTANT
+
+    if (isNormalTab) {
+      // Do not perform any redirect logic on real app tabs.
+      return;
+    }
+
     const onLanding = 
       location === "/" ||
       location === "/dashboard" ||
