@@ -1,0 +1,110 @@
+Got it — this is a redirect race + wrong condition problem.
+
+You have two things happening:
+
+Race: useSmartRedirect fires before leagues/draft state has finished loading → it sees “no leagues” and punts you to /dashboard. A moment later, data arrives and it redirects again.
+
+Condition: Your redirect logic only checks “has leagues” to send users to the main app, but you actually need “has completed draft”. While a draft is pending/active, users must stay in the draft room.
+
+Below is a tight, surgical fix set.
+
+1) Gate redirects until data is done loading
+
+Problem:
+Log shows:
+
+No leagues, redirecting to dashboard from /draft/...
+Has leagues, redirecting to main app from /dashboard
+
+
+So the hook ran once with empty data and redirected too early.
+
+Fix (useSmartRedirect.ts):
+
+Don’t redirect until both auth.ready and leagues.loading === false.
+
+Also add a special-case: never auto-redirect away from any /draft/:id route unless the draft is completed.
+
+// useSmartRedirect.ts
+import { useEffect } from "react";
+import { useAuth } from "@/providers/AuthProvider";
+import { useLeagues } from "@/stores/leagues";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useDraftByLeagueId } from "@/stores/draft"; // selector you likely have
+
+export function useSmartRedirect() {
+  const { ready: authReady } = useAuth();
+  const { items: leagues, loading: leaguesLoading } = useLeagues();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const params = useParams();
+
+  // SAFETY: don't decide anything until data is ready
+  const dataReady = authReady && !leaguesLoading;
+
+  // Detect draft route
+  const isDraftRoute = location.pathname.startsWith("/draft/");
+  const leagueId = params.leagueId as string | undefined;
+  const draft = useDraftByLeagueId(leagueId);
+
+  useEffect(() => {
+    if (!dataReady) return; // wait until we know the truth
+
+    // If we're on a draft page, only leave if draft is completed or not found
+    if (isDraftRoute) {
+      // Possible statuses: 'pending' | 'waiting' | 'active' | 'completed' | 'canceled'
+      const status = draft?.status;
+
+      // If we just created the league/draft but store didn't hydrate yet, be lenient: stay put.
+      if (!draft || status === "completed" || status === "canceled") {
+        // Draft is done/non-existent → send to main app
+        navigate("/app", { replace: true });
+      }
+      // else: pending/waiting/active → stay in draft room
+      return;
+    }
+
+    // Non-draft pages:
+    const hasAnyLeague = (leagues?.length ?? 0) > 0;
+
+    // If user has a league but hasn't completed a draft in their **current** league,
+    // push them toward the draft-waiting room.
+    if (hasAnyLeague) {
+      // Choose the league the user most recently created/joined, or active one
+      const current = leagues.find(l => l.isCurrent) ?? leagues[0];
+      const d = current?.draft;
+
+      const draftIncomplete =
+        d && d.status !== "completed" && d.status !== "canceled";
+
+      if (draftIncomplete) {
+        navigate(`/draft/${current.id}`, { replace: true });
+        return;
+      }
+
+      // Draft completed → main app
+      navigate("/app", { replace: true });
+      return;
+    }
+
+    // No leagues yet → dashboard/landing
+    navigate("/dashboard", { replace: true });
+  }, [
+    dataReady,
+    isDraftRoute,
+    leagueId,
+    draft?.status,
+    leagues?.length,
+    // if you track which is current
+    leagues,
+    navigate,
+    location.pathname,
+  ]);
+}
+
+
+Key points:
+
+Wait: if (!dataReady) return;
+
+Draft route is sticky: Do not kick users out of /draft/:id while status ∈ ["pending","waiting","active"].
