@@ -330,31 +330,100 @@ export default function DraftPage() {
     }
   }, [draftId, navigate]);
 
-  // CRITICAL: Declare variables after query is defined to prevent temporal dead zone errors  
-  const state: DraftState = (draftData?.state ?? {}) as DraftState;
+  // NORMALIZE SERVER DATA FOR JSX - JSX only reads from normalized object (never nested state)
+  // This prevents JSX from accidentally calling helpers that use uninitialized symbols
+  const normalized = useMemo(() => {
+    if (!draftData) {
+      // Safe fallback structure when no data
+      return {
+        // Draft metadata
+        id: draftId || '',
+        status: 'not_started' as const,
+        leagueId: '',
+        
+        // Timer data
+        timerSeconds: 0,
+        isCountingDown: false,
+        displayTime: 0,
+        
+        // User and permissions
+        currentPlayerId: null,
+        isCurrentUser: false,
+        participants: [],
+        
+        // Draft progress
+        currentRound: 1,
+        currentPick: 1,
+        totalRounds: 5,
+        pickTimeLimit: DEFAULT_PICK_TIME_LIMIT,
+        draftOrder: [],
+        
+        // Data arrays
+        picks: [],
+        availableTeams: [],
+        
+        // UI state
+        canMakePick: false
+      };
+    }
+    
+    // Extract safe data from potentially complex nested structure
+    const state: DraftState = (draftData.state ?? {}) as DraftState;
+    const draft = draftData.state?.draft ?? null;
+    
+    // Enhanced isCurrentUser calculation with multiple auth provider ID fields
+    const myId = user?.id || (user as any)?.sub || (user as any)?.userId || (user as any)?.uid || '';
+    const isCurrentUser = draftData.participants?.some(
+      (p: any) =>
+        p?.userId === myId ||
+        p?.id === myId ||
+        (p?.email && p.email === user?.email)
+    ) && draftData.currentPlayerId === myId;
+    
+    const status = draftData.status ?? 'not_started';
+    const timerSeconds = draftData.timerSeconds ?? 0;
+    
+    return {
+      // Draft metadata
+      id: draftData.id ?? draftId ?? '',
+      status,
+      leagueId: draftData.leagueId ?? '',
+      
+      // Timer data
+      timerSeconds,
+      isCountingDown: status === 'active',
+      displayTime: timerSeconds, // Will be updated by smooth timer logic
+      
+      // User and permissions
+      currentPlayerId: draftData.currentPlayerId ?? null,
+      isCurrentUser,
+      participants: draftData.participants ?? [],
+      
+      // Draft progress
+      currentRound: draft?.currentRound ?? 1,
+      currentPick: draft?.currentPick ?? 1,
+      totalRounds: draft?.totalRounds ?? 5,
+      pickTimeLimit: draft?.pickTimeLimit ?? DEFAULT_PICK_TIME_LIMIT,
+      draftOrder: draft?.draftOrder ?? [],
+      
+      // Data arrays
+      picks: state.picks ?? [],
+      availableTeams: state.availableTeams ?? [],
+      
+      // UI state
+      canMakePick: state.canMakePick ?? false
+    };
+  }, [draftData, draftId, user]);
   
-  // Enhanced isCurrentUser calculation with multiple auth provider ID fields
-  const myId = user?.id || (user as any)?.sub || (user as any)?.userId || (user as any)?.uid || '';
-  const isCurrentUser = draftData?.participants?.some(
-    (p: any) =>
-      p?.userId === myId ||
-      p?.id === myId ||
-      (p?.email && p.email === user?.email)
-  ) && draftData?.currentPlayerId === myId;
-
-  // Derived, null-safe handles using normalized fields
-  const draft = draftData?.state?.draft ?? null;
-  const draftStatus = draftData?.status ?? 'not_started';
-  const currentPlayerId = draftData?.currentPlayerId ?? null;
-  const isCountingDown = draftStatus === 'active';
-  const displaySeconds = draftData?.timerSeconds ?? 0;
-  const timeRemainingSafe = draftData?.timerSeconds ?? 0;
-  const picksSafe = state?.picks ?? [];
-  const availableTeamsSafe = state?.availableTeams ?? [];
-  const draftOrderSafe = draft?.draftOrder ?? [];
-  const currentRoundSafe = draft?.currentRound ?? 1;
-  const totalRoundsSafe = draft?.totalRounds ?? (draftOrderSafe.length || 1);
-  const pickTimeLimitSafe = draft?.pickTimeLimit ?? DEFAULT_PICK_TIME_LIMIT;
+  // JSX-safe aliases for backward compatibility (but prefer using normalized directly)
+  const draftStatus = normalized.status;
+  const isCountingDown = normalized.isCountingDown;
+  const currentPlayerId = normalized.currentPlayerId;
+  const isCurrentUser = normalized.isCurrentUser;
+  const picksSafe = normalized.picks;
+  const availableTeamsSafe = normalized.availableTeams;
+  const currentRoundSafe = normalized.currentRound;
+  const pickTimeLimitSafe = normalized.pickTimeLimit;
 
   // Log errors for debugging
   if (error) {
@@ -379,7 +448,7 @@ export default function DraftPage() {
       console.log('[SMOOTH TIMER] Server update received:', newServerTime);
       
       // Mobile UX: Vibration alerts for timer warnings
-      if (isCurrentUser) {
+      if (normalized.isCurrentUser) {
         if (newServerTime <= TIMER_WARNING_THRESHOLDS.CAUTION && newServerTime > 25 && serverTime > 30) {
           console.log('[VIBRATION] 30s warning triggered');
           vibrateDevice(VIBRATION_PATTERNS.WARNING);
@@ -398,7 +467,7 @@ export default function DraftPage() {
       if (isFreshTimer) {
         console.log('[SMOOTH TIMER] 🎯 Fresh timer detected - immediate transition');
         // Mobile UX: Notify user it's their turn (ONLY ONCE)
-        if (isCurrentUser && !hasNotifiedForThisTurn) {
+        if (normalized.isCurrentUser && !hasNotifiedForThisTurn) {
           const now = Date.now();
           // Prevent duplicate notifications within 30 seconds
           if (now - lastNotificationTime > NOTIFICATION_COOLDOWN) {
@@ -432,10 +501,10 @@ export default function DraftPage() {
   
   // Reset notification flag when it's no longer user's turn
   useEffect(() => {
-    if (!isCurrentUser && hasNotifiedForThisTurn) {
+    if (!normalized.isCurrentUser && hasNotifiedForThisTurn) {
       setHasNotifiedForThisTurn(false);
     }
-  }, [isCurrentUser, hasNotifiedForThisTurn]);
+  }, [normalized.isCurrentUser, hasNotifiedForThisTurn]);
 
   // Single stable RAF loop - no interval recreation
   useEffect(() => {
@@ -502,12 +571,12 @@ export default function DraftPage() {
     return () => document.removeEventListener('visibilitychange', onVis);
   }, []);
 
-  // Display logic with smooth transitions and integer rounding
+  // Display logic with smooth transitions and integer rounding - using normalized data
   const displayTime = useMemo(() => {
-    const rawTime = isCountingDown ? localTime : (serverTime || draftData?.timerSeconds || 0);
+    const rawTime = normalized.isCountingDown ? localTime : (serverTime || normalized.timerSeconds);
     // Smooth to integer if showing whole seconds (avoids 59.999 → 59 flicker)
     return Math.floor(rawTime + 1e-6);
-  }, [isCountingDown, localTime, serverTime, draftData?.timerSeconds]);
+  }, [normalized.isCountingDown, localTime, serverTime, normalized.timerSeconds]);
   
   console.log('[TIMER DEBUG] Server Time:', displaySeconds);
   console.log('[TIMER DEBUG] Display Time:', displayTime);
@@ -562,10 +631,10 @@ export default function DraftPage() {
     }
   };
 
-  // Show FAB when it's user's turn
+  // Show FAB when it's user's turn - using normalized data
   useEffect(() => {
-    setShowFAB(isCurrentUser && state?.canMakePick && !!selectedTeam);
-  }, [isCurrentUser, state?.canMakePick, selectedTeam]);
+    setShowFAB(normalized.isCurrentUser && normalized.canMakePick && !!selectedTeam);
+  }, [normalized.isCurrentUser, normalized.canMakePick, selectedTeam]);
 
   // Auto-expand panels when user's turn approaches
   useEffect(() => {
@@ -679,9 +748,9 @@ export default function DraftPage() {
     );
   }
 
-  // Helper function for rendering teams using hoisted functions
+  // Helper function for rendering teams using hoisted functions - normalized data
   const renderConferenceTeams = (conference: 'AFC' | 'NFC') => {
-    const allTeams = teamsData?.availableTeams || availableTeamsSafe || [];
+    const allTeams = teamsData?.availableTeams || normalized.availableTeams;
     const conferenceTeams = allTeams.filter((team: NflTeam) => team.conference === conference);
     const filteredTeams = filterTeamsBySearch(conferenceTeams, searchTerm);
     
@@ -710,9 +779,9 @@ export default function DraftPage() {
             </h4>
             <div className="grid grid-cols-1 gap-2">
               {teams.map((team) => {
-                const teamStatus = getTeamStatus(team, picksSafe, isCurrentUser, state, user?.id);
+                const teamStatus = getTeamStatus(team, normalized.picks, normalized.isCurrentUser, normalized, user?.id);
                 const isSelected = selectedTeam === team.id;
-                const isDisabled = teamStatus !== 'available' || !state?.canMakePick || !isCurrentUser;
+                const isDisabled = teamStatus !== 'available' || !normalized.canMakePick || !normalized.isCurrentUser;
                 
                 return (
                   <button
@@ -732,7 +801,7 @@ export default function DraftPage() {
                         ? 'opacity-60 cursor-not-allowed bg-orange-50 dark:bg-orange-950/20 border-orange-200 dark:border-orange-800'
                         : 'hover:bg-muted/50 cursor-pointer'
                       }
-                      ${!isCurrentUser || !state?.canMakePick 
+                      ${!normalized.isCurrentUser || !normalized.canMakePick 
                         ? 'cursor-not-allowed opacity-75' 
                         : ''
                       }
@@ -786,9 +855,9 @@ export default function DraftPage() {
     );
   };
 
-  // Main render
+  // Main render - using normalized data for all JSX
   return (
-    <div className={`min-h-screen transition-colors duration-300 ${getBackgroundColor(isCurrentUser, displayTime)}`}>
+    <div className={`min-h-screen transition-colors duration-300 ${getBackgroundColor(normalized.isCurrentUser, displayTime)}`}>
       {/* Header */}
       <div className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b">
         <div className="flex items-center justify-between p-4">
@@ -804,7 +873,7 @@ export default function DraftPage() {
             <div>
               <h1 className="font-semibold text-lg">Draft Room</h1>
               <p className="text-xs text-muted-foreground">
-                Round {currentRoundSafe} • Pick {(draft?.currentPick ?? 1)}
+                Round {normalized.currentRound} • Pick {normalized.currentPick}
               </p>
             </div>
           </div>
@@ -828,7 +897,7 @@ export default function DraftPage() {
       </div>
 
       {/* Timer Section */}
-      {draftStatus === 'active' && (
+      {normalized.status === 'active' && (
         <div className="p-4 border-b bg-card/50">
           <div className="flex items-center justify-between">
             <div>
@@ -836,7 +905,7 @@ export default function DraftPage() {
                 {formatTime(displayTime)}
               </div>
               <div className="text-sm text-muted-foreground">
-                {isCurrentUser ? 'Your turn to pick!' : `Waiting for pick...`}
+                {normalized.isCurrentUser ? 'Your turn to pick!' : `Waiting for pick...`}
               </div>
             </div>
             
@@ -874,7 +943,7 @@ export default function DraftPage() {
 
       {/* Main Content */}
       <div className="flex-1 p-4 space-y-4">
-        {draftStatus === 'not_started' && (
+        {normalized.status === 'not_started' && (
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -898,7 +967,7 @@ export default function DraftPage() {
           </Card>
         )}
 
-        {draftStatus === 'active' && (
+        {normalized.status === 'active' && (
           <Tabs value={currentConference} onValueChange={(value) => setCurrentConference(value as 'AFC' | 'NFC')}>
             <div className="flex items-center justify-between mb-4">
               <TabsList>
