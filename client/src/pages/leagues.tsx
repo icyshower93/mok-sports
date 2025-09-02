@@ -4,7 +4,9 @@ import { useAuth } from "@/features/auth/useAuth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Trophy, Crown, Medal, Award, TrendingUp, Zap } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Trophy, Crown, Medal, Award, TrendingUp, Zap, Eye, Lock, Shield } from "lucide-react";
 import { MainLayout } from "@/components/layout/main-layout";
 import { getCurrentSeason } from "@/lib/season";
 
@@ -12,7 +14,7 @@ interface SeasonStandings {
   userId: string;
   userName: string;
   totalMokPoints: number;
-  weeklyWins: number;
+  locksCorrect: number;
   lockSuccessRate: number;
   lockAndLoadSuccessRate: number;
   skinsWon: number;
@@ -33,6 +35,7 @@ interface StandingsResponse {
 
 export default function LeaguesPage() {
   console.debug("[Leagues] mount");
+  const [selectedPlayer, setSelectedPlayer] = useState<string | null>(null);
   
   useEffect(() => {
     return () => console.debug("[Leagues] unmount");
@@ -48,6 +51,17 @@ export default function LeaguesPage() {
   });
 
   const leagueId = Array.isArray(userLeagues) && userLeagues.length > 0 ? userLeagues[0].id : null;
+
+  // Get player roster when selected
+  const { data: playerRoster } = useQuery({
+    queryKey: ["player-roster", selectedPlayer, leagueId],
+    enabled: !!selectedPlayer && !!leagueId,
+    queryFn: async () => {
+      const res = await fetch(`/api/leagues/${leagueId}/roster/${selectedPlayer}`, { credentials: "include" });
+      if (!res.ok) throw new Error(`Failed to fetch roster: ${res.status}`);
+      return res.json();
+    },
+  });
 
   // Helper to normalize server response shape
   function normalizeStandingsPayload(raw: any): StandingsResponse {
@@ -234,18 +248,31 @@ export default function LeaguesPage() {
                         <Badge variant="secondary" className="text-xs px-1.5 py-0.5">YOU</Badge>
                       )}
                     </div>
-                    <div className="text-xs text-muted-foreground">
-                      {player.weeklyWins} wins • {player.skinsWon} skins
+                    <div className="text-xs text-muted-foreground flex items-center gap-1">
+                      <Lock className="w-3 h-3" />
+                      {player.locksCorrect} locks • {player.skinsWon} skins
                     </div>
                   </div>
                 </div>
                 
-                <div className="text-right">
-                  <div className="text-lg font-bold text-foreground">
-                    {player.totalMokPoints}
-                  </div>
-                  <div className="text-xs text-muted-foreground">
-                    points
+                <div className="flex items-center gap-3">
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    onClick={() => setSelectedPlayer(player.userId)}
+                    className="h-8 px-2"
+                    data-testid={`view-roster-${player.userId}`}
+                  >
+                    <Eye className="w-4 h-4" />
+                  </Button>
+                  
+                  <div className="text-right">
+                    <div className="text-lg font-bold text-foreground">
+                      {player.totalMokPoints}
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                      points
+                    </div>
                   </div>
                 </div>
               </div>
@@ -278,6 +305,52 @@ export default function LeaguesPage() {
             </div>
           </div>
         )}
+
+        {/* Player Roster Dialog */}
+        <Dialog open={!!selectedPlayer} onOpenChange={(open) => !open && setSelectedPlayer(null)}>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <Shield className="w-5 h-5" />
+                {standings.find(p => p.userId === selectedPlayer)?.userName}'s Teams
+              </DialogTitle>
+            </DialogHeader>
+            
+            {playerRoster && (
+              <div className="space-y-3">
+                <div className="grid grid-cols-1 gap-2">
+                  {playerRoster.teams?.map((team: any) => (
+                    <div key={team.id} className="flex items-center gap-3 p-3 bg-muted/30 rounded-lg">
+                      <img 
+                        src={team.logoUrl} 
+                        alt={`${team.name} logo`}
+                        className="w-8 h-8 object-contain"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = 'none';
+                        }}
+                      />
+                      <div className="flex-1">
+                        <div className="font-medium text-sm">{team.name}</div>
+                        <div className="text-xs text-muted-foreground">{team.conference}</div>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-sm font-medium">{team.seasonPoints || 0} pts</div>
+                        <div className="text-xs text-muted-foreground">{team.record || "0-0"}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                
+                {(!playerRoster.teams || playerRoster.teams.length === 0) && (
+                  <div className="text-center py-6 text-muted-foreground">
+                    No teams drafted yet
+                  </div>
+                )}
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
       </div>
     </MainLayout>
   );

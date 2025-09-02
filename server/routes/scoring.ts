@@ -1139,7 +1139,7 @@ router.get("/skins/:leagueId/:season", authenticateUser, authorizeLeagueMember, 
         
         // Calculate totals
         const totalMokPoints = userScores.reduce((sum, score) => sum + score.totalPoints, 0);
-        const weeklyWins = userScores.filter(score => score.totalPoints > 0).length;
+        const locksCorrect = userScores.reduce((sum, score) => sum + (score.lockBonusPoints > 0 ? 1 : 0), 0);
         
         // Calculate skins won (simplified - count weeks with highest score)
         const skinsWon = 0; // TODO: Calculate actual skins won
@@ -1148,7 +1148,7 @@ router.get("/skins/:leagueId/:season", authenticateUser, authorizeLeagueMember, 
           userId: member.userId,
           userName: memberUser.name,
           totalMokPoints,
-          weeklyWins,
+          locksCorrect,
           lockSuccessRate: 0.75, // Placeholder
           lockAndLoadSuccessRate: 0.5, // Placeholder  
           skinsWon,
@@ -1178,6 +1178,60 @@ router.get("/skins/:leagueId/:season", authenticateUser, authorizeLeagueMember, 
     } catch (error) {
       console.error('Error getting season standings:', error);
       res.status(500).json({ message: "Failed to get season standings" });
+    }
+  });
+
+  // Get player roster for a league
+  app.get("/api/leagues/:leagueId/roster/:userId", async (req, res) => {
+    try {
+      const user = await getAuthenticatedUser(req);
+      if (!user) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+
+      const { leagueId, userId } = req.params;
+      
+      // Check if user is member of this league
+      const isMember = await storage.isUserInLeague(user.id, leagueId);
+      if (!isMember) {
+        return res.status(403).json({ message: "Not authorized to view this league" });
+      }
+
+      // Get player's drafted teams
+      const playerDraftPicks = await db.select({
+        teamId: draftPicks.nflTeamId,
+        teamName: nflTeams.name,
+        teamCode: nflTeams.code,
+        logoUrl: nflTeams.logoUrl,
+        conference: nflTeams.conference,
+        division: nflTeams.division
+      })
+      .from(draftPicks)
+      .innerJoin(nflTeams, eq(draftPicks.nflTeamId, nflTeams.id))
+      .innerJoin(drafts, eq(draftPicks.draftId, drafts.id))
+      .where(
+        and(
+          eq(draftPicks.userId, userId),
+          eq(drafts.leagueId, leagueId)
+        )
+      )
+      .orderBy(draftPicks.pickNumber);
+
+      res.json({
+        teams: playerDraftPicks.map(pick => ({
+          id: pick.teamId,
+          name: pick.teamName,
+          code: pick.teamCode,
+          logoUrl: pick.logoUrl,
+          conference: pick.conference,
+          division: pick.division,
+          seasonPoints: 0, // TODO: Calculate actual points
+          record: "0-0" // TODO: Calculate actual record
+        }))
+      });
+    } catch (error) {
+      console.error('Error getting player roster:', error);
+      res.status(500).json({ message: "Failed to get player roster" });
     }
   });
 
