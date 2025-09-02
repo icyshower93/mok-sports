@@ -472,24 +472,27 @@ export default async function setupDraftRoutes(app: any, storage: IStorage, webS
         return res.status(400).json({ message: "Draft has already been started" });
       }
 
-      // ✅ Send response FIRST - keep it minimal & serializable
-      const draftState = await draftManager.startDraft(draft.id);
-
+      // ✅ RESPOND FIRST - keep it tiny & serializable (no complex objects)
       res.status(201).json({
-        message: "Draft started successfully",
         draftId: draft.id,
         leagueId,
-        status: "active",
-        state: draftState
+        status: "active"
       });
 
-      // 🔔 Then broadcast in the background (don't let failures affect the response)
-      setImmediate(() => {
+      // 🔔 Handle draft starting and broadcasting in background (prevent 500s)
+      setImmediate(async () => {
         try {
+          console.log(`[Draft Start] Starting draft ${draft.id} in background`);
+          const draftState = await draftManager.startDraft(draft.id);
+          console.log(`[Draft Start] Draft ${draft.id} started successfully`);
+          
+          // Update league to mark draft as started
+          await storage.updateLeague(leagueId, { draftStarted: true });
+          
           // Broadcast to WebSocket clients if available
           console.log(`[Draft Start] Broadcasting draft started event for league ${leagueId}`);
         } catch (e) {
-          console.error("[draft/start] broadcast failed:", e);
+          console.error("[draft/start] background processing failed:", e);
         }
       });
 

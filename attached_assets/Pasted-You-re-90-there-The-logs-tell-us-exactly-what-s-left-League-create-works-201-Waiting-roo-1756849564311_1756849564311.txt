@@ -1,0 +1,69 @@
+You’re 90% there. The logs tell us exactly what’s left:
+
+✅ League create works (201).
+
+✅ Waiting room loads league; later it gets a draftId and you connect WS successfully.
+
+❌ POST /draft/start still returns 500 (but the draft does start, so the server is crashing after doing the work).
+
+❌ The draft page spins: GET /drafts/:id is being aborted, and your page shows Status: undefined / CurrentPlayerId: undefined / TimerSeconds: undefined.
+
+⚠️ Two different WS clients are in play (/draft-ws?… and /ws/draft/:id). One connects, the other fails/competes.
+
+⚠️ Radix dialog warning still there.
+
+Fix these four things and it’ll click into place.
+
+1) Server: make /draft/start idempotent and respond before broadcasting
+
+Your draft is clearly being created/activated (league shows draftId, draftStatus: "active"), but the route still returns 500 → that means the response handler is failing after the state change. Return a tiny serializable JSON first; broadcast in the background:
+
+// POST /api/leagues/:leagueId/draft/start
+router.post("/api/leagues/:leagueId/draft/start", requireAuthCookieOrToken, requireCommissioner, async (req, res) => {
+  const { leagueId } = req.params;
+  const userId = req.user.id;
+
+  try {
+    const league = await prisma.league.findUnique({ where: { id: leagueId }, include: { members: true, draft: true }});
+    if (!league) return res.status(404).send("League not found");
+
+    // Idempotent return if already active/pending
+    if (league.draft && !["completed","canceled"].includes(league.draft.status)) {
+      return res.status(200).json({ draftId: league.draft.id, leagueId, status: league.draft.status });
+    }
+    if ((league.members?.length ?? 0) < 2) return res.status(400).send("Need at least 2 managers to start a draft");
+
+    // Compute pick order (or use stored)
+    const order = league.members.map(m => m.userId);
+    for (let i = order.length - 1; i > 0; i--) { const j = Math.floor(Math.random()*(i+1)); [order[i], order[j]] = [order[j], order[i]]; }
+
+    const draft = await prisma.$transaction(async (tx) => {
+      const created = await tx.draft.create({
+        data: { leagueId, status: "active", pickOrder: order, rounds: 12, currentRound: 1, currentPick: 1, timerSeconds: 120 }
+      });
+      await tx.league.update({ where: { id: leagueId }, data: { draftId: created.id } });
+      return created;
+    });
+
+    // ✅ Respond first — keep it tiny & serializable
+    res.status(201).json({ draftId: draft.id, leagueId, status: "active" });
+
+    // 🔔 Broadcast after response (don’t let failures 500 the route)
+    setImmediate(() => {
+      try {
+        wsServer.broadcastToLeague(leagueId, {
+          type: "draft:started",
+          payload: { draftId: draft.id, leagueId, status: "active" }
+        });
+      } catch (e) {
+        console.error("[draft/start] broadcast failed:", e);
+      }
+    });
+  } catch (err) {
+    console.error("[draft/start] error", { leagueId, userId, err });
+    return res.status(500).send("Failed to start draft");
+  }
+});
+
+
+This removes the 500 you’re seeing even though the draft starts.
