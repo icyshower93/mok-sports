@@ -1,25 +1,21 @@
 import { AuthToken } from './auth-token';
 
-export async function apiFetch(path: string, init: RequestInit = {}) {
-  const token = AuthToken.get();
-  const headers = new Headers(init.headers || {});
-  
-  // Set Content-Type automatically if body is JSON
-  if (init.body && !(init.body instanceof FormData) && !headers.has("Content-Type")) {
-    headers.set("Content-Type", "application/json");
+// Auth store compatible with your specification
+export const authStore = {
+  getState() {
+    return {
+      token: AuthToken.get()
+    };
   }
-  headers.set("Accept", "application/json");
-  
-  // Always include auth token if available
-  if (token) {
-    headers.set("Authorization", `Bearer ${token}`);
-  }
+};
 
-  const res = await fetch(path, {
-    ...init,
-    headers,
-    credentials: "include", // Always send cookies for session-based auth
-  });
-  
-  return res;
+export async function apiFetch(path: string, init: RequestInit = {}) {
+  const token = authStore.getState().token;
+  const headers = new Headers(init.headers || {});
+  if (init.body && !(init.body instanceof FormData) && !headers.has('Content-Type')) {
+    headers.set('Content-Type', 'application/json');
+  }
+  headers.set('Accept', 'application/json');
+  if (token) headers.set('Authorization', `Bearer ${token}`);
+  return fetch(path, { ...init, headers, credentials: 'include' });
 }
