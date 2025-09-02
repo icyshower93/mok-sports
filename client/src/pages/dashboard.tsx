@@ -113,9 +113,16 @@ export default function DashboardPage() {
       console.log("[CreateLeague] Response status:", res.status);
 
       if (!res.ok) {
-        const errorText = await res.text().catch(() => '');
-        console.error("[CreateLeague] Error response:", errorText);
-        throw new Error(errorText || `Create league failed (${res.status})`);
+        // Try JSON first for nice messages (e.g., duplicate name / validation)
+        let details = '';
+        try {
+          const j = await res.json();
+          details = j?.message || (Array.isArray(j?.errors) ? j.errors[0]?.message : '');
+        } catch {
+          details = await res.text().catch(() => '');
+        }
+        console.error("[CreateLeague] Error response:", details);
+        throw new Error(details || `Create league failed (${res.status})`);
       }
 
       const result = await res.json();
@@ -382,12 +389,23 @@ export default function DashboardPage() {
                     placeholder="Enter league name"
                     value={leagueName}
                     onChange={(e) => setLeagueName(e.target.value)}
+                    maxLength={50}
+                    data-testid="input-league-name-quick"
                   />
+                  {leagueName.trim().length > 50 && (
+                    <p className="text-xs text-destructive">League name must be 50 characters or less</p>
+                  )}
+                  {leagues && leagues.some(league => league.name.toLowerCase() === leagueName.trim().toLowerCase()) && (
+                    <p className="text-xs text-amber-600 dark:text-amber-400">
+                      ⚠️ You already have a league with this name
+                    </p>
+                  )}
                 </div>
                 <Button 
                   type="submit" 
                   className="w-full"
-                  disabled={!leagueName.trim() || createLeagueMutation.isPending}
+                  disabled={!leagueName.trim() || leagueName.trim().length > 50 || createLeagueMutation.isPending}
+                  data-testid="button-create-league-quick"
                 >
                   {createLeagueMutation.isPending ? "Creating..." : "Create League"}
                 </Button>
