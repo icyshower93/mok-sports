@@ -133,6 +133,18 @@ export default function LeaguesPage() {
     );
   }
 
+  const { standings, currentWeek, leagueInfo } = standingsQuery.data ?? { standings: [], currentWeek: 1, leagueInfo: { id: '', name: 'League', memberCount: 0 } };
+
+  if (!standings || standings.length === 0) {
+    return (
+      <MainLayout>
+        <div className="p-4 text-sm text-muted-foreground border rounded-xl">
+          No season standings yet for {season}. They'll appear once games are recorded.
+        </div>
+      </MainLayout>
+    );
+  }
+
   const getRankIcon = (rank: number) => {
     switch (rank) {
       case 1:
@@ -170,11 +182,11 @@ export default function LeaguesPage() {
               League Standings
             </h1>
             <p className="text-muted-foreground">
-              {standingsQuery.data?.leagueInfo?.name || 'League'} • Season {season}
+              {leagueInfo?.name || 'League'} • Season {season}
             </p>
           </div>
           <Badge variant="secondary">
-            Week {standingsQuery.data?.currentWeek || 1}
+            Week {currentWeek || 1}
           </Badge>
         </div>
 
@@ -187,17 +199,8 @@ export default function LeaguesPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            {standingsQuery.data?.standings?.length === 0 ? (
-              <div className="text-center py-8">
-                <Trophy className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
-                <h3 className="text-lg font-semibold mb-2">No Standings Yet</h3>
-                <p className="text-muted-foreground">
-                  Standings will appear once games begin and points are scored.
-                </p>
-              </div>
-            ) : (
-              <div className="space-y-3">
-                {standingsQuery.data?.standings?.map((player, index) => (
+            <div className="space-y-3">
+              {standings.map((player, index) => (
                   <div
                     key={player.userId}
                     className={`p-4 rounded-lg border transition-colors ${getRankColor(player.rank)} ${
@@ -245,24 +248,23 @@ export default function LeaguesPage() {
                       </div>
                     </div>
                   </div>
-                ))}
-              </div>
-            )}
+              ))}
+            </div>
           </CardContent>
         </Card>
 
         {/* Season Stats Summary */}
-        {standingsQuery.data?.standings && standingsQuery.data.standings.length > 0 && (
+        {standings && standings.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <Card>
               <CardContent className="p-4 text-center">
                 <Crown className="w-8 h-8 mx-auto mb-2 text-yellow-500" />
                 <div className="font-medium">Current Leader</div>
                 <div className="text-sm text-muted-foreground">
-                  {standingsQuery.data.standings[0]?.userName}
+                  {standings[0]?.userName}
                 </div>
                 <div className="text-lg font-bold">
-                  {standingsQuery.data.standings[0]?.totalMokPoints} pts
+                  {standings[0]?.totalMokPoints} pts
                 </div>
               </CardContent>
             </Card>
@@ -272,7 +274,7 @@ export default function LeaguesPage() {
                 <TrendingUp className="w-8 h-8 mx-auto mb-2 text-primary" />
                 <div className="font-medium">Total Players</div>
                 <div className="text-lg font-bold">
-                  {standingsQuery.data.leagueInfo.memberCount}
+                  {leagueInfo?.memberCount || 0}
                 </div>
               </CardContent>
             </Card>
@@ -282,7 +284,7 @@ export default function LeaguesPage() {
                 <Zap className="w-8 h-8 mx-auto mb-2 text-amber-500" />
                 <div className="font-medium">Total Skins Won</div>
                 <div className="text-lg font-bold">
-                  {standingsQuery.data.standings.reduce((sum, p) => sum + (p.skinsWon || 0), 0)}
+                  {standings.reduce((sum, p) => sum + (p.skinsWon || 0), 0)}
                 </div>
               </CardContent>
             </Card>
