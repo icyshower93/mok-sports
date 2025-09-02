@@ -303,15 +303,22 @@ export default function DraftPage() {
     }
   });
 
-  // WebSocket URL computed safely with useMemo
-  const wsUrl = useMemo(() => {
-    if (!draftId || !user?.id) return null;
-    const baseUrl = import.meta.env.VITE_WS_BASE_URL || window.location.origin;
-    return computeWebSocketUrl(baseUrl, draftId, user.id);
-  }, [draftId, user?.id]);
+  // Simple, TDZ-proof WebSocket connection logic - only based on auth readiness and draftId
+  const authReady = !authLoading && !!user;
+  const canConnect = authReady && Boolean(draftId);
+  const wsUrl = canConnect 
+    ? useMemo(() => {
+        const baseUrl = import.meta.env.VITE_WS_BASE_URL || window.location.origin;
+        return computeWebSocketUrl(baseUrl, draftId!, user!.id);
+      }, [draftId, user?.id])
+    : null;
 
-  const shouldConnectWS = Boolean(!authLoading && user && wsUrl);
-  console.log('[Draft] WebSocket connection decision:', { shouldConnectWS, wsUrl: wsUrl || 'none' });
+  console.log('[Draft] WebSocket connection decision:', { 
+    authReady, 
+    canConnect, 
+    draftId: draftId || 'none',
+    wsUrl: wsUrl || 'none' 
+  });
   
   const { status: connectionStatus, message: lastMessage } = useResilientWebSocket(wsUrl);
   const isConnected = connectionStatus === 'open';
