@@ -255,7 +255,7 @@ export default function DraftPage() {
   const wsUrl = draftId ? `${wsBase}/draft-ws?userId=${user?.id}&draftId=${draftId}` : null;
   const shouldConnectWS = Boolean(!authLoading && user && wsUrl);
     
-  console.log('[Draft] WebSocket connection decision:', { shouldConnectWS, wsUrl: wsUrl || 'none', draftStatus });
+  console.log('[Draft] WebSocket connection decision:', { shouldConnectWS, wsUrl: wsUrl || 'none' });
   
   const { status: connectionStatus, message: lastMessage } = useResilientWebSocket(wsUrl);
   const isConnected = connectionStatus === 'open';

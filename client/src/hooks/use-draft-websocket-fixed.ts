@@ -11,13 +11,7 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '@/features/auth/useAuth';
 import { useToast } from '@/hooks/use-toast';
-
-export interface DraftWebSocketMessage {
-  type: 'pick_made' | 'timer_update' | 'draft_state' | 'auto_pick' | 'draft_completed' | 'connected' | 'pong';
-  draftId: string;
-  data?: any;
-  timestamp: number;
-}
+import type { DraftWebSocketMessage, ConnectionStatus } from '@/draft/draft-types';
 
 export function useDraftWebSocket(draftId: string | null, leagueId: string | null = null) {
   const { user } = useAuth();
@@ -25,7 +19,7 @@ export function useDraftWebSocket(draftId: string | null, leagueId: string | nul
   const queryClient = useQueryClient();
   const wsRef = useRef<WebSocket | null>(null);
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const [connectionStatus, setConnectionStatus] = useState<'connecting' | 'connected' | 'disconnected' | 'draft_not_found'>('disconnected');
+  const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>('disconnected');
   const [lastMessage, setLastMessage] = useState<DraftWebSocketMessage | null>(null);
 
   console.log('[WebSocket] Hook called with:', { draftId, leagueId, userId: user?.id });

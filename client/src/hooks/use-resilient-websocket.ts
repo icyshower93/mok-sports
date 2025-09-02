@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
 import { DraftMessage, DraftMessageSchema } from '@shared/types/draft';
+import type { ConnectionStatus } from '@/draft/draft-types';
 
 interface WebSocketStatus {
-  status: 'idle' | 'connecting' | 'open' | 'closed';
+  status: ConnectionStatus;
   message: DraftMessage | null;
 }
 
@@ -15,7 +16,7 @@ function backoffDelay(attempt: number): number {
 }
 
 export function useResilientWebSocket(url: string | null): WebSocketStatus {
-  const [status, setStatus] = useState<'idle' | 'connecting' | 'open' | 'closed'>('idle');
+  const [status, setStatus] = useState<ConnectionStatus>('idle');
   const [message, setMessage] = useState<DraftMessage | null>(null);
   
   const wsRef = useRef<WebSocket | null>(null);
