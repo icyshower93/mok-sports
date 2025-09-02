@@ -316,12 +316,17 @@ export default function DraftPage() {
   const { status: connectionStatus, message: lastMessage } = useResilientWebSocket(wsUrl);
   const isConnected = connectionStatus === 'open';
 
-  // Redirect if no draft ID
+  // Smart redirect: don't auto-leave /draft/:id while not completed
   useEffect(() => {
-    if (!draftId) {
-      navigate('/dashboard');
+    const isDraftRoute = location.startsWith('/draft/');
+    if (isDraftRoute) {
+      const status = draft?.status;
+      if (!draft || status === 'completed' || status === 'canceled') {
+        navigate('/app', { replace: true });
+      }
+      return;
     }
-  }, [draftId, navigate]);
+  }, [location, draft?.status, navigate]);
 
   // Render only from normalized draft state
   const draftStatus = draft?.status;
@@ -555,16 +560,13 @@ export default function DraftPage() {
 
   console.log('[Draft] All hooks declared, starting conditional logic');
 
-  // Loading states
+  // Loading states - but don't redirect if we're on a draft route
   if (!draftId) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
-          <h2 className="text-xl font-semibold mb-2">No Draft Found</h2>
-          <p className="text-muted-foreground mb-4">You don't have an active draft.</p>
-          <Button onClick={() => navigate('/dashboard')}>
-            Go to Dashboard
-          </Button>
+          <h2 className="text-xl font-semibold mb-2">Loading Draft...</h2>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
         </div>
       </div>
     );
@@ -720,7 +722,18 @@ export default function DraftPage() {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => navigate('/dashboard')}
+              onClick={() => {
+                // Only navigate away if draft is actually finished
+                const status = draft?.status;
+                if (status === 'completed' || status === 'canceled') {
+                  navigate('/app');
+                } else {
+                  // Show confirmation before leaving active draft
+                  if (confirm('Are you sure you want to leave the draft? You can return to it later.')) {
+                    navigate('/app');
+                  }
+                }
+              }}
               data-testid="button-back-to-dashboard"
             >
               <ArrowLeft className="w-4 h-4" />
