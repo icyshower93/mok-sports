@@ -988,7 +988,7 @@ export default function DraftPage() {
                             localStorage.setItem('lastDraftLeagueId', draftData.draft.leagueId);
                           }
                           
-                          // NAVIGATION FIX: Navigate to main page
+                          // NAVIGATION FIX: Navigate to main app
                           navigate('/');
                           
                           // Delay query invalidation to after navigation completes
@@ -1004,7 +1004,7 @@ export default function DraftPage() {
                         size="lg"
                       >
                         <Trophy className="w-4 h-4 mr-2" />
-                        Main
+                        Go to Main App
                       </Button>
                     </div>
                   </div>
@@ -1638,9 +1638,9 @@ export default function DraftPage() {
                   <div className="flex flex-col sm:flex-row gap-3 justify-center">
                     <Button 
                       onClick={() => {
-                        // Force refresh user leagues data and navigate to main
+                        // Force refresh user leagues data and navigate to main app
                         queryClient.invalidateQueries({ queryKey: ['/api/user/leagues'] });
-                        navigate('/main');
+                        navigate('/');
                       }}
                       size="lg"
                       className="bg-green-600 hover:bg-green-700"
