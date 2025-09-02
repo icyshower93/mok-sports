@@ -101,24 +101,45 @@ export function useSmartRedirect(enabled: boolean) {
       return;
     }
 
-    // Users with leagues: check if they have an incomplete draft
+    // CRITICAL FIX: Check draft completion status, not just "has leagues"
     if (hasLeague && leagues && leagues.length > 0) {
-      // Choose the league the user most recently created/joined, or first one
-      const currentLeague = leagues[0]; // Since leagues are sorted by most recent
+      // Choose the current league (most recently created/joined)
+      const currentLeague = leagues[0];
       
-      if (currentLeague.draftId && currentLeague.draftStarted) {
-        // There's an active draft - check if user should be in draft room
-        if (onLanding && location !== "/") {
-          console.log("[SmartRedirect] Has active draft, redirecting to league waiting room from", location);
-          startTransition(() => {
-            setLocation(`/league/waiting?id=${currentLeague.id}`);
-          });
-          return;
+      // Check if there's a draft and what its status is
+      if (currentLeague.draftId) {
+        // We have a draft - need to check its status to decide where to send user
+        const draftStatus = currentLeague.draftStatus;
+        
+        console.debug("[SmartRedirect] League has draft", { 
+          leagueId: currentLeague.id, 
+          draftId: currentLeague.draftId, 
+          draftStatus 
+        });
+        
+        // If draft is pending/waiting/active → force user to draft room
+        if (draftStatus === "pending" || draftStatus === "waiting" || draftStatus === "active" || draftStatus === "starting") {
+          if (onLanding && location !== "/") {
+            console.log("[SmartRedirect] Draft incomplete, redirecting to draft room from", location);
+            startTransition(() => {
+              setLocation(`/draft/${currentLeague.draftId}`);
+            });
+            return;
+          }
+        } 
+        // If draft is completed → allow access to main app
+        else if (draftStatus === "completed" || draftStatus === "canceled") {
+          if (onLanding && location !== "/") {
+            console.log("[SmartRedirect] Draft completed, redirecting to main app from", location);
+            startTransition(() => {
+              setLocation("/");
+            });
+          }
         }
       } else {
-        // No active draft - send to main app from landing pages
+        // No draft exists yet - send to main app from landing pages
         if (onLanding && location !== "/") {
-          console.log("[SmartRedirect] Has leagues but no active draft, redirecting to main app from", location);
+          console.log("[SmartRedirect] Has leagues but no draft, redirecting to main app from", location);
           startTransition(() => {
             setLocation("/");
           });
