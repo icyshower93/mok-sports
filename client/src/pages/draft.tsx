@@ -392,6 +392,21 @@ export default function DraftPage() {
   const rafRef = useRef<number | null>(null);
   const [zeroSince, setZeroSince] = useState<number | null>(null);
   
+  // Handle WebSocket messages - normalize before updating state
+  useEffect(() => {
+    if (!lastMessage) return;
+    
+    // Normalize WebSocket messages that contain draft state updates
+    if (lastMessage.type === 'draft_state_update' || lastMessage.type === 'pick_made') {
+      const payload = lastMessage.data ?? lastMessage;
+      if (payload) {
+        const normalizedUpdate = normalizeDraftResponse(payload);
+        setDraft(normalizedUpdate);
+        console.log('[WS] Normalized draft update from WebSocket:', normalizedUpdate);
+      }
+    }
+  }, [lastMessage]);
+
   // Handle server timer updates (WebSocket or API) with mobile alerts
   useEffect(() => {
     const newServerTime = lastMessage?.type === 'timer_update' ? 
