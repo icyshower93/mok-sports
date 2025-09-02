@@ -34,8 +34,19 @@ async function getAuthenticatedUser(req: any) {
   
   if (!token) {
     console.log("[Draft Auth] No token found in header or cookies");
+    console.log("[Draft Auth] Available cookies:", Object.keys(req.cookies || {}));
+    console.log("[Draft Auth] Authorization header:", authHeader);
     
-    // REMOVED: Sky Evans fallback (causes PWA refresh conflicts when Sky Evans is current picker)
+    // Development fallback - same logic as main routes for consistency
+    if (process.env.NODE_ENV === 'development') {
+      console.log("[Draft Auth] Using development fallback authentication");
+      return {
+        id: '9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a',
+        email: 'sky@mokfantasysports.com',
+        name: 'Sky Evans'
+      };
+    }
+    
     return null;
   }
 
@@ -47,7 +58,16 @@ async function getAuthenticatedUser(req: any) {
     if (!user || typeof user === 'string') {
       console.log("[Draft Auth] Invalid token or wrong format");
       
-      // REMOVED: Sky Evans fallback (causes PWA refresh conflicts when Sky Evans is current picker)
+      // Development fallback for invalid tokens
+      if (process.env.NODE_ENV === 'development') {
+        console.log("[Draft Auth] Invalid token - using development fallback");
+        return {
+          id: '9932fcd8-7fbb-49c3-8fbb-f254cff1bb9a',
+          email: 'sky@mokfantasysports.com',
+          name: 'Sky Evans'
+        };
+      }
+      
       return null;
     }
 
@@ -166,6 +186,10 @@ export default async function setupDraftRoutes(app: any, storage: IStorage, webS
 
   // Add robots to league for testing
   app.post("/api/leagues/:leagueId/add-robots", async (req: any, res: any) => {
+    console.log("[add-robots] auth header present:", !!req.headers.authorization, 
+                "session user present:", !!req.session?.user, 
+                "req.user:", !!req.user);
+    
     try {
       const user = await getAuthenticatedUser(req);
       if (!user) {
