@@ -8,6 +8,7 @@ interface AppShellProps {
 }
 
 export function AppShell({ children }: AppShellProps) {
+  console.debug("[AppShell] mounted");
   const { hasLeague } = useHasLeague();
 
   return (
