@@ -835,6 +835,50 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
   */
 
+  // Delete league (creator only, when empty)
+  app.delete("/api/leagues/:id", async (req, res) => {
+    try {
+      const user = await getAuthenticatedUser(req);
+      if (!user) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+
+      const { id } = req.params;
+
+      // Get league to check if user is the creator
+      const league = await storage.getLeague(id);
+      if (!league) {
+        return res.status(404).json({ message: "League not found" });
+      }
+
+      // Only league creator can delete
+      if (league.creatorId !== user.id) {
+        return res.status(403).json({ message: "Only league creator can delete the league" });
+      }
+
+      // Check if league has any members
+      const memberCount = await storage.getLeagueMemberCount(id);
+      if (memberCount > 0) {
+        return res.status(400).json({ message: "Cannot delete league with members. All members must leave first." });
+      }
+
+      // Delete associated draft if it exists
+      if (league.draftId) {
+        console.log(`[Delete League] Deleting associated draft: ${league.draftId}`);
+        await storage.deleteDraft(league.draftId);
+      }
+
+      // Delete the league itself
+      await storage.deleteLeague(id);
+      
+      console.log(`[Delete League] Successfully deleted league ${id}`);
+      res.json({ message: "League deleted successfully" });
+    } catch (error: any) {
+      console.error('[Delete League] Error:', error);
+      res.status(500).json({ message: "Failed to delete league", details: error?.message });
+    }
+  });
+
   // Remove member from league (creator only)
   app.post("/api/leagues/:id/remove-member", async (req, res) => {
     try {

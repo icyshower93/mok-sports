@@ -273,6 +273,11 @@ export class DatabaseStorage implements IStorage {
     await db.delete(drafts).where(eq(drafts.id, draftId));
   }
 
+  async deleteLeague(leagueId: string): Promise<void> {
+    // Delete the league
+    await db.delete(leagues).where(eq(leagues.id, leagueId));
+  }
+
   async getUserByEmail(email: string): Promise<User | undefined> {
     const [user] = await db.select().from(users).where(eq(users.email, email));
     return user || undefined;
