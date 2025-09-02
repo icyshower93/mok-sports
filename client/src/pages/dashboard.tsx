@@ -14,6 +14,7 @@ import { useLocation } from "wouter";
 import { setLastLeagueId } from "@/hooks/useLastLeague";
 import { apiRequest } from "@/features/query/api";
 import { useHasLeague } from "@/features/leagues/useHasLeague";
+import { apiFetch } from "@/lib/api";
 
 const enableDebugUI =
   (import.meta as any).env?.VITE_ENABLE_DEBUG_UI === "true" ||
@@ -98,15 +99,9 @@ export default function DashboardPage() {
 
       console.log("[CreateLeague] Sending payload:", payload);
 
-      // Use fetch directly to get better error details
-      const res = await fetch('/api/leagues', {
+      // Use unified API helper with consistent auth
+      const res = await apiFetch('/api/leagues', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          ...((window as any).authToken ? { 'Authorization': `Bearer ${(window as any).authToken}` } : {})
-        },
-        credentials: 'include',
         body: JSON.stringify(payload),
       });
 

@@ -15,6 +15,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/features/auth/AuthProvider";
+import { apiFetch } from "@/lib/api";
 import { 
   Bot, 
   RotateCcw, 
@@ -44,18 +46,15 @@ export function DraftTestingPanel({
   onReset 
 }: DraftTestingPanelProps) {
   const { toast } = useToast();
+  const { isAuthenticated } = useAuth();
   const queryClient = useQueryClient();
   const [isExpanded, setIsExpanded] = useState(false);
 
   // Add robots to league mutation
   const addRobotsMutation = useMutation({
     mutationFn: async () => {
-      const response = await fetch(`/api/leagues/${leagueId}/add-robots`, {
+      const response = await apiFetch(`/api/leagues/${leagueId}/add-robots`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
       });
       
       if (!response.ok) {
@@ -84,12 +83,8 @@ export function DraftTestingPanel({
   // Reset draft mutation  
   const resetDraftMutation = useMutation({
     mutationFn: async () => {
-      const response = await fetch('/api/testing/reset-draft', {
+      const response = await apiFetch('/api/testing/reset-draft', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
         body: JSON.stringify({ leagueId }),
       });
       
@@ -240,7 +235,7 @@ export function DraftTestingPanel({
               
               <Button
                 onClick={() => addRobotsMutation.mutate()}
-                disabled={addRobotsMutation.isPending}
+                disabled={!isAuthenticated || addRobotsMutation.isPending}
                 variant="outline"
                 size="sm"
                 className="w-full"

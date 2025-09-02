@@ -1,0 +1,65 @@
+You’re authenticated (user is truthy), but your robot add request is failing auth because that endpoint isn’t seeing your auth the same way your “create league” endpoint does.
+
+Your logs show:
+
+Create league → 201 ✅ (works even when Has token: false)
+⇒ this route accepts your cookie session.
+
+Add robots → 401 ❌
+⇒ this route likely requires an Authorization: Bearer … header (token) and doesn’t read your cookie, or your fetch isn’t sending credentials.
+
+So you’ve got an auth mismatch between endpoints and/or your fetch calls.
+
+Fix it in two places
+A) Frontend: use one authed fetch everywhere (always send cookies; attach token if present)
+
+Create a single helper and use it for all API calls (create league, add robots, start draft, etc.).
+
+// client/src/lib/api.ts
+import { authStore } from "@/stores/auth"; // or however you read auth
+
+export async function apiFetch(path: string, init: RequestInit = {}) {
+  const token = authStore.getState().token; // may be null/undefined
+  const headers = new Headers(init.headers || {});
+  // Set Content-Type automatically if body is JSON
+  if (init.body && !(init.body instanceof FormData) && !headers.has("Content-Type")) {
+    headers.set("Content-Type", "application/json");
+  }
+  headers.set("Accept", "application/json");
+  if (token) headers.set("Authorization", `Bearer ${token}`);
+
+  const res = await fetch(path, {
+    ...init,
+    headers,
+    credentials: "include", // <-- ALWAYS send cookies
+  });
+  return res;
+}
+
+
+Then update your calls:
+
+// Create league
+await apiFetch("/api/leagues", {
+  method: "POST",
+  body: JSON.stringify({ name: leagueName.trim(), maxTeams: 6 }),
+});
+
+// Add robots (e.g., in league-waiting or draft controls)
+await apiFetch(`/api/leagues/${leagueId}/add-robots`, {
+  method: "POST",
+  body: JSON.stringify({ count: desiredCount }), // or omit body if your API ignores it
+});
+
+// Start draft
+await apiFetch(`/api/leagues/${leagueId}/draft/start`, { method: "POST" });
+
+
+Also disable the “Add robots” button until auth.isAuthenticated is true:
+
+<Button onClick={onAddRobots} disabled={!auth.isAuthenticated || pending}>
+  {pending ? "Adding…" : "Add robots"}
+</Button>
+
+
+Why this works: whether your backend uses cookie-session or Bearer JWT, every call now passes both (cookies + token if available). No more split behavior.

@@ -10,6 +10,7 @@ import { Play, Settings, Users, Clock, RotateCcw } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/features/query/api";
 import { useLocation } from "wouter";
+import { apiFetch } from "@/lib/api";
 
 interface DraftControlsProps {
   leagueId: string;
@@ -49,10 +50,8 @@ export default function DraftControls({
     try {
       console.log('[StartDraft] ✅ Starting draft for league:', leagueId);
       
-      const response = await fetch(`/api/leagues/${leagueId}/draft/start`, {
+      const response = await apiFetch(`/api/leagues/${leagueId}/draft/start`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include'
       });
       
       if (!response.ok) {

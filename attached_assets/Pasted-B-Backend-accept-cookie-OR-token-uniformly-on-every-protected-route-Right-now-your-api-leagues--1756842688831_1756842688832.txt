@@ -1,0 +1,68 @@
+B) Backend: accept cookie OR token uniformly on every protected route
+
+Right now, your /api/leagues (create) route clearly authenticates with the cookie, but /api/leagues/:id/add-robots is rejecting you. Unify them to the same auth middleware.
+
+Make a single middleware that resolves a user from either Authorization header or the session cookie, then use it everywhere:
+
+// server/auth/middleware.ts
+export async function requireAuthCookieOrToken(req, res, next) {
+  try {
+    // Try token first
+    const auth = req.headers.authorization;
+    if (auth?.startsWith("Bearer ")) {
+      const token = auth.slice("Bearer ".length).trim();
+      const userFromToken = await verifyJwtAndLoadUser(token);
+      if (userFromToken) {
+        req.user = userFromToken;
+        return next();
+      }
+    }
+
+    // Fallback to cookie/session
+    if (req.session?.user) {
+      req.user = req.session.user;
+      return next();
+    }
+
+    return res.status(401).send("Not authenticated");
+  } catch (e) {
+    return res.status(401).send("Not authenticated");
+  }
+}
+
+
+Then apply it consistently:
+
+router.post("/api/leagues", requireAuthCookieOrToken, createLeagueHandler);
+router.post("/api/leagues/:leagueId/add-robots", requireAuthCookieOrToken, requireCommissioner, addRobotsHandler);
+router.post("/api/leagues/:leagueId/draft/start", requireAuthCookieOrToken, requireCommissioner, startDraftHandler);
+// ...and anywhere else you check auth
+
+
+If you’re using different middlewares today (e.g., one that only reads JWT for add-robots), replace them with this unified one.
+
+Add quick server logs around add-robots to confirm what the server sees:
+
+console.log("[add-robots] auth header present:", !!req.headers.authorization, 
+            "session user present:", !!req.session?.user, 
+            "req.user:", !!req.user);
+
+
+If you’re on a different API domain than the UI, ensure your cookie is set with SameSite=None; Secure and your frontend uses credentials: "include" (we did that).
+
+Small cleanups you still need
+
+The Radix warning is still there — add a DialogDescription + aria-describedby to your dialog(s) to silence it and avoid portal a11y quirks.
+
+<DialogContent aria-describedby="create-league-desc">
+  <DialogHeader>
+    <DialogTitle>Create New League</DialogTitle>
+    <DialogDescription id="create-league-desc">
+      Name your league and choose settings. You can invite players next.
+    </DialogDescription>
+  </DialogHeader>
+  {/* ... */}
+</DialogContent>
+
+
+When you get 400 “A league with this name already exists”, you’re handling it correctly — good. Keep the dialog open and show that message.
