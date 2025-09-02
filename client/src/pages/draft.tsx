@@ -288,11 +288,11 @@ export default function DraftPage() {
 
   // Derived, null-safe handles using normalized fields
   const draft = draftData?.state?.draft ?? null;
-  const draftStatus = draftData?.status ?? 'not_started';
-  const currentPlayerId = draftData?.currentPlayerId ?? null;
+  const draftStatus = draftData?.status ?? 'not_started';               // now defined
+  const currentPlayerId = draftData?.currentPlayerId ?? null;          // now defined or null
+  const isCountingDown = draftStatus === 'active';                     // or a boolean the API gives you
+  const displaySeconds = draftData?.timerSeconds ?? 0;                 // now defined
   const timeRemainingSafe = draftData?.timerSeconds ?? 0;
-  const isCountingDown = draftStatus === 'active';
-  const displaySeconds = draftData?.timerSeconds ?? 0;
   const picksSafe = state?.picks ?? [];
   const availableTeamsSafe = state?.availableTeams ?? [];
   const draftOrderSafe = draft?.draftOrder ?? [];
@@ -457,6 +457,7 @@ export default function DraftPage() {
   })();
   
   console.log('[SMOOTH TIMER] Display time:', displayTime.toFixed(1), 'isCountingDown:', isCountingDown, 'localTime:', localTime.toFixed(1));
+  console.log('[NORMALIZED FIELDS] Status:', draftStatus, 'CurrentPlayerId:', currentPlayerId, 'TimerSeconds:', displaySeconds, 'IsCountingDown:', isCountingDown);
 
   // Variables moved earlier in the file to prevent compilation errors
 
