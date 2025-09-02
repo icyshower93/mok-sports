@@ -166,11 +166,8 @@ export default function DraftPage() {
   const [showFAB, setShowFAB] = useState(false);
   const [starting, setStarting] = useState(false);
   
-  // Enhanced timer state for smooth countdown
-  const [serverTime, setServerTime] = useState<number>(0);
-  const [localTime, setLocalTime] = useState<number>(0);
-  const [lastServerUpdate, setLastServerUpdate] = useState<number>(0);
-  const [isCountingDownState, setIsCountingDown] = useState<boolean>(false);
+  // Simple timer state
+  const [timer, setTimer] = useState<number>(0);
   
   // Prevent notification spam
   const [lastNotificationTime, setLastNotificationTime] = useState<number>(0);
@@ -372,7 +369,6 @@ export default function DraftPage() {
   }, [draft, draftId]);
   
   // JSX-safe aliases for backward compatibility - using normalized (which is now just draft)
-  const isCountingDown = normalized.isCountingDown;
   const isCurrentUser = normalized.isCurrentUser;
   const picksSafe = normalized.picks;
   const availableTeamsSafe = normalized.availableTeams;
@@ -384,13 +380,7 @@ export default function DraftPage() {
     console.error('Draft fetch error:', error);
   }
 
-  // SMOOTH TIMER SYSTEM: RAF-based stable timer with refs for jank-free countdown
-  
-  // Refs for stable timer tracking (no re-renders)
-  const serverTimeAtUpdateRef = useRef(0);      // seconds remaining at last server tick
-  const clientTsAtUpdateRef = useRef(0);        // performance.now() at last server tick
-  const rafRef = useRef<number | null>(null);
-  const [zeroSince, setZeroSince] = useState<number | null>(null);
+  // Simple timer based on normalized state
   
   // Handle WebSocket messages - normalize before updating state
   useEffect(() => {
@@ -407,66 +397,15 @@ export default function DraftPage() {
     }
   }, [lastMessage]);
 
-  // Handle server timer updates (WebSocket or API) with mobile alerts
+  // Timer: start from normalized state; don't read nested state in JSX
   useEffect(() => {
-    const newServerTime = lastMessage?.type === 'timer_update' ? 
-      lastMessage.data?.timeRemaining : 
-      displaySeconds;
+    if (!draft || draft.status !== 'active') return;
+    let t = draft.timerSeconds ?? DEFAULT_PICK_TIME_LIMIT;
+    setTimer(t);
 
-    if (newServerTime !== undefined && newServerTime !== serverTime) {
-      console.log('[SMOOTH TIMER] Server update received:', newServerTime);
-      
-      // Mobile UX: Vibration alerts for timer warnings
-      if (normalized.isCurrentUser) {
-        if (newServerTime <= TIMER_WARNING_THRESHOLDS.CAUTION && newServerTime > 25 && serverTime > 30) {
-          console.log('[VIBRATION] 30s warning triggered');
-          vibrateDevice(VIBRATION_PATTERNS.WARNING);
-        } else if (newServerTime <= TIMER_WARNING_THRESHOLDS.WARNING && newServerTime > 5 && serverTime > 10) {
-          console.log('[VIBRATION] 10s warning triggered');
-          vibrateDevice(VIBRATION_PATTERNS.URGENT);
-        } else if (newServerTime <= TIMER_WARNING_THRESHOLDS.URGENT && newServerTime > 0 && serverTime > 5) {
-          console.log('[VIBRATION] 5s urgent warning triggered');
-          vibrateDevice(VIBRATION_PATTERNS.CRITICAL);
-        }
-      }
-      
-      // PREDICTIVE TIMER FIX: If we receive a "fresh" timer (55+ seconds), immediately switch
-      const isFreshTimer = newServerTime >= 55 && serverTime < 10;
-      
-      if (isFreshTimer) {
-        console.log('[SMOOTH TIMER] 🎯 Fresh timer detected - immediate transition');
-        // Mobile UX: Notify user it's their turn (ONLY ONCE)
-        if (normalized.isCurrentUser && !hasNotifiedForThisTurn) {
-          const now = Date.now();
-          // Prevent duplicate notifications within 30 seconds
-          if (now - lastNotificationTime > NOTIFICATION_COOLDOWN) {
-            vibrateDevice(VIBRATION_PATTERNS.YOUR_TURN);
-            sendNotificationToUser('Your Draft Pick!', {
-              body: 'It\'s your turn to draft a team',
-              tag: 'draft-turn',
-              requireInteraction: true
-            });
-            setLastNotificationTime(now);
-            setHasNotifiedForThisTurn(true);
-          }
-        }
-      }
-      
-      // Update refs immediately (no re-renders needed)
-      serverTimeAtUpdateRef.current = newServerTime;
-      clientTsAtUpdateRef.current = performance.now();
-      
-      // Prevent snap-backs: only update UI if new time is <= current local time
-      const newUiTime = Math.min(newServerTime, localTime || newServerTime);
-      setServerTime(newServerTime);
-      setLocalTime(newUiTime);
-      
-      // Reset zero tracking on fresh updates
-      if (newServerTime > 0) {
-        setZeroSince(null);
-      }
-    }
-  }, [lastMessage, draftData, serverTime, isCurrentUser, hasNotifiedForThisTurn, lastNotificationTime, localTime]);
+    const id = setInterval(() => setTimer((s) => Math.max(0, s - 1)), 1000);
+    return () => clearInterval(id);
+  }, [draft?.status, draft?.timerSeconds]);
   
   // Reset notification flag when it's no longer user's turn
   useEffect(() => {
@@ -475,82 +414,12 @@ export default function DraftPage() {
     }
   }, [normalized.isCurrentUser, hasNotifiedForThisTurn]);
 
-  // Single stable RAF loop - no interval recreation
-  useEffect(() => {
-    if (!isCountingDown) {
-      if (rafRef.current != null) cancelAnimationFrame(rafRef.current);
-      rafRef.current = null;
-      return;
-    }
-
-    const tick = () => {
-      const elapsed = (performance.now() - clientTsAtUpdateRef.current) / 1000;
-      // Non-increasing, no snap-backs
-      const raw = serverTimeAtUpdateRef.current - elapsed;
-      const est = raw > 0 ? raw : 0;
-
-      setLocalTime(prev => {
-        // Prevent time from jumping up (snap-backs)
-        const newTime = est > (prev || 0) ? (prev || 0) : est;
-        
-        // Track when we hit zero for grace period
-        if (newTime <= 0 && prev > 0) {
-          setZeroSince(performance.now());
-        }
-        
-        return newTime;
-      });
-
-      rafRef.current = requestAnimationFrame(tick);
-    };
-
-    rafRef.current = requestAnimationFrame(tick);
-    return () => {
-      if (rafRef.current != null) cancelAnimationFrame(rafRef.current);
-      rafRef.current = null;
-    };
-  }, [isCountingDown]);
+  // Use simple timer for display
+  const displayTime = timer;
   
-  // Handle zero state with grace period
-  useEffect(() => {
-    if (localTime > 0) {
-      if (zeroSince !== null) setZeroSince(null);
-      return;
-    }
-    
-    // If we've shown 0 for > 1.5s and no draft state change, consider stopping
-    if (zeroSince !== null) {
-      const timeSinceZero = (performance.now() - zeroSince) / 1000;
-      if (timeSinceZero > 1.5 && isCountingDown) {
-        console.log('[SMOOTH TIMER] Grace period expired, stopping countdown');
-      }
-    }
-  }, [localTime, zeroSince, isCountingDown]);
-  
-  // Handle tab visibility to correct drift on resume
-  useEffect(() => {
-    const onVis = () => {
-      if (!document.hidden) {
-        // On resume, reset the client timestamp to correct any drift
-        clientTsAtUpdateRef.current = performance.now();
-        console.log('[SMOOTH TIMER] Tab resumed, correcting timer drift');
-      }
-    };
-    document.addEventListener('visibilitychange', onVis);
-    return () => document.removeEventListener('visibilitychange', onVis);
-  }, []);
-
-  // Display logic with smooth transitions and integer rounding - using normalized data
-  const displayTime = useMemo(() => {
-    const rawTime = normalized.isCountingDown ? localTime : (serverTime || normalized.timerSeconds);
-    // Smooth to integer if showing whole seconds (avoids 59.999 → 59 flicker)
-    return Math.floor(rawTime + 1e-6);
-  }, [normalized.isCountingDown, localTime, serverTime, normalized.timerSeconds]);
-  
-  console.log('[TIMER DEBUG] Server Time:', serverTime);
   console.log('[TIMER DEBUG] Display Time:', displayTime);
   console.log('[TIMER DEBUG] Current Player:', currentPlayerId);
-  console.log('[NORMALIZED FIELDS] Status:', draftStatus, 'CurrentPlayerId:', currentPlayerId, 'TimerSeconds:', normalized.timerSeconds, 'IsCountingDown:', isCountingDown);
+  console.log('[NORMALIZED FIELDS] Status:', draftStatus, 'CurrentPlayerId:', currentPlayerId, 'TimerSeconds:', draft?.timerSeconds);
 
   // Event handlers using hoisted functions
   const handleTouchStart = (e: React.TouchEvent) => {
