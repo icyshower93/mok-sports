@@ -311,7 +311,7 @@ export default function LeaguesPage() {
           <CardHeader className="pb-4">
             <CardTitle className="flex items-center gap-2 text-lg">
               <Trophy className="w-5 h-5 text-accent-gold" />
-              Season Prizes
+              Payouts
             </CardTitle>
           </CardHeader>
           
