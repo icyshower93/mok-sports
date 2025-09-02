@@ -63,8 +63,11 @@ export default function DraftControls({
       const data = await response.json();
       console.log('[StartDraft] ✅ Draft response:', data);
       
-      // CRITICAL: Update stores BEFORE navigation logic relies on draftId
-      queryClient.setQueryData(['/api/user/leagues'], (oldLeagues: any) => {
+      // CRITICAL: Update ALL league-related caches for immediate WebSocket connection
+      console.log('[StartDraft] 🔄 Updating all league caches with draftId:', data.draftId);
+      
+      // Update both possible league query keys
+      const updateLeagueData = (oldLeagues: any) => {
         if (!oldLeagues) return oldLeagues;
         
         return oldLeagues.map((league: any) => {
@@ -78,7 +81,10 @@ export default function DraftControls({
           }
           return league;
         });
-      });
+      };
+      
+      queryClient.setQueryData(['/api/user/leagues'], updateLeagueData);
+      queryClient.setQueryData(['/api/leagues/user'], updateLeagueData);
       
       // Update draft info cache
       queryClient.setQueryData(['/api/drafts/league', leagueId], {
@@ -90,11 +96,16 @@ export default function DraftControls({
         ...data.state
       });
       
+      // CRITICAL: Trigger refetch to ensure SSR/refresh compatibility
+      queryClient.invalidateQueries({ queryKey: ['/api/user/leagues'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/leagues/user'] });
+      queryClient.invalidateQueries({ queryKey: ['league', leagueId] });
+      
       console.log('[StartDraft] ✅ Store updated with draft info before navigation');
       console.log('[StartDraft] 🚀 NAVIGATING to draft room:', leagueId);
       
-      // Navigate to draft room using league ID (consistent with our useSmartRedirect logic)
-      setLocation(`/draft/${leagueId}`, { replace: true });
+      // Navigate to draft room using the returned draft ID
+      setLocation(`/draft/${data.draftId}`, { replace: true });
       
       toast({
         title: "Draft started!",
