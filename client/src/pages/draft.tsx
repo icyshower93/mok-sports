@@ -184,7 +184,7 @@ export default function DraftPage() {
   }
 
   const isCurrentUser = draft?.currentPlayerId === user?.id;
-  const currentPlayer = participants.find(p => p.id === draft?.currentPlayerId);
+  const currentPlayer = participants.find((p: any) => p.id === draft?.currentPlayerId);
 
   return (
     <div className="min-h-screen bg-background p-4">
@@ -244,7 +244,7 @@ export default function DraftPage() {
                         {isCurrentUser ? "Your turn to pick!" : `${currentPlayer?.name || 'Unknown'} is picking...`}
                       </p>
                       <p className="text-sm text-muted-foreground">
-                        {availableTeams.length} teams remaining
+                        {teams.length} teams remaining
                       </p>
                     </div>
                   </div>
