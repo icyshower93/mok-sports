@@ -75,43 +75,43 @@ export default function DraftPage() {
   const queryClient = useQueryClient();
 
   // Simple state management
-  const [draftData, setDraftData] = useState<SimpleDraftData | null>(null);
+  const [draft, setDraft] = useState<SimpleDraftData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedTeam, setSelectedTeam] = useState<string | null>(null);
   const [timer, setTimer] = useState<number>(0);
 
   // Safe fallbacks to prevent crashes during initial render
-  const availableTeams = (draftData?.availableTeams ?? []) as any[];
-  const picks = (draftData?.picks ?? []) as any[];
-  const participants = (draftData?.participants ?? []) as any[];
+  const availableTeams = (draft?.availableTeams ?? []) as any[];
+  const picks = (draft?.picks ?? []) as any[];
+  const participants = (draft?.participants ?? []) as any[];
 
-  // Simple WebSocket connection
+  // WebSocket connection - hydrate from WS
   useDraftWebSocket(draftId, user?.id, {
     onDraftState: (state) => {
-      console.log('[Draft] WS draft_state received');
-      if (state) {
-        setDraftData(state);
-        setIsLoading(false);
-      }
+      setDraft(state);
+      setIsLoading(false);
     },
     onTimerUpdate: ({ display }) => setTimer(display),
   });
 
-  // Simple fallback fetch
+  // GET fallback - hydrate from API, whichever arrives first
   useEffect(() => {
-    if (!draftId || !user?.id || draftData) return;
-    
-    fetch(endpoints.draft(draftId))
-      .then(res => res.json())
-      .then(data => {
-        console.log('[Draft] Fetched draft data');
-        if (data) {
-          setDraftData(data);
-          setIsLoading(false);
+    if (!draftId || auth.isLoading || draft) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch(endpoints.draft(draftId));
+        if (res.ok) {
+          const data = await res.json();
+          if (!cancelled) { 
+            setDraft(data); 
+            setIsLoading(false); 
+          }
         }
-      })
-      .catch(err => console.error('[Draft] Failed to fetch:', err));
-  }, [draftId, user?.id, draftData]);
+      } catch {}
+    })();
+    return () => { cancelled = true; };
+  }, [draftId, auth.isLoading, draft]);
 
   // Make pick mutation
   const makePick = useMutation({
@@ -147,8 +147,8 @@ export default function DraftPage() {
     );
   }
 
-  const isCurrentUser = draftData?.currentPlayerId === user?.id;
-  const currentPlayer = participants.find(p => p.id === draftData?.currentPlayerId);
+  const isCurrentUser = draft?.currentPlayerId === user?.id;
+  const currentPlayer = participants.find(p => p.id === draft?.currentPlayerId);
 
   return (
     <div className="min-h-screen bg-background p-4">
@@ -168,7 +168,7 @@ export default function DraftPage() {
           <div className="text-center">
             <h1 className="text-2xl font-bold">Draft Room</h1>
             <p className="text-sm text-muted-foreground">
-              Round {draftData?.currentRound ?? 1}, Pick {draftData?.currentPick ?? 1}
+              Round {draft?.currentRound ?? 1}, Pick {draft?.currentPick ?? 1}
             </p>
           </div>
 
@@ -210,7 +210,7 @@ export default function DraftPage() {
               <div className="grid grid-cols-2 gap-3 max-h-96 overflow-y-auto">
                 {availableTeams.map((team) => {
                   const isSelected = selectedTeam === team.id;
-                  const canSelect = draftData?.canMakePick && isCurrentUser;
+                  const canSelect = draft?.canMakePick && isCurrentUser;
                   
                   return (
                     <Card
@@ -242,7 +242,7 @@ export default function DraftPage() {
               </div>
 
               {/* Draft Button */}
-              {selectedTeam && draftData?.canMakePick && isCurrentUser && (
+              {selectedTeam && draft?.canMakePick && isCurrentUser && (
                 <div className="mt-4 pt-4 border-t">
                   <Button
                     onClick={() => makePick.mutate(selectedTeam)}
