@@ -24,6 +24,25 @@ import type { TeamStatus, Conference } from '@/draft/draft-types';
 const { DEFAULT_PICK_TIME_LIMIT } = TIMER_CONSTANTS;
 const { MINIMUM_SWIPE_DISTANCE, TIMER_WARNING_THRESHOLDS, NOTIFICATION_COOLDOWN, VIBRATION_PATTERNS } = DRAFT_UI_CONSTANTS;
 
+// Normalize draft payload into consistent shape (simplified)
+function normalizeDraft(raw: any) {
+  const s = raw?.state ?? raw ?? {};
+  return {
+    id: raw.id ?? s.id ?? null,
+    leagueId: raw.leagueId ?? s.leagueId ?? null,
+    status: raw.status ?? s.status ?? s.phase ?? "waiting",
+    currentPlayerId: raw.currentPlayerId ?? raw.currentPlayer?.id ?? s.currentPlayerId ?? null,
+    participants: raw.participants ?? s.participants ?? [],
+    picks: raw.picks ?? s.picks ?? [],
+    availableTeams: raw.availableTeams ?? s.availableTeams ?? [],
+    currentRound: raw.currentRound ?? s.currentRound ?? 1,
+    currentPick: raw.currentPick ?? s.currentPick ?? 1,
+    canMakePick: raw.canMakePick ?? s.canMakePick ?? false,
+    pickTimeLimit: raw.pickTimeLimit ?? s.pickTimeLimit ?? DEFAULT_PICK_TIME_LIMIT,
+    timerSeconds: raw.timer?.remaining ?? s.timer?.remaining ?? 0,
+  };
+}
+
 function formatTime(seconds: number): string {
   const mins = Math.floor(seconds / 60);
   const secs = seconds % 60;
@@ -49,11 +68,11 @@ function getBackgroundColor(isCurrentUser: boolean, displayTime: number): string
   return 'bg-green-50 dark:bg-green-950/20';
 }
 
-function getTeamStatus(team: NflTeam, picksSafe: DraftPick[], isCurrentUser: boolean, state: DraftState, userId?: string): TeamStatus {
+function getTeamStatus(team: NflTeam, picksSafe: DraftPick[], isCurrentUser: boolean, state: any, userId?: string): TeamStatus {
   const isDrafted = picksSafe.some(p => p.nflTeam.id === team.id);
   if (isDrafted) return 'taken';
   
-  // Check division conflict for current user (must match conference + division)
+  // Check division conflict for current user
   if (isCurrentUser && state?.canMakePick) {
     const userPicks = picksSafe.filter(p => p.user.id === userId) || [];
     const hasDivisionConflict = userPicks.some(
@@ -76,32 +95,6 @@ function filterTeamsBySearch(teams: NflTeam[], searchTerm: string): NflTeam[] {
   );
 }
 
-function vibrateDevice(pattern: number | number[]): boolean {
-  try {
-    if ('vibrate' in navigator && navigator.vibrate) {
-      const result = navigator.vibrate(pattern);
-      console.log('[VIBRATION]', result ? 'Success' : 'Failed', pattern);
-      return result;
-    } else {
-      console.log('[VIBRATION] API not supported on this device');
-      return false;
-    }
-  } catch (error) {
-    console.error('[VIBRATION] Error:', error);
-    return false;
-  }
-}
-
-function sendNotificationToUser(title: string, options?: NotificationOptions): void {
-  if ('Notification' in window && Notification.permission === 'granted') {
-    new Notification(title, {
-      icon: '/icon-192x192.png',
-      badge: '/icon-192x192.png',
-      ...options
-    });
-  }
-}
-
 async function requestNotificationPermissionFromUser(): Promise<void> {
   if ('Notification' in window && 'serviceWorker' in navigator) {
     if (Notification.permission === 'default') {
@@ -110,15 +103,16 @@ async function requestNotificationPermissionFromUser(): Promise<void> {
   }
 }
 
-// Simple React component
+// React component
 export default function DraftPage() {
   const { draftId } = useParams();
   const auth = useAuth();
   const { user } = auth;
 
-  // Simple single draft state object
-  const [draft, setDraft] = useState<any>(null);
-  const [timer, setTimer] = useState<number>(0);
+  // Simple draft state management (normalized)
+  const [draftData, setDraftData] = useState<any | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [displaySeconds, setDisplaySeconds] = useState(0);
 
   const [location, navigate] = useLocation();
   const { toast } = useToast();
@@ -135,6 +129,9 @@ export default function DraftPage() {
   const [showFAB, setShowFAB] = useState(false);
   const [starting, setStarting] = useState(false);
   
+  // Timer state
+  const [timer, setTimer] = useState<number>(0);
+  
   // Prevent notification spam
   const [lastNotificationTime, setLastNotificationTime] = useState<number>(0);
   const [hasNotifiedForThisTurn, setHasNotifiedForThisTurn] = useState<boolean>(false);
@@ -142,34 +139,32 @@ export default function DraftPage() {
   // Simple WebSocket connection with 3 parameters
   useDraftWebSocket(draftId, user?.id, {
     onDraftState: (state) => {
-      console.log('[Draft] Got draft state:', state);
-      setDraft(state);
+      console.log('[Draft] WS draft_state => hydrating', state);
+      if (state) {
+        const normalized = normalizeDraft(state);
+        setDraftData(normalized);
+        setIsLoading(false);
+      }
     },
-    onTimerUpdate: ({ display }) => setTimer(display),
+    onTimerUpdate: ({ display }) => setDisplaySeconds(display),
   });
 
   // Simple fallback fetch
   useEffect(() => {
-    if (!draftId || !user?.id || draft) return;
+    if (!draftId || !user?.id || draftData) return;
     
     fetch(endpoints.draft(draftId))
       .then(res => res.json())
       .then(data => {
         console.log('[Draft] Fetched draft data:', data);
-        setDraft(data);
+        if (data) {
+          const normalized = normalizeDraft(data);
+          setDraftData(normalized);
+          setIsLoading(false);
+        }
       })
       .catch(err => console.error('[Draft] Failed to fetch:', err));
-  }, [draftId, user?.id, draft]);
-
-  // Fetch user's leagues to get the current draft ID
-  const { data: leagueData } = useQuery({
-    queryKey: [endpoints.leaguesUser()],
-    queryFn: async () => {
-      return await apiRequest('GET', endpoints.leaguesUser());
-    },
-    enabled: !!user,
-    staleTime: 1000 * 10, // Cache for 10 seconds
-  });
+  }, [draftId, user?.id, draftData]);
 
   // Request notification permission on mount
   useEffect(() => {
@@ -198,7 +193,7 @@ export default function DraftPage() {
   });
 
   // Early loading state
-  if (!draft) {
+  if (isLoading || !draftData) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
@@ -209,16 +204,24 @@ export default function DraftPage() {
     );
   }
 
-  // Extract data from draft
-  const draftState = draft.state || draft;
-  const picks = draftState.picks || [];
-  const teams = draftState.availableTeams || [];
-  const participants = draftState.participants || [];
-  const isCurrentUser = draftState.currentPlayerId === user?.id;
-  const canMakePick = draftState.canMakePick && isCurrentUser;
+  // Normalized draft data
+  const normalized = draftData;
+  const draftStatus = normalized.status;
+  const currentPlayerId = normalized.currentPlayerId;
+  const isCurrentUser = currentPlayerId === user?.id;
+  const picksSafe = normalized.picks || [];
+  const availableTeamsSafe = normalized.availableTeams || [];
+  const currentRoundSafe = normalized.currentRound || 1;
+  const canMakePick = normalized.canMakePick && isCurrentUser;
 
-  // Filter teams by search
-  const filteredTeams = filterTeamsBySearch(teams, searchTerm);
+  // Use timer from WebSocket or fallback to local timer
+  const displayTime = displaySeconds || timer;
+
+  // Filter teams by search and conference
+  const filteredTeams = useMemo(() => {
+    const searchFiltered = filterTeamsBySearch(availableTeamsSafe, searchTerm);
+    return searchFiltered.filter(team => team.conference === currentConference);
+  }, [availableTeamsSafe, searchTerm, currentConference]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-green-50 dark:from-gray-900 dark:to-gray-800">
@@ -240,29 +243,29 @@ export default function DraftPage() {
               Draft Room
             </h1>
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              Round {draftState.currentRound || 1}, Pick {draftState.currentPick || 1}
+              Round {currentRoundSafe}, Pick {normalized.currentPick || 1}
             </p>
           </div>
 
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-1 text-sm text-gray-600 dark:text-gray-400">
               <Clock className="h-4 w-4" />
-              {formatTime(timer)}
+              {formatTime(displayTime)}
             </div>
           </div>
         </div>
 
         {/* Current turn indicator */}
         {isCurrentUser && canMakePick && (
-          <Card className={`mb-6 ${getBackgroundColor(true, timer)}`}>
+          <Card className={`mb-6 ${getBackgroundColor(true, displayTime)}`}>
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className={`w-3 h-3 rounded-full ${timer <= 10 ? 'bg-red-500 animate-pulse' : 'bg-green-500'}`} />
+                  <div className={`w-3 h-3 rounded-full ${displayTime <= 10 ? 'bg-red-500 animate-pulse' : 'bg-green-500'}`} />
                   <span className="font-semibold">It's your turn to pick!</span>
                 </div>
                 <div className="text-right">
-                  <div className="text-2xl font-bold">{formatTime(timer)}</div>
+                  <div className="text-2xl font-bold">{formatTime(displayTime)}</div>
                   <div className="text-sm text-gray-600">remaining</div>
                 </div>
               </div>
@@ -301,49 +304,47 @@ export default function DraftPage() {
                   <TabsContent value={currentConference} className="mt-4">
                     <ScrollArea className="h-96">
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        {filteredTeams
-                          .filter(team => team.conference === currentConference)
-                          .map((team) => {
-                            const status = getTeamStatus(team, picks, isCurrentUser, draftState, user?.id);
-                            const isDisabled = status !== 'available' || !canMakePick;
-                            
-                            return (
-                              <Card
-                                key={team.id}
-                                className={`cursor-pointer transition-all hover:shadow-md ${
-                                  selectedTeam === team.id ? 'ring-2 ring-primary' : ''
-                                } ${
-                                  isDisabled ? 'opacity-50 cursor-not-allowed' : ''
-                                }`}
-                                onClick={() => {
-                                  if (!isDisabled) {
-                                    setSelectedTeam(team.id);
-                                  }
-                                }}
-                              >
-                                <CardContent className="p-4">
-                                  <div className="flex items-center gap-3">
-                                    <TeamLogo logoUrl={team.logoUrl} teamCode={team.code} teamName={team.name} size="sm" />
-                                    <div className="flex-1">
-                                      <div className="font-semibold">{team.city} {team.name}</div>
-                                      <div className="text-sm text-gray-600">{team.division}</div>
-                                    </div>
-                                    <div>
-                                      {status === 'taken' && (
-                                        <Badge variant="secondary">Taken</Badge>
-                                      )}
-                                      {status === 'conflict' && (
-                                        <Badge variant="destructive">Division Conflict</Badge>
-                                      )}
-                                      {status === 'available' && selectedTeam === team.id && (
-                                        <CheckCircle className="h-5 w-5 text-green-500" />
-                                      )}
-                                    </div>
+                        {filteredTeams.map((team) => {
+                          const status = getTeamStatus(team, picksSafe, isCurrentUser, normalized, user?.id);
+                          const isDisabled = status !== 'available' || !canMakePick;
+                          
+                          return (
+                            <Card
+                              key={team.id}
+                              className={`cursor-pointer transition-all hover:shadow-md ${
+                                selectedTeam === team.id ? 'ring-2 ring-primary' : ''
+                              } ${
+                                isDisabled ? 'opacity-50 cursor-not-allowed' : ''
+                              }`}
+                              onClick={() => {
+                                if (!isDisabled) {
+                                  setSelectedTeam(team.id);
+                                }
+                              }}
+                            >
+                              <CardContent className="p-4">
+                                <div className="flex items-center gap-3">
+                                  <TeamLogo logoUrl={team.logoUrl} teamCode={team.code} teamName={team.name} size="sm" />
+                                  <div className="flex-1">
+                                    <div className="font-semibold">{team.city} {team.name}</div>
+                                    <div className="text-sm text-gray-600">{team.division}</div>
                                   </div>
-                                </CardContent>
-                              </Card>
-                            );
-                          })}
+                                  <div>
+                                    {status === 'taken' && (
+                                      <Badge variant="secondary">Taken</Badge>
+                                    )}
+                                    {status === 'conflict' && (
+                                      <Badge variant="destructive">Division Conflict</Badge>
+                                    )}
+                                    {status === 'available' && selectedTeam === team.id && (
+                                      <CheckCircle className="h-5 w-5 text-green-500" />
+                                    )}
+                                  </div>
+                                </div>
+                              </CardContent>
+                            </Card>
+                          );
+                        })}
                       </div>
                     </ScrollArea>
                   </TabsContent>
@@ -377,9 +378,9 @@ export default function DraftPage() {
               <CardContent>
                 <ScrollArea className="h-96">
                   <div className="space-y-2">
-                    {participants.map((participant: any, index: number) => {
-                      const userPicks = picks.filter((pick: any) => pick.user.id === participant.id);
-                      const isCurrentPicker = draftState.currentPlayerId === participant.id;
+                    {(normalized.participants || []).map((participant: any, index: number) => {
+                      const userPicks = picksSafe.filter((pick: any) => pick.user.id === participant.id);
+                      const isCurrentPicker = currentPlayerId === participant.id;
                       
                       return (
                         <div
