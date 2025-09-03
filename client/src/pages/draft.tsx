@@ -252,11 +252,11 @@ export default function DraftPage() {
                     <Badge variant="default">Your Turn</Badge>
                   )}
                 </div>
-                {isDraftActive && timer > 0 && (
+                {isDraftActive && timerDisplay > 0 && (
                   <div className="space-y-2">
                     <div className="flex items-center justify-between text-xs text-muted-foreground">
                       <span>Time remaining</span>
-                      <span>{formatTime(timer)}</span>
+                      <span>{formatTime(Math.max(0, timerDisplay))}</span>
                     </div>
                     <Progress value={timerProgress} className="h-2" />
                   </div>
@@ -274,7 +274,7 @@ export default function DraftPage() {
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 gap-3 max-h-96 overflow-y-auto">
-                {availableTeams.map((team) => {
+                {teams.map((team: any) => {
                   const isSelected = selectedTeam === team.id;
                   const eligibility = checkTeamEligibility(team);
                   const canSelect = canMakePicks && isCurrentUser && eligibility.eligible;
@@ -316,7 +316,7 @@ export default function DraftPage() {
 
               {/* Draft Button */}
               {selectedTeam && canMakePicks && isCurrentUser && (() => {
-                const selectedTeamData = availableTeams.find((t: any) => t.id === selectedTeam);
+                const selectedTeamData = teams.find((t: any) => t.id === selectedTeam);
                 const eligibility = selectedTeamData ? checkTeamEligibility(selectedTeamData) : { eligible: false, reason: 'Team not found' };
                 
                 return (
@@ -348,7 +348,7 @@ export default function DraftPage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-2 max-h-96 overflow-y-auto">
-                {picks.map((pick) => (
+                {picks.map((pick: any) => (
                   <div key={pick.id} className="flex items-center gap-3 p-2 rounded border">
                     <div className="text-sm font-mono w-12">
                       {pick.round}.{pick.pickNumber}
