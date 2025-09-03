@@ -1,0 +1,173 @@
+🚀 FRONTEND STARTING - bootstrap function running
+AuthProvider.tsx:110 [Auth] Token check - Has token: false Has user: false Loading: true
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+RequireLeague.tsx:9 [RequireLeague] entering
+RequireLeague.tsx:15 [RequireLeague] Object
+RequireLeague.tsx:19 [RequireLeague] loading state; showing spinner
+NavigationTracer.tsx:8 [Nav] location => /
+AuthProvider.tsx:110 [Auth] Token check - Has token: true Has user: true Loading: false
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+RequireLeague.tsx:9 [RequireLeague] entering
+RequireLeague.tsx:15 [RequireLeague] Object
+RequireLeague.tsx:28 [RequireLeague] no league and not allowed draft route; redirect -> /dashboard
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+NavigationTracer.tsx:8 [Nav] location => /dashboard
+index.mjs:308 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+(anonymous) @ index.mjs:308Understand this warning
+dashboard.tsx:100 [CreateLeague] Sending payload: Object
+dashboard.tsx:108 [CreateLeague] Response status: 201
+dashboard.tsx:124 [CreateLeague] Success result: Object
+dashboard.tsx:128 [CreateLeague] Success - server returned: Object
+dashboard.tsx:144 [CreateLeague] Navigating to waiting room with leagueId: 7f37c891-c8d8-428e-b150-447171de87ed
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+league-waiting.tsx:53 [LeagueWaiting] Auth state: Object
+league-waiting.tsx:94 [LeagueWaiting] WebSocket connection check: Object
+league-waiting.tsx:120 [LeagueWaiting] WebSocket connection established for draft: undefined
+NavigationTracer.tsx:8 [Nav] location => /league/waiting
+league-waiting.tsx:66 [LeagueWaiting] Checking URL params: Object
+league-waiting.tsx:53 [LeagueWaiting] Auth state: Object
+league-waiting.tsx:94 [LeagueWaiting] WebSocket connection check: Object
+league-waiting.tsx:120 [LeagueWaiting] WebSocket connection established for draft: undefined
+league-waiting.tsx:53 [LeagueWaiting] Auth state: Object
+league-waiting.tsx:94 [LeagueWaiting] WebSocket connection check: Object
+league-waiting.tsx:120 [LeagueWaiting] WebSocket connection established for draft: null
+league-waiting.tsx:125 [LeagueWaiting] League data updated: Object
+league-waiting.tsx:53 [LeagueWaiting] Auth state: Object
+league-waiting.tsx:94 [LeagueWaiting] WebSocket connection check: Object
+league-waiting.tsx:120 [LeagueWaiting] WebSocket connection established for draft: null
+league-waiting.tsx:53 [LeagueWaiting] Auth state: Object
+league-waiting.tsx:94 [LeagueWaiting] WebSocket connection check: Object
+league-waiting.tsx:120 [LeagueWaiting] WebSocket connection established for draft: null
+league-waiting.tsx:53 [LeagueWaiting] Auth state: Object
+league-waiting.tsx:94 [LeagueWaiting] WebSocket connection check: Object
+league-waiting.tsx:120 [LeagueWaiting] WebSocket connection established for draft: null
+league-waiting.tsx:125 [LeagueWaiting] League data updated: Object
+league-waiting.tsx:53 [LeagueWaiting] Auth state: Object
+league-waiting.tsx:94 [LeagueWaiting] WebSocket connection check: Object
+league-waiting.tsx:120 [LeagueWaiting] WebSocket connection established for draft: null
+league-waiting.tsx:53 [LeagueWaiting] Auth state: Object
+league-waiting.tsx:94 [LeagueWaiting] WebSocket connection check: Object
+league-waiting.tsx:120 [LeagueWaiting] WebSocket connection established for draft: null
+draft-controls.tsx:44 [StartDraft] ✅ Starting draft for league: 7f37c891-c8d8-428e-b150-447171de87ed
+league-waiting.tsx:53 [LeagueWaiting] Auth state: Object
+league-waiting.tsx:94 [LeagueWaiting] WebSocket connection check: Object
+league-waiting.tsx:120 [LeagueWaiting] WebSocket connection established for draft: 0ec4d258-b8a4-4ba0-98d5-2d7480119692
+league-waiting.tsx:125 [LeagueWaiting] League data updated: Object
+league-waiting.tsx:138 [League] Draft ID changed, WebSocket should reconnect to: 0ec4d258-b8a4-4ba0-98d5-2d7480119692
+use-draft-websocket.ts:48 [WS] Connected to draft: 0ec4d258-b8a4-4ba0-98d5-2d7480119692
+league-waiting.tsx:53 [LeagueWaiting] Auth state: Object
+league-waiting.tsx:94 [LeagueWaiting] WebSocket connection check: Object
+league-waiting.tsx:120 [LeagueWaiting] WebSocket connection established for draft: 0ec4d258-b8a4-4ba0-98d5-2d7480119692
+use-draft-websocket.ts:58 [WS] Connection closed: 1006
+use-draft-websocket.ts:48 [WS] Connected to draft: 0ec4d258-b8a4-4ba0-98d5-2d7480119692
+league-waiting.tsx:111 [LeagueWaiting] Draft state updated: undefined
+draft-controls.tsx:44 [StartDraft] ✅ Starting draft for league: 7f37c891-c8d8-428e-b150-447171de87ed
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+RequireLeague.tsx:9 [RequireLeague] entering
+RequireLeague.tsx:15 [RequireLeague] Object
+RequireLeague.tsx:32 [RequireLeague] has league; rendering children
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+RequireLeague.tsx:9 [RequireLeague] entering
+RequireLeague.tsx:15 [RequireLeague] Object
+RequireLeague.tsx:32 [RequireLeague] has league; rendering children
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+RequireLeague.tsx:9 [RequireLeague] entering
+RequireLeague.tsx:15 [RequireLeague] Object
+RequireLeague.tsx:32 [RequireLeague] has league; rendering children
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+RequireLeague.tsx:9 [RequireLeague] entering
+RequireLeague.tsx:15 [RequireLeague] Object
+RequireLeague.tsx:32 [RequireLeague] has league; rendering children
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+RequireLeague.tsx:9 [RequireLeague] entering
+RequireLeague.tsx:15 [RequireLeague] Object
+RequireLeague.tsx:32 [RequireLeague] has league; rendering children
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+RequireLeague.tsx:9 [RequireLeague] entering
+RequireLeague.tsx:15 [RequireLeague] Object
+RequireLeague.tsx:32 [RequireLeague] has league; rendering children
+NavigationTracer.tsx:8 [Nav] location => /draft/0ec4d258-b8a4-4ba0-98d5-2d7480119692
+use-draft-websocket.ts:58 [WS] Connection closed: 1000
+use-draft-websocket.ts:54 [WS] Connection error
+use-draft-websocket.ts:58 [WS] Connection closed: 1006
+use-draft-websocket.ts:48 [WS] Connected to draft: 0ec4d258-b8a4-4ba0-98d5-2d7480119692
+draft.tsx:145 [Draft] Got draft state: undefined
+use-draft-websocket.ts:58 [WS] Connection closed: 1006
+draft.tsx:158 [Draft] Fetched draft data: Object
+use-draft-websocket.ts:54 [WS] Connection error
+use-draft-websocket.ts:58 [WS] Connection closed: 1006
+use-draft-websocket.ts:48 [WS] Connected to draft: 0ec4d258-b8a4-4ba0-98d5-2d7480119692
+draft.tsx:145 [Draft] Got draft state: undefined
+use-draft-websocket.ts:58 [WS] Connection closed: 1000
+draft.tsx:158 [Draft] Fetched draft data: Object
+use-draft-websocket.ts:54 [WS] Connection error
+use-draft-websocket.ts:58 [WS] Connection closed: 1006
+use-draft-websocket.ts:48 [WS] Connected to draft: 0ec4d258-b8a4-4ba0-98d5-2d7480119692
+draft.tsx:145 [Draft] Got draft state: undefined
+draft.tsx:158 [Draft] Fetched draft data: Object
+use-draft-websocket.ts:54 [WS] Connection error
+use-draft-websocket.ts:58 [WS] Connection closed: 1006
+use-draft-websocket.ts:58 [WS] Connection closed: 1000
+use-draft-websocket.ts:48 [WS] Connected to draft: 0ec4d258-b8a4-4ba0-98d5-2d7480119692
+draft.tsx:145 [Draft] Got draft state: undefined
+draft.tsx:158 [Draft] Fetched draft data: Object
+use-draft-websocket.ts:58 [WS] Connection closed: 1000
+use-draft-websocket.ts:54 [WS] Connection error
+use-draft-websocket.ts:58 [WS] Connection closed: 1006
+use-draft-websocket.ts:48 [WS] Connected to draft: 0ec4d258-b8a4-4ba0-98d5-2d7480119692
+draft.tsx:145 [Draft] Got draft state: undefined
+use-draft-websocket.ts:58 [WS] Connection closed: 1000
+draft.tsx:158 [Draft] Fetched draft data: Object
+use-draft-websocket.ts:54 [WS] Connection error
+use-draft-websocket.ts:58 [WS] Connection closed: 1006
+use-draft-websocket.ts:48 [WS] Connected to draft: 0ec4d258-b8a4-4ba0-98d5-2d7480119692
+draft.tsx:145 [Draft] Got draft state: undefined
+use-draft-websocket.ts:58 [WS] Connection closed: 1006
+draft.tsx:158 [Draft] Fetched draft data: Object
+use-draft-websocket.ts:54 [WS] Connection error
+use-draft-websocket.ts:58 [WS] Connection closed: 1006
+use-draft-websocket.ts:48 [WS] Connected to draft: 0ec4d258-b8a4-4ba0-98d5-2d7480119692
+draft.tsx:145 [Draft] Got draft state: undefined
+draft.tsx:158 [Draft] Fetched draft data: Object
+use-draft-websocket.ts:58 [WS] Connection closed: 1006
+use-draft-websocket.ts:54 [WS] Connection error
+use-draft-websocket.ts:58 [WS] Connection closed: 1006
+use-draft-websocket.ts:48 [WS] Connected to draft: 0ec4d258-b8a4-4ba0-98d5-2d7480119692
+draft.tsx:145 [Draft] Got draft state: undefined
+use-draft-websocket.ts:58 [WS] Connection closed: 1006
+draft.tsx:158 [Draft] Fetched draft data: Object
+use-draft-websocket.ts:54 [WS] Connection error
+use-draft-websocket.ts:58 [WS] Connection closed: 1006
+use-draft-websocket.ts:48 [WS] Connected to draft: 0ec4d258-b8a4-4ba0-98d5-2d7480119692
+draft.tsx:145 [Draft] Got draft state: undefined
+use-draft-websocket.ts:58 [WS] Connection closed: 1000
+draft.tsx:158 [Draft] Fetched draft data: Object
+use-draft-websocket.ts:54 [WS] Connection error
+use-draft-websocket.ts:58 [WS] Connection closed: 1006
+use-draft-websocket.ts:48 [WS] Connected to draft: 0ec4d258-b8a4-4ba0-98d5-2d7480119692
+draft.tsx:145 [Draft] Got draft state: undefined
+draft.tsx:158 

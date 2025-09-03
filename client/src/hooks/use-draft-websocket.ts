@@ -57,11 +57,15 @@ export function useDraftWebSocket(
     ws.onclose = (e) => {
       console.log("[WS] Connection closed:", e.code);
       socketRef.current = null;
-      if (e.code !== 1000 && !reconnectTimerRef.current) {
+      // Only reconnect on unexpected closures (not normal 1000 close)
+      if (e.code !== 1000 && e.code !== 1001 && !reconnectTimerRef.current) {
+        // Use exponential backoff to prevent connection storms
+        const delay = Math.min(1000 * Math.pow(2, reconnectTick % 5), 10000);
+        console.log(`[WS] Reconnecting in ${delay}ms`);
         reconnectTimerRef.current = window.setTimeout(() => {
           reconnectTimerRef.current = null;
-          setReconnectTick((t) => t + 1); // re-run effect to reconnect
-        }, 1000);
+          setReconnectTick((t) => t + 1);
+        }, delay);
       }
     };
 
