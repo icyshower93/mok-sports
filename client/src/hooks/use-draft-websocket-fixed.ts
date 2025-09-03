@@ -6,13 +6,13 @@ type DraftSocketMessage =
   | { type: 'timer_update'; payload: { display: number } }
   | { type: string; payload?: any };
 
-export function useDraftWebSocket(opts: {
+export function useDraftWebSocket(opts?: {
   draftId?: string;
   userId?: string;
   onDraftState?: (s: any) => void;
   onTimerUpdate?: (t: { display: number }) => void;
 }) {
-  const { draftId, userId, onDraftState, onTimerUpdate } = opts;
+  const { draftId, userId, onDraftState, onTimerUpdate } = opts || {};
 
   const socketRef = useRef<WebSocket | null>(null);
   const reconnectTimerRef = useRef<number | null>(null);
