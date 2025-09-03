@@ -1,3 +1,24 @@
+What the logs reveal (in plain English)
+
+“Start Draft” fires twice
+You see two lines:
+[StartDraft] ✅ Starting draft for league: … (twice) → the click handler runs twice (double-click/StrictMode remount). You need a simple starting guard and/or ignore if league.draftId already exists.
+
+Waiting room opens the draft socket
+use-draft-websocket.ts:48 [WS] Connected to draft: … before you navigate → the waiting room is grabbing the draft WS. That competes with the draft page and causes churn.
+
+WebSocket keeps closing 1000 and reconnecting
+Repeated Connection closed: 1000 is almost always caused by your hook re-running on every render because you passed a { onDraftState, onTimerUpdate } object that changes identity each render. Your effect depends on that, so it closes (1000) and re-opens over and over.
+
+Draft state updated: undefined
+Your message parser assumes the server sends { type, payload }. Sometimes it’s { type, data } or { draft }. You’re swallowing real state.
+
+All four are easy, small fixes. No overengineering. Here’s the minimal patch set.
+
+1) Make the WS hook stable (no reopen on each render)
+
+client/src/hooks/use-draft-websocket.ts – drop-in replacement:
+
 import { useEffect, useRef, useState } from "react";
 import { wsUrl } from "@/lib/endpoints";
 
@@ -96,3 +117,8 @@ export function useDraftWebSocket(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [draftId, userId, reconnectTick]);
 }
+
+
+Uses a callbacks ref so re-renders don’t tear down the socket.
+
+Accepts varied message shapes, so onDraftState won’t get undefined when valid state arrives.
