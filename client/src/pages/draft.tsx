@@ -218,56 +218,69 @@ export default function DraftPage() {
     }
   }, [draftId, queryClient]);
 
-  // RACE CONDITION FIX: Fetch draft state only when auth is ready
-  const { data: draftData, isLoading, error } = useQuery({
-    queryKey: ['draft', draftId, 'state'], // Include 'state' for specificity
-    queryFn: async ({ signal }) => {
-      console.log('[Draft] === STARTING DRAFT FETCH ===');
-      console.log('[Draft] Draft ID:', draftId);
-      console.log('[Draft] Auth status - User:', auth.user?.name, 'Authenticated:', auth.isAuthenticated, 'Loading:', auth.isLoading);
-      
+  // Helper function to handle draft fetch with retry (handles create→navigate race)
+  async function fetchDraftWithRetry(draftId: string, signal: AbortSignal) {
+    const delays = [300, 600, 1200, 2000, 3000]; // ~7s total
+    for (let i = 0; i <= delays.length; i++) {
       try {
-        console.log('[Draft] Making API request to:', endpoints.draft(draftId!));
+        console.log(`[Draft] Fetch attempt ${i + 1}/${delays.length + 1} for draft:`, draftId);
         
-        // Use direct fetch with credentials and signal for cancellation
-        const response = await fetch(endpoints.draft(draftId!), {
+        const res = await fetch(endpoints.draft(draftId), { 
           method: 'GET',
-          credentials: 'include', // Use cookies for auth instead of Bearer token
-          signal, // Add signal for query cancellation
+          credentials: 'include',
+          signal,
           headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json'
           }
         });
         
-        console.log('[Draft] Response received:', {
-          status: response.status,
-          statusText: response.statusText,
-          url: response.url
-        });
-        
-        if (!response.ok) {
-          const errorText = await response.text();
-          console.error('[Draft] API Error Response:', errorText);
-          throw new Error(`Draft request failed: ${response.status} ${response.statusText}`);
+        if (res.ok) {
+          const raw = await res.json();
+          console.log('[Draft] ✅ Draft data received successfully:', raw);
+          
+          // ✅ Normalize the Draft API response 
+          const normalized = normalizeDraft(raw);
+          console.log('[Draft] 🔧 Normalized response:', normalized);
+          return normalized;
+        }
+
+        // If server uses 404 while creating, retry; otherwise break on non-404
+        if (res.status !== 404) {
+          const text = await res.text().catch(() => '');
+          throw new Error(`Draft fetch failed: ${res.status} ${text}`);
         }
         
-        const raw = await response.json();
-        console.log('[Draft] ✅ Draft data received successfully:', raw);
+        console.log(`[Draft] Got 404, attempt ${i + 1}/${delays.length + 1} - draft may still be creating...`);
+        if (i === delays.length) break;
         
-        // ✅ Normalize the Draft API response 
-        const normalized = normalizeDraft(raw);
-        console.log('[Draft] 🔧 Normalized response:', normalized);
+        console.log(`[Draft] Waiting ${delays[i]}ms before retry...`);
+        await new Promise(r => setTimeout(r, delays[i]));
         
-        return normalized;
       } catch (error: any) {
-        // ✅ Don't log AbortError - happens during normal query cancellation
+        // ✅ Don't retry AbortErrors
         if (error?.name === "AbortError" || error?.message?.includes("signal is aborted")) {
-          return;
+          throw error;
         }
-        console.error('[Draft] ❌ Error fetching draft data:', error);
-        throw error;
+        
+        // If it's the last attempt or not a 404-related error, throw
+        if (i === delays.length || !error?.message?.includes('404')) {
+          throw error;
+        }
       }
+    }
+    throw new Error('Draft not ready yet (timed out after ~7s)');
+  }
+
+  // RACE CONDITION FIX: Fetch draft state with retry mechanism
+  const { data: draftData, isLoading, error } = useQuery({
+    queryKey: ['draft', draftId, 'state'], // Include 'state' for specificity
+    queryFn: async ({ signal }) => {
+      console.log('[Draft] === STARTING DRAFT FETCH WITH RETRY ===');
+      console.log('[Draft] Draft ID:', draftId);
+      console.log('[Draft] Auth status - User:', auth.user?.name, 'Authenticated:', auth.isAuthenticated, 'Loading:', auth.isLoading);
+      
+      return await fetchDraftWithRetry(draftId!, signal);
     },
     enabled: !!draftId && !!auth.user && !auth.isLoading,
     staleTime: 2000, // 2 seconds to balance real-time needs with performance
@@ -275,20 +288,13 @@ export default function DraftPage() {
       // Only poll if draft is active and we're waiting for updates
       return queryData?.status === 'active' || queryData?.status === 'starting' ? 3000 : false;
     },
-    retry: (failureCount, error: any) => {
-      // ✅ Don't retry AbortErrors
-      if (error?.name === "AbortError" || error?.message?.includes("signal is aborted")) {
-        return false;
-      }
-      console.log(`[Draft] Query retry ${failureCount}, error:`, error);
-      return failureCount < 3;
-    },
+    retry: false, // Disable TanStack's retry since we handle it in fetchDraftWithRetry
     // Remove onSuccess - deprecated in TanStack Query v5
   });
 
-  // Simple WebSocket connection logic - wait for auth AND draft data to be loaded
-  // Use the draftId from above (already declared on line 212)
-  const canConnect = !auth.isLoading && !!auth.user && Boolean(draftId) && !isLoading;
+  // WebSocket connection logic - connect immediately when auth + draftId ready
+  // Don't wait for draft data loading - let the socket bring the page to life
+  const canConnect = !auth.isLoading && !!auth.user && Boolean(draftId);
   
   const draftWsUrl = useMemo(
     () => (canConnect && draftId ? wsUrl('/draft-ws', { draftId, userId: auth.user!.id }) : null),
@@ -596,7 +602,14 @@ export default function DraftPage() {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center space-y-4">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-          <p className="text-sm text-muted-foreground capitalize">{loadingReason}...</p>
+          <div>
+            <p className="text-sm text-muted-foreground capitalize">{loadingReason}...</p>
+            {loadingReason === 'draft data loading' && (
+              <p className="text-xs text-muted-foreground/70 mt-2">
+                Connecting to draft room... (retrying if needed)
+              </p>
+            )}
+          </div>
         </div>
       </div>
     );
