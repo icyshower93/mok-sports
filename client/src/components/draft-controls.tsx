@@ -40,9 +40,14 @@ export default function DraftControls({
   const totalRounds = 5; // Fixed to 5 rounds for 6-person leagues
   
 
-  // Start draft and navigate immediately
+  // Start draft and navigate immediately - idempotent handler
   const onStartDraft = async () => {
-    if (starting) return;
+    if (starting) return;                    // double-click guard
+    if (draftId) {
+      // someone already started it (or StrictMode double-mounted)
+      setLocation(`/draft/${draftId}`);
+      return;
+    }
     setStarting(true);
     
     try {
@@ -56,7 +61,7 @@ export default function DraftControls({
         throw new Error('Server did not return a draftId');
       }
       
-      const { draftId } = body;
+      const { draftId: newDraftId } = body;
     
     // Optimistic update for snappy UI
     const updateLeagueData = (oldLeagues: any) => {
@@ -66,7 +71,7 @@ export default function DraftControls({
         if (league.id === leagueId) {
           return {
             ...league,
-            draftId,
+            draftId: newDraftId,
             draftStatus: "active",
             draftStarted: true
           };
@@ -81,7 +86,7 @@ export default function DraftControls({
       if (!oldLeague) return oldLeague;
       return {
         ...oldLeague,
-        draftId,
+        draftId: newDraftId,
         draftStatus: "active",
         draftStarted: true
       };
@@ -93,17 +98,21 @@ export default function DraftControls({
     });
     
       // 👈 Navigate immediately after getting draftId
-      console.log('[StartDraft] 🚀 Navigating immediately to draft:', draftId);
-      setLocation(`/draft/${draftId}`);
+      console.log('[StartDraft] 🚀 Navigating immediately to draft:', newDraftId);
+      setLocation(`/draft/${newDraftId}`);
       
       if (onDraftStarted) {
         onDraftStarted();
       }
       
-      return { draftId };
+      return { draftId: newDraftId };
     } catch (error) {
       setStarting(false);
-      throw error;
+      toast({
+        title: "Failed to start draft",
+        description: "Please try again",
+        variant: "destructive"
+      });
     }
   };
 
@@ -309,8 +318,8 @@ export default function DraftControls({
             )}
 
             <Button
-              onClick={() => startDraftMutation.mutate()}
-              disabled={starting}
+              onClick={onStartDraft}
+              disabled={starting || !!draftId}
               className="w-full"
               size="lg"
             >
