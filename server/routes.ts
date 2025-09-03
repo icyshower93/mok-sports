@@ -1834,6 +1834,53 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // GET /api/drafts/:draftId/available-teams - Fetch available teams for drafting
+  app.get('/api/drafts/:draftId/available-teams', async (req, res) => {
+    const { draftId } = req.params;
+    
+    try {
+      const user = await getAuthenticatedUser(req);
+      if (!user) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+      
+      console.log('[GET /api/drafts/:id/available-teams] Fetching available teams for draft:', draftId, 'for user:', user.id);
+      
+      // Get draft from storage
+      const draft = await storage.getDraft(draftId);
+      if (!draft) {
+        return res.status(404).json({ message: "Draft not found" });
+      }
+      
+      // Verify user is in the league
+      const isInLeague = await storage.isUserInLeague(user.id, draft.leagueId);
+      if (!isInLeague) {
+        return res.status(403).json({ message: "Not authorized to view this draft" });
+      }
+      
+      // Get all NFL teams
+      const allTeams = await db.select().from(nflTeams);
+      
+      // Get already drafted teams
+      const draftedTeams = await db.select({
+        nflTeamId: draftPicks.nflTeamId
+      }).from(draftPicks).where(eq(draftPicks.draftId, draftId));
+      
+      const draftedTeamIds = new Set(draftedTeams.map(pick => pick.nflTeamId));
+      
+      // Filter out already drafted teams
+      const availableTeams = allTeams.filter(team => !draftedTeamIds.has(team.id));
+      
+      console.log('[GET /api/drafts/:id/available-teams] Returning', availableTeams.length, 'available teams out of', allTeams.length, 'total');
+      
+      res.json(availableTeams);
+      
+    } catch (error: any) {
+      console.error('[GET /api/drafts/:id/available-teams] Error:', error);
+      res.status(500).json({ message: 'Failed to fetch available teams', error: error?.message || 'Unknown error' });
+    }
+  });
+
   // Draft reset endpoint - Creates new draft for seamless WebSocket connection
   app.post('/api/testing/reset-draft', async (req, res) => {
     try {
