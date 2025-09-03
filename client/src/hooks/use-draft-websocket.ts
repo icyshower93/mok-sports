@@ -35,7 +35,19 @@ export function useDraftWebSocket(draftId: string) {
     if (!draftId || stoppedRef.current) return;
 
     setConnectionStatus('connecting');
-    const url = `${location.origin.replace(/^http/, 'ws')}/draft-ws?draftId=${encodeURIComponent(draftId)}`;
+    // Fix WebSocket URL for both development and production
+    let wsUrl;
+    
+    // In development, use 0.0.0.0 directly (Replit development environment)
+    if (location.hostname === 'localhost' || location.hostname === '127.0.0.1' || location.hostname.includes('replit.dev')) {
+      wsUrl = `ws://0.0.0.0:${location.port || '5000'}`;
+    } else {
+      // Production: Use the same origin but with ws protocol
+      wsUrl = location.origin.replace(/^http/, 'ws');
+    }
+    
+    const url = `${wsUrl}/draft-ws?draftId=${encodeURIComponent(draftId)}`;
+    console.log('[WebSocket] Connecting to:', url);
     const ws = new WebSocket(url);
     wsRef.current = ws;
 

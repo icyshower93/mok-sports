@@ -1,0 +1,164 @@
+3) Use the helper everywhere
+
+In draft.tsx (or your data layer):
+
+import { endpoints } from '@/lib/endpoints';
+
+const url = endpoints.draft(draftId);
+// GET draft
+// GET endpoints.draftAvailableTeams(draftId)
+
+
+In use-draft-websocket.ts:
+
+import { wsUrl } from '@/lib/endpoints';
+
+// If your server mounts at '/draft-ws' (same-origin), don’t hardcode a foreign domain:
+const url = wsUrl('/draft-ws', { draftId, userId /* add token if needed */ });
+const socket = new WebSocket(url);
+
+
+If the server’s actual mount is /ws or /api/draft-ws, change only the first argument of wsUrl() and you’re done across the app.
+
+B. Fix the race: connect only when you can
+
+In both the waiting room hook and the draft page:
+
+Do not attempt a WS connection until you have:
+
+authLoading === false and user?.id present
+
+a non-empty draftId
+
+(optional) the draft GET has returned and confirms status (e.g. in_progress)
+
+In use-draft-websocket.ts:
+
+useEffect(() => {
+  if (!user?.id || !draftId) {
+    log('❌ Connection requirements not met', { hasUser: !!user?.id, draftId });
+    return;
+  }
+  if (connectionRef.current) return; // don’t double-connect
+
+  const url = wsUrl('/draft-ws', { draftId, userId: user.id });
+  const ws = new WebSocket(url);
+  connectionRef.current = ws;
+
+  ws.onopen = () => log('✅ WS open', { url });
+  ws.onclose = (e) => { log('WS closed', e); connectionRef.current = null; };
+  ws.onerror = (e) => log('WS error', e);
+
+  return () => {
+    try { ws.close(); } catch {}
+    connectionRef.current = null;
+  };
+}, [draftId, user?.id]);
+
+
+In draft.tsx, gate network calls:
+
+// Before fetching anything:
+if (!draftId || authLoading) {
+  return <LoadingState />; // your existing loading render
+}
+
+C. Make REST and FE match (remove that 404)
+
+Pick one of these (whichever matches your server):
+
+Option 1 (change FE to match BE):
+If your backend actually exposes /api/draft/:id/teams/available:
+
+draftAvailableTeams: (draftId: string) => `${apiBase}/draft/${draftId}/teams/available`,
+
+
+Option 2 (add BE route to match FE):
+If the FE path /api/drafts/:id/available-teams is what you want, add the backend route alias to avoid breaking FE:
+
+// Express-ish pseudocode on server:
+app.get('/api/drafts/:id/available-teams', (req, res) => {
+  // internally forward/alias to your real handler
+});
+
+
+Option 3 (serve inline with the draft)
+Have GET /api/drafts/:id include availableTeams in the payload so the FE doesn’t need a second fetch.
+
+Quick sanity test (from browser console or curl):
+
+curl -i https://<your-host>/api/drafts/TEST_ID/available-teams
+curl -i https://<your-host>/api/draft/TEST_ID/teams/available
+
+
+One of those should be 200. Point the FE there.
+
+D. Start-Draft flow must return a draftId (and you must use it)
+
+Your logs show:
+
+[StartDraft] ✅ Starting draft for league: 51b1...
+Navigation => /draft/4616...
+
+
+Verify the endpoint you hit (likely POST /api/leagues/:leagueId/draft/start) returns:
+
+{ "draftId": "4616...", "status": "in_progress", ... }
+
+
+Then:
+
+const res = await fetch(endpoints.startLeagueDraft(leagueId), { method: 'POST' });
+const data = await res.json();
+// Guard:
+if (!data?.draftId) { toast.error('Server did not return a draftId'); return; }
+navigate(`/draft/${data.draftId}`);
+
+
+Also pass the draftId into any state/contexts that the waiting room or draft components rely on (so they don’t show draftId: null while rendering).
+
+E. Same-origin WS first, multi-service later
+
+Right now you hardcoded:
+
+wss://mok-sports-draft-mokfantasysport.replit.app/draft-ws
+
+
+If that service isn’t listening (or Replit proxying is different for WS), it will always fail.
+
+Safer default:
+
+Use wsUrl('/draft-ws') → same origin as the app (window.location.origin), which you can reverse-proxy to your draft service.
+
+If you truly need a separate host, set VITE_WS_BASE=wss://your-draft-host.example in env, and keep code unchanged.
+
+F. Minor but useful
+
+The shadcn warning:
+
+Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+
+
+Add a <DialogDescription id="…"> and pass aria-describedby on the content, or include <DialogHeader><DialogTitle/><DialogDescription/></DialogHeader> inside the dialog to silence it.
+
+The repeated [AppShell] mounted spam is expected in dev/StrictMode; in production it should be once. If you see it many times in prod, a router loop or layout key change is causing remounts. Double-check any <Routes> reconfiguration on state changes.
+
+Quick patch list (copy/paste)
+
+Create client/src/lib/endpoints.ts (as shown above).
+
+Replace hardcoded strings in:
+
+draft.tsx (GET draft, GET available teams)
+
+use-draft-websocket.ts (construct WS URL with wsUrl)
+
+draft-controls.tsx or wherever you start the draft (POST start)
+
+Gate effects in use-draft-websocket.ts with user?.id && draftId.
+
+Ensure the BE route you call for available teams actually exists (rename either FE or BE).
+
+Verify POST /leagues/:leagueId/draft/start returns { draftId } and you navigate with that.
+
+If you want, paste your current backend route list for drafts (just the paths/methods), and I’ll align the exact FE strings so the 404 disappears on the first try.
