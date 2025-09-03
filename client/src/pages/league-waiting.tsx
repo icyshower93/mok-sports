@@ -90,21 +90,24 @@ export function LeagueWaiting() {
     },
   });
 
-  // WebSocket connection for real-time draft updates - wait for auth and league to be ready
+  // WebSocket connection for real-time draft updates - only when draftId exists
   console.log('[LeagueWaiting] WebSocket connection check:', { 
     draftId: league?.draftId, 
     leagueId,
     authReady,
     leagueLoaded: !!league,
     hasDraftId: !!league?.draftId,
-    shouldConnect: authReady && !!league?.draftId,
+    shouldConnect: !!league?.draftId && !!user?.id,
     timestamp: Date.now()
   });
   
-  // Simple WebSocket connection - only connect when we have a draft ID
+  // Get draftId safely
+  const draftId = league?.draftId ?? null;
+  
+  // Only call WebSocket hook if draftId and userId exist
   useDraftWebSocket(
-    authReady && league?.draftId ? league.draftId : null,
-    authReady && user?.id ? user.id : null,
+    draftId,
+    user?.id ?? null,
     {
       onDraftState: (state) => {
         // Handle draft state updates if needed
@@ -116,8 +119,6 @@ export function LeagueWaiting() {
       }
     }
   );
-  
-  console.log('[LeagueWaiting] WebSocket connection established for draft:', league?.draftId);
 
   // Debug logging for league data
   useEffect(() => {
