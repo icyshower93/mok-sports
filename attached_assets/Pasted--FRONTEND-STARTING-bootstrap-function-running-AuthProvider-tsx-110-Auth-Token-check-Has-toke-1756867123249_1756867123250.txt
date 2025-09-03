@@ -1,0 +1,51 @@
+🚀 FRONTEND STARTING - bootstrap function running
+AuthProvider.tsx:110 [Auth] Token check - Has token: true Has user: false Loading: true
+AuthProvider.tsx:110 [Auth] Token check - Has token: true Has user: true Loading: false
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+RequireLeague.tsx:11 [RequireLeague] entering
+RequireLeague.tsx:17 [RequireLeague] Object
+RequireLeague.tsx:21 [RequireLeague] loading state; returning null
+NavigationTracer.tsx:8 [Nav] location => /draft/d1f29553-a362-4682-b0e2-35e0fbd29010
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+RequireLeague.tsx:11 [RequireLeague] entering
+RequireLeague.tsx:17 [RequireLeague] Object
+RequireLeague.tsx:30 [RequireLeague] has league; rendering children
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+RequireLeague.tsx:11 [RequireLeague] entering
+RequireLeague.tsx:17 [RequireLeague] Object
+RequireLeague.tsx:30 [RequireLeague] has league; rendering children
+draft.tsx:309 [Draft] WebSocket connection decision: Object
+use-draft-websocket-fixed.ts:40 [WebSocket] Hook called with: Object
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+RequireLeague.tsx:11 [RequireLeague] entering
+RequireLeague.tsx:17 [RequireLeague] Object
+RequireLeague.tsx:30 [RequireLeague] has league; rendering children
+draft.tsx:309 [Draft] WebSocket connection decision: Object
+use-draft-websocket-fixed.ts:40 [WebSocket] Hook called with: Object
+react-dom.production.min.js:188 ReferenceError: error is not defined
+    at _r (draft.tsx:399:7)
+    at yu (react-dom.production.min.js:160:137)
+    at xo (react-dom.production.min.js:196:258)
+    at Ja (react-dom.production.min.js:290:366)
+    at Ya (react-dom.production.min.js:279:389)
+    at Ed (react-dom.production.min.js:279:320)
+    at qr (react-dom.production.min.js:279:180)
+    at jo (react-dom.production.min.js:270:88)
+    at Qa (react-dom.production.min.js:267:429)
+    at E (scheduler.production.min.js:13:203)
+Co @ react-dom.production.min.js:188Understand this error
+react-dom.production.min.js:282 Uncaught ReferenceError: error is not defined
+    at _r (draft.tsx:399:7)
+    at yu (react-dom.production.min.js:160:137)
+    at xo (react-dom.production.min.js:196:258)
+    at Ja (react-dom.production.min.js:290:366)
+    at Ya (react-dom.production.min.js:279:389)
+    at Ed (react-dom.production.min.js:279:320)
+    at qr (react-dom.production.min.js:279:180)
+    at jo (react-dom.production.min.js:270:88)
+    at Qa (react-dom.production.min.js:267:429)
+    at E (scheduler.production.min.js:13:203)

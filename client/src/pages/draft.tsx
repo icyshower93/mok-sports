@@ -395,10 +395,7 @@ export default function DraftPage() {
   const currentRoundSafe = normalized.currentRound;
   const pickTimeLimitSafe = normalized.pickTimeLimit;
 
-  // Log errors for debugging
-  if (error) {
-    console.error('Draft fetch error:', error);
-  }
+  // Draft uses WebSocket hydration, no query-based errors to handle
 
   // Simple timer based on normalized state
   
@@ -407,8 +404,8 @@ export default function DraftPage() {
     if (!lastMessage) return;
     
     // ✅ Normalize WebSocket messages that contain draft state updates
-    if (lastMessage.type === 'draft_state_update' || lastMessage.type === 'pick_made' || lastMessage.type === 'draft:state' || lastMessage.type === 'draft:update' || lastMessage.type === 'draft:started') {
-      const payload = lastMessage.payload ?? lastMessage.data ?? lastMessage;
+    if (lastMessage.type === 'draft_state' || lastMessage.type === 'pick_made') {
+      const payload = lastMessage.data ?? lastMessage;
       if (payload) {
         const normalizedUpdate = normalizeDraft(payload);
         setDraftData(normalizedUpdate);
@@ -634,19 +631,7 @@ export default function DraftPage() {
     );
   }
 
-  if (error) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <h2 className="text-xl font-semibold mb-2">Error Loading Draft</h2>
-          <p className="text-muted-foreground mb-4">{error.message}</p>
-          <Button onClick={() => queryClient.invalidateQueries({ queryKey: ['draft', draftId] })}>
-            Try Again
-          </Button>
-        </div>
-      </div>
-    );
-  }
+  // Draft page uses WebSocket hydration, error handling is done via connection status
 
   // Helper function for rendering teams using hoisted functions - normalized data
   function renderConferenceTeams(conference: Conference) {
