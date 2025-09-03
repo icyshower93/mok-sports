@@ -1,0 +1,160 @@
+🚀 FRONTEND STARTING - bootstrap function running
+AuthProvider.tsx:110 [Auth] Token check - Has token: true Has user: false Loading: true
+AuthProvider.tsx:110 [Auth] Token check - Has token: true Has user: true Loading: false
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+RequireLeague.tsx:9 [RequireLeague] entering
+RequireLeague.tsx:15 [RequireLeague] Object
+RequireLeague.tsx:19 [RequireLeague] loading state; showing spinner
+NavigationTracer.tsx:8 [Nav] location => /
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+RequireLeague.tsx:9 [RequireLeague] entering
+RequireLeague.tsx:15 [RequireLeague] Object
+RequireLeague.tsx:28 [RequireLeague] no league and not allowed draft route; redirect -> /dashboard
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+NavigationTracer.tsx:8 [Nav] location => /dashboard
+index.mjs:308 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+(anonymous) @ index.mjs:308Understand this warning
+dashboard.tsx:100 [CreateLeague] Sending payload: Object
+dashboard.tsx:108 [CreateLeague] Response status: 201
+dashboard.tsx:124 [CreateLeague] Success result: Object
+dashboard.tsx:128 [CreateLeague] Success - server returned: Object
+dashboard.tsx:144 [CreateLeague] Navigating to waiting room with leagueId: 0fad18ef-86d9-48ad-b030-f386a4d8eaf8
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+league-waiting.tsx:53 [LeagueWaiting] Auth state: Object
+league-waiting.tsx:94 [LeagueWaiting] WebSocket connection check: Object
+NavigationTracer.tsx:8 [Nav] location => /league/waiting
+league-waiting.tsx:66 [LeagueWaiting] Checking URL params: Object
+league-waiting.tsx:53 [LeagueWaiting] Auth state: Object
+league-waiting.tsx:94 [LeagueWaiting] WebSocket connection check: Object
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+league-waiting.tsx:53 [LeagueWaiting] Auth state: Object
+league-waiting.tsx:94 [LeagueWaiting] WebSocket connection check: Object
+league-waiting.tsx:126 [LeagueWaiting] League data updated: Object
+league-waiting.tsx:53 [LeagueWaiting] Auth state: Object
+league-waiting.tsx:94 [LeagueWaiting] WebSocket connection check: Object
+league-waiting.tsx:53 [LeagueWaiting] Auth state: Object
+league-waiting.tsx:94 [LeagueWaiting] WebSocket connection check: Object
+league-waiting.tsx:53 [LeagueWaiting] Auth state: Object
+league-waiting.tsx:94 [LeagueWaiting] WebSocket connection check: Object
+league-waiting.tsx:126 [LeagueWaiting] League data updated: Object
+league-waiting.tsx:53 [LeagueWaiting] Auth state: Object
+league-waiting.tsx:94 [LeagueWaiting] WebSocket connection check: Object
+league-waiting.tsx:53 [LeagueWaiting] Auth state: Object
+league-waiting.tsx:94 [LeagueWaiting] WebSocket connection check: Object
+draft-controls.tsx:49 [StartDraft] ✅ Starting draft for league: 0fad18ef-86d9-48ad-b030-f386a4d8eaf8
+league-waiting.tsx:53 [LeagueWaiting] Auth state: Object
+league-waiting.tsx:94 [LeagueWaiting] WebSocket connection check: Object
+league-waiting.tsx:126 [LeagueWaiting] League data updated: Object
+league-waiting.tsx:139 [League] Draft ID changed, WebSocket should reconnect to: 21dbb5ed-7d63-4da2-9b6f-b21db180179d
+use-draft-websocket.ts:48 [WS] Connected to draft: 21dbb5ed-7d63-4da2-9b6f-b21db180179d
+league-waiting.tsx:114 [LeagueWaiting] Draft state updated: undefined
+draft-controls.tsx:49 [StartDraft] ✅ Starting draft for league: 0fad18ef-86d9-48ad-b030-f386a4d8eaf8
+draft-controls.tsx:96 [StartDraft] 🚀 Navigating immediately to draft: 21dbb5ed-7d63-4da2-9b6f-b21db180179d
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+RequireLeague.tsx:9 [RequireLeague] entering
+RequireLeague.tsx:15 [RequireLeague] Object
+RequireLeague.tsx:32 [RequireLeague] has league; rendering children
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+RequireLeague.tsx:9 [RequireLeague] entering
+RequireLeague.tsx:15 [RequireLeague] Object
+RequireLeague.tsx:32 [RequireLeague] has league; rendering children
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+RequireLeague.tsx:9 [RequireLeague] entering
+RequireLeague.tsx:15 [RequireLeague] Object
+RequireLeague.tsx:32 [RequireLeague] has league; rendering children
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+RequireLeague.tsx:9 [RequireLeague] entering
+RequireLeague.tsx:15 [RequireLeague] Object
+RequireLeague.tsx:32 [RequireLeague] has league; rendering children
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+RequireLeague.tsx:9 [RequireLeague] entering
+RequireLeague.tsx:15 [RequireLeague] Object
+RequireLeague.tsx:32 [RequireLeague] has league; rendering children
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+RequireLeague.tsx:9 [RequireLeague] entering
+RequireLeague.tsx:15 [RequireLeague] Object
+RequireLeague.tsx:32 [RequireLeague] has league; rendering children
+NavigationTracer.tsx:8 [Nav] location => /draft/21dbb5ed-7d63-4da2-9b6f-b21db180179d
+use-draft-websocket.ts:58 [WS] Connection closed: 1000
+use-draft-websocket.ts:48 [WS] Connected to draft: 21dbb5ed-7d63-4da2-9b6f-b21db180179d
+use-draft-websocket.ts:58 [WS] Connection closed: 1000
+use-draft-websocket.ts:48 [WS] Connected to draft: 21dbb5ed-7d63-4da2-9b6f-b21db180179d
+use-draft-websocket.ts:58 [WS] Connection closed: 1006
+use-draft-websocket.ts:64 [WS] Reconnecting in 1000ms
+use-draft-websocket.ts:48 [WS] Connected to draft: 21dbb5ed-7d63-4da2-9b6f-b21db180179d
+use-draft-websocket.ts:54 [WS] Connection error
+use-draft-websocket.ts:58 [WS] Connection closed: 1006
+use-draft-websocket.ts:64 [WS] Reconnecting in 1000ms
+use-draft-websocket.ts:58 [WS] Connection closed: 1000
+use-draft-websocket.ts:48 [WS] Connected to draft: 21dbb5ed-7d63-4da2-9b6f-b21db180179d
+use-draft-websocket.ts:58 [WS] Connection closed: 1000
+use-draft-websocket.ts:48 [WS] Connected to draft: 21dbb5ed-7d63-4da2-9b6f-b21db180179d
+use-draft-websocket.ts:58 [WS] Connection closed: 1006
+use-draft-websocket.ts:64 [WS] Reconnecting in 1000ms
+use-draft-websocket.ts:48 [WS] Connected to draft: 21dbb5ed-7d63-4da2-9b6f-b21db180179d
+use-draft-websocket.ts:58 [WS] Connection closed: 1000
+use-draft-websocket.ts:48 [WS] Connected to draft: 21dbb5ed-7d63-4da2-9b6f-b21db180179d
+use-draft-websocket.ts:58 [WS] Connection closed: 1000
+use-draft-websocket.ts:48 [WS] Connected to draft: 21dbb5ed-7d63-4da2-9b6f-b21db180179d
+use-draft-websocket.ts:58 [WS] Connection closed: 1000
+use-draft-websocket.ts:48 [WS] Connected to draft: 21dbb5ed-7d63-4da2-9b6f-b21db180179d
+use-draft-websocket.ts:58 [WS] Connection closed: 1000
+use-draft-websocket.ts:48 [WS] Connected to draft: 21dbb5ed-7d63-4da2-9b6f-b21db180179d
+use-draft-websocket.ts:58 [WS] Connection closed: 1000
+use-draft-websocket.ts:48 [WS] Connected to draft: 21dbb5ed-7d63-4da2-9b6f-b21db180179d
+use-draft-websocket.ts:58 [WS] Connection closed: 1000
+use-draft-websocket.ts:48 [WS] Connected to draft: 21dbb5ed-7d63-4da2-9b6f-b21db180179d
+use-draft-websocket.ts:58 [WS] Connection closed: 1000
+use-draft-websocket.ts:48 [WS] Connected to draft: 21dbb5ed-7d63-4da2-9b6f-b21db180179d
+use-draft-websocket.ts:58 [WS] Connection closed: 1006
+use-draft-websocket.ts:64 [WS] Reconnecting in 1000ms
+use-draft-websocket.ts:48 [WS] Connected to draft: 21dbb5ed-7d63-4da2-9b6f-b21db180179d
+use-draft-websocket.ts:58 [WS] Connection closed: 1000
+use-draft-websocket.ts:48 [WS] Connected to draft: 21dbb5ed-7d63-4da2-9b6f-b21db180179d
+use-draft-websocket.ts:58 [WS] Connection closed: 1000
+use-draft-websocket.ts:48 [WS] Connected to draft: 21dbb5ed-7d63-4da2-9b6f-b21db180179d
+use-draft-websocket.ts:58 [WS] Connection closed: 1006
+use-draft-websocket.ts:64 [WS] Reconnecting in 1000ms
+use-draft-websocket.ts:48 [WS] Connected to draft: 21dbb5ed-7d63-4da2-9b6f-b21db180179d
+use-draft-websocket.ts:58 [WS] Connection closed: 1006
+use-draft-websocket.ts:64 [WS] Reconnecting in 1000ms
+use-draft-websocket.ts:48 [WS] Connected to draft: 21dbb5ed-7d63-4da2-9b6f-b21db180179d
+use-draft-websocket.ts:58 [WS] Connection closed: 1000
+use-draft-websocket.ts:48 [WS] Connected to draft: 21dbb5ed-7d63-4da2-9b6f-b21db180179d
+use-draft-websocket.ts:58 [WS] Connection closed: 1000
+use-draft-websocket.ts:48 [WS] Connected to draft: 21dbb5ed-7d63-4da2-9b6f-b21db180179d
+use-draft-websocket.ts:58 [WS] Connection closed: 1000
+use-draft-websocket.ts:48 [WS] Connected to draft: 21dbb5ed-7d63-4da2-9b6f-b21db180179d
+use-draft-websocket.ts:58 [WS] Connection closed: 1000
+use-draft-websocket.ts:48 [WS] Connected to draft: 21dbb5ed-7d63-4da2-9b6f-b21db180179d
+use-draft-websocket.ts:58 [WS] Connection closed: 1000
+use-draft-websocket.ts:48 [WS] Connected to draft: 21dbb5ed-7d63-4da2-9b6f-b21db180179d
+use-draft-websocket.ts:58 [WS] Connection closed: 1000
+use-draft-websocket.ts:48 [WS] Connected to draft: 21dbb5ed-7d63-4da2-9b6f-b21db180179d
+use-draft-websocket.ts:58 [WS] Connection closed: 1000
+use-draft-websocket.ts:48 [WS] Connected to draft: 21dbb5ed-7d63-4da2-9b6f-b21db180179d
+use-draft-websocket.ts:58 [WS] Connection closed: 1000
+use-draft-websocket.ts:48 [WS] Connected to draft: 21dbb5ed-7d63-4da2-9b6f-b21db180179d
