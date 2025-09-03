@@ -1,0 +1,129 @@
+Fix: hydrate the page state from the WebSocket
+
+Fan out WS messages to callbacks:
+
+// use-draft-websocket-fixed.ts
+type DraftMessage =
+  | { type: 'connected' }
+  | { type: 'draft_state'; payload: any }
+  | { type: 'timer_update'; payload: { display: number } };
+
+export function useDraftWebSocket(options: {
+  draftId?: string;
+  userId?: string;
+  onDraftState?: (state: any) => void;
+  onTimerUpdate?: (tick: { display: number }) => void;
+}) {
+  const { draftId, userId, onDraftState, onTimerUpdate } = options;
+  // ... existing connect logic ...
+
+  ws.onmessage = (ev) => {
+    try {
+      const msg: DraftMessage = typeof ev.data === 'string' ? JSON.parse(ev.data) : ev.data;
+
+      if (msg.type === 'draft_state' && onDraftState) onDraftState(msg.payload);
+      else if (msg.type === 'timer_update' && onTimerUpdate) onTimerUpdate(msg.payload);
+    } catch {/* ignore non-JSON like "connected" */}
+  };
+}
+
+
+Consume it in the draft page and exit the loading branch as soon as you get state:
+
+// draft.tsx
+const [draftData, setDraftData] = useState<any | null>(null);
+const [isLoading, setIsLoading] = useState(true);
+const [displaySeconds, setDisplaySeconds] = useState(0);
+
+useDraftWebSocket({
+  draftId,
+  userId: user?.id,
+  onDraftState: (state) => {
+    console.log('[Draft] WS draft_state => hydrating', state);
+    setDraftData(state);
+    setIsLoading(false);           // ✅ unstick the page
+  },
+  onTimerUpdate: ({ display }) => setDisplaySeconds(display),
+});
+
+// Keep your fetchWithRetry as a fallback only if WS doesn’t arrive
+useEffect(() => {
+  if (!draftId || authLoading || draftData) return;
+  let cancelled = false;
+  (async () => {
+    try {
+      const data = await fetchDraftWithRetry(draftId);
+      if (!cancelled) {
+        setDraftData(data);
+        setIsLoading(false);
+      }
+    } catch (e) {
+      // optional toast
+    }
+  })();
+  return () => { cancelled = true; };
+}, [draftId, authLoading, draftData]);
+
+
+Make the loading branch visible (not null), so even if something stalls you see a spinner instead of a blank page:
+
+if (isLoading) {
+  return (
+    <div className="flex h-full items-center justify-center">
+      <div className="text-sm opacity-70">Starting draft…</div>
+    </div>
+  );
+}
+
+Clean up the duplicate sockets (you had a few 1006 → reconnects)
+
+Keep just one socket and cancel reconnect timers on open. Minimal hardening:
+
+// use-draft-websocket-fixed.ts
+const socketRef = useRef<WebSocket | null>(null);
+const reconnectTimerRef = useRef<number | null>(null);
+
+function clearReconnectTimer() {
+  if (reconnectTimerRef.current) {
+    clearTimeout(reconnectTimerRef.current);
+    reconnectTimerRef.current = null;
+  }
+}
+
+useEffect(() => {
+  if (!draftId || !userId || socketRef.current) return;
+
+  const url = wsUrl('/draft-ws', { draftId, userId });
+  const ws = new WebSocket(url);
+  socketRef.current = ws;
+
+  ws.onopen = () => {
+    console.log('[WebSocket] ✅ CONNECTION ESTABLISHED');
+    clearReconnectTimer();               // ✅ don’t spawn a 2nd socket
+  };
+
+  ws.onclose = (e) => {
+    socketRef.current = null;
+    if (e.code !== 1000) {
+      reconnectTimerRef.current ??= window.setTimeout(() => {
+        reconnectTimerRef.current = null;
+        // trigger re-connect by letting the effect run again
+      }, 1000);
+    }
+  };
+
+  return () => {
+    clearReconnectTimer();
+    try { ws.close(1000, 'route change'); } catch {}
+    socketRef.current = null;
+  };
+}, [draftId, userId]);
+
+One more guard that can blank the page
+
+If /draft/:draftId is still wrapped by a RequireLeague that navigates away while league isn’t loaded, the page can unmount before it renders. Allow the draft route through:
+
+// RequireLeague.tsx
+if (!leagueId && !location.pathname.startsWith('/draft/')) {
+  return <Navigate to="/dashboard" replace />;
+}

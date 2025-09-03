@@ -138,7 +138,9 @@ export default function DraftPage() {
   const auth = useAuth(); // Auth declared early
   
   // Store normalized draft state
-  const [draft, setDraft] = useState<any>(null);
+  const [draftData, setDraftData] = useState<any | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [displaySeconds, setDisplaySeconds] = useState(0);
   
   // Extract draft ID from URL params using wouter - SINGLE SOURCE OF TRUTH
   const [actualDraftId, setActualDraftId] = useState<string | null>(urlDraftId);
@@ -272,25 +274,25 @@ export default function DraftPage() {
     throw new Error('Draft not ready yet (timed out after ~7s)');
   }
 
-  // RACE CONDITION FIX: Fetch draft state with retry mechanism
-  const { data: draftData, isLoading, error } = useQuery({
-    queryKey: ['draft', draftId, 'state'], // Include 'state' for specificity
-    queryFn: async ({ signal }) => {
-      console.log('[Draft] === STARTING DRAFT FETCH WITH RETRY ===');
-      console.log('[Draft] Draft ID:', draftId);
-      console.log('[Draft] Auth status - User:', auth.user?.name, 'Authenticated:', auth.isAuthenticated, 'Loading:', auth.isLoading);
-      
-      return await fetchDraftWithRetry(draftId!, signal);
-    },
-    enabled: !!draftId && !!auth.user && !auth.isLoading,
-    staleTime: 2000, // 2 seconds to balance real-time needs with performance
-    refetchInterval: (queryData: any) => {
-      // Only poll if draft is active and we're waiting for updates
-      return queryData?.status === 'active' || queryData?.status === 'starting' ? 3000 : false;
-    },
-    retry: false, // Disable TanStack's retry since we handle it in fetchDraftWithRetry
-    // Remove onSuccess - deprecated in TanStack Query v5
-  });
+  // Keep your fetchWithRetry as a fallback ONLY if WS never arrives
+  useEffect(() => {
+    if (!draftId || auth.isLoading || draftData) return; // already loaded via WS
+    let cancelled = false;
+    (async () => {
+      try {
+        const controller = new AbortController();
+        const data = await fetchDraftWithRetry(draftId, controller.signal);
+        if (!cancelled) {
+          setDraftData(data);
+          setIsLoading(false);
+        }
+      } catch (e) {
+        console.log('[Draft] Fallback fetch failed (WS should handle it):', e);
+        // optional: surface toast; but WS should normally handle it
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [draftId, auth.isLoading, draftData]);
 
   // WebSocket connection logic - connect immediately when auth + draftId ready
   // Don't wait for draft data loading - let the socket bring the page to life
@@ -308,25 +310,33 @@ export default function DraftPage() {
     wsUrl: draftWsUrl || 'none' 
   });
   
-  // ✅ Fix race condition: only connect WebSocket when auth is ready and we have a draftId
-  const { connectionStatus, lastMessage } = useDraftWebSocket(canConnect ? draftId : null, draft, true);
+  // ✅ Use the socket to hydrate immediately when server pushes state
+  const { connectionStatus, lastMessage } = useDraftWebSocket({
+    draftId: canConnect ? draftId : undefined,
+    userId: auth.user?.id,
+    onDraftState: (state) => {
+      setDraftData(state);
+      setIsLoading(false); // ✅ stop loading as soon as we have authoritative state
+    },
+    onTimerUpdate: ({ display }) => setDisplaySeconds(display),
+  });
   const isConnected = connectionStatus === 'connected';
 
   // Smart redirect: don't auto-leave /draft/:id while not completed
   useEffect(() => {
     const isDraftRoute = location.startsWith('/draft/');
     if (isDraftRoute) {
-      const status = draft?.status;
-      if (!draft || status === 'completed' || status === 'canceled') {
+      const status = draftData?.status;
+      if (!draftData || status === 'completed' || status === 'canceled') {
         navigate('/app', { replace: true });
       }
       return;
     }
-  }, [location, draft?.status, navigate]);
+  }, [location, draftData?.status, navigate]);
 
-  // Keep the fallback object for compatibility (using draft state)
+  // Keep the fallback object for compatibility (using draftData state)
   const normalized = useMemo(() => {
-    if (!draft) {
+    if (!draftData) {
       // Safe fallback structure when no draft data
       return {
         // Draft metadata
@@ -361,13 +371,13 @@ export default function DraftPage() {
     }
     
     // Use normalized draft state directly
-    return draft;
-  }, [draft, draftId]);
+    return draftData;
+  }, [draftData, draftId]);
   
   // ✅ Render only from normalized draft state
   const draftStatus = normalized.status;
   const currentPlayerId = normalized.currentPlayerId;
-  const displaySeconds = normalized.timerSeconds ?? 0;
+  const timerFromState = normalized.timerSeconds ?? 0;
   
   // JSX-safe aliases for backward compatibility - using normalized (which is now just draft)
   const isCurrentUser = normalized.isCurrentUser;
@@ -392,7 +402,7 @@ export default function DraftPage() {
       const payload = lastMessage.payload ?? lastMessage.data ?? lastMessage;
       if (payload) {
         const normalizedUpdate = normalizeDraft(payload);
-        setDraft(normalizedUpdate);
+        setDraftData(normalizedUpdate);
         console.log('[WS] Normalized draft update from WebSocket:', normalizedUpdate);
       }
     }
@@ -400,13 +410,13 @@ export default function DraftPage() {
 
   // Timer: start from normalized state; don't read nested state in JSX
   useEffect(() => {
-    if (!draft || draft.status !== 'active') return;
-    let t = draft.timerSeconds ?? DEFAULT_PICK_TIME_LIMIT;
+    if (!draftData || draftData.status !== 'active') return;
+    let t = draftData.timerSeconds ?? DEFAULT_PICK_TIME_LIMIT;
     setTimer(t);
 
     const id = setInterval(() => setTimer((s) => Math.max(0, s - 1)), 1000);
     return () => clearInterval(id);
-  }, [draft?.status, draft?.timerSeconds]);
+  }, [draftData?.status, draftData?.timerSeconds]);
   
   // Reset notification flag when it's no longer user's turn
   useEffect(() => {
@@ -415,8 +425,8 @@ export default function DraftPage() {
     }
   }, [normalized.isCurrentUser, hasNotifiedForThisTurn]);
 
-  // Use simple timer for display
-  const displayTime = timer;
+  // Use timer from WebSocket or fallback to local timer
+  const displayTime = displaySeconds || timer;
   
   console.log('[TIMER DEBUG] Display Time:', displayTime);
   console.log('[TIMER DEBUG] Current Player:', currentPlayerId);
@@ -447,7 +457,7 @@ export default function DraftPage() {
   }
 
   async function onStartDraft() {
-    const leagueId = draft?.leagueId || draftData?.leagueId;
+    const leagueId = draftData?.leagueId || normalized?.leagueId;
     if (!leagueId || starting) return; // Idempotent check
     
     setStarting(true);
@@ -462,7 +472,7 @@ export default function DraftPage() {
       
       const raw = await response.json();
       const next = normalizeDraft(raw);
-      setDraft(next); // immediate UI update (status='active', currentPlayerId set, timer>0)
+      setDraftData(next); // immediate UI update (status='active', currentPlayerId set, timer>0)
       
       toast({
         title: "Draft started!",
@@ -748,7 +758,7 @@ export default function DraftPage() {
               size="sm"
               onClick={() => {
                 // Only navigate away if draft is actually finished
-                const status = draft?.status;
+                const status = draftData?.status;
                 if (status === 'completed' || status === 'canceled') {
                   navigate('/app');
                 } else {

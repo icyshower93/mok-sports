@@ -1,0 +1,95 @@
+2) Fix duplicate sockets / reconnect storm (1006 + multiple “established”)
+
+You’re close. Two common causes in your logs:
+
+A reconnect timer keeps running after a successful open, so it fires again and opens a 2nd socket.
+
+A previous socket isn’t fully torn down on route changes, so both “old” and “new” sockets exist briefly.
+
+Drop-in hardening for use-draft-websocket-fixed.ts:
+
+const socketRef = useRef<WebSocket | null>(null);
+const reconnectTimerRef = useRef<number | null>(null);
+const epochRef = useRef(0); // bump to invalidate in-flight connects
+
+function clearReconnectTimer() {
+  if (reconnectTimerRef.current) {
+    clearTimeout(reconnectTimerRef.current);
+    reconnectTimerRef.current = null;
+  }
+}
+
+function scheduleReconnect(delayMs: number) {
+  if (reconnectTimerRef.current) return; // already scheduled
+  reconnectTimerRef.current = window.setTimeout(() => {
+    reconnectTimerRef.current = null;
+    openSocket(); // try again
+  }, delayMs);
+}
+
+function openSocket() {
+  if (!draftId || !userId) return;
+  if (socketRef.current) return; // already connected or connecting
+
+  const myEpoch = ++epochRef.current; // capture this attempt
+  const url = wsUrl('/draft-ws', { draftId, userId });
+
+  log('[WebSocket] === STARTING NEW CONNECTION ATTEMPT ===');
+  const ws = new WebSocket(url);
+  socketRef.current = ws;
+
+  ws.onopen = () => {
+    // if another attempt superseded us, bail
+    if (myEpoch !== epochRef.current) { try { ws.close(); } catch {} return; }
+    log('[WebSocket] ✅ CONNECTION ESTABLISHED');
+    clearReconnectTimer();            // ✅ cancel any pending reconnect
+  };
+
+  ws.onmessage = onMessage;           // your fan-out from Patch #1
+
+  ws.onerror = (e) => {
+    log('[WebSocket] Connection error:', e);
+    // don't null ref here; wait for onclose
+  };
+
+  ws.onclose = (e) => {
+    // if a newer attempt already exists, ignore close
+    if (myEpoch !== epochRef.current) return;
+
+    log('[WebSocket] Connection closed:', e.code, e.reason);
+    socketRef.current = null;
+
+    // Reconnect on abnormal (1006) or server reset (1011). Backoff 0.5s→5s
+    if (e.code !== 1000) {
+      const attempt = Math.min(5, Math.max(1, myEpoch)); // crude backoff by epoch
+      const delay = 500 * attempt;
+      log('[WebSocket] Unexpected close, will reconnect in', delay, 'ms');
+      scheduleReconnect(delay);
+    }
+  };
+}
+
+useEffect(() => {
+  // connect when identifiers are present
+  if (draftId && userId && !socketRef.current) openSocket();
+
+  // cleanup on dependency change (e.g., navigating to another draft)
+  return () => {
+    clearReconnectTimer();
+    const s = socketRef.current;
+    socketRef.current = null;
+    epochRef.current++; // invalidate any inflight attempt
+    try { s?.close(1000, 'route change'); } catch {}
+  };
+}, [draftId, userId]); // keep deps minimal; don't include draft status/messages
+
+
+This ensures:
+
+Only one active socket at a time.
+
+All reconnect timers are canceled on successful open.
+
+Route changes close the socket and invalidate stale attempts.
+
+Backoff prevents hammering when 1006 happens.

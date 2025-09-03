@@ -1,0 +1,89 @@
+You’ve basically got it working: the WS now connects and streams connected, draft_state, and tons of timer_update. Two remaining problems:
+
+the draft page never exits “loading” because it isn’t consuming draft_state from the socket (so draftData stays false even though the server is sending it), and
+
+your WS layer occasionally spawns duplicate connections / reconnects (1006 then multiple “established”), which is just a cleanup/backoff bug.
+
+Below are tight patches to fix both, plus a tiny guard so navigation doesn’t bounce.
+
+1) Stop showing “Loading…” – consume draft_state from the WS
+
+Right now your draft page fetches with retry but ignores the authoritative state the socket is already pushing.
+
+Patch A — add typed message fan-out in the WS hook
+
+In use-draft-websocket-fixed.ts, accept optional callbacks and invoke them:
+
+// types
+type DraftSocketMessage =
+  | { type: 'connected' }
+  | { type: 'draft_state'; payload: any }
+  | { type: 'timer_update'; payload: { display: number } }
+  | { type: string; payload?: any };
+
+export function useDraftWebSocket(opts: {
+  draftId?: string;
+  userId?: string;
+  onDraftState?: (state: any) => void;
+  onTimerUpdate?: (t: { display: number }) => void;
+}) {
+  const { draftId, userId, onDraftState, onTimerUpdate } = opts;
+  // ... existing refs / status ...
+
+  // inside ws.onmessage:
+  ws.onmessage = (ev) => {
+    try {
+      const msg: DraftSocketMessage = typeof ev.data === 'string' ? JSON.parse(ev.data) : ev.data;
+      log('[WebSocket] Message received:', msg.type);
+
+      if (msg.type === 'draft_state' && onDraftState) onDraftState(msg.payload);
+      else if (msg.type === 'timer_update' && onTimerUpdate) onTimerUpdate(msg.payload);
+      // keep existing logs for "connected" if you like
+    } catch {
+      // tolerate unknown messages
+    }
+  };
+
+  // return nothing or connection state if you need
+}
+
+
+Patch B — consume those events in the draft page
+
+In client/src/pages/draft.tsx:
+
+const [draftData, setDraftData] = useState<any | null>(null);
+const [isLoading, setIsLoading] = useState(true);
+const [displaySeconds, setDisplaySeconds] = useState(0);
+
+// 1) Use the socket to hydrate immediately when server pushes state
+useDraftWebSocket({
+  draftId,
+  userId: user?.id,
+  onDraftState: (state) => {
+    setDraftData(state);
+    setIsLoading(false); // ✅ stop loading as soon as we have authoritative state
+  },
+  onTimerUpdate: ({ display }) => setDisplaySeconds(display),
+});
+
+// 2) Keep your fetchWithRetry as a fallback ONLY if WS never arrives
+useEffect(() => {
+  if (!draftId || authLoading || draftData) return; // already loaded via WS
+  let cancelled = false;
+  (async () => {
+    try {
+      const data = await fetchDraftWithRetry(draftId);
+      if (!cancelled) {
+        setDraftData(data);
+        setIsLoading(false);
+      }
+    } catch (e) {
+      // optional: surface toast; but WS should normally handle it
+    }
+  })();
+  return () => { cancelled = true; };
+}, [draftId, authLoading, draftData]);
+
+
+Now the moment the server emits draft_state, your UI fills and leaves the loading branch.

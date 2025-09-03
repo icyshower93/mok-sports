@@ -13,8 +13,20 @@ import { useAuth } from '@/features/auth/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import type { DraftWebSocketMessage, ConnectionStatus } from '@/draft/draft-types';
 
-export function useDraftWebSocket(draftId: string | null, leagueId: string | null = null) {
-  const { user } = useAuth();
+// Types for enhanced message handling
+type DraftSocketMessage =
+  | { type: 'connected' }
+  | { type: 'draft_state'; payload: any }
+  | { type: 'timer_update'; payload: { display: number } }
+  | { type: string; payload?: any };
+
+export function useDraftWebSocket(opts: {
+  draftId?: string;
+  userId?: string;
+  onDraftState?: (state: any) => void;
+  onTimerUpdate?: (t: { display: number }) => void;
+}) {
+  const { draftId, userId, onDraftState, onTimerUpdate } = opts;
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const wsRef = useRef<WebSocket | null>(null);
@@ -22,13 +34,13 @@ export function useDraftWebSocket(draftId: string | null, leagueId: string | nul
   const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>('disconnected');
   const [lastMessage, setLastMessage] = useState<DraftWebSocketMessage | null>(null);
 
-  console.log('[WebSocket] Hook called with:', { draftId, leagueId, userId: user?.id });
+  console.log('[WebSocket] Hook called with:', { draftId, userId });
 
   const connectToWebSocket = useCallback(() => {
     console.log('[WebSocket] === STARTING NEW CONNECTION ATTEMPT ===');
-    console.log('[WebSocket] Draft ID:', draftId, 'User ID:', user?.id);
+    console.log('[WebSocket] Draft ID:', draftId, 'User ID:', userId);
 
-    if (!draftId || !user?.id) {
+    if (!draftId || !userId) {
       console.log('[WebSocket] ❌ Cannot connect - missing draftId or userId');
       setConnectionStatus('disconnected');
       return;
@@ -44,7 +56,7 @@ export function useDraftWebSocket(draftId: string | null, leagueId: string | nul
     // Enhanced URL handling for Reserved VM deployments
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
     const wsHost = window.location.host;
-    const wsUrl = `${protocol}//${wsHost}/draft-ws?userId=${encodeURIComponent(user.id)}&draftId=${encodeURIComponent(draftId)}`;
+    const wsUrl = `${protocol}//${wsHost}/draft-ws?userId=${encodeURIComponent(userId)}&draftId=${encodeURIComponent(draftId)}`;
 
     console.log('[WebSocket] Creating connection to:', wsUrl);
     setConnectionStatus('connecting');
@@ -60,20 +72,30 @@ export function useDraftWebSocket(draftId: string | null, leagueId: string | nul
 
       ws.onmessage = (event) => {
         try {
-          const message: DraftWebSocketMessage = JSON.parse(event.data);
-          console.log('[WebSocket] Message received:', message.type);
-          setLastMessage(message);
+          const msg: DraftSocketMessage = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
+          console.log('[WebSocket] Message received:', msg.type);
+          setLastMessage(msg as DraftWebSocketMessage);
           
-          switch (message.type) {
+          // Enhanced message fan-out with callbacks
+          if (msg.type === 'draft_state' && onDraftState) {
+            onDraftState(msg.payload);
+          } else if (msg.type === 'timer_update' && onTimerUpdate) {
+            onTimerUpdate(msg.payload);
+          }
+          
+          // Keep existing functionality
+          switch (msg.type) {
             case 'connected':
               console.log('[WebSocket] Connected confirmation received');
               break;
             case 'pick_made':
               queryClient.invalidateQueries({ queryKey: ['draft', draftId] });
-              toast({
-                title: "Pick Made!",
-                description: `${message.data.pick.user.name} selected ${message.data.pick.nflTeam.name}`,
-              });
+              if (msg.payload?.pick) {
+                toast({
+                  title: "Pick Made!",
+                  description: `${msg.payload.pick.user.name} selected ${msg.payload.pick.nflTeam.name}`,
+                });
+              }
               break;
             case 'timer_update':
               queryClient.invalidateQueries({ queryKey: ['draft-timer', draftId] });
@@ -90,7 +112,7 @@ export function useDraftWebSocket(draftId: string | null, leagueId: string | nul
         wsRef.current = null;
 
         // Reconnect if unexpected close
-        if (event.code !== 1000 && draftId && user?.id) {
+        if (event.code !== 1000 && draftId && userId) {
           console.log('[WebSocket] Unexpected close, will reconnect...');
           reconnectTimeoutRef.current = setTimeout(() => {
             connectToWebSocket();
@@ -107,11 +129,11 @@ export function useDraftWebSocket(draftId: string | null, leagueId: string | nul
       console.error('[WebSocket] Failed to create WebSocket:', error);
       setConnectionStatus('disconnected');
     }
-  }, [draftId, user?.id, toast, queryClient]);
+  }, [draftId, userId, toast, queryClient, onDraftState, onTimerUpdate]);
 
   // Main effect to handle connections - simplified to only require draftId + userId
   useEffect(() => {
-    const hasUser = !!user?.id;
+    const hasUser = !!userId;
     const hasDraftId = !!draftId;
     
     console.log('[WebSocket] MAIN useEffect trigger', { hasUser, hasDraftId, draftId });
@@ -131,7 +153,7 @@ export function useDraftWebSocket(draftId: string | null, leagueId: string | nul
 
     console.log('[WebSocket] ✅ Requirements met, connecting immediately');
     connectToWebSocket();
-  }, [draftId, user?.id, connectToWebSocket]);
+  }, [draftId, userId, connectToWebSocket]);
 
   // Cleanup on unmount
   useEffect(() => {
