@@ -565,46 +565,6 @@ export default function DraftPage() {
     );
   }
 
-  // Create normalized draft state from draftData
-  const normalized = useMemo(() => {
-    if (!draftData) {
-      // Safe fallback structure when no draft data
-      return {
-        // Draft metadata
-        id: draftId || '',
-        status: 'not_started' as const,
-        leagueId: '',
-        
-        // Timer data
-        timerSeconds: 0,
-        isCountingDown: false,
-        displayTime: 0,
-        
-        // User and permissions
-        currentPlayerId: null,
-        isCurrentUser: false,
-        participants: [],
-        
-        // Draft progress
-        currentRound: 1,
-        currentPick: 1,
-        totalRounds: 5,
-        pickTimeLimit: DEFAULT_PICK_TIME_LIMIT,
-        draftOrder: [],
-        
-        // Data arrays
-        picks: [],
-        availableTeams: [],
-        
-        // UI state
-        canMakePick: false
-      };
-    }
-    
-    // Use normalized draft state directly
-    return draftData;
-  }, [draftData, draftId]);
-
   // Add missing touch handlers for swipe functionality
   function handleTouchStart(e: React.TouchEvent) {
     setTouchStartX(e.touches[0].clientX);
