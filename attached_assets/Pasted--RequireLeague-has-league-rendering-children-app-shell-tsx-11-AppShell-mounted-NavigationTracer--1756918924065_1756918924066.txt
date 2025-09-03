@@ -1,0 +1,59 @@
+[RequireLeague] has league; rendering children
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+RequireLeague.tsx:9 [RequireLeague] entering
+RequireLeague.tsx:15 [RequireLeague] {hasLeague: true, isDraftRoute: true, location: '/draft/182e27fb-2a49-46ed-b2f0-8d207b2ebc86'}
+RequireLeague.tsx:32 [RequireLeague] has league; rendering children
+NavigationTracer.tsx:8 [Nav] location => /draft/182e27fb-2a49-46ed-b2f0-8d207b2ebc86
+use-draft-websocket.ts:58 [WS] Connection closed: 1000
+use-draft-websocket.ts:48 [WS] Connected to draft: 182e27fb-2a49-46ed-b2f0-8d207b2ebc86
+draft.tsx:142 [Draft] WS draft_state => hydrating undefined
+draft.tsx:159 [Draft] Fetched draft data: {id: '182e27fb-2a49-46ed-b2f0-8d207b2ebc86', leagueId: '723b86f6-f241-4bf0-8927-6c6d5fb60f36', status: 'starting', currentPlayerId: null, participants: Array(6), …}
+react-dom.production.min.js:188 Error: Minified React error #310; visit https://reactjs.org/docs/error-decoder.html?invariant=310 for the full message or use the non-minified dev environment for full errors and additional helpful warnings.
+    at Ce (react-dom.production.min.js:161:314)
+    at Object.Ea [as useMemo] (react-dom.production.min.js:172:24)
+    at L.useMemo (react.production.min.js:26:48)
+    at Dr (draft.tsx:221:25)
+    at yu (react-dom.production.min.js:160:137)
+    at xo (react-dom.production.min.js:196:258)
+    at Ja (react-dom.production.min.js:291:88)
+    at Ya (react-dom.production.min.js:279:389)
+    at Ed (react-dom.production.min.js:279:320)
+    at qr (react-dom.production.min.js:279:180)
+Co @ react-dom.production.min.js:188
+La.t.callback @ react-dom.production.min.js:188
+Si @ react-dom.production.min.js:156
+ji @ react-dom.production.min.js:261
+Wa @ react-dom.production.min.js:259
+wd @ react-dom.production.min.js:258
+Cd @ react-dom.production.min.js:282
+Sn @ react-dom.production.min.js:280
+Qa @ react-dom.production.min.js:268
+E @ scheduler.production.min.js:13
+st @ scheduler.production.min.js:14Understand this error
+react-dom.production.min.js:161 Uncaught Error: Minified React error #310; visit https://reactjs.org/docs/error-decoder.html?invariant=310 for the full message or use the non-minified dev environment for full errors and additional helpful warnings.
+    at Ce (react-dom.production.min.js:161:314)
+    at Object.Ea [as useMemo] (react-dom.production.min.js:172:24)
+    at L.useMemo (react.production.min.js:26:48)
+    at Dr (draft.tsx:221:25)
+    at yu (react-dom.production.min.js:160:137)
+    at xo (react-dom.production.min.js:196:258)
+    at Ja (react-dom.production.min.js:291:88)
+    at Ya (react-dom.production.min.js:279:389)
+    at Ed (react-dom.production.min.js:279:320)
+    at qr (react-dom.production.min.js:279:180)
+Ce @ react-dom.production.min.js:161
+Ea @ react-dom.production.min.js:172
+L.useMemo @ react.production.min.js:26
+Dr @ draft.tsx:221
+yu @ react-dom.production.min.js:160
+xo @ react-dom.production.min.js:196
+Ja @ react-dom.production.min.js:291
+Ya @ react-dom.production.min.js:279
+Ed @ react-dom.production.min.js:279
+qr @ react-dom.production.min.js:279
+jo @ react-dom.production.min.js:270
+Qa @ react-dom.production.min.js:267
+E @ scheduler.production.min.js:13
+st @ scheduler.production.min.js:14Understand this error
+use-draft-websocket.ts:58 [WS] Connection closed: 1000

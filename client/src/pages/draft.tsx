@@ -217,14 +217,14 @@ export default function DraftPage() {
   // Use timer from WebSocket or fallback to local timer
   const displayTime = displaySeconds || timer;
 
-  // Filter teams by search and conference
-  const filteredTeams = useMemo(() => {
+  // Filter teams by search and conference - simplified to avoid React Error #310
+  const filteredTeams = (() => {
     if (!availableTeamsSafe || !Array.isArray(availableTeamsSafe)) {
       return [];
     }
     const searchFiltered = filterTeamsBySearch(availableTeamsSafe, searchTerm || '');
     return searchFiltered.filter(team => team.conference === currentConference);
-  }, [availableTeamsSafe, searchTerm, currentConference]);
+  })();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-green-50 dark:from-gray-900 dark:to-gray-800">
