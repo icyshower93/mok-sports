@@ -45,7 +45,13 @@ export default function DraftControls({
     
     const res = await apiFetch(endpoints.startLeagueDraft(leagueId), { method: "POST" });
     if (!res.ok) throw new Error(await res.text().catch(() => `Failed (${res.status})`));
-    const { draftId } = await res.json();
+    const body = await res.json();
+    
+    if (!body?.draftId) {
+      throw new Error('Server did not return a draftId');
+    }
+    
+    const { draftId } = body;
     
     // Optimistic update for snappy UI
     const updateLeagueData = (oldLeagues: any) => {

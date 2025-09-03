@@ -486,9 +486,16 @@ export function LeagueWaiting() {
                         });
                       }}
                       onDraftStarted={() => {
-                        // Use the existing draft ID or the league's draft ID
-                        const targetDraftId = league.draftId || '46160cd7-595b-4f70-9956-795ea53993ff';
-                        setLocation(`/draft/${targetDraftId}`);
+                        // Ensure we have a valid draft ID before navigating
+                        if (!league.draftId) {
+                          toast({
+                            title: "Navigation Error",
+                            description: "Draft ID not found. Please refresh the page.",
+                            variant: "destructive"
+                          });
+                          return;
+                        }
+                        setLocation(`/draft/${league.draftId}`);
                       }}
                     />
                   )}
