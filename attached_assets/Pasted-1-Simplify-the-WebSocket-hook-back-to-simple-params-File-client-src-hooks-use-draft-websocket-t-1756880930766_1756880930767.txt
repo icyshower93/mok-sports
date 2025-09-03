@@ -1,0 +1,269 @@
+1) Simplify the WebSocket hook (back to simple params)
+
+File: client/src/hooks/use-draft-websocket.ts
+(Use this one hook everywhere: waiting room + draft page. Delete/stop using the “-fixed” variant.)
+
+// client/src/hooks/use-draft-websocket.ts
+import { useCallback, useEffect, useRef, useState } from "react";
+import { wsUrl } from "@/lib/endpoints"; // or inline the URL if you prefer
+
+type Callbacks = {
+  onDraftState?(state: any): void;
+  onTimerUpdate?(t: { display: number }): void;
+};
+
+export function useDraftWebSocket(
+  draftId: string | null | undefined,
+  userId: string | null | undefined,
+  callbacks?: Callbacks
+) {
+  const socketRef = useRef<WebSocket | null>(null);
+  const reconnectTimerRef = useRef<number | null>(null);
+  const [reconnectTick, setReconnectTick] = useState(0);
+
+  const clearReconnect = () => {
+    if (reconnectTimerRef.current) {
+      clearTimeout(reconnectTimerRef.current);
+      reconnectTimerRef.current = null;
+    }
+  };
+
+  const handleMessage = useCallback(
+    (ev: MessageEvent) => {
+      try {
+        const msg = typeof ev.data === "string" ? JSON.parse(ev.data) : ev.data;
+        if (msg?.type === "draft_state") callbacks?.onDraftState?.(msg.payload);
+        else if (msg?.type === "timer_update") callbacks?.onTimerUpdate?.(msg.payload);
+      } catch {
+        // tolerate non-JSON like "connected"
+      }
+    },
+    [callbacks]
+  );
+
+  useEffect(() => {
+    if (!draftId || !userId) return;
+    if (socketRef.current) return;
+
+    const url = wsUrl("/draft-ws", { draftId, userId });
+    const ws = new WebSocket(url);
+    socketRef.current = ws;
+
+    ws.onopen = () => {
+      clearReconnect();
+      // console.log("[WS] open", url);
+    };
+
+    ws.onmessage = handleMessage;
+
+    ws.onerror = () => {
+      // console.log("[WS] error");
+    };
+
+    ws.onclose = (e) => {
+      // console.log("[WS] close", e.code);
+      socketRef.current = null;
+      if (e.code !== 1000 && !reconnectTimerRef.current) {
+        reconnectTimerRef.current = window.setTimeout(() => {
+          reconnectTimerRef.current = null;
+          setReconnectTick((t) => t + 1); // re-run effect to reconnect
+        }, 1000);
+      }
+    };
+
+    return () => {
+      clearReconnect();
+      try {
+        ws.close(1000, "cleanup");
+      } catch {}
+      socketRef.current = null;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [draftId, userId, handleMessage, reconnectTick]);
+}
+
+
+Interface is simple again: (draftId, userId, callbacks?).
+
+Single socket, gentle reconnect, no epochs/backoff complexity.
+
+No auth/status gating beyond draftId && userId.
+
+2) Draft page: one draft object, no normalize layer, visible loading
+
+File: client/src/pages/draft.tsx
+
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { useAuth } from "@/providers/auth-provider";
+import { endpoints } from "@/lib/endpoints";
+import { useDraftWebSocket } from "@/hooks/use-draft-websocket";
+
+export default function DraftPage() {
+  const { draftId } = useParams<{ draftId: string }>();
+  const { user, authLoading } = useAuth();
+
+  const [draft, setDraft] = useState<any | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [displaySeconds, setDisplaySeconds] = useState(0);
+  const [error, setError] = useState<string | null>(null);
+
+  // ✅ Hydrate from WS as soon as server pushes state
+  useDraftWebSocket(draftId, user?.id, {
+    onDraftState: (state) => {
+      setDraft(state);
+      setIsLoading(false);
+    },
+    onTimerUpdate: ({ display }) => setDisplaySeconds(display),
+  });
+
+  // ✅ Fallback GET with small retry in case WS doesn’t arrive first
+  useEffect(() => {
+    if (!draftId || authLoading || draft) return;
+
+    let cancelled = false;
+    const ac = new AbortController();
+
+    const delays = [300, 600, 1200, 2000, 3000];
+    (async () => {
+      try {
+        for (let i = 0; i <= delays.length; i++) {
+          const res = await fetch(endpoints.draft(draftId), { signal: ac.signal });
+          if (res.ok) {
+            const data = await res.json();
+            if (!cancelled) {
+              setDraft(data);
+              setIsLoading(false);
+            }
+            return;
+          }
+          if (res.status !== 404) {
+            throw new Error(`${res.status} ${await res.text().catch(() => "")}`);
+          }
+          if (i < delays.length) {
+            await new Promise((r) => setTimeout(r, delays[i]));
+          }
+        }
+        throw new Error("Draft not ready yet");
+      } catch (e: any) {
+        if (!cancelled) setError(e?.message ?? "Failed to load draft");
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+      ac.abort();
+    };
+  }, [draftId, authLoading, draft]);
+
+  // ---------- RENDER ----------
+  if (error) {
+    return (
+      <div className="flex h-full items-center justify-center">
+        <div className="text-red-500 text-sm">Error: {error}</div>
+      </div>
+    );
+  }
+
+  if (isLoading || !draftId) {
+    return (
+      <div className="flex h-full items-center justify-center">
+        <div className="text-sm opacity-70">Starting draft…</div>
+      </div>
+    );
+  }
+
+  if (!draft) {
+    return (
+      <div className="flex h-full items-center justify-center">
+        <div className="text-sm opacity-70">Waiting for draft state…</div>
+      </div>
+    );
+  }
+
+  // Render your actual UI with the single `draft` object
+  return (
+    <div className="p-4">
+      {/* Example usage; replace with your real components */}
+      <div className="mb-2 text-xs opacity-60">Timer: {displaySeconds.toFixed(1)}s</div>
+      <h1 className="text-xl font-semibold">Draft</h1>
+      {/* ... your DraftLayout or components, fed by `draft` ... */}
+    </div>
+  );
+}
+
+
+One state object: draft.
+
+No normalization layer (compute any derived values inline or with useMemo near where they’re displayed).
+
+Visible loading (no return null).
+
+3) Waiting Room → Draft: navigate only with real draftId
+
+File: client/src/pages/league-waiting.tsx (or wherever you start)
+Make sure you use the server’s draftId and don’t try to connect before you have it:
+
+// after POST /leagues/:leagueId/draft/start (or after you receive league update)
+if (league.draftId) {
+  navigate(`/draft/${league.draftId}`);
+}
+
+
+Don’t try to open a WS in the waiting room unless league.draftId exists (the hook above already ignores if draftId is falsy).
+
+4) Don’t bounce the draft route while league loads
+
+File: client/src/components/RequireLeague.tsx
+
+import { Navigate, Outlet, useLocation } from "react-router-dom";
+// ...your hooks to read leagueId...
+
+const location = useLocation();
+const isDraftRoute = location.pathname.startsWith("/draft/");
+
+if (!leagueId && !isDraftRoute) {
+  console.log("[RequireLeague] no league; redirect -> /dashboard");
+  return <Navigate to="/dashboard" replace />;
+}
+
+return <Outlet />;
+
+
+This preserves the simple guard but lets /draft/:id through during init.
+
+5) Keep only these “good” improvements
+
+Loading spinners instead of null (we did).
+
+TS/compile errors fixed (keep them).
+
+(Optional) Dialog warning: add a description id to your Dialogs to silence shadcn’s warning—purely cosmetic.
+
+<DialogContent aria-describedby="create-league-desc">
+  <DialogHeader>
+    <DialogTitle>Create League</DialogTitle>
+    <DialogDescription id="create-league-desc">
+      Fill in the fields to create a league.
+    </DialogDescription>
+  </DialogHeader>
+  {/* ... */}
+</DialogContent>
+
+6) Keep endpoints simple
+
+If you already have endpoints.draft(id), use it. Otherwise, this tiny helper is fine (no extra layers):
+
+// client/src/lib/endpoints.ts
+const apiBase = import.meta.env.VITE_API_BASE ?? "/api";
+export const endpoints = {
+  draft: (id: string) => `${apiBase}/drafts/${id}`,
+  startLeagueDraft: (leagueId: string) => `${apiBase}/leagues/${leagueId}/draft/start`,
+};
+export function wsUrl(path: string, params?: Record<string, string | number>) {
+  const base = (import.meta.env.VITE_WS_BASE as string | undefined)
+    ?? window.location.origin.replace(/^http/i, "ws");
+  const url = new URL(path.startsWith("/") ? path : `/${path}`, base);
+  if (params) for (const [k, v] of Object.entries(params)) url.searchParams.set(k, String(v));
+  return url.toString();
+}
