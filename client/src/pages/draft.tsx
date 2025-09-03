@@ -14,7 +14,7 @@ import { apiRequest } from "@/features/query/api";
 import { apiFetch } from "@/lib/api";
 import { useDraftWebSocket } from "@/hooks/use-draft-websocket";
 import { useAuth } from "@/features/auth/useAuth";
-import { endpoints } from "@/lib/endpoints";
+import { endpoints, wsUrl } from "@/lib/endpoints";
 import type { DraftState, NflTeam, DraftPick } from '@shared/types/draft';
 
 // ✅ Import shared constants from centralized draft-types (no duplication)
@@ -38,10 +38,6 @@ function normalizeDraft(raw: any) {
   };
 }
 
-function computeWsUrl(origin: string, draftId: string): string {
-  const base = origin.replace(/^http/i, 'ws');
-  return `${base}/ws/draft/${draftId}`;
-}
 
 function formatTime(seconds: number): string {
   const mins = Math.floor(seconds / 60);
@@ -166,9 +162,9 @@ export default function DraftPage() {
 
   // Fetch user's leagues to get the current draft ID
   const { data: leagueData } = useQuery({
-    queryKey: ['/api/leagues/user'],
+    queryKey: [endpoints.leaguesUser()],
     queryFn: async () => {
-      return await apiRequest('GET', '/api/leagues/user');
+      return await apiRequest('GET', endpoints.leaguesUser());
     },
     enabled: !!auth.user && !auth.isLoading,
     staleTime: 1000 * 10, // Cache for 10 seconds
@@ -231,10 +227,10 @@ export default function DraftPage() {
       console.log('[Draft] Auth status - User:', auth.user?.name, 'Authenticated:', auth.isAuthenticated, 'Loading:', auth.isLoading);
       
       try {
-        console.log('[Draft] Making API request to:', endpoints.draft(draftId));
+        console.log('[Draft] Making API request to:', endpoints.draft(draftId!));
         
         // Use direct fetch with credentials and signal for cancellation
-        const response = await fetch(endpoints.draft(draftId), {
+        const response = await fetch(endpoints.draft(draftId!), {
           method: 'GET',
           credentials: 'include', // Use cookies for auth instead of Bearer token
           signal, // Add signal for query cancellation
@@ -294,16 +290,16 @@ export default function DraftPage() {
   // Use the draftId from above (already declared on line 212)
   const canConnect = !auth.isLoading && !!auth.user && Boolean(draftId) && !isLoading;
   
-  const wsUrl = useMemo(
-    () => (canConnect && draftId ? computeWsUrl(window.location.origin, draftId) : null),
-    [canConnect, draftId]
+  const draftWsUrl = useMemo(
+    () => (canConnect && draftId ? wsUrl('/draft-ws', { draftId, userId: auth.user!.id }) : null),
+    [canConnect, draftId, auth.user?.id]
   );
 
   console.log('[Draft] WebSocket connection decision:', { 
     authReady: !auth.isLoading && !!auth.user,
     canConnect, 
     draftId: draftId || 'none',
-    wsUrl: wsUrl || 'none' 
+    wsUrl: draftWsUrl || 'none' 
   });
   
   // ✅ Fix race condition: only connect WebSocket when auth is ready and we have a draftId
