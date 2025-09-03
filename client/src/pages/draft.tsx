@@ -142,6 +142,9 @@ export default function DraftPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [displaySeconds, setDisplaySeconds] = useState(0);
   
+  // Timer throttling to prevent excessive UI updates
+  const lastPaintRef = useRef(0);
+  
   // Extract draft ID from URL params using wouter - SINGLE SOURCE OF TRUTH
   const [actualDraftId, setActualDraftId] = useState<string | null>(urlDraftId);
   const [selectedTeam, setSelectedTeam] = useState<string | null>(null);
@@ -318,7 +321,13 @@ export default function DraftPage() {
       setDraftData(state);
       setIsLoading(false); // ✅ stop loading as soon as we have authoritative state
     },
-    onTimerUpdate: ({ display }) => setDisplaySeconds(display),
+    onTimerUpdate: ({ display }) => {
+      const now = performance.now();
+      if (now - lastPaintRef.current > 200) { // 5 fps UI throttle
+        lastPaintRef.current = now;
+        setDisplaySeconds(display);
+      }
+    },
   });
   const isConnected = connectionStatus === 'connected';
 
