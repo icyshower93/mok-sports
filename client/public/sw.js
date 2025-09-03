@@ -73,9 +73,11 @@ self.addEventListener('fetch', (event) => {
   if (url.origin === self.location.origin && /\.(?:js|css|png|svg|ico|woff2?)$/.test(url.pathname)) {
     event.respondWith((async () => {
       try {
+        // Try cache first
         const cached = await caches.match(req);
         if (cached) return cached;
         
+        // Try network
         const res = await fetch(req);
         if (res && res.ok) {
           try {
@@ -87,9 +89,19 @@ self.addEventListener('fetch', (event) => {
         }
         return res;
       } catch (error) {
-        console.error('[SW] Fetch handler error:', error);
-        // Return a basic network request as fallback
-        return fetch(req);
+        console.error('[SW] Static asset fetch failed:', error);
+        try {
+          // Last-ditch: try basic network request one more time
+          return await fetch(req);
+        } catch (finalError) {
+          console.error('[SW] Final fetch attempt failed:', finalError);
+          // ALWAYS return a Response - never let this throw
+          return new Response('Asset unavailable', { 
+            status: 503, 
+            statusText: 'Service Unavailable',
+            headers: { 'Content-Type': 'text/plain' }
+          });
+        }
       }
     })());
   }
