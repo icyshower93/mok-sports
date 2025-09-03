@@ -20,7 +20,11 @@ const BASE = 750;
 const MAX  = 10_000;
 const backoff = (n: number) => Math.min(MAX, BASE * Math.pow(2, n));
 
-export function useDraftWebSocket(draftId: string) {
+import { wsUrl } from '@/lib/endpoints';
+import { useAuth } from '@/contexts/auth-context';
+
+export function useDraftWebSocket(draftId: string | null) {
+  const { user } = useAuth();
   const [connectionStatus, setConnectionStatus] = useState<WSStatus>('idle');
   const [lastMessage, setLastMessage] = useState<DraftWebSocketMessage | null>(null);
 
@@ -32,22 +36,25 @@ export function useDraftWebSocket(draftId: string) {
   const clearTimer = () => { if (timerRef.current) { clearTimeout(timerRef.current); timerRef.current = null; } };
 
   const connect = useCallback(() => {
-    if (!draftId || stoppedRef.current) return;
+    // RACE CONDITION FIX: Don't connect until we have all requirements
+    if (!user?.id || !draftId || stoppedRef.current) {
+      console.log('[WebSocket] ❌ Connection requirements not met', { 
+        hasUser: !!user?.id, 
+        draftId,
+        stopped: stoppedRef.current 
+      });
+      return;
+    }
+
+    if (wsRef.current) {
+      console.log('[WebSocket] ⚠️ Already connected, skipping double-connect');
+      return; // don't double-connect
+    }
 
     setConnectionStatus('connecting');
-    // Fix WebSocket URL for both development and production
-    let wsUrl;
     
-    // In development, use 0.0.0.0 directly (Replit development environment)
-    if (location.hostname === 'localhost' || location.hostname === '127.0.0.1' || location.hostname.includes('replit.dev')) {
-      wsUrl = `ws://0.0.0.0:${location.port || '5000'}`;
-    } else {
-      // Production: Use the same origin but with ws protocol
-      wsUrl = location.origin.replace(/^http/, 'ws');
-    }
-    
-    const url = `${wsUrl}/draft-ws?draftId=${encodeURIComponent(draftId)}`;
-    console.log('[WebSocket] Connecting to:', url);
+    const url = wsUrl('/draft-ws', { draftId, userId: user.id });
+    console.log('[WebSocket] ✅ Connecting to:', url);
     const ws = new WebSocket(url);
     wsRef.current = ws;
 
@@ -77,10 +84,17 @@ export function useDraftWebSocket(draftId: string) {
       clearTimer();
       timerRef.current = setTimeout(connect, delay);
     };
-  }, [draftId]);
+  }, [draftId, user?.id]);
 
   useEffect(() => {
-    if (!draftId) return;
+    // RACE CONDITION FIX: Wait for auth + draftId before connecting
+    if (!user?.id || !draftId) {
+      console.log('[WebSocket] 🛑 Not connecting - missing requirements', { 
+        hasUser: !!user?.id, 
+        draftId 
+      });
+      return;
+    }
 
     stoppedRef.current = false;
     connect();

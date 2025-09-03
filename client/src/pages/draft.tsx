@@ -14,6 +14,7 @@ import { apiRequest } from "@/features/query/api";
 import { apiFetch } from "@/lib/api";
 import { useDraftWebSocket } from "@/hooks/use-draft-websocket";
 import { useAuth } from "@/features/auth/useAuth";
+import { endpoints } from "@/lib/endpoints";
 import type { DraftState, NflTeam, DraftPick } from '@shared/types/draft';
 
 // ✅ Import shared constants from centralized draft-types (no duplication)
@@ -221,7 +222,7 @@ export default function DraftPage() {
     }
   }, [draftId, queryClient]);
 
-  // Fetch draft state with priority to establish connection rules
+  // RACE CONDITION FIX: Fetch draft state only when auth is ready
   const { data: draftData, isLoading, error } = useQuery({
     queryKey: ['draft', draftId, 'state'], // Include 'state' for specificity
     queryFn: async ({ signal }) => {
@@ -230,10 +231,10 @@ export default function DraftPage() {
       console.log('[Draft] Auth status - User:', auth.user?.name, 'Authenticated:', auth.isAuthenticated, 'Loading:', auth.isLoading);
       
       try {
-        console.log('[Draft] Making API request to:', `/api/drafts/${draftId}`);
+        console.log('[Draft] Making API request to:', endpoints.draft(draftId));
         
         // Use direct fetch with credentials and signal for cancellation
-        const response = await fetch(`/api/drafts/${draftId}`, {
+        const response = await fetch(endpoints.draft(draftId), {
           method: 'GET',
           credentials: 'include', // Use cookies for auth instead of Bearer token
           signal, // Add signal for query cancellation
@@ -291,7 +292,7 @@ export default function DraftPage() {
 
   // Simple WebSocket connection logic - wait for auth AND draft data to be loaded
   // Use the draftId from above (already declared on line 212)
-  const canConnect = !auth.isLoading && !!auth.user && Boolean(draftId) && !draftLoading;
+  const canConnect = !auth.isLoading && !!auth.user && Boolean(draftId) && !isLoading;
   
   const wsUrl = useMemo(
     () => (canConnect && draftId ? computeWsUrl(window.location.origin, draftId) : null),
@@ -449,7 +450,7 @@ export default function DraftPage() {
     
     setStarting(true);
     try {
-      const response = await apiFetch(`/api/leagues/${leagueId}/draft/start`, {
+      const response = await apiFetch(endpoints.startLeagueDraft(leagueId), {
         method: 'POST'
       });
       
@@ -507,7 +508,7 @@ export default function DraftPage() {
     queryKey: ['draft', draftId, 'teams'],
     queryFn: async ({ signal }) => {
       // Use the apiRequest function to include authentication headers
-      return await apiRequest('GET', `/api/drafts/${draftId}/available-teams`);
+      return await apiRequest('GET', endpoints.draftAvailableTeams(draftId));
     },
     enabled: !!draftId,
     refetchInterval: 5000,
@@ -518,7 +519,7 @@ export default function DraftPage() {
   // Make pick mutation - HARDENED: Single transition with optimized invalidation
   const makePickMutation = useMutation({
     mutationFn: async (nflTeamId: string) => {
-      return await apiRequest('POST', `/api/drafts/${draftId}/pick`, { nflTeamId });
+      return await apiRequest('POST', `${endpoints.draft(draftId)}/pick`, { nflTeamId });
     },
     onSuccess: (data) => {
       // HARDENING: Single transition with batched invalidations

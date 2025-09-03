@@ -11,6 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/features/query/api";
 import { useLocation } from "wouter";
 import { apiFetch } from "@/lib/api";
+import { endpoints } from "@/lib/endpoints";
 
 interface DraftControlsProps {
   leagueId: string;
@@ -42,7 +43,7 @@ export default function DraftControls({
   const onStartDraft = async () => {
     console.log('[StartDraft] ✅ Starting draft for league:', leagueId);
     
-    const res = await apiFetch(`/api/leagues/${leagueId}/draft/start`, { method: "POST" });
+    const res = await apiFetch(endpoints.startLeagueDraft(leagueId), { method: "POST" });
     if (!res.ok) throw new Error(await res.text().catch(() => `Failed (${res.status})`));
     const { draftId } = await res.json();
     
