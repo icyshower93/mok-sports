@@ -21,7 +21,7 @@ const MAX  = 10_000;
 const backoff = (n: number) => Math.min(MAX, BASE * Math.pow(2, n));
 
 import { wsUrl } from '@/lib/endpoints';
-import { useAuth } from '@/contexts/auth-context';
+import { useAuth } from '@/features/auth/useAuth';
 
 export function useDraftWebSocket(draftId: string | null) {
   const { user } = useAuth();
