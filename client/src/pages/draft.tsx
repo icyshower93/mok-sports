@@ -128,25 +128,22 @@ async function requestNotificationPermissionFromUser(): Promise<void> {
 // ✅ React component last
 export default function DraftPage() {
   // CRITICAL: All early returns must happen BEFORE any hooks to prevent Rules of Hooks violations
-  const urlParams = useParams();
-  const urlDraftId = (urlParams as any).draftId;
-  
+  const { draftId } = useParams();
+  const { user, authLoading } = useAuth(); // whatever you already have
+
+  const [draftData, setDraftData] = useState<any | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [displaySeconds, setDisplaySeconds] = useState(0);
+  const [error, setError] = useState<string | null>(null);
+
   // ALL HOOKS MUST BE CALLED CONSISTENTLY - cannot return early after calling hooks
   const [location, navigate] = useLocation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const auth = useAuth(); // Auth declared early
-  
-  // Store normalized draft state
-  const [draftData, setDraftData] = useState<any | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [displaySeconds, setDisplaySeconds] = useState(0);
   
   // Timer throttling to prevent excessive UI updates
   const lastPaintRef = useRef(0);
   
-  // Extract draft ID from URL params using wouter - SINGLE SOURCE OF TRUTH
-  const [actualDraftId, setActualDraftId] = useState<string | null>(urlDraftId);
   const [selectedTeam, setSelectedTeam] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>('');
   
@@ -165,13 +162,59 @@ export default function DraftPage() {
   const [lastNotificationTime, setLastNotificationTime] = useState<number>(0);
   const [hasNotifiedForThisTurn, setHasNotifiedForThisTurn] = useState<boolean>(false);
 
+  useDraftWebSocket({
+    draftId,
+    userId: user?.id,
+    onDraftState: (state) => {
+      console.log('[Draft] WS draft_state => hydrating', state);
+      setDraftData(state);
+      setIsLoading(false);         // ✅ leave loading ASAP
+    },
+    onTimerUpdate: ({ display }) => setDisplaySeconds(display),
+  });
+
+  // Fallback GET with retry if WS doesn't arrive quickly
+  async function fetchDraftWithRetry(id: string, signal?: AbortSignal) {
+    const delays = [300, 600, 1200, 2000, 3000]; // ~7s
+    for (let i = 0; i <= delays.length; i++) {
+      console.log(`[Draft] Fetch attempt ${i + 1}/${delays.length + 1} for draft: ${id}`);
+      const res = await fetch(endpoints.draft(id), { signal });
+      if (res.ok) return res.json();
+      if (res.status !== 404) throw new Error(`${res.status} ${await res.text().catch(() => '')}`);
+      if (i === delays.length) break;
+      await new Promise(r => setTimeout(r, delays[i]));
+    }
+    throw new Error('Draft not ready yet');
+  }
+
+  useEffect(() => {
+    if (!draftId || authLoading || draftData) return;
+    let cancelled = false;
+    const ac = new AbortController();
+    (async () => {
+      try {
+        const raw = await fetchDraftWithRetry(draftId, ac.signal);
+        console.log('[Draft] ✅ Draft data received successfully:', raw);
+        const normalized = normalizeDraft(raw); // keep your normalizeDraft if you have it
+        console.log('[Draft] 🔧 Normalized response:', normalized);
+        if (!cancelled) {
+          setDraftData(normalized ?? raw);
+          setIsLoading(false);    // ✅ ensure we exit loading on REST too
+        }
+      } catch (e: any) {
+        if (!cancelled) setError(e?.message ?? 'Failed to load draft');
+      }
+    })();
+    return () => { cancelled = true; ac.abort(); };
+  }, [draftId, authLoading, draftData]);
+
   // Fetch user's leagues to get the current draft ID
   const { data: leagueData } = useQuery({
     queryKey: [endpoints.leaguesUser()],
     queryFn: async () => {
       return await apiRequest('GET', endpoints.leaguesUser());
     },
-    enabled: !!auth.user && !auth.isLoading,
+    enabled: !!user && !authLoading,
     staleTime: 1000 * 10, // Cache for 10 seconds
   });
 
@@ -182,26 +225,21 @@ export default function DraftPage() {
 
   // Auto-redirect to correct draft if URL has wrong draft ID
   useEffect(() => {
-    if (!leagueData || !urlDraftId || auth.isLoading) return;
+    if (!leagueData || !draftId || authLoading) return;
     
     // Find the league that contains this user and has an active draft
     const activeLeague = leagueData.find((league: any) => 
       league.draftId && league.draftStatus === 'active'
     );
     
-    if (activeLeague?.draftId && activeLeague.draftId !== urlDraftId) {
+    if (activeLeague?.draftId && activeLeague.draftId !== draftId) {
       // Clear cache and redirect to the correct draft
       queryClient.clear();
       navigate(`/draft/${activeLeague.draftId}`, { replace: true });
       return;
-    } else if (activeLeague?.draftId) {
-      setActualDraftId(activeLeague.draftId);
     }
-  }, [leagueData, urlDraftId, auth.user?.id, navigate, queryClient, auth.isLoading]);
+  }, [leagueData, draftId, user?.id, navigate, queryClient, authLoading]);
 
-  // Use the actual draft ID for all operations - SINGLE SOURCE OF TRUTH
-  const draftId = actualDraftId;
-  
   // Cancel any queries when draftId changes to prevent race conditions
   useEffect(() => {
     if (draftId) {
@@ -222,80 +260,6 @@ export default function DraftPage() {
       setLastNotificationTime(0);
     }
   }, [draftId, queryClient]);
-
-  // Helper function to handle draft fetch with retry (handles create→navigate race)
-  async function fetchDraftWithRetry(draftId: string, signal: AbortSignal) {
-    const delays = [300, 600, 1200, 2000, 3000]; // ~7s total
-    for (let i = 0; i <= delays.length; i++) {
-      try {
-        console.log(`[Draft] Fetch attempt ${i + 1}/${delays.length + 1} for draft:`, draftId);
-        
-        const res = await fetch(endpoints.draft(draftId), { 
-          method: 'GET',
-          credentials: 'include',
-          signal,
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-          }
-        });
-        
-        if (res.ok) {
-          const raw = await res.json();
-          console.log('[Draft] ✅ Draft data received successfully:', raw);
-          
-          // ✅ Normalize the Draft API response 
-          const normalized = normalizeDraft(raw);
-          console.log('[Draft] 🔧 Normalized response:', normalized);
-          return normalized;
-        }
-
-        // If server uses 404 while creating, retry; otherwise break on non-404
-        if (res.status !== 404) {
-          const text = await res.text().catch(() => '');
-          throw new Error(`Draft fetch failed: ${res.status} ${text}`);
-        }
-        
-        console.log(`[Draft] Got 404, attempt ${i + 1}/${delays.length + 1} - draft may still be creating...`);
-        if (i === delays.length) break;
-        
-        console.log(`[Draft] Waiting ${delays[i]}ms before retry...`);
-        await new Promise(r => setTimeout(r, delays[i]));
-        
-      } catch (error: any) {
-        // ✅ Don't retry AbortErrors
-        if (error?.name === "AbortError" || error?.message?.includes("signal is aborted")) {
-          throw error;
-        }
-        
-        // If it's the last attempt or not a 404-related error, throw
-        if (i === delays.length || !error?.message?.includes('404')) {
-          throw error;
-        }
-      }
-    }
-    throw new Error('Draft not ready yet (timed out after ~7s)');
-  }
-
-  // Keep your fetchWithRetry as a fallback ONLY if WS never arrives
-  useEffect(() => {
-    if (!draftId || auth.isLoading || draftData) return; // already loaded via WS
-    let cancelled = false;
-    (async () => {
-      try {
-        const controller = new AbortController();
-        const data = await fetchDraftWithRetry(draftId, controller.signal);
-        if (!cancelled) {
-          setDraftData(data);
-          setIsLoading(false);
-        }
-      } catch (e) {
-        console.log('[Draft] Fallback fetch failed (WS should handle it):', e);
-        // optional: surface toast; but WS should normally handle it
-      }
-    })();
-    return () => { cancelled = true; };
-  }, [draftId, auth.isLoading, draftData]);
 
   // WebSocket connection logic - connect immediately when auth + draftId ready
   // Don't wait for draft data loading - let the socket bring the page to life
@@ -573,69 +537,109 @@ export default function DraftPage() {
     retry: 0 // No retries to prevent duplicate submissions
   });
 
-  console.log('[Draft] All hooks declared, starting conditional logic');
-
-  // Loading states - but don't redirect if we're on a draft route
-  if (!draftId) {
+  // ---------- RENDER ----------
+  if (error) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <h2 className="text-xl font-semibold mb-2">Loading Draft...</h2>
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-        </div>
+      <div className="flex h-full items-center justify-center">
+        <div className="text-red-500 text-sm">Error: {error}</div>
       </div>
     );
   }
 
-  // Resilient early return - wait for all requirements before rendering main UI
-  if (!draftId || auth.isLoading) {
-    console.log('[Draft] RENDER: Loading state - early requirements check', { 
-      draftId: !!draftId, 
-      authLoading: auth.isLoading 
-    });
-    
+  // Don't return null — show something while loading
+  if (isLoading || !draftId) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center space-y-4">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-          <p className="text-sm text-muted-foreground">
-            {!draftId ? 'Loading draft...' : 'Authenticating...'}
-          </p>
-        </div>
+      <div className="flex h-full items-center justify-center">
+        <div className="text-sm opacity-70">Starting draft…</div>
       </div>
     );
   }
 
-  const loadingReason = !auth.user ? 'authentication' : 
-                       isLoading ? 'draft data loading' :
-                       !draftData ? 'no draft data' : 
-                       null;
-
-  if (loadingReason) {
-    console.log('[Draft] RENDER: Loading state -', loadingReason, '- authLoading:', auth.isLoading, 'isLoading:', isLoading, 'draftData:', !!draftData);
-    
+  // ✅ At this point we either have WS-driven or REST-driven state
+  if (!draftData) {
+    // extremely defensive – should be rare
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center space-y-4">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-          <div>
-            <p className="text-sm text-muted-foreground capitalize">{loadingReason}...</p>
-            {loadingReason === 'draft data loading' && (
-              <p className="text-xs text-muted-foreground/70 mt-2">
-                Connecting to draft room... (retrying if needed)
-              </p>
-            )}
-          </div>
-        </div>
+      <div className="flex h-full items-center justify-center">
+        <div className="text-sm opacity-70">Waiting for draft state…</div>
       </div>
     );
+  }
+
+  // Create normalized draft state from draftData
+  const normalized = useMemo(() => {
+    if (!draftData) {
+      // Safe fallback structure when no draft data
+      return {
+        // Draft metadata
+        id: draftId || '',
+        status: 'not_started' as const,
+        leagueId: '',
+        
+        // Timer data
+        timerSeconds: 0,
+        isCountingDown: false,
+        displayTime: 0,
+        
+        // User and permissions
+        currentPlayerId: null,
+        isCurrentUser: false,
+        participants: [],
+        
+        // Draft progress
+        currentRound: 1,
+        currentPick: 1,
+        totalRounds: 5,
+        pickTimeLimit: DEFAULT_PICK_TIME_LIMIT,
+        draftOrder: [],
+        
+        // Data arrays
+        picks: [],
+        availableTeams: [],
+        
+        // UI state
+        canMakePick: false
+      };
+    }
+    
+    // Use normalized draft state directly
+    return draftData;
+  }, [draftData, draftId]);
+
+  // Add missing touch handlers for swipe functionality
+  function handleTouchStart(e: React.TouchEvent) {
+    setTouchStartX(e.touches[0].clientX);
+  }
+
+  function handleTouchEnd(e: React.TouchEvent) {
+    const touchEndX = e.changedTouches[0].clientX;
+    const diff = touchStartX - touchEndX;
+    
+    if (Math.abs(diff) > MINIMUM_SWIPE_DISTANCE) {
+      if (diff > 0 && currentConference === 'AFC') {
+        setCurrentConference('NFC');
+      } else if (diff < 0 && currentConference === 'NFC') {
+        setCurrentConference('AFC');
+      }
+    }
+  }
+
+  function handleMakePick() {
+    if (selectedTeam && normalized.isCurrentUser && normalized.canMakePick) {
+      makePickMutation.mutate(selectedTeam);
+    }
+  }
+
+  // Set showFAB based on selection and current user status
+  const shouldShowFAB = selectedTeam && normalized.isCurrentUser && normalized.canMakePick;
+  if (showFAB !== shouldShowFAB) {
+    setShowFAB(shouldShowFAB);
   }
 
   // Draft page uses WebSocket hydration, error handling is done via connection status
 
   // Helper function for rendering teams using hoisted functions - normalized data
   function renderConferenceTeams(conference: Conference) {
-    const allTeams = teamsData?.availableTeams || normalized.availableTeams;
+    const allTeams = normalized.availableTeams;
     const conferenceTeams = allTeams.filter((team: NflTeam) => team.conference === conference);
     const filteredTeams = filterTeamsBySearch(conferenceTeams, searchTerm);
     
