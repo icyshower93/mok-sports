@@ -1,0 +1,119 @@
+Got it — the logs are super telling. Your socket connects and the server does send draft_state, and your REST fetch also logs ✅ Draft data received. Yet the Draft page stays on:
+
+[Draft] RENDER: Loading state - authLoading: false isLoading: true draftData: false
+
+
+That means the component never flips isLoading to false or never treats the received object as “ready,” so it returns the loading branch (which is effectively blank).
+
+Below is a copy-paste final fix that makes the Draft page render as soon as either the WS or the GET returns state, and eliminates duplicate sockets/reconnect storms that were causing flakiness.
+
+✅ What you should change (exact patches)
+1) Draft page: hydrate from WS, and stop returning null while loading
+
+File: client/src/pages/draft.tsx
+
+Replace the loading/WS bits with this version (keep your imports at top as-is). The key parts:
+
+onDraftState sets both draftData and isLoading=false.
+
+the REST retry is only a fallback if WS doesn’t deliver.
+
+the render returns a visible spinner instead of null.
+
+the “ready” check is simply !!draftData (don’t AND it with nested arrays).
+
+// draft.tsx (inside your component)
+const { draftId } = useParams();
+const { user, authLoading } = useAuth(); // whatever you already have
+
+const [draftData, setDraftData] = useState<any | null>(null);
+const [isLoading, setIsLoading] = useState(true);
+const [displaySeconds, setDisplaySeconds] = useState(0);
+const [error, setError] = useState<string | null>(null);
+
+useDraftWebSocket({
+  draftId,
+  userId: user?.id,
+  onDraftState: (state) => {
+    console.log('[Draft] WS draft_state => hydrating', state);
+    setDraftData(state);
+    setIsLoading(false);         // ✅ leave loading ASAP
+  },
+  onTimerUpdate: ({ display }) => setDisplaySeconds(display),
+});
+
+// Fallback GET with retry if WS doesn’t arrive quickly
+async function fetchDraftWithRetry(id: string, signal?: AbortSignal) {
+  const delays = [300, 600, 1200, 2000, 3000]; // ~7s
+  for (let i = 0; i <= delays.length; i++) {
+    console.log(`[Draft] Fetch attempt ${i + 1}/${delays.length + 1} for draft: ${id}`);
+    const res = await fetch(endpoints.draft(id), { signal });
+    if (res.ok) return res.json();
+    if (res.status !== 404) throw new Error(`${res.status} ${await res.text().catch(() => '')}`);
+    if (i === delays.length) break;
+    await new Promise(r => setTimeout(r, delays[i]));
+  }
+  throw new Error('Draft not ready yet');
+}
+
+useEffect(() => {
+  if (!draftId || authLoading || draftData) return;
+  let cancelled = false;
+  const ac = new AbortController();
+  (async () => {
+    try {
+      const raw = await fetchDraftWithRetry(draftId, ac.signal);
+      console.log('[Draft] ✅ Draft data received successfully:', raw);
+      const normalized = normalizeDraft(raw); // keep your normalizeDraft if you have it
+      console.log('[Draft] 🔧 Normalized response:', normalized);
+      if (!cancelled) {
+        setDraftData(normalized ?? raw);
+        setIsLoading(false);    // ✅ ensure we exit loading on REST too
+      }
+    } catch (e: any) {
+      if (!cancelled) setError(e?.message ?? 'Failed to load draft');
+    }
+  })();
+  return () => { cancelled = true; ac.abort(); };
+}, [draftId, authLoading, draftData]);
+
+// ---------- RENDER ----------
+if (error) {
+  return (
+    <div className="flex h-full items-center justify-center">
+      <div className="text-red-500 text-sm">Error: {error}</div>
+    </div>
+  );
+}
+
+// Don’t return null — show something while loading
+if (isLoading || !draftId) {
+  return (
+    <div className="flex h-full items-center justify-center">
+      <div className="text-sm opacity-70">Starting draft…</div>
+    </div>
+  );
+}
+
+// ✅ At this point we either have WS-driven or REST-driven state
+if (!draftData) {
+  // extremely defensive – should be rare
+  return (
+    <div className="flex h-full items-center justify-center">
+      <div className="text-sm opacity-70">Waiting for draft state…</div>
+    </div>
+  );
+}
+
+// …render your real UI using `draftData` safely
+return (
+  <DraftLayout
+    draft={draftData}
+    displaySeconds={displaySeconds}
+    userId={user!.id}
+    draftId={draftId}
+  />
+);
+
+
+Why this fixes the blank screen: your logs show you are receiving draft_state and your GET also succeeds. But earlier code never flipped isLoading to false (or computed “ready” with a too-strict condition). The snippet above flips it on either path, and never returns null during loading.
