@@ -11,7 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import { TeamLogo } from "@/components/team-logo";
 import { apiRequest } from "@/features/query/api";
 import { apiFetch } from "@/lib/api";
-import { useDraftWebSocket } from "@/hooks/use-draft-websocket-fixed";
+import { useDraftWebSocket } from "@/hooks/use-draft-websocket";
 import { useAuth } from "@/features/auth/useAuth";
 import { endpoints, wsUrl } from "@/lib/endpoints";
 import type { DraftState, NflTeam, DraftPick } from '@shared/types/draft';
@@ -139,10 +139,8 @@ export default function DraftPage() {
   const [lastNotificationTime, setLastNotificationTime] = useState<number>(0);
   const [hasNotifiedForThisTurn, setHasNotifiedForThisTurn] = useState<boolean>(false);
 
-  // Simple WebSocket connection
-  useDraftWebSocket({
-    draftId,
-    userId: user?.id,
+  // Simple WebSocket connection with 3 parameters
+  useDraftWebSocket(draftId, user?.id, {
     onDraftState: (state) => {
       console.log('[Draft] Got draft state:', state);
       setDraft(state);
