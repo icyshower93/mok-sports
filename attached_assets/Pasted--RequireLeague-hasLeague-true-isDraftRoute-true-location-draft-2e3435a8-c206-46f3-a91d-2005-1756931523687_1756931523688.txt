@@ -1,0 +1,47 @@
+[RequireLeague] {hasLeague: true, isDraftRoute: true, location: '/draft/2e3435a8-c206-46f3-a91d-200585765b93'}
+RequireLeague.tsx:32 [RequireLeague] has league; rendering children
+NavigationTracer.tsx:8 [Nav] location => /draft/2e3435a8-c206-46f3-a91d-200585765b93
+react-dom.production.min.js:188 ReferenceError: availableTeams is not defined
+    at Ye (draft.tsx:278:33)
+    at yu (react-dom.production.min.js:160:137)
+    at xo (react-dom.production.min.js:196:258)
+    at Ja (react-dom.production.min.js:291:88)
+    at Ya (react-dom.production.min.js:279:389)
+    at Ed (react-dom.production.min.js:279:320)
+    at qr (react-dom.production.min.js:279:180)
+    at jo (react-dom.production.min.js:270:88)
+    at Qa (react-dom.production.min.js:267:429)
+    at E (scheduler.production.min.js:13:203)
+Co @ react-dom.production.min.js:188
+La.t.callback @ react-dom.production.min.js:188
+Si @ react-dom.production.min.js:156
+ji @ react-dom.production.min.js:261
+Wa @ react-dom.production.min.js:259
+wd @ react-dom.production.min.js:258
+Cd @ react-dom.production.min.js:282
+Sn @ react-dom.production.min.js:280
+Qa @ react-dom.production.min.js:268
+E @ scheduler.production.min.js:13
+st @ scheduler.production.min.js:14Understand this error
+react-dom.production.min.js:282 Uncaught ReferenceError: availableTeams is not defined
+    at Ye (draft.tsx:278:33)
+    at yu (react-dom.production.min.js:160:137)
+    at xo (react-dom.production.min.js:196:258)
+    at Ja (react-dom.production.min.js:291:88)
+    at Ya (react-dom.production.min.js:279:389)
+    at Ed (react-dom.production.min.js:279:320)
+    at qr (react-dom.production.min.js:279:180)
+    at jo (react-dom.production.min.js:270:88)
+    at Qa (react-dom.production.min.js:267:429)
+    at E (scheduler.production.min.js:13:203)
+Ye @ draft.tsx:278
+yu @ react-dom.production.min.js:160
+xo @ react-dom.production.min.js:196
+Ja @ react-dom.production.min.js:291
+Ya @ react-dom.production.min.js:279
+Ed @ react-dom.production.min.js:279
+qr @ react-dom.production.min.js:279
+jo @ react-dom.production.min.js:270
+Qa @ react-dom.production.min.js:267
+E @ scheduler.production.min.js:13
+st @ scheduler.production.min.js:14Understand this error
