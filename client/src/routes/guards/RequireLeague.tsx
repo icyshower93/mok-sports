@@ -26,7 +26,7 @@ export default function RequireLeague({
 
   if (!hasLeague && !isDraftRoute) {
     console.debug("[RequireLeague] no league and not allowed draft route; redirect -> /dashboard");
-    return <Redirect to="/dashboard" />;
+    return <Redirect to="/dashboard" replace />;
   }
 
   console.debug("[RequireLeague] has league; rendering children");
