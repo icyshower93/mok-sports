@@ -1,0 +1,174 @@
+🚀 FRONTEND STARTING - bootstrap function running
+AuthProvider.tsx:110 [Auth] Token check - Has token: false Has user: false Loading: true
+AuthProvider.tsx:110 [Auth] Token check - Has token: true Has user: true Loading: false
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+RequireLeague.tsx:11 [RequireLeague] entering
+RequireLeague.tsx:17 [RequireLeague] Object
+RequireLeague.tsx:21 [RequireLeague] loading state; returning null
+NavigationTracer.tsx:8 [Nav] location => /
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+RequireLeague.tsx:11 [RequireLeague] entering
+RequireLeague.tsx:17 [RequireLeague] Object
+RequireLeague.tsx:26 [RequireLeague] no league and not allowed draft route; redirect -> /dashboard
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+NavigationTracer.tsx:8 [Nav] location => /dashboard
+index.mjs:308 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+(anonymous) @ index.mjs:308Understand this warning
+dashboard.tsx:100 [CreateLeague] Sending payload: Object
+dashboard.tsx:108 [CreateLeague] Response status: 201
+dashboard.tsx:124 [CreateLeague] Success result: Object
+dashboard.tsx:128 [CreateLeague] Success - server returned: Object
+dashboard.tsx:144 [CreateLeague] Navigating to waiting room with leagueId: 7bb2bb6b-095b-43ef-a7ef-dedf49e39003
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+league-waiting.tsx:53 [LeagueWaiting] Auth state: Object
+league-waiting.tsx:94 [LeagueWaiting] WebSocket connection check: Object
+use-draft-websocket-fixed.ts:40 [WebSocket] Hook called with: Object
+league-waiting.tsx:112 [LeagueWaiting] WebSocket status: Object
+NavigationTracer.tsx:8 [Nav] location => /league/waiting
+league-waiting.tsx:66 [LeagueWaiting] Checking URL params: Object
+league-waiting.tsx:53 [LeagueWaiting] Auth state: Object
+league-waiting.tsx:94 [LeagueWaiting] WebSocket connection check: Object
+use-draft-websocket-fixed.ts:40 [WebSocket] Hook called with: Object
+league-waiting.tsx:112 [LeagueWaiting] WebSocket status: Object
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+league-waiting.tsx:53 [LeagueWaiting] Auth state: Object
+league-waiting.tsx:94 [LeagueWaiting] WebSocket connection check: Object
+use-draft-websocket-fixed.ts:40 [WebSocket] Hook called with: Object
+league-waiting.tsx:112 [LeagueWaiting] WebSocket status: Object
+league-waiting.tsx:122 [LeagueWaiting] League data updated: Object
+league-waiting.tsx:53 [LeagueWaiting] Auth state: Object
+league-waiting.tsx:94 [LeagueWaiting] WebSocket connection check: Object
+use-draft-websocket-fixed.ts:40 [WebSocket] Hook called with: Object
+league-waiting.tsx:112 [LeagueWaiting] WebSocket status: Object
+league-waiting.tsx:53 [LeagueWaiting] Auth state: Object
+league-waiting.tsx:94 [LeagueWaiting] WebSocket connection check: Object
+use-draft-websocket-fixed.ts:40 [WebSocket] Hook called with: Object
+league-waiting.tsx:112 [LeagueWaiting] WebSocket status: Object
+league-waiting.tsx:53 [LeagueWaiting] Auth state: Object
+league-waiting.tsx:94 [LeagueWaiting] WebSocket connection check: Object
+use-draft-websocket-fixed.ts:40 [WebSocket] Hook called with: Object
+league-waiting.tsx:112 [LeagueWaiting] WebSocket status: Object
+league-waiting.tsx:122 [LeagueWaiting] League data updated: Object
+league-waiting.tsx:53 [LeagueWaiting] Auth state: Object
+league-waiting.tsx:94 [LeagueWaiting] WebSocket connection check: Object
+use-draft-websocket-fixed.ts:40 [WebSocket] Hook called with: Object
+league-waiting.tsx:112 [LeagueWaiting] WebSocket status: Object
+league-waiting.tsx:53 [LeagueWaiting] Auth state: Object
+league-waiting.tsx:94 [LeagueWaiting] WebSocket connection check: Object
+use-draft-websocket-fixed.ts:40 [WebSocket] Hook called with: Object
+league-waiting.tsx:112 [LeagueWaiting] WebSocket status: Object
+draft-controls.tsx:44 [StartDraft] ✅ Starting draft for league: 7bb2bb6b-095b-43ef-a7ef-dedf49e39003
+league-waiting.tsx:53 [LeagueWaiting] Auth state: Object
+league-waiting.tsx:94 [LeagueWaiting] WebSocket connection check: Object
+use-draft-websocket-fixed.ts:40 [WebSocket] Hook called with: Object
+league-waiting.tsx:112 [LeagueWaiting] WebSocket status: Object
+use-draft-websocket-fixed.ts:102 [WebSocket] === STARTING NEW CONNECTION ATTEMPT ===
+use-draft-websocket-fixed.ts:103 [WebSocket] Draft ID: bd37a607-6e3c-4653-a156-4da2f1da8bb5 User ID: 1ee53199-df12-4724-b2a1-fd57409e2d9c
+league-waiting.tsx:122 [LeagueWaiting] League data updated: Object
+league-waiting.tsx:135 [League] Draft ID changed, WebSocket should reconnect to: bd37a607-6e3c-4653-a156-4da2f1da8bb5
+league-waiting.tsx:53 [LeagueWaiting] Auth state: Object
+league-waiting.tsx:94 [LeagueWaiting] WebSocket connection check: Object
+use-draft-websocket-fixed.ts:40 [WebSocket] Hook called with: Object
+league-waiting.tsx:112 [LeagueWaiting] WebSocket status: Object
+use-draft-websocket-fixed.ts:115 [WebSocket] ✅ CONNECTION ESTABLISHED
+use-draft-websocket-fixed.ts:60 [WebSocket] Message received: connected
+use-draft-websocket-fixed.ts:73 [WebSocket] Connected confirmation received
+league-waiting.tsx:53 [LeagueWaiting] Auth state: Object
+league-waiting.tsx:94 [LeagueWaiting] WebSocket connection check: Object
+use-draft-websocket-fixed.ts:40 [WebSocket] Hook called with: Object
+league-waiting.tsx:112 [LeagueWaiting] WebSocket status: Object
+use-draft-websocket-fixed.ts:60 [WebSocket] Message received: connected
+use-draft-websocket-fixed.ts:73 [WebSocket] Connected confirmation received
+league-waiting.tsx:53 [LeagueWaiting] Auth state: Object
+league-waiting.tsx:94 [LeagueWaiting] WebSocket connection check: Object
+use-draft-websocket-fixed.ts:40 [WebSocket] Hook called with: Object
+league-waiting.tsx:112 [LeagueWaiting] WebSocket status: Object
+use-draft-websocket-fixed.ts:60 [WebSocket] Message received: draft_state
+league-waiting.tsx:53 [LeagueWaiting] Auth state: Object
+league-waiting.tsx:94 [LeagueWaiting] WebSocket connection check: Object
+use-draft-websocket-fixed.ts:40 [WebSocket] Hook called with: Object
+league-waiting.tsx:112 [LeagueWaiting] WebSocket status: Object
+league-waiting.tsx:53 [LeagueWaiting] Auth state: Object
+league-waiting.tsx:94 [LeagueWaiting] WebSocket connection check: Object
+use-draft-websocket-fixed.ts:40 [WebSocket] Hook called with: Object
+league-waiting.tsx:112 [LeagueWaiting] WebSocket status: Object
+draft-controls.tsx:44 [StartDraft] ✅ Starting draft for league: 7bb2bb6b-095b-43ef-a7ef-dedf49e39003
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+RequireLeague.tsx:11 [RequireLeague] entering
+RequireLeague.tsx:17 [RequireLeague] Object
+RequireLeague.tsx:30 [RequireLeague] has league; rendering children
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+RequireLeague.tsx:11 [RequireLeague] entering
+RequireLeague.tsx:17 [RequireLeague] Object
+RequireLeague.tsx:30 [RequireLeague] has league; rendering children
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+RequireLeague.tsx:11 [RequireLeague] entering
+RequireLeague.tsx:17 [RequireLeague] Object
+RequireLeague.tsx:30 [RequireLeague] has league; rendering children
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+RequireLeague.tsx:11 [RequireLeague] entering
+RequireLeague.tsx:17 [RequireLeague] Object
+RequireLeague.tsx:30 [RequireLeague] has league; rendering children
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+RequireLeague.tsx:11 [RequireLeague] entering
+RequireLeague.tsx:17 [RequireLeague] Object
+RequireLeague.tsx:30 [RequireLeague] has league; rendering children
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+RequireLeague.tsx:11 [RequireLeague] entering
+RequireLeague.tsx:17 [RequireLeague] Object
+RequireLeague.tsx:30 [RequireLeague] has league; rendering children
+draft.tsx:309 [Draft] WebSocket connection decision: Object
+use-draft-websocket-fixed.ts:40 [WebSocket] Hook called with: Object
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+RequireLeague.tsx:11 [RequireLeague] entering
+RequireLeague.tsx:17 [RequireLeague] Object
+RequireLeague.tsx:30 [RequireLeague] has league; rendering children
+draft.tsx:309 [Draft] WebSocket connection decision: Object
+use-draft-websocket-fixed.ts:40 [WebSocket] Hook called with: Object
+react-dom.production.min.js:188 ReferenceError: error is not defined
+    at _r (draft.tsx:399:7)
+    at yu (react-dom.production.min.js:160:137)
+    at xo (react-dom.production.min.js:196:258)
+    at Ja (react-dom.production.min.js:290:366)
+    at Ya (react-dom.production.min.js:279:389)
+    at Ed (react-dom.production.min.js:279:320)
+    at qr (react-dom.production.min.js:279:180)
+    at jo (react-dom.production.min.js:270:88)
+    at Qa (react-dom.production.min.js:267:429)
+    at E (scheduler.production.min.js:13:203)
+Co @ react-dom.production.min.js:188Understand this error
+react-dom.production.min.js:282 Uncaught ReferenceError: error is not defined
+    at _r (draft.tsx:399:7)
+    at yu (react-dom.production.min.js:160:137)
+    at xo (react-dom.production.min.js:196:258)
+    at Ja (react-dom.production.min.js:290:366)
+    at Ya (react-dom.production.min.js:279:389)
+    at Ed (react-dom.production.min.js:279:320)
+    at qr (react-dom.production.min.js:279:180)
+    at jo (react-dom.production.min.js:270:88)
+    at Qa (react-dom.production.min.js:267:429)
+    at E (scheduler.production.min.js:13:203)Understand this error
