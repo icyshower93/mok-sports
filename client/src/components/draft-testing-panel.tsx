@@ -28,13 +28,14 @@ import {
   Pause,
   Settings
 } from "lucide-react";
+import type { ConnectionStatus } from "@/draft/draft-types";
 
 
 interface DraftTestingPanelProps {
   leagueId: string;
   draftId?: string;
   isCreator: boolean;
-  connectionStatus: 'connecting' | 'connected' | 'disconnected' | 'draft_not_found';
+  connectionStatus: ConnectionStatus;
   onReset?: () => void;
 }
 

@@ -1,0 +1,67 @@
+🚀 FRONTEND STARTING - bootstrap function running
+AuthProvider.tsx:110 [Auth] Token check - Has token: false Has user: false Loading: true
+AuthProvider.tsx:110 [Auth] Token check - Has token: true Has user: true Loading: false
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+RequireLeague.tsx:11 [RequireLeague] entering
+RequireLeague.tsx:17 [RequireLeague] Object
+RequireLeague.tsx:21 [RequireLeague] loading state; returning null
+NavigationTracer.tsx:8 [Nav] location => /
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+RequireLeague.tsx:11 [RequireLeague] entering
+RequireLeague.tsx:17 [RequireLeague] Object
+RequireLeague.tsx:26 [RequireLeague] no league and not allowed draft route; redirect -> /dashboard
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+NavigationTracer.tsx:8 [Nav] location => /dashboard
+index.mjs:308 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+(anonymous) @ index.mjs:308Understand this warning
+dashboard.tsx:100 [CreateLeague] Sending payload: Object
+dashboard.tsx:108 [CreateLeague] Response status: 201
+dashboard.tsx:124 [CreateLeague] Success result: Object
+dashboard.tsx:128 [CreateLeague] Success - server returned: Object
+dashboard.tsx:144 [CreateLeague] Navigating to waiting room with leagueId: d6ac3521-8504-4f16-8e38-17d30df7d62a
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+league-waiting.tsx:53 [LeagueWaiting] Auth state: Object
+league-waiting.tsx:94 [LeagueWaiting] WebSocket connection check: Object
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+league-waiting.tsx:53 [LeagueWaiting] Auth state: Object
+league-waiting.tsx:94 [LeagueWaiting] WebSocket connection check: Object
+react-dom.production.min.js:188 TypeError: Cannot destructure property 'draftId' of 't' as it is null.
+    at O (use-draft-websocket-fixed.ts:29:11)
+    at Ze (league-waiting.tsx:105:45)
+    at yu (react-dom.production.min.js:160:137)
+    at xo (react-dom.production.min.js:196:258)
+    at Ja (react-dom.production.min.js:290:366)
+    at Ya (react-dom.production.min.js:279:389)
+    at Ed (react-dom.production.min.js:279:320)
+    at qr (react-dom.production.min.js:279:180)
+    at jo (react-dom.production.min.js:270:88)
+    at Qa (react-dom.production.min.js:267:429)
+Co @ react-dom.production.min.js:188Understand this error
+react-dom.production.min.js:282 Uncaught TypeError: Cannot destructure property 'draftId' of 't' as it is null.
+    at O (use-draft-websocket-fixed.ts:29:11)
+    at Ze (league-waiting.tsx:105:45)
+    at yu (react-dom.production.min.js:160:137)
+    at xo (react-dom.production.min.js:196:258)
+    at Ja (react-dom.production.min.js:290:366)
+    at Ya (react-dom.production.min.js:279:389)
+    at Ed (react-dom.production.min.js:279:320)
+    at qr (react-dom.production.min.js:279:180)
+    at jo (react-dom.production.min.js:270:88)
+    at Qa (react-dom.production.min.js:267:429)Understand this error

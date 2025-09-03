@@ -21,7 +21,7 @@ export interface DraftWebSocketMessage {
 export type DraftStatus = 'not_started' | 'starting' | 'active' | 'paused' | 'completed' | 'cancelled';
 
 // WebSocket connection status
-export type ConnectionStatus = 'idle' | 'connecting' | 'open' | 'closed' | 'connected' | 'disconnected' | 'draft_not_found';
+export type ConnectionStatus = 'idle' | 'connecting' | 'open' | 'closed' | 'connected' | 'disconnected' | 'draft_not_found' | 'error';
 
 // Timer constants
 export const TIMER_CONSTANTS = {

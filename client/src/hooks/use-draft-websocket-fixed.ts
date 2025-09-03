@@ -20,13 +20,13 @@ type DraftSocketMessage =
   | { type: 'timer_update'; payload: { display: number } }
   | { type: string; payload?: any };
 
-export function useDraftWebSocket(opts: {
+export function useDraftWebSocket(opts?: {
   draftId?: string;
   userId?: string;
   onDraftState?: (state: any) => void;
   onTimerUpdate?: (t: { display: number }) => void;
 }) {
-  const { draftId, userId, onDraftState, onTimerUpdate } = opts;
+  const { draftId, userId, onDraftState, onTimerUpdate } = opts || {};
   const { toast } = useToast();
   const queryClient = useQueryClient();
   

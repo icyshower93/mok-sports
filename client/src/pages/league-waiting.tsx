@@ -103,7 +103,10 @@ export function LeagueWaiting() {
   
   // Only connect WebSocket when auth is ready and we have league data
   const { connectionStatus, isConnected } = useDraftWebSocket(
-    authReady && league?.draftId ? league.draftId : null
+    authReady && league?.draftId ? {
+      draftId: league.draftId,
+      userId: user?.id
+    } : undefined
   );
   
   console.log('[LeagueWaiting] WebSocket status:', { 
