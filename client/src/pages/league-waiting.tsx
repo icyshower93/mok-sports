@@ -14,7 +14,6 @@ import { setLastLeagueId } from "@/hooks/useLastLeague";
 import { DraftNotificationReminder } from "@/components/draft-notification-reminder";
 import DraftControls from "@/components/draft-controls";
 import { DraftTestingPanel } from "@/components/draft-testing-panel";
-import { useDraftWebSocket } from "@/hooks/use-draft-websocket";
 
 interface League {
   id: string;
@@ -90,35 +89,7 @@ export function LeagueWaiting() {
     },
   });
 
-  // WebSocket connection for real-time draft updates - only when draftId exists
-  console.log('[LeagueWaiting] WebSocket connection check:', { 
-    draftId: league?.draftId, 
-    leagueId,
-    authReady,
-    leagueLoaded: !!league,
-    hasDraftId: !!league?.draftId,
-    shouldConnect: !!league?.draftId && !!user?.id,
-    timestamp: Date.now()
-  });
-  
-  // Get draftId safely
-  const draftId = league?.draftId ?? null;
-  
-  // WebSocket connection - will only connect if both draftId and userId exist (the hook handles null checks)
-  useDraftWebSocket(
-    draftId || '', // Pass empty string instead of null to prevent connection
-    user?.id || '',
-    {
-      onDraftState: (state) => {
-        // Handle draft state updates if needed
-        console.log('[LeagueWaiting] Draft state updated:', state);
-      },
-      onTimerUpdate: (timer) => {
-        // Handle timer updates if needed  
-        console.log('[LeagueWaiting] Timer update:', timer);
-      }
-    }
-  );
+  // No WebSocket connection in waiting room - only the draft page should own the draft socket
 
   // Debug logging for league data
   useEffect(() => {
@@ -133,12 +104,7 @@ export function LeagueWaiting() {
     }
   }, [league]);
 
-  // Force WebSocket reconnection when draft ID changes
-  useEffect(() => {
-    if (league?.draftId) {
-      console.log('[League] Draft ID changed, WebSocket should reconnect to:', league.draftId);
-    }
-  }, [league?.draftId]);
+  // Removed WebSocket reconnection logic - not needed in waiting room
 
   // Remove member mutation (creator only)
   const removeMemberMutation = useMutation({
