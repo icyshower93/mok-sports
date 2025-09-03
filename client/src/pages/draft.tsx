@@ -80,6 +80,11 @@ export default function DraftPage() {
   const [selectedTeam, setSelectedTeam] = useState<string | null>(null);
   const [timer, setTimer] = useState<number>(0);
 
+  // Safe fallbacks to prevent crashes during initial render
+  const availableTeams = (draftData?.availableTeams ?? []) as any[];
+  const picks = (draftData?.picks ?? []) as any[];
+  const participants = (draftData?.participants ?? []) as any[];
+
   // Simple WebSocket connection
   useDraftWebSocket(draftId, user?.id, {
     onDraftState: (state) => {
@@ -130,20 +135,20 @@ export default function DraftPage() {
     }
   });
 
-  // Loading state
-  if (isLoading || !draftData) {
+  // Loading state - show visible spinner, not null
+  if (isLoading || !draftId) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex h-full items-center justify-center min-h-screen">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Loading draft...</p>
+          <div className="text-sm opacity-70">Starting draft…</div>
         </div>
       </div>
     );
   }
 
-  const isCurrentUser = draftData.currentPlayerId === user?.id;
-  const currentPlayer = draftData.participants.find(p => p.id === draftData.currentPlayerId);
+  const isCurrentUser = draftData?.currentPlayerId === user?.id;
+  const currentPlayer = participants.find(p => p.id === draftData?.currentPlayerId);
 
   return (
     <div className="min-h-screen bg-background p-4">
@@ -163,7 +168,7 @@ export default function DraftPage() {
           <div className="text-center">
             <h1 className="text-2xl font-bold">Draft Room</h1>
             <p className="text-sm text-muted-foreground">
-              Round {draftData.currentRound}, Pick {draftData.currentPick}
+              Round {draftData?.currentRound ?? 1}, Pick {draftData?.currentPick ?? 1}
             </p>
           </div>
 
@@ -184,7 +189,7 @@ export default function DraftPage() {
                     {isCurrentUser ? "Your turn to pick!" : `${currentPlayer?.name || 'Unknown'} is picking...`}
                   </p>
                   <p className="text-sm text-muted-foreground">
-                    {draftData.availableTeams.length} teams remaining
+                    {availableTeams.length} teams remaining
                   </p>
                 </div>
               </div>
@@ -203,9 +208,9 @@ export default function DraftPage() {
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 gap-3 max-h-96 overflow-y-auto">
-                {draftData.availableTeams.map((team) => {
+                {availableTeams.map((team) => {
                   const isSelected = selectedTeam === team.id;
-                  const canSelect = draftData.canMakePick && isCurrentUser;
+                  const canSelect = draftData?.canMakePick && isCurrentUser;
                   
                   return (
                     <Card
@@ -237,7 +242,7 @@ export default function DraftPage() {
               </div>
 
               {/* Draft Button */}
-              {selectedTeam && draftData.canMakePick && isCurrentUser && (
+              {selectedTeam && draftData?.canMakePick && isCurrentUser && (
                 <div className="mt-4 pt-4 border-t">
                   <Button
                     onClick={() => makePick.mutate(selectedTeam)}
@@ -258,7 +263,7 @@ export default function DraftPage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-2 max-h-96 overflow-y-auto">
-                {draftData.picks.map((pick) => (
+                {picks.map((pick) => (
                   <div key={pick.id} className="flex items-center gap-3 p-2 rounded border">
                     <div className="text-sm font-mono w-12">
                       {pick.round}.{pick.pickNumber}
