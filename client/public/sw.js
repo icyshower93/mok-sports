@@ -45,29 +45,52 @@ self.addEventListener('fetch', (event) => {
   // Always network-first for HTML/shell
   if (req.mode === 'navigate' || url.pathname.endsWith('.html')) {
     event.respondWith((async () => {
-      try { return await fetch(req, { cache: 'no-store' }); }
-      catch { return await caches.match('/index.html'); }
+      try { 
+        return await fetch(req, { cache: 'no-store' }); 
+      } catch (error) { 
+        console.warn('[SW] Navigation fetch failed, serving cached index:', error);
+        const cached = await caches.match('/index.html');
+        return cached || new Response('App temporarily unavailable', { status: 503 });
+      }
     })());
     return;
   }
 
   // Network-first for API
   if (url.pathname.startsWith('/api/')) {
-    event.respondWith(fetch(req));
+    event.respondWith((async () => {
+      try {
+        return await fetch(req);
+      } catch (error) {
+        console.error('[SW] API fetch failed:', error);
+        return new Response('Network error', { status: 503 });
+      }
+    })());
     return;
   }
 
   // Cache-first for common static assets
   if (url.origin === self.location.origin && /\.(?:js|css|png|svg|ico|woff2?)$/.test(url.pathname)) {
     event.respondWith((async () => {
-      const cached = await caches.match(req);
-      if (cached) return cached;
-      const res = await fetch(req);
       try {
-        const cache = await caches.open(CACHE_VERSION);
-        cache.put(req, res.clone());
-      } catch {}
-      return res;
+        const cached = await caches.match(req);
+        if (cached) return cached;
+        
+        const res = await fetch(req);
+        if (res && res.ok) {
+          try {
+            const cache = await caches.open(CACHE_VERSION);
+            cache.put(req, res.clone());
+          } catch (e) {
+            console.warn('[SW] Cache put failed:', e);
+          }
+        }
+        return res;
+      } catch (error) {
+        console.error('[SW] Fetch handler error:', error);
+        // Return a basic network request as fallback
+        return fetch(req);
+      }
     })());
   }
 });
