@@ -307,7 +307,7 @@ export default function DraftPage() {
   });
   
   // ✅ Fix race condition: only connect WebSocket when auth is ready and we have a draftId
-  const { connectionStatus, lastMessage } = useDraftWebSocket(canConnect ? draftId : null);
+  const { connectionStatus, lastMessage } = useDraftWebSocket(canConnect ? draftId : null, draft, true);
   const isConnected = connectionStatus === 'connected';
 
   // Smart redirect: don't auto-leave /draft/:id while not completed
@@ -569,8 +569,26 @@ export default function DraftPage() {
     );
   }
 
+  // Resilient early return - wait for all requirements before rendering main UI
+  if (!draftId || auth.isLoading) {
+    console.log('[Draft] RENDER: Loading state - early requirements check', { 
+      draftId: !!draftId, 
+      authLoading: auth.isLoading 
+    });
+    
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center space-y-4">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+          <p className="text-sm text-muted-foreground">
+            {!draftId ? 'Loading draft...' : 'Authenticating...'}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   const loadingReason = !auth.user ? 'authentication' : 
-                       auth.isLoading ? 'authentication loading' :
                        isLoading ? 'draft data loading' :
                        !draftData ? 'no draft data' : 
                        null;

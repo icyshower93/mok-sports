@@ -23,7 +23,7 @@ const backoff = (n: number) => Math.min(MAX, BASE * Math.pow(2, n));
 import { wsUrl } from '@/lib/endpoints';
 import { useAuth } from '@/features/auth/useAuth';
 
-export function useDraftWebSocket(draftId: string | null) {
+export function useDraftWebSocket(draftId: string | null, draft?: any, requireStarted: boolean = false) {
   const { user } = useAuth();
   const [connectionStatus, setConnectionStatus] = useState<WSStatus>('idle');
   const [lastMessage, setLastMessage] = useState<DraftWebSocketMessage | null>(null);
@@ -36,11 +36,18 @@ export function useDraftWebSocket(draftId: string | null) {
   const clearTimer = () => { if (timerRef.current) { clearTimeout(timerRef.current); timerRef.current = null; } };
 
   const connect = useCallback(() => {
-    // RACE CONDITION FIX: Don't connect until we have all requirements
-    if (!user?.id || !draftId || stoppedRef.current) {
-      console.log('[WebSocket] ❌ Connection requirements not met', { 
-        hasUser: !!user?.id, 
-        draftId,
+    // RESILIENT REQUIREMENTS CHECK: Don't connect until we have all requirements
+    const hasUser = !!user?.id;
+    const hasDraftId = !!draftId;
+    const readyStatus = !requireStarted || draft?.status === 'active' || draft?.status === 'in_progress';
+    
+    if (!hasUser || !hasDraftId || !readyStatus || stoppedRef.current) {
+      console.log('[WebSocket] 🛑 Not connecting - missing requirements', { 
+        hasUser, 
+        hasDraftId, 
+        readyStatus, 
+        draftStatus: draft?.status,
+        requireStarted,
         stopped: stoppedRef.current 
       });
       return;
@@ -84,14 +91,21 @@ export function useDraftWebSocket(draftId: string | null) {
       clearTimer();
       timerRef.current = setTimeout(connect, delay);
     };
-  }, [draftId, user?.id]);
+  }, [draftId, user?.id, draft?.status, requireStarted]);
 
   useEffect(() => {
-    // RACE CONDITION FIX: Wait for auth + draftId before connecting
-    if (!user?.id || !draftId) {
+    // RESILIENT CONNECTION: Wait for all requirements before connecting
+    const hasUser = !!user?.id;
+    const hasDraftId = !!draftId;
+    const readyStatus = !requireStarted || draft?.status === 'active' || draft?.status === 'in_progress';
+    
+    if (!hasUser || !hasDraftId || !readyStatus) {
       console.log('[WebSocket] 🛑 Not connecting - missing requirements', { 
-        hasUser: !!user?.id, 
-        draftId 
+        hasUser, 
+        hasDraftId, 
+        readyStatus, 
+        draftStatus: draft?.status,
+        requireStarted
       });
       return;
     }
@@ -116,7 +130,7 @@ export function useDraftWebSocket(draftId: string | null) {
       wsRef.current = null;
       setConnectionStatus('closed');
     };
-  }, [draftId, connect, connectionStatus]);
+  }, [draftId, user?.id, draft?.status, requireStarted, connect, connectionStatus]);
 
   const sendMessage = useCallback((msg: unknown) => {
     const json = JSON.stringify(msg);
