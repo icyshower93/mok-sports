@@ -289,9 +289,9 @@ export default function DraftPage() {
     // Remove onSuccess - deprecated in TanStack Query v5
   });
 
-  // Simple WebSocket connection logic - purely based on draftId and auth ready
+  // Simple WebSocket connection logic - wait for auth AND draft data to be loaded
   // Use the draftId from above (already declared on line 212)
-  const canConnect = !auth.isLoading && !!auth.user && Boolean(draftId);
+  const canConnect = !auth.isLoading && !!auth.user && Boolean(draftId) && !draftLoading;
   
   const wsUrl = useMemo(
     () => (canConnect && draftId ? computeWsUrl(window.location.origin, draftId) : null),
@@ -305,7 +305,8 @@ export default function DraftPage() {
     wsUrl: wsUrl || 'none' 
   });
   
-  const { connectionStatus, lastMessage } = useDraftWebSocket(draftId || '');
+  // ✅ Fix race condition: only connect WebSocket when auth is ready and we have a draftId
+  const { connectionStatus, lastMessage } = useDraftWebSocket(canConnect ? draftId : null);
   const isConnected = connectionStatus === 'connected';
 
   // Smart redirect: don't auto-leave /draft/:id while not completed
