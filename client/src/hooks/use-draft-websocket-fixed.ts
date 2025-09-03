@@ -109,36 +109,28 @@ export function useDraftWebSocket(draftId: string | null, leagueId: string | nul
     }
   }, [draftId, user?.id, toast, queryClient]);
 
-  // Main effect to handle connections
+  // Main effect to handle connections - simplified to only require draftId + userId
   useEffect(() => {
-    console.log('[WebSocket] MAIN useEffect trigger - draftId:', draftId, 'userId:', !!user?.id);
+    const hasUser = !!user?.id;
+    const hasDraftId = !!draftId;
     
-    if (draftId && user?.id) {
-      console.log('[WebSocket] ✅ Conditions met, validating draft exists before connection...');
-      
-      // Validate draft exists before attempting WebSocket connection
-      fetch(`/api/drafts/${draftId}`)
-        .then(response => {
-          if (response.ok) {
-            console.log('[WebSocket] ✅ Draft exists, proceeding with connection');
-            connectToWebSocket();
-          } else {
-            console.log('[WebSocket] ❌ Draft not found, skipping connection');
-            setConnectionStatus('draft_not_found');
-          }
-        })
-        .catch(error => {
-          console.log('[WebSocket] ❌ Draft validation failed:', error);
-          setConnectionStatus('disconnected');
-        });
-    } else {
-      console.log('[WebSocket] ❌ Connection requirements not met:', {
-        hasDraftId: !!draftId,
-        hasUserId: !!user?.id,
-        actualDraftId: draftId
-      });
+    console.log('[WebSocket] MAIN useEffect trigger', { hasUser, hasDraftId, draftId });
+
+    // ✅ Only require these two - let the socket bring the page to life
+    if (!hasUser || !hasDraftId) {
+      console.log('[WebSocket] 🛑 Not connecting - missing requirements', { hasUser, hasDraftId });
       setConnectionStatus('disconnected');
+      return;
     }
+
+    // Don't create duplicate connections
+    if (wsRef.current) {
+      console.log('[WebSocket] ⚠️ Socket already exists, skipping');
+      return;
+    }
+
+    console.log('[WebSocket] ✅ Requirements met, connecting immediately');
+    connectToWebSocket();
   }, [draftId, user?.id, connectToWebSocket]);
 
   // Cleanup on unmount
