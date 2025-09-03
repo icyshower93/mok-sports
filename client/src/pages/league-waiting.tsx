@@ -104,10 +104,10 @@ export function LeagueWaiting() {
   // Get draftId safely
   const draftId = league?.draftId ?? null;
   
-  // Only call WebSocket hook if draftId and userId exist
+  // WebSocket connection - will only connect if both draftId and userId exist (the hook handles null checks)
   useDraftWebSocket(
-    draftId,
-    user?.id ?? null,
+    draftId || '', // Pass empty string instead of null to prevent connection
+    user?.id || '',
     {
       onDraftState: (state) => {
         // Handle draft state updates if needed
