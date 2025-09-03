@@ -1,0 +1,135 @@
+🚀 FRONTEND STARTING - bootstrap function running
+AuthProvider.tsx:110 [Auth] Token check - Has token: false Has user: false Loading: true
+AuthProvider.tsx:110 [Auth] Token check - Has token: true Has user: true Loading: false
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+RequireLeague.tsx:9 [RequireLeague] entering
+RequireLeague.tsx:15 [RequireLeague] Object
+RequireLeague.tsx:19 [RequireLeague] loading state; showing spinner
+NavigationTracer.tsx:8 [Nav] location => /
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+RequireLeague.tsx:9 [RequireLeague] entering
+RequireLeague.tsx:15 [RequireLeague] Object
+RequireLeague.tsx:28 [RequireLeague] no league and not allowed draft route; redirect -> /dashboard
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+NavigationTracer.tsx:8 [Nav] location => /dashboard
+index.mjs:308 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+(anonymous) @ index.mjs:308Understand this warning
+dashboard.tsx:100 [CreateLeague] Sending payload: Object
+dashboard.tsx:108 [CreateLeague] Response status: 201
+dashboard.tsx:124 [CreateLeague] Success result: Object
+dashboard.tsx:128 [CreateLeague] Success - server returned: Object
+dashboard.tsx:144 [CreateLeague] Navigating to waiting room with leagueId: 64b8f118-25c0-4265-9313-4b8643c383b1
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+league-waiting.tsx:53 [LeagueWaiting] Auth state: Object
+league-waiting.tsx:94 [LeagueWaiting] WebSocket connection check: Object
+league-waiting.tsx:120 [LeagueWaiting] WebSocket connection established for draft: undefined
+NavigationTracer.tsx:8 [Nav] location => /league/waiting
+league-waiting.tsx:66 [LeagueWaiting] Checking URL params: Object
+league-waiting.tsx:53 [LeagueWaiting] Auth state: Object
+league-waiting.tsx:94 [LeagueWaiting] WebSocket connection check: Object
+league-waiting.tsx:120 [LeagueWaiting] WebSocket connection established for draft: undefined
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+league-waiting.tsx:53 [LeagueWaiting] Auth state: Object
+league-waiting.tsx:94 [LeagueWaiting] WebSocket connection check: Object
+league-waiting.tsx:120 [LeagueWaiting] WebSocket connection established for draft: null
+league-waiting.tsx:125 [LeagueWaiting] League data updated: Object
+league-waiting.tsx:53 [LeagueWaiting] Auth state: Object
+league-waiting.tsx:94 [LeagueWaiting] WebSocket connection check: Object
+league-waiting.tsx:120 [LeagueWaiting] WebSocket connection established for draft: null
+league-waiting.tsx:53 [LeagueWaiting] Auth state: Object
+league-waiting.tsx:94 [LeagueWaiting] WebSocket connection check: Object
+league-waiting.tsx:120 [LeagueWaiting] WebSocket connection established for draft: null
+league-waiting.tsx:53 [LeagueWaiting] Auth state: Object
+league-waiting.tsx:94 [LeagueWaiting] WebSocket connection check: Object
+league-waiting.tsx:120 [LeagueWaiting] WebSocket connection established for draft: null
+league-waiting.tsx:125 [LeagueWaiting] League data updated: Object
+league-waiting.tsx:53 [LeagueWaiting] Auth state: Object
+league-waiting.tsx:94 [LeagueWaiting] WebSocket connection check: Object
+league-waiting.tsx:120 [LeagueWaiting] WebSocket connection established for draft: null
+draft-controls.tsx:44 [StartDraft] ✅ Starting draft for league: 64b8f118-25c0-4265-9313-4b8643c383b1
+league-waiting.tsx:53 [LeagueWaiting] Auth state: Object
+league-waiting.tsx:94 [LeagueWaiting] WebSocket connection check: Object
+league-waiting.tsx:120 [LeagueWaiting] WebSocket connection established for draft: null
+league-waiting.tsx:53 [LeagueWaiting] Auth state: Object
+league-waiting.tsx:94 [LeagueWaiting] WebSocket connection check: Object
+league-waiting.tsx:120 [LeagueWaiting] WebSocket connection established for draft: 3f5604ed-7d13-4ac7-a650-4cb54bf11fa2
+league-waiting.tsx:125 [LeagueWaiting] League data updated: Object
+league-waiting.tsx:138 [League] Draft ID changed, WebSocket should reconnect to: 3f5604ed-7d13-4ac7-a650-4cb54bf11fa2
+use-draft-websocket.ts:48 [WS] Connected to draft: 3f5604ed-7d13-4ac7-a650-4cb54bf11fa2
+draft-controls.tsx:44 [StartDraft] ✅ Starting draft for league: 64b8f118-25c0-4265-9313-4b8643c383b1
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+RequireLeague.tsx:9 [RequireLeague] entering
+RequireLeague.tsx:15 [RequireLeague] Object
+RequireLeague.tsx:32 [RequireLeague] has league; rendering children
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+RequireLeague.tsx:9 [RequireLeague] entering
+RequireLeague.tsx:15 [RequireLeague] Object
+RequireLeague.tsx:32 [RequireLeague] has league; rendering children
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+RequireLeague.tsx:9 [RequireLeague] entering
+RequireLeague.tsx:15 [RequireLeague] Object
+RequireLeague.tsx:32 [RequireLeague] has league; rendering children
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+RequireLeague.tsx:9 [RequireLeague] entering
+RequireLeague.tsx:15 [RequireLeague] Object
+RequireLeague.tsx:32 [RequireLeague] has league; rendering children
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+RequireLeague.tsx:9 [RequireLeague] entering
+RequireLeague.tsx:15 [RequireLeague] Object
+RequireLeague.tsx:32 [RequireLeague] has league; rendering children
+app-shell.tsx:11 [AppShell] mounted
+NavigationTracer.tsx:5 [NavigationTracer] component mounted
+RequireLeague.tsx:9 [RequireLeague] entering
+RequireLeague.tsx:15 [RequireLeague] Object
+RequireLeague.tsx:32 [RequireLeague] has league; rendering children
+NavigationTracer.tsx:8 [Nav] location => /draft/3f5604ed-7d13-4ac7-a650-4cb54bf11fa2
+use-draft-websocket.ts:58 [WS] Connection closed: 1000
+use-draft-websocket.ts:48 [WS] Connected to draft: 3f5604ed-7d13-4ac7-a650-4cb54bf11fa2
+draft.tsx:142 [Draft] WS draft_state => hydrating undefined
+draft.tsx:159 [Draft] Fetched draft data: Object
+react-dom.production.min.js:188 Error: Minified React error #310; visit https://reactjs.org/docs/error-decoder.html?invariant=310 for the full message or use the non-minified dev environment for full errors and additional helpful warnings.
+    at Ce (react-dom.production.min.js:161:314)
+    at Object.Ea [as useMemo] (react-dom.production.min.js:172:24)
+    at L.useMemo (react.production.min.js:26:48)
+    at Dr (draft.tsx:221:25)
+    at yu (react-dom.production.min.js:160:137)
+    at xo (react-dom.production.min.js:196:258)
+    at Ja (react-dom.production.min.js:291:88)
+    at Ya (react-dom.production.min.js:279:389)
+    at Ed (react-dom.production.min.js:279:320)
+    at qr (react-dom.production.min.js:279:180)
+Co @ react-dom.production.min.js:188Understand this error
+react-dom.production.min.js:282 Uncaught Error: Minified React error #310; visit https://reactjs.org/docs/error-decoder.html?invariant=310 for the full message or use the non-minified dev environment for full errors and additional helpful warnings.
+    at Ce (react-dom.production.min.js:161:314)
+    at Object.Ea [as useMemo] (react-dom.production.min.js:172:24)
+    at L.useMemo (react.production.min.js:26:48)
+    at Dr (draft.tsx:221:25)
+    at yu (react-dom.production.min.js:160:137)
+    at xo (react-dom.production.min.js:196:258)
+    at Ja (react-dom.production.min.js:291:88)
+    at Ya (react-dom.production.min.js:279:389)
+    at Ed (react-dom.production.min.js:279:320)
+    at qr (react-dom.production.min.js:279:180)Understand this error
+use-draft-websocket.ts:58 [WS] Connection closed: 1000

@@ -219,7 +219,10 @@ export default function DraftPage() {
 
   // Filter teams by search and conference
   const filteredTeams = useMemo(() => {
-    const searchFiltered = filterTeamsBySearch(availableTeamsSafe, searchTerm);
+    if (!availableTeamsSafe || !Array.isArray(availableTeamsSafe)) {
+      return [];
+    }
+    const searchFiltered = filterTeamsBySearch(availableTeamsSafe, searchTerm || '');
     return searchFiltered.filter(team => team.conference === currentConference);
   }, [availableTeamsSafe, searchTerm, currentConference]);
 
