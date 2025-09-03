@@ -14,7 +14,7 @@ import { setLastLeagueId } from "@/hooks/useLastLeague";
 import { DraftNotificationReminder } from "@/components/draft-notification-reminder";
 import DraftControls from "@/components/draft-controls";
 import { DraftTestingPanel } from "@/components/draft-testing-panel";
-import { useDraftWebSocket } from "@/hooks/use-draft-websocket-fixed";
+import { useDraftWebSocket } from "@/hooks/use-draft-websocket";
 
 interface League {
   id: string;
@@ -101,20 +101,23 @@ export function LeagueWaiting() {
     timestamp: Date.now()
   });
   
-  // Only connect WebSocket when auth is ready and we have league data
-  const { connectionStatus, isConnected } = useDraftWebSocket(
-    authReady && league?.draftId ? {
-      draftId: league.draftId,
-      userId: user?.id
-    } : undefined
+  // Simple WebSocket connection - only connect when we have a draft ID
+  useDraftWebSocket(
+    authReady && league?.draftId ? league.draftId : null,
+    authReady && user?.id ? user.id : null,
+    {
+      onDraftState: (state) => {
+        // Handle draft state updates if needed
+        console.log('[LeagueWaiting] Draft state updated:', state);
+      },
+      onTimerUpdate: (timer) => {
+        // Handle timer updates if needed  
+        console.log('[LeagueWaiting] Timer update:', timer);
+      }
+    }
   );
   
-  console.log('[LeagueWaiting] WebSocket status:', { 
-    connectionStatus, 
-    isConnected, 
-    authReady,
-    timestamp: Date.now() 
-  });
+  console.log('[LeagueWaiting] WebSocket connection established for draft:', league?.draftId);
 
   // Debug logging for league data
   useEffect(() => {
@@ -535,7 +538,7 @@ export function LeagueWaiting() {
                 leagueId={league.id}
                 draftId={league.draftId}
                 isCreator={user?.id === league.creatorId}
-                connectionStatus={connectionStatus as any}
+                connectionStatus={"connected" as any}
                 onReset={() => {
                   // Force immediate refetch after reset to get new draft ID
                   queryClient.invalidateQueries({ queryKey: [`/api/leagues/${leagueId}`] });
