@@ -56,6 +56,49 @@ export function useServiceWorker(enableInPWAOnly: boolean = true) {
       return null;
     }
 
+    // Check if service worker should be enabled on this host
+    const CANONICAL_ORIGIN = (() => { 
+      try { return import.meta.env.VITE_CANONICAL_ORIGIN; } catch { return undefined; } 
+    })();
+    const ENABLE_SW = (() => { 
+      try { return (import.meta.env.VITE_ENABLE_SW ?? 'false') === 'true'; } catch { return false; } 
+    })();
+
+    const isCanonical = CANONICAL_ORIGIN
+      ? window.location.origin === CANONICAL_ORIGIN
+      : true; // if not provided, allow same-origin deploys
+
+    if (!ENABLE_SW || !isCanonical) {
+      console.log('[SW Hook] Service worker disabled:', { 
+        ENABLE_SW, 
+        isCanonical, 
+        currentOrigin: window.location.origin, 
+        canonicalOrigin: CANONICAL_ORIGIN 
+      });
+      
+      // Safety: unregister any old workers that might still be controlling this scope
+      try {
+        const registrations = await navigator.serviceWorker.getRegistrations();
+        await Promise.all(registrations.map(r => r.unregister()));
+        console.log('[SW Hook] Unregistered', registrations.length, 'existing service workers');
+      } catch (e) {
+        console.warn('[SW Hook] Failed to unregister service workers:', e);
+      }
+      
+      // Also clear PWA caches so old cached assets don't mask new builds
+      try {
+        if ('caches' in window) {
+          const keys = await caches.keys();
+          await Promise.all(keys.map(k => caches.delete(k)));
+          console.log('[SW Hook] Cleared', keys.length, 'caches on non-canonical host');
+        }
+      } catch (e) {
+        console.warn('[SW Hook] Failed to clear caches:', e);
+      }
+      
+      return null;
+    }
+
     try {
       // One-time safety: clear known old caches (remove after a few releases)
       try {
