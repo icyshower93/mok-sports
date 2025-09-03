@@ -139,12 +139,12 @@ export default function DraftPage() {
     let cancelled = false;
     (async () => {
       try {
-        const res = await fetch(endpoints.draft(draftId));
-        if (res.ok) {
-          const data = await res.json();
-          if (!cancelled) { setDraft(data); setIsLoading(false); }
-        }
-      } catch {}
+        const data = await apiRequest('GET', endpoints.draft(draftId));
+        if (!cancelled) { setDraft(data); setIsLoading(false); }
+      } catch (error) {
+        console.error('Failed to load draft:', error);
+        if (!cancelled) { setIsLoading(false); }
+      }
     })();
     return () => { cancelled = true; };
   }, [draftId, authLoading, draft]);
