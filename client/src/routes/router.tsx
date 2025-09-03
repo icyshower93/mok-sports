@@ -48,8 +48,8 @@ export function getRouter() {
     <Switch>
       <Route path="/login" component={Login} />
       <Route path="/dashboard" component={() => <AuthGuard><Dashboard /></AuthGuard>} />
-      <Route path="/draft/:draftId" component={() => <AuthGuard><Draft /></AuthGuard>} />
-      <Route path="/draft" component={() => <AuthGuard><Draft /></AuthGuard>} />
+      <Route path="/draft/:draftId" component={() => <AuthGuard><RequireLeague allowDraftRoute><Draft /></RequireLeague></AuthGuard>} />
+      <Route path="/draft" component={() => <AuthGuard><RequireLeague allowDraftRoute><Draft /></RequireLeague></AuthGuard>} />
       <Route path="/scores" component={() => <AuthGuard><RequireLeague><Scores /></RequireLeague></AuthGuard>} />
       <Route path="/standings" component={() => <AuthGuard><RequireLeague><Scores /></RequireLeague></AuthGuard>} />
       <Route path="/teams" component={() => <AuthGuard><RequireLeague><Teams /></RequireLeague></AuthGuard>} />

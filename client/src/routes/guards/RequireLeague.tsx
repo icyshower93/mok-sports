@@ -1,12 +1,20 @@
-import { Redirect } from "wouter";
+import { Redirect, useLocation } from "wouter";
 import { useHasLeague } from "@/features/leagues/useHasLeague";
 
-export default function RequireLeague({ children }: { children: React.ReactNode }) {
+export default function RequireLeague({ 
+  children, 
+  allowDraftRoute = false 
+}: { 
+  children: React.ReactNode;
+  allowDraftRoute?: boolean;
+}) {
   console.debug("[RequireLeague] entering");
   
   const { hasLeague } = useHasLeague();
+  const [location] = useLocation();
+  const isDraftRoute = location.startsWith('/draft/');
   
-  console.debug("[RequireLeague]", { hasLeague });
+  console.debug("[RequireLeague]", { hasLeague, allowDraftRoute, isDraftRoute, location });
 
   // While unknown, don't render anything (prevents brief bottom-nav flash)
   if (hasLeague === undefined) {
@@ -14,8 +22,8 @@ export default function RequireLeague({ children }: { children: React.ReactNode 
     return null;
   }
 
-  if (!hasLeague) {
-    console.debug("[RequireLeague] no league; redirect -> /dashboard");
+  if (!hasLeague && !(allowDraftRoute && isDraftRoute)) {
+    console.debug("[RequireLeague] no league and not allowed draft route; redirect -> /dashboard");
     return <Redirect to="/dashboard" />;
   }
 
