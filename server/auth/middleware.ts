@@ -12,10 +12,16 @@ export async function requireAuthCookieOrToken(req: Request, res: Response, next
       console.log("[Auth] Found token in Authorization header");
     }
     
-    // Fallback to cookie/session
+    // Fallback to cookie/session - check both auth_token and token
     if (!token && req.cookies?.auth_token) {
       token = req.cookies.auth_token;
-      console.log("[Auth] Found token in cookie");
+      console.log("[Auth] Found token in auth_token cookie");
+    }
+    
+    // Also check for 'token' cookie as fallback (for compatibility)
+    if (!token && req.cookies?.token) {
+      token = req.cookies.token;
+      console.log("[Auth] Found token in token cookie");
     }
     
     if (!token) {

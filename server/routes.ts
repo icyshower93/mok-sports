@@ -177,10 +177,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
       token = authHeader.substring(7);
       console.log("[Auth] Using Bearer token from header");
     } else {
-      // Fallback to cookie
+      // Fallback to cookie - check both auth_token and token
       token = req.cookies?.auth_token;
       if (token) {
-        console.log("[Auth] Using token from cookie");
+        console.log("[Auth] Using token from auth_token cookie");
+      } else {
+        token = req.cookies?.token;
+        if (token) {
+          console.log("[Auth] Using token from token cookie");
+        }
       }
     }
     
