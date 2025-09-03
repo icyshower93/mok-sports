@@ -36,22 +36,27 @@ export default function DraftControls({
   
   const [showSettings, setShowSettings] = useState(false);
   const [pickTimeLimit, setPickTimeLimit] = useState(120); // Default 2 minutes to match server
+  const [starting, setStarting] = useState(false);
   const totalRounds = 5; // Fixed to 5 rounds for 6-person leagues
   
 
-  // Optimistic start draft function with snappy UI updates
+  // Start draft and navigate immediately
   const onStartDraft = async () => {
-    console.log('[StartDraft] ✅ Starting draft for league:', leagueId);
+    if (starting) return;
+    setStarting(true);
     
-    const res = await apiFetch(endpoints.startLeagueDraft(leagueId), { method: "POST" });
-    if (!res.ok) throw new Error(await res.text().catch(() => `Failed (${res.status})`));
-    const body = await res.json();
-    
-    if (!body?.draftId) {
-      throw new Error('Server did not return a draftId');
-    }
-    
-    const { draftId } = body;
+    try {
+      console.log('[StartDraft] ✅ Starting draft for league:', leagueId);
+      
+      const res = await apiFetch(endpoints.startLeagueDraft(leagueId), { method: "POST" });
+      if (!res.ok) throw new Error(await res.text().catch(() => `Failed (${res.status})`));
+      const body = await res.json();
+      
+      if (!body?.draftId) {
+        throw new Error('Server did not return a draftId');
+      }
+      
+      const { draftId } = body;
     
     // Optimistic update for snappy UI
     const updateLeagueData = (oldLeagues: any) => {
@@ -82,17 +87,24 @@ export default function DraftControls({
       };
     });
     
-    // Navigation handled by waiting-room effect
     toast({
       title: "Draft started!",
       description: "The live draft is now beginning. Good luck!",
     });
     
-    if (onDraftStarted) {
-      onDraftStarted();
+      // 👈 Navigate immediately after getting draftId
+      console.log('[StartDraft] 🚀 Navigating immediately to draft:', draftId);
+      setLocation(`/draft/${draftId}`);
+      
+      if (onDraftStarted) {
+        onDraftStarted();
+      }
+      
+      return { draftId };
+    } catch (error) {
+      setStarting(false);
+      throw error;
     }
-    
-    return { draftId };
   };
 
   // Start draft mutation using the proper league-based endpoint
@@ -298,12 +310,12 @@ export default function DraftControls({
 
             <Button
               onClick={() => startDraftMutation.mutate()}
-              disabled={startDraftMutation.isPending}
+              disabled={starting}
               className="w-full"
               size="lg"
             >
               <Play className="w-4 h-4 mr-2" />
-              {startDraftMutation.isPending ? 'Starting Draft...' : 'Start Draft Now'}
+              {starting ? 'Starting…' : 'Start Draft Now'}
             </Button>
           </>
         )}
@@ -322,12 +334,12 @@ export default function DraftControls({
             <div className="flex space-x-2">
               <Button
                 onClick={() => startDraftMutation.mutate()}
-                disabled={startDraftMutation.isPending}
+                disabled={starting}
                 className="flex-1"
                 size="lg"
               >
                 <Play className="w-4 h-4 mr-2" />
-                {startDraftMutation.isPending ? 'Starting...' : 'Start Draft'}
+                {starting ? 'Starting…' : 'Start Draft'}
               </Button>
               
               <Button
