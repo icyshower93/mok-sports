@@ -171,24 +171,23 @@ export default function DraftPage() {
     }
   });
 
-  // ---- RENDER
+  // Loading state - show visible spinner
   if (isLoading || !draftId) {
-    return <div className="flex h-full items-center justify-center"><div className="opacity-70 text-sm">Starting draft…</div></div>;
+    return (
+      <div className="flex h-full items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <div className="text-sm opacity-70">Starting draft…</div>
+        </div>
+      </div>
+    );
   }
 
   const isCurrentUser = draft?.currentPlayerId === user?.id;
   const currentPlayer = participants.find(p => p.id === draft?.currentPlayerId);
 
   return (
-    <div className="p-4">
-      {status === 'starting' && (
-        <div className="mb-3 text-xs opacity-70">
-          Draft begins in: {Math.max(0, Math.ceil(timerDisplay))}s
-        </div>
-      )}
-      <div className="mb-2 text-xs">
-        Pick timer: {Math.max(0, timerDisplay).toFixed(1)}s / {timerLimit}s
-      </div>
+    <div className="min-h-screen bg-background p-4">
       <div className="max-w-6xl mx-auto">
         {/* Simple Header */}
         <div className="flex items-center justify-between mb-6">
