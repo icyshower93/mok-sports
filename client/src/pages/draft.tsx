@@ -7,7 +7,8 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Clock, CheckCircle, Users } from 'lucide-react';
+import { Progress } from '@/components/ui/progress';
+import { ArrowLeft, Clock, CheckCircle, Users, Timer } from 'lucide-react';
 import { useDraftWebSocket } from '@/hooks/use-draft-websocket';
 import { endpoints } from '@/lib/endpoints';
 import { apiRequest } from '@/features/query/api';
@@ -84,6 +85,45 @@ export default function DraftPage() {
   const availableTeams = (draft?.availableTeams ?? []) as any[];
   const picks = (draft?.picks ?? []) as any[];
   const participants = (draft?.participants ?? []) as any[];
+  const restrictions = draft?.restrictions ?? {};
+  const draftStatus = draft?.status ?? 'not_started';
+  const pickTimeLimit = draft?.pickTimeLimit ?? 120;
+
+  // UI state computed from draft data
+  const isCountdown = draftStatus === 'starting';
+  const isDraftActive = draftStatus === 'in_progress';
+  const canMakePicks = isDraftActive && draft?.canMakePick;
+  const timerProgress = pickTimeLimit > 0 ? ((pickTimeLimit - timer) / pickTimeLimit) * 100 : 0;
+
+  // Draft restrictions and eligibility
+  const userPicks = picks.filter((pick: any) => pick.userId === user?.id) || [];
+  const enableDivisionRule = restrictions.enableDivisionRule ?? true;
+  const maxTeamsPerDivision = restrictions.maxTeamsPerDivision ?? 1;
+
+  // Check team eligibility based on division rules
+  const checkTeamEligibility = (team: any) => {
+    if (!enableDivisionRule) return { eligible: true, reason: '' };
+    
+    const teamDivision = `${team.conference} ${team.division}`;
+    const divisionCount = userPicks.filter((pick: any) => 
+      `${pick.nflTeam?.conference} ${pick.nflTeam?.division}` === teamDivision
+    ).length;
+    
+    if (divisionCount >= maxTeamsPerDivision) {
+      const hasOtherOptions = availableTeams.some((t: any) => 
+        `${t.conference} ${t.division}` !== teamDivision
+      );
+      
+      return {
+        eligible: !hasOtherOptions, // Only eligible if no other division options
+        reason: hasOtherOptions 
+          ? `Already have team from ${teamDivision}` 
+          : 'Override: no other divisions available'
+      };
+    }
+    
+    return { eligible: true, reason: '' };
+  };
 
   // WebSocket connection - hydrate from WS
   useDraftWebSocket(draftId, user?.id, {
@@ -173,30 +213,60 @@ export default function DraftPage() {
           </div>
 
           <div className="flex items-center gap-2 text-sm">
-            <Clock className="h-4 w-4" />
-            {formatTime(timer)}
+            {isCountdown ? (
+              <div className="flex items-center gap-2 text-orange-500">
+                <Timer className="h-4 w-4" />
+                <span className="font-bold">Starting in {timer}s</span>
+              </div>
+            ) : (
+              <>
+                <Clock className="h-4 w-4" />
+                {formatTime(timer)}
+              </>
+            )}
           </div>
         </div>
 
         {/* Current Turn */}
         <Card className="mb-6">
           <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <Users className="h-5 w-5" />
-                <div>
-                  <p className="font-medium">
-                    {isCurrentUser ? "Your turn to pick!" : `${currentPlayer?.name || 'Unknown'} is picking...`}
-                  </p>
-                  <p className="text-sm text-muted-foreground">
-                    {availableTeams.length} teams remaining
-                  </p>
+            {isCountdown ? (
+              <div className="text-center space-y-3">
+                <div className="flex items-center justify-center gap-2 text-orange-500">
+                  <Timer className="h-5 w-5" />
+                  <p className="font-bold text-lg">Draft starting in {timer} seconds...</p>
                 </div>
+                <p className="text-sm text-muted-foreground">Get ready to pick your teams!</p>
               </div>
-              {isCurrentUser && (
-                <Badge variant="default">Your Turn</Badge>
-              )}
-            </div>
+            ) : (
+              <>
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-3">
+                    <Users className="h-5 w-5" />
+                    <div>
+                      <p className="font-medium">
+                        {isCurrentUser ? "Your turn to pick!" : `${currentPlayer?.name || 'Unknown'} is picking...`}
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        {availableTeams.length} teams remaining
+                      </p>
+                    </div>
+                  </div>
+                  {isCurrentUser && isDraftActive && (
+                    <Badge variant="default">Your Turn</Badge>
+                  )}
+                </div>
+                {isDraftActive && timer > 0 && (
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between text-xs text-muted-foreground">
+                      <span>Time remaining</span>
+                      <span>{formatTime(timer)}</span>
+                    </div>
+                    <Progress value={timerProgress} className="h-2" />
+                  </div>
+                )}
+              </>
+            )}
           </CardContent>
         </Card>
 
@@ -210,7 +280,8 @@ export default function DraftPage() {
               <div className="grid grid-cols-2 gap-3 max-h-96 overflow-y-auto">
                 {availableTeams.map((team) => {
                   const isSelected = selectedTeam === team.id;
-                  const canSelect = draft?.canMakePick && isCurrentUser;
+                  const eligibility = checkTeamEligibility(team);
+                  const canSelect = canMakePicks && isCurrentUser && eligibility.eligible;
                   
                   return (
                     <Card
@@ -219,12 +290,15 @@ export default function DraftPage() {
                         isSelected ? 'ring-2 ring-primary bg-primary/5' : ''
                       } ${
                         !canSelect ? 'opacity-50 cursor-not-allowed' : 'hover:bg-muted/50'
+                      } ${
+                        !eligibility.eligible ? 'border-orange-200 bg-orange-50 dark:border-orange-800 dark:bg-orange-900/20' : ''
                       }`}
                       onClick={() => {
                         if (canSelect) {
                           setSelectedTeam(team.id);
                         }
                       }}
+                      title={!eligibility.eligible ? eligibility.reason : ''}
                     >
                       <CardContent className="p-3">
                         <div className="flex items-center gap-2">
@@ -232,6 +306,9 @@ export default function DraftPage() {
                           <div className="flex-1 min-w-0">
                             <p className="font-medium text-sm truncate">{team.city}</p>
                             <p className="text-xs text-muted-foreground truncate">{team.name}</p>
+                            {!eligibility.eligible && (
+                              <p className="text-xs text-orange-600 dark:text-orange-400 truncate">{eligibility.reason}</p>
+                            )}
                           </div>
                           {isSelected && <CheckCircle className="h-4 w-4 text-green-500" />}
                         </div>
@@ -242,17 +319,29 @@ export default function DraftPage() {
               </div>
 
               {/* Draft Button */}
-              {selectedTeam && draft?.canMakePick && isCurrentUser && (
-                <div className="mt-4 pt-4 border-t">
-                  <Button
-                    onClick={() => makePick.mutate(selectedTeam)}
-                    disabled={makePick.isPending}
-                    className="w-full"
-                  >
-                    {makePick.isPending ? 'Drafting...' : 'Draft Team'}
-                  </Button>
-                </div>
-              )}
+              {selectedTeam && canMakePicks && isCurrentUser && (() => {
+                const selectedTeamData = availableTeams.find((t: any) => t.id === selectedTeam);
+                const eligibility = selectedTeamData ? checkTeamEligibility(selectedTeamData) : { eligible: false, reason: 'Team not found' };
+                
+                return (
+                  <div className="mt-4 pt-4 border-t">
+                    <Button
+                      onClick={() => makePick.mutate(selectedTeam)}
+                      disabled={makePick.isPending || !canMakePicks || !eligibility.eligible}
+                      className="w-full"
+                    >
+                      {makePick.isPending ? 'Drafting...' : 
+                       !eligibility.eligible ? `Can't Draft: ${eligibility.reason}` :
+                       'Draft Team'}
+                    </Button>
+                    {!eligibility.eligible && (
+                      <p className="text-xs text-orange-600 dark:text-orange-400 mt-2 text-center">
+                        {eligibility.reason}
+                      </p>
+                    )}
+                  </div>
+                );
+              })()}
             </CardContent>
           </Card>
 
