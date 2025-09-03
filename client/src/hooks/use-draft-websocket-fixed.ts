@@ -82,4 +82,11 @@ export function useDraftWebSocket(opts?: {
       try { s?.close(1000, 'route change'); } catch {}
     };
   }, [draftId, userId, openSocket]);
+
+  // Return connection status
+  return {
+    connectionStatus: socketRef.current ? 'connected' : 'disconnected',
+    isConnected: !!socketRef.current,
+    lastMessage: null // Could track this if needed
+  };
 }

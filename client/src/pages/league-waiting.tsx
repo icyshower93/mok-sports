@@ -535,7 +535,7 @@ export function LeagueWaiting() {
                 leagueId={league.id}
                 draftId={league.draftId}
                 isCreator={user?.id === league.creatorId}
-                connectionStatus={connectionStatus}
+                connectionStatus={connectionStatus as any}
                 onReset={() => {
                   // Force immediate refetch after reset to get new draft ID
                   queryClient.invalidateQueries({ queryKey: [`/api/leagues/${leagueId}`] });

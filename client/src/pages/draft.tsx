@@ -129,7 +129,8 @@ async function requestNotificationPermissionFromUser(): Promise<void> {
 export default function DraftPage() {
   // CRITICAL: All early returns must happen BEFORE any hooks to prevent Rules of Hooks violations
   const { draftId } = useParams();
-  const { user, authLoading } = useAuth(); // whatever you already have
+  const auth = useAuth();
+  const { user } = auth;
 
   const [draftData, setDraftData] = useState<any | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -188,7 +189,7 @@ export default function DraftPage() {
   }
 
   useEffect(() => {
-    if (!draftId || authLoading || draftData) return;
+    if (!draftId || !user || draftData) return;
     let cancelled = false;
     const ac = new AbortController();
     (async () => {
@@ -206,7 +207,7 @@ export default function DraftPage() {
       }
     })();
     return () => { cancelled = true; ac.abort(); };
-  }, [draftId, authLoading, draftData]);
+  }, [draftId, !user, draftData]);
 
   // Fetch user's leagues to get the current draft ID
   const { data: leagueData } = useQuery({
@@ -214,7 +215,7 @@ export default function DraftPage() {
     queryFn: async () => {
       return await apiRequest('GET', endpoints.leaguesUser());
     },
-    enabled: !!user && !authLoading,
+    enabled: !!user && !!user,
     staleTime: 1000 * 10, // Cache for 10 seconds
   });
 
@@ -225,7 +226,7 @@ export default function DraftPage() {
 
   // Auto-redirect to correct draft if URL has wrong draft ID
   useEffect(() => {
-    if (!leagueData || !draftId || authLoading) return;
+    if (!leagueData || !draftId || !user) return;
     
     // Find the league that contains this user and has an active draft
     const activeLeague = leagueData.find((league: any) => 
@@ -238,7 +239,7 @@ export default function DraftPage() {
       navigate(`/draft/${activeLeague.draftId}`, { replace: true });
       return;
     }
-  }, [leagueData, draftId, user?.id, navigate, queryClient, authLoading]);
+  }, [leagueData, draftId, user?.id, navigate, queryClient, !user]);
 
   // Cancel any queries when draftId changes to prevent race conditions
   useEffect(() => {
@@ -368,8 +369,8 @@ export default function DraftPage() {
     if (!lastMessage) return;
     
     // ✅ Normalize WebSocket messages that contain draft state updates
-    if (lastMessage.type === 'draft_state' || lastMessage.type === 'pick_made') {
-      const payload = lastMessage.data ?? lastMessage;
+    if ((lastMessage as any)?.type === 'draft_state' || (lastMessage as any)?.type === 'pick_made') {
+      const payload = (lastMessage as any)?.data ?? lastMessage;
       if (payload) {
         const normalizedUpdate = normalizeDraft(payload);
         setDraftData(normalizedUpdate);
@@ -490,7 +491,7 @@ export default function DraftPage() {
     queryKey: ['draft', draftId, 'teams'],
     queryFn: async ({ signal }) => {
       // Use the apiRequest function to include authentication headers
-      return await apiRequest('GET', endpoints.draftAvailableTeams(draftId));
+      return await apiRequest('GET', endpoints.draftAvailableTeams(draftId!));
     },
     enabled: !!draftId,
     refetchInterval: 5000,
@@ -501,7 +502,7 @@ export default function DraftPage() {
   // Make pick mutation - HARDENED: Single transition with optimized invalidation
   const makePickMutation = useMutation({
     mutationFn: async (nflTeamId: string) => {
-      return await apiRequest('POST', `${endpoints.draft(draftId)}/pick`, { nflTeamId });
+      return await apiRequest('POST', `${endpoints.draft(draftId!)}/pick`, { nflTeamId });
     },
     onSuccess: (data) => {
       // HARDENING: Single transition with batched invalidations
@@ -565,29 +566,6 @@ export default function DraftPage() {
     );
   }
 
-  // Add missing touch handlers for swipe functionality
-  function handleTouchStart(e: React.TouchEvent) {
-    setTouchStartX(e.touches[0].clientX);
-  }
-
-  function handleTouchEnd(e: React.TouchEvent) {
-    const touchEndX = e.changedTouches[0].clientX;
-    const diff = touchStartX - touchEndX;
-    
-    if (Math.abs(diff) > MINIMUM_SWIPE_DISTANCE) {
-      if (diff > 0 && currentConference === 'AFC') {
-        setCurrentConference('NFC');
-      } else if (diff < 0 && currentConference === 'NFC') {
-        setCurrentConference('AFC');
-      }
-    }
-  }
-
-  function handleMakePick() {
-    if (selectedTeam && normalized.isCurrentUser && normalized.canMakePick) {
-      makePickMutation.mutate(selectedTeam);
-    }
-  }
 
   // Set showFAB based on selection and current user status
   const shouldShowFAB = selectedTeam && normalized.isCurrentUser && normalized.canMakePick;
