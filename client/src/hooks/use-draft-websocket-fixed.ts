@@ -1,15 +1,15 @@
 /**
- * Enhanced WebSocket hook for real-time draft communication with Reserved VM support
+ * Enhanced WebSocket hook for draft management with hardened connection handling
  * Features:
- * - Single WebSocket instance management 
+ * - Real-time draft state synchronization
  * - Automatic reconnection on disconnect
  * - Pick notifications and timer updates
  * - Draft state persistence across page reloads
+ * - Prevention of duplicate sockets and reconnect storms
  */
 
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import { useAuth } from '@/features/auth/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import type { DraftWebSocketMessage, ConnectionStatus } from '@/draft/draft-types';
 
@@ -29,140 +29,146 @@ export function useDraftWebSocket(opts: {
   const { draftId, userId, onDraftState, onTimerUpdate } = opts;
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const wsRef = useRef<WebSocket | null>(null);
-  const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  
+  // Hardened connection management
+  const socketRef = useRef<WebSocket | null>(null);
+  const reconnectTimerRef = useRef<number | null>(null);
+  const epochRef = useRef(0); // bump to invalidate in-flight connects
   const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>('disconnected');
   const [lastMessage, setLastMessage] = useState<DraftWebSocketMessage | null>(null);
 
   console.log('[WebSocket] Hook called with:', { draftId, userId });
 
-  const connectToWebSocket = useCallback(() => {
-    console.log('[WebSocket] === STARTING NEW CONNECTION ATTEMPT ===');
-    console.log('[WebSocket] Draft ID:', draftId, 'User ID:', userId);
-
-    if (!draftId || !userId) {
-      console.log('[WebSocket] ❌ Cannot connect - missing draftId or userId');
-      setConnectionStatus('disconnected');
-      return;
+  function clearReconnectTimer() {
+    if (reconnectTimerRef.current) {
+      clearTimeout(reconnectTimerRef.current);
+      reconnectTimerRef.current = null;
     }
+  }
 
-    // Clean close existing connection
-    if (wsRef.current) {
-      console.log('[WebSocket] Closing existing connection before creating new one');
-      wsRef.current.close(1000, 'Creating new connection');
-      wsRef.current = null;
+  function scheduleReconnect(delayMs: number) {
+    if (reconnectTimerRef.current) return; // already scheduled
+    reconnectTimerRef.current = window.setTimeout(() => {
+      reconnectTimerRef.current = null;
+      openSocket(); // try again
+    }, delayMs);
+  }
+
+  const onMessage = useCallback((event: MessageEvent) => {
+    try {
+      const msg: DraftSocketMessage = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
+      console.log('[WebSocket] Message received:', msg.type);
+      setLastMessage(msg as DraftWebSocketMessage);
+      
+      // Enhanced message fan-out with callbacks
+      if (msg.type === 'draft_state' && onDraftState) {
+        onDraftState(msg.payload);
+      } else if (msg.type === 'timer_update' && onTimerUpdate) {
+        onTimerUpdate(msg.payload);
+      }
+      
+      // Keep existing functionality
+      switch (msg.type) {
+        case 'connected':
+          console.log('[WebSocket] Connected confirmation received');
+          break;
+        case 'pick_made':
+          queryClient.invalidateQueries({ queryKey: ['draft', draftId] });
+          if (msg.payload?.pick) {
+            toast({
+              title: "Pick Made!",
+              description: `${msg.payload.pick.user.name} selected ${msg.payload.pick.nflTeam.name}`,
+            });
+          }
+          break;
+        case 'timer_update':
+          queryClient.invalidateQueries({ queryKey: ['draft-timer', draftId] });
+          break;
+      }
+    } catch (error) {
+      console.error('[WebSocket] Error parsing message:', error);
     }
+  }, [onDraftState, onTimerUpdate, queryClient, draftId, toast]);
 
-    // Enhanced URL handling for Reserved VM deployments
+  function openSocket() {
+    if (!draftId || !userId) return;
+    if (socketRef.current) return; // already connected or connecting
+
+    const myEpoch = ++epochRef.current; // capture this attempt
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
     const wsHost = window.location.host;
-    const wsUrl = `${protocol}//${wsHost}/draft-ws?userId=${encodeURIComponent(userId)}&draftId=${encodeURIComponent(draftId)}`;
+    const url = `${protocol}//${wsHost}/draft-ws?userId=${encodeURIComponent(userId)}&draftId=${encodeURIComponent(draftId)}`;
 
-    console.log('[WebSocket] Creating connection to:', wsUrl);
+    console.log('[WebSocket] === STARTING NEW CONNECTION ATTEMPT ===');
+    console.log('[WebSocket] Draft ID:', draftId, 'User ID:', userId);
     setConnectionStatus('connecting');
 
-    try {
-      const ws = new WebSocket(wsUrl);
-      wsRef.current = ws;
+    const ws = new WebSocket(url);
+    socketRef.current = ws;
 
-      ws.onopen = () => {
-        console.log('[WebSocket] ✅ CONNECTION ESTABLISHED');
-        setConnectionStatus('connected');
-      };
+    ws.onopen = () => {
+      // if another attempt superseded us, bail
+      if (myEpoch !== epochRef.current) { 
+        try { ws.close(); } catch {} 
+        return; 
+      }
+      console.log('[WebSocket] ✅ CONNECTION ESTABLISHED');
+      setConnectionStatus('connected');
+      clearReconnectTimer(); // ✅ cancel any pending reconnect
+    };
 
-      ws.onmessage = (event) => {
-        try {
-          const msg: DraftSocketMessage = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
-          console.log('[WebSocket] Message received:', msg.type);
-          setLastMessage(msg as DraftWebSocketMessage);
-          
-          // Enhanced message fan-out with callbacks
-          if (msg.type === 'draft_state' && onDraftState) {
-            onDraftState(msg.payload);
-          } else if (msg.type === 'timer_update' && onTimerUpdate) {
-            onTimerUpdate(msg.payload);
-          }
-          
-          // Keep existing functionality
-          switch (msg.type) {
-            case 'connected':
-              console.log('[WebSocket] Connected confirmation received');
-              break;
-            case 'pick_made':
-              queryClient.invalidateQueries({ queryKey: ['draft', draftId] });
-              if (msg.payload?.pick) {
-                toast({
-                  title: "Pick Made!",
-                  description: `${msg.payload.pick.user.name} selected ${msg.payload.pick.nflTeam.name}`,
-                });
-              }
-              break;
-            case 'timer_update':
-              queryClient.invalidateQueries({ queryKey: ['draft-timer', draftId] });
-              break;
-          }
-        } catch (error) {
-          console.error('[WebSocket] Error parsing message:', error);
-        }
-      };
+    ws.onmessage = onMessage; // your fan-out from Patch #1
 
-      ws.onclose = (event) => {
-        console.log('[WebSocket] Connection closed:', event.code, event.reason);
-        setConnectionStatus('disconnected');
-        wsRef.current = null;
+    ws.onerror = (e) => {
+      console.log('[WebSocket] Connection error:', e);
+      setConnectionStatus('error');
+      // don't null ref here; wait for onclose
+    };
 
-        // Reconnect if unexpected close
-        if (event.code !== 1000 && draftId && userId) {
-          console.log('[WebSocket] Unexpected close, will reconnect...');
-          reconnectTimeoutRef.current = setTimeout(() => {
-            connectToWebSocket();
-          }, 2000);
-        }
-      };
+    ws.onclose = (e) => {
+      // if a newer attempt already exists, ignore close
+      if (myEpoch !== epochRef.current) return;
 
-      ws.onerror = (error) => {
-        console.error('[WebSocket] Connection error:', error);
-        setConnectionStatus('disconnected');
-      };
-
-    } catch (error) {
-      console.error('[WebSocket] Failed to create WebSocket:', error);
+      console.log('[WebSocket] Connection closed:', e.code, e.reason);
       setConnectionStatus('disconnected');
-    }
-  }, [draftId, userId, toast, queryClient, onDraftState, onTimerUpdate]);
+      socketRef.current = null;
 
-  // Main effect to handle connections - simplified to only require draftId + userId
+      // Reconnect on abnormal (1006) or server reset (1011). Backoff 0.5s→5s
+      if (e.code !== 1000) {
+        const attempt = Math.min(5, Math.max(1, myEpoch)); // crude backoff by epoch
+        const delay = 500 * attempt;
+        console.log('[WebSocket] Unexpected close, will reconnect in', delay, 'ms');
+        scheduleReconnect(delay);
+      }
+    };
+  }
+
+  // Hardened connection effect with proper cleanup
   useEffect(() => {
-    const hasUser = !!userId;
-    const hasDraftId = !!draftId;
-    
-    console.log('[WebSocket] MAIN useEffect trigger', { hasUser, hasDraftId, draftId });
+    // connect when identifiers are present
+    if (draftId && userId && !socketRef.current) openSocket();
 
-    // ✅ Only require these two - let the socket bring the page to life
-    if (!hasUser || !hasDraftId) {
-      console.log('[WebSocket] 🛑 Not connecting - missing requirements', { hasUser, hasDraftId });
-      setConnectionStatus('disconnected');
-      return;
-    }
-
-    // Don't create duplicate connections
-    if (wsRef.current) {
-      console.log('[WebSocket] ⚠️ Socket already exists, skipping');
-      return;
-    }
-
-    console.log('[WebSocket] ✅ Requirements met, connecting immediately');
-    connectToWebSocket();
-  }, [draftId, userId, connectToWebSocket]);
+    // cleanup on dependency change (e.g., navigating to another draft)
+    return () => {
+      clearReconnectTimer();
+      const s = socketRef.current;
+      socketRef.current = null;
+      epochRef.current++; // invalidate any inflight attempt
+      try { s?.close(1000, 'route change'); } catch {}
+    };
+  }, [draftId, userId]); // keep deps minimal; don't include draft status/messages
 
   // Cleanup on unmount
   useEffect(() => {
     return () => {
-      if (wsRef.current) {
-        wsRef.current.close(1000, 'Component cleanup');
+      clearReconnectTimer();
+      if (reconnectTimerRef.current) {
+        clearTimeout(reconnectTimerRef.current);
+        reconnectTimerRef.current = null;
       }
-      if (reconnectTimeoutRef.current) {
-        clearTimeout(reconnectTimeoutRef.current);
+      if (socketRef.current) {
+        socketRef.current.close(1000, 'Component unmounted');
+        socketRef.current = null;
       }
     };
   }, []);
