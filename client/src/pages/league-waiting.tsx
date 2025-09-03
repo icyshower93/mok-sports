@@ -216,7 +216,11 @@ export function LeagueWaiting() {
 
   // Early return after ALL hooks have been called
   if (!user) {
-    return null;
+    return (
+      <div className="flex h-full items-center justify-center">
+        <div className="text-sm opacity-70">Loading user data…</div>
+      </div>
+    );
   }
 
   // Handle missing or invalid league ID
@@ -316,7 +320,11 @@ export function LeagueWaiting() {
 
   // Type guard - ensure league exists before proceeding
   if (!league) {
-    return null;
+    return (
+      <div className="flex h-full items-center justify-center">
+        <div className="text-sm opacity-70">Loading league data…</div>
+      </div>
+    );
   }
 
   const isLeagueFull = league.memberCount >= league.maxTeams;

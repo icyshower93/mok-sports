@@ -22,7 +22,13 @@ export default function ProfilePage() {
     enabled: !!user,
   });
 
-  if (!user) return null;
+  if (!user) {
+    return (
+      <div className="flex h-full items-center justify-center">
+        <div className="text-sm opacity-70">Loading profile…</div>
+      </div>
+    );
+  }
 
   const handleLogout = async () => {
     await logout();

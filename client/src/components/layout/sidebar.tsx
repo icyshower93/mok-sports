@@ -11,6 +11,7 @@ interface NavItem {
   href: string;
 }
 
+const navItems: NavItem[] = [
   { icon: Home, label: "Dashboard", href: "/" },
   { icon: Users, label: "My Leagues", href: "/leagues" },
   { icon: Zap, label: "Draft Center", href: "/draft" },
@@ -21,13 +22,20 @@ export function Sidebar() {
   const [location] = useLocation();
   const { user, logout } = useAuth();
 
-  if (!user) return null;
+  if (!user) {
+    return (
+      <div className="flex h-full w-64 bg-background border-r border-border items-center justify-center">
+        <div className="text-sm text-muted-foreground">Loading sidebar…</div>
+      </div>
+    );
+  }
 
   const handleLogout = async () => {
     await logout();
   };
 
   return (
+    <aside className="flex flex-col h-full w-64 bg-background border-r border-border">
       {/* Logo */}
       <div className="flex items-center px-6 py-4 border-b border-border">
         <div className="flex items-center justify-center w-8 h-8 bg-gradient-to-br from-fantasy-green to-trust-blue rounded-lg mr-3">
@@ -50,6 +58,7 @@ export function Sidebar() {
                 "flex items-center px-4 py-3 rounded-xl transition-all duration-200 group",
                 isActive 
                   ? "bg-gradient-to-r from-fantasy-green to-fantasy-green/80 text-white shadow-lg" 
+                  : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
               )}>
                 <Icon className={cn(
                   "w-5 h-5 mr-3 transition-colors",

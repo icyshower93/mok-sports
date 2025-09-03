@@ -14,10 +14,14 @@ export default function RequireLeague({
   
   console.debug("[RequireLeague]", { hasLeague, isDraftRoute, location });
 
-  // While unknown, don't render anything (prevents brief bottom-nav flash)
+  // While unknown, show loading spinner instead of blank screen
   if (hasLeague === undefined) {
-    console.debug("[RequireLeague] loading state; returning null");
-    return null;
+    console.debug("[RequireLeague] loading state; showing spinner");
+    return (
+      <div className="flex h-full items-center justify-center">
+        <div className="text-sm opacity-70">Loading league data…</div>
+      </div>
+    );
   }
 
   if (!hasLeague && !isDraftRoute) {
