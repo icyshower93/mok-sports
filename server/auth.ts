@@ -16,18 +16,17 @@ if (!GOOGLE_CLIENT_ID || !GOOGLE_CLIENT_SECRET) {
   isOAuthConfigured = true;
 }
 
-// Get the base URL for redirects
+// Get the base URL for OAuth redirects (must match Google Cloud Console)
 const getBaseUrl = () => {
-  // Development environment - use stable REPLIT_DEV_DOMAIN
-  if (process.env.REPLIT_DEV_DOMAIN) {
-    return `https://${process.env.REPLIT_DEV_DOMAIN}`;
+  // For OAuth, we need to use the domain registered in Google Cloud Console
+  // This should be the production domain where OAuth is configured
+  if (process.env.NODE_ENV === 'production' || process.env.REPLIT_DEPLOYMENT === 'true') {
+    return 'https://mok-sports-draft-mokfantasysport.replit.app';
   }
   
-  // Production deployment - use REPLIT_DOMAINS environment variable
-  const replitDomains = process.env.REPLIT_DOMAINS;
-  if (replitDomains) {
-    const domains = replitDomains.split(',');
-    return `https://${domains[0]}`;
+  // Development environment - check if we have OAuth configured for dev domain
+  if (process.env.REPLIT_DEV_DOMAIN) {
+    return `https://${process.env.REPLIT_DEV_DOMAIN}`;
   }
   
   // Final fallback for local development
