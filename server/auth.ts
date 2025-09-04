@@ -18,17 +18,12 @@ if (!GOOGLE_CLIENT_ID || !GOOGLE_CLIENT_SECRET) {
 
 // Get the base URL for redirects
 const getBaseUrl = () => {
-  // Check if we're in production deployment
-  if (process.env.NODE_ENV === 'production' || process.env.REPLIT_DEPLOYMENT === 'true') {
-    return 'https://mok-sports-draft-mokfantasysport.replit.app';
-  }
-  
   // Development environment - use stable REPLIT_DEV_DOMAIN
   if (process.env.REPLIT_DEV_DOMAIN) {
     return `https://${process.env.REPLIT_DEV_DOMAIN}`;
   }
   
-  // Fallback for REPLIT_DOMAINS if DEV_DOMAIN not available
+  // Production deployment - use REPLIT_DOMAINS environment variable
   const replitDomains = process.env.REPLIT_DOMAINS;
   if (replitDomains) {
     const domains = replitDomains.split(',');

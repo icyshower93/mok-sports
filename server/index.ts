@@ -98,11 +98,6 @@ const corsOptions = {
       return callback(null, true);
     }
     
-    // Allow the specific deployment domain
-    if (origin === 'https://mok-sports-draft-mokfantasysport.replit.app') {
-      return callback(null, true);
-    }
-    
     callback(new Error('Not allowed by CORS'), false);
   },
   credentials: true, // Allow cookies to be sent
